@@ -266,8 +266,5 @@ def get_timeline(input_file):
     if input_file.endswith(".timeline"):
         from data_file import FileTimeline
         return FileTimeline(input_file)
-    elif input_file.endswith(".db2timeline"):
-        from data_db2 import Db2Timeline
-        return Db2Timeline(input_file)
     else:
         raise Exception("Unknown format")
