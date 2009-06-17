@@ -53,6 +53,7 @@ class MainFrame(wx.Frame):
                                   (input_file, e))
         else:
             self.SetTitle("%s (%s)" % (self.title_base, input_file))
+            self.main_panel.catbox.set_timeline(self.timeline)
             self.main_panel.drawing_area.set_timeline(self.timeline)
         self._enable_disable_menus()
 
@@ -247,6 +248,32 @@ class MainFrame(wx.Frame):
         return self.main_panel.drawing_area.get_time_period()
 
 
+class CategoriesVisibleCheckListBox(wx.CheckListBox):
+
+    def __init__(self, parent, changed_fn):
+        wx.CheckListBox.__init__(self, parent)
+        self.changed_fn = changed_fn
+        self.Bind(wx.EVT_CHECKLISTBOX, self._checklistbox_on_checklistbox, self)
+
+    def set_timeline(self, timeline):
+        self.timeline = timeline
+        self.Clear()
+        for category in self.timeline.get_categories():
+            self._add_category_to_list(category)
+        for i in range(0, self.Count):
+            self.Check(i)
+
+    def _add_category_to_list(self, category):
+        self.Append(category.name, category)
+
+    def _checklistbox_on_checklistbox(self, e):
+        unchecked = []
+        for i in range(0, self.Count):
+            if not self.IsChecked(i):
+                unchecked.append(self.GetClientData(i))
+        self.changed_fn(unchecked)
+
+
 class MainPanel(wx.Panel):
     """
     Panel that covers the whole client area of MainFrame.
@@ -256,21 +283,31 @@ class MainPanel(wx.Panel):
 
     def __init__(self, parent):
         """Create the Main Panel."""
-        wx.Panel.__init__(self, parent, pos=wx.DefaultPosition,
-                          size=wx.DefaultSize)
+        wx.Panel.__init__(self, parent)
         self._create_gui()
 
     def _create_gui(self):
         """Create the controls of the Main Panel."""
-        self.drawing_area = DrawingArea(self)
-        self.SetAutoLayout(True)
-        self.globalSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.globalSizer.Add(self.drawing_area, flag=wx.GROW, proportion=2)
-        self.globalSizer.SetSizeHints(self)
-        self.SetSizer(self.globalSizer)
+        splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        # DrawingArea
+        self.drawing_area = DrawingArea(splitter)
+        # Container
+        pane = wx.Panel(splitter, style=wx.BORDER_NONE)
+        self.catbox = CategoriesVisibleCheckListBox(pane,
+                             self.drawing_area.update_excluded_categories)
+        # Splitter configuration
+        splitter.SplitVertically(pane, self.drawing_area, 200)
+        # Container sizer
+        pane_sizer = wx.BoxSizer(wx.VERTICAL)
+        pane_sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
+        pane.SetSizer(pane_sizer)
+        # Splitter in sizer
+        globalSizer = wx.BoxSizer(wx.HORIZONTAL)
+        globalSizer.Add(splitter, flag=wx.GROW, proportion=1)
+        self.SetSizer(globalSizer)
 
 
-class DrawingArea(wx.Window):
+class DrawingArea(wx.Panel):
     """
     Window on which the timeline is drawn.
 
@@ -305,7 +342,7 @@ class DrawingArea(wx.Window):
     """
 
     def __init__(self, parent):
-        wx.Window.__init__(self, parent, style=wx.NO_BORDER)
+        wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
         self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
@@ -316,11 +353,16 @@ class DrawingArea(wx.Window):
         self.timeline = timeline
         if self.timeline:
             self.time_period = timeline.get_preferred_period()
+            self.exclude_categories = []
             self.redraw_timeline()
             self.Enable()
             self.SetFocus()
         else:
             self.Disable()
+
+    def update_excluded_categories(self, new_list):
+        self.exclude_categories = new_list
+        self.redraw_timeline()
 
     def get_time_period(self):
         """Return currently displayed time period."""
@@ -360,7 +402,9 @@ class DrawingArea(wx.Window):
             memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
             memdc.Clear()
             if self.timeline:
-                current_events = self.timeline.get_events(self.time_period)
+                current_events = self.timeline.get_events(
+                                     self.time_period,
+                                     self.exclude_categories)
                 self.drawing_algorithm.draw(memdc, self.time_period,
                                             current_events,
                                             period_selection)

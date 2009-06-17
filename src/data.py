@@ -25,8 +25,9 @@ class Timeline(object):
     All methods that modify the timeline should automatically save it.
     """
 
-    def get_events(self, time_period):
-        """Return a list of all events visible within the time period."""
+    def get_events(self, time_period, exclude_categories=[]):
+        """Return a list of all events visible within the time period whose
+        category is not in exclude_categories."""
         raise NotImplementedError()
 
     def add_event(self, event):
