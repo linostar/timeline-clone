@@ -1083,23 +1083,20 @@ class GotoDayDialog(GotoBaseDialog):
 
 
 class GotoDateDialog(wx.Dialog):
-    """This dialog is used for creating and updating events."""
 
     def __init__(self, parent, time):
         wx.Dialog.__init__(self, parent, title="Go to Date")
         self._create_gui()
 
     def _create_gui(self):
-        # Setup layout
-        # Textbox
+        # First row with label and date picker
         header = wx.StaticText(self, wx.ID_ANY, "Date:")
         self.dpc = wx.DatePickerCtrl(self, size=(120,-1),
-                                           style = wx.DP_DROPDOWN
-                                               | wx.DP_SHOWCENTURY
+                                     style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY
                                                )#| wx.DP_ALLOWNONE )
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(header, flag=wx.EXPAND|wx.ALL, border=BORDER)
-        hbox.Add(self.dpc, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        hbox.Add(header, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALL, border=BORDER)
+        hbox.Add(self.dpc, flag=wx.EXPAND|wx.ALL, border=BORDER, proportion=1)
         # Buttons
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
