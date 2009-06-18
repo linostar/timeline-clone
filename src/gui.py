@@ -249,6 +249,8 @@ class MainFrame(wx.Frame):
 
 
 class CategoriesVisibleCheckListBox(wx.CheckListBox):
+    # ClientData can not be used in this control
+    # (see http://docs.wxwidgets.org/stable/wx_wxchecklistbox.html)
 
     def __init__(self, parent, changed_fn):
         wx.CheckListBox.__init__(self, parent)
@@ -257,20 +259,20 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
 
     def set_timeline(self, timeline):
         self.timeline = timeline
+        self._update_categories()
+
+    def _update_categories(self):
+        self.categories = self.timeline.get_categories()
         self.Clear()
-        for category in self.timeline.get_categories():
-            self._add_category_to_list(category)
+        self.AppendItems([category.name for category in self.categories])
         for i in range(0, self.Count):
             self.Check(i)
-
-    def _add_category_to_list(self, category):
-        self.Append(category.name, category)
 
     def _checklistbox_on_checklistbox(self, e):
         unchecked = []
         for i in range(0, self.Count):
             if not self.IsChecked(i):
-                unchecked.append(self.GetClientData(i))
+                unchecked.append(self.categories[i])
         self.changed_fn(unchecked)
 
 
