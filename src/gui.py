@@ -1093,7 +1093,7 @@ class GotoDateDialog(wx.Dialog):
         header = wx.StaticText(self, wx.ID_ANY, "Date:")
         self.dpc = wx.DatePickerCtrl(self, size=(120,-1),
                                      style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY
-                                               )#| wx.DP_ALLOWNONE )
+                                               )
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.Add(header, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALL, border=BORDER)
         hbox.Add(self.dpc, flag=wx.EXPAND|wx.ALL, border=BORDER, proportion=1)
