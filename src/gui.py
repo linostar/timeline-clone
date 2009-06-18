@@ -151,7 +151,7 @@ class MainFrame(wx.Frame):
         self._goto_x(GotoDayDialog)
 
     def _mnu_goto_date_on_click(self, evt):
-        display_error_message("Not implemented yet.", self)
+        self._goto_x(GotoDateDialog)
 
     def _mnu_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda(tp): tp.fit_year())
@@ -821,7 +821,7 @@ class EventEditor(wx.Dialog):
         """
         Return the time string with milliseconds removed.
 
-        Expected formt of time_string: yyyy-mm-dd-hh:mm:ss.mmmmmm
+        Expected format of time_string: yyyy-mm-dd-hh:mm:ss.mmmmmm
         """
         if time_string:
             return time_string.split('.')[0]
@@ -890,7 +890,7 @@ class EventEditor(wx.Dialog):
 class CategoriesEditor(wx.Dialog):
     """
     Dialog used to edit categories of a timeline.
-    
+
     The edits happen immediately. In other words: when the dialog is closing
     all edits have been applied already.
     """
@@ -965,7 +965,7 @@ class CategoriesEditor(wx.Dialog):
 class CategoryEditor(wx.Dialog):
     """
     Dialog used to edit a category.
-    
+
     The edited category can be fetched with get_edited_category.
     """
 
@@ -1080,6 +1080,39 @@ class GotoDayDialog(GotoBaseDialog):
 
     def _before_close(self):
         self.time = self.time.replace(day=self.slider.GetValue())
+
+
+class GotoDateDialog(wx.Dialog):
+    """This dialog is used for creating and updating events."""
+
+    def __init__(self, parent, time):
+        wx.Dialog.__init__(self, parent, title="Go to Date")
+        self._create_gui()
+
+    def _create_gui(self):
+        # Setup layout
+        # Textbox
+        header = wx.StaticText(self, wx.ID_ANY, "Date:")
+        self.dpc = wx.DatePickerCtrl(self, size=(120,-1),
+                                           style = wx.DP_DROPDOWN
+                                               | wx.DP_SHOWCENTURY
+                                               )#| wx.DP_ALLOWNONE )
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        hbox.Add(header, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        hbox.Add(self.dpc, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        # Buttons
+        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(hbox, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self.SetSizerAndFit(vbox)
+        self.dpc.SetFocus()
+
+    def _btn_ok_on_click(self, e):
+        dt = self.dpc.GetValue()
+        self.time = datetime.datetime(dt.Year, dt.Month + 1, dt.Day)
+        self.EndModal(wx.ID_OK)
 
 
 class TxtException(ValueError):
