@@ -17,12 +17,15 @@ from datetime import datetime as dt
 import wx
 import wx.lib.colourselect as colourselect
 
+from data import Timeline
 from data import Event
 from data import Category
 import data
 import drawing
 
 
+# Border, in pixels, between controls in a window (should always be used when
+# border is needed) 
 BORDER = 5
 
 
@@ -32,7 +35,8 @@ class MainFrame(wx.Frame):
 
     Can be resized, maximized and minimized. The frame contains one panel.
 
-    Holds an instance of a timeline that is currently being displayed.
+    Owns an instance of a timeline that is currently being displayed. When the
+    timeline changes, this control will notify sub controls about it.
     """
 
     def __init__(self):
@@ -52,6 +56,7 @@ class MainFrame(wx.Frame):
                                   (input_file, e))
         else:
             self.SetTitle("%s (%s)" % (self.title_base, input_file))
+            # Notify sub controls that we have a new timeline
             self.main_panel.catbox.set_timeline(self.timeline)
             self.main_panel.drawing_area.set_timeline(self.timeline)
         self._enable_disable_menus()
@@ -126,16 +131,14 @@ class MainFrame(wx.Frame):
 
     def _mnu_timeline_create_event_on_click(self, evt):
         """Event handler for the New Event menu item"""
-        if create_new_event(self.timeline) == wx.ID_OK:
-            self.main_panel.drawing_area.redraw_timeline()
+        create_new_event(self.timeline)
 
     def _mnu_timeline_edit_categories_on_click(self, evt):
         """Event handler for the Edit Categories menu item"""
-        if edit_categories(self.timeline) == wx.ID_OK:
-            self.main_panel.drawing_area.redraw_timeline()
+        edit_categories(self.timeline)
 
     def _mnu_goto_today_on_click(self, evt):
-        self._navigate_timeline(lambda(tp): tp.center(dt.now()))
+        self._navigate_timeline(lambda tp: tp.center(dt.now()))
 
     def _mnu_goto_year_on_click(self, evt):
         self._goto_x(GotoYearDialog)
@@ -150,18 +153,18 @@ class MainFrame(wx.Frame):
         self._goto_x(GotoDateDialog)
 
     def _mnu_fit_year_on_click(self, evt):
-        self._navigate_timeline(lambda(tp): tp.fit_year())
+        self._navigate_timeline(lambda tp: tp.fit_year())
 
     def _mnu_fit_month_on_click(self, evt):
-        self._navigate_timeline(lambda(tp): tp.fit_month())
+        self._navigate_timeline(lambda tp: tp.fit_month())
 
     def _mnu_fit_day_on_click(self, evt):
-        self._navigate_timeline(lambda(tp): tp.fit_day())
+        self._navigate_timeline(lambda tp: tp.fit_day())
 
     def _goto_x(self, dialog_cls):
         dialog = dialog_cls(self, self._get_time_period().mean_time())
         if dialog.ShowModal() == wx.ID_OK:
-            self._navigate_timeline(lambda(tp): tp.center(dialog.time))
+            self._navigate_timeline(lambda tp: tp.center(dialog.time))
         dialog.Destroy()
 
     def _set_initial_values_to_member_variables(self):
@@ -242,10 +245,6 @@ class MainFrame(wx.Frame):
         """Shortcut for method in DrawingArea."""
         return self.main_panel.drawing_area.navigate_timeline(navigation_fn)
 
-    def _redraw_timeline(self):
-        """Shortcut for method in DrawingArea."""
-        self.main_panel.drawing_area.redraw_timeline()
-
     def _get_time_period(self):
         """Shortcut for method in DrawingArea."""
         return self.main_panel.drawing_area.get_time_period()
@@ -254,22 +253,36 @@ class MainFrame(wx.Frame):
 class CategoriesVisibleCheckListBox(wx.CheckListBox):
     # ClientData can not be used in this control
     # (see http://docs.wxwidgets.org/stable/wx_wxchecklistbox.html)
+    # This workaround will not work if items are reordered
 
     def __init__(self, parent, changed_fn):
         wx.CheckListBox.__init__(self, parent)
         self.changed_fn = changed_fn
+        self.timeline = None
         self.Bind(wx.EVT_CHECKLISTBOX, self._checklistbox_on_checklistbox, self)
 
     def set_timeline(self, timeline):
+        if self.timeline != None:
+            self.timeline.unregister(self._timeline_changed)
         self.timeline = timeline
-        self._update_categories()
+        if self.timeline:
+            self.timeline.register(self._timeline_changed)
+            self._update_categories()
+        else:
+            self.Clear()
 
     def _update_categories(self):
-        self.categories = self.timeline.get_categories()
+        # TODO: Maintain checked state when updating
+        self.categories = list(self.timeline.get_categories())
+        self.categories.sort(cmp, lambda x: x.name.lower())
         self.Clear()
         self.AppendItems([category.name for category in self.categories])
         for i in range(0, self.Count):
             self.Check(i)
+
+    def _timeline_changed(self, state_change):
+        if state_change == Timeline.STATE_CHANGE_CATEGORY:
+            self._update_categories()
 
     def _checklistbox_on_checklistbox(self, e):
         unchecked = []
@@ -351,15 +364,19 @@ class DrawingArea(wx.Panel):
         self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
+        self.timeline = None
         logging.debug("Init done in DrawingArea")
 
     def set_timeline(self, timeline):
         """Inform what timeline to draw."""
+        if self.timeline != None:
+            self.timeline.unregister(self._timeline_changed)
         self.timeline = timeline
         if self.timeline:
+            self.timeline.register(self._timeline_changed)
             self.time_period = timeline.get_preferred_period()
             self.exclude_categories = []
-            self.redraw_timeline()
+            self._redraw_timeline()
             self.Enable()
             self.SetFocus()
         else:
@@ -367,7 +384,7 @@ class DrawingArea(wx.Panel):
 
     def update_excluded_categories(self, new_list):
         self.exclude_categories = new_list
-        self.redraw_timeline()
+        self._redraw_timeline()
 
     def get_time_period(self):
         """Return currently displayed time period."""
@@ -393,11 +410,15 @@ class DrawingArea(wx.Panel):
             raise Exception("No timeline set")
         try:
             navigation_fn(self.time_period)
-            self.redraw_timeline()
+            self._redraw_timeline()
         except (ValueError, OverflowError), e:
             wx.GetTopLevelParent(self).SetStatusText(str(e))
 
-    def redraw_timeline(self, period_selection=None):
+    def _timeline_changed(self, state_change):
+        if state_change == Timeline.STATE_CHANGE_ANY:
+            self._redraw_timeline()
+
+    def _redraw_timeline(self, period_selection=None):
         """Draw the timeline onto the background buffer."""
         logging.debug('Draw timeline to bgbuf')
         memdc = wx.MemoryDC()
@@ -482,7 +503,7 @@ class DrawingArea(wx.Panel):
         logging.debug("Resize event in DrawingArea: %s", self.GetSizeTuple())
         width, height = self.GetSizeTuple()
         self.bgbuf = wx.EmptyBitmap(width, height)
-        self.redraw_timeline()
+        self._redraw_timeline()
 
     def _window_on_erase_background(self, event):
         # For double buffering
@@ -533,7 +554,6 @@ class DrawingArea(wx.Panel):
             create_new_event(self.timeline,
                              self._current_time.isoformat('-'),
                              self._current_time.isoformat('-'))
-        self.redraw_timeline()
 
     def _window_on_left_up(self, evt):
         """
@@ -637,7 +657,7 @@ class DrawingArea(wx.Panel):
             event.selected = not selected
         else:
             self.timeline.reset_selection()
-        self.redraw_timeline()
+        self._redraw_timeline()
 
     def _end_selection_and_create_event(self, current_x):
         self._mark_selection = False
@@ -645,7 +665,7 @@ class DrawingArea(wx.Panel):
         start, end = period_selection
         create_new_event(self.timeline, start.isoformat('-'),
                          end.isoformat('-'))
-        self.redraw_timeline()
+        self._redraw_timeline()
 
     def _display_eventname_in_statusbar(self, xpixelpos, ypixelpos):
         """
@@ -663,13 +683,13 @@ class DrawingArea(wx.Panel):
         """Selection-marking starts or continues."""
         self._mark_selection = True
         period_selection = self._get_period_selection(current_x)
-        self.redraw_timeline(period_selection)
+        self._redraw_timeline(period_selection)
 
     def _scroll_timeline(self, delta):
-        self.navigate_timeline(lambda (tp): tp.move_delta(-delta))
+        self.navigate_timeline(lambda tp: tp.move_delta(-delta))
 
     def _zoom_timeline(self, direction=0):
-        self.navigate_timeline(lambda (tp): tp.zoom(direction))
+        self.navigate_timeline(lambda tp: tp.zoom(direction))
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
@@ -678,7 +698,6 @@ class DrawingArea(wx.Panel):
                                       self) == wx.YES
         if ok_to_delete:
             self.timeline.delete_selected_events()
-            self.redraw_timeline()
 
     def _get_period_selection(self, current_x):
         """Return a tuple containing the start and end time of a selection."""
@@ -1153,9 +1172,8 @@ def todt(datetime_string):
 def create_new_event(timeline, start=None, end=None):
     """Open a dialog for creating a new event."""
     dlg = EventEditor(None, -1, 'Create Event', timeline, start, end)
-    rv = dlg.ShowModal()
+    dlg.ShowModal()
     dlg.Destroy()
-    return rv
 
 
 def edit_event(timeline, event):
