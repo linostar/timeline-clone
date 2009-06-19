@@ -23,8 +23,6 @@ import data
 import drawing
 
 
-ID_NEW_EVENT = 1
-ID_CATEGORIES = 2
 BORDER = 5
 
 
@@ -42,6 +40,7 @@ class MainFrame(wx.Frame):
                           style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
         self._set_initial_values_to_member_variables()
         self._create_gui()
+        self.SetTitle(self.title_base)
         self._enable_disable_menus()
 
     def display_timeline(self, input_file):
@@ -102,14 +101,11 @@ class MainFrame(wx.Frame):
         """
         Enable or disable menu items depending on the state of the application.
         """
-        timeline_menu_index = 1
-        timeline_menu = self.GetMenuBar().GetMenu(timeline_menu_index)
-        if self.timeline == None:
-            timeline_menu.Enable(ID_NEW_EVENT , False)
-            timeline_menu.Enable(ID_CATEGORIES, False)
-        else:
-            timeline_menu.Enable(ID_NEW_EVENT , True)
-            timeline_menu.Enable(ID_CATEGORIES, True)
+        menues = [self.mnu_timeline, self.mnu_navigate]
+        enable = self.timeline != None
+        for menu in menues:
+            for menuitem in menu.GetMenuItems():
+                menuitem.Enable(enable)
 
     def _mnu_file_new_on_click(self, event):
         """Event handler used when the user wants to create a new timeline."""
@@ -187,39 +183,46 @@ class MainFrame(wx.Frame):
             ";".join(["*" + e for e in self.extensions]))
 
     def _create_gui(self):
-        self.Bind(wx.EVT_CLOSE, self._window_on_close)
+        # The only content of this frame is the MainPanel
         self.main_panel = MainPanel(self)
-        self.SetTitle(self.title_base)
+        self.Bind(wx.EVT_CLOSE, self._window_on_close)
+        # The status bar
         self.CreateStatusBar()
+        # The menu
         # File menu
-        file_mnu = wx.Menu()
-        file_mnu.Append(wx.ID_NEW, "&New...\tCtrl+N", "Create a new timeline")
-        file_mnu.Append(wx.ID_OPEN, "&Open...\tCtrl+O", "Open an existing timeline")
-        file_mnu.AppendSeparator()
-        file_mnu.Append(wx.ID_EXIT, "E&xit\tAlt-F4", "Exit the program")
-        # Timeline menu
-        timeline_mnu = wx.Menu()
-        timeline_mnu.Append(ID_NEW_EVENT, "&Create Event", "Create a new event")
-        timeline_mnu.Append(ID_CATEGORIES, "Edit &Categories", "Edit categories")
-        # Navigate menu
-        mnu_navigate = wx.Menu()
-        goto_today = mnu_navigate.Append(wx.ID_ANY, "Go to &Today")
-        mnu_navigate.AppendSeparator()
-        goto_year = mnu_navigate.Append(wx.ID_ANY, "Go to &Year")
-        goto_month = mnu_navigate.Append(wx.ID_ANY, "Go to &Month")
-        goto_day = mnu_navigate.Append(wx.ID_ANY, "Go to &Day")
-        mnu_navigate.AppendSeparator()
-        goto_date = mnu_navigate.Append(wx.ID_ANY, "Go to D&ate")
-        mnu_navigate.AppendSeparator()
-        fit_year = mnu_navigate.Append(wx.ID_ANY, "Fit Year")
-        fit_month = mnu_navigate.Append(wx.ID_ANY, "Fit Month")
-        fit_day = mnu_navigate.Append(wx.ID_ANY, "Fit Day")
-        # Event handlers to menus
+        self.mnu_file = wx.Menu()
+        self.mnu_file.Append(wx.ID_NEW, "&New...\tCtrl+N",
+                             "Create a new timeline")
+        self.mnu_file.Append(wx.ID_OPEN, "&Open...\tCtrl+O",
+                             "Open an existing timeline")
+        self.mnu_file.AppendSeparator()
+        self.mnu_file.Append(wx.ID_EXIT, "E&xit\tAlt-F4", "Exit the program")
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click, id=ID_NEW_EVENT)
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click, id=ID_CATEGORIES)
+        # Timeline menu
+        self.mnu_timeline = wx.Menu()
+        mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
+                                    "&Create Event", "Create a new event")
+        mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
+                                       "Edit &Categories", "Edit categories")
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
+                  mnu_timeline_create_event)
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
+                  mnu_timeline_edit_categories)
+        # Navigate menu
+        self.mnu_navigate = wx.Menu()
+        goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today")
+        self.mnu_navigate.AppendSeparator()
+        goto_year = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Year")
+        goto_month = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Month")
+        goto_day = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Day")
+        self.mnu_navigate.AppendSeparator()
+        goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate")
+        self.mnu_navigate.AppendSeparator()
+        fit_year = self.mnu_navigate.Append(wx.ID_ANY, "Fit Year")
+        fit_month = self.mnu_navigate.Append(wx.ID_ANY, "Fit Month")
+        fit_day = self.mnu_navigate.Append(wx.ID_ANY, "Fit Day")
         self.Bind(wx.EVT_MENU, self._mnu_goto_today_on_click, goto_today)
         self.Bind(wx.EVT_MENU, self._mnu_goto_year_on_click, goto_year)
         self.Bind(wx.EVT_MENU, self._mnu_goto_month_on_click, goto_month)
@@ -228,11 +231,11 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_fit_year_on_click, fit_year)
         self.Bind(wx.EVT_MENU, self._mnu_fit_month_on_click, fit_month)
         self.Bind(wx.EVT_MENU, self._mnu_fit_day_on_click, fit_day)
-        # The Menu bar
+        # The menu bar
         menuBar = wx.MenuBar()
-        menuBar.Append(file_mnu, "&File")
-        menuBar.Append(timeline_mnu, "&Timeline")
-        menuBar.Append(mnu_navigate, "&Navigate")
+        menuBar.Append(self.mnu_file, "&File")
+        menuBar.Append(self.mnu_timeline, "&Timeline")
+        menuBar.Append(self.mnu_navigate, "&Navigate")
         self.SetMenuBar(menuBar)
 
     def _navigate_timeline(self, navigation_fn):
