@@ -12,7 +12,30 @@ US_PER_SEC = 1000000
 US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
 
 
-class Timeline(object):
+class Observable(object):
+    """
+    Base class for objects that would like to be observable.
+
+    The function registered should take one argument which represent the state
+    change. It can be any object.
+    """
+
+    def __init__(self):
+        self.observers = []
+
+    def register(self, fn):
+        self.observers.append(fn)
+
+    def unregister(self, fn):
+        if fn in self.observers:
+            self.observers.remove(fn)
+
+    def _notify(self, state_change):
+        for fn in self.observers:
+            fn(state_change)
+
+
+class Timeline(Observable):
     """
     Base class that represents the interface for a timeline.
 
@@ -23,7 +46,18 @@ class Timeline(object):
     be used.
 
     All methods that modify the timeline should automatically save it.
+
+    A timeline is observable so that GUI components can update themselves when
+    it changes. The two types of state changes are given as constants below.
     """
+
+    # A category was added, edited, or deleted
+    STATE_CHANGE_CATEGORY = 1
+    # Something happened that changed the state of the timeline
+    STATE_CHANGE_ANY = 2
+
+    def __init__(self):
+        Observable.__init__(self)
 
     def get_events(self, time_period, exclude_categories=[]):
         """Return a list of all events visible within the time period whose

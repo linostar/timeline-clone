@@ -42,6 +42,7 @@ class FileTimeline(Timeline):
 
     def __init__(self, file_path):
         """Create a new timeline and read data from file."""
+        Timeline.__init__(self)
         self.file_path = file_path
         self.__load_data()
 
@@ -108,6 +109,7 @@ class FileTimeline(Timeline):
         finally:
             if file:
                 file.close()
+        self._notify(Timeline.STATE_CHANGE_ANY)
 
     def __create_backup(self):
         backup_path = self.file_path + "~"
@@ -224,9 +226,11 @@ class FileTimeline(Timeline):
     def add_category(self, category):
         self.categories.append(category)
         self.__save_data()
+        self._notify(Timeline.STATE_CHANGE_CATEGORY)
 
     def category_edited(self, category):
         self.__save_data()
+        self._notify(Timeline.STATE_CHANGE_CATEGORY)
 
     def delete_category(self, category):
         if category in self.categories:
@@ -235,6 +239,7 @@ class FileTimeline(Timeline):
             if event.category == category:
                 event.category = None
         self.__save_data()
+        self._notify(Timeline.STATE_CHANGE_CATEGORY)
 
     def get_preferred_period(self):
         if self.preferred_period:
