@@ -25,7 +25,7 @@ import drawing
 
 
 # Border, in pixels, between controls in a window (should always be used when
-# border is needed) 
+# border is needed)
 BORDER = 5
 
 
@@ -121,6 +121,7 @@ class MainFrame(wx.Frame):
         self._open_existing_timeline()
 
     def _window_on_close(self, event):
+        print "self.timeline", self.timeline
         if self.timeline:
             self.timeline.set_preferred_period(self._get_time_period())
         self.Destroy()
@@ -279,6 +280,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         self.AppendItems([category.name for category in self.categories])
         for i in range(0, self.Count):
             self.Check(i)
+            self.SetItemBackgroundColour(i, self.categories[i].color)
 
     def _timeline_changed(self, state_change):
         if state_change == Timeline.STATE_CHANGE_CATEGORY:
