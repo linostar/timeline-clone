@@ -326,8 +326,6 @@ class MainPanel(wx.Panel):
         pane = wx.Panel(splitter, style=wx.BORDER_NONE)
         self.catbox = CategoriesVisibleCheckListBox(pane,
                              self.drawing_area.update_excluded_categories)
-        # Splitter configuration
-        splitter.SplitVertically(pane, self.drawing_area, 200)
         # Container sizer
         pane_sizer = wx.BoxSizer(wx.VERTICAL)
         pane_sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
@@ -338,6 +336,8 @@ class MainPanel(wx.Panel):
         self.SetSizer(globalSizer)
         self.splitter = splitter
         self.catbox_pane = pane
+        # Splitter configuration
+        self.show_categories()
 
     def show_categories(self):
         self.splitter.SplitVertically(self.catbox_pane, self.drawing_area, 200)
