@@ -131,9 +131,9 @@ class MainFrame(wx.Frame):
 
     def _mnu_view_categories_on_click(self, evt):
         if evt.IsChecked():
-            self.main_panel.ShowCategories()
+            self.main_panel.show_categories()
         else:
-            self.main_panel.HideCategories()
+            self.main_panel.hide_categories()
 
     def _mnu_timeline_create_event_on_click(self, evt):
         """Event handler for the New Event menu item"""
@@ -339,11 +339,12 @@ class MainPanel(wx.Panel):
         self.splitter = splitter
         self.catbox_pane = pane
 
-    def ShowCategories(self):
+    def show_categories(self):
         self.splitter.SplitVertically(self.catbox_pane, self.drawing_area, 200)
 
-    def HideCategories(self):
+    def hide_categories(self):
         self.splitter.Unsplit(self.splitter.GetWindow1())
+
 
 class DrawingArea(wx.Panel):
     """
