@@ -15,6 +15,7 @@ import wx
 
 from gui import MainFrame
 from version import get_version
+import config
 
 
 def parse_options():
@@ -72,6 +73,7 @@ def main():
     """Main entry point."""
     (options, input_files) = parse_options()
     setup_logging(options.log_level, options.log_file)
+    config.read()
     app = create_wx_app(input_files)
     app.MainLoop()
 

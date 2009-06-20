@@ -22,6 +22,7 @@ from data import Event
 from data import Category
 import data
 import drawing
+import config
 
 
 # Border, in pixels, between controls in a window (should always be used when
@@ -40,11 +41,13 @@ class MainFrame(wx.Frame):
     """
 
     def __init__(self):
-        wx.Frame.__init__(self, None, size=(900, 500),
-                          style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
+        wx.Frame.__init__(self, None, size=config.get_window_size(),
+                          style=wx.DEFAULT_FRAME_STYLE)
         self._set_initial_values_to_member_variables()
         self._create_gui()
+        self.Maximize(config.get_window_maximized())
         self.SetTitle(self.title_base)
+        self.mnu_view_categories.Check(config.get_show_sidebar())
         self._enable_disable_menus()
 
     def display_timeline(self, input_file):
@@ -123,6 +126,10 @@ class MainFrame(wx.Frame):
     def _window_on_close(self, event):
         if self.timeline:
             self.timeline.set_preferred_period(self._get_time_period())
+            config.set_window_size(self.GetSize())
+            config.set_window_maximized(self.IsMaximized())
+            config.set_show_sidebar(self.mnu_view_categories.IsChecked())
+            config.write()
         self.Destroy()
 
     def _mnu_file_exit_on_click(self, evt):
@@ -222,6 +229,7 @@ class MainFrame(wx.Frame):
         # View menu
         self.mnu_view = wx.Menu()
         view_categories = self.mnu_view.Append(wx.ID_ANY, "&Categories", kind=wx.ITEM_CHECK)
+        self.mnu_view_categories = view_categories
         view_categories.Check()
         self.Bind(wx.EVT_MENU, self._mnu_view_categories_on_click, view_categories)
         # Navigate menu
@@ -316,6 +324,9 @@ class MainPanel(wx.Panel):
         """Create the Main Panel."""
         wx.Panel.__init__(self, parent)
         self._create_gui()
+        self.show_categories()
+        if not config.get_show_sidebar():
+            self.hide_categories()
 
     def _create_gui(self):
         """Create the controls of the Main Panel."""
@@ -336,14 +347,12 @@ class MainPanel(wx.Panel):
         self.SetSizer(globalSizer)
         self.splitter = splitter
         self.catbox_pane = pane
-        # Splitter configuration
-        self.show_categories()
 
     def show_categories(self):
         self.splitter.SplitVertically(self.catbox_pane, self.drawing_area, 200)
 
     def hide_categories(self):
-        self.splitter.Unsplit(self.splitter.GetWindow1())
+        self.splitter.Unsplit(self.catbox_pane)
 
 
 class DrawingArea(wx.Panel):
