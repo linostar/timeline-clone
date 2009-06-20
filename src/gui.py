@@ -121,7 +121,6 @@ class MainFrame(wx.Frame):
         self._open_existing_timeline()
 
     def _window_on_close(self, event):
-        print "self.timeline", self.timeline
         if self.timeline:
             self.timeline.set_preferred_period(self._get_time_period())
         self.Destroy()
@@ -129,6 +128,12 @@ class MainFrame(wx.Frame):
     def _mnu_file_exit_on_click(self, evt):
         """Event handler for the Exit menu item"""
         self.Close()
+
+    def _mnu_view_categories_on_click(self, evt):
+        if evt.IsChecked():
+            self.main_panel.ShowCategories()
+        else:
+            self.main_panel.HideCategories()
 
     def _mnu_timeline_create_event_on_click(self, evt):
         """Event handler for the New Event menu item"""
@@ -214,6 +219,11 @@ class MainFrame(wx.Frame):
                   mnu_timeline_create_event)
         self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
                   mnu_timeline_edit_categories)
+        # View menu
+        self.mnu_view = wx.Menu()
+        view_categories = self.mnu_view.Append(wx.ID_ANY, "&Categories", kind=wx.ITEM_CHECK)
+        view_categories.Check()
+        self.Bind(wx.EVT_MENU, self._mnu_view_categories_on_click, view_categories)
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today")
@@ -238,6 +248,7 @@ class MainFrame(wx.Frame):
         # The menu bar
         menuBar = wx.MenuBar()
         menuBar.Append(self.mnu_file, "&File")
+        menuBar.Append(self.mnu_view, "&View")
         menuBar.Append(self.mnu_timeline, "&Timeline")
         menuBar.Append(self.mnu_navigate, "&Navigate")
         self.SetMenuBar(menuBar)
@@ -325,7 +336,14 @@ class MainPanel(wx.Panel):
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(splitter, flag=wx.GROW, proportion=1)
         self.SetSizer(globalSizer)
+        self.splitter = splitter
+        self.catbox_pane = pane
 
+    def ShowCategories(self):
+        self.splitter.SplitVertically(self.catbox_pane, self.drawing_area, 200)
+
+    def HideCategories(self):
+        self.splitter.Unsplit(self.splitter.GetWindow1())
 
 class DrawingArea(wx.Panel):
     """
