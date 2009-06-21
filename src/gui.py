@@ -208,19 +208,19 @@ class MainFrame(wx.Frame):
         # The menu
         # File menu
         self.mnu_file = wx.Menu()
-        self.mnu_file.Append(wx.ID_NEW, "&New...\tCtrl+N",
+        self.mnu_file.Append(wx.ID_NEW, "&New\tCtrl+N",
                              "Create a new timeline")
         self.mnu_file.Append(wx.ID_OPEN, "&Open...\tCtrl+O",
                              "Open an existing timeline")
         self.mnu_file.AppendSeparator()
-        self.mnu_file.Append(wx.ID_EXIT, "E&xit\tAlt-F4", "Exit the program")
+        self.mnu_file.Append(wx.ID_EXIT, "&Quit\tCtrl+Q", "Exit the program")
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
         # Timeline menu
         self.mnu_timeline = wx.Menu()
         mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
-                                    "&Create Event", "Create a new event")
+                                    "Create &Event", "Create a new event")
         mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
                                        "Edit &Categories", "Edit categories")
         self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
