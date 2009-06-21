@@ -47,7 +47,7 @@ class MainFrame(wx.Frame):
         self._create_gui()
         self.Maximize(config.get_window_maximized())
         self.SetTitle(self.title_base)
-        self.mnu_view_categories.Check(config.get_show_sidebar())
+        self.mnu_view_sidebar.Check(config.get_show_sidebar())
         self._enable_disable_menus()
 
     def display_timeline(self, input_file):
@@ -128,7 +128,7 @@ class MainFrame(wx.Frame):
             self.timeline.set_preferred_period(self._get_time_period())
             config.set_window_size(self.GetSize())
             config.set_window_maximized(self.IsMaximized())
-            config.set_show_sidebar(self.mnu_view_categories.IsChecked())
+            config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
             config.write()
         self.Destroy()
 
@@ -138,9 +138,9 @@ class MainFrame(wx.Frame):
 
     def _mnu_view_categories_on_click(self, evt):
         if evt.IsChecked():
-            self.main_panel.show_categories()
+            self.main_panel.show_sidebar()
         else:
-            self.main_panel.hide_categories()
+            self.main_panel.hide_sidebar()
 
     def _mnu_timeline_create_event_on_click(self, evt):
         """Event handler for the New Event menu item"""
@@ -228,10 +228,12 @@ class MainFrame(wx.Frame):
                   mnu_timeline_edit_categories)
         # View menu
         self.mnu_view = wx.Menu()
-        view_categories = self.mnu_view.Append(wx.ID_ANY, "&Categories", kind=wx.ITEM_CHECK)
-        self.mnu_view_categories = view_categories
-        view_categories.Check()
-        self.Bind(wx.EVT_MENU, self._mnu_view_categories_on_click, view_categories)
+        self.mnu_view_sidebar = self.mnu_view.Append(wx.ID_ANY,
+                                                     "&Sidebar\tCtrl+I",
+                                                     kind=wx.ITEM_CHECK)
+        self.mnu_view_sidebar.Check()
+        self.Bind(wx.EVT_MENU, self._mnu_view_categories_on_click,
+                  self.mnu_view_sidebar)
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today")
@@ -314,41 +316,40 @@ class MainPanel(wx.Panel):
     """
     Panel that covers the whole client area of MainFrame.
 
-    At the moment, the panel only contains a single control: DrawingArea.
+    Contains a sidebar that can be hidden and shown and DrawingArea.
     """
 
     def __init__(self, parent):
         """Create the Main Panel."""
         wx.Panel.__init__(self, parent)
         self._create_gui()
-        self.show_categories()
+        self.show_sidebar()
         if not config.get_show_sidebar():
-            self.hide_categories()
+            self.hide_sidebar()
 
     def _create_gui(self):
         """Create the controls of the Main Panel."""
         splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
         # DrawingArea
         self.drawing_area = DrawingArea(splitter)
-        # Container
-        pane = wx.Panel(splitter, style=wx.BORDER_NONE)
-        self.catbox = CategoriesVisibleCheckListBox(pane)
+        # Sidebar
+        self.sidebar = wx.Panel(splitter, style=wx.BORDER_NONE)
+        self.catbox = CategoriesVisibleCheckListBox(self.sidebar)
         # Container sizer
         pane_sizer = wx.BoxSizer(wx.VERTICAL)
         pane_sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
-        pane.SetSizer(pane_sizer)
+        self.sidebar.SetSizer(pane_sizer)
         # Splitter in sizer
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(splitter, flag=wx.GROW, proportion=1)
         self.SetSizer(globalSizer)
         self.splitter = splitter
-        self.catbox_pane = pane
 
-    def show_categories(self):
-        self.splitter.SplitVertically(self.catbox_pane, self.drawing_area, 200)
+    def show_sidebar(self):
+        self.splitter.SplitVertically(self.sidebar, self.drawing_area, 200)
 
-    def hide_categories(self):
-        self.splitter.Unsplit(self.catbox_pane)
+    def hide_sidebar(self):
+        self.splitter.Unsplit(self.sidebar)
 
 
 class DrawingArea(wx.Panel):
