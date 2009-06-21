@@ -275,9 +275,8 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
     # (see http://docs.wxwidgets.org/stable/wx_wxchecklistbox.html)
     # This workaround will not work if items are reordered
 
-    def __init__(self, parent, changed_fn):
+    def __init__(self, parent):
         wx.CheckListBox.__init__(self, parent)
-        self.changed_fn = changed_fn
         self.timeline = None
         self.Bind(wx.EVT_CHECKLISTBOX, self._checklistbox_on_checklistbox, self)
 
@@ -292,13 +291,13 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
             self.Clear()
 
     def _update_categories(self):
-        # TODO: Maintain checked state when updating
         self.categories = list(self.timeline.get_categories())
         self.categories.sort(cmp, lambda x: x.name.lower())
         self.Clear()
         self.AppendItems([category.name for category in self.categories])
         for i in range(0, self.Count):
-            self.Check(i)
+            if self.categories[i].visible:
+                self.Check(i)
             self.SetItemBackgroundColour(i, self.categories[i].color)
 
     def _timeline_changed(self, state_change):
@@ -306,11 +305,9 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
             self._update_categories()
 
     def _checklistbox_on_checklistbox(self, e):
-        unchecked = []
-        for i in range(0, self.Count):
-            if not self.IsChecked(i):
-                unchecked.append(self.categories[i])
-        self.changed_fn(unchecked)
+        i = e.GetSelection()
+        self.categories[i].visible = self.IsChecked(i)
+        self.timeline.category_edited(self.categories[i])
 
 
 class MainPanel(wx.Panel):
@@ -335,8 +332,7 @@ class MainPanel(wx.Panel):
         self.drawing_area = DrawingArea(splitter)
         # Container
         pane = wx.Panel(splitter, style=wx.BORDER_NONE)
-        self.catbox = CategoriesVisibleCheckListBox(pane,
-                             self.drawing_area.update_excluded_categories)
+        self.catbox = CategoriesVisibleCheckListBox(pane)
         # Container sizer
         pane_sizer = wx.BoxSizer(wx.VERTICAL)
         pane_sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
@@ -405,16 +401,11 @@ class DrawingArea(wx.Panel):
         if self.timeline:
             self.timeline.register(self._timeline_changed)
             self.time_period = timeline.get_preferred_period()
-            self.exclude_categories = []
             self._redraw_timeline()
             self.Enable()
             self.SetFocus()
         else:
             self.Disable()
-
-    def update_excluded_categories(self, new_list):
-        self.exclude_categories = new_list
-        self._redraw_timeline()
 
     def get_time_period(self):
         """Return currently displayed time period."""
@@ -458,9 +449,7 @@ class DrawingArea(wx.Panel):
             memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
             memdc.Clear()
             if self.timeline:
-                current_events = self.timeline.get_events(
-                                     self.time_period,
-                                     self.exclude_categories)
+                current_events = self.timeline.get_events(self.time_period)
                 self.drawing_algorithm.draw(memdc, self.time_period,
                                             current_events,
                                             period_selection)
@@ -1029,9 +1018,10 @@ class CategoryEditor(wx.Dialog):
         self.timeline = timeline
         self.category = category
         if self.category == None:
-            self.category = Category("", (200, 200, 200))
+            self.category = Category("", (200, 200, 200), True)
         self.txt_name.SetValue(self.category.name)
         self.colorpicker.SetColour(self.category.color)
+        self.chb_visible.SetValue(self.category.visible)
 
     def get_edited_category(self):
         return self.category
@@ -1041,16 +1031,21 @@ class CategoryEditor(wx.Dialog):
         self.txt_name = wx.TextCtrl(self, size=(150, -1))
         # The color chooser
         self.colorpicker = colourselect.ColourSelect(self)
+        # The visible check box
+        self.chb_visible = wx.CheckBox(self)
         # Setup layout
         vbox = wx.BoxSizer(wx.VERTICAL)
         # Grid for controls
-        field_grid = wx.FlexGridSizer(2, 2, BORDER, BORDER)
+        field_grid = wx.FlexGridSizer(3, 2, BORDER, BORDER)
         field_grid.Add(wx.StaticText(self, label="Name:"),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.txt_name)
         field_grid.Add(wx.StaticText(self, label="Color:"),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.colorpicker)
+        field_grid.Add(wx.StaticText(self, label="Visible:"),
+                       flag=wx.ALIGN_CENTER_VERTICAL)
+        field_grid.Add(self.chb_visible)
         vbox.Add(field_grid, flag=wx.EXPAND|wx.ALL, border=BORDER)
         # Buttons
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
@@ -1070,6 +1065,7 @@ class CategoryEditor(wx.Dialog):
         if self._verify_name():
             self.category.name = name
             self.category.color = self.colorpicker.GetColour()
+            self.category.visible = self.chb_visible.IsChecked()
             self.EndModal(wx.ID_OK)
         else:
             display_error_message("Category name '%s' already in use." % name,

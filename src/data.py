@@ -59,9 +59,9 @@ class Timeline(Observable):
     def __init__(self):
         Observable.__init__(self)
 
-    def get_events(self, time_period, exclude_categories=[]):
+    def get_events(self, time_period):
         """Return a list of all events visible within the time period whose
-        category is not in exclude_categories."""
+        category is visible."""
         raise NotImplementedError()
 
     def add_event(self, event):
@@ -139,7 +139,7 @@ class Event(object):
 class Category(object):
     """Represents a category that an event belongs to."""
 
-    def __init__(self, name, color):
+    def __init__(self, name, color, visible):
         """
         Create a category with the given name and color.
 
@@ -148,6 +148,7 @@ class Category(object):
         """
         self.name = name
         self.color = color
+        self.visible = visible
 
 
 class TimePeriod(object):

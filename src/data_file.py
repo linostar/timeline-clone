@@ -96,8 +96,9 @@ class FileTimeline(Timeline):
                         time_string(self.preferred_period.end_time)))
                 for cat in self.categories:
                     r, g, b = cat.color
-                    file.write("CATEGORY:%s;%s,%s,%s\n" % (quote(cat.name),
-                                                           r, g, b))
+                    file.write("CATEGORY:%s;%s,%s,%s;%s\n" % (quote(cat.name),
+                                                              r, g, b,
+                                                              cat.visible))
                 for event in self.events:
                     file.write("EVENT:%s;%s;%s" % (
                         time_string(event.time_period.start_time),
@@ -151,14 +152,23 @@ class FileTimeline(Timeline):
             return False
 
     def __load_category(self, category_text):
-        """Expected format 'name;color'."""
+        """
+        Expected format 'name;color;visible'.
+        
+        File format for timeline version 0.1.0 did not have the visible
+        attribute. If it is not found (we read an old file), we automatically
+        set it to True.
+        """
         category_data = split_on_semicolon(category_text)
         try:
-            if len(category_data) != 2:
+            if len(category_data) != 2 and len(category_data) != 3:
                 raise ParseException("Unexpected number of components")
             name = dequote(category_data[0])
             color = parse_color(category_data[1])
-            self.categories.append(Category(name, color))
+            visible = True
+            if len(category_data) == 3:
+                visible = parse_bool(category_data[2])
+            self.categories.append(Category(name, color, visible))
             return True
         except ParseException, e:
             logerror("Unable to parse category from '%s'" % category_text,
@@ -203,10 +213,10 @@ class FileTimeline(Timeline):
                 return category
         return None
 
-    def get_events(self, time_period, exclude_categories=[]):
+    def get_events(self, time_period):
         return [event for event in self.events
                 if (event.inside_period(time_period) and
-                    event.category not in exclude_categories)]
+                    event.category.visible)]
 
     def add_event(self, event):
         self.events.append(event)
@@ -253,6 +263,20 @@ class FileTimeline(Timeline):
     def reset_selection(self):
         for event in self.events:
             event.selected = False
+
+
+def parse_bool(bool_string):
+    """
+    Return True or False.
+
+    Expected format 'True' or 'False'.
+    """
+    if bool_string == "True":
+        return True
+    elif bool_string == "False":
+        return False
+    else:
+        raise ParseException("Unknown boolean '%s'" % bool_string)
 
 
 def parse_color(color_string):
