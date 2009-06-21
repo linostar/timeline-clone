@@ -129,6 +129,7 @@ class MainFrame(wx.Frame):
             config.set_window_size(self.GetSize())
             config.set_window_maximized(self.IsMaximized())
             config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
+            config.set_sidebar_width(self.main_panel.get_sidebar_width())
             config.write()
         self.Destroy()
 
@@ -322,18 +323,31 @@ class MainPanel(wx.Panel):
     def __init__(self, parent):
         """Create the Main Panel."""
         wx.Panel.__init__(self, parent)
+        self.sidebar_width = config.get_sidebar_width()
         self._create_gui()
         self.show_sidebar()
         if not config.get_show_sidebar():
             self.hide_sidebar()
 
+    def get_sidebar_width(self):
+        return self.sidebar_width
+
+    def show_sidebar(self):
+        self.splitter.SplitVertically(self.sidebar, self.drawing_area,
+                                      self.sidebar_width)
+
+    def hide_sidebar(self):
+        self.splitter.Unsplit(self.sidebar)
+
     def _create_gui(self):
         """Create the controls of the Main Panel."""
-        splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED,
+                  self._splitter_on_splitter_sash_pos_changed, self.splitter)
         # DrawingArea
-        self.drawing_area = DrawingArea(splitter)
+        self.drawing_area = DrawingArea(self.splitter)
         # Sidebar
-        self.sidebar = wx.Panel(splitter, style=wx.BORDER_NONE)
+        self.sidebar = wx.Panel(self.splitter, style=wx.BORDER_NONE)
         self.catbox = CategoriesVisibleCheckListBox(self.sidebar)
         # Container sizer
         pane_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -341,15 +355,11 @@ class MainPanel(wx.Panel):
         self.sidebar.SetSizer(pane_sizer)
         # Splitter in sizer
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
-        globalSizer.Add(splitter, flag=wx.GROW, proportion=1)
+        globalSizer.Add(self.splitter, flag=wx.GROW, proportion=1)
         self.SetSizer(globalSizer)
-        self.splitter = splitter
 
-    def show_sidebar(self):
-        self.splitter.SplitVertically(self.sidebar, self.drawing_area, 200)
-
-    def hide_sidebar(self):
-        self.splitter.Unsplit(self.sidebar)
+    def _splitter_on_splitter_sash_pos_changed(self, e):
+        self.sidebar_width = self.splitter.GetSashPosition()
 
 
 class DrawingArea(wx.Panel):

@@ -18,11 +18,13 @@ WINDOW_WIDTH = "window_width"
 WINDOW_HEIGHT = "window_height"
 WINDOW_MAXIMIZED = "window_maximized"
 SHOW_SIDEBAR = "show_sidebar"
+SIDEBAR_WIDTH = "sidebar_width"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
     WINDOW_MAXIMIZED: "False",
-    SHOW_SIDEBAR: "True"
+    SHOW_SIDEBAR: "True",
+    SIDEBAR_WIDTH: "200"
 }
 
 
@@ -70,3 +72,11 @@ def get_show_sidebar():
 
 def set_show_sidebar(show):
     config.set(DEFAULTSECT, SHOW_SIDEBAR, str(show))
+
+
+def get_sidebar_width():
+    return config.getint(DEFAULTSECT, SIDEBAR_WIDTH)
+
+
+def set_sidebar_width(width):
+    config.set(DEFAULTSECT, SIDEBAR_WIDTH, str(width))
