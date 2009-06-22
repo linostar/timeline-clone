@@ -7,13 +7,15 @@ configuration back to file, call the write method.
 """
 
 
+import wx
 from ConfigParser import ConfigParser
 from ConfigParser import DEFAULTSECT
 import os.path
 from logging import error as logerror
 
 
-PATH = os.path.expanduser("~/.thetimelineproj.cfg")
+PATH = os.path.join(wx.StandardPaths.Get().GetUserConfigDir(),
+                    ".thetimelineproj.cfg")
 WINDOW_WIDTH = "window_width"
 WINDOW_HEIGHT = "window_height"
 WINDOW_MAXIMIZED = "window_maximized"
