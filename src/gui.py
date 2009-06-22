@@ -208,7 +208,7 @@ class MainFrame(wx.Frame):
         # The menu
         # File menu
         self.mnu_file = wx.Menu()
-        self.mnu_file.Append(wx.ID_NEW, "&New\tCtrl+N",
+        self.mnu_file.Append(wx.ID_NEW, "&New...\tCtrl+N",
                              "Create a new timeline")
         self.mnu_file.Append(wx.ID_OPEN, "&Open...\tCtrl+O",
                              "Open an existing timeline")
@@ -220,7 +220,7 @@ class MainFrame(wx.Frame):
         # Timeline menu
         self.mnu_timeline = wx.Menu()
         mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
-                                    "Create &Event", "Create a new event")
+                                    "Create &Event...", "Create a new event")
         mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
                                        "Edit &Categories", "Edit categories")
         self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
@@ -239,11 +239,11 @@ class MainFrame(wx.Frame):
         self.mnu_navigate = wx.Menu()
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today")
         self.mnu_navigate.AppendSeparator()
-        goto_year = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Year")
-        goto_month = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Month")
-        goto_day = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Day")
+        goto_year = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Year...")
+        goto_month = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Month...")
+        goto_day = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Day...")
         self.mnu_navigate.AppendSeparator()
-        goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate")
+        goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate...")
         self.mnu_navigate.AppendSeparator()
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, "Fit Year")
         fit_month = self.mnu_navigate.Append(wx.ID_ANY, "Fit Month")
