@@ -230,7 +230,7 @@ class MainFrame(wx.Frame):
                   self.mnu_view_sidebar)
         # Navigate menu
         self.mnu_navigate = wx.Menu()
-        goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today")
+        goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today\tCtrl+H")
         goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate...\tCtrl+G")
         self.mnu_navigate.AppendSeparator()
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, "Fit Year")
