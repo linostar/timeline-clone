@@ -14,8 +14,6 @@ import os.path
 from logging import error as logerror
 
 
-PATH = os.path.join(wx.StandardPaths.Get().GetUserConfigDir(),
-                    ".thetimelineproj.cfg")
 WINDOW_WIDTH = "window_width"
 WINDOW_HEIGHT = "window_height"
 WINDOW_MAXIMIZED = "window_maximized"
@@ -30,20 +28,25 @@ DEFAULTS = {
 }
 
 
+path = None
 config = None
 
 
 def read():
+    # Note: wx.App object must have been created before calling this method.
+    global path
     global config
+    path = os.path.join(wx.StandardPaths.Get().GetUserConfigDir(),
+                        ".thetimelineproj.cfg")
     config = ConfigParser(DEFAULTS)
-    config.read(PATH)
+    config.read(path)
 
 
 def write():
     try:
-        f = open(PATH, "w")
+        f = open(path, "w")
     except IOError, e:
-        logerror("Unable to write configuration file to %s" % PATH)
+        logerror("Unable to write configuration file to '%s'" % path)
     else:
         config.write(f)
         f.close()

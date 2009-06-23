@@ -62,6 +62,7 @@ def setup_logging(log_level, filename):
 def create_wx_app(input_files):
     """Initialize wx and create the main frame."""
     app = wx.PySimpleApp()
+    config.read() # Must be called after we have created the wx.App
     main_frame = MainFrame()
     main_frame.Show()
     for input_file in input_files:
@@ -73,7 +74,6 @@ def main():
     """Main entry point."""
     (options, input_files) = parse_options()
     setup_logging(options.log_level, options.log_file)
-    config.read()
     app = create_wx_app(input_files)
     app.MainLoop()
 
