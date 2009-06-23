@@ -214,9 +214,13 @@ class FileTimeline(Timeline):
         return None
 
     def get_events(self, time_period):
-        return [event for event in self.events
-                if (event.inside_period(time_period) and
-                    event.category.visible)]
+        def include_event(event):
+            if not event.inside_period(time_period):
+                return False
+            if event.category != None and event.category.visible == False:
+                return False
+            return True
+        return [event for event in self.events if include_event(event)]
 
     def add_event(self, event):
         self.events.append(event)
