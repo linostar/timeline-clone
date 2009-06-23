@@ -27,7 +27,7 @@ PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 
 class Strip(object):
     """
-    An interface for strips (month or day for example).
+    An interface for strips.
 
     The different strips are implemented in subclasses below.
 
@@ -37,23 +37,11 @@ class Strip(object):
     three major strips should be shown and the rest will be minor strips.
     """
 
-    def use_as_minor(self, time_period):
-        """
-        Return True if this strip should be used as minor strip for the given
-        time period, otherwise False.
-
-        The strip before this one in `strips` will then be used as major.
-
-        Strips are always checked in order larger to smaller (year strip is
-        tested before month strip for example). So if the time period is larger
-        than 2 days, maybe we would like to use the day strip.
-
-        This method is used in `_choose_strip`. Have a look there for details
-        on how strips are chosen.
-        """
-
     def label(self, time, major=False):
-        """Return the label for this strip at the given time."""
+        """
+        Return the label for this strip at the given time when used as major or
+        minor strip.
+        """
 
     def start(self, time):
         """
@@ -72,9 +60,6 @@ class Strip(object):
 
 class StripDecade(Strip):
 
-    def use_as_minor(self, time_period):
-        return time_period.delta() > timedelta(365*15)
-
     def label(self, time, major=False):
         if major:
             # TODO: This only works for English. Possible to localize?
@@ -88,13 +73,10 @@ class StripDecade(Strip):
         return time.replace(year=time.year+10)
 
     def _decade_start_year(self, year):
-        return (year / 10) * 10
+        return (int(year) / 10) * 10
 
 
 class StripYear(Strip):
-
-    def use_as_minor(self, time_period):
-        return time_period.delta() > timedelta(365*2)
 
     def label(self, time, major=False):
         return str(time.year)
@@ -108,9 +90,6 @@ class StripYear(Strip):
 
 class StripMonth(Strip):
 
-    def use_as_minor(self, time_period):
-        return time_period.delta() > timedelta(40)
-
     def label(self, time, major=False):
         if major:
             return "%s %s" % (calendar.month_abbr[time.month], time.year)
@@ -123,10 +102,53 @@ class StripMonth(Strip):
         return time + timedelta(calendar.monthrange(time.year, time.month)[1])
 
 
-class StripDay(Strip):
+class StripWeek(Strip):
 
-    def use_as_minor(self, time_period):
-        return time_period.delta() > timedelta(2)
+    def label(self, time, major=False):
+        if major:
+            # Example: Week 23 (1-7 Jan 09)
+            first_weekday = self.start(time)
+            next_first_weekday = self.increment(first_weekday)
+            last_weekday = next_first_weekday - timedelta(days=1)
+            range_string = self._time_range_string(first_weekday, last_weekday)
+            return "Week %s (%s)" % (time.isocalendar()[1], range_string)
+        # This strip should never be used as minor
+        return ""
+
+    def start(self, time):
+        stripped_date = datetime(time.year, time.month, time.day)
+        return stripped_date - timedelta(stripped_date.weekday())
+
+    def increment(self, time):
+        return time + timedelta(7)
+
+    def _time_range_string(self, time1, time2):
+        """
+        Examples:
+
+        * 1-7 Jun 09
+        * 28 Jun-3 Jul 09
+        * 28 Jun 08-3 Jul 09
+        """
+        if time1.year == time2.year:
+            if time1.month == time2.month:
+                return "%s-%s %s %s" % (time1.day, time2.day,
+                                        calendar.month_abbr[time1.month],
+                                        time1.strftime("%y"))
+            return "%s %s-%s %s %s" % (time1.day,
+                                       calendar.month_abbr[time1.month],
+                                       time2.day,
+                                       calendar.month_abbr[time2.month],
+                                       time1.strftime("%y"))
+        return "%s %s %s-%s %s %s" % (time1.day,
+                                      calendar.month_abbr[time1.month],
+                                      time1.strftime("%y"),
+                                      time2.day,
+                                      calendar.month_abbr[time2.month],
+                                      time2.strftime("%y"))
+
+
+class StripDay(Strip):
 
     def label(self, time, major=False):
         if major:
@@ -141,10 +163,23 @@ class StripDay(Strip):
         return time + timedelta(1)
 
 
-class StripHour(Strip):
+class StripWeekday(Strip):
 
-    def use_as_minor(self, time_period):
-        return time_period.delta() > timedelta(0, 60)
+    def label(self, time, major=False):
+        if major:
+            return "%s %s %s %s" % (calendar.day_abbr[time.weekday()],
+                                    time.day, calendar.month_abbr[time.month],
+                                    time.year)
+        return str(calendar.day_abbr[time.weekday()])
+
+    def start(self, time):
+        return datetime(time.year, time.month, time.day)
+
+    def increment(self, time):
+        return time + timedelta(1)
+
+
+class StripHour(Strip):
 
     def label(self, time, major=False):
         if major:
@@ -174,13 +209,6 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.grey_solid_pen = wx.Pen(wx.Color(200, 200, 200), 1, wx.SOLID)
         self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
-        # Init the list of strips in the order larger to smaller
-        self.strips = []
-        self.strips.append(StripDecade())
-        self.strips.append(StripYear())
-        self.strips.append(StripMonth())
-        self.strips.append(StripDay())
-        self.strips.append(StripHour())
 
     def draw(self, dc, time_period, events, period_selection=None):
         """
@@ -305,18 +333,25 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
 
     def _choose_strip(self):
         """
-        Return a tuple (major_strip, minor_strip) for current time period.
+        Return a tuple (major_strip, minor_strip) for current time period and
+        window size.
         """
-        prev_strip = None
-        for strip in self.strips:
-            if strip.use_as_minor(self.time_period):
-                if prev_strip == None:
-                    # Use the same strip for major and minor
-                    return (strip, strip)
-                return (prev_strip, strip)
-            prev_strip = strip
-        # Zoom level is high, resort to last one
-        return (self.strips[-2], self.strips[-1])
+        today = datetime.now()
+        tomorrow = today + timedelta(days=1)
+        day_period = TimePeriod(today, tomorrow)
+        one_day_width = self.metrics.calc_exact_width(day_period)
+        if one_day_width > 600:
+            return (StripDay(), StripHour())
+        elif one_day_width > 45:
+            return (StripWeek(), StripWeekday())
+        elif one_day_width > 25:
+            return (StripMonth(), StripDay())
+        elif one_day_width > 1.5:
+            return (StripYear(), StripMonth())
+        elif one_day_width > 0.12:
+            return (StripDecade(), StripYear())
+        else:
+            return (StripDecade(), StripDecade())
 
     def _draw_period_selection(self, period_selection):
         start, end = period_selection

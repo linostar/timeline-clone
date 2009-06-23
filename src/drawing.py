@@ -59,15 +59,24 @@ class Metrics(object):
         self.half_height = self.height / 2
         self.time_period = time_period
 
-    def calc_x(self, time):
-        """Return the x position in pixels for the given time."""
+    def calc_exact_x(self, time):
+        """Return the x position in pixels as a float for the given time."""
         delta1 = div_timedeltas(time - self.time_period.start_time,
                                 self.time_period.delta())
         float_res = self.width * delta1
-        return int(round(float_res))
+        return float_res
+
+    def calc_x(self, time):
+        """Return the x position in pixels as an integer for the given time."""
+        return int(round(self.calc_exact_x(time)))
+
+    def calc_exact_width(self, time_period):
+        """Return the with in pixels as a float for the given time_period."""
+        return (self.calc_exact_x(time_period.end_time) -
+                self.calc_exact_x(time_period.start_time))
 
     def calc_width(self, time_period):
-        """Return the with in pixels for the given time_period."""
+        """Return the with in pixels as an integer for the given time_period."""
         return (self.calc_x(time_period.end_time) -
                 self.calc_x(time_period.start_time)) + 1
 
