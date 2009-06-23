@@ -32,7 +32,7 @@ class Strip(object):
     The different strips are implemented in subclasses below.
 
     The timeline is divided in major and minor strips. The minor strip might
-    for example be days, and the major strip month. Major strips are divided
+    for example be days, and the major strip months. Major strips are divided
     with a solid line and minor strips with dotted lines. Typically maximum
     three major strips should be shown and the rest will be minor strips.
     """
@@ -48,7 +48,7 @@ class Strip(object):
         tested before month strip for example). So if the time period is larger
         than 2 days, maybe we would like to use the day strip.
 
-        This method is used in `__choose_strip`. Have a look there for details
+        This method is used in `_choose_strip`. Have a look there for details
         on how strips are chosen.
         """
 
@@ -78,16 +78,16 @@ class StripDecade(Strip):
     def label(self, time, major=False):
         if major:
             # TODO: This only works for English. Possible to localize?
-            return str(self.__decade_start_year(time.year)) + "s"
+            return str(self._decade_start_year(time.year)) + "s"
         return ""
 
     def start(self, time):
-        return datetime(self.__decade_start_year(time.year), 1, 1)
+        return datetime(self._decade_start_year(time.year), 1, 1)
 
     def increment(self, time):
         return time.replace(year=time.year+10)
 
-    def __decade_start_year(self, year):
+    def _decade_start_year(self, year):
         return (year / 10) * 10
 
 
@@ -199,18 +199,18 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
         # Calculate stuff later used for drawing
-        self.__calc_rects(events)
-        self.__calc_strips()
+        self._calc_rects(events)
+        self._calc_strips()
         # Perform the actual drawing
         if period_selection:
-            self.__draw_period_selection(period_selection)
-        self.__draw_bg()
-        self.__draw_events()
+            self._draw_period_selection(period_selection)
+        self._draw_bg()
+        self._draw_events()
         # Make sure to delete this one
         del self.dc
 
     def snap_selection(self, period_selection):
-        major_strip, minor_strip = self.__choose_strip()
+        major_strip, minor_strip = self._choose_strip()
         start, end = period_selection
         new_start = minor_strip.start(start)
         new_end = minor_strip.increment(minor_strip.start(end))
@@ -222,7 +222,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 return event
         return None
 
-    def __calc_rects(self, events):
+    def _calc_rects(self, events):
         """
         Calculate rectangles for all events.
 
@@ -254,7 +254,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 ry = self.metrics.half_height - rh - BASELINE_PADDING
                 movedir = -1
             rect = wx.Rect(rx, ry, rw, rh)
-            self.__prevent_overlap(rect, movedir)
+            self._prevent_overlap(rect, movedir)
             self.event_data.append((event, rect))
         for (event, rect) in self.event_data:
             # Remove outer padding
@@ -267,18 +267,18 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             if rect.Width > self.metrics.width:
                 rect.Width = self.metrics.width + 2
 
-    def __prevent_overlap(self, rect, movedir):
+    def _prevent_overlap(self, rect, movedir):
         """
         Prevent rect from overlapping with any rectangle by moving it.
         """
         while True:
-            h = self.__intersection_height(rect)
+            h = self._intersection_height(rect)
             if h > 0:
                 rect.Y += movedir * h
             else:
                 break
 
-    def __intersection_height(self, rect):
+    def _intersection_height(self, rect):
         """
         Calculate height of first intersection with rectangle.
         """
@@ -290,7 +290,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 return intersection.Height
         return 0
 
-    def __calc_strips(self):
+    def _calc_strips(self):
         """Fill the two arrays `minor_strip_data` and `major_strip_data`."""
         def fill(list, strip):
             """Fill the given list with the given strip."""
@@ -299,11 +299,11 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 next_start = strip.increment(current_start)
                 list.append(TimePeriod(current_start, next_start))
                 current_start = next_start
-        major_strip, minor_strip = self.__choose_strip()
+        major_strip, minor_strip = self._choose_strip()
         fill(self.major_strip_data, major_strip)
         fill(self.minor_strip_data, minor_strip)
 
-    def __choose_strip(self):
+    def _choose_strip(self):
         """
         Return a tuple (major_strip, minor_strip) for current time period.
         """
@@ -318,7 +318,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         # Zoom level is high, resort to last one
         return (self.strips[-2], self.strips[-1])
 
-    def __draw_period_selection(self, period_selection):
+    def _draw_period_selection(self, period_selection):
         start, end = period_selection
         start_x = self.metrics.calc_x(start)
         end_x = self.metrics.calc_x(end)
@@ -327,13 +327,13 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.dc.DrawRectangle(start_x, 0,
                               end_x - start_x + 1, self.metrics.height)
 
-    def __draw_bg(self):
+    def _draw_bg(self):
         """
         Draw major and minor strips, lines to all event boxes and baseline.
 
         Both major and minor strips have divider lines and labels.
         """
-        major_strip, minor_strip = self.__choose_strip()
+        major_strip, minor_strip = self._choose_strip()
         # Minor strips
         self.dc.SetFont(self.small_text_font)
         self.dc.SetPen(self.black_dashed_pen)
@@ -391,7 +391,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             x = self.metrics.calc_x(now_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
 
-    def __draw_events(self):
+    def _draw_events(self):
         """Draw all event boxes and the text inside them."""
         self.dc.SetFont(self.small_text_font)
         self.dc.SetTextForeground((0, 0, 0))
