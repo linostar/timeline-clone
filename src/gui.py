@@ -13,9 +13,11 @@ import calendar
 import logging
 import os.path
 from datetime import datetime as dt
+from datetime import time
 
 import wx
 import wx.lib.colourselect as colourselect
+from wx.lib.masked import TimeCtrl
 
 from data import Timeline
 from data import Event
@@ -243,7 +245,7 @@ class MainFrame(wx.Frame):
         goto_month = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Month...")
         goto_day = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Day...")
         self.mnu_navigate.AppendSeparator()
-        goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate...")
+        goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate...\tCtrl+G")
         self.mnu_navigate.AppendSeparator()
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, "Fit Year")
         fit_month = self.mnu_navigate.Append(wx.ID_ANY, "Fit Month")
@@ -311,6 +313,66 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         i = e.GetSelection()
         self.categories[i].visible = self.IsChecked(i)
         self.timeline.category_edited(self.categories[i])
+
+
+class DateTimePicker(wx.Panel):
+    """
+    Control to pick a Python datetime object.
+
+    The time part will default to 00:00:00 if none is entered.
+    """
+
+    def __init__(self, parent, show_time=True):
+        wx.Panel.__init__(self, parent)
+        self._create_gui()
+        self.show_time(show_time)
+
+    def show_time(self, show=True):
+        self.time_picker.Show(show)
+        self.GetSizer().Layout()
+
+    def get_value(self):
+        """Return the selected date time as a Python datetime object."""
+        date = self.date_picker.GetValue()
+        date_time = dt(date.Year, date.Month+1, date.Day)
+        if self.time_picker.IsShown():
+            time = self.time_picker.GetValue(as_wxDateTime=True)
+            date_time = date_time.replace(hour=time.Hour,
+                                          minute=time.Minute)
+        return date_time
+
+    def set_value(self, value):
+        if value == None:
+            now = dt.now()
+            value = dt(now.year, now.month, now.day)
+        wx_date_time = self._python_date_to_wx_date(value)
+        self.date_picker.SetValue(wx_date_time)
+        self.time_picker.SetValue(wx_date_time)
+
+    def _python_date_to_wx_date(self, py_date):
+        return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
+                                  py_date.hour, py_date.minute,
+                                  py_date.second)
+
+    def _date_picker_on_date_changed(self, e):
+        wx_date = self.date_picker.GetValue()
+        if wx_date.Year < 10:
+            wx_new_date = wx_date.SetYear(10)
+            self.date_picker.SetValue(wx_new_date)
+
+    def _create_gui(self):
+        self.date_picker = wx.DatePickerCtrl(self,
+                               style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+        self.Bind(wx.EVT_DATE_CHANGED, self._date_picker_on_date_changed,
+                  self.date_picker)
+        self.time_picker = TimeCtrl(self, format="24HHMM")
+        # Layout
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self.date_picker, proportion=1,
+                  flag=wx.GROW|wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(self.time_picker, proportion=0,
+                  flag=wx.ALIGN_CENTER_VERTICAL)
+        self.SetSizer(sizer)
 
 
 class MainPanel(wx.Panel):
@@ -581,9 +643,8 @@ class DrawingArea(wx.Panel):
         if event:
             edit_event(self.timeline, event)
         else:
-            create_new_event(self.timeline,
-                             self._current_time.isoformat('-'),
-                             self._current_time.isoformat('-'))
+            create_new_event(self.timeline, self._current_time,
+                             self._current_time)
 
     def _window_on_left_up(self, evt):
         """
@@ -693,8 +754,7 @@ class DrawingArea(wx.Panel):
         self._mark_selection = False
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
-        create_new_event(self.timeline, start.isoformat('-'),
-                         end.isoformat('-'))
+        create_new_event(self.timeline, start, end)
         self._redraw_timeline()
 
     def _display_eventname_in_statusbar(self, xpixelpos, ypixelpos):
@@ -746,28 +806,25 @@ class DrawingArea(wx.Panel):
 
 
 class EventEditor(wx.Dialog):
-    """This dialog is used for creating and updating events."""
+    """Dialog used for creating and editing events."""
 
     def __init__(self, parent, id, title, timeline, start=None, end=None,
                  event=None):
         """
         Create a event editor dialog.
 
-        The dialog can be used both for creating new events and for updating
-        old ones.
-
         The 'event' argument is optional. If it is given the dialog is used
-        to update this event and the textboxes are filled with data from
+        to edit this event and the controls are filled with data from
         the event and the arguments 'start' and 'end' are ignored.
 
         If the 'event' argument isn't given the dialog is used to create a
-        new event, and the textboxes for start and end time are initially
+        new event, and the controls for start and end time are initially
         filled with data from the arguments 'start' and 'end' if they are
-        given.
+        given. Otherwise they will default to today.
         """
         wx.Dialog.__init__(self, parent, id, title)
-        self._timeline = timeline
-        self._event = event
+        self.timeline = timeline
+        self.event = event
         self._create_gui()
         self._fill_controls_with_data(start, end)
         self._set_initial_focus()
@@ -794,93 +851,97 @@ class EventEditor(wx.Dialog):
             self.SetDefaultItem(btn_ok)
             self.SetAffirmativeId(btn_ok.GetId())
             return button_box
+        # The check boxes
+        self.chb_period = wx.CheckBox(self, label="Period")
+        self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
+                  self.chb_period)
+        self.chb_show_time = wx.CheckBox(self, label="Show time")
+        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
+                  self.chb_show_time)
+        self.chb_close_on_ok = wx.CheckBox(self, label="Close on OK")
+        # The grid
         grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
-        CTRL_MIN_WIDTH = 160
-        self._txt_start_time = wx.TextCtrl(self, wx.ID_ANY,
-                                           size=(CTRL_MIN_WIDTH, -1))
-        self._txt_end_time = wx.TextCtrl(self, wx.ID_ANY,
-                                         size=(CTRL_MIN_WIDTH, -1))
-        self._txt_name = wx.TextCtrl(self, wx.ID_ANY,
-                                     size=(CTRL_MIN_WIDTH, -1))
-        self._lst_category = wx.Choice(self, wx.ID_ANY,
-                                       size=(CTRL_MIN_WIDTH, -1))
-        grid.AddMany([
-            (wx.StaticText(self, wx.ID_ANY, "Start:"), 0,
-                           wx.ALIGN_CENTER_VERTICAL), (self._txt_start_time),
-            (wx.StaticText(self, wx.ID_ANY, "End:"), 0,
-                           wx.ALIGN_CENTER_VERTICAL), (self._txt_end_time),
-            (wx.StaticText(self, wx.ID_ANY, "Name:"), 0,
-                           wx.ALIGN_CENTER_VERTICAL), (self._txt_name),
-            (wx.StaticText(self, wx.ID_ANY, "Category:"), 0,
-                           wx.ALIGN_CENTER_VERTICAL), (self._lst_category),
-        ])
+        MIN_WIDTH = 170
+        self.dtp_start = DateTimePicker(self)
+        self.dtp_end = DateTimePicker(self)
+        self.txt_text = wx.TextCtrl(self, wx.ID_ANY, size=(MIN_WIDTH, -1))
+        self.lst_category = wx.Choice(self, wx.ID_ANY, size=(MIN_WIDTH, -1))
+        grid.Add(wx.StaticText(self, label="Start:"),
+                 flag=wx.ALIGN_CENTER_VERTICAL)
+        grid.Add(self.dtp_start, flag=wx.EXPAND)
+        grid.Add(wx.StaticText(self, label="End:"),
+                 flag=wx.ALIGN_CENTER_VERTICAL)
+        grid.Add(self.dtp_end, flag=wx.EXPAND)
+        grid.Add(wx.StaticText(self, label="Text:"),
+                 flag=wx.ALIGN_CENTER_VERTICAL)
+        grid.Add(self.txt_text)
+        grid.Add(wx.StaticText(self, label="Category:"),
+                 flag=wx.ALIGN_CENTER_VERTICAL)
+        grid.Add(self.lst_category)
         # The Group box
         groupbox = wx.StaticBox(self, wx.ID_ANY, "Event Properties")
         groupbox_sizer = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
         groupbox_sizer.Add(grid, 0, wx.ALL, BORDER)
-        # The checkbox
-        self._cbx_close_on_ok = wx.CheckBox(self, wx.ID_ANY, "Close on OK")
         # Add controls and buttons do the dialog
         main_box = wx.BoxSizer(wx.VERTICAL)
-        main_box.Add(groupbox_sizer, 1, wx.EXPAND|wx.ALL, BORDER)
-        main_box.Add(self._cbx_close_on_ok, 0, wx.EXPAND|wx.ALL, BORDER)
-        main_box.Add(create_button_box(), 0, wx.EXPAND|wx.ALL, BORDER)
+        main_box.Add(self.chb_period, flag=wx.EXPAND|wx.LEFT|wx.TOP|wx.RIGHT,
+                     border=BORDER)
+        main_box.Add(self.chb_show_time, flag=wx.EXPAND|wx.LEFT|wx.RIGHT,
+                     border=BORDER)
+        main_box.Add(self.chb_close_on_ok,
+                     flag=wx.EXPAND|wx.LEFT|wx.BOTTOM|wx.RIGHT, border=BORDER)
+        main_box.Add(groupbox_sizer, proportion=1, flag=wx.EXPAND|wx.ALL,
+                     border=BORDER)
+        main_box.Add(create_button_box(), flag=wx.EXPAND|wx.ALL, border=BORDER)
         self.SetSizerAndFit(main_box)
+
+    def _chb_period_on_checkbox(self, e):
+        self.dtp_end.Enable(e.IsChecked())
+
+    def _chb_show_time_on_checkbox(self, e):
+        self.dtp_start.show_time(e.IsChecked())
+        self.dtp_end.show_time(e.IsChecked())
 
     def _fill_controls_with_data(self, start=None, end=None):
         """Initially fill the controls in the dialog with data."""
-        # Text fields
-        if self._event != None:
-            start = self._event.time_period.start_time.isoformat('-')
-            end = self._event.time_period.end_time.isoformat('-')
-            name = self._event.text
-            category = self._event.category
-            self._updatemode = True
-        else:
-            self._updatemode = False
-            name = ''
+        if self.event == None:
+            self.chb_period.SetValue(False)
+            self.chb_show_time.SetValue(False)
+            text = ""
             category = None
-        self._txt_start_time.SetValue(self._strip_milliseconds(start))
-        self._txt_end_time.SetValue(self._strip_milliseconds(end  ))
-        self._txt_name.SetValue(name)
+            self.updatemode = False
+        else:
+            start = self.event.time_period.start_time
+            end = self.event.time_period.end_time
+            text = self.event.text
+            category = self.event.category
+            self.updatemode = True
+        if start != None and end != None:
+            show_time = (start.time() != time(0, 0, 0) or
+                         end.time() != time(0, 0, 0))
+            self.chb_show_time.SetValue(show_time)
+            self.chb_period.SetValue(start != end)
+        self.dtp_start.set_value(start)
+        self.dtp_end.set_value(end)
+        self.txt_text.SetValue(text)
         current_item_index = 0
         # Category Choice
         selection_set = False
-        for cat in self._timeline.get_categories():
-            self._lst_category.Append(cat.name, cat)
+        for cat in self.timeline.get_categories():
+            self.lst_category.Append(cat.name, cat)
             if cat == category:
-                self._lst_category.SetSelection(current_item_index)
+                self.lst_category.SetSelection(current_item_index)
                 selection_set = True
             current_item_index += 1
         if not selection_set:
-            self._lst_category.SetSelection(0)
-        # Close on ok Checkbox
-        self._cbx_close_on_ok.SetValue(True)
+            self.lst_category.SetSelection(0)
+        self.chb_close_on_ok.SetValue(True)
+        self.dtp_end.Enable(self.chb_period.IsChecked())
+        self.dtp_start.show_time(self.chb_show_time.IsChecked())
+        self.dtp_end.show_time(self.chb_show_time.IsChecked())
 
     def _set_initial_focus(self):
-        """
-        Set focus on the first empty textbox.
-
-        If there is no empty textbox the focus is set to the 'start_time'
-        textbox.
-        """
-        self._txt_start_time.SetFocus()
-        for ctrl in [self._txt_start_time, self._txt_end_time,
-                     self._txt_name]:
-            if ctrl.GetValue().strip() == '':
-                ctrl.SetFocus()
-                break
-
-    def _strip_milliseconds(self, time_string):
-        """
-        Return the time string with milliseconds removed.
-
-        Expected format of time_string: yyyy-mm-dd-hh:mm:ss.mmmmmm
-        """
-        if time_string:
-            return time_string.split('.')[0]
-        else:
-            return ''
+        self.dtp_start.SetFocus()
 
     def _btn_close_on_click(self, evt):
         """
@@ -903,32 +964,32 @@ class EventEditor(wx.Dialog):
         logging.debug("_btn_ok_on_click")
         try:
             # Input value retrieval and validation
-            start_time = parse_time_from_textbox(self._txt_start_time,
-                                                 "start_time")
-            end_time = parse_time_from_textbox(self._txt_end_time,
-                                               "end_time")
-            name = parse_text_from_textbox (self._txt_name, "Name")
-            selection = self._lst_category.GetSelection()
+            start_time = self.dtp_start.get_value()
+            end_time = start_time
+            if self.chb_period.IsChecked():
+                end_time = self.dtp_end.get_value()
+            selection = self.lst_category.GetSelection()
             if selection >= 0:
-                category = self._lst_category.GetClientData(selection)
+                category = self.lst_category.GetClientData(selection)
             else:
                 category = None
             if start_time > end_time:
-                raise TxtException, ("End must be > Start", self._txt_start_time)
+                raise TxtException("End must be > Start", self.dtp_start)
+            name = parse_text_from_textbox(self.txt_text, "Text")
             # Update existing event
-            if self._updatemode:
-                self._event.update(start_time, end_time, name, category)
-                self._timeline.event_edited(self._event)
+            if self.updatemode:
+                self.event.update(start_time, end_time, name, category)
+                self.timeline.event_edited(self.event)
             # Create new event
             else:
-                self._event = Event(start_time, end_time, name, category)
-                self._timeline.add_event(self._event)
+                self.event = Event(start_time, end_time, name, category)
+                self.timeline.add_event(self.event)
             # Close the dialog ?
-            if self._cbx_close_on_ok.GetValue():
+            if self.chb_close_on_ok.GetValue():
                 self._close()
         except TxtException, ex:
             display_error_message("%s" % ex.error_message)
-            set_focus_on_textctrl(ex.control)
+            set_focus_and_select(ex.control)
 
     def _close(self):
         """
@@ -936,8 +997,8 @@ class EventEditor(wx.Dialog):
 
         Make sure that no events are selected after the dialog is closed.
         """
-        if self._event != None:
-            self._event.selected = False
+        if self.event != None:
+            self.event.selected = False
         self.EndModal(wx.ID_OK)
 
 
@@ -1063,7 +1124,7 @@ class CategoryEditor(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(vbox)
-        set_focus_on_textctrl(self.txt_name)
+        set_focus_and_select(self.txt_name)
 
     def _verify_name(self):
         for cat in self.timeline.get_categories():
@@ -1136,7 +1197,8 @@ class GotoDayDialog(GotoBaseDialog):
 
     def __init__(self, parent, time):
         (weekday, num_days) = calendar.monthrange(time.year, time.month)
-        GotoBaseDialog.__init__(self, parent, "Go to Day", time.day, 1, num_days)
+        GotoBaseDialog.__init__(self, parent, "Go to Day", time.day, 1,
+                                num_days)
         self.time = time
 
     def _before_close(self):
@@ -1150,26 +1212,27 @@ class GotoDateDialog(wx.Dialog):
         self._create_gui()
 
     def _create_gui(self):
-        # First row with label and date picker
-        header = wx.StaticText(self, wx.ID_ANY, "Date:")
-        self.dpc = wx.DatePickerCtrl(self, size=(120,-1),
-                                     style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY
-                                               )
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(header, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALL, border=BORDER)
-        hbox.Add(self.dpc, flag=wx.EXPAND|wx.ALL, border=BORDER, proportion=1)
-        # Buttons
+        self.dtpc = DateTimePicker(self)
+        checkbox = wx.CheckBox(self, label="Show time")
+        checkbox.SetValue(False)
+        self.dtpc.show_time(checkbox.IsChecked())
+        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox, checkbox)
+        # Layout
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(checkbox, flag=wx.EXPAND|wx.LEFT|wx.TOP|wx.RIGHT,
+                 border=BORDER, proportion=1)
+        vbox.Add(self.dtpc, flag=wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT,
+                 border=BORDER, proportion=1)
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(hbox, flag=wx.ALL|wx.EXPAND, border=BORDER)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(vbox)
-        self.dpc.SetFocus()
+
+    def _chb_show_time_on_checkbox(self, e):
+        self.dtpc.show_time(e.IsChecked())
 
     def _btn_ok_on_click(self, e):
-        dt = self.dpc.GetValue()
-        self.time = datetime.datetime(dt.Year, dt.Month + 1, dt.Day)
+        self.time = self.dtpc.get_value()
         self.EndModal(wx.ID_OK)
 
 
@@ -1186,24 +1249,6 @@ class TxtException(ValueError):
         ValueError.__init__(self, error_message)
         self.error_message = error_message
         self.control = control
-
-
-def todt(datetime_string):
-    """Convert a string to a datetime object"""
-    args = datetime_string.strip().split('-')
-    # Date only
-    if len(args) == 3:
-        return dt(int(args[0]),int(args[1]),int(args[2]))
-    # Date and time
-    elif len(args) == 4:
-        time = args[3].split(':')
-        if len(time) != 3:
-            raise Exception("Unknown datetime format='%s'" % datetime_string)
-        return dt(int(args[0]),int(args[1]),int(args[2]),
-                  int(time[0]),int(time[1]),int(time[2]))
-    # Unknown format
-    else:
-        raise Exception("Unknown datetime format='%s'" % datetime_string)
 
 
 def create_new_event(timeline, start=None, end=None):
@@ -1226,9 +1271,10 @@ def edit_categories(timeline):
     dialog.Destroy()
 
 
-def set_focus_on_textctrl(txt):
-    txt.SetFocus()
-    txt.SelectAll()
+def set_focus_and_select(ctrl):
+    ctrl.SetFocus()
+    if hasattr(ctrl, "SelectAll"):
+        ctrl.SelectAll()
 
 
 def parse_text_from_textbox(txt, name):
@@ -1236,7 +1282,7 @@ def parse_text_from_textbox(txt, name):
     Return a text control field.
 
     If the value is an empty string the method raises a ValueError
-    exception and sets foucs on the control.
+    exception and sets focus on the control.
 
     If the value is valid the text in the control is returned
     """
@@ -1244,24 +1290,6 @@ def parse_text_from_textbox(txt, name):
     if len(data) == 0:
         raise TxtException, ("%s: Can't be empty" % name, txt)
     return data
-
-
-def parse_time_from_textbox(txt, name):
-    """
-    Convert a text string into a time value.
-
-    If the value is not a valid time format a ValueError exception is raised
-    and foucs is set on the control.
-
-    If the text value is valid the text is converted into a  time value
-    and thereafter returned.
-    """
-    try:
-        time = todt(txt.GetValue())
-    except:
-        raise TxtException, ("Invalid %s data format.\n" % name +
-                        "Expected format: yyyy-mm-dd:hh:mm:ss" , txt)
-    return time
 
 
 def display_error_message(message, parent=None):
