@@ -98,7 +98,7 @@ class Db2Timeline(Timeline):
         self.preferred_period = period
         self.__save_data()
 
-    def reset_selection(self):
+    def reset_selected_events(self):
         for event in self.events:
             event.selected = False
 

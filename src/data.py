@@ -72,8 +72,21 @@ class Timeline(Observable):
         """Notify that `event` has been modified so that it can be saved."""
         raise NotImplementedError()
 
+    def select_event(self, event, selected=True):
+        """
+        Notify that event should be marked as selected.
+
+        Must ensure that subsequent calls to get_events maintains this selected
+        state.
+        """
+        raise NotImplementedError()
+
     def delete_selected_events(self):
-        """Delete all events whose selected flag is True."""
+        """Delete all events that have been marked as selected."""
+        raise NotImplementedError()
+
+    def reset_selected_events(self):
+        """Mark all selected events as unselected."""
         raise NotImplementedError()
 
     def get_categories(self):
@@ -98,10 +111,6 @@ class Timeline(Observable):
 
     def set_preferred_period(self, period):
         """Set the preferred period to display of this timeline."""
-        raise NotImplementedError()
-
-    def reset_selection(self):
-        """Reset any selection on the timeline."""
         raise NotImplementedError()
 
 

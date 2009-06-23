@@ -225,9 +225,18 @@ class FileTimeline(Timeline):
     def event_edited(self, event):
         self.__save_data()
 
+    def select_event(self, event, selected=True):
+        event.selected = selected
+        self._notify(Timeline.STATE_CHANGE_ANY)
+
     def delete_selected_events(self):
         self.events = [event for event in self.events if not event.selected]
         self.__save_data()
+
+    def reset_selected_events(self):
+        for event in self.events:
+            event.selected = False
+        self._notify(Timeline.STATE_CHANGE_ANY)
 
     def get_categories(self):
         # Make sure the original list can't be modified
@@ -259,10 +268,6 @@ class FileTimeline(Timeline):
     def set_preferred_period(self, period):
         self.preferred_period = period
         self.__save_data()
-
-    def reset_selection(self):
-        for event in self.events:
-            event.selected = False
 
 
 def parse_bool(bool_string):

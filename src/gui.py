@@ -725,13 +725,11 @@ class DrawingArea(wx.Panel):
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event:
-            selected = event.selected
             if not control_down:
-                self.timeline.reset_selection()
-            event.selected = not selected
+                self.timeline.reset_selected_events()
+            self.timeline.select_event(event, not event.selected)
         else:
-            self.timeline.reset_selection()
-        self._redraw_timeline()
+            self.timeline.reset_selected_events()
 
     def _end_selection_and_create_event(self, current_x):
         self._mark_selection = False
@@ -980,8 +978,7 @@ class EventEditor(wx.Dialog):
 
         Make sure that no events are selected after the dialog is closed.
         """
-        if self.event != None:
-            self.event.selected = False
+        self.timeline.reset_selected_events()
         self.EndModal(wx.ID_OK)
 
 
