@@ -156,17 +156,8 @@ class MainFrame(wx.Frame):
     def _mnu_goto_today_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.center(dt.now()))
 
-    def _mnu_goto_year_on_click(self, evt):
-        self._goto_x(GotoYearDialog)
-
-    def _mnu_goto_month_on_click(self, evt):
-        self._goto_x(GotoMonthDialog)
-
-    def _mnu_goto_day_on_click(self, evt):
-        self._goto_x(GotoDayDialog)
-
     def _mnu_goto_date_on_click(self, evt):
-        self._goto_x(GotoDateDialog)
+        self._goto_date()
 
     def _mnu_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_year())
@@ -177,8 +168,8 @@ class MainFrame(wx.Frame):
     def _mnu_fit_day_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_day())
 
-    def _goto_x(self, dialog_cls):
-        dialog = dialog_cls(self, self._get_time_period().mean_time())
+    def _goto_date(self):
+        dialog = GotoDateDialog(self, self._get_time_period().mean_time())
         if dialog.ShowModal() == wx.ID_OK:
             self._navigate_timeline(lambda tp: tp.center(dialog.time))
         dialog.Destroy()
@@ -240,20 +231,12 @@ class MainFrame(wx.Frame):
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today")
-        self.mnu_navigate.AppendSeparator()
-        goto_year = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Year...")
-        goto_month = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Month...")
-        goto_day = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Day...")
-        self.mnu_navigate.AppendSeparator()
         goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate...\tCtrl+G")
         self.mnu_navigate.AppendSeparator()
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, "Fit Year")
         fit_month = self.mnu_navigate.Append(wx.ID_ANY, "Fit Month")
         fit_day = self.mnu_navigate.Append(wx.ID_ANY, "Fit Day")
         self.Bind(wx.EVT_MENU, self._mnu_goto_today_on_click, goto_today)
-        self.Bind(wx.EVT_MENU, self._mnu_goto_year_on_click, goto_year)
-        self.Bind(wx.EVT_MENU, self._mnu_goto_month_on_click, goto_month)
-        self.Bind(wx.EVT_MENU, self._mnu_goto_day_on_click, goto_day)
         self.Bind(wx.EVT_MENU, self._mnu_goto_date_on_click, goto_date)
         self.Bind(wx.EVT_MENU, self._mnu_fit_year_on_click, fit_year)
         self.Bind(wx.EVT_MENU, self._mnu_fit_month_on_click, fit_month)
@@ -1142,67 +1125,6 @@ class CategoryEditor(wx.Dialog):
         else:
             display_error_message("Category name '%s' already in use." % name,
                                   self)
-
-
-class GotoBaseDialog(wx.Dialog):
-
-    def __init__(self, parent, title, value, min, max):
-        wx.Dialog.__init__(self, parent, title=title)
-        self._create_gui(value, min, max)
-
-    def _create_gui(self, value, min, max):
-        # Setup layout
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        # Slider
-        self.slider = wx.Slider(self, value=value, minValue=min,
-                                maxValue=max, style=wx.SL_LABELS,
-                                size=(250, -1))
-        vbox.Add(self.slider, flag=wx.EXPAND|wx.ALL, border=BORDER)
-        # Buttons
-        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
-        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        self.SetSizerAndFit(vbox)
-
-    def _before_close(self):
-        raise NotImplementedError()
-
-    def _btn_ok_on_click(self, e):
-        self._before_close()
-        self.EndModal(wx.ID_OK)
-
-
-class GotoYearDialog(GotoBaseDialog):
-
-    def __init__(self, parent, time):
-        GotoBaseDialog.__init__(self, parent, "Go to Year", time.year,
-                          datetime.MINYEAR, datetime.MAXYEAR)
-        self.time = time
-
-    def _before_close(self):
-        self.time = self.time.replace(year=self.slider.GetValue())
-
-
-class GotoMonthDialog(GotoBaseDialog):
-
-    def __init__(self, parent, time):
-        GotoBaseDialog.__init__(self, parent, "Go to Month", time.month, 1, 12)
-        self.time = time
-
-    def _before_close(self):
-        self.time = self.time.replace(month=self.slider.GetValue())
-
-
-class GotoDayDialog(GotoBaseDialog):
-
-    def __init__(self, parent, time):
-        (weekday, num_days) = calendar.monthrange(time.year, time.month)
-        GotoBaseDialog.__init__(self, parent, "Go to Day", time.day, 1,
-                                num_days)
-        self.time = time
-
-    def _before_close(self):
-        self.time = self.time.replace(day=self.slider.GetValue())
 
 
 class GotoDateDialog(wx.Dialog):
