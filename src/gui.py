@@ -387,6 +387,7 @@ class MainPanel(wx.Panel):
     def _create_gui(self):
         """Create the controls of the Main Panel."""
         self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        self.splitter.SetMinimumPaneSize(50)
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED,
                   self._splitter_on_splitter_sash_pos_changed, self.splitter)
         # DrawingArea
