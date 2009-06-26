@@ -1137,6 +1137,7 @@ class GotoDateDialog(wx.Dialog):
     def __init__(self, parent, time):
         wx.Dialog.__init__(self, parent, title="Go to Date")
         self._create_gui()
+        self.dtpc.set_value(time)
 
     def _create_gui(self):
         self.dtpc = DateTimePicker(self)
