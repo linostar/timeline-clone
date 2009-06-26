@@ -1107,22 +1107,29 @@ class CategoryEditor(wx.Dialog):
         self.SetSizerAndFit(vbox)
         set_focus_and_select(self.txt_name)
 
-    def _verify_name(self):
+    def _name_valid(self, name):
+        return len(name) > 0
+
+    def _name_in_use(self, name):
         for cat in self.timeline.get_categories():
-            if cat != self.category and cat.name == self.txt_name.GetValue():
-                return False
-        return True
+            if cat != self.category and cat.name == name:
+                return True
+        return False
 
     def _btn_ok_on_click(self, e):
-        name = self.txt_name.GetValue()
-        if self._verify_name():
-            self.category.name = name
-            self.category.color = self.colorpicker.GetColour()
-            self.category.visible = self.chb_visible.IsChecked()
-            self.EndModal(wx.ID_OK)
-        else:
+        name = self.txt_name.GetValue().strip()
+        if not self._name_valid(name):
+            display_error_message("Category name '%s' not valid. Must be non-empty." % name,
+                                  self)
+            return
+        if self._name_in_use(name):
             display_error_message("Category name '%s' already in use." % name,
                                   self)
+            return
+        self.category.name = name
+        self.category.color = self.colorpicker.GetColour()
+        self.category.visible = self.chb_visible.IsChecked()
+        self.EndModal(wx.ID_OK)
 
 
 class GotoDateDialog(wx.Dialog):
