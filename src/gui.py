@@ -866,12 +866,11 @@ class EventEditor(wx.Dialog):
         groupbox_sizer.Add(grid, 0, wx.ALL, BORDER)
         # Add controls and buttons do the dialog
         main_box = wx.BoxSizer(wx.VERTICAL)
-        main_box.Add(self.chb_period, flag=wx.EXPAND|wx.LEFT|wx.TOP|wx.RIGHT,
+        main_box.Add(self.chb_period, flag=wx.LEFT|wx.TOP|wx.RIGHT,
                      border=BORDER)
-        main_box.Add(self.chb_show_time, flag=wx.EXPAND|wx.LEFT|wx.RIGHT,
+        main_box.Add(self.chb_show_time, flag=wx.ALL, border=BORDER)
+        main_box.Add(self.chb_close_on_ok, flag=wx.LEFT|wx.BOTTOM|wx.RIGHT,
                      border=BORDER)
-        main_box.Add(self.chb_close_on_ok,
-                     flag=wx.EXPAND|wx.LEFT|wx.BOTTOM|wx.RIGHT, border=BORDER)
         main_box.Add(groupbox_sizer, proportion=1, flag=wx.EXPAND|wx.ALL,
                      border=BORDER)
         main_box.Add(create_button_box(), flag=wx.EXPAND|wx.ALL, border=BORDER)
