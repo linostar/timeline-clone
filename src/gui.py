@@ -489,6 +489,7 @@ class DrawingArea(wx.Panel):
         try:
             navigation_fn(self.time_period)
             self._redraw_timeline()
+            wx.GetTopLevelParent(self).SetStatusText("")
         except (ValueError, OverflowError), e:
             wx.GetTopLevelParent(self).SetStatusText(str(e))
 
