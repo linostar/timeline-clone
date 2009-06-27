@@ -134,18 +134,18 @@ class StripWeek(Strip):
             if time1.month == time2.month:
                 return "%s-%s %s %s" % (time1.day, time2.day,
                                         calendar.month_abbr[time1.month],
-                                        time1.strftime("%y"))
+                                        time1.year)
             return "%s %s-%s %s %s" % (time1.day,
                                        calendar.month_abbr[time1.month],
                                        time2.day,
                                        calendar.month_abbr[time2.month],
-                                       time1.strftime("%y"))
+                                       time1.year)
         return "%s %s %s-%s %s %s" % (time1.day,
                                       calendar.month_abbr[time1.month],
-                                      time1.strftime("%y"),
+                                      time1.year,
                                       time2.day,
                                       calendar.month_abbr[time2.month],
-                                      time2.strftime("%y"))
+                                      time2.year)
 
 
 class StripDay(Strip):
