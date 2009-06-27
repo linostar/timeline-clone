@@ -106,7 +106,7 @@ class StripWeek(Strip):
 
     def label(self, time, major=False):
         if major:
-            # Example: Week 23 (1-7 Jan 09)
+            # Example: Week 23 (1-7 Jan 2009)
             first_weekday = self.start(time)
             next_first_weekday = self.increment(first_weekday)
             last_weekday = next_first_weekday - timedelta(days=1)
@@ -126,9 +126,9 @@ class StripWeek(Strip):
         """
         Examples:
 
-        * 1-7 Jun 09
-        * 28 Jun-3 Jul 09
-        * 28 Jun 08-3 Jul 09
+        * 1-7 Jun 2009
+        * 28 Jun-3 Jul 2009
+        * 28 Jun 08-3 Jul 2009
         """
         if time1.year == time2.year:
             if time1.month == time2.month:
