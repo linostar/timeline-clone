@@ -66,7 +66,7 @@ class FileTimeline(Timeline):
             else:
                 data_corrupt = False
                 for line in file:
-                    if not self.__load_object_from_line(line.strip()):
+                    if not self.__load_object_from_line(line.rstrip("\r\n")):
                         data_corrupt = True
                 if data_corrupt:
                     display_error_message("Timeline data corrupt. Enable logging and open the timeline again to get more information about the problem.")
