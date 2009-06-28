@@ -12,6 +12,7 @@ import os.path
 from logging import error as logerror
 from logging import info as loginfo
 from logging import warning as logwarning
+from logging import debug as logdebug
 from datetime import datetime
 from datetime import timedelta
 
@@ -80,6 +81,7 @@ class FileTimeline(Timeline):
         if self.disable_save_due_to_corrupt_data:
             display_error_message("Save disabled because timeline data was corrupt.")
             return
+        loginfo("Saving file '%s'" % self.file_path)
         file = None
         try:
             try:
@@ -123,7 +125,7 @@ class FileTimeline(Timeline):
 
     def __load_object_from_line(self, line):
         """Return True if object successfully loaded, otherwise False."""
-        loginfo("Processing line '%s'" % line)
+        logdebug("Processing line '%s'" % line)
         # Map prefixes to functions that handle the loading of those objects
         prefixes = (
             ("PREFERRED-PERIOD:", self.__load_preferred_period),

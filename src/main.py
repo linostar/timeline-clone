@@ -7,6 +7,7 @@ application.
 
 
 from sys import argv
+from sys import version as python_version
 from optparse import OptionParser
 import logging
 from logging import info as loginfo
@@ -59,6 +60,12 @@ def setup_logging(log_level, filename):
             filename)
 
 
+def log_versions():
+    loginfo("Timeline version %s", get_version())
+    loginfo("Python version %s", python_version.replace("\n", ""))
+    loginfo("wxPython version %s", wx.version())
+
+
 def create_wx_app(input_files):
     """Initialize wx and create the main frame."""
     app = wx.PySimpleApp()
@@ -74,6 +81,7 @@ def main():
     """Main entry point."""
     (options, input_files) = parse_options()
     setup_logging(options.log_level, options.log_file)
+    log_versions()
     app = create_wx_app(input_files)
     app.MainLoop()
 
