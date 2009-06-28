@@ -513,7 +513,6 @@ class DrawingArea(wx.Panel):
                                             period_selection)
             memdc.EndDrawing()
             self.Refresh()
-            self.Update()
         except Exception, ex:
             self.bgbuf = None
             logging.fatal('Error in drawing', exc_info=ex)
