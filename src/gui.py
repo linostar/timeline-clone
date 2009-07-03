@@ -279,8 +279,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
             self.Clear()
 
     def _update_categories(self):
-        self.categories = list(self.timeline.get_categories())
-        self.categories.sort(cmp, lambda x: x.name.lower())
+        self.categories = sort_categories(self.timeline.get_categories())
         self.Clear()
         self.AppendItems([category.name for category in self.categories])
         for i in range(0, self.Count):
@@ -356,6 +355,7 @@ class DateTimePicker(wx.Panel):
         sizer.Add(self.time_picker, proportion=0,
                   flag=wx.ALIGN_CENTER_VERTICAL)
         self.SetSizer(sizer)
+        self.date_picker.SetFocus()
 
 
 class MainPanel(wx.Panel):
@@ -512,6 +512,7 @@ class DrawingArea(wx.Panel):
                                             current_events,
                                             period_selection)
             memdc.EndDrawing()
+            del(memdc)
             self.Refresh()
             self.Update()
         except Exception, ex:
@@ -910,7 +911,7 @@ class EventEditor(wx.Dialog):
         current_item_index = 0
         # Category Choice
         selection_set = False
-        for cat in self.timeline.get_categories():
+        for cat in sort_categories(self.timeline.get_categories()):
             self.lst_category.Append(cat.name, cat)
             if cat == category:
                 self.lst_category.SetSelection(current_item_index)
@@ -996,13 +997,18 @@ class CategoriesEditor(wx.Dialog):
         wx.Dialog.__init__(self, parent, title="Edit Categories")
         self._create_gui()
         self.timeline = timeline
-        for category in self.timeline.get_categories():
-            self._add_category_to_list(category)
+        # Note: We must unregister before we close this dialog. When we close
+        # this dialog it will be disposed and self._timeline_changed will no
+        # longer exist. The next time the timeline gets updated it will try to
+        # call a method that does not exist.
+        self.timeline.register(self._timeline_changed)
+        self._update_categories()
 
     def _create_gui(self):
+        self.Bind(wx.EVT_CLOSE, self._window_on_close)
         # The list box
         self.lst_categories = wx.ListBox(self, size=(200, 180),
-                                         style=wx.LB_SINGLE|wx.LB_SORT)
+                                         style=wx.LB_SINGLE)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self._lst_categories_on_dclick,
                   self.lst_categories)
         # The Add button
@@ -1016,6 +1022,7 @@ class CategoriesEditor(wx.Dialog):
         btn_close.SetDefault()
         btn_close.SetFocus()
         self.SetAffirmativeId(wx.ID_CLOSE)
+        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
         # Setup layout
         vbox = wx.BoxSizer(wx.VERTICAL)
         vbox.Add(self.lst_categories, flag=wx.ALL|wx.EXPAND, border=BORDER)
@@ -1028,22 +1035,25 @@ class CategoriesEditor(wx.Dialog):
         self.SetSizerAndFit(vbox)
         self.lst_categories.SetFocus()
 
-    def _add_category_to_list(self, category):
-        self.lst_categories.Append(category.name, category)
+    def _update_categories(self):
+        self.lst_categories.Clear()
+        for category in sort_categories(self.timeline.get_categories()):
+            self.lst_categories.Append(category.name, category)
 
     def _lst_categories_on_dclick(self, e):
         selection = e.GetSelection()
         dialog = CategoryEditor(self, self.timeline, e.GetClientData())
         if dialog.ShowModal() == wx.ID_OK:
-            self.lst_categories.SetString(selection,
-                                          dialog.get_edited_category().name)
             self.timeline.category_edited(dialog.get_edited_category())
         dialog.Destroy()
+
+    def _timeline_changed(self, state_change):
+        if state_change == Timeline.STATE_CHANGE_CATEGORY:
+            self._update_categories()
 
     def _btn_add_on_click(self, e):
         dialog = CategoryEditor(self, self.timeline, None)
         if dialog.ShowModal() == wx.ID_OK:
-            self._add_category_to_list(dialog.get_edited_category())
             self.timeline.add_category(dialog.get_edited_category())
         dialog.Destroy()
 
@@ -1056,7 +1066,15 @@ class CategoriesEditor(wx.Dialog):
             if ok_to_delete:
                 cat = self.lst_categories.GetClientData(selection)
                 self.timeline.delete_category(cat)
-                self.lst_categories.Delete(selection)
+
+    def _btn_close_on_click(self, e):
+        self.Close()
+
+    def _window_on_close(self, e):
+        # This will always be called before the dialog closes so we can do the
+        # unregister here.
+        self.timeline.unregister(self._timeline_changed)
+        self.EndModal(wx.ID_CLOSE)
 
 
 class CategoryEditor(wx.Dialog):
@@ -1241,3 +1259,9 @@ def step_function(x_value):
     elif x_value > 0:
         y_value = 1
     return y_value
+
+
+def sort_categories(categories):
+    sorted_categories = list(categories)
+    sorted_categories.sort(cmp, lambda x: x.name.lower())
+    return sorted_categories
