@@ -355,7 +355,7 @@ class DateTimePicker(wx.Panel):
         sizer.Add(self.time_picker, proportion=0,
                   flag=wx.ALIGN_CENTER_VERTICAL)
         self.SetSizer(sizer)
-
+        self.date_picker.SetFocus()
 
 class MainPanel(wx.Panel):
     """
