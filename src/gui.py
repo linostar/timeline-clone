@@ -357,6 +357,7 @@ class DateTimePicker(wx.Panel):
         self.SetSizer(sizer)
         self.date_picker.SetFocus()
 
+
 class MainPanel(wx.Panel):
     """
     Panel that covers the whole client area of MainFrame.
