@@ -8,6 +8,7 @@ application.
 
 from sys import argv
 from sys import version as python_version
+import platform
 from optparse import OptionParser
 import logging
 from logging import info as loginfo
@@ -62,6 +63,7 @@ def setup_logging(log_level, filename):
 
 def log_versions():
     loginfo("Timeline version %s", get_version())
+    loginfo("System version %s", ", ".join(platform.uname()))
     loginfo("Python version %s", python_version.replace("\n", ""))
     loginfo("wxPython version %s", wx.version())
 
