@@ -512,7 +512,7 @@ class DrawingArea(wx.Panel):
                                             current_events,
                                             period_selection)
             memdc.EndDrawing()
-            del(memdc)
+            del memdc
             self.Refresh()
             self.Update()
         except Exception, ex:
