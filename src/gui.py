@@ -43,6 +43,7 @@ from data import Category
 import data
 import drawing
 import config
+from about import display_about_dialog
 
 
 # Border, in pixels, between controls in a window (should always be used when
@@ -192,6 +193,9 @@ class MainFrame(wx.Frame):
             self._navigate_timeline(lambda tp: tp.center(dialog.time))
         dialog.Destroy()
 
+    def _mnu_help_about_on_click(self, e):
+        display_about_dialog()
+
     def _set_initial_values_to_member_variables(self):
         """
         Instance variables usage:
@@ -259,12 +263,17 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_fit_year_on_click, fit_year)
         self.Bind(wx.EVT_MENU, self._mnu_fit_month_on_click, fit_month)
         self.Bind(wx.EVT_MENU, self._mnu_fit_day_on_click, fit_day)
+        # Help menu
+        self.mnu_help = wx.Menu()
+        help_about = self.mnu_help.Append(wx.ID_ABOUT, "&About")
+        self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
         # The menu bar
         menuBar = wx.MenuBar()
         menuBar.Append(self.mnu_file, "&File")
         menuBar.Append(self.mnu_view, "&View")
         menuBar.Append(self.mnu_timeline, "&Timeline")
         menuBar.Append(self.mnu_navigate, "&Navigate")
+        menuBar.Append(self.mnu_help, "&Help")
         self.SetMenuBar(menuBar)
 
     def _navigate_timeline(self, navigation_fn):
