@@ -1,15 +1,16 @@
-This is Timeline version 0.3.0.
+Timeline version 0.3.0
+======================
 
 Timeline is a cross-platform application for displaying and navigating
 information on a timeline. 
 
-Timeline is licensed under the GNU General Public License. See COPYING for
-details.
+Timeline is free software licensed under the GNU General Public License. See
+COPYING for details.
 
 To see what has changed in this version and in previous versions, have a look
 in CHANGES.
 
-For instructions on how to install Timeline, have a look in INSTALL.
+For installation instructions, have a look in INSTALL.
 
 For more information visit the project's website:
 
