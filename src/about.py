@@ -19,8 +19,8 @@
 """
 Functionality and information for displaying the About dialog.
 
-Much of this information is available in the source distribution files README,
-COPYING, and AUTHORS. It is copied here to be available from Python code.
+This information is also available in the source distribution files.  It is
+copied here to be available from Python code.
 """
 
 
@@ -31,7 +31,7 @@ from version import get_version
 
 
 APPLICATION_NAME = "Timeline"
-COPYRIGHT_TEXT = "Copyright (C) 2009 The %s Developers" % APPLICATION_NAME
+COPYRIGHT_TEXT = "Copyright (C) 2009 The %s Authors" % APPLICATION_NAME
 APPLICATION_DESCRIPTION = "Timeline is a cross-platform application for displaying and navigating information on a timeline."
 WEBSITE = "http://sourceforge.net/apps/trac/thetimelineproj/"
 DEVELOPERS = ["Rickard Lindberg", "Roger Lindberg"]
@@ -47,6 +47,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Timeline.  If not, see <http://www.gnu.org/licenses/>."""
+
 
 def display_about_dialog():
     info = wx.AboutDialogInfo()
