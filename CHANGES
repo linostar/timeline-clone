@@ -1,21 +1,24 @@
 Timeline 0.3.0, released ...
+============================
 
  * Added copyright notes to all source files.
- * Added missing AUTHORS, CHANGES, COPYING, and INSTALL.
+ * Added AUTHORS, CHANGES, COPYING, and INSTALL.
 
 Timeline 0.2.0, released 5 July 2009
+====================================
 
- This version contains lots of improvements.
+This version contains lots of improvements.
 
- File format written by this version is not readable by previous versions.
+File format written by this version is not readable by previous versions.
 
- New features, enhancements:
+New features, enhancements:
 
-  * Added support for showing and hiding events from certain categories.
-  * Added a week view in one zoom level of the timeline.
-  * Added navigation functions such as ''Go to Date'' and ''Go to Today''.
-  * Improved controls for entering a date and time.
+ * Added support for showing and hiding events from certain categories.
+ * Added a week view in one zoom level of the timeline.
+ * Added navigation functions such as ''Go to Date'' and ''Go to Today''.
+ * Improved controls for entering a date and time.
 
 Timeline 0.1.0, released 11 April 2009
+======================================
 
- First usable version.
+First usable version.
