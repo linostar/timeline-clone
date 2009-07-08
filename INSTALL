@@ -1,0 +1,50 @@
+This document describes how to install the software as well as how to upgrade
+from a previous version. 
+
+Prerequisites
+=============
+
+Timeline is written in the Python programming language and uses the wxPython
+library for the GUI. Both these components are needed in order to run
+Timeline. For further instructions on how to download and install these, go to
+their respective home pages:
+
+ * Python (http://www.python.org)
+ * wxPython (http://www.wxpython.org)
+
+Platforms
+=========
+
+Timeline has been tested with the following platforms and versions of Python an
+wxPython:
+
+Platform              Python   wxPython
+---------------------------------------
+Windows (XP)          2.5.2    2.8.8.1
+Linux (Debian Etch)   2.4.6    2.8.10.1
+Linux (Debian Etch)   2.5.2    2.8.10.1
+
+Install and Start Timeline
+==========================
+
+To begin with, extract the downloaded zip-file into a directory of your choice.
+
+To run the application, use this command:
+
+  python <path-to-timeline-directory>/main.py [options]
+
+Preferable you create a shortcut on your platform that issues this command.
+
+What options are available is displayed with the following command:
+
+  python <path-to-timeline-directory>/main.py --help
+
+Notes on Upgrading
+==================
+
+0.1.x to 0.2.x
+--------------
+
+The file format for version 0.2.x is not backwards compatible with version
+0.1.x. 0.2.x can read 0.1.x files though so there is no need to be concerned
+when upgrading.
