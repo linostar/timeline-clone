@@ -1,11 +1,11 @@
-Timeline 0.3.0, released ...
-============================
+Timeline 0.3.0, released on ...
+===============================
 
  * Added copyright notes to all source files.
  * Added AUTHORS, CHANGES, COPYING, and INSTALL.
 
-Timeline 0.2.0, released 5 July 2009
-====================================
+Timeline 0.2.0, released on 5 July 2009
+=======================================
 
 This version contains lots of improvements.
 
@@ -18,7 +18,7 @@ New features, enhancements:
  * Added navigation functions such as ''Go to Date'' and ''Go to Today''.
  * Improved controls for entering a date and time.
 
-Timeline 0.1.0, released 11 April 2009
-======================================
+Timeline 0.1.0, released on 11 April 2009
+=========================================
 
 First usable version.
