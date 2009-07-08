@@ -1,6 +1,6 @@
 This directory contains the 0.3.0 release of Timeline.
 
-Timeline is a cross-platform application for displaying and navigating
+Timeline is a free, cross-platform application for displaying and navigating
 information on a timeline. 
 
 Timeline is free software, distributed under the GNU General Public License,
@@ -13,12 +13,14 @@ src/      - Python source code
 testdata/ - ??
 web/      - The project's website
 AUTHORS   - Lists all people that have contributed to the project
-CHANGES   - Lists changes between releases
+CHANGES   - Lists changes between releases (releases notes for all versions)
 COPYING   - A copy of the GNU General Public License, version 3
 INSTALL   - Instructions how to install Timeline
 README    - This file
 
-The project's website is intended as a first place to learn about the project:
+The project's website is intended as the first source of information about the
+project. It includes information about how to download the software, how to get
+help, and how to participate:
 
   http://thetimelineproj.sourceforge.net/
 
