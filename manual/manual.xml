@@ -1,0 +1,433 @@
+<?xml version="1.0" standalone="no" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY app "<application>Timeline</application>">
+<!ENTITY appname "Timeline">
+<!ENTITY appversion "0.3.0">
+<!ENTITY manrevision "0.3.0">
+]>
+
+<article id="index" lang="en">
+
+<articleinfo>
+
+<title>&appname; User Manual</title>
+
+<copyright>
+<year>2009</year>
+<holder>Rickard Lindberg</holder>
+</copyright>
+
+<publisher>
+<publishername>Rickard Lindberg</publishername>
+<address><email>ricli85@gmail.com</email></address>
+</publisher>
+
+<authorgroup>
+<author role="maintainer">
+<firstname>Rickard</firstname>
+<surname>Lindberg</surname>
+</author>
+</authorgroup>
+
+<!--
+<revhistory>
+<revision>
+<revnumber>&appname; User Manual 0.3.0</revnumber>
+<date>2009-07-08</date>
+<revremark>fobar</revremark>
+</revision>
+</revhistory>
+-->
+
+<releaseinfo>
+This manual documents how to use version &appversion; of &appname;. It assumes
+that you have already installed it. For installation instructions, see the
+source distribution.
+</releaseinfo>
+
+<legalnotice>
+<para>
+Lincense
+</para>
+</legalnotice>
+
+<abstract role="description">
+<para>
+&appname; is a cross-platform application for displaying and navigating
+information on a timeline.
+</para>
+</abstract>
+
+</articleinfo>
+
+<section>
+<title>Tutorial</title>
+
+<para>
+The idea is to display events on a timeline and to be able to quickly change
+what period in time is shown. An event can be at a specific point in time or
+span over a period.
+</para>
+
+<figure>
+<title>
+Showing the two different types of events (cursor hoovering blue event).
+</title>
+<graphic fileref="figures/events.png" />
+</figure>
+    
+<figure>
+<title>
+Showing the same timeline as above but with a different zoom level.
+</title>
+<graphic fileref="figures/zoom.png" />
+</figure>
+
+<para>
+To create a new timeline, select <emphasis>New</emphasis> from the
+<emphasis>File</emphasis> menu and enter a name of a file in the dialog box
+that opens. This is the name of the file in which information about your events
+will be stored. Next time you start Timeline you can choose to open the same
+file again.
+</para>
+
+<para>
+To add a new event at a specific point in time, double click somewhere on the
+timeline. This will open a dialog box in which you enter a text for the event.
+Click the <emphasis>OK</emphasis> button to save the event. Now you will see an
+event above the horizontal line at the specific point in time that you double
+clicked on.
+</para>
+
+<para>
+<emphasis>
+Timeline automatically saves all changes for you so you never need to manually
+save your timeline.
+</emphasis>
+</para>
+
+<para>
+To add an event that spans over a period, hold the
+<emphasis>Ctrl-key</emphasis> down, click and drag the mouse to mark a period,
+and release the mouse button. Again the event dialog box will display and you
+enter a text for the event and click <emphasis>OK</emphasis>.  Now you will
+also see an event displayed under the horizontal line spanning over the period
+that you selected.
+</para>
+
+<para>
+Events at a specific point in time will always be displayed above the
+horizontal line. Events spanning over a period period will be displayed below
+the horizontal line most of the time.  However, if the period is to small to
+fit within a few pixels on the screen, it will be displayed above the
+horizontal line (zooming in will make the event jump from above to below).
+</para>
+
+<para>
+To edit an event, double click on it and the event dialog box will appear.
+</para>
+
+<para>
+To select an event, just click on it. To select multiple events, hold down the
+<emphasis>Ctrl-key</emphasis> while selecting events. To delete the selected
+events, press the <emphasis>Del-key</emphasis>.
+</para>
+
+<para>
+Try the mouse wheel and you will see the timeline scroll.
+</para>
+
+<para>
+Try pressing the left mouse button and drag and you will see the timeline
+scroll.
+</para>
+
+<para>
+Try the mouse wheel while holding the <emphasis>Ctrl-key</emphasis> down and
+you will see the timeline zoom.
+</para>
+
+<para>
+The vertical red line indicates the current time.
+</para>
+
+<para>
+Hoovering an event will display the full description in the status bar.
+</para>
+
+</section>
+
+<section>
+<title>Topics in Detail</title>
+
+<section>
+<title>Editing Events</title>
+
+<para>
+Editing event information is done in the dialog shown below.
+</para>
+
+<figure>
+<title />
+<graphic fileref="figures/event_editor.png" />
+</figure>
+
+<para>
+It is used both for creating new events and for editing existing ones.
+</para>
+
+<para>
+The <emphasis>Create Event</emphasis> dialog can be opened in the
+following ways:
+</para>
+
+<itemizedlist>
+<listitem>
+<para>
+Select the menu <emphasis>File -&gt; Create Event</emphasis>.
+</para>
+</listitem>
+<listitem>
+<para>
+Double click with the left mouse button on the timeline.
+</para>
+</listitem>
+<listitem>
+<para>
+Press the <emphasis>Ctrl-key</emphasis>, thereafter hold left mouse button down
+on the timeline, drag the mouse and release it.
+</para>
+</listitem>
+</itemizedlist>
+
+<para>
+The <emphasis>Edit Event</emphasis> dialog can be opened by double clicking on
+an event.
+</para>
+
+<para>
+The following properties can be defined for an event:
+</para>
+
+<variablelist>
+<title />
+<varlistentry>
+<term>Start</term>
+<listitem>
+<para>
+This is the start time of the event if it spans a period, otherwise it is the
+specific point in time. If used for a period, it has to be less or equal to the
+end time.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>End</term>
+<listitem>
+<para>
+This is the end time of the event if it spans a period. This is not used
+otherwise. If used it has to be greater or equal to the start time.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Text</term>
+<listitem>
+<para>
+A free text describing the event.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Category</term>
+<listitem>
+<para>
+If you have defined any categories (see section below) you can associate the
+event with one of your categories. An event can only belong to one category.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>
+The checkboxes at the top of the dialog work as following:
+</para>
+
+<variablelist>
+<title />
+<varlistentry>
+<term>Period</term>
+<listitem>
+<para>
+If checked, both the start and end time will be used to define the period that
+the event spans. If unchecked only the start time will be enabled and it will
+specify the specific point in time for the event.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Show time</term>
+<listitem>
+<para>
+If checked, you can specify a time for the start and end time in addition to
+the date. This is useful if you are editing events on a day level where the
+time is also important. The time will default to 00:00 if not entered.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Close on OK</term>
+<listitem>
+<para>
+If checked, the dialog will close when you click OK. Otherwise it will not.
+This can be used to add multiple events without closing the dialog.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
+<title>Deleting Events</title>
+
+<para>
+One or more events can be deleted at the same time. To delete events you first
+select them and thereafter press the <emphasis>Delete</emphasis> key.
+</para>
+
+<para>
+Before the event is deleted the deletion must be acknowledged in the dialog box
+that appears when the <emphasis>Delete</emphasis> key has been pressed.
+</para>
+
+<para>
+An event is selected by clicking within the rectangle representing the event.
+The event is deselected by clicking on it once again. To select more than one
+event, hold the <emphasis>Ctrl-key</emphasis> down while selecting events.
+</para>
+
+</section>
+
+<section>
+<title>Categories</title>
+
+<para>
+Categories are used to group events. An event can belong to one and only one
+category. All events that belong to the same category are displayed with the
+same background color. The color to be used is defined by the category. You can
+also choose to show or hide all events belonging to a category.
+</para>
+
+<para>
+If no categories exist (as is the case when a new timeline is created) no
+categories will be associated with events. But as soon as there is a category
+an event must have one. (This might change in future versions so that you can
+create events without associating a category to it. Or maybe associate a
+default category.)
+</para>
+
+<para>
+If you want to edit the categories you open the <emphasis>Edit
+Categories</emphasis> dialog.  This is done by selecting the menu
+<emphasis>Timeline -&gt; Edit Categories</emphasis>.  The dialog looks like
+this:
+</para>
+
+<figure>
+<title />
+<graphic fileref="figures/edit_categories.png" />
+</figure>
+
+<para>
+You create a new category by clicking the <emphasis>Add</emphasis> button and
+thereafter filling in the attributes of the category in the dialog that
+appears. The visible checkbox determines if the events belonging to that
+category should be visible or not. This flag can also be modified in the
+sidebar (<emphasis>View -&gt; Sidebar</emphasis>).
+</para>
+
+<figure>
+<title>The Edit Category dialog.</title>
+<graphic fileref="figures/edit_category.png" />
+</figure>
+
+<figure>
+<title>
+Showing the correspondence between the visible flag in the Edit Category dialog
+and the sidebar.
+</title>
+<graphic fileref="figures/sidebar.png" />
+</figure>
+
+<para>
+You delete a category by selecting it in the listbox and clicking the
+<emphasis>Delete</emphasis> button.  You thereafter have to acknowledge the
+delete in the dialog that appears.  When you delete a category, all the events
+that belonged to this category are associated with the special category None.
+</para>
+
+<para>
+To edit a category, just double click on it.
+</para>
+
+</section>
+
+<section>
+<title>Navigation Functions</title>
+
+<para>
+In addition to the basic navigation functions described in the tutorial there
+are also a set of navigation functions in the <emphasis>Navigate</emphasis>
+menu:
+</para>
+
+<itemizedlist>
+<listitem><para>Go To Today</para></listitem>
+<listitem><para>Go To Date...</para></listitem>
+<listitem><para>Fit Year</para></listitem>
+<listitem><para>Fit Month</para></listitem>
+<listitem><para>Fit Day</para></listitem>
+</itemizedlist>
+
+<para>
+<emphasis>Go To Today</emphasis> scrolls the timeline until the current date is
+at the center of the screen.
+</para>
+
+<para>
+<emphasis>Go To Date</emphasis> has the same functionality as <emphasis>Go To
+Today</emphasis> with the exception that the user selects the date in a
+dialog.
+</para>
+
+<figure>
+<title>The Go to Date dialog.</title>
+<graphic fileref="figures/goto_date.png" />
+</figure>
+
+<para>
+The <emphasis>Show Time</emphasis> checkbox is used to enable or disable input
+of time. The time will default to 00:00 if not entered. The timeline will be
+centered at the date and time.  When the dialog is opened it is the date and
+time at the center of the screen that is displayed.
+</para>
+
+<para>
+<emphasis>Fit Year</emphasis> will expand or contract the timeline so that it
+shows one whole year. The year shown is the year that is in the center of the
+screen.
+</para>
+
+<para>
+<emphasis>Fit Month</emphasis> and <emphasis>Fit Day</emphasis> has the same
+functionality as the <emphasis>Fit Year</emphasis> except that the timeline
+will display one single month and one single day.
+</para>
+
+</section>
+
+</section>
+
+</article>
