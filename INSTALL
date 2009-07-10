@@ -1,6 +1,3 @@
-This document describes how to install the software as well as how to upgrade
-from a previous version. 
-
 Prerequisites
 =============
 
@@ -15,8 +12,8 @@ their respective home pages:
 Platforms
 =========
 
-Timeline has been tested with the following platforms and versions of Python an
-wxPython:
+Timeline has been tested with the following platforms and versions of Python
+and wxPython:
 
 Platform              Python   wxPython
 ---------------------------------------
@@ -27,24 +24,16 @@ Linux (Debian Etch)   2.5.2    2.8.10.1
 Install and Start Timeline
 ==========================
 
-To begin with, extract the downloaded zip-file into a directory of your choice.
-
 To run the application, use this command:
 
-  python <path-to-timeline-directory>/main.py [options]
+  python <path-to-timeline-directory>/src/main.py [options]
+
+For example:
+
+  python /home/rick/timeline-0.3.0/src/main.py
 
 Preferable you create a shortcut on your platform that issues this command.
 
 What options are available is displayed with the following command:
 
-  python <path-to-timeline-directory>/main.py --help
-
-Notes on Upgrading
-==================
-
-0.1.x to 0.2.x
---------------
-
-The file format for version 0.2.x is not backwards compatible with version
-0.1.x. 0.2.x can read 0.1.x files though so there is no need to be concerned
-when upgrading.
+  python <path-to-timeline-directory>/src/main.py --help
