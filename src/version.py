@@ -22,5 +22,20 @@ DEV = True
 
 def get_version():
     if DEV:
-        return "%s.%s.%sdev" % VERSION
+        return ("%s.%s.%sdev" % VERSION) + _get_revision()
     return "%s.%s.%s" % VERSION
+
+
+def _get_revision():
+    try:
+        import os
+        from subprocess import Popen, PIPE
+        root_rel = os.path.join(os.path.dirname(__file__), "..")
+        rev = Popen(["svnversion", root_rel], stdout=PIPE).communicate()[0]
+        # format "xxx:yyy\n", we are interested in yyy
+        revsplit = rev.strip().split(":")
+        if len(revsplit) == 1:
+            return revsplit[0]
+        return revsplit[-1]
+    except:
+        return "norev"

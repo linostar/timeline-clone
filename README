@@ -23,6 +23,7 @@ CHANGES         - Lists changes between releases (releases notes)
 COPYING         - A copy of the GNU General Public License, version 3
 INSTALL         - Instructions how to install Timeline
 README          - This file
+release.py      - Script to generate a source package
 
 The project's website is intended as the first source of information about the
 project. It includes information about how to download the software, how to get
