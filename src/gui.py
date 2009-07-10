@@ -98,6 +98,7 @@ class MainFrame(wx.Frame):
         dialog = wx.FileDialog(self, message="Create Timeline",
                                wildcard=self.wildcard, style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
+            self._save_currenttimeline_data()
             path = dialog.GetPath()
             # If no extension, add default
             has_valid_extension = False
@@ -123,6 +124,7 @@ class MainFrame(wx.Frame):
         dialog = wx.FileDialog(self, message="Open Timeline",
                                wildcard=self.wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
+            self._save_currenttimeline_data()
             self.display_timeline(dialog.GetPath())
         dialog.Destroy()
 
@@ -145,14 +147,26 @@ class MainFrame(wx.Frame):
         self._open_existing_timeline()
 
     def _window_on_close(self, event):
+        self._save_currenttimeline_data()
         if self.timeline:
-            self.timeline.set_preferred_period(self._get_time_period())
             config.set_window_size(self.GetSize())
             config.set_window_maximized(self.IsMaximized())
             config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
             config.set_sidebar_width(self.main_panel.get_sidebar_width())
             config.write()
         self.Destroy()
+
+    def _save_currenttimeline_data(self):
+        """
+        Saves settings for the timeline that is currently displayed to
+        the timeline file. Date saved is:
+            - currently displayed time period
+        If there is no current timeline, nothing happens.
+        This method should be called before a new timeline is opened
+        or created or when the application is closed.
+        """
+        if self.timeline:
+            self.timeline.set_preferred_period(self._get_time_period())
 
     def _mnu_file_exit_on_click(self, evt):
         """Event handler for the Exit menu item"""
