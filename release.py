@@ -52,6 +52,8 @@ def ignore(file):
         return True
     if os.path.basename(file).endswith(".pyc"):
         return True
+    if os.path.basename(file).endswith("~"):
+        return True
     if os.path.basename(file).endswith(".zip"):
         return True
     return False
@@ -80,6 +82,10 @@ def copy_files(files):
 
 if os.path.exists(REL_NAME):
     print("Error: Path already exists %s" % REL_NAME)
+    sys.exit()
+
+if os.path.exists(REL_NAME_ZIP):
+    print("Error: Package already exists %s" % REL_NAME_ZIP)
     sys.exit()
 
 print("Making manual")
