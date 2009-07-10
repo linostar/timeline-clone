@@ -32,6 +32,7 @@ import os.path
 import shutil
 from subprocess import Popen
 from subprocess import PIPE
+from subprocess import call
 
 # The root of the source archive corresponds to the directory in which this
 # file is
@@ -79,6 +80,11 @@ def copy_files(files):
 
 if os.path.exists(REL_NAME):
     print("Error: Path already exists %s" % REL_NAME)
+    sys.exit()
+
+print("Making manual")
+if call(["make", "-C", os.path.join(ROOT_DIR, "manual")]) != 0:
+    print("Error: Could not make manual")
     sys.exit()
 
 print("Creating directory %s" % REL_NAME)
