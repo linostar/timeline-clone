@@ -1064,6 +1064,8 @@ class CategoriesEditor(wx.Dialog):
         btn_close.SetFocus()
         self.SetAffirmativeId(wx.ID_CLOSE)
         self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
+        self.lst_categories.Bind(wx.EVT_KEY_DOWN, self._dialog_on_key_down)
+        self.Bind(wx.EVT_KEY_DOWN, self._dialog_on_key_down)
         # Setup layout
         vbox = wx.BoxSizer(wx.VERTICAL)
         vbox.Add(self.lst_categories, flag=wx.ALL|wx.EXPAND, border=BORDER)
@@ -1099,6 +1101,20 @@ class CategoriesEditor(wx.Dialog):
         dialog.Destroy()
 
     def _btn_del_on_click(self, e):
+        self._delete_category()
+
+    def _btn_close_on_click(self, e):
+        self.Close()
+
+    def _dialog_on_key_down(self, e):
+        print "arghhhh"
+        logging.debug("Key down event in CategoriesEditor")
+        keycode = e.GetKeyCode()
+        if keycode == wx.WXK_DELETE:
+            self._delete_category()
+        e.Skip()
+
+    def _delete_category(self):
         selection = self.lst_categories.GetSelection()
         if selection != wx.NOT_FOUND:
             ok_to_delete = wx.MessageBox('Are you sure to delete?', 'Question',
@@ -1107,9 +1123,6 @@ class CategoriesEditor(wx.Dialog):
             if ok_to_delete:
                 cat = self.lst_categories.GetClientData(selection)
                 self.timeline.delete_category(cat)
-
-    def _btn_close_on_click(self, e):
-        self.Close()
 
     def _window_on_close(self, e):
         # This will always be called before the dialog closes so we can do the
