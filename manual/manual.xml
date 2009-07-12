@@ -123,7 +123,7 @@ that you selected.
 
 <para>
 Events at a specific point in time will always be displayed above the
-horizontal line. Events spanning over a period period will be displayed below
+horizontal line. Events spanning over a period will be displayed below
 the horizontal line most of the time.  However, if the period is to small to
 fit within a few pixels on the screen, it will be displayed above the
 horizontal line (zooming in will make the event jump from above to below).
@@ -167,7 +167,7 @@ Hoovering an event will display the full description in the status bar.
 <title>Topics in Detail</title>
 
 <section>
-<title>Editing Events</title>
+<title>Creating and Editing Events</title>
 
 <para>
 Editing event information is done in the dialog shown below.
