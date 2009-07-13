@@ -976,9 +976,10 @@ class EventEditor(wx.Dialog):
         self.dtp_start.set_value(start)
         self.dtp_end.set_value(end)
         self.txt_text.SetValue(text)
-        current_item_index = 0
         # Category Choice
+        self.lst_category.Append("", None) # The None-category
         selection_set = False
+        current_item_index = 1
         for cat in sort_categories(self.timeline.get_categories()):
             self.lst_category.Append(cat.name, cat)
             if cat == category:
@@ -1021,10 +1022,7 @@ class EventEditor(wx.Dialog):
             if self.chb_period.IsChecked():
                 end_time = self.dtp_end.get_value()
             selection = self.lst_category.GetSelection()
-            if selection >= 0:
-                category = self.lst_category.GetClientData(selection)
-            else:
-                category = None
+            category = self.lst_category.GetClientData(selection)
             if start_time > end_time:
                 raise TxtException("End must be > Start", self.dtp_start)
             name = parse_text_from_textbox(self.txt_text, "Text")

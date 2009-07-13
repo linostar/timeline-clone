@@ -59,7 +59,7 @@ A copy of the license is included in <xref linkend="fdl"/>.
 
 <abstract role="description">
 <para>
-&appname; is a cross-platform application for displaying and navigating
+&appname; is a free, cross-platform application for displaying and navigating
 information on a timeline.
 </para>
 </abstract>
@@ -319,18 +319,10 @@ event, hold the <emphasis>Ctrl-key</emphasis> down while selecting events.
 <title>Categories</title>
 
 <para>
-Categories are used to group events. An event can belong to one and only one
-category. All events that belong to the same category are displayed with the
-same background color. The color to be used is defined by the category. You can
-also choose to show or hide all events belonging to a category.
-</para>
-
-<para>
-If no categories exist (as is the case when a new timeline is created) no
-categories will be associated with events. But as soon as there is a category
-an event must have one. (This might change in future versions so that you can
-create events without associating a category to it. Or maybe associate a
-default category.)
+Categories are used to group events. An event can only belong to one category.
+All events that belong to the same category are displayed with the same
+background color. The color to be used is defined by the category. You can also
+choose to show or hide all events belonging to a category.
 </para>
 
 <para>
@@ -368,9 +360,10 @@ and the sidebar.
 
 <para>
 You delete a category by selecting it in the listbox and clicking the
-<emphasis>Delete</emphasis> button.  You thereafter have to acknowledge the
-delete in the dialog that appears.  When you delete a category, all the events
-that belonged to this category are associated with the special category None.
+<emphasis>Delete</emphasis> button or pressing the
+<emphasis>Del</emphasis> key.  You thereafter have to acknowledge the delete in
+the dialog that appears.  When you delete a category, all the events that
+belonged to this category are no longer associated with a category.
 </para>
 
 <para>
