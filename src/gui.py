@@ -213,7 +213,7 @@ class MainFrame(wx.Frame):
         self._show_help()
 
     def _show_help(self):
-        path = os.path.abspath(os.path.join(os.path.basename(__file__), "..",
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
                                             "manual", "manual.html"))
         if os.path.exists(path):
             HelpWindow(self, path).Show()
