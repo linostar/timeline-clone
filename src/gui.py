@@ -41,6 +41,7 @@ from wx.lib.masked import TimeCtrl
 from data import Timeline
 from data import Event
 from data import Category
+from data import TimePeriod
 import data
 import drawing
 import config
@@ -405,10 +406,11 @@ class DateTimePicker(wx.Panel):
                                   py_date.second)
 
     def _date_picker_on_date_changed(self, e):
-        wx_date = self.date_picker.GetValue()
-        if wx_date.Year < 10:
-            wx_new_date = wx_date.SetYear(10)
-            self.date_picker.SetValue(wx_new_date)
+        date = self.get_value()
+        if date < TimePeriod.MIN_TIME:
+            self.set_value(TimePeriod.MIN_TIME)
+        if date > TimePeriod.MAX_TIME:
+            self.set_value(TimePeriod.MAX_TIME)
 
     def _create_gui(self):
         self.date_picker = wx.DatePickerCtrl(self,

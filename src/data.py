@@ -186,6 +186,9 @@ class TimePeriod(object):
     currently displayed time period in the GUI.
     """
 
+    MIN_TIME = dt(10, 1, 1)
+    MAX_TIME = dt(9990, 1, 1)
+
     def __init__(self, start_time, end_time):
         """
         Create a time period.
@@ -194,19 +197,25 @@ class TimePeriod(object):
         """
         self.update(start_time, end_time)
 
-    def update(self, start_time, end_time):
+    def update(self, start_time, end_time,
+               start_delta=timedelta(0), end_delta=timedelta(0)):
         """
         Change the time period data.
 
+        Optionally add the deltas to the times like this: time + delta.
+
         If data is invalid, it will not be set, and a ValueError will be raised
         instead.
+
+        Data is invalid if time + delta is not within the range [MIN_TIME,
+        MAX_TIME] or if the start time is larger than the end time.
         """
-        if start_time > end_time:
+        new_start = self._ensure_within_range(start_time, start_delta, "Start")
+        new_end = self._ensure_within_range(end_time, end_delta, "End")
+        if new_start > new_end:
             raise ValueError("Start time can't be after end time")
-        if start_time.year < 10:
-            raise ValueError("Start time can't be before year 10")
-        self.start_time = start_time
-        self.end_time = end_time
+        self.start_time = new_start
+        self.end_time = new_end
 
     def inside(self, time):
         """
@@ -243,22 +252,39 @@ class TimePeriod(object):
             raise ValueError("Can't zoom wider than 120 years")
         if new_delta < MIN_ZOOM_DELTA:
             raise ValueError("Can't zoom deeper than 1 hour")
-        self.update(self.start_time + delta, self.end_time - delta)
+        self.update(self.start_time, self.end_time, delta, -delta)
 
-    def move(self, dir):
-        delta = mult_timedelta(self.delta(), dir / 10.0)
+    def move(self, direction):
+        """
+        Move this time period one 10th to the given direction.
+
+        Direction should be -1 for moving to the left or 1 for moving to the
+        right.
+        """
+        delta = mult_timedelta(self.delta(), direction / 10.0)
         self.move_delta(delta)
 
     def move_delta(self, delta):
-        self.update(self.start_time + delta, self.end_time + delta)
+        self.update(self.start_time, self.end_time, delta, delta)
 
     def delta(self):
         """Return the length of this time period as a timedelta object."""
         return self.end_time - self.start_time
 
     def center(self, time):
-        """Center time period around time keeping the length."""
-        self.move_delta(time - self.mean_time())
+        """
+        Center time period around time keeping the length.
+
+        If we can't center because we are on the edge, we do as good as we can.
+        """
+        delta = time - self.mean_time()
+        start_overflow = self._calculate_overflow(self.start_time, delta)[1]
+        end_overflow = self._calculate_overflow(self.end_time, delta)[1]
+        if start_overflow == -1:
+            delta = TimePeriod.MIN_TIME - self.start_time
+        elif end_overflow == 1:
+            delta = TimePeriod.MAX_TIME - self.end_time
+        self.move_delta(delta)
 
     def fit_year(self):
         mean = self.mean_time()
@@ -277,6 +303,41 @@ class TimePeriod(object):
         start = dt(mean.year, mean.month, mean.day)
         end = dt(mean.year, mean.month, mean.day + 1)
         self.update(start, end)
+
+    def _ensure_within_range(self, time, delta, which):
+        """
+        Return new time (time + delta) or raise ValueError if it is not within
+        the range [MIN_TIME, MAX_TIME].
+        """
+        new_time, overflow = self._calculate_overflow(time, delta)
+        if overflow > 0:
+            raise ValueError("%s time can't be after year 9989" % which)
+        elif overflow < 0:
+            raise ValueError("%s time can't be before year 10" % which)
+        else:
+            return new_time
+
+    def _calculate_overflow(self, time, delta):
+        """
+        Return a tuple (new time, overflow flag).
+
+        Overflow flag can be -1 (overflow to the left), 0 (no overflow), or 1
+        (overflow to the right).
+
+        If overflow flag is 0 new time is time + delta, otherwise None.
+        """
+        try:
+            new_time = time + delta
+            if new_time < TimePeriod.MIN_TIME:
+                return (None, -1)
+            if new_time > TimePeriod.MAX_TIME:
+                return (None, 1)
+            return (new_time, 0)
+        except OverflowError:
+            if delta > timedelta(0):
+                return (None, 1)
+            else:
+                return (None, -1)
 
 
 def delta_to_microseconds(delta):
