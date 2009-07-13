@@ -34,6 +34,7 @@ from datetime import datetime as dt
 from datetime import time
 
 import wx
+import wx.html
 import wx.lib.colourselect as colourselect
 from wx.lib.masked import TimeCtrl
 
@@ -207,6 +208,18 @@ class MainFrame(wx.Frame):
             self._navigate_timeline(lambda tp: tp.center(dialog.time))
         dialog.Destroy()
 
+    def _mnu_help_contents_on_click(self, e):
+        self._show_help()
+
+    def _show_help(self):
+        path = os.path.abspath(os.path.join(os.path.basename(__file__), "..",
+                                            "manual", "manual.html"))
+        if os.path.exists(path):
+            HelpWindow(self, path).Show()
+        else:
+            display_error_message("Could not locate manual at '%s'." % path,
+                                  self)
+
     def _mnu_help_about_on_click(self, e):
         display_about_dialog()
 
@@ -279,7 +292,9 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_fit_day_on_click, fit_day)
         # Help menu
         self.mnu_help = wx.Menu()
+        help_contents = self.mnu_help.Append(wx.ID_HELP, "&Contents\tF1")
         help_about = self.mnu_help.Append(wx.ID_ABOUT, "&About")
+        self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, help_contents)
         self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
         # The menu bar
         menuBar = wx.MenuBar()
@@ -297,6 +312,18 @@ class MainFrame(wx.Frame):
     def _get_time_period(self):
         """Shortcut for method in DrawingArea."""
         return self.main_panel.drawing_area.get_time_period()
+
+
+class HelpWindow(wx.Frame):
+
+    def __init__(self, parent, path):
+        wx.Frame.__init__(self, parent, title="Timeline User Manual",
+                          size=(700, 500), style=wx.DEFAULT_FRAME_STYLE)
+        self._create_gui()
+        self.html_window.LoadPage(path)
+
+    def _create_gui(self):
+        self.html_window = wx.html.HtmlWindow(self)
 
 
 class CategoriesVisibleCheckListBox(wx.CheckListBox):
