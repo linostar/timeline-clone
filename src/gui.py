@@ -103,7 +103,7 @@ class MainFrame(wx.Frame):
         dialog = wx.FileDialog(self, message="Create Timeline",
                                wildcard=self.wildcard, style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
-            self._save_currenttimeline_data()
+            self._save_current_timeline_data()
             path = dialog.GetPath()
             # If no extension, add default
             has_valid_extension = False
@@ -129,7 +129,7 @@ class MainFrame(wx.Frame):
         dialog = wx.FileDialog(self, message="Open Timeline",
                                wildcard=self.wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
-            self._save_currenttimeline_data()
+            self._save_current_timeline_data()
             self.display_timeline(dialog.GetPath())
         dialog.Destroy()
 
@@ -152,7 +152,7 @@ class MainFrame(wx.Frame):
         self._open_existing_timeline()
 
     def _window_on_close(self, event):
-        self._save_currenttimeline_data()
+        self._save_current_timeline_data()
         if self.timeline:
             config.set_window_size(self.GetSize())
             config.set_window_maximized(self.IsMaximized())
@@ -161,7 +161,7 @@ class MainFrame(wx.Frame):
             config.write()
         self.Destroy()
 
-    def _save_currenttimeline_data(self):
+    def _save_current_timeline_data(self):
         """
         Saves settings for the timeline that is currently displayed to
         the timeline file. Date saved is:
@@ -1092,8 +1092,7 @@ class CategoriesEditor(wx.Dialog):
         btn_close.SetFocus()
         self.SetAffirmativeId(wx.ID_CLOSE)
         self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
-        self.lst_categories.Bind(wx.EVT_KEY_DOWN, self._dialog_on_key_down)
-        self.Bind(wx.EVT_KEY_DOWN, self._dialog_on_key_down)
+        self.lst_categories.Bind(wx.EVT_KEY_DOWN, self._lst_categories_on_key_down)
         # Setup layout
         vbox = wx.BoxSizer(wx.VERTICAL)
         vbox.Add(self.lst_categories, flag=wx.ALL|wx.EXPAND, border=BORDER)
@@ -1130,20 +1129,19 @@ class CategoriesEditor(wx.Dialog):
         dialog.Destroy()
 
     def _btn_del_on_click(self, e):
-        self._delete_category()
+        self._delete_selected_category()
 
     def _btn_close_on_click(self, e):
         self.Close()
 
-    def _dialog_on_key_down(self, e):
-        print "arghhhh"
+    def _lst_categories_on_key_down(self, e):
         logging.debug("Key down event in CategoriesEditor")
         keycode = e.GetKeyCode()
         if keycode == wx.WXK_DELETE:
-            self._delete_category()
+            self._delete_selected_category()
         e.Skip()
 
-    def _delete_category(self):
+    def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
         if selection != wx.NOT_FOUND:
             ok_to_delete = wx.MessageBox('Are you sure to delete?', 'Question',
