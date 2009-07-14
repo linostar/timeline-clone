@@ -1113,7 +1113,8 @@ class CategoriesEditor(wx.Dialog):
 
     def _lst_categories_on_dclick(self, e):
         selection = e.GetSelection()
-        dialog = CategoryEditor(self, self.timeline, e.GetClientData())
+        dialog = CategoryEditor(self, "Edit Category", self.timeline,
+                                e.GetClientData())
         if dialog.ShowModal() == wx.ID_OK:
             self.timeline.category_edited(dialog.get_edited_category())
         dialog.Destroy()
@@ -1123,7 +1124,7 @@ class CategoriesEditor(wx.Dialog):
             self._update_categories()
 
     def _btn_add_on_click(self, e):
-        dialog = CategoryEditor(self, self.timeline, None)
+        dialog = CategoryEditor(self, "Add Category", self.timeline, None)
         if dialog.ShowModal() == wx.ID_OK:
             self.timeline.add_category(dialog.get_edited_category())
         dialog.Destroy()
@@ -1166,8 +1167,8 @@ class CategoryEditor(wx.Dialog):
     The edited category can be fetched with get_edited_category.
     """
 
-    def __init__(self, parent, timeline, category):
-        wx.Dialog.__init__(self, parent, title="Edit Category")
+    def __init__(self, parent, title, timeline, category):
+        wx.Dialog.__init__(self, parent, title=title)
         self._create_gui()
         self.timeline = timeline
         self.category = category
