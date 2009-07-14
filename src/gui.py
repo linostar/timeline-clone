@@ -46,6 +46,7 @@ import data
 import drawing
 import config
 from about import display_about_dialog
+from about import APPLICATION_NAME
 
 
 # Border, in pixels, between controls in a window (should always be used when
@@ -69,7 +70,7 @@ class MainFrame(wx.Frame):
         self._set_initial_values_to_member_variables()
         self._create_gui()
         self.Maximize(config.get_window_maximized())
-        self.SetTitle(self.title_base)
+        self.SetTitle(APPLICATION_NAME)
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
         self._enable_disable_menus()
 
@@ -81,7 +82,9 @@ class MainFrame(wx.Frame):
             display_error_message("Unable to open timeline '%s'.\n\n%s" %
                                   (input_file, e))
         else:
-            self.SetTitle("%s (%s)" % (self.title_base, input_file))
+            self.SetTitle("%s (%s) - %s" % (os.path.basename(input_file),
+                                            os.path.dirname(os.path.abspath(input_file)),
+                                            APPLICATION_NAME))
             # Notify sub controls that we have a new timeline
             self.main_panel.catbox.set_timeline(self.timeline)
             self.main_panel.drawing_area.set_timeline(self.timeline)
@@ -229,13 +232,11 @@ class MainFrame(wx.Frame):
         Instance variables usage:
 
         timeline            The timeline currently handled by the application
-        title_base          The prefix of the title displayed in the title bar
         extensions          Valid extensions for files containing timeline info
         default_extension   The default extension used in FileDialog
         wildcard            The wildcard used in FileDialog
         """
         self.timeline = None
-        self.title_base = "The Timeline Project"
         self.extensions = [".timeline"]
         self.default_extension = self.extensions[0]
         self.wildcard = "Timeline file (%s)|%s" % (
