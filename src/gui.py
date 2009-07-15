@@ -600,6 +600,7 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_MOTION, self._window_on_motion)
         self.Bind(wx.EVT_MOUSEWHEEL, self._window_on_mousewheel)
         self.Bind(wx.EVT_KEY_DOWN, self._window_on_key_down)
+        self.Bind(wx.EVT_KEY_UP, self._window_on_key_up)
 
     def _set_initial_values_to_member_variables(self):
         """
@@ -638,7 +639,7 @@ class DrawingArea(wx.Panel):
         """Define the look and feel of the drawing area."""
         self.SetBackgroundColour(wx.WHITE)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.SetCursor(wx.CROSS_CURSOR)
+        self.set_default_cursor()
         self.Disable()
 
     def _window_on_size(self, event):
@@ -775,12 +776,20 @@ class DrawingArea(wx.Panel):
         Key         Action
         --------    ------------------------------------
         Delete      Delete any selected event(s)
+        Control     Change cursor
         """
         logging.debug("Key down event in DrawingArea")
         keycode = evt.GetKeyCode()
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()
+        elif keycode == wx.WXK_CONTROL:
+            self.set_action_cursor()
         evt.Skip()
+
+    def _window_on_key_up(self, evt):
+        keycode = evt.GetKeyCode()
+        if keycode == wx.WXK_CONTROL:
+            self.set_default_cursor()
 
     def _set_new_current_time(self, current_x):
         self._current_time = self.drawing_algorithm.metrics.get_time(current_x)
@@ -860,6 +869,21 @@ class DrawingArea(wx.Panel):
     def _reset_text_in_statusbar(self):
         wx.GetTopLevelParent(self).SetStatusText('')
 
+    def set_action_cursor(self):
+        """
+        Set the shape of the cursor, to indicate that a special
+        action can be taken, such as:
+            - zooming the timeline
+            - creating a period event
+        """
+        self.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
+
+    def set_default_cursor(self):
+        """
+        Set the cursor to it's default shape when it is in the timeline
+        drawing area.
+        """
+        self.SetCursor(wx.StockCursor(wx.CURSOR_CROSS))
 
 class EventEditor(wx.Dialog):
     """Dialog used for creating and editing events."""
@@ -1346,3 +1370,5 @@ def sort_categories(categories):
     sorted_categories = list(categories)
     sorted_categories.sort(cmp, lambda x: x.name.lower())
     return sorted_categories
+
+
