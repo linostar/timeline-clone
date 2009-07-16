@@ -20,7 +20,8 @@
 html: manual.html
 
 manual.html: manual.xml
-	docbook2html -u manual.xml
+	#docbook2html -u manual.xml
+	xmlto -vv --stringparam chunker.output.encoding=UTF-8 html-nochunks manual.xml
 
 clean:
 	-rm manual.html
