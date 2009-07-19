@@ -56,6 +56,8 @@ def ignore(file):
         return True
     if os.path.basename(file).endswith(".zip"):
         return True
+    if os.path.basename(file).endswith("tags"):
+        return True
     return False
 
 def generate_filelist(subpath=""):
