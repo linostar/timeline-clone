@@ -23,7 +23,7 @@ import sys
 import os.path
 import unittest
 
-src_dir = os.path.abspath(os.path.join(os.path.basename(__file__), "..", "src"))
+src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, src_dir)
 
 import time_period
