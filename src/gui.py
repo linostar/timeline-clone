@@ -164,13 +164,15 @@ class MainFrame(wx.Frame):
 
     def _window_on_close(self, event):
         self._save_current_timeline_data()
-        if self.timeline:
-            config.set_window_size(self.GetSize())
-            config.set_window_maximized(self.IsMaximized())
-            config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
-            config.set_sidebar_width(self.main_panel.get_sidebar_width())
-            config.write()
+        self._save_application_config()
         self.Destroy()
+
+    def _save_application_config(self):
+        config.set_window_size(self.GetSize())
+        config.set_window_maximized(self.IsMaximized())
+        config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
+        config.set_sidebar_width(self.main_panel.get_sidebar_width())
+        config.write()
 
     def _save_current_timeline_data(self):
         """
