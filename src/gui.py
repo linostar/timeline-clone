@@ -73,6 +73,17 @@ class MainFrame(wx.Frame):
         self.SetTitle(APPLICATION_NAME)
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
         self._enable_disable_menus()
+        self.SetIcons(self._load_icon_bundle())
+
+    def _load_icon_bundle(self):
+        bundle = wx.IconBundle()
+        icondir = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                  "..", "icons"))
+        for size in ["16", "32", "48"]:
+            iconpath = os.path.join(icondir, "%s.png" % size)
+            icon = wx.IconFromBitmap(wx.BitmapFromImage(wx.Image(iconpath)))
+            bundle.AddIcon(icon)
+        return bundle
 
     def display_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
