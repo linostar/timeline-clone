@@ -822,9 +822,10 @@ class DrawingArea(wx.Panel):
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event:
+            selected = event.selected
             if not control_down:
                 self.timeline.reset_selected_events()
-            self.timeline.select_event(event, not event.selected)
+            self.timeline.select_event(event, not selected)
         else:
             self.timeline.reset_selected_events()
 
