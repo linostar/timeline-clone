@@ -700,7 +700,13 @@ class DrawingArea(wx.Panel):
         """
         logging.debug("Left mouse pressed event in DrawingArea")
         self._set_new_current_time(evt.m_x)
-        self._toggle_event_selection(evt.m_x, evt.m_y, evt.m_controlDown)
+        posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
+                                                  evt.m_controlDown)
+        if not posAtEvent:
+            if evt.m_controlDown:
+                self.set_select_period_cursor()
+            else:
+                self.set_drag_cursor()
         evt.Skip()
 
     def _window_on_left_dclick(self, evt):
@@ -730,6 +736,7 @@ class DrawingArea(wx.Panel):
             self._end_selection_and_create_event(evt.m_x)
         self.is_selecting = False
         self.is_scrolling = False
+        self.set_default_cursor()
 
     def _window_on_motion(self, evt):
         """
@@ -795,8 +802,6 @@ class DrawingArea(wx.Panel):
         keycode = evt.GetKeyCode()
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()
-        elif keycode == wx.WXK_CONTROL:
-            self.set_action_cursor()
         evt.Skip()
 
     def _window_on_key_up(self, evt):
@@ -819,6 +824,9 @@ class DrawingArea(wx.Panel):
 
         If the given position isn't within an event all selected events will
         be unselected.
+
+        Return True if the given position was with an event, otherwise
+        return False.
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event:
@@ -828,6 +836,7 @@ class DrawingArea(wx.Panel):
             self.timeline.select_event(event, not selected)
         else:
             self.timeline.reset_selected_events()
+        return event != None
 
     def _end_selection_and_create_event(self, current_x):
         self._mark_selection = False
@@ -883,21 +892,18 @@ class DrawingArea(wx.Panel):
     def _reset_text_in_statusbar(self):
         wx.GetTopLevelParent(self).SetStatusText('')
 
-    def set_action_cursor(self):
-        """
-        Set the shape of the cursor, to indicate that a special
-        action can be taken, such as:
-            - zooming the timeline
-            - creating a period event
-        """
+    def set_select_period_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
+
+    def set_drag_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
     def set_default_cursor(self):
         """
         Set the cursor to it's default shape when it is in the timeline
         drawing area.
         """
-        self.SetCursor(wx.StockCursor(wx.CURSOR_CROSS))
+        self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
 class EventEditor(wx.Dialog):
     """Dialog used for creating and editing events."""
