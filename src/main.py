@@ -44,7 +44,7 @@ def parse_options():
     option_parser = OptionParser(usage="%prog [options] [filename]",
                                  version=version_string)
     option_parser.add_option("-l", "--log-level",
-                             type="int", default=logging.ERROR,
+                             type="int", default=100, # Don't log anything
                              help="specify log level (0 to log everything)")
     option_parser.add_option("-f", "--log-file",
                              default=None,
