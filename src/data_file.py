@@ -210,10 +210,10 @@ class FileTimeline(Timeline):
             if not self._load_footer(current_line.rstrip("\r\n")):
                 return False
             current_line = file.readline()
-        # Ensure no more data
-        if current_line:
-            logerror("File continues after EOF marker")
-            return False
+            # Ensure no more data
+            if current_line:
+                logerror("File continues after EOF marker")
+                return False
         # All well
         return True
 
