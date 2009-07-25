@@ -82,5 +82,11 @@ shutil.rmtree(REL_NAME)
 
 print("-----")
 
+f = open(os.path.join(ROOT_DIR, "README"))
+redme_first_line = f.readline()
+f.close()
+if not version.get_version() in redme_first_line:
+    print("Warning: Version mismatch between README and version module")
+
 if version.DEV:
     print("Warning: This is a development version")
