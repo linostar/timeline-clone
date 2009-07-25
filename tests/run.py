@@ -27,10 +27,11 @@ src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, src_dir)
 
 import time_period
+import file_timeline
 
 if __name__ == '__main__':
     loader = unittest.TestLoader()
-    test_modules = [time_period]
+    test_modules = [time_period, file_timeline]
     test_suites = [loader.loadTestsFromModule(x) for x in test_modules]
     the_suite = unittest.TestSuite(test_suites)
     unittest.TextTestRunner(verbosity=2).run(the_suite)

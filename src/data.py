@@ -384,7 +384,7 @@ def time_period_center(time, length):
     return TimePeriod(start_time, end_time)
 
 
-def get_timeline(input_file):
+def get_timeline(input_file, error_fn):
     """
     Timeline factory method.
 
@@ -392,7 +392,7 @@ def get_timeline(input_file):
     """
     if input_file.endswith(".timeline"):
         from data_file import FileTimeline
-        return FileTimeline(input_file)
+        return FileTimeline(input_file, error_fn)
     if input_file.startswith("http://") or input_file.endswith(".rss"):
         from data_feed import FeedTimeline
         return FeedTimeline(input_file)

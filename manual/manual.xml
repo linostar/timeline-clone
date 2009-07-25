@@ -99,14 +99,16 @@
     </itemizedlist>
 
     <para>
-      The tutorial should contain enough information to get you started using
-      &app;. Later you can come back and read more details about particular
-      topics.
+      The <link linkend="tutorial">tutorial</link> should contain enough
+      information to get you started using &app;. You are also strongly
+      encouraged to read the section about <link
+        linkend="backups">backups</link>. Later you can come back and read more
+      details about particular topics.
     </para>
 
   </section>
 
-  <section>
+  <section id="tutorial">
 
     <title>Tutorial</title>
 
@@ -209,6 +211,37 @@
 
     <para>
       Hoovering an event will display the full description in the status bar.
+    </para>
+
+  </section>
+
+  <section id="backups">
+
+    <title>Backups</title>
+
+    <para>
+      &app; tries its best to ensure that the data you save in a timeline
+      never get lost. One step in that process is to create a backup of
+      your timeline every time before new data is saved. The backup is
+      saved in a file with the same name as the original but with an "~"
+      appended to the name.
+    </para>
+
+    <para>
+      If you get an error saying that there was a problem reading
+      timeline data, your backup might save you if the original has been
+      corrupted.
+    </para>
+
+    <para>
+      To recover a file from the backup, simply remove the "~" in the name of
+      the backed up file.
+    </para>
+
+    <para>
+      If you would like to be extra ceratain to not loose your data, we
+      recommend that you take regular backups of your timeline file. It can be
+      as simple as copying the original file to another directory.
     </para>
 
   </section>
@@ -503,6 +536,43 @@
           Day</guimenuitem> has the same functionality as the <guimenuitem>Fit
           Year</guimenuitem> except that the timeline will display one single
         month and one single day.
+      </para>
+
+    </section>
+
+    <section>
+
+      <title>Enable logging</title>
+
+      <para>
+        If you are having a problem with &app; it can be helpful to enable
+        logging to get more information about your problem.
+      </para>
+
+      <para>
+        In order to enable logging, &app; must be started from the command
+        line like this:
+      </para>
+
+      <screen>
+        <userinput>
+          python &lt;path-to-timeline-directory&gt;/src/main.py --log-level 0 --log-file log.txt
+        </userinput>
+      </screen>
+
+      <para>
+        Windows users might also need to specify the path to the python exe
+        file which is normally <filename>C:\Pyhon25\python.exe</filename>.
+      </para>
+
+      <para>
+        This command will print a lot of information and also write it to the
+        file <filename>log.txt</filename>.
+      </para>
+
+      <para>
+        To exlude debug messages, change the 0 to 20 in the log level
+        parameter.
       </para>
 
     </section>

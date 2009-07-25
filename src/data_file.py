@@ -17,9 +17,9 @@
 
 
 """
-Implementation of `Timeline` with file storage.
+Implementation of Timeline with flat file storage.
 
-The class `FileTimeline` implements the `Timeline` interface.
+The class FileTimeline implements the Timeline interface.
 """
 
 
@@ -27,9 +27,9 @@ import re
 import codecs
 import shutil
 import os.path
+from os.path import abspath
 from logging import error as logerror
 from logging import info as loginfo
-from logging import warning as logwarning
 from logging import debug as logdebug
 from datetime import datetime
 from datetime import timedelta
@@ -40,7 +40,6 @@ from data import Event
 from data import Category
 from data import time_period_center
 from version import get_version
-from gui import display_error_message
 
 
 ENCODING = "utf-8"
@@ -53,111 +52,194 @@ class ParseException(Exception):
 
 class FileTimeline(Timeline):
     """
-    Implements the `Timeline` interface.
+    Implements the Timeline interface.
 
-    The comments in the `Timeline` class describes what the public methods
+    The comments in the Timeline class describes what the public methods
     should do.
+
+    The format of the file looks like this:
+
+      # Written by Timeline 0.3.0dev227M on 2009-7-23 9:40:33
+      PREFERRED-PERIOD:...
+      CATEGORY:...
+      ...
+      EVENT:...
+      ...
+      # END
+    
+    Only the first and last line are required. Note: last line only required in
+    version >= 0.3.0.
     """
 
-    def __init__(self, file_path):
-        """Create a new timeline and read data from file."""
+    # Errors caused by loading and saving timeline data to file
+    ERROR_NONE    = 0
+    ERROR_READ    = 1 # Unable to read from file
+    ERROR_CORRUPT = 2 # Able to read from file but content corrupt
+    ERROR_WRITE   = 3 # Unable to write to file
+
+    def __init__(self, file_path, error_fn):
+        """
+        Create a new timeline and read data from file.
+
+        The error function is used by the timeline to display error messages.
+        It does not know where the messages get displayed, it just knows how to
+        send them. The function takes one argument: the message.
+        """
         Timeline.__init__(self)
         self.file_path = file_path
-        self.__load_data()
+        self.error_fn = error_fn
+        self._load_data()
 
-    def __load_data(self):
-        """Load timeline data from the file that this timeline points to."""
+    def get_events(self, time_period):
+        def include_event(event):
+            if not event.inside_period(time_period):
+                return False
+            if event.category != None and event.category.visible == False:
+                return False
+            return True
+        return [event for event in self.events if include_event(event)]
+
+    def add_event(self, event):
+        self.events.append(event)
+        self._save_data()
+
+    def event_edited(self, event):
+        self._save_data()
+
+    def select_event(self, event, selected=True):
+        event.selected = selected
+        self._notify(Timeline.STATE_CHANGE_ANY)
+
+    def delete_selected_events(self):
+        self.events = [event for event in self.events if not event.selected]
+        self._save_data()
+
+    def reset_selected_events(self):
+        for event in self.events:
+            event.selected = False
+        self._notify(Timeline.STATE_CHANGE_ANY)
+
+    def get_categories(self):
+        # Make sure the original list can't be modified
+        return tuple(self.categories)
+
+    def add_category(self, category):
+        self.categories.append(category)
+        self._save_data()
+        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+
+    def category_edited(self, category):
+        self._save_data()
+        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+
+    def delete_category(self, category):
+        if category in self.categories:
+            self.categories.remove(category)
+        for event in self.events:
+            if event.category == category:
+                event.category = None
+        self._save_data()
+        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+
+    def get_preferred_period(self):
+        if self.preferred_period != None:
+            return self.preferred_period
+        return time_period_center(datetime.now(), timedelta(days=30))
+
+    def set_preferred_period(self, period):
+        self.preferred_period = period
+        self._save_data()
+
+    def _load_data(self):
+        """
+        Load timeline data from the file that this timeline points to.
+
+        This should only be done once when this class is created.
+
+        The data is stored internally until we do a save.
+
+        If an error occurs, the error_flag will be set to either ERROR_READ if
+        we failed to read from the file or ERROR_CORRUPT if the data we read
+        was not valid. An error message will also be sent.
+        """
         self.preferred_period = None
         self.categories = []
         self.events = []
-        self.disable_save_due_to_corrupt_data = False
+        self.error_flag = FileTimeline.ERROR_NONE
         if not os.path.exists(self.file_path): 
-            # Nothing to load if file does not exist
+            loginfo("File '%s' does not exists, nothing to load",
+                    abspath(self.file_path))
             return
-        self.__create_backup()
-        loginfo("Opening file '%s'" % self.file_path)
-        file = None
         try:
+            loginfo("Opening file '%s'", abspath(self.file_path))
+            file = codecs.open(self.file_path, "r", ENCODING)
             try:
-                file = codecs.open(self.file_path, "r", ENCODING)
-            except IOError, e:
-                display_error_message("Unable to read data from timeline.\n\n%s" % e)
-            else:
-                data_corrupt = False
-                for line in file:
-                    if not self.__load_object_from_line(line.rstrip("\r\n")):
-                        data_corrupt = True
-                if data_corrupt:
-                    display_error_message("Timeline data corrupt. Enable logging and open the timeline again to get more information about the problem.")
-                    self.disable_save_due_to_corrupt_data = True
-        finally:
-            if file:
+                if not self._load_from_lines(file):
+                    self.error_fn("Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem." % abspath(self.file_path))
+                    self.error_flag = FileTimeline.ERROR_CORRUPT
+            finally:
                 file.close()
-
-    def __save_data(self):
-        """Save timeline data to the file that this timeline points to."""
-        if self.disable_save_due_to_corrupt_data:
-            display_error_message("Save disabled because timeline data was corrupt.")
-            return
-        loginfo("Saving file '%s'" % self.file_path)
-        file = None
-        try:
-            try:
-                file = codecs.open(self.file_path, "w", ENCODING)
-            except IOError, e:
-                display_error_message("Unable to save timeline data.\n\nIf data was corrupted, check out the backed up file that was created when the timeline was opened.\n\n%s" % e)
-            else:
-                file.write("# Written by Timeline %s on %s\n" % (
-                    get_version(),
-                    time_string(datetime.now())))
-                if self.preferred_period:
-                    file.write("PREFERRED-PERIOD:%s;%s\n" % (
-                        time_string(self.preferred_period.start_time),
-                        time_string(self.preferred_period.end_time)))
-                for cat in self.categories:
-                    r, g, b = cat.color
-                    file.write("CATEGORY:%s;%s,%s,%s;%s\n" % (quote(cat.name),
-                                                              r, g, b,
-                                                              cat.visible))
-                for event in self.events:
-                    file.write("EVENT:%s;%s;%s" % (
-                        time_string(event.time_period.start_time),
-                        time_string(event.time_period.end_time),
-                        quote(event.text)))
-                    if event.category:
-                        file.write(";%s" % quote(event.category.name))
-                    file.write("\n")
-        finally:
-            if file:
-                file.close()
-        self._notify(Timeline.STATE_CHANGE_ANY)
-
-    def __create_backup(self):
-        backup_path = self.file_path + "~"
-        try:
-            loginfo("Creating backup to '%s'" % backup_path)
-            shutil.copy(self.file_path, backup_path)
         except IOError, e:
-            logwarning("Unable to create backup to '%s'" % backup_path,
-                       exc_info=e)
+            self.error_fn("Unable to read from file '%s'.\n\n%s" % (abspath(self.file_path), e))
+            self.error_flag = FileTimeline.ERROR_READ
 
-    def __load_object_from_line(self, line):
-        """Return True if object successfully loaded, otherwise False."""
-        logdebug("Processing line '%s'" % line)
-        # Map prefixes to functions that handle the loading of those objects
-        prefixes = (
-            ("PREFERRED-PERIOD:", self.__load_preferred_period),
-            ("CATEGORY:", self.__load_category),
-            ("EVENT:", self.__load_event),
-            ("#", self.__load_comment),
-            # Catch all (make sure this function always return something)
-            ("", self.__load_unknown),
-        )
-        for (prefix, loading_function) in prefixes:
-            if line.startswith(prefix):
-                return loading_function(line[len(prefix):])
+    def _load_from_lines(self, file):
+        """Return True if able to load, otherwise False."""
+        current_line = file.readline()
+        # Load header
+        if not self._load_header(current_line.rstrip("\r\n")):
+            return False
+        current_line = file.readline()
+        # Load preferred period
+        if current_line.startswith("PREFERRED-PERIOD:"):
+            if not self._load_preferred_period(current_line[17:].rstrip("\r\n")):
+                return False
+            current_line = file.readline()
+        # Load categories
+        while current_line.startswith("CATEGORY:"):
+            if not self._load_category(current_line[9:].rstrip("\r\n")):
+                return False
+            current_line = file.readline()
+        # Load events
+        while current_line.startswith("EVENT:"):
+            if not self._load_event(current_line[6:].rstrip("\r\n")):
+                return False
+            current_line = file.readline()
+        # Load footer if version supports it (version read by _load_header)
+        if self.file_version >= (0, 3, 0, 1):
+            if not self._load_footer(current_line.rstrip("\r\n")):
+                return False
+            current_line = file.readline()
+        # Ensure no more data
+        if current_line:
+            logerror("File continues after EOF marker")
+            return False
+        # All well
+        return True
 
-    def __load_preferred_period(self, period_text):
+    def _load_header(self, header_text):
+        """
+        Expected format '# Written by Timeline <version> on <date>'.
+        
+        Expected format of <version> '0.3.0[dev227M]'. We are just interested
+        in the first part of the version.
+        """
+        match = re.search(r"^# Written by Timeline (\d+)\.(\d+)\.(\d+)(dev)?",
+                          header_text)
+        if match:
+            major = int(match.group(1))
+            minor = int(match.group(2))
+            tiny = int(match.group(3))
+            dev = 1
+            if match.group(4):
+                dev = 0 # Development version must have lower version number
+            self.file_version = (major, minor, tiny, dev)
+            return True
+        else:
+            logerror("Unable to load header from '%s'", header_text)
+            return False
+
+    def _load_preferred_period(self, period_text):
         """Expected format 'start_time;end_time'."""
         times = split_on_semicolon(period_text)
         try:
@@ -167,11 +249,11 @@ class FileTimeline(Timeline):
                                                parse_time(times[1]))
             return True
         except ParseException, e:
-            logerror("Unable to parse preferred period from '%s'" % (
-                     period_text), exc_info=e)
+            logerror("Unable to parse preferred period from '%s'",
+                     period_text, exc_info=e)
             return False
 
-    def __load_category(self, category_text):
+    def _load_category(self, category_text):
         """
         Expected format 'name;color;visible'.
         
@@ -191,11 +273,11 @@ class FileTimeline(Timeline):
             self.categories.append(Category(name, color, visible))
             return True
         except ParseException, e:
-            logerror("Unable to parse category from '%s'" % category_text,
+            logerror("Unable to parse category from '%s'", category_text,
                      exc_info=e)
             return False
 
-    def __load_event(self, event_text):
+    def _load_event(self, event_text):
         """Expected format 'start_time;end_time;text[;category]'."""
         event_specification = split_on_semicolon(event_text)
         try:
@@ -207,91 +289,102 @@ class FileTimeline(Timeline):
             cat_name = None
             if len(event_specification) == 4:
                 cat_name = dequote(event_specification[3])
-            category = self.__get_category(cat_name)
+            category = self._get_category(cat_name)
             self.events.append(Event(start_time, end_time, text, category))
             return True
         except ParseException, e:
-            logerror("Unable to parse event from '%s'" % event_text,
+            logerror("Unable to parse event from '%s'", event_text,
                      exc_info=e)
             return False
 
-    def __load_comment(self, comment):
-        # No processing of comments
-        return True
-
-    def __load_unknown(self, line):
-        line_is_empty = line.strip() == ""
-        if line_is_empty:
+    def _load_footer(self, footer_text):
+        """Expected format '# END'."""
+        if footer_text == "# END":
             return True
         else:
-            logerror("Skipping unknown line: '%s'" % line)
+            logerror("Unable to load footer from '%s'", footer_text)
             return False
 
-    def __get_category(self, name):
+    def _get_category(self, name):
         for category in self.categories:
             if category.name == name:
                 return category
         return None
 
-    def get_events(self, time_period):
-        def include_event(event):
-            if not event.inside_period(time_period):
-                return False
-            if event.category != None and event.category.visible == False:
-                return False
-            return True
-        return [event for event in self.events if include_event(event)]
+    def _save_data(self):
+        """
+        Save timeline data to the file that this timeline points to.
 
-    def add_event(self, event):
-        self.events.append(event)
-        self.__save_data()
+        It is extremely important to ensure that we never loose data. We can
+        only loose data when we write. Here is how we try to minimize data
+        loss:
 
-    def event_edited(self, event):
-        self.__save_data()
-
-    def select_event(self, event, selected=True):
-        event.selected = selected
+          * Before we write the timeline we take a backup of the original
+            * A backup can only be taken if the original file is healthy
+            * If we encountered problems while reading the original file, it is
+              not healthy (error_flag != ERROR_NONE)
+            * If we read a file correctly and encounter error while writing new
+              data, the error flag is also set to prevent further writes
+        """
+        if self.error_flag != FileTimeline.ERROR_NONE:
+            self.error_fn("Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten.")
+            return
+        self._create_backup()
+        loginfo("Saving file '%s'", abspath(self.file_path))
+        try:
+            file = codecs.open(self.file_path, "w", ENCODING)
+            try:
+                self._write_header(file)
+                self._write_preferred_period(file)
+                self._write_categories(file)
+                self._write_events(file)
+                self._write_footer(file)
+            finally:
+                file.close()
+        except IOError, e:
+            self.error_fn("Unable to save timeline data.\n\nIf data was corrupted, check out the backed up file that was created when the timeline was last saved.\n\n%s" % e)
+            self.error_flag = FileTimeline.ERROR_WRITE
         self._notify(Timeline.STATE_CHANGE_ANY)
 
-    def delete_selected_events(self):
-        self.events = [event for event in self.events if not event.selected]
-        self.__save_data()
+    def _create_backup(self):
+        if os.path.exists(self.file_path):
+            backup_path = self.file_path + "~"
+            try:
+                loginfo("Creating backup to '%s'", abspath(backup_path))
+                shutil.copy(self.file_path, backup_path)
+            except IOError, e:
+                self.error_fn("Unable to create backup to '%s'.\n\n%s" % (abspath(backup_path), e))
 
-    def reset_selected_events(self):
-        for event in self.events:
-            event.selected = False
-        self._notify(Timeline.STATE_CHANGE_ANY)
+    def _write_header(self, file):
+        file.write("# Written by Timeline %s on %s\n" % (
+            get_version(),
+            time_string(datetime.now())))
 
-    def get_categories(self):
-        # Make sure the original list can't be modified
-        return tuple(self.categories)
-
-    def add_category(self, category):
-        self.categories.append(category)
-        self.__save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
-
-    def category_edited(self, category):
-        self.__save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
-
-    def delete_category(self, category):
-        if category in self.categories:
-            self.categories.remove(category)
-        for event in self.events:
-            if event.category == category:
-                event.category = None
-        self.__save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
-
-    def get_preferred_period(self):
+    def _write_preferred_period(self, file):
         if self.preferred_period:
-            return self.preferred_period
-        return time_period_center(datetime.now(), timedelta(days=30))
+            file.write("PREFERRED-PERIOD:%s;%s\n" % (
+                time_string(self.preferred_period.start_time),
+                time_string(self.preferred_period.end_time)))
 
-    def set_preferred_period(self, period):
-        self.preferred_period = period
-        self.__save_data()
+    def _write_categories(self, file):
+        for cat in self.categories:
+            r, g, b = cat.color
+            file.write("CATEGORY:%s;%s,%s,%s;%s\n" % (quote(cat.name),
+                                                      r, g, b,
+                                                      cat.visible))
+
+    def _write_events(self, file):
+        for event in self.events:
+            file.write("EVENT:%s;%s;%s" % (
+                time_string(event.time_period.start_time),
+                time_string(event.time_period.end_time),
+                quote(event.text)))
+            if event.category:
+                file.write(";%s" % quote(event.category.name))
+            file.write("\n")
+
+    def _write_footer(self, file):
+        file.write(u"# END\n")
 
 
 def parse_bool(bool_string):
