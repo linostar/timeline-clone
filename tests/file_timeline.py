@@ -137,7 +137,7 @@ class TestFileTimeline(unittest.TestCase):
         Scenario: A timeline is opened that contains no corrupt data. However,
         no end of file marker is found.
 
-        Expected result: The timeline should be treaded as corrupt.
+        Expected result: The timeline should be treated as corrupt.
         """
         timeline = FileTimeline("missing.timeline", self._error_fn)
         self.assertEqual(self.error_fn_called, 1)
