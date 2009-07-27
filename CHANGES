@@ -1,8 +1,32 @@
-Timeline 0.3.0, released on ...
-===============================
+Timeline 0.3.0, released on 1 August 2009
+=========================================
 
- * Added copyright notes to all source files.
- * Added AUTHORS, CHANGES, COPYING, and INSTALL.
+In this release the documentation has been improved and a few bugs have been
+fixed.
+
+The file format has also been updated to decrease the risk of loosing data.
+Users are therefore strongly encouraged to upgrade to this version. The file
+format is readable by the 0.2.0 version but it can not take advantage of the
+new format.
+
+New features, enhancements:
+
+  * Changed to allow events without categories.
+  * Improved what's displayed in the title bar (open file name first).
+  * Added application icon.
+  * Added Help menu.
+  * Converted user manual to DocBook format.
+  * Integrated user manual with application (first step).
+  * Started experimenting with unit tests.
+  * Added copyright notes to all source files.
+  * Added AUTHORS, CHANGES, COPYING, and INSTALL.
+
+Bug fixes:
+
+  * Fixed bug where application raised exceptions when scrolling to the very
+    end or the very beginning of time (year 10 or year 9999).
+  * If multiple timelines were opened, the preferred period would just be saved
+    for the last opened one. That is fixed now so it is saved for all.
 
 Timeline 0.2.0, released on 5 July 2009
 =======================================
@@ -13,10 +37,10 @@ File format written by this version is not readable by previous versions.
 
 New features, enhancements:
 
- * Added support for showing and hiding events from certain categories.
- * Added a week view in one zoom level of the timeline.
- * Added navigation functions such as ''Go to Date'' and ''Go to Today''.
- * Improved controls for entering a date and time.
+  * Added support for showing and hiding events from certain categories.
+  * Added a week view in one zoom level of the timeline.
+  * Added navigation functions such as 'Go to Date' and 'Go to Today'.
+  * Improved controls for entering a date and time.
 
 Timeline 0.1.0, released on 11 April 2009
 =========================================
