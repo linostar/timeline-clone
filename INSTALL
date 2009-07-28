@@ -6,8 +6,8 @@ library for the GUI. Both these components are needed in order to run
 Timeline. For further instructions on how to download and install these, go to
 their respective home pages:
 
- * Python (http://www.python.org)
- * wxPython (http://www.wxpython.org)
+  * Python (http://www.python.org)
+  * wxPython (http://www.wxpython.org)
 
 Platforms
 =========
@@ -39,12 +39,12 @@ What options are available is displayed with the following command:
 
   python <path-to-timeline-directory>/src/main.py --help
 
-
 Notes for Windows
 =================
 
 Creating a desktop shortcut
 ---------------------------
+
 Follow the instructions below to create a desktop shortcut to the Timeline
 application.
 
@@ -59,7 +59,7 @@ application.
 7. Change the "Start in" value to the directory where main.py is found.
 8. Click the <Change icon>-button and select the Timeline icon from the
    icons directory in your Timeline installation.
-9. Clik <OK>-button
+9. Click <OK>-button
 
 
 
