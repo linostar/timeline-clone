@@ -78,22 +78,22 @@
     <itemizedlist>
       <listitem>
         <para>
-          Organize events in categories
+          Organize events in categories.
         </para>
       </listitem>
       <listitem>
         <para>
-          Go to a specific date
+          Go to a specific date.
         </para>
       </listitem>
       <listitem>
         <para>
-          Scroll and zoom with mouse wheel
+          Scroll and zoom with mouse wheel.
         </para>
       </listitem>
       <listitem>
         <para>
-          Different representation depending on zoom level
+          Different representation depending on zoom level.
         </para>
       </listitem>
     </itemizedlist>
@@ -138,14 +138,9 @@
       <guimenu>File</guimenu> menu and enter a name of a file in the dialog box
       that opens. This is the name of the file in which information about your
       events will be stored. Next time you start &app; you can choose to open
-      the same file again.
+      the same file again. The titlebar always shows which timeline is
+      currently opened.
     </para>
-
-    <note>
-      <para>
-        The titlebar shows which timeline is currently opened.
-      </para>
-    </note>
 
     <para>
       To add a new event at a specific point in time, double click somewhere on
@@ -188,7 +183,7 @@
     <para>
       To select an event, just click on it. To select multiple events, hold
       down the <keycap>Ctrl</keycap> key while selecting events. To delete the
-      selected events, press the <keycap>Del</keycap> key.
+      selected events, press the <keycap>Delete</keycap> key.
     </para>
 
     <para>
@@ -221,7 +216,7 @@
 
     <para>
       &app; tries its best to ensure that the data you save in a timeline
-      never get lost. One step in that process is to create a backup of
+      never gets lost. One step in that process is to create a backup of
       your timeline every time before new data is saved. The backup is
       saved in a file with the same name as the original but with an "~"
       appended to the name.
@@ -442,11 +437,11 @@
       </figure>
 
       <para>
-        You create a new category by clicking the <keycap>Add</keycap> button
-        and thereafter filling in the attributes of the category in the dialog
-        that appears. The visible checkbox determines if the events belonging
-        to that category should be visible or not. This flag can also be
-        modified in the sidebar
+        You create a new category by clicking the <guibutton>Add</guibutton>
+        button and thereafter filling in the attributes of the category in the
+        dialog that appears. The visible checkbox determines if the events
+        belonging to that category should be visible or not. This flag can also
+        be modified in the sidebar
         (<menuchoice>
           <guimenu>View</guimenu>
           <guimenuitem>Sidebar</guimenuitem>
@@ -469,7 +464,7 @@
       <para>
         You delete a category by selecting it in the listbox and clicking the
         <guibutton>Delete</guibutton> button or pressing the
-        <keycap>Del</keycap> key.  You thereafter have to acknowledge the
+        <keycap>Delete</keycap> key.  You thereafter have to acknowledge the
         delete in the dialog that appears.  When you delete a category, all the
         events that belonged to this category are no longer associated with a
         category.
@@ -542,7 +537,7 @@
 
     <section>
 
-      <title>Enable logging</title>
+      <title>Enable Logging</title>
 
       <para>
         If you are having a problem with &app; it can be helpful to enable
@@ -562,7 +557,8 @@
 
       <para>
         Windows users might also need to specify the path to the python exe
-        file which is normally <filename>C:\Pyhon25\python.exe</filename>.
+        file which is normally something like
+        <filename>C:\Pyhon25\python.exe</filename>.
       </para>
 
       <para>
