@@ -1293,7 +1293,7 @@ class GotoDateDialog(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox, checkbox)
         # Layout
         vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(checkbox, flag=wx.EXPAND|wx.LEFT|wx.TOP|wx.RIGHT,
+        vbox.Add(checkbox, flag=wx.LEFT|wx.TOP|wx.RIGHT,
                  border=BORDER, proportion=1)
         vbox.Add(self.dtpc, flag=wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT,
                  border=BORDER, proportion=1)
