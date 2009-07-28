@@ -46,13 +46,13 @@ class TestFileTimeline(unittest.TestCase):
     def setUp(self):
         self.error_fn_called = 0
         HEADER_030 = "# Written by Timeline 0.3.0 on 2009-7-23 9:40:33"
-        HEADER_DEV = "# Written by Timeline 0.3.0dev on 2009-7-23 9:40:33"
+        HEADER_030_DEV = "# Written by Timeline 0.3.0dev on 2009-7-23 9:40:33"
         HEADER_021 = "# Written by Timeline 0.2.1 on 2009-7-23 9:40:33"
         self._write_timeline("readonly.timeline", [HEADER_030, "# END"])
         self._write_timeline("writeonly.timeline", [HEADER_030, "# END"])
         self._write_timeline("corrupt.timeline", ["corrupt data here"])
-        self._write_timeline("missing.timeline", ["# valid data"])
-        self._write_timeline("030dev.timeline", [HEADER_DEV])
+        self._write_timeline("missingeof.timeline", ["# valid data"])
+        self._write_timeline("030dev.timeline", [HEADER_030_DEV])
         self._write_timeline("021.timeline", [HEADER_021])
         self._set_read_only("readonly.timeline")
         self._set_write_only("writeonly.timeline")
@@ -64,8 +64,8 @@ class TestFileTimeline(unittest.TestCase):
         self._silent_remove("writeonly.timeline~")
         self._silent_remove("corrupt.timeline")
         self._silent_remove("corrupt.timeline~")
-        self._silent_remove("missing.timeline")
-        self._silent_remove("missing.timeline~")
+        self._silent_remove("missingeof.timeline")
+        self._silent_remove("missingeof.timeline~")
         self._silent_remove("030dev.timeline")
         self._silent_remove("030dev.timeline~")
         self._silent_remove("021.timeline")
@@ -128,9 +128,11 @@ class TestFileTimeline(unittest.TestCase):
         timeline._save_data()
         self.assertEqual(self.error_fn_called, 2)
         self.assertFalse(os.path.exists("corrupt.timeline~"))
+        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_CORRUPT)
         timeline._save_data()
         self.assertEqual(self.error_fn_called, 3)
         self.assertFalse(os.path.exists("corrupt.timeline~"))
+        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_CORRUPT)
 
     def testMissingEOF(self):
         """
@@ -139,7 +141,7 @@ class TestFileTimeline(unittest.TestCase):
 
         Expected result: The timeline should be treated as corrupt.
         """
-        timeline = FileTimeline("missing.timeline", self._error_fn)
+        timeline = FileTimeline("missingeof.timeline", self._error_fn)
         self.assertEqual(self.error_fn_called, 1)
         self.assertEqual(timeline.error_flag, FileTimeline.ERROR_CORRUPT)
 
