@@ -17,7 +17,8 @@ and wxPython:
 
 Platform              Python   wxPython
 ---------------------------------------
-Windows (XP)          2.5.2    2.8.8.1
+Windows (Vista)       2.5.2    2.8.8.1
+Windows (XP)          2.5.2    2.8.10.1
 Linux (Debian Etch)   2.4.6    2.8.10.1
 Linux (Debian Etch)   2.5.2    2.8.10.1
 
