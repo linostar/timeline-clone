@@ -25,7 +25,7 @@ Bug fixes:
 
   * Fixed bug where application raised exceptions when scrolling to the very
     end or the very beginning of time (year 10 or year 9999).
-  * If multiple timelines were opened, the preferred period would just be saved
+  * If multiple timelines were opened, the displayed period would just be saved
     for the last opened one. That is fixed now so it is saved for all.
 
 Timeline 0.2.0, released on 5 July 2009

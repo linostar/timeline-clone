@@ -63,7 +63,7 @@ if call(["make", "-C", os.path.join(ROOT_DIR, "manual")]) != 0:
     print("Error: Could not make manual")
     sys.exit()
 
-# The html version of the manual is not versioned controlled, but we would like
+# The html version of the manual is not version controlled, but we would like
 # to include it in the source release anyway so that users running from source
 # do not need to make it themselves.
 print("Copying manual to release")
