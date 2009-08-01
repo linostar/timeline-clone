@@ -92,7 +92,7 @@ class MainFrame(wx.Frame):
         try:
             self.timeline = data.get_timeline(input_file, error_fn)
         except Exception, e:
-            display_error_message("Unable to open timeline '%s'.\n\n%s" %
+            display_error_message(_("Unable to open timeline '%s'.\n\n%s") %
                                   (input_file, e))
         else:
             self.SetTitle("%s (%s) - %s" % (os.path.basename(input_file),
@@ -113,7 +113,7 @@ class MainFrame(wx.Frame):
         If the new filename entered, should already exist, the existing
         timeline is opened. The user will be informed about this situation.
         """
-        dialog = wx.FileDialog(self, message="Create Timeline",
+        dialog = wx.FileDialog(self, message=_("Create Timeline"),
                                wildcard=self.wildcard, style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
@@ -127,8 +127,9 @@ class MainFrame(wx.Frame):
             if not has_valid_extension:
                 path += self.default_extension
             if os.path.exists(path):
-                wx.MessageBox("The specified timeline already exists.\n\n"
-                              "Opening instead of creating new.", "Information",
+                wx.MessageBox(_("The specified timeline already exists.\n\n"),
+                              _("Opening instead of creating new."),
+                              _("Information"),
                               wx.OK|wx.ICON_INFORMATION, self)
             self.display_timeline(path)
         dialog.Destroy()
@@ -139,7 +140,7 @@ class MainFrame(wx.Frame):
 
         The user is asked to enter the filename of the timeline to be opened.
         """
-        dialog = wx.FileDialog(self, message="Open Timeline",
+        dialog = wx.FileDialog(self, message=_("Open Timeline"),
                                wildcard=self.wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
@@ -232,11 +233,11 @@ class MainFrame(wx.Frame):
 
     def _show_help(self):
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
-                                            "manual", "manual.html"))
+                                            _("manual"), "manual.html"))
         if os.path.exists(path):
             HelpWindow(self, path).Show()
         else:
-            display_error_message("Could not locate manual at '%s'." % path,
+            display_error_message(_("Could not locate manual at '%s'.") % path,
                                   self)
 
     def _mnu_help_about_on_click(self, e):
@@ -254,7 +255,7 @@ class MainFrame(wx.Frame):
         self.timeline = None
         self.extensions = [".timeline"]
         self.default_extension = self.extensions[0]
-        self.wildcard = "Timeline file (%s)|%s" % (
+        self.wildcard = _("Timeline file (%s)|%s") % (
             ", ".join(["*" + e for e in self.extensions]),
             ";".join(["*" + e for e in self.extensions]))
 
@@ -267,21 +268,24 @@ class MainFrame(wx.Frame):
         # The menu
         # File menu
         self.mnu_file = wx.Menu()
-        self.mnu_file.Append(wx.ID_NEW, "&New...\tCtrl+N",
-                             "Create a new timeline")
-        self.mnu_file.Append(wx.ID_OPEN, "&Open...\tCtrl+O",
-                             "Open an existing timeline")
+        self.mnu_file.Append(wx.ID_NEW, _("&New...\tCtrl+N"),
+                             _("Create a new timeline"))
+        self.mnu_file.Append(wx.ID_OPEN, _("&Open...\tCtrl+O"),
+                             _("Open an existing timeline"))
         self.mnu_file.AppendSeparator()
-        self.mnu_file.Append(wx.ID_EXIT, "&Quit\tCtrl+Q", "Exit the program")
+        self.mnu_file.Append(wx.ID_EXIT, _("&Quit\tCtrl+Q"),
+                             _("Exit the program"))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
         # Timeline menu
         self.mnu_timeline = wx.Menu()
         mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
-                                    "Create &Event...", "Create a new event")
+                                    _("Create &Event..."),
+                                    _("Create a new event"))
         mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
-                                       "Edit &Categories", "Edit categories")
+                                       _("Edit &Categories"),
+                                       _("Edit categories"))
         self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
                   mnu_timeline_create_event)
         self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
@@ -289,19 +293,19 @@ class MainFrame(wx.Frame):
         # View menu
         self.mnu_view = wx.Menu()
         self.mnu_view_sidebar = self.mnu_view.Append(wx.ID_ANY,
-                                                     "&Sidebar\tCtrl+I",
+                                                     _("&Sidebar\tCtrl+I"),
                                                      kind=wx.ITEM_CHECK)
         self.mnu_view_sidebar.Check()
         self.Bind(wx.EVT_MENU, self._mnu_view_categories_on_click,
                   self.mnu_view_sidebar)
         # Navigate menu
         self.mnu_navigate = wx.Menu()
-        goto_today = self.mnu_navigate.Append(wx.ID_ANY, "Go to &Today\tCtrl+H")
-        goto_date = self.mnu_navigate.Append(wx.ID_ANY, "Go to D&ate...\tCtrl+G")
+        goto_today = self.mnu_navigate.Append(wx.ID_ANY, _("Go to &Today\tCtrl+H"))
+        goto_date = self.mnu_navigate.Append(wx.ID_ANY, _("Go to D&ate...\tCtrl+G"))
         self.mnu_navigate.AppendSeparator()
-        fit_year = self.mnu_navigate.Append(wx.ID_ANY, "Fit Year")
-        fit_month = self.mnu_navigate.Append(wx.ID_ANY, "Fit Month")
-        fit_day = self.mnu_navigate.Append(wx.ID_ANY, "Fit Day")
+        fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
+        fit_month = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Month"))
+        fit_day = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Day"))
         self.Bind(wx.EVT_MENU, self._mnu_goto_today_on_click, goto_today)
         self.Bind(wx.EVT_MENU, self._mnu_goto_date_on_click, goto_date)
         self.Bind(wx.EVT_MENU, self._mnu_fit_year_on_click, fit_year)
@@ -309,17 +313,17 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_fit_day_on_click, fit_day)
         # Help menu
         self.mnu_help = wx.Menu()
-        help_contents = self.mnu_help.Append(wx.ID_HELP, "&Contents\tF1")
-        help_about = self.mnu_help.Append(wx.ID_ABOUT, "&About")
+        help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
+        help_about = self.mnu_help.Append(wx.ID_ABOUT, _("&About"))
         self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, help_contents)
         self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
         # The menu bar
         menuBar = wx.MenuBar()
-        menuBar.Append(self.mnu_file, "&File")
-        menuBar.Append(self.mnu_view, "&View")
-        menuBar.Append(self.mnu_timeline, "&Timeline")
-        menuBar.Append(self.mnu_navigate, "&Navigate")
-        menuBar.Append(self.mnu_help, "&Help")
+        menuBar.Append(self.mnu_file, _("&File"))
+        menuBar.Append(self.mnu_view, _("&View"))
+        menuBar.Append(self.mnu_timeline, _("&Timeline"))
+        menuBar.Append(self.mnu_navigate, _("&Navigate"))
+        menuBar.Append(self.mnu_help, _("&Help"))
         self.SetMenuBar(menuBar)
 
     def _navigate_timeline(self, navigation_fn):
@@ -334,7 +338,7 @@ class MainFrame(wx.Frame):
 class HelpWindow(wx.Frame):
 
     def __init__(self, parent, path):
-        wx.Frame.__init__(self, parent, title="Timeline User Manual",
+        wx.Frame.__init__(self, parent, title=_("Timeline User Manual"),
                           size=(700, 500), style=wx.DEFAULT_FRAME_STYLE)
         self._create_gui()
         self.html_window.LoadPage(path)
@@ -553,7 +557,7 @@ class DrawingArea(wx.Panel):
     def get_time_period(self):
         """Return currently displayed time period."""
         if self.timeline == None:
-            raise Exception("No timeline set")
+            raise Exception(_("No timeline set"))
         return self.time_period
 
     def navigate_timeline(self, navigation_fn):
@@ -571,7 +575,7 @@ class DrawingArea(wx.Panel):
         should always be used instead.
         """
         if self.timeline == None:
-            raise Exception("No timeline set")
+            raise Exception(_("No timeline set"))
         try:
             navigation_fn(self.time_period)
             self._redraw_timeline()
@@ -954,13 +958,13 @@ class EventEditor(wx.Dialog):
             self.SetAffirmativeId(btn_ok.GetId())
             return button_box
         # The check boxes
-        self.chb_period = wx.CheckBox(self, label="Period")
+        self.chb_period = wx.CheckBox(self, label=_("Period"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
                   self.chb_period)
-        self.chb_show_time = wx.CheckBox(self, label="Show time")
+        self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
                   self.chb_show_time)
-        self.chb_close_on_ok = wx.CheckBox(self, label="Close on OK")
+        self.chb_close_on_ok = wx.CheckBox(self, label=_("Close on OK"))
         # The grid
         grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
         MIN_WIDTH = 170
@@ -968,20 +972,20 @@ class EventEditor(wx.Dialog):
         self.dtp_end = DateTimePicker(self)
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY, size=(MIN_WIDTH, -1))
         self.lst_category = wx.Choice(self, wx.ID_ANY, size=(MIN_WIDTH, -1))
-        grid.Add(wx.StaticText(self, label="Start:"),
+        grid.Add(wx.StaticText(self, label=_("Start:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.dtp_start, flag=wx.EXPAND)
-        grid.Add(wx.StaticText(self, label="End:"),
+        grid.Add(wx.StaticText(self, label=_("End:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.dtp_end, flag=wx.EXPAND)
-        grid.Add(wx.StaticText(self, label="Text:"),
+        grid.Add(wx.StaticText(self, label=_("Text:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.txt_text)
-        grid.Add(wx.StaticText(self, label="Category:"),
+        grid.Add(wx.StaticText(self, label=_("Category:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.lst_category)
         # The Group box
-        groupbox = wx.StaticBox(self, wx.ID_ANY, "Event Properties")
+        groupbox = wx.StaticBox(self, wx.ID_ANY, _("Event Properties"))
         groupbox_sizer = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
         groupbox_sizer.Add(grid, 0, wx.ALL, BORDER)
         # Add controls and buttons do the dialog
@@ -1073,8 +1077,8 @@ class EventEditor(wx.Dialog):
             selection = self.lst_category.GetSelection()
             category = self.lst_category.GetClientData(selection)
             if start_time > end_time:
-                raise TxtException("End must be > Start", self.dtp_start)
-            name = parse_text_from_textbox(self.txt_text, "Text")
+                raise TxtException(_("End must be > Start"), self.dtp_start)
+            name = parse_text_from_textbox(self.txt_text, _("Text"))
             # Update existing event
             if self.updatemode:
                 self.event.update(start_time, end_time, name, category)
@@ -1109,7 +1113,7 @@ class CategoriesEditor(wx.Dialog):
     """
 
     def __init__(self, parent, timeline):
-        wx.Dialog.__init__(self, parent, title="Edit Categories")
+        wx.Dialog.__init__(self, parent, title=_("Edit Categories"))
         self._create_gui()
         self.timeline = timeline
         # Note: We must unregister before we close this dialog. When we close
@@ -1158,7 +1162,7 @@ class CategoriesEditor(wx.Dialog):
 
     def _lst_categories_on_dclick(self, e):
         selection = e.GetSelection()
-        dialog = CategoryEditor(self, "Edit Category", self.timeline,
+        dialog = CategoryEditor(self, _("Edit Category"), self.timeline,
                                 e.GetClientData())
         if dialog.ShowModal() == wx.ID_OK:
             self.timeline.category_edited(dialog.get_edited_category())
@@ -1169,7 +1173,7 @@ class CategoriesEditor(wx.Dialog):
             self._update_categories()
 
     def _btn_add_on_click(self, e):
-        dialog = CategoryEditor(self, "Add Category", self.timeline, None)
+        dialog = CategoryEditor(self, _("Add Category"), self.timeline, None)
         if dialog.ShowModal() == wx.ID_OK:
             self.timeline.add_category(dialog.get_edited_category())
         dialog.Destroy()
@@ -1236,13 +1240,13 @@ class CategoryEditor(wx.Dialog):
         vbox = wx.BoxSizer(wx.VERTICAL)
         # Grid for controls
         field_grid = wx.FlexGridSizer(3, 2, BORDER, BORDER)
-        field_grid.Add(wx.StaticText(self, label="Name:"),
+        field_grid.Add(wx.StaticText(self, label=_("Name:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.txt_name)
-        field_grid.Add(wx.StaticText(self, label="Color:"),
+        field_grid.Add(wx.StaticText(self, label=_("Color:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.colorpicker)
-        field_grid.Add(wx.StaticText(self, label="Visible:"),
+        field_grid.Add(wx.StaticText(self, label=_("Visible:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.chb_visible)
         vbox.Add(field_grid, flag=wx.EXPAND|wx.ALL, border=BORDER)
@@ -1265,11 +1269,11 @@ class CategoryEditor(wx.Dialog):
     def _btn_ok_on_click(self, e):
         name = self.txt_name.GetValue().strip()
         if not self._name_valid(name):
-            display_error_message("Category name '%s' not valid. Must be non-empty." % name,
+            display_error_message(_("Category name '%s' not valid. Must be non-empty.") % name,
                                   self)
             return
         if self._name_in_use(name):
-            display_error_message("Category name '%s' already in use." % name,
+            display_error_message(_("Category name '%s' already in use.") % name,
                                   self)
             return
         self.category.name = name
@@ -1281,13 +1285,13 @@ class CategoryEditor(wx.Dialog):
 class GotoDateDialog(wx.Dialog):
 
     def __init__(self, parent, time):
-        wx.Dialog.__init__(self, parent, title="Go to Date")
+        wx.Dialog.__init__(self, parent, title=_("Go to Date"))
         self._create_gui()
         self.dtpc.set_value(time)
 
     def _create_gui(self):
         self.dtpc = DateTimePicker(self)
-        checkbox = wx.CheckBox(self, label="Show time")
+        checkbox = wx.CheckBox(self, label=_("Show time"))
         checkbox.SetValue(False)
         self.dtpc.show_time(checkbox.IsChecked())
         self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox, checkbox)
@@ -1327,14 +1331,14 @@ class TxtException(ValueError):
 
 def create_new_event(timeline, start=None, end=None):
     """Open a dialog for creating a new event."""
-    dlg = EventEditor(None, -1, 'Create Event', timeline, start, end)
+    dlg = EventEditor(None, -1, _('Create Event'), timeline, start, end)
     dlg.ShowModal()
     dlg.Destroy()
 
 
 def edit_event(timeline, event):
     """Open a dialog for updating properties of a marked event"""
-    dlg = EventEditor(None, -1, 'Edit Event', timeline, event=event)
+    dlg = EventEditor(None, -1, _('Edit Event'), timeline, event=event)
     dlg.ShowModal()
     dlg.Destroy()
 
@@ -1362,7 +1366,7 @@ def parse_text_from_textbox(txt, name):
     """
     data = txt.GetValue().strip()
     if len(data) == 0:
-        raise TxtException, ("%s: Can't be empty" % name, txt)
+        raise TxtException, (_("%s: Can't be empty") % name, txt)
     return data
 
 

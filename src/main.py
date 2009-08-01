@@ -32,11 +32,13 @@ import logging
 from logging import info as loginfo
 
 import wx
+import gettext
+import locale
 
 from gui import MainFrame
 from version import get_version
 import config
-
+from about import APPLICATION_NAME
 
 def parse_options():
     """Parse command line options using the optparse module."""
@@ -97,10 +99,48 @@ def create_wx_app(input_files):
     return app
 
 
+def get_supported_languages():
+    """
+    Return a set with the codes for each language for wich translation
+    is supported.
+    The default langugae, 'en_US' is not included in this set.
+    """
+    return ('sv_SE')
+
+
+def setup_locale():
+    """
+    Install the user locale language, if it is supported by the application.
+    Texts to translate are collected in a .pot file. This file is created
+    with the python tool pygettext.py in the following way:
+       %PYTHON_PATH%\Tools\i18n\pygettext.py -a -v -d Timeline  %APP_SRC%\*.py
+    Plain text translation files (.po) are copies of the .pot file with
+    the a translations of all application texts. These files are updated
+    with the GNU merge utility when new texts are added to the application.
+        msgmerge  Timeline_sv_SE.po Timeline.pot --output-file=sv.po
+    Binary translation files (.mo) are created from .po files with the python
+    tool msgfmt.py in the following way:
+       %PYTHON_PATH%\Tools\i18n\msgfmt.py
+                    --output-file=%DIR%\Timeline.mo  %DIR%\Timeline_sv_SE.po
+    """
+    def get_user_locale_language():
+        locale.setlocale(locale.LC_ALL, '')
+        language, encoding = locale.getdefaultlocale()
+        return language
+    locale_dir = '../locale'
+    gettext.install(APPLICATION_NAME, locale_dir, unicode=False)
+    language = get_user_locale_language()
+    if language in get_supported_languages():
+        current_language = gettext.translation(APPLICATION_NAME, locale_dir,
+                                               languages=[language])
+        current_language.install()
+
+
 def main():
     """Main entry point."""
     (options, input_files) = parse_options()
     setup_logging(options.log_level, options.log_file)
+    setup_locale()
     log_versions()
     app = create_wx_app(input_files)
     app.MainLoop()

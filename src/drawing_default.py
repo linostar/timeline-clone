@@ -129,7 +129,7 @@ class StripWeek(Strip):
             next_first_weekday = self.increment(first_weekday)
             last_weekday = next_first_weekday - timedelta(days=1)
             range_string = self._time_range_string(first_weekday, last_weekday)
-            return "Week %s (%s)" % (time.isocalendar()[1], range_string)
+            return _("Week %s (%s)") % (time.isocalendar()[1], range_string)
         # This strip should never be used as minor
         return ""
 
