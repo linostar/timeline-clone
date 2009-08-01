@@ -40,6 +40,7 @@ from version import get_version
 import config
 from about import APPLICATION_NAME
 
+
 def parse_options():
     """Parse command line options using the optparse module."""
     version_string = "%prog " + get_version()
@@ -101,9 +102,10 @@ def create_wx_app(input_files):
 
 def get_supported_languages():
     """
-    Return a set with the codes for each language for wich translation
+    Return a set with the codes for each language for which translation
     is supported.
-    The default langugae, 'en_US' is not included in this set.
+
+    The default language, 'en_US', is not included in this set.
     """
     return ('sv_SE')
 
@@ -115,7 +117,7 @@ def setup_locale():
     with the python tool pygettext.py in the following way:
        %PYTHON_PATH%\Tools\i18n\pygettext.py -a -v -d Timeline  %APP_SRC%\*.py
     Plain text translation files (.po) are copies of the .pot file with
-    the a translations of all application texts. These files are updated
+    the translations of all application texts. These files are updated
     with the GNU merge utility when new texts are added to the application.
         msgmerge  Timeline_sv_SE.po Timeline.pot --output-file=sv.po
     Binary translation files (.mo) are created from .po files with the python
