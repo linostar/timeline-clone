@@ -156,6 +156,7 @@ class MainFrame(wx.Frame):
         for menu in menues:
             for menuitem in menu.GetMenuItems():
                 menuitem.Enable(enable)
+        self.mnu_file_export.Enable(enable)
 
     def _mnu_file_new_on_click(self, event):
         """Event handler used when the user wants to create a new timeline."""
@@ -188,6 +189,26 @@ class MainFrame(wx.Frame):
         """
         if self.timeline:
             self.timeline.set_preferred_period(self._get_time_period())
+
+    def _mnu_file_export_on_click(self, evt):
+        self._export_to_image()
+
+    def _export_to_image(self):
+        extension_map = {"png": wx.BITMAP_TYPE_PNG,
+                         "bmp": wx.BITMAP_TYPE_BMP}
+        extensions = extension_map.keys()
+        wildcard = _create_wildcard(_("Image files"), extensions)
+        dialog = wx.FileDialog(self, message=_("Export to Image"),
+                               wildcard=wildcard, style=wx.FD_SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            path, extension = _extend_path(dialog.GetPath(), extensions, "png")
+            overwrite_question = _("File '%s' exists. Overwrite?") % path
+            if (not os.path.exists(path) or
+                ask_question(overwrite_question, self) == wx.YES):
+                bitmap = self.main_panel.drawing_area.bgbuf
+                image = wx.ImageFromBitmap(bitmap)
+                image.SaveFile(path, extension_map[extension])
+        dialog.Destroy()
 
     def _mnu_file_exit_on_click(self, evt):
         """Event handler for the Exit menu item"""
@@ -273,10 +294,15 @@ class MainFrame(wx.Frame):
         self.mnu_file.Append(wx.ID_OPEN, _("&Open...\tCtrl+O"),
                              _("Open an existing timeline"))
         self.mnu_file.AppendSeparator()
+        self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
+                                                    _("&Export to Image..."))
+        self.mnu_file.AppendSeparator()
         self.mnu_file.Append(wx.ID_EXIT, _("&Quit\tCtrl+Q"),
                              _("Exit the program"))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click,
+                  self.mnu_file_export)
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
         # Timeline menu
         self.mnu_timeline = wx.Menu()
@@ -1376,6 +1402,11 @@ def display_error_message(message, parent=None):
     dial.ShowModal()
 
 
+def ask_question(question, parent=None):
+    return wx.MessageBox(question, _("Question"),
+                         wx.YES_NO|wx.CENTRE|wx.NO_DEFAULT, parent)
+
+
 def step_function(x_value):
     """
     A step function.
@@ -1398,3 +1429,18 @@ def sort_categories(categories):
     return sorted_categories
 
 
+def _create_wildcard(text, extensions):
+    """
+    Create wildcard for use in open/save dialogs.
+    """
+    return "%s (%s)|%s" % (text,
+                           ", ".join(["*." + e for e in extensions]),
+                           ";".join(["*." + e for e in extensions]))
+
+
+def _extend_path(path, valid_extensions, default_extension):
+    """Return tuple (path, extension) ensuring that path has extension."""
+    for extension in valid_extensions:
+        if path.endswith("." + extension):
+            return (path, extension)
+    return (path + "." + default_extension, default_extension)
