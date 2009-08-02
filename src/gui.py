@@ -75,25 +75,15 @@ class MainFrame(wx.Frame):
         self._enable_disable_menus()
         self.SetIcons(self._load_icon_bundle())
 
-    def _load_icon_bundle(self):
-        bundle = wx.IconBundle()
-        icondir = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                  "..", "icons"))
-        for size in ["16", "32", "48"]:
-            iconpath = os.path.join(icondir, "%s.png" % size)
-            icon = wx.IconFromBitmap(wx.BitmapFromImage(wx.Image(iconpath)))
-            bundle.AddIcon(icon)
-        return bundle
-
     def display_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
         def error_fn(msg):
-            display_error_message(msg, self)
+            _display_error_message(msg, self)
         try:
             self.timeline = data.get_timeline(input_file, error_fn)
         except Exception, e:
-            display_error_message(_("Unable to open timeline '%s'.\n\n%s") %
-                                  (input_file, e))
+            _display_error_message(_("Unable to open timeline '%s'.\n\n%s") %
+                                   (input_file, e))
         else:
             self.SetTitle("%s (%s) - %s" % (os.path.basename(input_file),
                                             os.path.dirname(os.path.abspath(input_file)),
@@ -102,6 +92,133 @@ class MainFrame(wx.Frame):
             self.main_panel.catbox.set_timeline(self.timeline)
             self.main_panel.drawing_area.set_timeline(self.timeline)
         self._enable_disable_menus()
+
+    def _create_gui(self):
+        # The only content of this frame is the MainPanel
+        self.main_panel = MainPanel(self)
+        self.Bind(wx.EVT_CLOSE, self._window_on_close)
+        # The status bar
+        self.CreateStatusBar()
+        # The menu
+        # File menu
+        self.mnu_file = wx.Menu()
+        self.mnu_file.Append(wx.ID_NEW, _("&New...\tCtrl+N"),
+                             _("Create a new timeline"))
+        self.mnu_file.Append(wx.ID_OPEN, _("&Open...\tCtrl+O"),
+                             _("Open an existing timeline"))
+        self.mnu_file.AppendSeparator()
+        self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
+                                                    _("&Export to Image..."))
+        self.mnu_file.AppendSeparator()
+        self.mnu_file.Append(wx.ID_EXIT, _("&Quit\tCtrl+Q"),
+                             _("Exit the program"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
+        self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click,
+                  self.mnu_file_export)
+        self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
+        # Timeline menu
+        self.mnu_timeline = wx.Menu()
+        mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
+                                    _("Create &Event..."),
+                                    _("Create a new event"))
+        mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
+                                       _("Edit &Categories"),
+                                       _("Edit categories"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
+                  mnu_timeline_create_event)
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
+                  mnu_timeline_edit_categories)
+        # View menu
+        self.mnu_view = wx.Menu()
+        self.mnu_view_sidebar = self.mnu_view.Append(wx.ID_ANY,
+                                                     _("&Sidebar\tCtrl+I"),
+                                                     kind=wx.ITEM_CHECK)
+        self.mnu_view_sidebar.Check()
+        self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click,
+                  self.mnu_view_sidebar)
+        # Navigate menu
+        self.mnu_navigate = wx.Menu()
+        goto_today = self.mnu_navigate.Append(wx.ID_ANY, _("Go to &Today\tCtrl+H"))
+        goto_date = self.mnu_navigate.Append(wx.ID_ANY, _("Go to D&ate...\tCtrl+G"))
+        self.mnu_navigate.AppendSeparator()
+        fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
+        fit_month = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Month"))
+        fit_day = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Day"))
+        self.Bind(wx.EVT_MENU, self._mnu_goto_today_on_click, goto_today)
+        self.Bind(wx.EVT_MENU, self._mnu_goto_date_on_click, goto_date)
+        self.Bind(wx.EVT_MENU, self._mnu_fit_year_on_click, fit_year)
+        self.Bind(wx.EVT_MENU, self._mnu_fit_month_on_click, fit_month)
+        self.Bind(wx.EVT_MENU, self._mnu_fit_day_on_click, fit_day)
+        # Help menu
+        self.mnu_help = wx.Menu()
+        help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
+        help_about = self.mnu_help.Append(wx.ID_ABOUT, _("&About"))
+        self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, help_contents)
+        self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
+        # The menu bar
+        menuBar = wx.MenuBar()
+        menuBar.Append(self.mnu_file, _("&File"))
+        menuBar.Append(self.mnu_view, _("&View"))
+        menuBar.Append(self.mnu_timeline, _("&Timeline"))
+        menuBar.Append(self.mnu_navigate, _("&Navigate"))
+        menuBar.Append(self.mnu_help, _("&Help"))
+        self.SetMenuBar(menuBar)
+
+    def _window_on_close(self, event):
+        self._save_current_timeline_data()
+        self._save_application_config()
+        self.Destroy()
+
+    def _mnu_file_new_on_click(self, event):
+        """Event handler used when the user wants to create a new timeline."""
+        self._create_new_timeline()
+
+    def _mnu_file_open_on_click(self, event):
+        """Event handler used when the user wants to open a new timeline."""
+        self._open_existing_timeline()
+
+    def _mnu_file_export_on_click(self, evt):
+        self._export_to_image()
+
+    def _mnu_file_exit_on_click(self, evt):
+        """Event handler for the Exit menu item"""
+        self.Close()
+
+    def _mnu_view_sidebar_on_click(self, evt):
+        if evt.IsChecked():
+            self.main_panel.show_sidebar()
+        else:
+            self.main_panel.hide_sidebar()
+
+    def _mnu_timeline_create_event_on_click(self, evt):
+        """Event handler for the New Event menu item"""
+        _create_new_event(self.timeline)
+
+    def _mnu_timeline_edit_categories_on_click(self, evt):
+        """Event handler for the Edit Categories menu item"""
+        _edit_categories(self.timeline)
+
+    def _mnu_goto_today_on_click(self, evt):
+        self._navigate_timeline(lambda tp: tp.center(dt.now()))
+
+    def _mnu_goto_date_on_click(self, evt):
+        self._goto_date()
+
+    def _mnu_fit_year_on_click(self, evt):
+        self._navigate_timeline(lambda tp: tp.fit_year())
+
+    def _mnu_fit_month_on_click(self, evt):
+        self._navigate_timeline(lambda tp: tp.fit_month())
+
+    def _mnu_fit_day_on_click(self, evt):
+        self._navigate_timeline(lambda tp: tp.fit_day())
+
+    def _mnu_help_contents_on_click(self, e):
+        self._show_help()
+
+    def _mnu_help_about_on_click(self, e):
+        display_about_dialog()
 
     def _create_new_timeline(self):
         """
@@ -158,19 +275,6 @@ class MainFrame(wx.Frame):
                 menuitem.Enable(enable)
         self.mnu_file_export.Enable(enable)
 
-    def _mnu_file_new_on_click(self, event):
-        """Event handler used when the user wants to create a new timeline."""
-        self._create_new_timeline()
-
-    def _mnu_file_open_on_click(self, event):
-        """Event handler used when the user wants to open a new timeline."""
-        self._open_existing_timeline()
-
-    def _window_on_close(self, event):
-        self._save_current_timeline_data()
-        self._save_application_config()
-        self.Destroy()
-
     def _save_application_config(self):
         config.set_window_size(self.GetSize())
         config.set_window_maximized(self.IsMaximized())
@@ -190,9 +294,6 @@ class MainFrame(wx.Frame):
         if self.timeline:
             self.timeline.set_preferred_period(self._get_time_period())
 
-    def _mnu_file_export_on_click(self, evt):
-        self._export_to_image()
-
     def _export_to_image(self):
         extension_map = {"png": wx.BITMAP_TYPE_PNG,
                          "bmp": wx.BITMAP_TYPE_BMP}
@@ -204,44 +305,11 @@ class MainFrame(wx.Frame):
             path, extension = _extend_path(dialog.GetPath(), extensions, "png")
             overwrite_question = _("File '%s' exists. Overwrite?") % path
             if (not os.path.exists(path) or
-                ask_question(overwrite_question, self) == wx.YES):
+                _ask_question(overwrite_question, self) == wx.YES):
                 bitmap = self.main_panel.drawing_area.bgbuf
                 image = wx.ImageFromBitmap(bitmap)
                 image.SaveFile(path, extension_map[extension])
         dialog.Destroy()
-
-    def _mnu_file_exit_on_click(self, evt):
-        """Event handler for the Exit menu item"""
-        self.Close()
-
-    def _mnu_view_categories_on_click(self, evt):
-        if evt.IsChecked():
-            self.main_panel.show_sidebar()
-        else:
-            self.main_panel.hide_sidebar()
-
-    def _mnu_timeline_create_event_on_click(self, evt):
-        """Event handler for the New Event menu item"""
-        create_new_event(self.timeline)
-
-    def _mnu_timeline_edit_categories_on_click(self, evt):
-        """Event handler for the Edit Categories menu item"""
-        edit_categories(self.timeline)
-
-    def _mnu_goto_today_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.center(dt.now()))
-
-    def _mnu_goto_date_on_click(self, evt):
-        self._goto_date()
-
-    def _mnu_fit_year_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_year())
-
-    def _mnu_fit_month_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_month())
-
-    def _mnu_fit_day_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_day())
 
     def _goto_date(self):
         dialog = GotoDateDialog(self, self._get_time_period().mean_time())
@@ -249,20 +317,14 @@ class MainFrame(wx.Frame):
             self._navigate_timeline(lambda tp: tp.center(dialog.time))
         dialog.Destroy()
 
-    def _mnu_help_contents_on_click(self, e):
-        self._show_help()
-
     def _show_help(self):
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
                                             _("manual"), "manual.html"))
         if os.path.exists(path):
             HelpWindow(self, path).Show()
         else:
-            display_error_message(_("Could not locate manual at '%s'.") % path,
-                                  self)
-
-    def _mnu_help_about_on_click(self, e):
-        display_about_dialog()
+            _display_error_message(_("Could not locate manual at '%s'.") % path,
+                                   self)
 
     def _set_initial_values_to_member_variables(self):
         """
@@ -280,77 +342,15 @@ class MainFrame(wx.Frame):
             ", ".join(["*" + e for e in self.extensions]),
             ";".join(["*" + e for e in self.extensions]))
 
-    def _create_gui(self):
-        # The only content of this frame is the MainPanel
-        self.main_panel = MainPanel(self)
-        self.Bind(wx.EVT_CLOSE, self._window_on_close)
-        # The status bar
-        self.CreateStatusBar()
-        # The menu
-        # File menu
-        self.mnu_file = wx.Menu()
-        self.mnu_file.Append(wx.ID_NEW, _("&New...\tCtrl+N"),
-                             _("Create a new timeline"))
-        self.mnu_file.Append(wx.ID_OPEN, _("&Open...\tCtrl+O"),
-                             _("Open an existing timeline"))
-        self.mnu_file.AppendSeparator()
-        self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
-                                                    _("&Export to Image..."))
-        self.mnu_file.AppendSeparator()
-        self.mnu_file.Append(wx.ID_EXIT, _("&Quit\tCtrl+Q"),
-                             _("Exit the program"))
-        self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
-        self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click,
-                  self.mnu_file_export)
-        self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
-        # Timeline menu
-        self.mnu_timeline = wx.Menu()
-        mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
-                                    _("Create &Event..."),
-                                    _("Create a new event"))
-        mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
-                                       _("Edit &Categories"),
-                                       _("Edit categories"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
-                  mnu_timeline_create_event)
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
-                  mnu_timeline_edit_categories)
-        # View menu
-        self.mnu_view = wx.Menu()
-        self.mnu_view_sidebar = self.mnu_view.Append(wx.ID_ANY,
-                                                     _("&Sidebar\tCtrl+I"),
-                                                     kind=wx.ITEM_CHECK)
-        self.mnu_view_sidebar.Check()
-        self.Bind(wx.EVT_MENU, self._mnu_view_categories_on_click,
-                  self.mnu_view_sidebar)
-        # Navigate menu
-        self.mnu_navigate = wx.Menu()
-        goto_today = self.mnu_navigate.Append(wx.ID_ANY, _("Go to &Today\tCtrl+H"))
-        goto_date = self.mnu_navigate.Append(wx.ID_ANY, _("Go to D&ate...\tCtrl+G"))
-        self.mnu_navigate.AppendSeparator()
-        fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
-        fit_month = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Month"))
-        fit_day = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Day"))
-        self.Bind(wx.EVT_MENU, self._mnu_goto_today_on_click, goto_today)
-        self.Bind(wx.EVT_MENU, self._mnu_goto_date_on_click, goto_date)
-        self.Bind(wx.EVT_MENU, self._mnu_fit_year_on_click, fit_year)
-        self.Bind(wx.EVT_MENU, self._mnu_fit_month_on_click, fit_month)
-        self.Bind(wx.EVT_MENU, self._mnu_fit_day_on_click, fit_day)
-        # Help menu
-        self.mnu_help = wx.Menu()
-        help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
-        help_about = self.mnu_help.Append(wx.ID_ABOUT, _("&About"))
-        self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, help_contents)
-        self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
-        # The menu bar
-        menuBar = wx.MenuBar()
-        menuBar.Append(self.mnu_file, _("&File"))
-        menuBar.Append(self.mnu_view, _("&View"))
-        menuBar.Append(self.mnu_timeline, _("&Timeline"))
-        menuBar.Append(self.mnu_navigate, _("&Navigate"))
-        menuBar.Append(self.mnu_help, _("&Help"))
-        self.SetMenuBar(menuBar)
+    def _load_icon_bundle(self):
+        bundle = wx.IconBundle()
+        icondir = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                  "..", "icons"))
+        for size in ["16", "32", "48"]:
+            iconpath = os.path.join(icondir, "%s.png" % size)
+            icon = wx.IconFromBitmap(wx.BitmapFromImage(wx.Image(iconpath)))
+            bundle.AddIcon(icon)
+        return bundle
 
     def _navigate_timeline(self, navigation_fn):
         """Shortcut for method in DrawingArea."""
@@ -393,23 +393,23 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         else:
             self.Clear()
 
+    def _checklistbox_on_checklistbox(self, e):
+        i = e.GetSelection()
+        self.categories[i].visible = self.IsChecked(i)
+        self.timeline.category_edited(self.categories[i])
+
+    def _timeline_changed(self, state_change):
+        if state_change == Timeline.STATE_CHANGE_CATEGORY:
+            self._update_categories()
+
     def _update_categories(self):
-        self.categories = sort_categories(self.timeline.get_categories())
+        self.categories = _sort_categories(self.timeline.get_categories())
         self.Clear()
         self.AppendItems([category.name for category in self.categories])
         for i in range(0, self.Count):
             if self.categories[i].visible:
                 self.Check(i)
             self.SetItemBackgroundColour(i, self.categories[i].color)
-
-    def _timeline_changed(self, state_change):
-        if state_change == Timeline.STATE_CHANGE_CATEGORY:
-            self._update_categories()
-
-    def _checklistbox_on_checklistbox(self, e):
-        i = e.GetSelection()
-        self.categories[i].visible = self.IsChecked(i)
-        self.timeline.category_edited(self.categories[i])
 
 
 class DateTimePicker(wx.Panel):
@@ -446,18 +446,6 @@ class DateTimePicker(wx.Panel):
         self.date_picker.SetValue(wx_date_time)
         self.time_picker.SetValue(wx_date_time)
 
-    def _python_date_to_wx_date(self, py_date):
-        return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
-                                  py_date.hour, py_date.minute,
-                                  py_date.second)
-
-    def _date_picker_on_date_changed(self, e):
-        date = self.get_value()
-        if date < TimePeriod.MIN_TIME:
-            self.set_value(TimePeriod.MIN_TIME)
-        if date > TimePeriod.MAX_TIME:
-            self.set_value(TimePeriod.MAX_TIME)
-
     def _create_gui(self):
         self.date_picker = wx.DatePickerCtrl(self,
                                style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
@@ -472,6 +460,18 @@ class DateTimePicker(wx.Panel):
                   flag=wx.ALIGN_CENTER_VERTICAL)
         self.SetSizer(sizer)
         self.date_picker.SetFocus()
+
+    def _date_picker_on_date_changed(self, e):
+        date = self.get_value()
+        if date < TimePeriod.MIN_TIME:
+            self.set_value(TimePeriod.MIN_TIME)
+        if date > TimePeriod.MAX_TIME:
+            self.set_value(TimePeriod.MAX_TIME)
+
+    def _python_date_to_wx_date(self, py_date):
+        return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
+                                  py_date.hour, py_date.minute,
+                                  py_date.second)
 
 
 class MainPanel(wx.Panel):
@@ -609,32 +609,6 @@ class DrawingArea(wx.Panel):
         except (ValueError, OverflowError), e:
             wx.GetTopLevelParent(self).SetStatusText(str(e))
 
-    def _timeline_changed(self, state_change):
-        if state_change == Timeline.STATE_CHANGE_ANY:
-            self._redraw_timeline()
-
-    def _redraw_timeline(self, period_selection=None):
-        """Draw the timeline onto the background buffer."""
-        logging.debug('Draw timeline to bgbuf')
-        memdc = wx.MemoryDC()
-        memdc.SelectObject(self.bgbuf)
-        try:
-            memdc.BeginDrawing()
-            memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
-            memdc.Clear()
-            if self.timeline:
-                current_events = self.timeline.get_events(self.time_period)
-                self.drawing_algorithm.draw(memdc, self.time_period,
-                                            current_events,
-                                            period_selection)
-            memdc.EndDrawing()
-            del memdc
-            self.Refresh()
-            self.Update()
-        except Exception, ex:
-            self.bgbuf = None
-            logging.fatal('Error in drawing', exc_info=ex)
-
     def _create_gui(self):
         self.Bind(wx.EVT_SIZE, self._window_on_size)
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
@@ -646,46 +620,6 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_MOUSEWHEEL, self._window_on_mousewheel)
         self.Bind(wx.EVT_KEY_DOWN, self._window_on_key_down)
         self.Bind(wx.EVT_KEY_UP, self._window_on_key_up)
-
-    def _set_initial_values_to_member_variables(self):
-        """
-        Instance variables usage:
-
-        _current_time       This variable is set to the time on the timeline
-                            where the mouse button is clicked when the left
-                            mouse button is used
-        _mark_selection     Processing flag indicating ongoing selection of a
-                            time period
-        timeline            The timeline currently handled by the application
-        time_period         The part of the timeline currently displayed in the
-                            drawing area
-        drawing_algorithm   The algorithm used to draw the timeline
-        bgbuf               The bitmap to which the drawing methods draw the
-                            timeline. When the EVT_PAINT occurs this bitmap
-                            is painted on the screen. This is a buffer drawing
-                            approach for avoiding screen flicker.
-        is_scrolling        True when scrolling with the mouse takes place.
-                            It is set True in mouse_has_moved and set False
-                            in left_mouse_button_released.
-        is_selecting        True when selecting with the mouse takes place
-                            It is set True in mouse_has_moved and set False
-                            in left_mouse_button_released.
-        """
-        self._current_time = None
-        self._mark_selection = False
-        self.bgbuf = None
-        self.timeline = None
-        self.time_period = None
-        self.drawing_algorithm = drawing.get_algorithm()
-        self.is_scrolling = False
-        self.is_selecting = False
-
-    def _set_colors_and_styles(self):
-        """Define the look and feel of the drawing area."""
-        self.SetBackgroundColour(wx.WHITE)
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.set_default_cursor()
-        self.Disable()
 
     def _window_on_size(self, event):
         """
@@ -736,9 +670,9 @@ class DrawingArea(wx.Panel):
                                                   evt.m_controlDown)
         if not posAtEvent:
             if evt.m_controlDown:
-                self.set_select_period_cursor()
+                self._set_select_period_cursor()
             else:
-                self.set_drag_cursor()
+                self._set_drag_cursor()
         evt.Skip()
 
     def _window_on_left_dclick(self, evt):
@@ -751,10 +685,10 @@ class DrawingArea(wx.Panel):
         logging.debug("Left Mouse doubleclicked event in DrawingArea")
         event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
         if event:
-            edit_event(self.timeline, event)
+            _edit_event(self.timeline, event)
         else:
-            create_new_event(self.timeline, self._current_time,
-                             self._current_time)
+            _create_new_event(self.timeline, self._current_time,
+                              self._current_time)
 
     def _window_on_left_up(self, evt):
         """
@@ -768,7 +702,7 @@ class DrawingArea(wx.Panel):
             self._end_selection_and_create_event(evt.m_x)
         self.is_selecting = False
         self.is_scrolling = False
-        self.set_default_cursor()
+        self._set_default_cursor()
 
     def _window_on_motion(self, evt):
         """
@@ -798,12 +732,6 @@ class DrawingArea(wx.Panel):
                     self._scroll(evt.m_x)
                     self.is_scrolling = True
 
-    def _scroll(self, xpixelpos):
-        if self._current_time:
-            delta = (self.drawing_algorithm.metrics.get_time(xpixelpos) -
-                        self._current_time)
-            self._scroll_timeline(delta)
-
     def _window_on_mousewheel(self, evt):
         """
         Event handler used when the mouse wheel is rotated.
@@ -812,7 +740,7 @@ class DrawingArea(wx.Panel):
         scrolled the timeline will be zoomed, otherwise it will be scrolled.
         """
         logging.debug("Mouse wheel event in DrawingArea")
-        direction = step_function(evt.m_wheelRotation)
+        direction = _step_function(evt.m_wheelRotation)
         if evt.ControlDown():
             self._zoom_timeline(direction)
         else:
@@ -839,7 +767,79 @@ class DrawingArea(wx.Panel):
     def _window_on_key_up(self, evt):
         keycode = evt.GetKeyCode()
         if keycode == wx.WXK_CONTROL:
-            self.set_default_cursor()
+            self._set_default_cursor()
+
+    def _timeline_changed(self, state_change):
+        if state_change == Timeline.STATE_CHANGE_ANY:
+            self._redraw_timeline()
+
+    def _set_initial_values_to_member_variables(self):
+        """
+        Instance variables usage:
+
+        _current_time       This variable is set to the time on the timeline
+                            where the mouse button is clicked when the left
+                            mouse button is used
+        _mark_selection     Processing flag indicating ongoing selection of a
+                            time period
+        timeline            The timeline currently handled by the application
+        time_period         The part of the timeline currently displayed in the
+                            drawing area
+        drawing_algorithm   The algorithm used to draw the timeline
+        bgbuf               The bitmap to which the drawing methods draw the
+                            timeline. When the EVT_PAINT occurs this bitmap
+                            is painted on the screen. This is a buffer drawing
+                            approach for avoiding screen flicker.
+        is_scrolling        True when scrolling with the mouse takes place.
+                            It is set True in mouse_has_moved and set False
+                            in left_mouse_button_released.
+        is_selecting        True when selecting with the mouse takes place
+                            It is set True in mouse_has_moved and set False
+                            in left_mouse_button_released.
+        """
+        self._current_time = None
+        self._mark_selection = False
+        self.bgbuf = None
+        self.timeline = None
+        self.time_period = None
+        self.drawing_algorithm = drawing.get_algorithm()
+        self.is_scrolling = False
+        self.is_selecting = False
+
+    def _set_colors_and_styles(self):
+        """Define the look and feel of the drawing area."""
+        self.SetBackgroundColour(wx.WHITE)
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self._set_default_cursor()
+        self.Disable()
+
+    def _redraw_timeline(self, period_selection=None):
+        """Draw the timeline onto the background buffer."""
+        logging.debug('Draw timeline to bgbuf')
+        memdc = wx.MemoryDC()
+        memdc.SelectObject(self.bgbuf)
+        try:
+            memdc.BeginDrawing()
+            memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
+            memdc.Clear()
+            if self.timeline:
+                current_events = self.timeline.get_events(self.time_period)
+                self.drawing_algorithm.draw(memdc, self.time_period,
+                                            current_events,
+                                            period_selection)
+            memdc.EndDrawing()
+            del memdc
+            self.Refresh()
+            self.Update()
+        except Exception, ex:
+            self.bgbuf = None
+            logging.fatal('Error in drawing', exc_info=ex)
+
+    def _scroll(self, xpixelpos):
+        if self._current_time:
+            delta = (self.drawing_algorithm.metrics.get_time(xpixelpos) -
+                        self._current_time)
+            self._scroll_timeline(delta)
 
     def _set_new_current_time(self, current_x):
         self._current_time = self.drawing_algorithm.metrics.get_time(current_x)
@@ -874,7 +874,7 @@ class DrawingArea(wx.Panel):
         self._mark_selection = False
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
-        create_new_event(self.timeline, start, end)
+        _create_new_event(self.timeline, start, end)
         self._redraw_timeline()
 
     def _display_eventname_in_statusbar(self, xpixelpos, ypixelpos):
@@ -924,18 +924,19 @@ class DrawingArea(wx.Panel):
     def _reset_text_in_statusbar(self):
         wx.GetTopLevelParent(self).SetStatusText('')
 
-    def set_select_period_cursor(self):
+    def _set_select_period_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
 
-    def set_drag_cursor(self):
+    def _set_drag_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
-    def set_default_cursor(self):
+    def _set_default_cursor(self):
         """
         Set the cursor to it's default shape when it is in the timeline
         drawing area.
         """
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
+
 
 class EventEditor(wx.Dialog):
     """Dialog used for creating and editing events."""
@@ -1026,6 +1027,51 @@ class EventEditor(wx.Dialog):
         main_box.Add(create_button_box(), flag=wx.EXPAND|wx.ALL, border=BORDER)
         self.SetSizerAndFit(main_box)
 
+    def _btn_close_on_click(self, evt):
+        """
+        Close the dialog.
+
+        This event is triggered by one of the following actions:
+          * Click the Close button
+          * Press the Escape key
+          * Click the dialog (X) button
+        """
+        logging.debug("_btn_close_on_click")
+        self._close()
+
+    def _btn_ok_on_click(self, evt):
+        """
+        Add new or update existing event.
+
+        If the Close-on-ok checkbox is checked the dialog is also closed.
+        """
+        logging.debug("_btn_ok_on_click")
+        try:
+            # Input value retrieval and validation
+            start_time = self.dtp_start.get_value()
+            end_time = start_time
+            if self.chb_period.IsChecked():
+                end_time = self.dtp_end.get_value()
+            selection = self.lst_category.GetSelection()
+            category = self.lst_category.GetClientData(selection)
+            if start_time > end_time:
+                raise TxtException(_("End must be > Start"), self.dtp_start)
+            name = _parse_text_from_textbox(self.txt_text, _("Text"))
+            # Update existing event
+            if self.updatemode:
+                self.event.update(start_time, end_time, name, category)
+                self.timeline.event_edited(self.event)
+            # Create new event
+            else:
+                self.event = Event(start_time, end_time, name, category)
+                self.timeline.add_event(self.event)
+            # Close the dialog ?
+            if self.chb_close_on_ok.GetValue():
+                self._close()
+        except TxtException, ex:
+            _display_error_message("%s" % ex.error_message)
+            _set_focus_and_select(ex.control)
+
     def _chb_period_on_checkbox(self, e):
         self.dtp_end.Enable(e.IsChecked())
 
@@ -1059,7 +1105,7 @@ class EventEditor(wx.Dialog):
         self.lst_category.Append("", None) # The None-category
         selection_set = False
         current_item_index = 1
-        for cat in sort_categories(self.timeline.get_categories()):
+        for cat in _sort_categories(self.timeline.get_categories()):
             self.lst_category.Append(cat.name, cat)
             if cat == category:
                 self.lst_category.SetSelection(current_item_index)
@@ -1074,51 +1120,6 @@ class EventEditor(wx.Dialog):
 
     def _set_initial_focus(self):
         self.dtp_start.SetFocus()
-
-    def _btn_close_on_click(self, evt):
-        """
-        Close the dialog.
-
-        This event is triggered by one of the following actions:
-          * Click the Close button
-          * Press the Escape key
-          * Click the dialog (X) button
-        """
-        logging.debug("_btn_close_on_click")
-        self._close()
-
-    def _btn_ok_on_click(self, evt):
-        """
-        Add new or update existing event.
-
-        If the Close-on-ok checkbox is checked the dialog is also closed.
-        """
-        logging.debug("_btn_ok_on_click")
-        try:
-            # Input value retrieval and validation
-            start_time = self.dtp_start.get_value()
-            end_time = start_time
-            if self.chb_period.IsChecked():
-                end_time = self.dtp_end.get_value()
-            selection = self.lst_category.GetSelection()
-            category = self.lst_category.GetClientData(selection)
-            if start_time > end_time:
-                raise TxtException(_("End must be > Start"), self.dtp_start)
-            name = parse_text_from_textbox(self.txt_text, _("Text"))
-            # Update existing event
-            if self.updatemode:
-                self.event.update(start_time, end_time, name, category)
-                self.timeline.event_edited(self.event)
-            # Create new event
-            else:
-                self.event = Event(start_time, end_time, name, category)
-                self.timeline.add_event(self.event)
-            # Close the dialog ?
-            if self.chb_close_on_ok.GetValue():
-                self._close()
-        except TxtException, ex:
-            display_error_message("%s" % ex.error_message)
-            set_focus_and_select(ex.control)
 
     def _close(self):
         """
@@ -1181,10 +1182,11 @@ class CategoriesEditor(wx.Dialog):
         self.SetSizerAndFit(vbox)
         self.lst_categories.SetFocus()
 
-    def _update_categories(self):
-        self.lst_categories.Clear()
-        for category in sort_categories(self.timeline.get_categories()):
-            self.lst_categories.Append(category.name, category)
+    def _window_on_close(self, e):
+        # This will always be called before the dialog closes so we can do the
+        # unregister here.
+        self.timeline.unregister(self._timeline_changed)
+        self.EndModal(wx.ID_CLOSE)
 
     def _lst_categories_on_dclick(self, e):
         selection = e.GetSelection()
@@ -1193,10 +1195,6 @@ class CategoriesEditor(wx.Dialog):
         if dialog.ShowModal() == wx.ID_OK:
             self.timeline.category_edited(dialog.get_edited_category())
         dialog.Destroy()
-
-    def _timeline_changed(self, state_change):
-        if state_change == Timeline.STATE_CHANGE_CATEGORY:
-            self._update_categories()
 
     def _btn_add_on_click(self, e):
         dialog = CategoryEditor(self, _("Add Category"), self.timeline, None)
@@ -1217,6 +1215,10 @@ class CategoriesEditor(wx.Dialog):
             self._delete_selected_category()
         e.Skip()
 
+    def _timeline_changed(self, state_change):
+        if state_change == Timeline.STATE_CHANGE_CATEGORY:
+            self._update_categories()
+
     def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
         if selection != wx.NOT_FOUND:
@@ -1227,11 +1229,10 @@ class CategoriesEditor(wx.Dialog):
                 cat = self.lst_categories.GetClientData(selection)
                 self.timeline.delete_category(cat)
 
-    def _window_on_close(self, e):
-        # This will always be called before the dialog closes so we can do the
-        # unregister here.
-        self.timeline.unregister(self._timeline_changed)
-        self.EndModal(wx.ID_CLOSE)
+    def _update_categories(self):
+        self.lst_categories.Clear()
+        for category in _sort_categories(self.timeline.get_categories()):
+            self.lst_categories.Append(category.name, category)
 
 
 class CategoryEditor(wx.Dialog):
@@ -1281,7 +1282,22 @@ class CategoryEditor(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(vbox)
-        set_focus_and_select(self.txt_name)
+        _set_focus_and_select(self.txt_name)
+
+    def _btn_ok_on_click(self, e):
+        name = self.txt_name.GetValue().strip()
+        if not self._name_valid(name):
+            _display_error_message(_("Category name '%s' not valid. Must be non-empty.") % name,
+                                   self)
+            return
+        if self._name_in_use(name):
+            _display_error_message(_("Category name '%s' already in use.") % name,
+                                   self)
+            return
+        self.category.name = name
+        self.category.color = self.colorpicker.GetColour()
+        self.category.visible = self.chb_visible.IsChecked()
+        self.EndModal(wx.ID_OK)
 
     def _name_valid(self, name):
         return len(name) > 0
@@ -1291,21 +1307,6 @@ class CategoryEditor(wx.Dialog):
             if cat != self.category and cat.name == name:
                 return True
         return False
-
-    def _btn_ok_on_click(self, e):
-        name = self.txt_name.GetValue().strip()
-        if not self._name_valid(name):
-            display_error_message(_("Category name '%s' not valid. Must be non-empty.") % name,
-                                  self)
-            return
-        if self._name_in_use(name):
-            display_error_message(_("Category name '%s' already in use.") % name,
-                                  self)
-            return
-        self.category.name = name
-        self.category.color = self.colorpicker.GetColour()
-        self.category.visible = self.chb_visible.IsChecked()
-        self.EndModal(wx.ID_OK)
 
 
 class GotoDateDialog(wx.Dialog):
@@ -1355,33 +1356,33 @@ class TxtException(ValueError):
         self.control = control
 
 
-def create_new_event(timeline, start=None, end=None):
+def _create_new_event(timeline, start=None, end=None):
     """Open a dialog for creating a new event."""
     dlg = EventEditor(None, -1, _('Create Event'), timeline, start, end)
     dlg.ShowModal()
     dlg.Destroy()
 
 
-def edit_event(timeline, event):
+def _edit_event(timeline, event):
     """Open a dialog for updating properties of a marked event"""
     dlg = EventEditor(None, -1, _('Edit Event'), timeline, event=event)
     dlg.ShowModal()
     dlg.Destroy()
 
 
-def edit_categories(timeline):
+def _edit_categories(timeline):
     dialog = CategoriesEditor(None, timeline)
     dialog.ShowModal()
     dialog.Destroy()
 
 
-def set_focus_and_select(ctrl):
+def _set_focus_and_select(ctrl):
     ctrl.SetFocus()
     if hasattr(ctrl, "SelectAll"):
         ctrl.SelectAll()
 
 
-def parse_text_from_textbox(txt, name):
+def _parse_text_from_textbox(txt, name):
     """
     Return a text control field.
 
@@ -1396,18 +1397,19 @@ def parse_text_from_textbox(txt, name):
     return data
 
 
-def display_error_message(message, parent=None):
+def _display_error_message(message, parent=None):
     """Display an error message in a modal dialog box"""
     dial = wx.MessageDialog(parent, message, 'Error', wx.OK | wx.ICON_ERROR)
     dial.ShowModal()
 
 
-def ask_question(question, parent=None):
+def _ask_question(question, parent=None):
+    """Ask a yes/no question and return the reply."""
     return wx.MessageBox(question, _("Question"),
                          wx.YES_NO|wx.CENTRE|wx.NO_DEFAULT, parent)
 
 
-def step_function(x_value):
+def _step_function(x_value):
     """
     A step function.
 
@@ -1423,7 +1425,7 @@ def step_function(x_value):
     return y_value
 
 
-def sort_categories(categories):
+def _sort_categories(categories):
     sorted_categories = list(categories)
     sorted_categories.sort(cmp, lambda x: x.name.lower())
     return sorted_categories
