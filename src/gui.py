@@ -145,11 +145,11 @@ class MainFrame(wx.Frame):
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
         fit_month = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Month"))
         fit_day = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Day"))
-        self.Bind(wx.EVT_MENU, self._mnu_goto_today_on_click, goto_today)
-        self.Bind(wx.EVT_MENU, self._mnu_goto_date_on_click, goto_date)
-        self.Bind(wx.EVT_MENU, self._mnu_fit_year_on_click, fit_year)
-        self.Bind(wx.EVT_MENU, self._mnu_fit_month_on_click, fit_month)
-        self.Bind(wx.EVT_MENU, self._mnu_fit_day_on_click, fit_day)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_today_on_click, goto_today)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_date_on_click, goto_date)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_month_on_click, fit_month)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_day_on_click, fit_day)
         # Help menu
         self.mnu_help = wx.Menu()
         help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
@@ -199,19 +199,19 @@ class MainFrame(wx.Frame):
         """Event handler for the Edit Categories menu item"""
         _edit_categories(self.timeline)
 
-    def _mnu_goto_today_on_click(self, evt):
+    def _mnu_navigate_goto_today_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.center(dt.now()))
 
-    def _mnu_goto_date_on_click(self, evt):
+    def _mnu_navigate_goto_date_on_click(self, evt):
         self._goto_date()
 
-    def _mnu_fit_year_on_click(self, evt):
+    def _mnu_navigate_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_year())
 
-    def _mnu_fit_month_on_click(self, evt):
+    def _mnu_navigate_fit_month_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_month())
 
-    def _mnu_fit_day_on_click(self, evt):
+    def _mnu_navigate_fit_day_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_day())
 
     def _mnu_help_contents_on_click(self, e):
