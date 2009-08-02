@@ -234,18 +234,10 @@ class MainFrame(wx.Frame):
                                wildcard=self.wildcard, style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
-            path = dialog.GetPath()
-            # If no extension, add default
-            has_valid_extension = False
-            for extension in self.extensions:
-                if path.endswith(extension):
-                    has_valid_extension = True
-                    break
-            if not has_valid_extension:
-                path += self.default_extension
+            path, extension = _extend_path(dialog.GetPath(), self.extensions,
+                                           self.default_extension)
             if os.path.exists(path):
-                wx.MessageBox(_("The specified timeline already exists.\n\n"),
-                              _("Opening instead of creating new."),
+                wx.MessageBox(_("The specified timeline already exists.\n\nOpening instead of creating new."),
                               _("Information"),
                               wx.OK|wx.ICON_INFORMATION, self)
             self.display_timeline(path)
@@ -336,11 +328,9 @@ class MainFrame(wx.Frame):
         wildcard            The wildcard used in FileDialog
         """
         self.timeline = None
-        self.extensions = [".timeline"]
+        self.extensions = ["timeline"]
         self.default_extension = self.extensions[0]
-        self.wildcard = _("Timeline file (%s)|%s") % (
-            ", ".join(["*" + e for e in self.extensions]),
-            ";".join(["*" + e for e in self.extensions]))
+        self.wildcard = _create_wildcard(_("Timeline files"), self.extensions)
 
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()
