@@ -210,10 +210,10 @@ class TimePeriod(object):
         Data is invalid if time + delta is not within the range [MIN_TIME,
         MAX_TIME] or if the start time is larger than the end time.
         """
-        new_start = self._ensure_within_range(start_time, start_delta, "Start")
-        new_end = self._ensure_within_range(end_time, end_delta, "End")
+        new_start = self._ensure_within_range(start_time, start_delta, _("Start"))
+        new_end = self._ensure_within_range(end_time, end_delta, _("End"))
         if new_start > new_end:
-            raise ValueError("Start time can't be after end time")
+            raise ValueError(_("Start time can't be after end time"))
         self.start_time = new_start
         self.end_time = new_end
 
@@ -249,9 +249,9 @@ class TimePeriod(object):
         delta = mult_timedelta(self.delta(), times / 10.0)
         new_delta = self.delta() - 2 * delta
         if new_delta > MAX_ZOOM_DELTA:
-            raise ValueError("Can't zoom wider than 120 years")
+            raise ValueError(_("Can't zoom wider than 120 years"))
         if new_delta < MIN_ZOOM_DELTA:
-            raise ValueError("Can't zoom deeper than 1 hour")
+            raise ValueError(_("Can't zoom deeper than 1 hour"))
         self.update(self.start_time, self.end_time, delta, -delta)
 
     def move(self, direction):
@@ -311,9 +311,9 @@ class TimePeriod(object):
         """
         new_time, overflow = self._calculate_overflow(time, delta)
         if overflow > 0:
-            raise ValueError("%s time can't be after year 9989" % which)
+            raise ValueError(_("%s time can't be after year 9989") % which)
         elif overflow < 0:
-            raise ValueError("%s time can't be before year 10" % which)
+            raise ValueError(_("%s time can't be before year 10") % which)
         else:
             return new_time
 
@@ -394,4 +394,4 @@ def get_timeline(input_file, error_fn):
         from data_file import FileTimeline
         return FileTimeline(input_file, error_fn)
     else:
-        raise Exception("Unknown format")
+        raise Exception(_("Unknown format"))
