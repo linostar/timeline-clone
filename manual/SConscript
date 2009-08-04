@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-env = Environment()
+Import("env")
 
-manual_cmd = env.Command("manual.html", "manual.xml", "xmlto -vv --stringparam chunker.output.encoding=UTF-8 html-nochunks -o manual $SOURCE")
-env.Alias("manual", manual_cmd)
+env.Alias("manual", env.DocBookHtml("manual.html", "manual.xml"))
