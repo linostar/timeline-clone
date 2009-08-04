@@ -84,8 +84,8 @@ class MainFrame(wx.Frame):
         try:
             self.timeline = data.get_timeline(input_file, error_fn)
         except Exception, e:
-            _display_error_message(_("Unable to open timeline '%s'.\n\n%s") %
-                                   (input_file, e))
+            msg_template = _("Unable to open timeline '%s'.") + "\n\n%s"
+            _display_error_message(msg_template % (input_file, e))
         else:
             self.SetTitle("%s (%s) - %s" % (os.path.basename(input_file),
                                             os.path.dirname(os.path.abspath(input_file)),
@@ -239,7 +239,9 @@ class MainFrame(wx.Frame):
             path, extension = _extend_path(dialog.GetPath(), self.extensions,
                                            self.default_extension)
             if os.path.exists(path):
-                wx.MessageBox(_("The specified timeline already exists.\n\nOpening instead of creating new."),
+                msg_first_part = _("The specified timeline already exists.")
+                msg_second_part = _("Opening  timeline instead of creating new.")
+                wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
                               _("Information"),
                               wx.OK|wx.ICON_INFORMATION, self)
             self.display_timeline(path)
@@ -1357,7 +1359,7 @@ def _parse_text_from_textbox(txt, name):
     """
     data = txt.GetValue().strip()
     if len(data) == 0:
-        raise TxtException, (_("%s: Can't be empty") % name, txt)
+        raise TxtException, (_("Field '%s' can't be empty.") % name, txt)
     return data
 
 

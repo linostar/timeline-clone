@@ -180,7 +180,8 @@ class FileTimeline(Timeline):
             finally:
                 file.close()
         except IOError, e:
-            self.error_fn(_("Unable to read from file '%s'.\n\n%s") % (abspath(self.file_path), e))
+            msg = _("Unable to read from file '%s'.")
+            self.error_fn((msg + "\n\n%s") % (abspath(self.file_path), e))
             self.error_flag = FileTimeline.ERROR_READ
 
     def _load_from_lines(self, file):
@@ -342,7 +343,9 @@ class FileTimeline(Timeline):
             finally:
                 file.close()
         except IOError, e:
-            self.error_fn(_("Unable to save timeline data.\n\nIf data was corrupted, check out the backed up file that was created when the timeline was last saved.\n\n%s") % e)
+            msg_part1 = _("Unable to save timeline data.")
+            msg_part2 = _("If data was corrupted, check out the backed up file that was created when the timeline was last saved.")
+            self.error_fn(msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e)
             self.error_flag = FileTimeline.ERROR_WRITE
         self._notify(Timeline.STATE_CHANGE_ANY)
 
@@ -353,7 +356,8 @@ class FileTimeline(Timeline):
                 loginfo("Creating backup to '%s'", abspath(backup_path))
                 shutil.copy(self.file_path, backup_path)
             except IOError, e:
-                self.error_fn(_("Unable to create backup to '%s'.\n\n%s") % (abspath(backup_path), e))
+                msg = _("Unable to create backup to '%s'.")
+                self.error_fn((msg + "\n\n%s") % (abspath(backup_path), e))
 
     def _write_header(self, file):
         file.write("# Written by Timeline %s on %s\n" % (
