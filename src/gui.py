@@ -240,7 +240,7 @@ class MainFrame(wx.Frame):
                                            self.default_extension)
             if os.path.exists(path):
                 msg_first_part = _("The specified timeline already exists.")
-                msg_second_part = _("Opening  timeline instead of creating new.")
+                msg_second_part = _("Opening timeline instead of creating new.")
                 wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
                               _("Information"),
                               wx.OK|wx.ICON_INFORMATION, self)
