@@ -803,7 +803,7 @@ class DrawingArea(wx.Panel):
 
     def _redraw_timeline(self, period_selection=None):
         """Draw the timeline onto the background buffer."""
-        logging.debug('Draw timeline to bgbuf')
+        logging.debug("Draw timeline to bgbuf")
         memdc = wx.MemoryDC()
         memdc.SelectObject(self.bgbuf)
         try:
@@ -821,7 +821,7 @@ class DrawingArea(wx.Panel):
             self.Update()
         except Exception, ex:
             self.bgbuf = None
-            logging.fatal('Error in drawing', exc_info=ex)
+            logging.fatal("Error in drawing", exc_info=ex)
 
     def _scroll(self, xpixelpos):
         if self._current_time:
@@ -831,7 +831,7 @@ class DrawingArea(wx.Panel):
 
     def _set_new_current_time(self, current_x):
         self._current_time = self.drawing_algorithm.metrics.get_time(current_x)
-        logging.debug("Marked time " + self._current_time.isoformat('-'))
+        logging.debug("Marked time " + self._current_time.isoformat("-"))
 
     def _toggle_event_selection(self, xpixelpos, ypixelpos, control_down):
         """
@@ -891,7 +891,7 @@ class DrawingArea(wx.Panel):
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
-        if _ask_question(_('Are you sure to delete?'), self) == wx.YES:
+        if _ask_question(_("Are you sure to delete?"), self) == wx.YES:
             self.timeline.delete_selected_events()
 
     def _get_period_selection(self, current_x):
@@ -907,7 +907,7 @@ class DrawingArea(wx.Panel):
         wx.GetTopLevelParent(self).SetStatusText(text)
 
     def _reset_text_in_statusbar(self):
-        wx.GetTopLevelParent(self).SetStatusText('')
+        wx.GetTopLevelParent(self).SetStatusText("")
 
     def _set_select_period_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
@@ -1125,13 +1125,13 @@ class CategoriesEditor(wx.Dialog):
         self.Bind(wx.EVT_LISTBOX_DCLICK, self._lst_categories_on_dclick,
                   self.lst_categories)
         # The Add button
-        btn_add = wx.Button(self, wx.ID_ADD, _('Add'))
+        btn_add = wx.Button(self, wx.ID_ADD, _("Add"))
         self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn_add)
         # The Delete button
-        btn_del = wx.Button(self, wx.ID_DELETE, _('&Delete'))
+        btn_del = wx.Button(self, wx.ID_DELETE, _("&Delete"))
         self.Bind(wx.EVT_BUTTON, self._btn_del_on_click, btn_del)
         # The close button
-        btn_close = wx.Button(self, wx.ID_CLOSE, _('Close'))
+        btn_close = wx.Button(self, wx.ID_CLOSE, _("Close"))
         btn_close.SetDefault()
         btn_close.SetFocus()
         self.SetAffirmativeId(wx.ID_CLOSE)
@@ -1189,7 +1189,7 @@ class CategoriesEditor(wx.Dialog):
     def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
         if selection != wx.NOT_FOUND:
-            if _ask_question(_('Are you sure to delete?'), self) == wx.YES:
+            if _ask_question(_("Are you sure to delete?"), self) == wx.YES:
                 cat = self.lst_categories.GetClientData(selection)
                 self.timeline.delete_category(cat)
 
@@ -1322,14 +1322,14 @@ class TxtException(ValueError):
 
 def _create_new_event(timeline, start=None, end=None):
     """Open a dialog for creating a new event."""
-    dlg = EventEditor(None, -1, _('Create Event'), timeline, start, end)
+    dlg = EventEditor(None, -1, _("Create Event"), timeline, start, end)
     dlg.ShowModal()
     dlg.Destroy()
 
 
 def _edit_event(timeline, event):
     """Open a dialog for updating properties of a marked event"""
-    dlg = EventEditor(None, -1, _('Edit Event'), timeline, event=event)
+    dlg = EventEditor(None, -1, _("Edit Event"), timeline, event=event)
     dlg.ShowModal()
     dlg.Destroy()
 
@@ -1419,8 +1419,8 @@ def _create_button_box(parent, ok_method, cancel_method=None):
     The control contains one OK button and one Cancel or Close button.
     """
     button_box = wx.StdDialogButtonSizer()
-    btn_ok = wx.Button(parent, wx.ID_OK, _('&OK') )
-    btn_cancel = wx.Button(parent, wx.ID_CANCEL, _('&Cancel'))
+    btn_ok = wx.Button(parent, wx.ID_OK, _("&OK") )
+    btn_cancel = wx.Button(parent, wx.ID_CANCEL, _("&Cancel"))
     btn_ok.SetDefault()
     button_box.SetCancelButton(btn_cancel)
     button_box.SetAffirmativeButton(btn_ok)

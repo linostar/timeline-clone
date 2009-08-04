@@ -108,7 +108,7 @@ def get_supported_languages():
 
     The default language, 'en_US', is not included in this set.
     """
-    return ('sv_SE')
+    return ("sv_SE")
 
 
 def setup_locale():
@@ -127,7 +127,7 @@ def setup_locale():
                     --output-file=%DIR%\Timeline.mo  %DIR%\Timeline_sv_SE.po
     """
     def get_user_locale_language():
-        locale.setlocale(locale.LC_ALL, '')
+        locale.setlocale(locale.LC_ALL, "")
         language, encoding = locale.getdefaultlocale()
         return language
     gettext.install(APPLICATION_NAME, LOCALE_DIR.lower(), unicode=False)
@@ -149,5 +149,5 @@ def main():
     app.MainLoop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
