@@ -891,10 +891,7 @@ class DrawingArea(wx.Panel):
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
-        ok_to_delete  = wx.MessageBox(_('Are you sure to delete?'), _('Question'),
-                                      wx.YES_NO|wx.CENTRE|wx.NO_DEFAULT,
-                                      self) == wx.YES
-        if ok_to_delete:
+        if _ask_question(_('Are you sure to delete?'), self) == wx.YES:
             self.timeline.delete_selected_events()
 
     def _get_period_selection(self, current_x):
@@ -1192,10 +1189,7 @@ class CategoriesEditor(wx.Dialog):
     def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
         if selection != wx.NOT_FOUND:
-            ok_to_delete = wx.MessageBox(_('Are you sure to delete?'), _('Question'),
-                                         wx.YES_NO|wx.CENTRE|wx.NO_DEFAULT,
-                                         self) == wx.YES
-            if ok_to_delete:
+            if _ask_question(_('Are you sure to delete?'), self) == wx.YES:
                 cat = self.lst_categories.GetClientData(selection)
                 self.timeline.delete_category(cat)
 
