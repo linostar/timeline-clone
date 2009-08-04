@@ -130,10 +130,11 @@ def setup_locale():
         locale.setlocale(locale.LC_ALL, '')
         language, encoding = locale.getdefaultlocale()
         return language
-    gettext.install(APPLICATION_NAME, LOCALE_DIR, unicode=False)
+    gettext.install(APPLICATION_NAME, LOCALE_DIR.lower(), unicode=False)
     language = get_user_locale_language()
     if language in get_supported_languages():
-        current_language = gettext.translation(APPLICATION_NAME, LOCALE_DIR,
+        current_language = gettext.translation(APPLICATION_NAME.lower(),
+                                               LOCALE_DIR,
                                                languages=[language])
         current_language.install()
 
