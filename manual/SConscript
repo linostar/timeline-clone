@@ -15,13 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: clean
+env = Environment()
 
-html: manual.html
-
-manual.html: manual.xml
-	#docbook2html -u manual.xml
-	xmlto -vv --stringparam chunker.output.encoding=UTF-8 html-nochunks manual.xml
-
-clean:
-	-rm manual.html
+manual_cmd = env.Command("manual.html", "manual.xml", "xmlto -vv --stringparam chunker.output.encoding=UTF-8 html-nochunks -o manual $SOURCE")
+env.Alias("manual", manual_cmd)
