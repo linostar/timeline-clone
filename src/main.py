@@ -39,6 +39,7 @@ from gui import MainFrame
 from version import get_version
 import config
 from about import APPLICATION_NAME
+from paths import LOCALE_DIR
 
 
 def parse_options():
@@ -129,11 +130,10 @@ def setup_locale():
         locale.setlocale(locale.LC_ALL, '')
         language, encoding = locale.getdefaultlocale()
         return language
-    locale_dir = '../locale'
-    gettext.install(APPLICATION_NAME, locale_dir, unicode=False)
+    gettext.install(APPLICATION_NAME, LOCALE_DIR, unicode=False)
     language = get_user_locale_language()
     if language in get_supported_languages():
-        current_language = gettext.translation(APPLICATION_NAME, locale_dir,
+        current_language = gettext.translation(APPLICATION_NAME, LOCALE_DIR,
                                                languages=[language])
         current_language.install()
 

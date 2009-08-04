@@ -47,6 +47,8 @@ import drawing
 import config
 from about import display_about_dialog
 from about import APPLICATION_NAME
+from paths import ICONS_DIR
+from paths import MANUAL_FILE
 
 
 # Border, in pixels, between controls in a window (should always be used when
@@ -310,12 +312,10 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
 
     def _show_help(self):
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
-                                            _("manual"), "manual.html"))
-        if os.path.exists(path):
-            HelpWindow(self, path).Show()
+        if os.path.exists(MANUAL_FILE):
+            HelpWindow(self, MANUAL_FILE).Show()
         else:
-            _display_error_message(_("Could not locate manual at '%s'.") % path,
+            _display_error_message(_("Could not locate manual at '%s'.") % MANUAL_FILE,
                                    self)
 
     def _set_initial_values_to_member_variables(self):
@@ -334,10 +334,8 @@ class MainFrame(wx.Frame):
 
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()
-        icondir = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                  "..", "icons"))
         for size in ["16", "32", "48"]:
-            iconpath = os.path.join(icondir, "%s.png" % size)
+            iconpath = os.path.join(ICONS_DIR, "%s.png" % size)
             icon = wx.IconFromBitmap(wx.BitmapFromImage(wx.Image(iconpath)))
             bundle.AddIcon(icon)
         return bundle
