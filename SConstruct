@@ -46,8 +46,14 @@ def mo_builder(env):
     convert_action = "msgfmt -o $TARGET $SOURCE"
     env["BUILDERS"]["Mo"] = Builder(action=convert_action)
 
-env = Environment(tools=[docbookhtml_builder, pot_builder, mo_builder])
+def vimtags_builder(env):
+    generate_action = "ctags -f $TARGET $SOURCES"
+    env["BUILDERS"]["VimTags"] = Builder(action=generate_action)
+
+env = Environment(tools=[docbookhtml_builder, pot_builder, mo_builder,
+                         vimtags_builder])
 Export("env")
 
 SConscript("manual/SConscript")
 SConscript("po/SConscript")
+SConscript("src/SConscript")

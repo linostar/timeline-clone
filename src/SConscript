@@ -15,11 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: tags clean
+Import("env")
 
-tags: *.py
-	ctags *.py
-
-clean:
-	-rm *.pyc
-	-rm tags
+env.Alias("tags", env.VimTags("tags", Glob("*.py")))
