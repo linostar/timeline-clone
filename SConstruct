@@ -21,8 +21,6 @@
 
 def docbookhtml_builder(env):
     env["XMLTO"] = WhereIs("xmlto")
-    if not env["XMLTO"]:
-        print("xmlto not found. You will not be able to convert docbook files to html files.")
     convert_action = "$XMLTO" \
                      " -vv" \
                      " --stringparam chunker.output.encoding=UTF-8" \
@@ -38,26 +36,17 @@ def docbookhtml_builder(env):
 
 def pot_builder(env):
     env["XGETTEXT"] = WhereIs("xgettext")
-    if not env["XGETTEXT"]:
-        print("xgettext not found. You will not be able to extract pot files from source code.")
     env["XGETTEXTFLAGS"] = ""
-    extract_action = "$XGETTEXT" \
-                     " -o $TARGET" \
-                     " $XGETTEXTFLAGS" \
-                     " $SOURCES"
+    extract_action = "$XGETTEXT -o $TARGET $XGETTEXTFLAGS $SOURCES"
     env["BUILDERS"]["Pot"] = Builder(action=extract_action)
 
 def mo_builder(env):
     env["MSGFMT"] = WhereIs("msgfmt")
-    if not env["MSGFMT"]:
-        print("msgfmt not found. You will not be able to create mo files.")
     convert_action = "$MSGFMT -o $TARGET $SOURCE"
     env["BUILDERS"]["Mo"] = Builder(action=convert_action)
 
 def vimtags_builder(env):
     env["CTAGS"] = WhereIs("ctags")
-    if not env["CTAGS"]:
-        print("ctags not found. You will not be able to create vim tags file.")
     generate_action = "$CTAGS -f $TARGET $SOURCES"
     env["BUILDERS"]["VimTags"] = Builder(action=generate_action)
 
@@ -69,3 +58,5 @@ Export("env")
 SConscript("manual/SConscript")
 SConscript("po/SConscript")
 SConscript("src/SConscript")
+
+# vim: syntax=python

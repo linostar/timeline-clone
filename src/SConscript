@@ -17,4 +17,9 @@
 
 Import("env")
 
-env.Alias("tags", env.VimTags("tags", Glob("*.py")))
+if not env["CTAGS"]:
+    print("WARNING: tags target disabled because ctags was not found")
+else:
+    env.Alias("tags", env.VimTags("tags", Glob("*.py")))
+
+# vim: syntax=python

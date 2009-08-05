@@ -17,4 +17,9 @@
 
 Import("env")
 
-env.Alias("manual", env.DocBookHtml("manual.html", "manual.xml"))
+if not env["XMLTO"]:
+    print("WARNING: manual target disabled because xmlto was not found")
+else:
+    env.Alias("manual", env.DocBookHtml("manual.html", "manual.xml"))
+
+# vim: syntax=python

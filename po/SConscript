@@ -17,14 +17,22 @@
 
 Import("env")
 
-flags = " --copyright-holder=\"Rickard Lindberg\"" \
-        " --package-name=Timeline" \
-        " --package-version=0.4.0"
-env.Alias("pot",
-          env.Pot("timeline.pot", Glob("../src/*.py"), XGETTEXTFLAGS=flags))
+if not env["XGETTEXT"]:
+    print("WARNING: pot target disabled because xgettext was not found")
+else:
+    flags = " --copyright-holder=\"Rickard Lindberg\"" \
+            " --package-name=Timeline" \
+            " --package-version=0.4.0"
+    env.Alias("pot", env.Pot("timeline.pot", Glob("../src/*.py"),
+                             XGETTEXTFLAGS=flags))
 
-language_map = {"sv": "sv_SE"}
-for key, value in language_map.items():
-    target = "%s/LC_MESSAGES/timeline.mo" % value
-    env.Alias("mo", env.Mo(target, "%s.po" % key))
-    env.Clean(target, value)
+if not env["MSGFMT"]:
+    print("WARNING: mo target disabled because msgfmt was not found")
+else:
+    language_map = {"sv": "sv_SE"}
+    for key, value in language_map.items():
+        target = "%s/LC_MESSAGES/timeline.mo" % value
+        env.Alias("mo", env.Mo(target, "%s.po" % key))
+        env.Clean(target, value)
+
+# vim: syntax=python
