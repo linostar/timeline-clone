@@ -17,7 +17,11 @@
 
 Import("env")
 
-env.Alias("pot", env.Pot("timeline.pot", Glob("../src/*.py")))
+flags = " --copyright-holder=\"Rickard Lindberg\"" \
+        " --package-name=Timeline" \
+        " --package-version=0.4.0"
+env.Alias("pot",
+          env.Pot("timeline.pot", Glob("../src/*.py"), XGETTEXTFLAGS=flags))
 
 language_map = {"sv": "sv_SE"}
 for key, value in language_map.items():

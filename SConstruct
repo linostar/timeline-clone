@@ -20,7 +20,10 @@
 # the place to change them with a check like if "win32" in sys.platform: ..."
 
 def docbookhtml_builder(env):
-    convert_action = "xmlto" \
+    env["XMLTO"] = WhereIs("xmlto")
+    if not env["XMLTO"]:
+        print("xmlto not found. You will not be able to convert docbook files to html files.")
+    convert_action = "$XMLTO" \
                      " -vv" \
                      " --stringparam chunker.output.encoding=UTF-8" \
                      " html-nochunks" \
@@ -34,24 +37,33 @@ def docbookhtml_builder(env):
                                                      move_action])
 
 def pot_builder(env):
-    extract_action = "xgettext" \
+    env["XGETTEXT"] = WhereIs("xgettext")
+    if not env["XGETTEXT"]:
+        print("xgettext not found. You will not be able to extract pot files from source code.")
+    env["XGETTEXTFLAGS"] = ""
+    extract_action = "$XGETTEXT" \
                      " -o $TARGET" \
-                     " --copyright-holder='Rickard Lindberg'" \
-                     " --package-name=Timeline" \
-                     " --package-version=0.4.0" \
+                     " $XGETTEXTFLAGS" \
                      " $SOURCES"
     env["BUILDERS"]["Pot"] = Builder(action=extract_action)
 
 def mo_builder(env):
-    convert_action = "msgfmt -o $TARGET $SOURCE"
+    env["MSGFMT"] = WhereIs("msgfmt")
+    if not env["MSGFMT"]:
+        print("msgfmt not found. You will not be able to create mo files.")
+    convert_action = "$MSGFMT -o $TARGET $SOURCE"
     env["BUILDERS"]["Mo"] = Builder(action=convert_action)
 
 def vimtags_builder(env):
-    generate_action = "ctags -f $TARGET $SOURCES"
+    env["CTAGS"] = WhereIs("ctags")
+    if not env["CTAGS"]:
+        print("ctags not found. You will not be able to create vim tags file.")
+    generate_action = "$CTAGS -f $TARGET $SOURCES"
     env["BUILDERS"]["VimTags"] = Builder(action=generate_action)
 
-env = Environment(tools=[docbookhtml_builder, pot_builder, mo_builder,
-                         vimtags_builder])
+env = Environment(tools=["default", docbookhtml_builder, pot_builder,
+                         mo_builder, vimtags_builder])
+
 Export("env")
 
 SConscript("manual/SConscript")
