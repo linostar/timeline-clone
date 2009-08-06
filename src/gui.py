@@ -155,7 +155,7 @@ class MainFrame(wx.Frame):
         # Help menu
         self.mnu_help = wx.Menu()
         help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
-        help_about = self.mnu_help.Append(wx.ID_ABOUT, _("&About"))
+        help_about = self.mnu_help.Append(wx.ID_ABOUT)
         self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, help_contents)
         self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
         # The menu bar
@@ -951,6 +951,26 @@ class EventEditor(wx.Dialog):
 
     def _create_gui(self):
         """Create the controls of the dialog."""
+        def create_button_box(): 
+            """ 
+            Convenience method for creating a button box control. 
+
+            The control contains one OK button and one Close button. 
+            """ 
+            button_box = wx.StdDialogButtonSizer() 
+            btn_ok = wx.Button(self, wx.ID_OK) 
+            btn_close = wx.Button(self, wx.ID_CLOSE) 
+            btn_ok.SetDefault() 
+            button_box.SetCancelButton(btn_close) 
+            button_box.SetAffirmativeButton(btn_ok) 
+            button_box.Realize() 
+            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, id=wx.ID_CANCEL) 
+            self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, btn_ok) 
+            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close) 
+            self.SetEscapeId(btn_close.GetId()) 
+            self.SetDefaultItem(btn_ok) 
+            self.SetAffirmativeId(btn_ok.GetId()) 
+            return button_box 
         # The check boxes
         self.chb_period = wx.CheckBox(self, label=_("Period"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
@@ -991,9 +1011,7 @@ class EventEditor(wx.Dialog):
                      border=BORDER)
         main_box.Add(groupbox_sizer, proportion=1, flag=wx.EXPAND|wx.ALL,
                      border=BORDER)
-        button_box = _create_button_box(self, self._btn_ok_on_click,
-                                        self._btn_close_on_click)
-        main_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        main_box.Add(create_button_box(), flag=wx.EXPAND|wx.ALL, border=BORDER)
         self.SetSizerAndFit(main_box)
 
     def _btn_close_on_click(self, evt):
@@ -1127,13 +1145,13 @@ class CategoriesEditor(wx.Dialog):
         self.Bind(wx.EVT_LISTBOX_DCLICK, self._lst_categories_on_dclick,
                   self.lst_categories)
         # The Add button
-        btn_add = wx.Button(self, wx.ID_ADD, _("Add"))
+        btn_add = wx.Button(self, wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn_add)
         # The Delete button
-        btn_del = wx.Button(self, wx.ID_DELETE, _("&Delete"))
+        btn_del = wx.Button(self, wx.ID_DELETE)
         self.Bind(wx.EVT_BUTTON, self._btn_del_on_click, btn_del)
         # The close button
-        btn_close = wx.Button(self, wx.ID_CLOSE, _("Close"))
+        btn_close = wx.Button(self, wx.ID_CLOSE)
         btn_close.SetDefault()
         btn_close.SetFocus()
         self.SetAffirmativeId(wx.ID_CLOSE)
@@ -1244,8 +1262,8 @@ class CategoryEditor(wx.Dialog):
         field_grid.Add(self.chb_visible)
         vbox.Add(field_grid, flag=wx.EXPAND|wx.ALL, border=BORDER)
         # Buttons
-        button_box = _create_button_box(self, self._btn_ok_on_click)
-        #self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
+        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(vbox)
         _set_focus_and_select(self.txt_name)
@@ -1295,7 +1313,7 @@ class GotoDateDialog(wx.Dialog):
         vbox.Add(self.dtpc, flag=wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT,
                  border=BORDER, proportion=1)
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        button_box = _create_button_box(self, self._btn_ok_on_click)
+        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(vbox)
 
@@ -1421,8 +1439,8 @@ def _create_button_box(parent, ok_method, cancel_method=None):
     The control contains one OK button and one Cancel or Close button.
     """
     button_box = wx.StdDialogButtonSizer()
-    btn_ok = wx.Button(parent, wx.ID_OK, _("&OK") )
-    btn_cancel = wx.Button(parent, wx.ID_CANCEL, _("&Cancel"))
+    btn_ok = wx.Button(parent, wx.ID_OK)
+    btn_cancel = wx.Button(parent, wx.ID_CANCEL)
     btn_ok.SetDefault()
     button_box.SetCancelButton(btn_cancel)
     button_box.SetAffirmativeButton(btn_ok)
