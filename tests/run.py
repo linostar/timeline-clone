@@ -22,14 +22,18 @@ Script that runs all unit tests.
 import sys
 import os.path
 import unittest
+import gettext
 
 src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, src_dir)
 
 import time_period
 import file_timeline
+from about import APPLICATION_NAME
+from paths import LOCALE_DIR
 
 if __name__ == '__main__':
+    gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
     loader = unittest.TestLoader()
     test_modules = [time_period, file_timeline]
     test_suites = [loader.loadTestsFromModule(x) for x in test_modules]
