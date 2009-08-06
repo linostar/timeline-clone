@@ -210,8 +210,14 @@ class TimePeriod(object):
         Data is invalid if time + delta is not within the range [MIN_TIME,
         MAX_TIME] or if the start time is larger than the end time.
         """
-        new_start = self._ensure_within_range(start_time, start_delta, _("Start"))
-        new_end = self._ensure_within_range(end_time, end_delta, _("End"))
+        pos_error = _("Start time can't be after year 9989")
+        neg_error = _("Start time can't be before year 10")
+        new_start = self._ensure_within_range(start_time, start_delta,
+                                              pos_error, neg_error)
+        pos_error = _("End time can't be after year 9989")
+        neg_error = _("End time can't be before year 10")
+        new_end = self._ensure_within_range(end_time, end_delta,
+                                            pos_error, neg_error)
         if new_start > new_end:
             raise ValueError(_("Start time can't be after end time"))
         self.start_time = new_start
@@ -304,16 +310,16 @@ class TimePeriod(object):
         end = dt(mean.year, mean.month, mean.day + 1)
         self.update(start, end)
 
-    def _ensure_within_range(self, time, delta, which):
+    def _ensure_within_range(self, time, delta, pos_error, neg_error):
         """
         Return new time (time + delta) or raise ValueError if it is not within
         the range [MIN_TIME, MAX_TIME].
         """
         new_time, overflow = self._calculate_overflow(time, delta)
         if overflow > 0:
-            raise ValueError(_("%s time can't be after year 9989") % which)
+            raise ValueError(pos_error)
         elif overflow < 0:
-            raise ValueError(_("%s time can't be before year 10") % which)
+            raise ValueError(neg_error)
         else:
             return new_time
 
