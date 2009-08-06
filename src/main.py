@@ -97,9 +97,6 @@ def log_versions():
 def create_wx_app(input_files):
     """Initialize wx and create the main frame."""
     app = wx.PySimpleApp()
-    # To enable translations of wx stock items. Note that it is important to
-    # assign to a variable, otherwise it will not work.
-    locale = wx.Locale(wx.LANGUAGE_DEFAULT)
     config.read() # Must be called after we have created the wx.App
     main_frame = MainFrame()
     main_frame.Show()

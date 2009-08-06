@@ -69,6 +69,8 @@ class MainFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, size=config.get_window_size(),
                           style=wx.DEFAULT_FRAME_STYLE)
+        # To enable translations of wx stock items.
+        self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
         self._set_initial_values_to_member_variables()
         self._create_gui()
         self.Maximize(config.get_window_maximized())
@@ -959,26 +961,26 @@ class EventEditor(wx.Dialog):
 
     def _create_gui(self):
         """Create the controls of the dialog."""
-        def create_button_box(): 
-            """ 
-            Convenience method for creating a button box control. 
+        def create_button_box():
+            """
+            Convenience method for creating a button box control.
 
-            The control contains one OK button and one Close button. 
-            """ 
-            button_box = wx.StdDialogButtonSizer() 
-            btn_ok = wx.Button(self, wx.ID_OK) 
-            btn_close = wx.Button(self, wx.ID_CLOSE) 
-            btn_ok.SetDefault() 
-            button_box.SetCancelButton(btn_close) 
-            button_box.SetAffirmativeButton(btn_ok) 
-            button_box.Realize() 
-            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, id=wx.ID_CANCEL) 
-            self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, btn_ok) 
-            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close) 
-            self.SetEscapeId(btn_close.GetId()) 
-            self.SetDefaultItem(btn_ok) 
-            self.SetAffirmativeId(btn_ok.GetId()) 
-            return button_box 
+            The control contains one OK button and one Close button.
+            """
+            button_box = wx.StdDialogButtonSizer()
+            btn_ok = wx.Button(self, wx.ID_OK)
+            btn_close = wx.Button(self, wx.ID_CLOSE)
+            btn_ok.SetDefault()
+            button_box.SetCancelButton(btn_close)
+            button_box.SetAffirmativeButton(btn_ok)
+            button_box.Realize()
+            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, id=wx.ID_CANCEL)
+            self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, btn_ok)
+            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
+            self.SetEscapeId(btn_close.GetId())
+            self.SetDefaultItem(btn_ok)
+            self.SetAffirmativeId(btn_ok.GetId())
+            return button_box
         # The check boxes
         self.chb_period = wx.CheckBox(self, label=_("Period"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
