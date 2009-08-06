@@ -96,6 +96,14 @@ class MainFrame(wx.Frame):
         self._enable_disable_menus()
 
     def _create_gui(self):
+        def add_ellipses_to_menuitem(id):
+            plain = wx.GetStockLabel(id,
+                    wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
+            # format of plain 'xxx[\tyyy]', example '&New\tCtrl+N'
+            tab_index = plain.find("\t")
+            if tab_index != -1:
+                return plain[:tab_index] + "..." + plain[tab_index:]
+            return plain + "..."
         # The only content of this frame is the MainPanel
         self.main_panel = MainPanel(self)
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
@@ -104,15 +112,15 @@ class MainFrame(wx.Frame):
         # The menu
         # File menu
         self.mnu_file = wx.Menu()
-        self.mnu_file.Append(wx.ID_NEW, _("&New...\tCtrl+N"),
+        self.mnu_file.Append(wx.ID_NEW, add_ellipses_to_menuitem(wx.ID_NEW),
                              _("Create a new timeline"))
-        self.mnu_file.Append(wx.ID_OPEN, _("&Open...\tCtrl+O"),
+        self.mnu_file.Append(wx.ID_OPEN, add_ellipses_to_menuitem(wx.ID_OPEN),
                              _("Open an existing timeline"))
         self.mnu_file.AppendSeparator()
         self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
                                                     _("&Export to Image..."))
         self.mnu_file.AppendSeparator()
-        self.mnu_file.Append(wx.ID_EXIT, _("&Quit\tCtrl+Q"),
+        self.mnu_file.Append(wx.ID_EXIT, "",
                              _("Exit the program"))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
