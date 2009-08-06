@@ -597,7 +597,7 @@ class DrawingArea(wx.Panel):
             self._redraw_timeline()
             wx.GetTopLevelParent(self).SetStatusText("")
         except (ValueError, OverflowError), e:
-            wx.GetTopLevelParent(self).SetStatusText(str(e))
+            wx.GetTopLevelParent(self).SetStatusText(e.message)
 
     def _create_gui(self):
         self.Bind(wx.EVT_SIZE, self._window_on_size)
