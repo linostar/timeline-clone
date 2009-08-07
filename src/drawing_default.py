@@ -28,6 +28,7 @@ import logging
 import calendar
 from datetime import timedelta
 from datetime import datetime
+from gui import sort_categories
 
 import wx
 
@@ -454,7 +455,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             cat = event.category
             if cat and not cat in categories:
                 categories.append(cat)
-        return categories
+        return sort_categories(categories)
 
     def _draw_legend(self, categories):
         """

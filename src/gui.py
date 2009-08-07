@@ -413,7 +413,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
             self._update_categories()
 
     def _update_categories(self):
-        self.categories = _sort_categories(self.timeline.get_categories())
+        self.categories = sort_categories(self.timeline.get_categories())
         self.Clear()
         self.AppendItems([category.name for category in self.categories])
         for i in range(0, self.Count):
@@ -1119,7 +1119,7 @@ class EventEditor(wx.Dialog):
         self.lst_category.Append("", None) # The None-category
         selection_set = False
         current_item_index = 1
-        for cat in _sort_categories(self.timeline.get_categories()):
+        for cat in sort_categories(self.timeline.get_categories()):
             self.lst_category.Append(cat.name, cat)
             if cat == category:
                 self.lst_category.SetSelection(current_item_index)
@@ -1242,7 +1242,7 @@ class CategoriesEditor(wx.Dialog):
 
     def _update_categories(self):
         self.lst_categories.Clear()
-        for category in _sort_categories(self.timeline.get_categories()):
+        for category in sort_categories(self.timeline.get_categories()):
             self.lst_categories.Append(category.name, category)
 
 
@@ -1367,6 +1367,12 @@ class TxtException(ValueError):
         self.control = control
 
 
+def sort_categories(categories):
+    sorted_categories = list(categories)
+    sorted_categories.sort(cmp, lambda x: x.name.lower())
+    return sorted_categories
+
+
 def _create_new_event(timeline, start=None, end=None):
     """Open a dialog for creating a new event."""
     dlg = EventEditor(None, -1, _("Create Event"), timeline, start, end)
@@ -1434,12 +1440,6 @@ def _step_function(x_value):
     elif x_value > 0:
         y_value = 1
     return y_value
-
-
-def _sort_categories(categories):
-    sorted_categories = list(categories)
-    sorted_categories.sort(cmp, lambda x: x.name.lower())
-    return sorted_categories
 
 
 def _create_wildcard(text, extensions):
