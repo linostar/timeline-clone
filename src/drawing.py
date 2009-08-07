@@ -37,7 +37,8 @@ class DrawingAlgorithm(object):
     should be used.
     """
 
-    def draw(self, dc, time_period, events, period_selection=None):
+    def draw(self, dc, time_period, events, period_selection=None,
+             legend=False):
         """
         This is the interface.
 
@@ -45,6 +46,7 @@ class DrawingAlgorithm(object):
         - time_period: what period of the timeline should be visible
         - events: events inside time_period that should be drawn
         - period_selection: tuple with start and end time indicating selection
+        - legend: draw a legend for the categories
 
         When the dc is temporarily stored in a class variable such as self.dc,
         this class variable must be deleted before the draw method ends.

@@ -228,7 +228,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
 
-    def draw(self, dc, time_period, events, period_selection=None):
+    def draw(self, dc, time_period, events, period_selection=None,
+             legend=False):
         """
         Implement the drawing interface.
 
