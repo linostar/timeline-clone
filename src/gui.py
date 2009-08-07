@@ -146,9 +146,14 @@ class MainFrame(wx.Frame):
         self.mnu_view_sidebar = self.mnu_view.Append(wx.ID_ANY,
                                                      _("&Sidebar\tCtrl+I"),
                                                      kind=wx.ITEM_CHECK)
+        self.mnu_view_legend = self.mnu_view.Append(wx.ID_ANY,
+                                                    _("&Legend"),
+                                                    kind=wx.ITEM_CHECK)
         self.mnu_view_sidebar.Check()
         self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click,
                   self.mnu_view_sidebar)
+        self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click,
+                  self.mnu_view_legend)
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, _("Go to &Today\tCtrl+H"))
@@ -202,6 +207,9 @@ class MainFrame(wx.Frame):
             self.main_panel.show_sidebar()
         else:
             self.main_panel.hide_sidebar()
+
+    def _mnu_view_legend_on_click(self, evt):
+        self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
 
     def _mnu_timeline_create_event_on_click(self, evt):
         """Event handler for the New Event menu item"""
@@ -580,6 +588,11 @@ class DrawingArea(wx.Panel):
         else:
             self.Disable()
 
+    def show_hide_legend(self, show):
+        self.show_legend = show
+        if self.timeline:
+            self._redraw_timeline()
+
     def get_time_period(self):
         """Return currently displayed time period."""
         if self.timeline == None:
@@ -805,6 +818,7 @@ class DrawingArea(wx.Panel):
         self.drawing_algorithm = drawing.get_algorithm()
         self.is_scrolling = False
         self.is_selecting = False
+        self.show_legend = False
 
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
@@ -826,7 +840,8 @@ class DrawingArea(wx.Panel):
                 current_events = self.timeline.get_events(self.time_period)
                 self.drawing_algorithm.draw(memdc, self.time_period,
                                             current_events,
-                                            period_selection)
+                                            period_selection,
+                                            self.show_legend)
             memdc.EndDrawing()
             del memdc
             self.Refresh()
