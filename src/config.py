@@ -36,13 +36,15 @@ WINDOW_WIDTH = "window_width"
 WINDOW_HEIGHT = "window_height"
 WINDOW_MAXIMIZED = "window_maximized"
 SHOW_SIDEBAR = "show_sidebar"
+SHOW_LEGEND = "show_legend"
 SIDEBAR_WIDTH = "sidebar_width"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
     WINDOW_MAXIMIZED: "False",
     SHOW_SIDEBAR: "True",
-    SIDEBAR_WIDTH: "200"
+    SIDEBAR_WIDTH: "200",
+    SHOW_LEGEND: "False"
 }
 
 
@@ -95,6 +97,14 @@ def get_show_sidebar():
 
 def set_show_sidebar(show):
     config.set(DEFAULTSECT, SHOW_SIDEBAR, str(show))
+
+
+def get_show_legend():
+    return config.getboolean(DEFAULTSECT, SHOW_LEGEND)
+
+
+def set_show_legend(show):
+    config.set(DEFAULTSECT, SHOW_LEGEND, str(show))
 
 
 def get_sidebar_width():

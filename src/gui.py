@@ -76,6 +76,7 @@ class MainFrame(wx.Frame):
         self.Maximize(config.get_window_maximized())
         self.SetTitle(APPLICATION_NAME)
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
+        self.mnu_view_legend.Check(config.get_show_legend())
         self._enable_disable_menus()
         self.SetIcons(self._load_icon_bundle())
 
@@ -293,6 +294,7 @@ class MainFrame(wx.Frame):
         config.set_window_size(self.GetSize())
         config.set_window_maximized(self.IsMaximized())
         config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
+        config.set_show_legend(self.mnu_view_legend.IsChecked())
         config.set_sidebar_width(self.main_panel.get_sidebar_width())
         config.write()
 
@@ -818,7 +820,7 @@ class DrawingArea(wx.Panel):
         self.drawing_algorithm = drawing.get_algorithm()
         self.is_scrolling = False
         self.is_selecting = False
-        self.show_legend = False
+        self.show_legend = config.get_show_legend()
 
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
