@@ -225,6 +225,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.black_dashed_pen.SetDashes([2, 2])
         self.black_dashed_pen.SetCap(wx.CAP_BUTT)
         self.grey_solid_pen = wx.Pen(wx.Color(200, 200, 200), 1, wx.SOLID)
+        self.white_solid_brush = wx.Brush(wx.Color(255, 255, 255), wx.SOLID)
         self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
 
@@ -252,6 +253,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         if period_selection:
             self._draw_period_selection(period_selection)
         self._draw_bg()
+        if legend:
+            self._draw_legend(self._extract_categories(events))
         self._draw_events()
         # Make sure to delete this one
         del self.dc
@@ -444,6 +447,66 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.SetPen(self.darkred_solid_pen)
             x = self.metrics.calc_x(now_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
+
+    def _extract_categories(self, events):
+        categories = []
+        for event in events:
+            cat = event.category
+            if cat and not cat in categories:
+                categories.append(cat)
+        return categories
+
+    def _draw_legend(self, categories):
+        """
+        Draw legend for the given categories.
+
+        Box in lower left corner:
+
+          +----------+
+          | Name   O |
+          | Name   O |
+          +----------+
+        """
+        num_categories = len(categories)
+        if num_categories == 0:
+            return
+        def calc_sizes(dc):
+            """Return (width, height, item_height)."""
+            width = 0
+            height = INNER_PADDING
+            item_heights = 0
+            for cat in categories:
+                tw, th = self.dc.GetTextExtent(cat.name)
+                height = height + th + INNER_PADDING
+                item_heights += th
+                if tw > width:
+                    width = tw
+            item_height = item_heights / num_categories
+            return (width + 4 * INNER_PADDING + item_height, height,
+                    item_height)
+        self.dc.SetFont(self.small_text_font)
+        self.dc.SetTextForeground((0, 0, 0))
+        width, height, item_height = calc_sizes(self.dc)
+        # Draw big box
+        self.dc.SetBrush(self.white_solid_brush)
+        self.dc.SetPen(self.black_solid_pen)
+        box_rect = (OUTER_PADDING,
+                    self.metrics.height - height - OUTER_PADDING,
+                    width, height)
+        self.dc.DrawRectangleRect(box_rect)
+        # Draw text and color boxes
+        cur_y = self.metrics.height - height - OUTER_PADDING + INNER_PADDING
+        for cat in categories:
+            base_color = cat.color
+            border_color = drawing.darken_color(base_color)
+            self.dc.SetBrush(wx.Brush(base_color, wx.SOLID))
+            self.dc.SetPen(wx.Pen(border_color, 1, wx.SOLID))
+            color_box_rect = (OUTER_PADDING + width - item_height -
+                              INNER_PADDING,
+                              cur_y, item_height, item_height)
+            self.dc.DrawRectangleRect(color_box_rect)
+            self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
+            cur_y = cur_y + item_height + INNER_PADDING
 
     def _draw_events(self):
         """Draw all event boxes and the text inside them."""
