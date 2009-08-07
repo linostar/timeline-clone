@@ -1,5 +1,6 @@
 # Swedish translations for the Timeline application.
 # Copyright (C) 2009 ORGANIZATION
+# This file is distributed under the same license as the Timeline package.
 # Roger Lindberg <roger@rolidata.se>, 2009.
 #
 msgid ""
