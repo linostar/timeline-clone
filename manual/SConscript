@@ -17,9 +17,12 @@
 
 Import("env")
 
-if not env["XMLTO"]:
-    print("WARNING: manual target disabled because xmlto was not found")
+if not env["XMLLINT"] or not env["XSLTPROC"]:
+    print("WARNING: manual target disabled because xml tool xmllint or xsltproc was not found")
 else:
-    env.Alias("manual", env.DocBookHtml("manual.html", "manual.xml"))
+    flags = " --stringparam chunker.output.encoding UTF-8" \
+            " --stringparam toc.section.depth 2"
+    env.Alias("manual", env.DocBookSingleHtml("manual.html", "manual.xml",
+                                              XSLTPROCFLAGS=flags))
 
 # vim: syntax=python

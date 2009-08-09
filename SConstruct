@@ -19,20 +19,16 @@
 # related stuff. These commands might differ on different platforms. This is
 # the place to change them with a check like if "win32" in sys.platform: ..."
 
-def docbookhtml_builder(env):
-    env["XMLTO"] = WhereIs("xmlto")
-    convert_action = "$XMLTO" \
-                     " -vv" \
-                     " --stringparam chunker.output.encoding=UTF-8" \
-                     " html-nochunks" \
-                     " -o ${SOURCE.dir}" \
+def docbooksinglehtml_builder(env):
+    env["XMLLINT"] = WhereIs("xmllint")
+    env["XSLTPROC"] = WhereIs("xsltproc")
+    verify_action = "$XMLLINT --xinclude --postvalid --nonet --noent --noout" \
+                    " $SOURCE"
+    convert_action = "$XSLTPROC $XSLTPROCFLAGS --nonet --xinclude -o $TARGET" \
+                     " http://docbook.sourceforge.net/release/xsl/current/html/docbook.xsl" \
                      " $SOURCE"
-    # -o option specified output directory. There is no way to specify output
-    # file with the xmlto command. We therefore have to move the file in place
-    # as a last step.
-    move_action = Move("$TARGET", "${SOURCE.base}.html")
-    env["BUILDERS"]["DocBookHtml"] = Builder(action=[convert_action,
-                                                     move_action])
+    env["BUILDERS"]["DocBookSingleHtml"] = Builder(action=[verify_action,
+                                                           convert_action])
 
 def pot_builder(env):
     env["XGETTEXT"] = WhereIs("xgettext")
@@ -50,7 +46,7 @@ def vimtags_builder(env):
     generate_action = "$CTAGS -f $TARGET $SOURCES"
     env["BUILDERS"]["VimTags"] = Builder(action=generate_action)
 
-env = Environment(tools=["default", docbookhtml_builder, pot_builder,
+env = Environment(tools=["default", docbooksinglehtml_builder, pot_builder,
                          mo_builder, vimtags_builder])
 
 Export("env")
