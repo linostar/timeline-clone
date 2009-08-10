@@ -29,11 +29,10 @@ else:
 if not env["MSGFMT"]:
     print("WARNING: mo target disabled because msgfmt was not found")
 else:
-    language_map = {"sv": "sv_SE",
-                    "es": "es"}
-    for key, value in language_map.items():
-        target = "%s/LC_MESSAGES/timeline.mo" % value
-        env.Alias("mo", env.Mo(target, "%s.po" % key))
-        env.Clean(target, value)
+    languages = ["sv", "es"]
+    for language in languages:
+        target = "%s/LC_MESSAGES/timeline.mo" % language
+        env.Alias("mo", env.Mo(target, "%s.po" % language))
+        env.Clean(target, language) # Removed the folder
 
 # vim: syntax=python
