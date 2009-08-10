@@ -35,6 +35,9 @@ COPYRIGHT_TEXT = "Copyright (C) 2009 The %s Authors" % APPLICATION_NAME
 APPLICATION_DESCRIPTION = "Timeline is a free, cross-platform application for displaying and navigating information on a timeline."
 WEBSITE = "http://thetimelineproj.sourceforge.net/"
 DEVELOPERS = ["Rickard Lindberg", "Roger Lindberg"]
+TRANSLATORS = ["Roger Lindberg (Swedish)",
+               "Rickard Lindberg (Swedish)",
+               "Roman Gelbort (Spanish)"]
 ARTISTS = ["Sara Lindberg"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,6 +61,7 @@ def display_about_dialog():
     info.Description = APPLICATION_DESCRIPTION
     info.WebSite = (WEBSITE, "%s Website" % APPLICATION_NAME)
     info.Developers = DEVELOPERS
+    info.Translators = TRANSLATORS
     info.Artists = ARTISTS
     info.License = LICENSE
     wx.AboutBox(info)
