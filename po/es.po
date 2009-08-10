@@ -1,0 +1,323 @@
+# Spanish translations for the Timeline application.
+# Copyright (C) YEAR Rickard Lindberg
+# This file is distributed under the same license as the Timeline package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Timeline 0.4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-07 07:47+0200\n"
+"PO-Revision-Date: 2009-08-09 23:29-0300\n"
+"Last-Translator: Roman Gelbort (aka elproferoman) <elproferoman@gmail.com>\n"
+"Language-Team: native-languaje <elproferoman@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Spanish\n"
+"X-Poedit-Basepath: /home/roman/traducciones\n"
+
+#: src/drawing_default.py:132
+msgid "Week"
+msgstr "Semana"
+
+#: src/data_file.py:178
+#, python-format
+msgid "Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem."
+msgstr "No se puede leer datos de la linea de tiempo '%s'. Activar el log (ver el manual del usuario para ver como hacer esto) y abrir la línea de tiempo nuevamente para recoger más información sobre este problema."
+
+#: src/data_file.py:183
+#, python-format
+msgid "Unable to read from file '%s'."
+msgstr "No se puede leer el archivo '%s'."
+
+#: src/data_file.py:331
+msgid "Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."
+msgstr "La función de guardado fue desactivada porque hubo un problema leyendo o escribiendo la línea de tiempos antes. Esto asegura que sus datos no sean sobreescritos."
+
+#: src/data_file.py:346
+msgid "Unable to save timeline data."
+msgstr "No se puede guardar los datos de la línea de tiempo."
+
+#: src/data_file.py:347
+msgid "If data was corrupted, check out the backed up file that was created when the timeline was last saved."
+msgstr "Si los datos están corruptos, consulte el anterior archivo guardado."
+
+#: src/data_file.py:359
+#, python-format
+msgid "Unable to create backup to '%s'."
+msgstr "No se puede crear el backup a '%s'"
+
+#: src/gui.py:89
+#, python-format
+msgid "Unable to open timeline '%s'."
+msgstr "No se puede abrir la línea de tiempo '%s'."
+
+#: src/gui.py:118
+msgid "Create a new timeline"
+msgstr "Crear nueva línea de tiempo"
+
+#: src/gui.py:120
+msgid "Open an existing timeline"
+msgstr "Abrir una línea de tiempo"
+
+#: src/gui.py:123
+msgid "&Export to Image..."
+msgstr "&Exportar como imagen..."
+
+#: src/gui.py:126
+msgid "Exit the program"
+msgstr "Salir del programa"
+
+#: src/gui.py:135
+msgid "Create &Event..."
+msgstr "Crear &Evento..."
+
+#: src/gui.py:136
+msgid "Create a new event"
+msgstr "Crear nuevo evento"
+
+#: src/gui.py:138
+msgid "Edit &Categories"
+msgstr "Editar &Categorías"
+
+#: src/gui.py:139
+msgid "Edit categories"
+msgstr "Editar categorías"
+
+#: src/gui.py:147
+msgid "&Sidebar\tCtrl+I"
+msgstr "&Barra lateral\tCtrl+l"
+
+#: src/gui.py:154
+msgid "Go to &Today\tCtrl+H"
+msgstr "Ir a &Hoy\tCtrl+H"
+
+#: src/gui.py:155
+msgid "Go to D&ate...\tCtrl+G"
+msgstr "Día de Hoy...\tCtrl+G"
+
+#: src/gui.py:157
+msgid "Fit Year"
+msgstr "Fijar Año"
+
+#: src/gui.py:158
+msgid "Fit Month"
+msgstr "Fijar Mes"
+
+#: src/gui.py:159
+msgid "Fit Day"
+msgstr "Fijar Día"
+
+#: src/gui.py:167
+msgid "&Contents\tF1"
+msgstr "&Contenidos\tF1"
+
+#: src/gui.py:173
+msgid "&File"
+msgstr "&Archivo"
+
+#: src/gui.py:174
+msgid "&View"
+msgstr "&Ver"
+
+#: src/gui.py:175
+msgid "&Timeline"
+msgstr "&Línea de tiempo"
+
+#: src/gui.py:176
+msgid "&Navigate"
+msgstr "&Navegar"
+
+#: src/gui.py:177
+msgid "&Help"
+msgstr "&Ayuda"
+
+#: src/gui.py:245
+msgid "Create Timeline"
+msgstr "Crear Línea de Tiempo"
+
+#: src/gui.py:252
+msgid "The specified timeline already exists."
+msgstr "Esta línea de tiempo ya existe."
+
+#: src/gui.py:253
+msgid "Opening timeline instead of creating new."
+msgstr "Abriendo una línea de tiempo en lugar de crear una nueva."
+
+#: src/gui.py:255
+msgid "Information"
+msgstr "Información"
+
+#: src/gui.py:266
+msgid "Open Timeline"
+msgstr "Abrir Línea de tiempo"
+
+#: src/gui.py:307
+msgid "Image files"
+msgstr "Archivos de imagen"
+
+#: src/gui.py:308
+msgid "Export to Image"
+msgstr "Exportar a imagen"
+
+#: src/gui.py:312
+#, python-format
+msgid "File '%s' exists. Overwrite?"
+msgstr "El archivo '%s' existe ¿Sobreescribir?"
+
+#: src/gui.py:330
+#, python-format
+msgid "Could not locate manual at '%s'."
+msgstr "No se puede localizar el manual en '%s'."
+
+#: src/gui.py:345
+msgid "Timeline files"
+msgstr "Archivos de Timeline"
+
+#: src/gui.py:367
+msgid "Timeline User Manual"
+msgstr "Manual del usuario de Timeline"
+
+#: src/gui.py:586
+#: src/gui.py:604
+msgid "No timeline set"
+msgstr "No hay una línea de tiempo seleccionada"
+
+#: src/gui.py:906
+#: src/gui.py:1222
+msgid "Are you sure to delete?"
+msgstr "¿Está seguro de querer borrar?"
+
+#: src/gui.py:985
+msgid "Period"
+msgstr "Período"
+
+#: src/gui.py:988
+#: src/gui.py:1315
+msgid "Show time"
+msgstr "Ver hora"
+
+#: src/gui.py:991
+msgid "Close on OK"
+msgstr "Ok cierra"
+
+#: src/gui.py:999
+msgid "Start:"
+msgstr "Inicio:"
+
+#: src/gui.py:1002
+msgid "End:"
+msgstr "Fin:"
+
+#: src/gui.py:1005
+msgid "Text:"
+msgstr "Texto:"
+
+#: src/gui.py:1008
+msgid "Category:"
+msgstr "Categoría:"
+
+#: src/gui.py:1012
+msgid "Event Properties"
+msgstr "Propiedades del evento"
+
+#: src/gui.py:1055
+msgid "End must be > Start"
+msgstr "La fecha de fin debe ser > que la de Inicio"
+
+#: src/gui.py:1056
+msgid "Text"
+msgstr "Texto"
+
+#: src/gui.py:1140
+msgid "Edit Categories"
+msgstr "Editar Categorías"
+
+#: src/gui.py:1190
+msgid "Edit Category"
+msgstr "Editar Categorías"
+
+#: src/gui.py:1197
+msgid "Add Category"
+msgstr "Agregar Categoría"
+
+#: src/gui.py:1264
+msgid "Name:"
+msgstr "Nombre:"
+
+#: src/gui.py:1267
+msgid "Color:"
+msgstr "Color:"
+
+#: src/gui.py:1270
+msgid "Visible:"
+msgstr "Visible:"
+
+#: src/gui.py:1284
+#, python-format
+msgid "Category name '%s' not valid. Must be non-empty."
+msgstr "El nombre de categoría '%s' no es válido. Debe contener algo."
+
+#: src/gui.py:1288
+#, python-format
+msgid "Category name '%s' already in use."
+msgstr "El nombre de categoría '%s' ya está en uso."
+
+#: src/gui.py:1309
+msgid "Go to Date"
+msgstr "Ir al día"
+
+#: src/gui.py:1355
+msgid "Create Event"
+msgstr "Crear Evento"
+
+#: src/gui.py:1362
+msgid "Edit Event"
+msgstr "Editar Evento"
+
+#: src/gui.py:1390
+#, python-format
+msgid "Field '%s' can't be empty."
+msgstr "El campo '%s' no puede estar vacío."
+
+#: src/gui.py:1396
+msgid "Error"
+msgstr "Error"
+
+#: src/gui.py:1402
+msgid "Question"
+msgstr "Pregunta"
+
+#: src/data.py:213
+msgid "Start time can't be after year 9989"
+msgstr "La fecha de inicio no puede ser posterior a 9989"
+
+#: src/data.py:214
+msgid "Start time can't be before year 10"
+msgstr "La fecha de inicio no puede ser anterior a 10"
+
+#: src/data.py:217
+msgid "End time can't be after year 9989"
+msgstr "La fecha de fin no puede ser posterior a 9989"
+
+#: src/data.py:218
+msgid "End time can't be before year 10"
+msgstr "La fecha de fin no puede ser anterior a 10"
+
+#: src/data.py:222
+msgid "Start time can't be after end time"
+msgstr "La fecha de inicio no puede ser posterior a la de fin"
+
+#: src/data.py:258
+msgid "Can't zoom wider than 120 years"
+msgstr "No se puede hacer zoom a más de 120 años"
+
+#: src/data.py:260
+msgid "Can't zoom deeper than 1 hour"
+msgstr "No se puede hacer zoom a menos de 1 hora"
+
+#: src/data.py:403
+msgid "Unknown format"
+msgstr "Formato desconocido"
+
