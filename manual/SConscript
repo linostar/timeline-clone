@@ -20,6 +20,11 @@ Import("env")
 if not env["XMLLINT"] or not env["XSLTPROC"]:
     print("WARNING: manual target disabled because xml tool xmllint or xsltproc was not found")
 else:
+    import os
+    try:
+        env["ENV"]["XML_CATALOG_FILES"] = os.environ["XML_CATALOG_FILES"]
+    except:
+        pass
     flags = " --stringparam chunker.output.encoding UTF-8" \
             " --stringparam toc.section.depth 2"
     env.Alias("manual", env.DocBookSingleHtml("manual.html", "manual.xml",
