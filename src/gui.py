@@ -151,7 +151,6 @@ class MainFrame(wx.Frame):
         self.mnu_view_legend = self.mnu_view.Append(wx.ID_ANY,
                                                     _("&Legend"),
                                                     kind=wx.ITEM_CHECK)
-        self.mnu_view_sidebar.Check()
         self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click,
                   self.mnu_view_sidebar)
         self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click,
