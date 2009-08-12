@@ -121,7 +121,8 @@ class MainFrame(wx.Frame):
                              _("Open an existing timeline"))
         self.mnu_file.AppendSeparator()
         self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
-                                                    _("&Export to Image..."))
+                                                    _("&Export to Image..."),
+                                                    _("Export the current view to a PNG or BMP image"))
         self.mnu_file.AppendSeparator()
         self.mnu_file.Append(wx.ID_EXIT, "",
                              _("Exit the program"))
