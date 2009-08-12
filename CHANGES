@@ -1,3 +1,17 @@
+Timeline 0.4.0, released on 1 September 2009
+============================================
+
+In this release we have implemented support for translation. Thanks to
+contributor Roman Gelbort we also have a Spanish translation of Timeline in
+addition to the English and Swedish one.
+
+New features, enhancements:
+
+  * Implemented Export to Image
+  * Implemented support for viewing legends for categories
+  * Added support for translation
+    * Supported languages: English, Swedish, and Spanish
+
 Timeline 0.3.0, released on 1 August 2009
 =========================================
 
