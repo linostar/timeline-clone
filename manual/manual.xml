@@ -210,40 +210,40 @@
 
   </section>
 
-  <section id="backups">
-
-    <title>Backups</title>
-
-    <para>
-      &app; tries its best to ensure that the data you save in a timeline
-      never gets lost. One step in that process is to create a backup of
-      your timeline every time before new data is saved. The backup is
-      saved in a file with the same name as the original but with an "~"
-      appended to the name.
-    </para>
-
-    <para>
-      If you get an error saying that there was a problem reading
-      timeline data, your backup might save you if the original has been
-      corrupted.
-    </para>
-
-    <para>
-      To recover a file from the backup, simply remove the "~" in the name of
-      the backed up file.
-    </para>
-
-    <para>
-      If you would like to be extra ceratain to not loose your data, we
-      recommend that you take regular backups of your timeline file. It can be
-      as simple as copying the original file to another directory.
-    </para>
-
-  </section>
-
   <section>
 
     <title>Topics in Detail</title>
+
+    <section id="backups">
+
+      <title>Backups</title>
+
+      <para>
+        &app; tries its best to ensure that the data you save in a timeline
+        never gets lost. One step in that process is to create a backup of
+        your timeline every time before new data is saved. The backup is
+        saved in a file with the same name as the original but with an "~"
+        appended to the name.
+      </para>
+
+      <para>
+        If you get an error saying that there was a problem reading
+        timeline data, your backup might save you if the original has been
+        corrupted.
+      </para>
+
+      <para>
+        To recover a file from the backup, simply remove the "~" in the name of
+        the backed up file.
+      </para>
+
+      <para>
+        If you would like to be extra certain to not loose your data, we
+        recommend that you take regular backups of your timeline file. It can be
+        as simple as copying the original file to another directory.
+      </para>
+
+    </section>
 
     <section>
 
