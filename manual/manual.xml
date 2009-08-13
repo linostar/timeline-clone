@@ -40,8 +40,8 @@
         <revnumber>0.4.0</revnumber>
         <date>2009-09-01</date>
         <revremark>
-          Documented the following new features: legend. Moved Backups section
-          under Topics in Detail.
+          Documented the following new features: legend, export to image. Moved
+          Backups section under Topics in Detail.
         </revremark>
       </revision>
       <revision>
@@ -552,6 +552,25 @@
           Day</guimenuitem> has the same functionality as the <guimenuitem>Fit
           Year</guimenuitem> except that the timeline will display one single
         month and one single day.
+      </para>
+
+    </section>
+
+    <section>
+
+      <title>Export to Image</title>
+
+      <para>
+        Sometimes you want to take your timeline and use it somewhere else. For
+        example include it in an OpenOffice document or put it on a website.
+        The Export to Image feature
+        (<menuchoice>
+          <guimenu>File</guimenu>
+          <guimenuitem>Export to Image...</guimenuitem>
+        </menuchoice>)
+        lets you save the current view of the
+        timeline as an image on disk. The default format is PNG. Other
+        supported formats are BMP.
       </para>
 
     </section>
