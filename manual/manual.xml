@@ -37,6 +37,14 @@
 
     <revhistory>
       <revision>
+        <revnumber>0.4.0</revnumber>
+        <date>2009-09-01</date>
+        <revremark>
+          Documented the following new features: legend. Moved Backups section
+          under Topics in Detail.
+        </revremark>
+      </revision>
+      <revision>
         <revnumber>0.3.0</revnumber>
         <date>2009-08-01</date>
         <revremark>
@@ -472,6 +480,19 @@
 
       <para>
         To edit a category, just double click on it.
+      </para>
+
+      <para>
+        Sometimes you forget what color you assigned to a category. To get a
+        quick overview of the active categories you can show the legend
+        (<menuchoice>
+          <guimenu>View</guimenu>
+          <guimenuitem>Legend</guimenuitem>
+        </menuchoice>).
+        The legend sits in the lower left corner of the timeline and shows the
+        categories used by events in the current view and the color associated
+        with them. This feature is especially useful when you export the
+        timeline to an image.
       </para>
 
     </section>
