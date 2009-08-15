@@ -30,12 +30,9 @@ def _get_revision():
     try:
         import os
         from subprocess import Popen, PIPE
-        root_rel = os.path.join(os.path.dirname(__file__), "..")
-        rev = Popen(["svnversion", root_rel], stdout=PIPE).communicate()[0]
-        # format "xxx:yyy\n", we are interested in yyy
-        revsplit = rev.strip().split(":")
-        if len(revsplit) == 1:
-            return revsplit[0]
-        return revsplit[-1]
+        root = os.path.join(os.path.dirname(__file__), "..")
+        cmd = ["hg", "id", "-i", "-R", root]
+        rev = Popen(cmd, stdout=PIPE).communicate()[0].strip()
+        return rev
     except:
-        return "norev"
+        return "0"

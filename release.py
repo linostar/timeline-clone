@@ -42,43 +42,22 @@ sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
 import about
 import version
 
-REL_NAME = "%s-%s" % (about.APPLICATION_NAME.lower(), version.get_version())
-REL_NAME_ZIP = "%s.zip" % REL_NAME
-
-if os.path.exists(REL_NAME):
-    print("Error: Path already exists %s" % REL_NAME)
-    sys.exit()
+REL_NAME_ZIP = "%s-%s.zip" % (about.APPLICATION_NAME.lower(),
+                              version.get_version())
 
 if os.path.exists(REL_NAME_ZIP):
-    print("Error: Package already exists %s" % REL_NAME_ZIP)
+    print("Error: Archive '%s' already exists" % REL_NAME_ZIP)
     sys.exit()
 
-print("Exporting from SVN")
-if call(["svn", "export", ROOT_DIR, REL_NAME]) != 0:
-    print("Error: Could not export from SVN")
+print("Exporting from Mercurial")
+cmd = ["hg", "archive",
+       "-R", ROOT_DIR,
+       "-t", "zip",
+       "--exclude", ".hg*",
+       REL_NAME_ZIP]
+if call(cmd) != 0:
+    print("Error: Could not export from Mercurial")
     sys.exit()
-
-print("Making manual")
-if call(["make", "-C", os.path.join(ROOT_DIR, "manual")]) != 0:
-    print("Error: Could not make manual")
-    sys.exit()
-
-# The html version of the manual is not version controlled, but we would like
-# to include it in the source release anyway so that users running from source
-# do not need to make it themselves.
-print("Copying manual to release")
-if call(["cp", os.path.join(ROOT_DIR, "manual", "manual.html"),
-         os.path.join(REL_NAME, "manual")]) != 0:
-    print("Error: Could not copy manual")
-    sys.exit()
-
-print("Creating file %s" % REL_NAME_ZIP)
-if call(["zip", "-r", REL_NAME_ZIP, REL_NAME]) != 0:
-    print("Error: Could not create archive")
-    sys.exit()
-
-print("Deleting directory %s" % REL_NAME)
-shutil.rmtree(REL_NAME)
 
 print("-----")
 
