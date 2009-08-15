@@ -8,7 +8,6 @@ version 3. For more information, see the file COPYING.
 
 Overview of the files in this directory:
 
-debian/         - Scripts and files to generate a Debian binary package
 icons/          - Images used for application icon
 manual/         - User manual
   figures/      - Figures for the user manual
@@ -18,8 +17,6 @@ manual/         - User manual
 po/             - Translation files
 src/            - Python source code
 tests/          - Unit tests (run with 'python run.py')
-web/            - The project's website
-win/            - Scripts and files to generate a Windows installer
 AUTHORS         - Lists all people that have contributed to the project
 CHANGES         - Lists changes between releases (releases notes)
 COPYING         - A copy of the GNU General Public License, version 3
