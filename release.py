@@ -53,7 +53,9 @@ print("Exporting from Mercurial")
 cmd = ["hg", "archive",
        "-R", ROOT_DIR,
        "-t", "zip",
-       "--exclude", ".hg*",
+       "--exclude", "%s/.hgignore" % (ROOT_DIR or "."),
+       "--exclude", "%s/.hgtags" % (ROOT_DIR or "."),
+       "--exclude", "%s/.hg_archival.txt" % (ROOT_DIR or "."),
        REL_NAME_ZIP]
 if call(cmd) != 0:
     print("Error: Could not export from Mercurial")
