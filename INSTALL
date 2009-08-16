@@ -1,3 +1,7 @@
+The recommended way to install Timeline is with a binary package or installer.
+If that is not available for your platform, instructions for installing from
+source will follow below.
+
 Prerequisites
 =============
 
@@ -19,8 +23,8 @@ Platform              Python   wxPython
 ---------------------------------------
 Windows (Vista)       2.5.2    2.8.8.1
 Windows (XP)          2.5.2    2.8.10.1
-Linux (Debian Etch)   2.4.6    2.8.10.1
-Linux (Debian Etch)   2.5.2    2.8.10.1
+Linux (Debian)        2.4.6    2.8.10.1
+Linux (Debian)        2.5.2    2.8.10.1
 
 Install and Start Timeline
 ==========================
@@ -48,15 +52,15 @@ Creating a desktop shortcut
 Follow the instructions below to create a desktop shortcut to the Timeline
 application.
 
-1. Open the desktop context menu and select new->shortcut.
-2. Enter the full path to your python exe-file, pythonw.exe and put the
-   text "main.py" as an argument, like this:
-     C:\Program\Python25\pythonw.exe  main.py
-3. Click the <continue>-button.
-4. Enter a shortcut name like "Timeline" in the text field
-5. Click the <Finish>-button
-6. Open the context menu for the shortcut and select "properties".
-7. Change the "Start in" value to the directory where main.py is found.
-8. Click the <Change icon>-button and select the Timeline icon from the
-   icons directory in your Timeline installation.
-9. Click <OK>-button
+  1. Open the desktop context menu and select new->shortcut.
+  2. Enter the full path to your python exe-file, pythonw.exe and put the
+     text "main.py" as an argument, like this:
+       C:\Program\Python25\pythonw.exe  main.py
+  3. Click the <continue>-button.
+  4. Enter a shortcut name like "Timeline" in the text field
+  5. Click the <Finish>-button
+  6. Open the context menu for the shortcut and select "properties".
+  7. Change the "Start in" value to the directory where main.py is found.
+  8. Click the <Change icon>-button and select the Timeline icon from the
+     icons directory in your Timeline installation.
+  9. Click <OK>-button
