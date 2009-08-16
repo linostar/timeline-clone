@@ -15,7 +15,7 @@ manual/         - User manual
   fdl-1.3.xml   - Copy of the GNU Free Documentation License
   manual.xml    - DocBook source for user manual
 po/             - Translation files
-src/            - Python source code
+src/            - Python source code (run with 'python main.py')
 tests/          - Unit tests (run with 'python run.py')
 AUTHORS         - Lists all people that have contributed to the project
 CHANGES         - Lists changes between releases (releases notes)
