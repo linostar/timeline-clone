@@ -33,9 +33,16 @@ from about import APPLICATION_NAME
 from paths import LOCALE_DIR
 
 if __name__ == '__main__':
+    verbosity = 2
+    if len(sys.argv) == 2 and sys.argv[1] == "quiet":
+        verbosity = 0
     gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
     loader = unittest.TestLoader()
     test_modules = [time_period, file_timeline]
     test_suites = [loader.loadTestsFromModule(x) for x in test_modules]
     the_suite = unittest.TestSuite(test_suites)
-    unittest.TextTestRunner(verbosity=2).run(the_suite)
+    res = unittest.TextTestRunner(verbosity=verbosity).run(the_suite)
+    if res.wasSuccessful():
+        sys.exit(0)
+    else:
+        sys.exit(1)

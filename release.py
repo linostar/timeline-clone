@@ -61,7 +61,13 @@ if call(cmd) != 0:
     print("Error: Could not export from Mercurial")
     sys.exit()
 
+print("Running unit tests")
+unittest_ret = call(["python", "%s/tests/run.py" % (ROOT_DIR or "."), "quiet"])
+
 print("-----")
+
+if unittest_ret != 0:
+    print("Warning: Failed unit test")
 
 f = open(os.path.join(ROOT_DIR, "README"))
 redme_first_line = f.readline()
