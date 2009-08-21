@@ -21,6 +21,8 @@ import os
 import stat
 
 from data_file import FileTimeline
+from data_file import quote
+from data_file import dequote
 
 
 class TestFileTimeline(unittest.TestCase):
@@ -151,3 +153,27 @@ class TestFileTimeline(unittest.TestCase):
         """
         timeline = FileTimeline("021.timeline", self._error_fn)
         self.assertEqual(self.error_fn_called, 0)
+
+
+class TestHelperFunctions(unittest.TestCase):
+
+    def testQuote(self):
+        # None
+        self.assertEqual(quote("plain"), "plain")
+        # Single
+        self.assertEqual(quote("foo;bar"), "foo\\;bar")
+        self.assertEqual(quote("foo\nbar"), "foo\\nbar")
+        self.assertEqual(quote("foo\\bar"), "foo\\\\bar")
+        self.assertEqual(quote("foo\\nbar"), "foo\\\\nbar")
+        self.assertEqual(quote("\\;"), "\\\\\\;")
+        # Mixed
+        self.assertEqual(quote("foo\nbar\rbaz\\n;;"),
+                         "foo\\nbar\\rbaz\\\\n\\;\\;")
+
+    def testDequote(self):
+        self.assertEqual(dequote("\\\\n"), "\\n")
+
+    def testQuoteDequote(self):
+        for s in ["simple string", "with; some;; semicolons",
+                  "with\r\n some\n\n newlines\n"]:
+            self.assertEqual(s, dequote(quote(s)))

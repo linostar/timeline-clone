@@ -465,8 +465,28 @@ def split_on_semicolon(text):
 
 
 def dequote(text):
-    return text.replace(r"\;", ";")
+    map = {"n": "\n",
+           "r": "\r"}
+    res = ""
+    dequote_next = False
+    for char in text:
+        if dequote_next:
+            res += map.get(char, char)
+            dequote_next = False
+        else:
+            if char == "\\":
+                dequote_next = True
+            else:
+                res += char
+    return res
 
 
 def quote(text):
-    return text.replace(";", r"\;")
+    map = {";": "\\;",
+           "\n": "\\n",
+           "\r": "\\r",
+           "\\": "\\\\"}
+    res = ""
+    for char in text:
+        res += map.get(char, char)
+    return res
