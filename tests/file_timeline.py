@@ -23,6 +23,7 @@ import stat
 from data_file import FileTimeline
 from data_file import quote
 from data_file import dequote
+from data_file import split_on_semicolon
 
 
 class TestFileTimeline(unittest.TestCase):
@@ -177,3 +178,7 @@ class TestHelperFunctions(unittest.TestCase):
         for s in ["simple string", "with; some;; semicolons",
                   "with\r\n some\n\n newlines\n"]:
             self.assertEqual(s, dequote(quote(s)))
+
+    def testSplit(self):
+        self.assertEqual(split_on_semicolon("one;two\\;;three"),
+                         ["one", "two\\;", "three"])
