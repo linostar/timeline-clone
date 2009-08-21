@@ -206,7 +206,7 @@ class FileTimeline(Timeline):
             if not self._load_event(current_line[6:].rstrip("\r\n")):
                 return False
             current_line = file.readline()
-        # Load footer if version >= 0.3.0 it (version read by _load_header)
+        # Check for footer if version >= 0.3.0 (version read by _load_header)
         if self.file_version >= (0, 3, 0):
             if not self._load_footer(current_line.rstrip("\r\n")):
                 return False
@@ -255,9 +255,8 @@ class FileTimeline(Timeline):
         """
         Expected format 'name;color;visible'.
         
-        File format for timeline version 0.1.0 did not have the visible
-        attribute. If it is not found (we read an old file), we automatically
-        set it to True.
+        Visible attribute added in version 0.2.0. If it is not found (we read
+        an older file), we automatically set it to True.
         """
         category_data = split_on_semicolon(category_text)
         try:
