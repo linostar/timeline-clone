@@ -465,11 +465,10 @@ class DateTimePicker(wx.Panel):
         # Layout
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(self.date_picker, proportion=1,
-                  flag=wx.GROW|wx.ALIGN_CENTER_VERTICAL)
+                  flag=wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self.time_picker, proportion=0,
                   flag=wx.ALIGN_CENTER_VERTICAL)
-        self.SetSizer(sizer)
-        self.date_picker.SetFocus()
+        self.SetSizerAndFit(sizer)
 
     def _date_picker_on_date_changed(self, e):
         date = self.get_value()
@@ -978,80 +977,76 @@ class EventEditor(wx.Dialog):
 
     def _create_gui(self):
         """Create the controls of the dialog."""
-        def create_button_box():
-            """
-            Convenience method for creating a button box control.
-
-            The control contains one OK button and one Close button.
-            """
-            button_box = wx.StdDialogButtonSizer()
-            btn_ok = wx.Button(self, wx.ID_OK)
-            btn_close = wx.Button(self, wx.ID_CLOSE)
-            btn_ok.SetDefault()
-            button_box.SetCancelButton(btn_close)
-            button_box.SetAffirmativeButton(btn_ok)
-            button_box.Realize()
-            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, id=wx.ID_CANCEL)
-            self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, btn_ok)
-            self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
-            self.SetEscapeId(btn_close.GetId())
-            self.SetDefaultItem(btn_ok)
-            self.SetAffirmativeId(btn_ok.GetId())
-            return button_box
-        # The check boxes
+        # Groupbox
+        groupbox = wx.StaticBox(self, wx.ID_ANY, _("Event Properties"))
+        groupbox_sizer = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
+        # Grid
+        grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
+        # Grid: When: Label + DateTimePickers
+        grid.Add(wx.StaticText(self, label=_("When:")),
+                 flag=wx.ALIGN_CENTER_VERTICAL)
+        self.dtp_start = DateTimePicker(self)
+        self.lbl_to = wx.StaticText(self, label=_("to"))
+        self.dtp_end = DateTimePicker(self)
+        when_box = wx.BoxSizer(wx.HORIZONTAL)
+        when_box.Add(self.dtp_start, proportion=1)
+        when_box.AddSpacer(BORDER)
+        when_box.Add(self.lbl_to, flag=wx.ALIGN_CENTER_VERTICAL|wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
+        when_box.AddSpacer(BORDER)
+        when_box.Add(self.dtp_end, proportion=1,
+                     flag=wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
+        grid.Add(when_box, flag=wx.EXPAND)
+        # Grid: When: Checkboxes
+        grid.AddStretchSpacer()
+        when_box_props = wx.BoxSizer(wx.HORIZONTAL)
         self.chb_period = wx.CheckBox(self, label=_("Period"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
                   self.chb_period)
+        when_box_props.Add(self.chb_period)
         self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
                   self.chb_show_time)
-        self.chb_close_on_ok = wx.CheckBox(self, label=_("Close on OK"))
-        # The grid
-        grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
-        MIN_WIDTH = 170
-        self.dtp_start = DateTimePicker(self)
-        self.dtp_end = DateTimePicker(self)
-        self.txt_text = wx.TextCtrl(self, wx.ID_ANY, size=(MIN_WIDTH, -1))
-        self.lst_category = wx.Choice(self, wx.ID_ANY, size=(MIN_WIDTH, -1))
-        grid.Add(wx.StaticText(self, label=_("Start:")),
-                 flag=wx.ALIGN_CENTER_VERTICAL)
-        grid.Add(self.dtp_start, flag=wx.EXPAND)
-        grid.Add(wx.StaticText(self, label=_("End:")),
-                 flag=wx.ALIGN_CENTER_VERTICAL)
-        grid.Add(self.dtp_end, flag=wx.EXPAND)
+        when_box_props.Add(self.chb_show_time)
+        grid.Add(when_box_props, flag=wx.EXPAND)
+        # Grid: Text
+        self.txt_text = wx.TextCtrl(self, wx.ID_ANY)
         grid.Add(wx.StaticText(self, label=_("Text:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
-        grid.Add(self.txt_text)
+        grid.Add(self.txt_text, flag=wx.EXPAND)
+        # Grid: Category
+        self.lst_category = wx.Choice(self, wx.ID_ANY)
         grid.Add(wx.StaticText(self, label=_("Category:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.lst_category)
-        # The Group box
-        groupbox = wx.StaticBox(self, wx.ID_ANY, _("Event Properties"))
-        groupbox_sizer = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
-        groupbox_sizer.Add(grid, 0, wx.ALL, BORDER)
-        # Add controls and buttons do the dialog
+        groupbox_sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        # Plugins
+        self.event_data_plugins = []
+        for plugin in data.get_event_data_plugins():
+            pane = wx.CollapsiblePane(self, label=plugin.get_name())
+            ctrl = plugin.create_editor(pane.GetPane())
+            sizer = wx.BoxSizer(wx.VERTICAL)
+            sizer.Add(ctrl, flag=wx.EXPAND)
+            pane.GetPane().SetSizerAndFit(sizer)
+            groupbox_sizer.Add(pane, border=BORDER,
+                                        flag=wx.LEFT|wx.TOP|wx.RIGHT|wx.EXPAND)
+            self.event_data_plugins.append((plugin, pane, ctrl))
+        groupbox_sizer.AddSpacer(BORDER)
+        # Main (vertical layout)
         main_box = wx.BoxSizer(wx.VERTICAL)
-        main_box.Add(self.chb_period, flag=wx.LEFT|wx.TOP|wx.RIGHT,
-                     border=BORDER)
-        main_box.Add(self.chb_show_time, flag=wx.ALL, border=BORDER)
-        main_box.Add(self.chb_close_on_ok, flag=wx.LEFT|wx.BOTTOM|wx.RIGHT,
-                     border=BORDER)
-        main_box.Add(groupbox_sizer, proportion=1, flag=wx.EXPAND|wx.ALL,
-                     border=BORDER)
-        main_box.Add(create_button_box(), flag=wx.EXPAND|wx.ALL, border=BORDER)
+        # Main: Groupbox
+        main_box.Add(groupbox_sizer, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        # Main: Checkbox
+        self.chb_add_more = wx.CheckBox(self, label=_("Add more events after this one"))
+        main_box.Add(self.chb_add_more, flag=wx.ALL, border=BORDER)
+        # Main: Buttons
+        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
+        main_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        # Hide if not creating new
+        if self.event != None:
+            self.chb_add_more.Show(False)
+        # Realize
         self.SetSizerAndFit(main_box)
-
-    def _btn_close_on_click(self, evt):
-        """
-        Close the dialog.
-
-        This event is triggered by one of the following actions:
-          * Click the Close button
-          * Press the Escape key
-          * Click the dialog (X) button
-        """
-        logging.debug("_btn_close_on_click")
-        self._close()
 
     def _btn_ok_on_click(self, evt):
         """
@@ -1074,24 +1069,34 @@ class EventEditor(wx.Dialog):
             # Update existing event
             if self.updatemode:
                 self.event.update(start_time, end_time, name, category)
+                for plugin, pane, editor in self.event_data_plugins:
+                    self.event.set_data(plugin.get_id(),
+                                        plugin.get_editor_data(editor))
                 self.timeline.event_edited(self.event)
             # Create new event
             else:
                 self.event = Event(start_time, end_time, name, category)
+                for plugin, pane, editor in self.event_data_plugins:
+                    self.event.set_data(plugin.get_id(),
+                                        plugin.get_editor_data(editor))
                 self.timeline.add_event(self.event)
             # Close the dialog ?
-            if self.chb_close_on_ok.GetValue():
+            if not self.chb_add_more.GetValue():
                 self._close()
         except TxtException, ex:
             _display_error_message("%s" % ex.error_message)
             _set_focus_and_select(ex.control)
 
     def _chb_period_on_checkbox(self, e):
-        self.dtp_end.Enable(e.IsChecked())
+        self._show_to_time(e.IsChecked())
 
     def _chb_show_time_on_checkbox(self, e):
         self.dtp_start.show_time(e.IsChecked())
         self.dtp_end.show_time(e.IsChecked())
+
+    def _show_to_time(self, show=True):
+        self.lbl_to.Show(show)
+        self.dtp_end.Show(show)
 
     def _fill_controls_with_data(self, start=None, end=None):
         """Initially fill the controls in the dialog with data."""
@@ -1106,6 +1111,11 @@ class EventEditor(wx.Dialog):
             end = self.event.time_period.end_time
             text = self.event.text
             category = self.event.category
+            for plugin, pane, editor in self.event_data_plugins:
+                data = self.event.get_data(plugin.get_id())
+                if data != None:
+                    plugin.set_editor_data(editor, data)
+                    pane.Collapse(False)
             self.updatemode = True
         if start != None and end != None:
             show_time = (start.time() != time(0, 0, 0) or
@@ -1127,8 +1137,8 @@ class EventEditor(wx.Dialog):
             current_item_index += 1
         if not selection_set:
             self.lst_category.SetSelection(0)
-        self.chb_close_on_ok.SetValue(True)
-        self.dtp_end.Enable(self.chb_period.IsChecked())
+        self.chb_add_more.SetValue(False)
+        self._show_to_time(self.chb_period.IsChecked())
         self.dtp_start.show_time(self.chb_show_time.IsChecked())
         self.dtp_end.show_time(self.chb_show_time.IsChecked())
 
