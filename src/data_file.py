@@ -39,6 +39,8 @@ from data import TimePeriod
 from data import Event
 from data import Category
 from data import time_period_center
+from data import get_event_data_plugins
+from data import get_event_data_plugin
 from version import get_version
 
 
@@ -275,20 +277,48 @@ class FileTimeline(Timeline):
             return False
 
     def _load_event(self, event_text):
-        """Expected format 'start_time;end_time;text[;category]'."""
+        """
+        Expected format 'start_time;end_time;text;category[;id:data]*'.
+
+        Changed in version 0.4.0: made category compulsory and added support
+        for additional data. Format for version < 0.4.0 looked like this:
+        'start_time;end_time;text[;category]'.
+        
+        If an event does not have a category the empty string will be written
+        as category name. Since category names can not be the empty string
+        there will be no confusion.
+        """
         event_specification = split_on_semicolon(event_text)
         try:
-            if len(event_specification) != 3 and len(event_specification) != 4:
-                raise ParseException("Unexpected number of components")
-            start_time = parse_time(event_specification[0])
-            end_time = parse_time(event_specification[1])
-            text = dequote(event_specification[2])
-            cat_name = None
-            if len(event_specification) == 4:
-                cat_name = dequote(event_specification[3])
-            category = self._get_category(cat_name)
-            self.events.append(Event(start_time, end_time, text, category))
-            return True
+            if self.file_version < (0, 4, 0):
+                if (len(event_specification) != 3 and
+                    len(event_specification) != 4):
+                    raise ParseException("Unexpected number of components")
+                start_time = parse_time(event_specification[0])
+                end_time = parse_time(event_specification[1])
+                text = dequote(event_specification[2])
+                cat_name = None
+                if len(event_specification) == 4:
+                    cat_name = dequote(event_specification[3])
+                category = self._get_category(cat_name)
+                self.events.append(Event(start_time, end_time, text, category))
+                return True
+            else:
+                if len(event_specification) < 4:
+                    raise ParseException("Unexpected number of components")
+                start_time = parse_time(event_specification[0])
+                end_time = parse_time(event_specification[1])
+                text = dequote(event_specification[2])
+                category = self._get_category(dequote(event_specification[3]))
+                event = Event(start_time, end_time, text, category)
+                for item in event_specification[4:]:
+                    id, data = item.split(":", 1)
+                    plugin = get_event_data_plugin(id)
+                    if plugin == None:
+                        raise ParseException("Can't find event data plugin '%s'" % id)
+                    event.set_data(id, plugin.decode(dequote(data)))
+                self.events.append(event)
+                return True
         except ParseException, e:
             logerror("Unable to parse event from '%s'", event_text,
                      exc_info=e)
@@ -381,6 +411,13 @@ class FileTimeline(Timeline):
                 quote(event.text)))
             if event.category:
                 file.write(";%s" % quote(event.category.name))
+            else:
+                file.write(";")
+            for plugin in get_event_data_plugins():
+                data = event.get_data(plugin.get_id())
+                if data != None:
+                    file.write(";%s:%s" % (plugin.get_id(),
+                                           quote(plugin.decode(data))))
             file.write("\n")
 
     def _write_footer(self, file):
