@@ -7,3 +7,4 @@ po/sv
 po/timeline.pot
 *.pyc
 src/tags
+**/*.swp
