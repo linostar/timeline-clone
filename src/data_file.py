@@ -57,9 +57,9 @@ class FileTimeline(Timeline):
     The comments in the Timeline class describes what the public methods
     should do.
 
-    The format of the file looks like this:
+    The format of the file looks like this for version >= 0.3.0:
 
-      # Written by Timeline 0.3.0dev227M on 2009-7-23 9:40:33
+      # Written by Timeline 0.3.0 on 2009-7-23 9:40:33
       PREFERRED-PERIOD:...
       CATEGORY:...
       ...
@@ -67,8 +67,8 @@ class FileTimeline(Timeline):
       ...
       # END
     
-    Only the first and last line are required. Note: last line only required in
-    version >= 0.3.0.
+    Only the first and last line are required. See comments in _load_*
+    functions for information how the format has changed.
     """
 
     # Errors caused by loading and saving timeline data to file
@@ -206,8 +206,8 @@ class FileTimeline(Timeline):
             if not self._load_event(current_line[6:].rstrip("\r\n")):
                 return False
             current_line = file.readline()
-        # Load footer if version supports it (version read by _load_header)
-        if self.file_version >= (0, 3, 0, 1):
+        # Load footer if version >= 0.3.0 it (version read by _load_header)
+        if self.file_version >= (0, 3, 0):
             if not self._load_footer(current_line.rstrip("\r\n")):
                 return False
             current_line = file.readline()
@@ -222,19 +222,16 @@ class FileTimeline(Timeline):
         """
         Expected format '# Written by Timeline <version> on <date>'.
         
-        Expected format of <version> '0.3.0[dev227M]'. We are just interested
-        in the first part of the version.
+        Expected format of <version> '0.3.0[dev<revision>]'. We are just
+        interested in the first part of the version.
         """
-        match = re.search(r"^# Written by Timeline (\d+)\.(\d+)\.(\d+)(dev)?",
+        match = re.search(r"^# Written by Timeline (\d+)\.(\d+)\.(\d+)",
                           header_text)
         if match:
             major = int(match.group(1))
             minor = int(match.group(2))
             tiny = int(match.group(3))
-            dev = 1
-            if match.group(4):
-                dev = 0 # Development version must have lower version number
-            self.file_version = (major, minor, tiny, dev)
+            self.file_version = (major, minor, tiny)
             return True
         else:
             logerror("Unable to load header from '%s'", header_text)

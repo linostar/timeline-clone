@@ -52,7 +52,6 @@ class TestFileTimeline(unittest.TestCase):
         self._write_timeline("writeonly.timeline", [HEADER_030, "# END"])
         self._write_timeline("corrupt.timeline", ["corrupt data here"])
         self._write_timeline("missingeof.timeline", ["# valid data"])
-        self._write_timeline("030dev.timeline", [HEADER_030_DEV])
         self._write_timeline("021.timeline", [HEADER_021])
         self._set_read_only("readonly.timeline")
         self._set_write_only("writeonly.timeline")
@@ -66,8 +65,6 @@ class TestFileTimeline(unittest.TestCase):
         self._silent_remove("corrupt.timeline~")
         self._silent_remove("missingeof.timeline")
         self._silent_remove("missingeof.timeline~")
-        self._silent_remove("030dev.timeline")
-        self._silent_remove("030dev.timeline~")
         self._silent_remove("021.timeline")
         self._silent_remove("021.timeline~")
 
@@ -152,7 +149,5 @@ class TestFileTimeline(unittest.TestCase):
         Expected result: The timeline does not contain the EOF marker but since
         it is an old file, no error messages should be sent.
         """
-        timeline = FileTimeline("030dev.timeline", self._error_fn)
-        self.assertEqual(self.error_fn_called, 0)
         timeline = FileTimeline("021.timeline", self._error_fn)
         self.assertEqual(self.error_fn_called, 0)
