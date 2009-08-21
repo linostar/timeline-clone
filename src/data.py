@@ -24,6 +24,8 @@ Custom data types.
 from datetime import timedelta
 from datetime import datetime as dt
 
+import wx
+
 
 # To save computation power (used by `delta_to_microseconds`)
 US_PER_SEC = 1000000
@@ -132,6 +134,59 @@ class Timeline(Observable):
         raise NotImplementedError()
 
 
+class EventDataPlugin(object):
+    """Interface for plugins that extend the data that an event can store."""
+
+    def get_id(self):
+        """Return a string [a-z]+."""
+        raise NotImplementedError()
+
+    def get_name(self):
+        """Return an internationalized string."""
+        raise NotImplementedError()
+
+    def encode(self, data):
+        """Encode data to string."""
+        return data
+
+    def decode(self, string):
+        """Decode string to data."""
+        return string
+
+    def create_editor(self):
+        raise NotImplementedError()
+
+    def get_editor_data(self, editor):
+        raise NotImplementedError()
+
+    def set_editor_data(self, editor, data):
+        raise NotImplementedError()
+
+
+class DescriptionEventDataPlugin(EventDataPlugin):
+
+    def get_id(self):
+        return "description"
+
+    def get_name(self):
+        return _("Description")
+
+    def create_editor(self, parent, data=None):
+        ctrl = wx.TextCtrl(parent, style=wx.TE_MULTILINE)
+        if data != None:
+            ctrl.SetValue(data)
+        return ctrl
+
+    def get_editor_data(self, editor):
+        description = editor.GetValue()
+        if description.strip() != "":
+            return description
+        return None
+
+    def set_editor_data(self, editor, description):
+        editor.SetValue(description)
+
+
 class Event(object):
     """Represents an event on a timeline."""
 
@@ -143,6 +198,7 @@ class Event(object):
         """
         self.selected = False
         self.update(start_time, end_time, text, category)
+        self.data = {}
 
     def update(self, start_time, end_time, text, category=None):
         """Change the event data."""
@@ -161,6 +217,12 @@ class Event(object):
     def mean_time(self):
         """Wrapper for time period method."""
         return self.time_period.mean_time()
+
+    def get_data(self, id):
+        return self.data.get(id, None)
+
+    def set_data(self, id, data):
+        self.data[id] = data
 
 
 class Category(object):
@@ -344,6 +406,19 @@ class TimePeriod(object):
                 return (None, 1)
             else:
                 return (None, -1)
+
+
+def get_event_data_plugin(id):
+    """Return an instance of the event data plugin with the given id."""
+    for plugin in get_event_data_plugins():
+        if plugin.get_id() == id:
+            return plugin
+    return None
+
+
+def get_event_data_plugins():
+    """Return instances of all event data plugins."""
+    return [DescriptionEventDataPlugin()]
 
 
 def delta_to_microseconds(delta):
