@@ -968,7 +968,7 @@ class EventEditor(wx.Dialog):
         filled with data from the arguments 'start' and 'end' if they are
         given. Otherwise they will default to today.
         """
-        wx.Dialog.__init__(self, parent, id, title)
+        wx.Dialog.__init__(self, parent, id, title, style=wx.RESIZE_BORDER)
         self.timeline = timeline
         self.event = event
         self._create_gui()
@@ -982,6 +982,7 @@ class EventEditor(wx.Dialog):
         groupbox_sizer = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
         # Grid
         grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
+        grid.AddGrowableCol(1)
         # Grid: When: Label + DateTimePickers
         grid.Add(wx.StaticText(self, label=_("When:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
@@ -995,7 +996,7 @@ class EventEditor(wx.Dialog):
         when_box.AddSpacer(BORDER)
         when_box.Add(self.dtp_end, proportion=1,
                      flag=wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
-        grid.Add(when_box, flag=wx.EXPAND)
+        grid.Add(when_box)
         # Grid: When: Checkboxes
         grid.AddStretchSpacer()
         when_box_props = wx.BoxSizer(wx.HORIZONTAL)
@@ -1007,7 +1008,7 @@ class EventEditor(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
                   self.chb_show_time)
         when_box_props.Add(self.chb_show_time)
-        grid.Add(when_box_props, flag=wx.EXPAND)
+        grid.Add(when_box_props)
         # Grid: Text
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY)
         grid.Add(wx.StaticText(self, label=_("Text:")),
@@ -1027,14 +1028,16 @@ class EventEditor(wx.Dialog):
             notebook.AddPage(panel, plugin.get_name())
             editor = plugin.create_editor(panel)
             sizer = wx.BoxSizer(wx.VERTICAL)
-            sizer.Add(editor, flag=wx.EXPAND)
+            sizer.Add(editor, flag=wx.EXPAND, proportion=1)
             panel.SetSizer(sizer)
             self.event_data_plugins.append((plugin, editor))
-        groupbox_sizer.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND)
+        groupbox_sizer.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND,
+                           proportion=1)
         # Main (vertical layout)
         main_box = wx.BoxSizer(wx.VERTICAL)
         # Main: Groupbox
-        main_box.Add(groupbox_sizer, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        main_box.Add(groupbox_sizer, flag=wx.EXPAND|wx.ALL, border=BORDER,
+                     proportion=1)
         # Main: Checkbox
         self.chb_add_more = wx.CheckBox(self, label=_("Add more events after this one"))
         main_box.Add(self.chb_add_more, flag=wx.ALL, border=BORDER)
