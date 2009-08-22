@@ -1021,16 +1021,16 @@ class EventEditor(wx.Dialog):
         groupbox_sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
         # Plugins
         self.event_data_plugins = []
+        notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
         for plugin in data.get_event_data_plugins():
-            pane = wx.CollapsiblePane(self, label=plugin.get_name())
-            ctrl = plugin.create_editor(pane.GetPane())
+            panel = wx.Panel(notebook)
+            notebook.AddPage(panel, plugin.get_name())
+            editor = plugin.create_editor(panel)
             sizer = wx.BoxSizer(wx.VERTICAL)
-            sizer.Add(ctrl, flag=wx.EXPAND)
-            pane.GetPane().SetSizerAndFit(sizer)
-            groupbox_sizer.Add(pane, border=BORDER,
-                                        flag=wx.LEFT|wx.TOP|wx.RIGHT|wx.EXPAND)
-            self.event_data_plugins.append((plugin, pane, ctrl))
-        groupbox_sizer.AddSpacer(BORDER)
+            sizer.Add(editor, flag=wx.EXPAND)
+            panel.SetSizer(sizer)
+            self.event_data_plugins.append((plugin, editor))
+        groupbox_sizer.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND)
         # Main (vertical layout)
         main_box = wx.BoxSizer(wx.VERTICAL)
         # Main: Groupbox
@@ -1069,14 +1069,14 @@ class EventEditor(wx.Dialog):
             # Update existing event
             if self.updatemode:
                 self.event.update(start_time, end_time, name, category)
-                for plugin, pane, editor in self.event_data_plugins:
+                for plugin, editor in self.event_data_plugins:
                     self.event.set_data(plugin.get_id(),
                                         plugin.get_editor_data(editor))
                 self.timeline.event_edited(self.event)
             # Create new event
             else:
                 self.event = Event(start_time, end_time, name, category)
-                for plugin, pane, editor in self.event_data_plugins:
+                for plugin, editor in self.event_data_plugins:
                     self.event.set_data(plugin.get_id(),
                                         plugin.get_editor_data(editor))
                 self.timeline.add_event(self.event)
@@ -1111,11 +1111,10 @@ class EventEditor(wx.Dialog):
             end = self.event.time_period.end_time
             text = self.event.text
             category = self.event.category
-            for plugin, pane, editor in self.event_data_plugins:
+            for plugin, editor in self.event_data_plugins:
                 data = self.event.get_data(plugin.get_id())
                 if data != None:
                     plugin.set_editor_data(editor, data)
-                    pane.Collapse(False)
             self.updatemode = True
         if start != None and end != None:
             show_time = (start.time() != time(0, 0, 0) or
