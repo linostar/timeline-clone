@@ -162,6 +162,9 @@ class EventDataPlugin(object):
     def set_editor_data(self, editor, data):
         raise NotImplementedError()
 
+    def clear_editor_data(self, editor):
+        raise NotImplementedError()
+
 
 class DescriptionEventDataPlugin(EventDataPlugin):
 
@@ -185,6 +188,9 @@ class DescriptionEventDataPlugin(EventDataPlugin):
 
     def set_editor_data(self, editor, description):
         editor.SetValue(description)
+
+    def clear_editor_data(self, editor):
+        editor.SetValue("")
 
 
 class Event(object):

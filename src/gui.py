@@ -1084,7 +1084,11 @@ class EventEditor(wx.Dialog):
                                         plugin.get_editor_data(editor))
                 self.timeline.add_event(self.event)
             # Close the dialog ?
-            if not self.chb_add_more.GetValue():
+            if self.chb_add_more.GetValue():
+                self.txt_text.SetValue("")
+                for plugin, editor in self.event_data_plugins:
+                    plugin.clear_editor_data(editor)
+            else:
                 self._close()
         except TxtException, ex:
             _display_error_message("%s" % ex.error_message)
