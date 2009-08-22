@@ -43,7 +43,7 @@ def mo_builder(env):
 
 def vimtags_builder(env):
     env["CTAGS"] = WhereIs("ctags")
-    generate_action = "$CTAGS -f $TARGET $SOURCES"
+    generate_action = "$CTAGS --tag-relative=yes -f $TARGET $SOURCES"
     env["BUILDERS"]["VimTags"] = Builder(action=generate_action)
 
 env = Environment(tools=["default", docbooksinglehtml_builder, pot_builder,
