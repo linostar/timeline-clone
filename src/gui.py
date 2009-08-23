@@ -968,7 +968,8 @@ class EventEditor(wx.Dialog):
         filled with data from the arguments 'start' and 'end' if they are
         given. Otherwise they will default to today.
         """
-        wx.Dialog.__init__(self, parent, id, title, style=wx.RESIZE_BORDER)
+        wx.Dialog.__init__(self, parent, id, title,
+                           style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self.event = event
         self._create_gui()
