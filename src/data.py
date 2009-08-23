@@ -465,7 +465,11 @@ def get_event_data_plugin(id):
 
 
 def get_event_data_plugins():
-    """Return instances of all event data plugins."""
+    """
+    Configure event data plugins to use.
+
+    Configure by returning a list of instances of event data plugins.
+    """
     return [DescriptionEventDataPlugin()]
 
 
