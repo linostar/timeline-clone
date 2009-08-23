@@ -192,7 +192,10 @@ class EventDataPlugin(object):
         raise NotImplementedError()
 
     def get_editor_data(self, editor):
-        """Return data object given the editor created in create_editor."""
+        """
+        Return data object given the editor created in create_editor or None if
+        no data has been entered in the editor control.
+        """
         raise NotImplementedError()
 
     def set_editor_data(self, editor, data):
