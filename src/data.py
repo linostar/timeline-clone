@@ -135,34 +135,78 @@ class Timeline(Observable):
 
 
 class EventDataPlugin(object):
-    """Interface for plugins that extend the data that an event can store."""
+    """
+    Base class for plugins that extend events by adding additional data fields.
+
+    Access an event's additional data like this:
+
+      data_object = event.get_data("plugin_id")
+      event.set_data("plugin_id", data_object)
+
+    Available plugins must be configured in get_event_data_plugins.
+    """
 
     def get_id(self):
-        """Return a string [a-z]+."""
+        """
+        Return a string [a-z]+.
+
+        Must be unique among all plugins configured in get_event_data_plugins.
+        """
         raise NotImplementedError()
 
     def get_name(self):
-        """Return an internationalized string."""
+        """
+        Return an internationalized string.
+        
+        Displayed on the tabs of the notebook in the event editor dialog.
+        """
         raise NotImplementedError()
 
     def encode(self, data):
-        """Encode data to string."""
+        """
+        Encode data to string.
+
+        Used to save data to file.
+        
+        For convenience, string data is assumed.
+        """
         return data
 
     def decode(self, string):
-        """Decode string to data."""
+        """
+        Decode string to data.
+        
+        Used to load data from file.
+        
+        For convenience, string data is assumed.
+        """
         return string
 
-    def create_editor(self):
+    def create_editor(self, parent):
+        """
+        Create and return a wx control with the given parent.
+
+        Used in the event editor dialog to edit the data objects that this
+        plugin handles.
+        """
         raise NotImplementedError()
 
     def get_editor_data(self, editor):
+        """Return data object given the editor created in create_editor."""
         raise NotImplementedError()
 
     def set_editor_data(self, editor, data):
+        """
+        Configure the editor created in create_editor with the given data
+        object.
+        """
         raise NotImplementedError()
 
     def clear_editor_data(self, editor):
+        """
+        Configure the editor created in create_editor so that get_editor_data
+        will return None.
+        """
         raise NotImplementedError()
 
 
