@@ -266,11 +266,11 @@ class Event(object):
         """Wrapper for time period method."""
         return self.time_period.mean_time()
 
-    def get_data(self, id):
-        return self.data.get(id, None)
+    def get_data(self, plugin_id):
+        return self.data.get(plugin_id, None)
 
-    def set_data(self, id, data):
-        self.data[id] = data
+    def set_data(self, plugin_id, data):
+        self.data[plugin_id] = data
 
 
 class Category(object):
