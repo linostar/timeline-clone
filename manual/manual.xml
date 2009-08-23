@@ -41,7 +41,8 @@
         <date>2009-09-01</date>
         <revremark>
           Documented the following new features: legend, export to image. Moved
-          Backups section under Topics in Detail.
+          Backups section under Topics in Detail. Updated Creating and Editing
+          Events section to reflect changes in the dialog.
         </revremark>
       </revision>
       <revision>
@@ -258,11 +259,11 @@
       <title>Creating and Editing Events</title>
 
       <para>
-        Editing event information is done in the dialog shown below.
+        Editing event properties is done in the dialog shown below.
       </para>
 
       <figure>
-        <title>Dialog to edit events.</title>
+        <title>Dialog used to edit events.</title>
         <graphic fileref="figures/event_editor.png" />
       </figure>
 
@@ -307,88 +308,44 @@
       </para>
 
       <para>
-        The following properties can be defined for an event:
+        All events must define when they take place. It can be either a single
+        point in time or a period (as in the figure above). If
+        <guilabel>Period</guilabel> is unchecked, the to field will disappear.
+        The <guilabel>Show time</guilabel> checkbox controls whether you can
+        specify the specific time of the day or not. If unchecked, the time
+        will default to 00:00.
       </para>
-
-      <variablelist>
-        <varlistentry>
-          <term><guilabel>Start</guilabel></term>
-          <listitem>
-            <para>
-              This is the start time of the event if it spans a period,
-              otherwise it is the specific point in time. If used for a period,
-              it has to be less or equal to the end time.
-            </para>
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term><guilabel>End</guilabel></term>
-          <listitem>
-            <para>
-              This is the end time of the event if it spans a period. This is
-              not used otherwise. If used it has to be greater or equal to the
-              start time.
-            </para>
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term><guilabel>Text</guilabel></term>
-          <listitem>
-            <para>
-              A free text describing the event.
-            </para>
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term><guilabel>Category</guilabel></term>
-          <listitem>
-            <para>
-              If you have defined any categories (see section below) you can
-              associate the event with one of your categories. An event can
-              only belong to one category.
-            </para>
-          </listitem>
-        </varlistentry>
-      </variablelist>
 
       <para>
-        The checkboxes at the top of the dialog work as follows:
+        The text field is also also mandatory and is used to give a short text
+        describing the event. This text is displayed in the boxes on the
+        timeline.
       </para>
 
-      <variablelist>
-        <varlistentry>
-          <term><guilabel>Period</guilabel></term>
-          <listitem>
-            <para>
-              If checked, both the start and end time will be used to define
-              the period that the event spans. If unchecked only the start time
-              will be enabled and it will specify the specific point in time
-              for the event.
-            </para>
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term><guilabel>Show time</guilabel></term>
-          <listitem>
-            <para>
-              If checked, you can specify a time for the start and end time in
-              addition to the date. This is useful if you are editing events on
-              a day level where the time is also important. The time will
-              default to 00:00 if not entered.
-            </para>
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term><guilabel>Close on OK</guilabel></term>
-          <listitem>
-            <para>
-              If checked, the dialog will close when you click OK. Otherwise it
-              will not.  This can be used to add multiple events without
-              closing the dialog.
-            </para>
-          </listitem>
-        </varlistentry>
-      </variablelist>
+      <para>
+        If you have defined any categories (see section below) you can
+        associate the event with one of your categories. An event can only
+        belong to one category.
+      </para>
+
+      <para>
+        In addition to the basic properties, there are additional data fields
+        (currently only <guilabel>Description</guilabel>) that can be used to
+        associate more data with an event. At the moment you can only view this
+        data inside the event editor dialog, but in future versions you will be
+        able to display this data on the timeline. (How to display it is not
+        yet decided. Suggestions are welcome.)
+      </para>
+
+      <para>
+        The <guilabel>Add more events after this one</guilabel> checkbox is
+        only visible when creating new events. If checked, it allows you to
+        create multiple events without closing the dialog: When you press the
+        <guibutton>OK</guibutton> button to create an event, the text field and
+        the additional data fields will be cleared and you can fill in data for
+        your next event. When you are done creating multiple events, you can
+        press the <guibutton>Cancel</guibutton> button to close the dialog.
+      </para>
 
     </section>
 
