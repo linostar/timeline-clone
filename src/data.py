@@ -218,10 +218,8 @@ class DescriptionEventDataPlugin(EventDataPlugin):
     def get_name(self):
         return _("Description")
 
-    def create_editor(self, parent, data=None):
+    def create_editor(self, parent):
         ctrl = wx.TextCtrl(parent, style=wx.TE_MULTILINE)
-        if data != None:
-            ctrl.SetValue(data)
         return ctrl
 
     def get_editor_data(self, editor):
