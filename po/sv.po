@@ -7,354 +7,354 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Timeline 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-06 08:33+0200\n"
-"PO-Revision-Date: 2009-08-06 08:43+0100\n"
+"POT-Creation-Date: 2009-08-24 11:30+0200\n"
+"PO-Revision-Date: 2009-08-26 11:20+0100\n"
 "Last-Translator: Rickard Lindberg <ricli85@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/drawing_default.py:132
+#: src/drawing_default.py:133
 msgid "Week"
 msgstr "Vecka"
 
-#: src/data_file.py:178
-#, python-format
-msgid "Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem."
-msgstr "Kan inte läsa tidslinjedata från '%s'. Slå på loggning (se användarmanualen för instruktioner hur) och öppna tidslinjen igen för att få mer information om problemet."
-
-#: src/data_file.py:183
-#, python-format
-msgid "Unable to read from file '%s'."
-msgstr "Kan inte läsa från filen '%s'."
-
-#: src/data_file.py:331
-msgid "Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."
-msgstr "Sparafunktionen har inaktiverats på grund av att det var problem att läsa eller skriva tidslinjedata förut. Detta för att inte skriva över ditt data."
-
-#: src/data_file.py:346
-msgid "Unable to save timeline data."
-msgstr "Kan inte spara tidslinjedata."
-
-#: src/data_file.py:347
-msgid "If data was corrupted, check out the backed up file that was created when the timeline was last saved."
-msgstr "Om data har blivit korrupt så kolla in backupfilen som skapades då tidslinjen senast sparades."
-
-#: src/data_file.py:359
-#, python-format
-msgid "Unable to create backup to '%s'."
-msgstr "Kan inte skriva en backup till '%s'."
-
-#: src/gui.py:87
+#: src/gui.py:90
 #, python-format
 msgid "Unable to open timeline '%s'."
 msgstr "Kan inte öppna tidslinje '%s'."
 
-#: src/gui.py:107
-msgid "&New...\tCtrl+N"
-msgstr "&Ny...\tCtrl+N"
-
-#: src/gui.py:108
+#: src/gui.py:119
 msgid "Create a new timeline"
 msgstr "Skapa en ny tidslinje"
 
-#: src/gui.py:109
-msgid "&Open...\tCtrl+O"
-msgstr "&Öppna...\tCtrl+O"
-
-#: src/gui.py:110
+#: src/gui.py:121
 msgid "Open an existing timeline"
 msgstr "Öppna en befintlig tidslinje"
 
-#: src/gui.py:113
+#: src/gui.py:124
 msgid "&Export to Image..."
 msgstr "&Exportera till Bild..."
 
-#: src/gui.py:115
-msgid "&Quit\tCtrl+Q"
-msgstr "&Avsluta\tCtrl+Q"
+#: src/gui.py:125
+msgid "Export the current view to a PNG or BMP image"
+msgstr "Exportera nuvarande vy till en PNG- eller BMP-bild"
 
-#: src/gui.py:116
+#: src/gui.py:128
 msgid "Exit the program"
 msgstr "Avsluta programmet"
 
-#: src/gui.py:125
+#: src/gui.py:137
 msgid "Create &Event..."
 msgstr "Skapa &Händelse..."
 
-#: src/gui.py:126
+#: src/gui.py:138
 msgid "Create a new event"
 msgstr "Skapa en ny händelse"
 
-#: src/gui.py:128
+#: src/gui.py:140
 msgid "Edit &Categories"
 msgstr "Redigera &Kategorier"
 
-#: src/gui.py:129
+#: src/gui.py:141
 msgid "Edit categories"
 msgstr "Redigera kategorier"
 
-#: src/gui.py:137
+#: src/gui.py:149
 msgid "&Sidebar\tCtrl+I"
 msgstr "&Sidopanel\tCtrl+I"
 
-#: src/gui.py:144
+#: src/gui.py:152
+msgid "&Legend"
+msgstr "&Teckenförklaring"
+
+#: src/gui.py:160
 msgid "Go to &Today\tCtrl+H"
 msgstr "Gå till &Idag\tCtrl+H"
 
-#: src/gui.py:145
+#: src/gui.py:161
 msgid "Go to D&ate...\tCtrl+G"
 msgstr "Gå till D&atum...\tCtrl+G"
 
-#: src/gui.py:147
+#: src/gui.py:163
 msgid "Fit Year"
 msgstr "Anpassa År"
 
-#: src/gui.py:148
+#: src/gui.py:164
 msgid "Fit Month"
 msgstr "Anpassa Månad"
 
-#: src/gui.py:149
+#: src/gui.py:165
 msgid "Fit Day"
 msgstr "Anpassa Dag"
 
-#: src/gui.py:157
+#: src/gui.py:173
 msgid "&Contents\tF1"
 msgstr "&Innehåll\tF1"
 
-#: src/gui.py:158
-msgid "&About"
-msgstr "&Om"
-
-#: src/gui.py:163
+#: src/gui.py:179
 msgid "&File"
 msgstr "&Arkiv"
 
-#: src/gui.py:164
+#: src/gui.py:180
 msgid "&View"
 msgstr "&Visa"
 
-#: src/gui.py:165
+#: src/gui.py:181
 msgid "&Timeline"
 msgstr "&Tidslinje"
 
-#: src/gui.py:166
+#: src/gui.py:182
 msgid "&Navigate"
 msgstr "&Navigera"
 
-#: src/gui.py:167
+#: src/gui.py:183
 msgid "&Help"
 msgstr "&Hjälp"
 
-#: src/gui.py:235
+#: src/gui.py:254
 msgid "Create Timeline"
 msgstr "Skapa Tidslinje"
 
-#: src/gui.py:242
+#: src/gui.py:261
 msgid "The specified timeline already exists."
 msgstr "Den angivna tidslinjen finns redan."
 
-#: src/gui.py:243
+#: src/gui.py:262
 msgid "Opening timeline instead of creating new."
 msgstr "Öppnar tidslinje istället för att skapa ny."
 
-#: src/gui.py:245
+#: src/gui.py:264
 msgid "Information"
 msgstr "Information"
 
-#: src/gui.py:256
+#: src/gui.py:275
 msgid "Open Timeline"
 msgstr "Öppna Tidslinje"
 
-#: src/gui.py:297
+#: src/gui.py:317
 msgid "Image files"
 msgstr "Bildfiler"
 
-#: src/gui.py:298
+#: src/gui.py:318
 msgid "Export to Image"
 msgstr "Exportera till Bild"
 
-#: src/gui.py:302
+#: src/gui.py:322
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "Filen '%s' finns redan. Vill du skriva över den?"
 
-#: src/gui.py:320
+#: src/gui.py:340
 #, python-format
 msgid "Could not locate manual at '%s'."
 msgstr "Kan inte hitta manualen i '%s'."
 
-#: src/gui.py:335
+#: src/gui.py:355
 msgid "Timeline files"
 msgstr "Tidslinjefiler"
 
-#: src/gui.py:357
+#: src/gui.py:377
 msgid "Timeline User Manual"
 msgstr "Timeline Användarmanual"
 
-#: src/gui.py:576
-#: src/gui.py:594
+#: src/gui.py:600
+#: src/gui.py:618
 msgid "No timeline set"
 msgstr "Ingen tidslinje vald"
 
-#: src/gui.py:896
-#: src/gui.py:1194
+#: src/gui.py:922
+#: src/gui.py:1256
 msgid "Are you sure to delete?"
 msgstr "Är du säker på att du vill ta bort?"
-
-#: src/gui.py:955
-msgid "Period"
-msgstr "Period"
-
-#: src/gui.py:958
-#: src/gui.py:1287
-msgid "Show time"
-msgstr "Visa tid"
-
-#: src/gui.py:961
-msgid "Close on OK"
-msgstr "Stäng vid OK"
-
-#: src/gui.py:969
-msgid "Start:"
-msgstr "Start:"
-
-#: src/gui.py:972
-msgid "End:"
-msgstr "Slut:"
-
-#: src/gui.py:975
-msgid "Text:"
-msgstr "Text:"
-
-#: src/gui.py:978
-msgid "Category:"
-msgstr "Kategori:"
 
 #: src/gui.py:982
 msgid "Event Properties"
 msgstr "Egenskaper för Händelse"
 
-#: src/gui.py:1027
+#: src/gui.py:988
+msgid "When:"
+msgstr "När:"
+
+#: src/gui.py:991
+msgid "to"
+msgstr "till"
+
+#: src/gui.py:1004
+msgid "Period"
+msgstr "Period"
+
+#: src/gui.py:1008
+#: src/gui.py:1349
+msgid "Show time"
+msgstr "Visa tid"
+
+#: src/gui.py:1015
+msgid "Text:"
+msgstr "Text:"
+
+#: src/gui.py:1020
+msgid "Category:"
+msgstr "Kategori:"
+
+#: src/gui.py:1043
+msgid "Add more events after this one"
+msgstr "Lägg till fler händelser efter denna"
+
+#: src/gui.py:1071
 msgid "End must be > Start"
 msgstr "Slut måste vara > Start"
 
-#: src/gui.py:1028
+#: src/gui.py:1072
 msgid "Text"
 msgstr "Text"
 
-#: src/gui.py:1112
+#: src/gui.py:1174
 msgid "Edit Categories"
 msgstr "Redigera Kategorier"
 
-#: src/gui.py:1130
-msgid "Add"
-msgstr "Lägg till"
-
-#: src/gui.py:1133
-msgid "&Delete"
-msgstr "Ta &bort"
-
-#: src/gui.py:1136
-msgid "Close"
-msgstr "Stäng"
-
-#: src/gui.py:1162
+#: src/gui.py:1224
 msgid "Edit Category"
 msgstr "Redigera Kategori"
 
-#: src/gui.py:1169
+#: src/gui.py:1231
 msgid "Add Category"
 msgstr "Lägg till Kategori"
 
-#: src/gui.py:1236
+#: src/gui.py:1298
 msgid "Name:"
 msgstr "Namn:"
 
-#: src/gui.py:1239
+#: src/gui.py:1301
 msgid "Color:"
 msgstr "Färg:"
 
-#: src/gui.py:1242
+#: src/gui.py:1304
 msgid "Visible:"
 msgstr "Synlig:"
 
-#: src/gui.py:1256
+#: src/gui.py:1318
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
 msgstr "Ogiltigt kategorinamn '%s'. Får inte vara blankt."
 
-#: src/gui.py:1260
+#: src/gui.py:1322
 #, python-format
 msgid "Category name '%s' already in use."
 msgstr "Kategorinamnet '%s' används redan."
 
-#: src/gui.py:1281
+#: src/gui.py:1343
 msgid "Go to Date"
 msgstr "Gå till Datum"
 
-#: src/gui.py:1327
+#: src/gui.py:1395
 msgid "Create Event"
 msgstr "Skapa Händelse"
 
-#: src/gui.py:1334
+#: src/gui.py:1402
 msgid "Edit Event"
 msgstr "Redigera Händelse"
 
-#: src/gui.py:1362
+#: src/gui.py:1430
 #, python-format
 msgid "Field '%s' can't be empty."
 msgstr "Fältet '%s' får inte vara tomt."
 
-#: src/gui.py:1368
+#: src/gui.py:1436
 msgid "Error"
 msgstr "Fel"
 
-#: src/gui.py:1374
+#: src/gui.py:1442
 msgid "Question"
 msgstr "Fråga"
 
-#: src/gui.py:1424
-msgid "&OK"
-msgstr "&OK"
+#: src/data_file.py:180
+#, python-format
+msgid "Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem."
+msgstr "Kan inte läsa tidslinjedata från '%s'. Slå på loggning (se användarmanualen för instruktioner hur) och öppna tidslinjen igen för att få mer information om problemet."
 
-#: src/gui.py:1425
-msgid "&Cancel"
-msgstr "&Avbryt"
+#: src/data_file.py:185
+#, python-format
+msgid "Unable to read from file '%s'."
+msgstr "Kan inte läsa från filen '%s'."
 
-#: src/data.py:213
+#: src/data_file.py:357
+msgid "Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."
+msgstr "Sparafunktionen har inaktiverats på grund av att det var problem att läsa eller skriva tidslinjedata förut. Detta för att inte skriva över ditt data."
+
+#: src/data_file.py:372
+msgid "Unable to save timeline data."
+msgstr "Kan inte spara tidslinjedata."
+
+#: src/data_file.py:373
+msgid "If data was corrupted, check out the backed up file that was created when the timeline was last saved."
+msgstr "Om data har blivit korrupt så kolla in backupfilen som skapades då tidslinjen senast sparades."
+
+#: src/data_file.py:385
+#, python-format
+msgid "Unable to create backup to '%s'."
+msgstr "Kan inte skriva en backup till '%s'."
+
+#: src/data.py:222
+msgid "Description"
+msgstr "Beskrivning"
+
+#: src/data.py:326
 msgid "Start time can't be after year 9989"
 msgstr "Starttiden kan inte vara efter år 9989"
 
-#: src/data.py:214
+#: src/data.py:327
 msgid "Start time can't be before year 10"
 msgstr "Starttiden kan inte vara före år 10"
 
-#: src/data.py:217
+#: src/data.py:330
 msgid "End time can't be after year 9989"
 msgstr "Sluttiden kan inte vara efter år 9989"
 
-#: src/data.py:218
+#: src/data.py:331
 msgid "End time can't be before year 10"
 msgstr "Sluttiden kan inte vara före år 10"
 
-#: src/data.py:222
+#: src/data.py:335
 msgid "Start time can't be after end time"
 msgstr "Starttiden kan inte vara efter sluttiden"
 
-#: src/data.py:258
+#: src/data.py:371
 msgid "Can't zoom wider than 120 years"
 msgstr "Kan inte zooma bredare än 120 år"
 
-#: src/data.py:260
+#: src/data.py:373
 msgid "Can't zoom deeper than 1 hour"
 msgstr "Kan inte zooma djupare än 1 timme"
 
-#: src/data.py:403
+#: src/data.py:533
 msgid "Unknown format"
 msgstr "Okänt format"
 
+#~ msgid "&New...\tCtrl+N"
+#~ msgstr "&Ny...\tCtrl+N"
+#~ msgid "&Open...\tCtrl+O"
+#~ msgstr "&Öppna...\tCtrl+O"
+#~ msgid "&Quit\tCtrl+Q"
+#~ msgstr "&Avsluta\tCtrl+Q"
+#~ msgid "&About"
+#~ msgstr "&Om"
+#~ msgid "Close on OK"
+#~ msgstr "Stäng vid OK"
+#~ msgid "Start:"
+#~ msgstr "Start:"
+#~ msgid "End:"
+#~ msgstr "Slut:"
+#~ msgid "Add"
+#~ msgstr "Lägg till"
+#~ msgid "&Delete"
+#~ msgstr "Ta &bort"
+#~ msgid "Close"
+#~ msgstr "Stäng"
+#~ msgid "&OK"
+#~ msgstr "&OK"
+#~ msgid "&Cancel"
+#~ msgstr "&Avbryt"
 #~ msgid "Start"
 #~ msgstr "Start"
 #~ msgid "End"
