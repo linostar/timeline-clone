@@ -8,3 +8,4 @@ po/timeline.pot
 *.pyc
 src/tags
 *.swp
+*.mo
