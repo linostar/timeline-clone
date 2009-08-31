@@ -29,7 +29,7 @@ else:
 if not env["MSGFMT"]:
     print("WARNING: mo target disabled because msgfmt was not found")
 else:
-    languages = ["sv", "es"]
+    languages = ["sv", "es", "de"]
     for language in languages:
         target = "%s/LC_MESSAGES/timeline.mo" % language
         env.Alias("mo", env.Mo(target, "%s.po" % language))

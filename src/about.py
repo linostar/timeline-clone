@@ -37,7 +37,8 @@ WEBSITE = "http://thetimelineproj.sourceforge.net/"
 DEVELOPERS = ["Rickard Lindberg", "Roger Lindberg"]
 TRANSLATORS = ["Roger Lindberg (Swedish)",
                "Rickard Lindberg (Swedish)",
-               "Roman Gelbort (Spanish)"]
+               "Roman Gelbort (Spanish)",
+               "Nils Steinger (German)"]
 ARTISTS = ["Sara Lindberg"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

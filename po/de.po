@@ -1,0 +1,334 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Rickard Lindberg
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Timeline 0.4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-24 11:30+0200\n"
+"PO-Revision-Date: 2009-08-31 11:04+0100\n"
+"Last-Translator: Nils Steinger <nrsend-translations@yahoo.de>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: German\n"
+
+#: src/drawing_default.py:133
+msgid "Week"
+msgstr "Woche"
+
+#: src/gui.py:90
+#, python-format
+msgid "Unable to open timeline '%s'."
+msgstr "Beim Öffnen des Zeitstrahls '%s' ist ein Fehler aufgetreten."
+
+#: src/gui.py:119
+msgid "Create a new timeline"
+msgstr "Einen neuen Zeitstrahl erstellen"
+
+#: src/gui.py:121
+msgid "Open an existing timeline"
+msgstr "Einen bestehenden Zeitstrahl öffnen"
+
+#: src/gui.py:124
+msgid "&Export to Image..."
+msgstr "Als &Bild exportieren..."
+
+#: src/gui.py:125
+msgid "Export the current view to a PNG or BMP image"
+msgstr "Speichert die aktuelle Ansicht als PNG- oder BMP-Datei"
+
+#: src/gui.py:128
+msgid "Exit the program"
+msgstr "Beendet das Programm"
+
+#: src/gui.py:137
+msgid "Create &Event..."
+msgstr "Neues &Ereignis eintragen..."
+
+#: src/gui.py:138
+msgid "Create a new event"
+msgstr "Erstellt ein neues Ereignis"
+
+#: src/gui.py:140
+msgid "Edit &Categories"
+msgstr "&Kategorien verwalten"
+
+#: src/gui.py:141
+msgid "Edit categories"
+msgstr "Ermöglicht es Ihnen, Kategorien zu erstellen, zu bearbeiten und zu löschen."
+
+#: src/gui.py:149
+msgid "&Sidebar\tCtrl+I"
+msgstr "&Sidebar\tStrg+I"
+
+#: src/gui.py:152
+msgid "&Legend"
+msgstr "&Legende"
+
+#: src/gui.py:160
+msgid "Go to &Today\tCtrl+H"
+msgstr "Zu &heutigem Datum springen\tStrg+H"
+
+#: src/gui.py:161
+msgid "Go to D&ate...\tCtrl+G"
+msgstr "Zu bestimmtem Datum springen\tStrg+G"
+
+#: src/gui.py:163
+msgid "Fit Year"
+msgstr "Zoom auf ein Jahr einstellen"
+
+#: src/gui.py:164
+msgid "Fit Month"
+msgstr "Zoom auf einen Monat einstellen"
+
+#: src/gui.py:165
+msgid "Fit Day"
+msgstr "Zoom auf einen Tag einstellen"
+
+#: src/gui.py:173
+msgid "&Contents\tF1"
+msgstr "&Inhalt\tF1"
+
+#: src/gui.py:179
+msgid "&File"
+msgstr "&Datei"
+
+#: src/gui.py:180
+msgid "&View"
+msgstr "&Ansicht"
+
+#: src/gui.py:181
+msgid "&Timeline"
+msgstr "&Zeitstrahl"
+
+#: src/gui.py:182
+msgid "&Navigate"
+msgstr "&Position/Zoom"
+
+#: src/gui.py:183
+msgid "&Help"
+msgstr "&Hilfe"
+
+#: src/gui.py:254
+msgid "Create Timeline"
+msgstr "Zeitstrahl erstellen"
+
+#: src/gui.py:261
+msgid "The specified timeline already exists."
+msgstr "Der angegebene Zeitstrahl existiert bereits."
+
+#: src/gui.py:262
+msgid "Opening timeline instead of creating new."
+msgstr "Öffnet einen vorhandenen Zeitstrahl, anstatt einen neuen zu erstellen."
+
+#: src/gui.py:264
+msgid "Information"
+msgstr "Hinweis"
+
+#: src/gui.py:275
+msgid "Open Timeline"
+msgstr "Zeitstrahl öffnen"
+
+#: src/gui.py:317
+msgid "Image files"
+msgstr "Bild-Dateien"
+
+#: src/gui.py:318
+msgid "Export to Image"
+msgstr "Als Bild exportieren"
+
+#: src/gui.py:322
+#, python-format
+msgid "File '%s' exists. Overwrite?"
+msgstr "Die Datei '%s' existiert bereits. Soll sie überschrieben werden?"
+
+#: src/gui.py:340
+#, python-format
+msgid "Could not locate manual at '%s'."
+msgstr "Das Handbuch '%s' konnte nicht gefunden werden."
+
+#: src/gui.py:355
+msgid "Timeline files"
+msgstr "Zeitstrahl-Dateien"
+
+#: src/gui.py:377
+msgid "Timeline User Manual"
+msgstr "Timeline-Benutzerhandbuch"
+
+#: src/gui.py:600
+#: src/gui.py:618
+msgid "No timeline set"
+msgstr "Kein Zeitstrahl ausgewählt"
+
+#: src/gui.py:922
+#: src/gui.py:1256
+msgid "Are you sure to delete?"
+msgstr "Wirklich löschen?"
+
+#: src/gui.py:982
+msgid "Event Properties"
+msgstr "Eigenschaften"
+
+#: src/gui.py:988
+msgid "When:"
+msgstr "Zeit:"
+
+#: src/gui.py:991
+msgid "to"
+msgstr "bis"
+
+#: src/gui.py:1004
+msgid "Period"
+msgstr "Zeitspanne"
+
+#: src/gui.py:1008
+#: src/gui.py:1349
+msgid "Show time"
+msgstr "Uhrzeit anzeigen"
+
+#: src/gui.py:1015
+msgid "Text:"
+msgstr "Text:"
+
+#: src/gui.py:1020
+msgid "Category:"
+msgstr "Kategorie:"
+
+#: src/gui.py:1043
+msgid "Add more events after this one"
+msgstr "Weitere Ereignisse nach diesem erstellen"
+
+#: src/gui.py:1071
+msgid "End must be > Start"
+msgstr "Der Ende des Ereignisses darf nicht vor dem Beginn des Ereignisses sein."
+
+#: src/gui.py:1072
+msgid "Text"
+msgstr "Text"
+
+#: src/gui.py:1174
+msgid "Edit Categories"
+msgstr "Kategorien verwalten"
+
+#: src/gui.py:1224
+msgid "Edit Category"
+msgstr "Kategorie bearbeiten"
+
+#: src/gui.py:1231
+msgid "Add Category"
+msgstr "Kategorie hinzufügen"
+
+#: src/gui.py:1298
+msgid "Name:"
+msgstr "Name:"
+
+#: src/gui.py:1301
+msgid "Color:"
+msgstr "Farbe:"
+
+#: src/gui.py:1304
+msgid "Visible:"
+msgstr "Sichtbar:"
+
+#: src/gui.py:1318
+#, python-format
+msgid "Category name '%s' not valid. Must be non-empty."
+msgstr "Bitte geben Sie einen Namen für die gewählte Kategorie ein."
+
+#: src/gui.py:1322
+#, python-format
+msgid "Category name '%s' already in use."
+msgstr "Es existiert bereits eine Kategorie mit dem Namen '%s'."
+
+#: src/gui.py:1343
+msgid "Go to Date"
+msgstr "Zu bestimmtem Datum springen"
+
+#: src/gui.py:1395
+msgid "Create Event"
+msgstr "Neues Ereignis eintragen"
+
+#: src/gui.py:1402
+msgid "Edit Event"
+msgstr "Ereignis bearbeiten"
+
+#: src/gui.py:1430
+#, python-format
+msgid "Field '%s' can't be empty."
+msgstr "Das Feld '%s' darf nicht leer sein."
+
+#: src/gui.py:1436
+msgid "Error"
+msgstr "Fehler"
+
+#: src/gui.py:1442
+msgid "Question"
+msgstr "Frage"
+
+#: src/data_file.py:180
+#, python-format
+msgid "Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem."
+msgstr "Beim Lesen der Zeitstrahl-Daten von '%s' ist ein Fehler aufgetreten.Schalten Sie das Erstellen einer Logdatei ein (siehe Handbuch), um mehr Informationen über das Problem zu erhalten."
+
+#: src/data_file.py:185
+#, python-format
+msgid "Unable to read from file '%s'."
+msgstr "Beim Lesen der Datei '%s' ist ein Fehler aufgetreten."
+
+#: src/data_file.py:357
+msgid "Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."
+msgstr "Die Speichern-Funktion wurde deaktiviert, da beim Lesen oder Schreiben des Zeitstrahls ein Fehler aufgetreten ist. Dadurch wird verhindert, dass Ihre Daten überschrieben werden."
+
+#: src/data_file.py:372
+msgid "Unable to save timeline data."
+msgstr "Beim Speichern der Zeitstrahl-Daten ist ein Fehler aufgetreten."
+
+#: src/data_file.py:373
+msgid "If data was corrupted, check out the backed up file that was created when the timeline was last saved."
+msgstr "Wenn die Daten beschädigt wurden, können Sie versuchen, die Backup-Datei, die beim letzten Speichern erstellt wurde, zu verwenden."
+
+#: src/data_file.py:385
+#, python-format
+msgid "Unable to create backup to '%s'."
+msgstr "Beim Erstellen des Backups '%s' ist ein Fehler aufgetreten."
+
+#: src/data.py:222
+msgid "Description"
+msgstr "Beschreibung"
+
+#: src/data.py:326
+msgid "Start time can't be after year 9989"
+msgstr "Der Beginn des Ereignisses darf nicht später als das Jahr 9989 sein."
+
+#: src/data.py:327
+msgid "Start time can't be before year 10"
+msgstr "Der Beginn des Ereignisses darf nicht früher als das Jahr 10 sein."
+
+#: src/data.py:330
+msgid "End time can't be after year 9989"
+msgstr "Das Ende des Ereignisses darf nicht später als das Jahr 9989 sein."
+
+#: src/data.py:331
+msgid "End time can't be before year 10"
+msgstr "Das Ende des Ereignisses darf nicht früher als das Jahr 10 sein."
+
+#: src/data.py:335
+msgid "Start time can't be after end time"
+msgstr "Der Beginn des Ereignisses darf nicht nach dem Ende des Ereignisses sein."
+
+#: src/data.py:371
+msgid "Can't zoom wider than 120 years"
+msgstr "Der Zoom kann nicht auf mehr als 120 Jahre eingestellt werden."
+
+#: src/data.py:373
+msgid "Can't zoom deeper than 1 hour"
+msgstr "Der Zoom kann nicht auf weniger als eine Stunde eingestellt werden."
+
+#: src/data.py:533
+msgid "Unknown format"
+msgstr "Unbekanntes Format"
+
