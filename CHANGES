@@ -1,16 +1,26 @@
 Timeline 0.4.0, released on 1 September 2009
 ============================================
 
-In this release we have implemented support for translation. Thanks to
-contributor Roman Gelbort we also have a Spanish translation of Timeline in
-addition to the English and Swedish one.
+This is a new feature release.
+
+The first step in supporting additional data for events has been implemented.
+The file format had to be changed for this. Files written by version 0.4.0 will
+not be readable by previous versions, but 0.4.0 can read 0.3.0 files and will
+convert them automatically.
 
 New features, enhancements:
 
-  * Implemented Export to Image
-  * Implemented support for viewing legends for categories
-  * Added support for translation
-    * Supported languages: English, Swedish, and Spanish
+  * Translation support
+  * Export to Image
+  * Legend for categories
+  * Longer descriptions for events (visualization will be implemented in 0.5.0)
+
+New translations:
+
+  * Swedish (Roger Lindberg)
+  * Spanish (Roman Gelbort)
+  * German (Nils Steinger)
+  * Brazilian Portuguese (Leonardo Frigo da Purificação)
 
 Timeline 0.3.0, released on 1 August 2009
 =========================================
