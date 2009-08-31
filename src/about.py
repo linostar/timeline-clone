@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009  Rickard Lindberg, Roger Lindberg
 #
 # This file is part of Timeline.
@@ -38,7 +39,8 @@ DEVELOPERS = ["Rickard Lindberg", "Roger Lindberg"]
 TRANSLATORS = ["Roger Lindberg (Swedish)",
                "Rickard Lindberg (Swedish)",
                "Roman Gelbort (Spanish)",
-               "Nils Steinger (German)"]
+               "Nils Steinger (German)",
+               u"Leonardo Frigo da Purificação (Brazilian Portuguese)"]
 ARTISTS = ["Sara Lindberg"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
