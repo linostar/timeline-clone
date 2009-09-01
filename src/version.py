@@ -16,8 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-VERSION = (0, 4, 0)
-DEV = False
+VERSION = (0, 5, 0)
+DEV = True
 
 
 def get_version():
