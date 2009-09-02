@@ -1,0 +1,334 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Rickard Lindberg
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Timeline 0.4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-24 11:30+0200\n"
+"PO-Revision-Date: 2009-09-02 04:10+0100\n"
+"Last-Translator: Koert <koert@dumsoft.be>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/drawing_default.py:133
+msgid "Week"
+msgstr "Week"
+
+#: src/gui.py:90
+#, python-format
+msgid "Unable to open timeline '%s'."
+msgstr "Kan tijdslijn '%s' niet openen."
+
+#: src/gui.py:119
+msgid "Create a new timeline"
+msgstr "Een nieuwe tijdslijn aanmaken"
+
+#: src/gui.py:121
+msgid "Open an existing timeline"
+msgstr "Een bestaande tijdslijn openen"
+
+#: src/gui.py:124
+msgid "&Export to Image..."
+msgstr "&Exporteer naar beeldbestand"
+
+#: src/gui.py:125
+msgid "Export the current view to a PNG or BMP image"
+msgstr "Exporteer de huidige weergave naar een PNG of een BMP bestand"
+
+#: src/gui.py:128
+msgid "Exit the program"
+msgstr "Het programma sluiten"
+
+#: src/gui.py:137
+msgid "Create &Event..."
+msgstr "&Gebeurtenis aanmaken..."
+
+#: src/gui.py:138
+msgid "Create a new event"
+msgstr "Een nieuwe gebeurtenis aanmaken"
+
+#: src/gui.py:140
+msgid "Edit &Categories"
+msgstr "&Categorieën bewerken"
+
+#: src/gui.py:141
+msgid "Edit categories"
+msgstr "Categorieën bewerken"
+
+# This is a bit of a weird translation.  Literally it is correct, but it doesn't sound right.  Most ppl will probably understand "Sidebar" so I guess you could just keep the english term.
+#: src/gui.py:149
+#, fuzzy
+msgid "&Sidebar\tCtrl+I"
+msgstr "&Zijbalk\tCtrl+I"
+
+#: src/gui.py:152
+msgid "&Legend"
+msgstr "&Legende"
+
+#: src/gui.py:160
+msgid "Go to &Today\tCtrl+H"
+msgstr "Ga naar &Vandaag\tCtrl+H"
+
+#: src/gui.py:161
+msgid "Go to D&ate...\tCtrl+G"
+msgstr "Ga naar D&atum...\tCtrl+G"
+
+#: src/gui.py:163
+msgid "Fit Year"
+msgstr "Passend maken voor jaar"
+
+#: src/gui.py:164
+msgid "Fit Month"
+msgstr "Passend maken voor een maand"
+
+#: src/gui.py:165
+msgid "Fit Day"
+msgstr "Passend maken voor een dag"
+
+#: src/gui.py:173
+msgid "&Contents\tF1"
+msgstr "$Inhoud\tF1"
+
+#: src/gui.py:179
+msgid "&File"
+msgstr "&Bestand"
+
+#: src/gui.py:180
+msgid "&View"
+msgstr "&Beeld"
+
+#: src/gui.py:181
+msgid "&Timeline"
+msgstr "&Tijdslijn"
+
+#: src/gui.py:182
+msgid "&Navigate"
+msgstr "&Navigatie"
+
+#: src/gui.py:183
+msgid "&Help"
+msgstr "&Help"
+
+#: src/gui.py:254
+msgid "Create Timeline"
+msgstr "Tijdslijn aanmaken"
+
+#: src/gui.py:261
+msgid "The specified timeline already exists."
+msgstr "De opgegeven tijdslijn bestaat al"
+
+#: src/gui.py:262
+msgid "Opening timeline instead of creating new."
+msgstr "Tijdslijn openen in plaats van een nieuwe aanmaken."
+
+#: src/gui.py:264
+msgid "Information"
+msgstr "informatie"
+
+#: src/gui.py:275
+msgid "Open Timeline"
+msgstr "Tijdslijn openen"
+
+#: src/gui.py:317
+msgid "Image files"
+msgstr "Beeldbestanden"
+
+#: src/gui.py:318
+msgid "Export to Image"
+msgstr "Exporteer naar afbeelding"
+
+#: src/gui.py:322
+#, python-format
+msgid "File '%s' exists. Overwrite?"
+msgstr "Bestand '%s' bestaat al.  Overschrijven?"
+
+#: src/gui.py:340
+#, python-format
+msgid "Could not locate manual at '%s'."
+msgstr "Kan handleiding niet vinden in '%s'"
+
+#: src/gui.py:355
+msgid "Timeline files"
+msgstr "Tijdslijnbestanden"
+
+#: src/gui.py:377
+msgid "Timeline User Manual"
+msgstr "Handleiding Tijdslijn"
+
+#: src/gui.py:600
+#: src/gui.py:618
+msgid "No timeline set"
+msgstr "Geen tijdslijn ingesteld"
+
+#: src/gui.py:922
+#: src/gui.py:1256
+msgid "Are you sure to delete?"
+msgstr "Zeker verwijderen?"
+
+#: src/gui.py:982
+msgid "Event Properties"
+msgstr "Gebeurtenis eigenschappen"
+
+#: src/gui.py:988
+msgid "When:"
+msgstr "Wanneer:"
+
+#: src/gui.py:991
+msgid "to"
+msgstr "naar"
+
+#: src/gui.py:1004
+msgid "Period"
+msgstr "Periode"
+
+#: src/gui.py:1008
+#: src/gui.py:1349
+msgid "Show time"
+msgstr "Tijd tonen"
+
+#: src/gui.py:1015
+msgid "Text:"
+msgstr "Tekst:"
+
+#: src/gui.py:1020
+msgid "Category:"
+msgstr "Categorie"
+
+#: src/gui.py:1043
+msgid "Add more events after this one"
+msgstr "Hierna nog gebeurtenissen toevoegen"
+
+#: src/gui.py:1071
+msgid "End must be > Start"
+msgstr "Einde moet > Start zijn"
+
+#: src/gui.py:1072
+msgid "Text"
+msgstr "Tekst"
+
+#: src/gui.py:1174
+msgid "Edit Categories"
+msgstr "Categoriën bewerken"
+
+#: src/gui.py:1224
+msgid "Edit Category"
+msgstr "Categorie bewerken"
+
+#: src/gui.py:1231
+msgid "Add Category"
+msgstr "Categorie aanmaken"
+
+#: src/gui.py:1298
+msgid "Name:"
+msgstr "Naam:"
+
+#: src/gui.py:1301
+msgid "Color:"
+msgstr "Kleur:"
+
+#: src/gui.py:1304
+msgid "Visible:"
+msgstr "Zichtbaar:"
+
+#: src/gui.py:1318
+#, python-format
+msgid "Category name '%s' not valid. Must be non-empty."
+msgstr "Categorie naam '%s' niet geldig.  Mag niet leeg zijn."
+
+#: src/gui.py:1322
+#, python-format
+msgid "Category name '%s' already in use."
+msgstr "Categorie naam '%s' reeds in gebruik."
+
+#: src/gui.py:1343
+msgid "Go to Date"
+msgstr "Ga naar datum"
+
+#: src/gui.py:1395
+msgid "Create Event"
+msgstr "Gebeurtenis aanmaken"
+
+#: src/gui.py:1402
+msgid "Edit Event"
+msgstr "Gebeurtenis bewerken"
+
+#: src/gui.py:1430
+#, python-format
+msgid "Field '%s' can't be empty."
+msgstr "Veld '%s' mag niet leeg zijn."
+
+#: src/gui.py:1436
+msgid "Error"
+msgstr "Fout"
+
+#: src/gui.py:1442
+msgid "Question"
+msgstr "Vraag"
+
+#: src/data_file.py:180
+#, python-format
+msgid "Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem."
+msgstr "Kan tijdslijn data niet lezen van '%s'.  Schakel loggen in (zie handleiding voor instructies) en open de tijdslijn opnieuw om meer informatie over het probleem."
+
+#: src/data_file.py:185
+#, python-format
+msgid "Unable to read from file '%s'."
+msgstr "Kan niet lezen uit bestand '%s'."
+
+#: src/data_file.py:357
+msgid "Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."
+msgstr "Bewaar functie is uitgeschakeld omdat er eerder een probleem was met het lezen en schrijven van en naar de tijdslijn.  Dit is om te verzekeren dat uw data niet overschreven wordt."
+
+#: src/data_file.py:372
+msgid "Unable to save timeline data."
+msgstr "Kan de tijdslijn data niet bewaren."
+
+#: src/data_file.py:373
+msgid "If data was corrupted, check out the backed up file that was created when the timeline was last saved."
+msgstr "Als data beschadigd is, kijk dan het backup bestand na dat gecreeerd is toen de de tijdslijn voor het laatst bewaard werd."
+
+#: src/data_file.py:385
+#, python-format
+msgid "Unable to create backup to '%s'."
+msgstr "Kan backup niet maken in '%s'."
+
+#: src/data.py:222
+msgid "Description"
+msgstr "Beschrijving"
+
+#: src/data.py:326
+msgid "Start time can't be after year 9989"
+msgstr "Begin tijd kan niet later dan het jaar 9989 zijn"
+
+#: src/data.py:327
+msgid "Start time can't be before year 10"
+msgstr "Begin tijd kan niet vroeger dan het jaar 10 zijn"
+
+#: src/data.py:330
+msgid "End time can't be after year 9989"
+msgstr "Eind tijd kan niet later dan het jaar 9989 zijn"
+
+#: src/data.py:331
+msgid "End time can't be before year 10"
+msgstr "Eindtijd kan niet vroeger dan het jaar 10 zijn"
+
+#: src/data.py:335
+msgid "Start time can't be after end time"
+msgstr "Begin tijd kan niet later dan de eind tijd zijn"
+
+#: src/data.py:371
+msgid "Can't zoom wider than 120 years"
+msgstr "Kan niet verder uitzoomen dan 120 jaar."
+
+#: src/data.py:373
+msgid "Can't zoom deeper than 1 hour"
+msgstr "Kan niet verder inzoomen dan 1 uur"
+
+#: src/data.py:533
+msgid "Unknown format"
+msgstr "Onbekend formaat"
