@@ -51,7 +51,6 @@ env = Environment(tools=["default", docbooksinglehtml_builder, pot_builder,
 
 Export("env")
 
-SConscript("manual/SConscript")
 SConscript("po/SConscript")
 SConscript("src/SConscript")
 
