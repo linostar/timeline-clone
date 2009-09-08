@@ -49,6 +49,8 @@ from about import display_about_dialog
 from about import APPLICATION_NAME
 from paths import ICONS_DIR
 from paths import MANUAL_FILE
+from paths import HELP_RESOURCES_DIR
+import help
 
 
 # Border, in pixels, between controls in a window (should always be used when
@@ -79,6 +81,7 @@ class MainFrame(wx.Frame):
         self.mnu_view_legend.Check(config.get_show_legend())
         self._enable_disable_menus()
         self.SetIcons(self._load_icon_bundle())
+        help.init(self, "contents", HELP_RESOURCES_DIR, ["help_pages"])
 
     def display_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
@@ -171,8 +174,14 @@ class MainFrame(wx.Frame):
         # Help menu
         self.mnu_help = wx.Menu()
         help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
-        help_about = self.mnu_help.Append(wx.ID_ABOUT)
         self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, help_contents)
+        self.mnu_help.AppendSeparator()
+        help_tutorial = self.mnu_help.Append(wx.ID_ANY, _("Getting started tutorial"))
+        self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, help_tutorial)
+        help_contact = self.mnu_help.Append(wx.ID_ANY, _("Contact us"))
+        self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, help_contact)
+        self.mnu_help.AppendSeparator()
+        help_about = self.mnu_help.Append(wx.ID_ABOUT)
         self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
         # The menu bar
         menuBar = wx.MenuBar()
@@ -236,7 +245,13 @@ class MainFrame(wx.Frame):
         self._navigate_timeline(lambda tp: tp.fit_day())
 
     def _mnu_help_contents_on_click(self, e):
-        self._show_help()
+        help.show_page("contents")
+
+    def _mnu_help_tutorial_on_click(self, e):
+        help.show_page("tutorial")
+
+    def _mnu_help_contact_on_click(self, e):
+        help.show_page("contact")
 
     def _mnu_help_about_on_click(self, e):
         display_about_dialog()
@@ -333,13 +348,6 @@ class MainFrame(wx.Frame):
             self._navigate_timeline(lambda tp: tp.center(dialog.time))
         dialog.Destroy()
 
-    def _show_help(self):
-        if os.path.exists(MANUAL_FILE):
-            HelpWindow(self, MANUAL_FILE).Show()
-        else:
-            _display_error_message(_("Could not locate manual at '%s'.") % MANUAL_FILE,
-                                   self)
-
     def _set_initial_values_to_member_variables(self):
         """
         Instance variables usage:
@@ -369,18 +377,6 @@ class MainFrame(wx.Frame):
     def _get_time_period(self):
         """Shortcut for method in DrawingArea."""
         return self.main_panel.drawing_area.get_time_period()
-
-
-class HelpWindow(wx.Frame):
-
-    def __init__(self, parent, path):
-        wx.Frame.__init__(self, parent, title=_("Timeline User Manual"),
-                          size=(700, 500), style=wx.DEFAULT_FRAME_STYLE)
-        self._create_gui()
-        self.html_window.LoadPage(path)
-
-    def _create_gui(self):
-        self.html_window = wx.html.HtmlWindow(self)
 
 
 class CategoriesVisibleCheckListBox(wx.CheckListBox):
