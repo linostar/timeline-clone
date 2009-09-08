@@ -49,9 +49,10 @@ from about import display_about_dialog
 from about import APPLICATION_NAME
 from paths import ICONS_DIR
 from paths import MANUAL_FILE
+
+import printing as prt
 from paths import HELP_RESOURCES_DIR
 import help
-
 
 # Border, in pixels, between controls in a window (should always be used when
 # border is needed)
@@ -123,6 +124,16 @@ class MainFrame(wx.Frame):
         self.mnu_file.Append(wx.ID_OPEN, add_ellipses_to_menuitem(wx.ID_OPEN),
                              _("Open an existing timeline"))
         self.mnu_file.AppendSeparator()
+        self.mnu_file_print = self.mnu_file.Append(wx.ID_PRINT,
+                                       add_ellipses_to_menuitem(wx.ID_PRINT),
+                                       _("Print"))
+        self.mnu_file_print_preview = self.mnu_file.Append(wx.ID_PREVIEW,
+                                        add_ellipses_to_menuitem(wx.ID_PREVIEW),
+                                       _("Print Preview"))
+        self.mnu_file_print_setup = self.mnu_file.Append(wx.ID_PRINT_SETUP,
+                                       _("Page Set&up..."),
+                                       _("Setup page for printing"))
+        self.mnu_file.AppendSeparator()
         self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
                                                     _("&Export to Image..."),
                                                     _("Export the current view to a PNG or BMP image"))
@@ -131,6 +142,9 @@ class MainFrame(wx.Frame):
                              _("Exit the program"))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
         self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click,
                   self.mnu_file_export)
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
@@ -204,6 +218,15 @@ class MainFrame(wx.Frame):
     def _mnu_file_open_on_click(self, event):
         """Event handler used when the user wants to open a new timeline."""
         self._open_existing_timeline()
+
+    def _mnu_file_print_on_click(self, event):
+        self.main_panel.drawing_area.print_timeline(event)
+
+    def _mnu_file_print_preview_on_click(self, event):
+        self.main_panel.drawing_area.print_preview(event)
+
+    def _mnu_file_print_setup_on_click(self, event):
+        self.main_panel.drawing_area.print_setup(event)
 
     def _mnu_file_export_on_click(self, evt):
         self._export_to_image()
@@ -303,6 +326,9 @@ class MainFrame(wx.Frame):
         for menu in menues:
             for menuitem in menu.GetMenuItems():
                 menuitem.Enable(enable)
+        self.mnu_file_print.Enable(enable)
+        self.mnu_file_print_preview.Enable(enable)
+        self.mnu_file_print_setup.Enable(enable)
         self.mnu_file_export.Enable(enable)
 
     def _save_application_config(self):
@@ -569,7 +595,49 @@ class DrawingArea(wx.Panel):
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
         self.timeline = None
+        self.printData = wx.PrintData()
+        self.printData.SetPaperId(wx.PAPER_A4)
+        self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
+        self.printData.SetOrientation(wx.LANDSCAPE)
         logging.debug("Init done in DrawingArea")
+
+    def print_timeline(self, event):
+        pdd = wx.PrintDialogData(self.printData)
+        pdd.SetToPage(1)
+        printer = wx.Printer(pdd)
+        printout = prt.TimelinePrintout(self, False)
+        frame = wx.GetApp().GetTopWindow()
+        if not printer.Print(frame, printout, True):
+            wx.MessageBox(_("There was a problem printing.\nPerhaps your current printer is not set correctly?"), _("Printing"), wx.OK)
+        else:
+            self.printData = wx.PrintData( printer.GetPrintDialogData().GetPrintData() )
+        printout.Destroy()
+
+    def print_preview(self, event):
+        data = wx.PrintDialogData(self.printData)
+        printout_preview  = prt.TimelinePrintout(self, True)
+        printout = prt.TimelinePrintout(self, False)
+        self.preview = wx.PrintPreview(printout_preview, printout, data)
+        if not self.preview.Ok():
+            logging.debug("Problem with preview dialog...\n")
+            return
+        frame = wx.GetApp().GetTopWindow()
+        pfrm = wx.PreviewFrame(self.preview, frame, _("Print preview"))
+        pfrm.Initialize()
+        pfrm.SetPosition(frame.GetPosition())
+        pfrm.SetSize(frame.GetSize())
+        pfrm.Show(True)
+
+    def print_setup(self, event):
+        psdd = wx.PageSetupDialogData(self.printData)
+        psdd.CalculatePaperSizeFromId()
+        dlg = wx.PageSetupDialog(self, psdd)
+        dlg.ShowModal()
+        # this makes a copy of the wx.PrintData instead of just saving
+        # a reference to the one inside the PrintDialogData that will
+        # be destroyed when the dialog is destroyed
+        self.printData = wx.PrintData( dlg.GetPageSetupData().GetPrintData() )
+        dlg.Destroy()
 
     def set_timeline(self, timeline):
         """Inform what timeline to draw."""
