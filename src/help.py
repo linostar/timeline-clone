@@ -119,6 +119,7 @@ class HelpBrowser(wx.Frame):
                                     style=wx.TE_PROCESS_ENTER)
         self.Bind(wx.EVT_TEXT_ENTER, self._search_on_text_enter, self.search)
         self.toolbar.AddControl(self.search)
+        self.toolbar.Realize()
         # Html window
         self.html_window = wx.html.HtmlWindow(self)
         self.Bind(wx.html.EVT_HTML_LINK_CLICKED,
