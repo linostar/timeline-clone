@@ -125,7 +125,7 @@ class MainFrame(wx.Frame):
         self.mnu_file.AppendSeparator()
         self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
                                                     _("&Export to Image..."),
-                                                    _("Export the current view to a PNG or BMP image"))
+                                                    _("Export the current view to a PNG image"))
         self.mnu_file.AppendSeparator()
         self.mnu_file.Append(wx.ID_EXIT, "",
                              _("Exit the program"))
