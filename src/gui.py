@@ -352,8 +352,7 @@ class MainFrame(wx.Frame):
             self.timeline.set_preferred_period(self._get_time_period())
 
     def _export_to_image(self):
-        extension_map = {"png": wx.BITMAP_TYPE_PNG,
-                         "bmp": wx.BITMAP_TYPE_BMP}
+        extension_map = {"png": wx.BITMAP_TYPE_PNG}
         extensions = extension_map.keys()
         wildcard = _create_wildcard(_("Image files"), extensions)
         dialog = wx.FileDialog(self, message=_("Export to Image"),
