@@ -136,7 +136,7 @@ class MainFrame(wx.Frame):
         self.mnu_file.AppendSeparator()
         self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
                                                     _("&Export to Image..."),
-                                                    _("Export the current view to a PNG or BMP image"))
+                                                    _("Export the current view to a PNG image"))
         self.mnu_file.AppendSeparator()
         self.mnu_file.Append(wx.ID_EXIT, "",
                              _("Exit the program"))
@@ -177,11 +177,16 @@ class MainFrame(wx.Frame):
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, _("Go to &Today\tCtrl+H"))
         goto_date = self.mnu_navigate.Append(wx.ID_ANY, _("Go to D&ate...\tCtrl+G"))
         self.mnu_navigate.AppendSeparator()
+        backward = self.mnu_navigate.Append(wx.ID_ANY, _("Backward\tPgUp"))
+        forward = self.mnu_navigate.Append(wx.ID_ANY, _("Forward\tPgDn"))
+        self.mnu_navigate.AppendSeparator()
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
         fit_month = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Month"))
         fit_day = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Day"))
         self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_today_on_click, goto_today)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_date_on_click, goto_date)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_on_click, backward)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_on_click, forward)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_month_on_click, fit_month)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_day_on_click, fit_day)
@@ -257,6 +262,12 @@ class MainFrame(wx.Frame):
 
     def _mnu_navigate_goto_date_on_click(self, evt):
         self._goto_date()
+
+    def _mnu_navigate_backward_on_click(self, evt):
+        self._navigate_backward()
+
+    def _mnu_navigate_forward_on_click(self, evt):
+        self._navigate_forward()
 
     def _mnu_navigate_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_year())
@@ -373,6 +384,12 @@ class MainFrame(wx.Frame):
             self._navigate_timeline(lambda tp: tp.center(dialog.time))
         dialog.Destroy()
 
+    def _navigate_backward(self):
+        self._navigate_smart_step(-1)
+
+    def _navigate_forward(self):
+        self._navigate_smart_step(1)
+
     def _set_initial_values_to_member_variables(self):
         """
         Instance variables usage:
@@ -394,6 +411,54 @@ class MainFrame(wx.Frame):
             icon = wx.IconFromBitmap(wx.BitmapFromImage(wx.Image(iconpath)))
             bundle.AddIcon(icon)
         return bundle
+
+    def _navigate_smart_step(self, direction):
+    
+        def months_to_year_and_month(months):
+            years = int(months / 12)
+            month = months - years * 12
+            if month == 0:
+                month = 12
+                years -=1    
+            return years, month
+            
+        tp = self._get_time_period()
+        start, end = tp.start_time, tp.end_time
+        year_diff = end.year - start.year
+        start_months = start.year * 12 + start.month
+        end_months = end.year * 12 + end.month
+        month_diff = end_months - start_months
+        whole_years = start.replace(year=start.year + year_diff) == end
+        whole_months = start.day == 1 and end.day == 1
+        direction_backward = direction < 0
+        # Whole years
+        if whole_years and year_diff > 0:
+            if direction_backward:
+                new_start = start.replace(year=start.year-year_diff)
+                new_end   = start
+            else:
+                new_start = end
+                new_end   = end.replace(year=new_start.year+year_diff)
+            self._navigate_timeline(lambda tp: tp.update(new_start, new_end))
+        # Whole months
+        elif whole_months and month_diff > 0:
+            if direction_backward:
+                new_end = start
+                new_start_year, new_start_month = months_to_year_and_month(
+                                                        start_months - 
+                                                        month_diff)
+                new_start = start.replace(year=new_start_year, 
+                                          month=new_start_month)
+            else:
+                new_start = end
+                new_end_year, new_end_month = months_to_year_and_month(
+                                                        end_months + 
+                                                        month_diff)
+                new_end = end.replace(year=new_end_year, month=new_end_month)
+            self._navigate_timeline(lambda tp: tp.update(new_start, new_end))
+        # No need for smart delta
+        else:
+            self._navigate_timeline(lambda tp: tp.move_delta(direction*tp.delta()))
 
     def _navigate_timeline(self, navigation_fn):
         """Shortcut for method in DrawingArea."""
