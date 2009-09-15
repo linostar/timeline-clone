@@ -543,7 +543,7 @@ class DateTimePicker(wx.Panel):
         self.time_picker.SetValue(wx_date_time)
 
     def _create_gui(self):
-        self.date_picker = wx.DatePickerCtrl(self,
+        self.date_picker = wx.GenericDatePickerCtrl(self,
                                style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
         self.Bind(wx.EVT_DATE_CHANGED, self._date_picker_on_date_changed,
                   self.date_picker)
