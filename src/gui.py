@@ -62,7 +62,7 @@ class MainFrame(wx.Frame):
     """
     The main frame of the application.
 
-    Can be resized, maximized and minimized. The frame contains one panel.
+    Can be resized, maximized and minimized. Contains one panel: MainPanel.
 
     Owns an instance of a timeline that is currently being displayed. When the
     timeline changes, this control will notify sub controls about it.
@@ -82,6 +82,7 @@ class MainFrame(wx.Frame):
         self._enable_disable_menus()
         self.SetIcons(self._load_icon_bundle())
         help.init(self, "contents", HELP_RESOURCES_DIR, ["help_pages"])
+        self.main_panel.show_welcome_panel()
 
     def display_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
@@ -96,9 +97,9 @@ class MainFrame(wx.Frame):
             self.SetTitle("%s (%s) - %s" % (os.path.basename(input_file),
                                             os.path.dirname(os.path.abspath(input_file)),
                                             APPLICATION_NAME))
-            # Notify sub controls that we have a new timeline
             self.main_panel.catbox.set_timeline(self.timeline)
             self.main_panel.drawing_area.set_timeline(self.timeline)
+            self.main_panel.show_timeline_panel()
         self._enable_disable_menus()
 
     def _create_gui(self):
@@ -547,11 +548,63 @@ class MainPanel(wx.Panel):
     """
     Panel that covers the whole client area of MainFrame.
 
-    Contains a sidebar that can be hidden and shown and DrawingArea.
+    Displays one of the following panels:
+    
+      * The welcome panel (show_welcome_panel)
+      * A splitter with sidebar and DrawingArea (show_timeline_panel)
+      * The error panel (show_error_panel)
     """
 
     def __init__(self, parent):
-        """Create the Main Panel."""
+        wx.Panel.__init__(self, parent)
+        self._create_gui()
+        # Install variables for backwards compatibility
+        self.catbox = self.timeline_panel.sidebar.catbox
+        self.drawing_area = self.timeline_panel.drawing_area
+        self.show_sidebar = self.timeline_panel.show_sidebar
+        self.hide_sidebar = self.timeline_panel.hide_sidebar
+        self.get_sidebar_width = self.timeline_panel.get_sidebar_width
+
+    def show_welcome_panel(self):
+        self._show_panel(self.welcome_panel)
+
+    def show_timeline_panel(self):
+        self._show_panel(self.timeline_panel)
+
+    def show_error_panel(self):
+        self._show_panel(self.error_panel)
+
+    def _create_gui(self):
+        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.welcome_panel = WelcomePanel(self)
+        self.sizer.Add(self.welcome_panel, flag=wx.GROW, proportion=1)
+        self.timeline_panel = TimelinePanel(self)
+        self.sizer.Add(self.timeline_panel, flag=wx.GROW, proportion=1)
+        self.error_panel = ErrorPanel(self)
+        self.sizer.Add(self.error_panel, flag=wx.GROW, proportion=1)
+        self.SetSizer(self.sizer)
+
+    def _show_panel(self, panel):
+        # Hide all panels
+        for panel_to_hide in [self.welcome_panel, self.timeline_panel,
+                self.error_panel]:
+            panel_to_hide.Show(False)
+        # Show this one
+        panel.Show(True)
+        self.sizer.Layout()
+
+
+class WelcomePanel(wx.Panel):
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+        wx.StaticText(self, label="Welcome...")
+
+
+class TimelinePanel(wx.Panel):
+    """Showing the drawn timeline and the optional sidebar."""
+
+    def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self.sidebar_width = config.get_sidebar_width()
         self._create_gui()
@@ -570,21 +623,12 @@ class MainPanel(wx.Panel):
         self.splitter.Unsplit(self.sidebar)
 
     def _create_gui(self):
-        """Create the controls of the Main Panel."""
         self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
         self.splitter.SetMinimumPaneSize(50)
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED,
                   self._splitter_on_splitter_sash_pos_changed, self.splitter)
-        # DrawingArea
+        self.sidebar = Sidebar(self.splitter)
         self.drawing_area = DrawingArea(self.splitter)
-        # Sidebar
-        self.sidebar = wx.Panel(self.splitter, style=wx.BORDER_NONE)
-        self.catbox = CategoriesVisibleCheckListBox(self.sidebar)
-        # Container sizer
-        pane_sizer = wx.BoxSizer(wx.VERTICAL)
-        pane_sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
-        self.sidebar.SetSizer(pane_sizer)
-        # Splitter in sizer
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(self.splitter, flag=wx.GROW, proportion=1)
         self.SetSizer(globalSizer)
@@ -593,9 +637,35 @@ class MainPanel(wx.Panel):
         self.sidebar_width = self.splitter.GetSashPosition()
 
 
+class ErrorPanel(wx.Panel):
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+        wx.StaticText(self, label="Error...")
+
+
+class Sidebar(wx.Panel):
+    """
+    The left part in TimelinePanel.
+
+    Currently only shows the categories with visibility check boxes.
+    """
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent, style=wx.BORDER_NONE)
+        self._create_gui()
+
+    def _create_gui(self):
+        self.catbox = CategoriesVisibleCheckListBox(self)
+        # Layout
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
+        self.SetSizer(sizer)
+
+
 class DrawingArea(wx.Panel):
     """
-    Window on which the timeline is drawn.
+    The right part in TimelinePanel: a window on which the timeline is drawn.
 
     This class has information about what timeline and what part of the
     timeline to draw and makes sure that the timeline is redrawn whenever it is
