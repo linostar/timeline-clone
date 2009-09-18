@@ -470,106 +470,6 @@ class MainFrame(wx.Frame):
         return self.main_panel.drawing_area.get_time_period()
 
 
-class CategoriesVisibleCheckListBox(wx.CheckListBox):
-    # ClientData can not be used in this control
-    # (see http://docs.wxwidgets.org/stable/wx_wxchecklistbox.html)
-    # This workaround will not work if items are reordered
-
-    def __init__(self, parent):
-        wx.CheckListBox.__init__(self, parent)
-        self.timeline = None
-        self.Bind(wx.EVT_CHECKLISTBOX, self._checklistbox_on_checklistbox, self)
-
-    def set_timeline(self, timeline):
-        if self.timeline != None:
-            self.timeline.unregister(self._timeline_changed)
-        self.timeline = timeline
-        if self.timeline:
-            self.timeline.register(self._timeline_changed)
-            self._update_categories()
-        else:
-            self.Clear()
-
-    def _checklistbox_on_checklistbox(self, e):
-        i = e.GetSelection()
-        self.categories[i].visible = self.IsChecked(i)
-        self.timeline.category_edited(self.categories[i])
-
-    def _timeline_changed(self, state_change):
-        if state_change == Timeline.STATE_CHANGE_CATEGORY:
-            self._update_categories()
-
-    def _update_categories(self):
-        self.categories = sort_categories(self.timeline.get_categories())
-        self.Clear()
-        self.AppendItems([category.name for category in self.categories])
-        for i in range(0, self.Count):
-            if self.categories[i].visible:
-                self.Check(i)
-            self.SetItemBackgroundColour(i, self.categories[i].color)
-
-
-class DateTimePicker(wx.Panel):
-    """
-    Control to pick a Python datetime object.
-
-    The time part will default to 00:00:00 if none is entered.
-    """
-
-    def __init__(self, parent, show_time=True):
-        wx.Panel.__init__(self, parent)
-        self._create_gui()
-        self.show_time(show_time)
-
-    def show_time(self, show=True):
-        self.time_picker.Show(show)
-        self.GetSizer().Layout()
-
-    def get_value(self):
-        """Return the selected date time as a Python datetime object."""
-        date = self.date_picker.GetValue()
-        date_time = dt(date.Year, date.Month+1, date.Day)
-        if self.time_picker.IsShown():
-            time = self.time_picker.GetValue(as_wxDateTime=True)
-            date_time = date_time.replace(hour=time.Hour,
-                                          minute=time.Minute)
-        return date_time
-
-    def set_value(self, value):
-        if value == None:
-            now = dt.now()
-            value = dt(now.year, now.month, now.day)
-        wx_date_time = self._python_date_to_wx_date(value)
-        self.date_picker.SetValue(wx_date_time)
-        self.time_picker.SetValue(wx_date_time)
-
-    def _create_gui(self):
-        self.date_picker = wx.GenericDatePickerCtrl(self,
-                               style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
-        self.Bind(wx.EVT_DATE_CHANGED, self._date_picker_on_date_changed,
-                  self.date_picker)
-        self.time_picker = TimeCtrl(self, format="24HHMM")
-        # Layout
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(self.date_picker, proportion=1,
-                  flag=wx.ALIGN_CENTER_VERTICAL)
-        sizer.Add(self.time_picker, proportion=0,
-                  flag=wx.ALIGN_CENTER_VERTICAL)
-        self.SetSizerAndFit(sizer)
-
-    def _date_picker_on_date_changed(self, e):
-        date = self.get_value()
-        if date < TimePeriod.MIN_TIME:
-            self.set_value(TimePeriod.MIN_TIME)
-        if date > TimePeriod.MAX_TIME:
-            self.set_value(TimePeriod.MAX_TIME)
-
-    def _python_date_to_wx_date(self, py_date):
-        return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
-                                  py_date.hour, py_date.minute,
-                                  py_date.second)
-
-
 class MainPanel(wx.Panel):
     """
     Panel that covers the whole client area of MainFrame.
@@ -663,13 +563,6 @@ class TimelinePanel(wx.Panel):
         self.sidebar_width = self.splitter.GetSashPosition()
 
 
-class ErrorPanel(wx.Panel):
-
-    def __init__(self, parent):
-        wx.Panel.__init__(self, parent)
-        wx.StaticText(self, label="Error...")
-
-
 class Sidebar(wx.Panel):
     """
     The left part in TimelinePanel.
@@ -687,6 +580,45 @@ class Sidebar(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
         self.SetSizer(sizer)
+
+
+class CategoriesVisibleCheckListBox(wx.CheckListBox):
+    # ClientData can not be used in this control
+    # (see http://docs.wxwidgets.org/stable/wx_wxchecklistbox.html)
+    # This workaround will not work if items are reordered
+
+    def __init__(self, parent):
+        wx.CheckListBox.__init__(self, parent)
+        self.timeline = None
+        self.Bind(wx.EVT_CHECKLISTBOX, self._checklistbox_on_checklistbox, self)
+
+    def set_timeline(self, timeline):
+        if self.timeline != None:
+            self.timeline.unregister(self._timeline_changed)
+        self.timeline = timeline
+        if self.timeline:
+            self.timeline.register(self._timeline_changed)
+            self._update_categories()
+        else:
+            self.Clear()
+
+    def _checklistbox_on_checklistbox(self, e):
+        i = e.GetSelection()
+        self.categories[i].visible = self.IsChecked(i)
+        self.timeline.category_edited(self.categories[i])
+
+    def _timeline_changed(self, state_change):
+        if state_change == Timeline.STATE_CHANGE_CATEGORY:
+            self._update_categories()
+
+    def _update_categories(self):
+        self.categories = sort_categories(self.timeline.get_categories())
+        self.Clear()
+        self.AppendItems([category.name for category in self.categories])
+        for i in range(0, self.Count):
+            if self.categories[i].visible:
+                self.Check(i)
+            self.SetItemBackgroundColour(i, self.categories[i].color)
 
 
 class DrawingArea(wx.Panel):
@@ -1149,6 +1081,13 @@ class DrawingArea(wx.Panel):
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
 
+class ErrorPanel(wx.Panel):
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+        wx.StaticText(self, label="Error...")
+
+
 class EventEditor(wx.Dialog):
     """Dialog used for creating and editing events."""
 
@@ -1567,6 +1506,67 @@ class GotoDateDialog(wx.Dialog):
         self.EndModal(wx.ID_OK)
 
 
+class DateTimePicker(wx.Panel):
+    """
+    Control to pick a Python datetime object.
+
+    The time part will default to 00:00:00 if none is entered.
+    """
+
+    def __init__(self, parent, show_time=True):
+        wx.Panel.__init__(self, parent)
+        self._create_gui()
+        self.show_time(show_time)
+
+    def show_time(self, show=True):
+        self.time_picker.Show(show)
+        self.GetSizer().Layout()
+
+    def get_value(self):
+        """Return the selected date time as a Python datetime object."""
+        date = self.date_picker.GetValue()
+        date_time = dt(date.Year, date.Month+1, date.Day)
+        if self.time_picker.IsShown():
+            time = self.time_picker.GetValue(as_wxDateTime=True)
+            date_time = date_time.replace(hour=time.Hour,
+                                          minute=time.Minute)
+        return date_time
+
+    def set_value(self, value):
+        if value == None:
+            now = dt.now()
+            value = dt(now.year, now.month, now.day)
+        wx_date_time = self._python_date_to_wx_date(value)
+        self.date_picker.SetValue(wx_date_time)
+        self.time_picker.SetValue(wx_date_time)
+
+    def _create_gui(self):
+        self.date_picker = wx.GenericDatePickerCtrl(self,
+                               style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+        self.Bind(wx.EVT_DATE_CHANGED, self._date_picker_on_date_changed,
+                  self.date_picker)
+        self.time_picker = TimeCtrl(self, format="24HHMM")
+        # Layout
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self.date_picker, proportion=1,
+                  flag=wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(self.time_picker, proportion=0,
+                  flag=wx.ALIGN_CENTER_VERTICAL)
+        self.SetSizerAndFit(sizer)
+
+    def _date_picker_on_date_changed(self, e):
+        date = self.get_value()
+        if date < TimePeriod.MIN_TIME:
+            self.set_value(TimePeriod.MIN_TIME)
+        if date > TimePeriod.MAX_TIME:
+            self.set_value(TimePeriod.MAX_TIME)
+
+    def _python_date_to_wx_date(self, py_date):
+        return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
+                                  py_date.hour, py_date.minute,
+                                  py_date.second)
+
+
 class TxtException(ValueError):
     """
     Thrown if a text control contains an invalid value.
@@ -1695,4 +1695,3 @@ def _create_button_box(parent, ok_method, cancel_method=None):
     parent.SetDefaultItem(btn_ok)
     parent.SetAffirmativeId(btn_ok.GetId())
     return button_box
-
