@@ -34,6 +34,7 @@ from logging import debug as logdebug
 from datetime import datetime
 from datetime import timedelta
 
+from data import TimelineIOError
 from data import Timeline
 from data import TimePeriod
 from data import Event
@@ -79,7 +80,7 @@ class FileTimeline(Timeline):
     ERROR_CORRUPT = 2 # Able to read from file but content corrupt
     ERROR_WRITE   = 3 # Unable to write to file
 
-    def __init__(self, file_path, error_fn):
+    def __init__(self, file_path):
         """
         Create a new timeline and read data from file.
 
@@ -89,7 +90,6 @@ class FileTimeline(Timeline):
         """
         Timeline.__init__(self)
         self.file_path = file_path
-        self.error_fn = error_fn
         self._load_data()
 
     def get_events(self, time_period):
@@ -177,14 +177,15 @@ class FileTimeline(Timeline):
             file = codecs.open(self.file_path, "r", ENCODING)
             try:
                 if not self._load_from_lines(file):
-                    self.error_fn(_("Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem.") % abspath(self.file_path))
                     self.error_flag = FileTimeline.ERROR_CORRUPT
+                    raise TimelineIOError(_("Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem.") % abspath(self.file_path))
             finally:
                 file.close()
         except IOError, e:
-            msg = _("Unable to read from file '%s'.")
-            self.error_fn((msg + "\n\n%s") % (abspath(self.file_path), e))
             self.error_flag = FileTimeline.ERROR_READ
+            msg = _("Unable to read from file '%s'.")
+            whole_msg = (msg + "\n\n%s") % (abspath(self.file_path), e)
+            raise TimelineIOError(whole_msg)
 
     def _load_from_lines(self, file):
         """Return True if able to load, otherwise False."""
@@ -354,8 +355,7 @@ class FileTimeline(Timeline):
               data, the error flag is also set to prevent further writes
         """
         if self.error_flag != FileTimeline.ERROR_NONE:
-            self.error_fn(_("Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."))
-            return
+            raise TimelineIOError(_("Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."))
         self._create_backup()
         loginfo("Saving file '%s'", abspath(self.file_path))
         try:
@@ -366,14 +366,15 @@ class FileTimeline(Timeline):
                 self._write_categories(file)
                 self._write_events(file)
                 self._write_footer(file)
+                self._notify(Timeline.STATE_CHANGE_ANY)
             finally:
                 file.close()
         except IOError, e:
+            self.error_flag = FileTimeline.ERROR_WRITE
             msg_part1 = _("Unable to save timeline data.")
             msg_part2 = _("If data was corrupted, check out the backed up file that was created when the timeline was last saved.")
-            self.error_fn(msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e)
-            self.error_flag = FileTimeline.ERROR_WRITE
-        self._notify(Timeline.STATE_CHANGE_ANY)
+            msg = msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e
+            raise TimelineIOError(msg)
 
     def _create_backup(self):
         if os.path.exists(self.file_path):
@@ -383,7 +384,8 @@ class FileTimeline(Timeline):
                 shutil.copy(self.file_path, backup_path)
             except IOError, e:
                 msg = _("Unable to create backup to '%s'.")
-                self.error_fn((msg + "\n\n%s") % (abspath(backup_path), e))
+                whole_msg = (msg + "\n\n%s") % (abspath(backup_path), e)
+                raise TimelineIOError(whole_msg)
 
     def _write_header(self, file):
         file.write("# Written by Timeline %s on %s\n" % (

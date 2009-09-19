@@ -87,10 +87,8 @@ class MainFrame(wx.Frame):
 
     def display_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
-        def error_fn(msg):
-            _display_error_message(msg, self)
         try:
-            self.timeline = data.get_timeline(input_file, error_fn)
+            self.timeline = data.get_timeline(input_file)
         except Exception, e:
             msg_template = _("Unable to open timeline '%s'.") + "\n\n%s"
             _display_error_message(msg_template % (input_file, e))

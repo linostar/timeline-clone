@@ -20,6 +20,7 @@ import unittest
 import os
 import stat
 
+from data import TimelineIOError
 from data_file import FileTimeline
 from data_file import quote
 from data_file import dequote
@@ -28,9 +29,6 @@ from data_file import split_on_semicolon
 
 class TestFileTimeline(unittest.TestCase):
     
-    def _error_fn(self, msg):
-        self.error_fn_called += 1
-
     def _silent_remove(self, path):
         if os.path.exists(path):
             os.remove(path)
@@ -47,7 +45,6 @@ class TestFileTimeline(unittest.TestCase):
         os.chmod(path, stat.S_IWRITE)
 
     def setUp(self):
-        self.error_fn_called = 0
         HEADER_030 = "# Written by Timeline 0.3.0 on 2009-7-23 9:40:33"
         HEADER_030_DEV = "# Written by Timeline 0.3.0dev on 2009-7-23 9:40:33"
         HEADER_021 = "# Written by Timeline 0.2.1 on 2009-7-23 9:40:33"
@@ -73,66 +70,45 @@ class TestFileTimeline(unittest.TestCase):
 
     def testWriteError(self):
         """
-        Scenario: You open a timeline and everything is fine. When you do
-        something that causes a save it fails to save your data.
+        Scenario: You open a timeline without errors. When you do something
+        that causes a save it fails to save your data.
 
-        Expected result: You get an error message and subsequent tries to save
-        will be disabled. The first save attempt will create a backup
-        even though the save itself will fail. Subsequent saves should not
-        create backups.
+        Expected result: You get an exception and subsequent tries to save will
+        not have any effect. The first save attempt will create a backup even
+        though the save itself will fail. Subsequent saves should not create
+        backups.
 
         The write error is simulated with a read-only file.
         """
-        timeline = FileTimeline("readonly.timeline", self._error_fn)
+        timeline = FileTimeline("readonly.timeline")
         self.assertFalse(os.path.exists("readonly.timeline~"))
-        timeline._save_data()
-        self.assertEqual(self.error_fn_called, 1)
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_WRITE)
+        self.assertRaises(TimelineIOError, timeline._save_data)
         self.assertTrue(os.path.exists("readonly.timeline~"))
-        modified_time = os.stat("readonly.timeline~").st_mtime
-        timeline._save_data()
-        self.assertEqual(self.error_fn_called, 2)
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_WRITE)
-        self.assertEqual(modified_time, os.stat("readonly.timeline~").st_mtime)
+        modified_time = os.stat("readonly.timeline").st_mtime
+        backup_modified_time = os.stat("readonly.timeline~").st_mtime
+        self.assertRaises(TimelineIOError, timeline._save_data)
+        self.assertEqual(modified_time, os.stat("readonly.timeline").st_mtime)
+        self.assertEqual(backup_modified_time, os.stat("readonly.timeline~").st_mtime)
 
     def testReadError(self):
         """
         Scenario: You open a timeline and the application fails to read from
         the file.
 
-        Expected result: You get an error message and subsequent tries to save
-        will be disabled. No backup file will be created.
+        Expected result: You get an exception and you can not use the timeline.
 
         The read error is simulated with a write-only file.
         """
-        timeline = FileTimeline("writeonly.timeline", self._error_fn)
-        self.assertEqual(self.error_fn_called, 1)
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_READ)
-        self.assertFalse(os.path.exists("writeonly.timeline~"))
-        timeline._save_data()
-        self.assertEqual(self.error_fn_called, 2)
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_READ)
+        self.assertRaises(TimelineIOError, FileTimeline, "writeonly.timeline")
         self.assertFalse(os.path.exists("writeonly.timeline~"))
 
     def testCorruptData(self):
         """
         Scenario: You open a timeline that contains corrupt data.
 
-        Expected result: You get an error message and subsequent attempts to
-        save the timeline will fail with an error message. No backup file will
-        be created either.
+        Expected result: You get an exception and you can not use the timeline.
         """
-        timeline = FileTimeline("corrupt.timeline", self._error_fn)
-        self.assertEqual(self.error_fn_called, 1)
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_CORRUPT)
-        timeline._save_data()
-        self.assertEqual(self.error_fn_called, 2)
-        self.assertFalse(os.path.exists("corrupt.timeline~"))
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_CORRUPT)
-        timeline._save_data()
-        self.assertEqual(self.error_fn_called, 3)
-        self.assertFalse(os.path.exists("corrupt.timeline~"))
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_CORRUPT)
+        self.assertRaises(TimelineIOError, FileTimeline, "corrupt.timeline")
 
     def testMissingEOF(self):
         """
@@ -141,19 +117,16 @@ class TestFileTimeline(unittest.TestCase):
 
         Expected result: The timeline should be treated as corrupt.
         """
-        timeline = FileTimeline("missingeof.timeline", self._error_fn)
-        self.assertEqual(self.error_fn_called, 1)
-        self.assertEqual(timeline.error_flag, FileTimeline.ERROR_CORRUPT)
+        self.assertRaises(TimelineIOError, FileTimeline, "missingeof.timeline")
 
     def testAddingEOF(self):
         """
         Scenario: You open an old timeline < 0.3.0 with a client >= 0.3.0.
 
         Expected result: The timeline does not contain the EOF marker but since
-        it is an old file, no error messages should be sent.
+        it is an old file, no exception should be raised.
         """
-        timeline = FileTimeline("021.timeline", self._error_fn)
-        self.assertEqual(self.error_fn_called, 0)
+        FileTimeline("021.timeline")
 
 
 class TestHelperFunctions(unittest.TestCase):

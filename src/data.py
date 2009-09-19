@@ -55,6 +55,15 @@ class Observable(object):
             fn(state_change)
 
 
+class TimelineIOError(Exception):
+    """
+    Raised from a Timeline if a read/write error occurs.
+
+    The constructor and any of the public methods can raise this exception.
+    """
+    pass
+
+
 class Timeline(Observable):
     """
     Base class that represents the interface for a timeline.
@@ -520,7 +529,7 @@ def time_period_center(time, length):
     return TimePeriod(start_time, end_time)
 
 
-def get_timeline(input_file, error_fn):
+def get_timeline(input_file):
     """
     Timeline factory method.
 
@@ -528,6 +537,6 @@ def get_timeline(input_file, error_fn):
     """
     if input_file.endswith(".timeline"):
         from data_file import FileTimeline
-        return FileTimeline(input_file, error_fn)
+        return FileTimeline(input_file)
     else:
         raise Exception(_("Unknown format"))
