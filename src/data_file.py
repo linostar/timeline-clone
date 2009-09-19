@@ -80,7 +80,7 @@ class FileTimeline(Timeline):
     ERROR_CORRUPT = 2 # Able to read from file but content corrupt
     ERROR_WRITE   = 3 # Unable to write to file
 
-    def __init__(self, file_path):
+    def __init__(self, path):
         """
         Create a new timeline and read data from file.
 
@@ -88,8 +88,7 @@ class FileTimeline(Timeline):
         It does not know where the messages get displayed, it just knows how to
         send them. The function takes one argument: the message.
         """
-        Timeline.__init__(self)
-        self.file_path = file_path
+        Timeline.__init__(self, path)
         self._load_data()
 
     def get_events(self, time_period):
@@ -168,23 +167,23 @@ class FileTimeline(Timeline):
         self.categories = []
         self.events = []
         self.error_flag = FileTimeline.ERROR_NONE
-        if not os.path.exists(self.file_path): 
+        if not os.path.exists(self.path): 
             loginfo("File '%s' does not exists, nothing to load",
-                    abspath(self.file_path))
+                    abspath(self.path))
             return
         try:
-            loginfo("Opening file '%s'", abspath(self.file_path))
-            file = codecs.open(self.file_path, "r", ENCODING)
+            loginfo("Opening file '%s'", abspath(self.path))
+            file = codecs.open(self.path, "r", ENCODING)
             try:
                 if not self._load_from_lines(file):
                     self.error_flag = FileTimeline.ERROR_CORRUPT
-                    raise TimelineIOError(_("Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem.") % abspath(self.file_path))
+                    raise TimelineIOError(_("Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem.") % abspath(self.path))
             finally:
                 file.close()
         except IOError, e:
             self.error_flag = FileTimeline.ERROR_READ
             msg = _("Unable to read from file '%s'.")
-            whole_msg = (msg + "\n\n%s") % (abspath(self.file_path), e)
+            whole_msg = (msg + "\n\n%s") % (abspath(self.path), e)
             raise TimelineIOError(whole_msg)
 
     def _load_from_lines(self, file):
@@ -357,9 +356,9 @@ class FileTimeline(Timeline):
         if self.error_flag != FileTimeline.ERROR_NONE:
             raise TimelineIOError(_("Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."))
         self._create_backup()
-        loginfo("Saving file '%s'", abspath(self.file_path))
+        loginfo("Saving file '%s'", abspath(self.path))
         try:
-            file = codecs.open(self.file_path, "w", ENCODING)
+            file = codecs.open(self.path, "w", ENCODING)
             try:
                 self._write_header(file)
                 self._write_preferred_period(file)
@@ -377,11 +376,11 @@ class FileTimeline(Timeline):
             raise TimelineIOError(msg)
 
     def _create_backup(self):
-        if os.path.exists(self.file_path):
-            backup_path = self.file_path + "~"
+        if os.path.exists(self.path):
+            backup_path = self.path + "~"
             try:
                 loginfo("Creating backup to '%s'", abspath(backup_path))
-                shutil.copy(self.file_path, backup_path)
+                shutil.copy(self.path, backup_path)
             except IOError, e:
                 msg = _("Unable to create backup to '%s'.")
                 whole_msg = (msg + "\n\n%s") % (abspath(backup_path), e)

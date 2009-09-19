@@ -85,8 +85,9 @@ class Timeline(Observable):
     # Something happened that changed the state of the timeline
     STATE_CHANGE_ANY = 2
 
-    def __init__(self):
+    def __init__(self, path):
         Observable.__init__(self)
+        self.path = path
 
     def get_events(self, time_period):
         """Return a list of all events visible within the time period whose
