@@ -60,6 +60,8 @@ class TimelineIOError(Exception):
     Raised from a Timeline if a read/write error occurs.
 
     The constructor and any of the public methods can raise this exception.
+
+    Also raised by the get_timeline method if loading of a timeline failed.
     """
     pass
 
@@ -540,4 +542,6 @@ def get_timeline(input_file):
         from data_file import FileTimeline
         return FileTimeline(input_file)
     else:
-        raise Exception(_("Unknown format"))
+        msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
+                        _("Unknown format."))
+        raise TimelineIOError(msg_template % input_file)
