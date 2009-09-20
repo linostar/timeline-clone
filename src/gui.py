@@ -80,10 +80,10 @@ class MainFrame(wx.Frame):
         self.SetTitle(APPLICATION_NAME)
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
         self.mnu_view_legend.Check(config.get_show_legend())
-        self._enable_disable_menus()
         self.SetIcons(self._load_icon_bundle())
         help.init(self, "contents", HELP_RESOURCES_DIR, ["help_pages"])
         self.main_panel.show_welcome_panel()
+        self._enable_disable_menus()
 
     def open_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
@@ -341,15 +341,26 @@ class MainFrame(wx.Frame):
         """
         Enable or disable menu items depending on the state of the application.
         """
-        menues = [self.mnu_timeline, self.mnu_navigate]
-        enable = self.timeline != None
-        for menu in menues:
-            for menuitem in menu.GetMenuItems():
-                menuitem.Enable(enable)
-        self.mnu_file_print.Enable(enable)
-        self.mnu_file_print_preview.Enable(enable)
-        self.mnu_file_print_setup.Enable(enable)
-        self.mnu_file_export.Enable(enable)
+        items_requiring_timeline_view = [
+            self.mnu_view_sidebar,
+        ]
+        items_requiring_timeline = [
+            self.mnu_file_print,
+            self.mnu_file_print_preview,
+            self.mnu_file_print_setup,
+            self.mnu_file_export,
+            self.mnu_view_legend,
+        ]
+        for item in self.mnu_timeline.GetMenuItems():
+            items_requiring_timeline.append(item)
+        for item in self.mnu_navigate.GetMenuItems():
+            items_requiring_timeline.append(item)
+        have_timeline_view = self.main_panel.timeline_panel_visible()
+        have_timeline = self.timeline != None
+        for item in items_requiring_timeline_view:
+            item.Enable(have_timeline_view)
+        for item in items_requiring_timeline:
+            item.Enable(have_timeline)
 
     def _save_application_config(self):
         config.set_window_size(self.GetSize())
@@ -498,6 +509,9 @@ class MainPanel(wx.Panel):
         self.show_sidebar = self.timeline_panel.show_sidebar
         self.hide_sidebar = self.timeline_panel.hide_sidebar
         self.get_sidebar_width = self.timeline_panel.get_sidebar_width
+
+    def timeline_panel_visible(self):
+        return self.timeline_panel.IsShown()
 
     def show_welcome_panel(self):
         self._show_panel(self.welcome_panel)
