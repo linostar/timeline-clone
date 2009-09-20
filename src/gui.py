@@ -85,21 +85,16 @@ class MainFrame(wx.Frame):
         help.init(self, "contents", HELP_RESOURCES_DIR, ["help_pages"])
         self.main_panel.show_welcome_panel()
 
-    def display_timeline(self, input_file):
+    def open_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
         try:
-            self.timeline = data.get_timeline(input_file)
-        except Exception, e:
-            msg_template = _("Unable to open timeline '%s'.") + "\n\n%s"
-            _display_error_message(msg_template % (input_file, e))
+            timeline = data.get_timeline(input_file)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            # No need to switch to the error view: the current view is still
+            # visible instead
         else:
-            self.SetTitle("%s (%s) - %s" % (os.path.basename(input_file),
-                                            os.path.dirname(os.path.abspath(input_file)),
-                                            APPLICATION_NAME))
-            self.main_panel.catbox.set_timeline(self.timeline)
-            self.main_panel.drawing_area.set_timeline(self.timeline)
-            self.main_panel.show_timeline_panel()
-        self._enable_disable_menus()
+            self._display_timeline(timeline)
 
     def _create_gui(self):
         def add_ellipses_to_menuitem(id):
@@ -289,6 +284,21 @@ class MainFrame(wx.Frame):
     def _mnu_help_about_on_click(self, e):
         display_about_dialog()
 
+    def _display_timeline(self, timeline):
+        self.timeline = timeline
+        self.main_panel.catbox.set_timeline(self.timeline)
+        self.main_panel.drawing_area.set_timeline(self.timeline)
+        if timeline == None:
+            self.main_panel.show_welcome_panel()
+            self.SetTitle(APPLICATION_NAME)
+        else:
+            self.main_panel.show_timeline_panel()
+            self.SetTitle("%s (%s) - %s" % (
+                os.path.basename(self.timeline.path),
+                os.path.dirname(os.path.abspath(self.timeline.path)),
+                APPLICATION_NAME))
+        self._enable_disable_menus()
+
     def _create_new_timeline(self):
         """
         Create a new empty timeline.
@@ -311,7 +321,7 @@ class MainFrame(wx.Frame):
                 wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
                               _("Information"),
                               wx.OK|wx.ICON_INFORMATION, self)
-            self.display_timeline(path)
+            self.open_timeline(path)
         dialog.Destroy()
 
     def _open_existing_timeline(self):
@@ -324,7 +334,7 @@ class MainFrame(wx.Frame):
                                wildcard=self.wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
-            self.display_timeline(dialog.GetPath())
+            self.open_timeline(dialog.GetPath())
         dialog.Destroy()
 
     def _enable_disable_menus(self):
