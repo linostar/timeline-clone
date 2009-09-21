@@ -50,10 +50,10 @@ from about import display_about_dialog
 from about import APPLICATION_NAME
 from paths import ICONS_DIR
 from paths import MANUAL_FILE
-
-import printing as prt
 from paths import HELP_RESOURCES_DIR
+import printing
 import help
+
 
 # Border, in pixels, between controls in a window (should always be used when
 # border is needed)
@@ -161,19 +161,18 @@ class MainFrame(wx.Frame):
         self.mnu_file.Append(wx.ID_OPEN, add_ellipses_to_menuitem(wx.ID_OPEN),
                              _("Open an existing timeline"))
         self.mnu_file.AppendSeparator()
-        self.mnu_file_print = self.mnu_file.Append(wx.ID_PRINT,
-                                       add_ellipses_to_menuitem(wx.ID_PRINT),
-                                       _("Print"))
-        self.mnu_file_print_preview = self.mnu_file.Append(wx.ID_PREVIEW,
-                                        add_ellipses_to_menuitem(wx.ID_PREVIEW),
-                                       _("Print Preview"))
         self.mnu_file_print_setup = self.mnu_file.Append(wx.ID_PRINT_SETUP,
                                        _("Page Set&up..."),
                                        _("Setup page for printing"))
+        self.mnu_file_print_preview = self.mnu_file.Append(wx.ID_PREVIEW, "",
+                                       _("Print Preview"))
+        self.mnu_file_print = self.mnu_file.Append(wx.ID_PRINT,
+                                       add_ellipses_to_menuitem(wx.ID_PRINT),
+                                       _("Print"))
         self.mnu_file.AppendSeparator()
         self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
-                                                    _("&Export to Image..."),
-                                                    _("Export the current view to a PNG image"))
+                                                   _("&Export to Image..."),
+                                                   _("Export the current view to a PNG image"))
         self.mnu_file.AppendSeparator()
         self.mnu_file.Append(wx.ID_EXIT, "",
                              _("Exit the program"))
@@ -480,15 +479,15 @@ class MainFrame(wx.Frame):
         return bundle
 
     def _navigate_smart_step(self, direction):
-    
+
         def months_to_year_and_month(months):
             years = int(months / 12)
             month = months - years * 12
             if month == 0:
                 month = 12
-                years -=1    
+                years -=1
             return years, month
-            
+
         tp = self._get_time_period()
         start, end = tp.start_time, tp.end_time
         year_diff = end.year - start.year
@@ -512,14 +511,14 @@ class MainFrame(wx.Frame):
             if direction_backward:
                 new_end = start
                 new_start_year, new_start_month = months_to_year_and_month(
-                                                        start_months - 
+                                                        start_months -
                                                         month_diff)
-                new_start = start.replace(year=new_start_year, 
+                new_start = start.replace(year=new_start_year,
                                           month=new_start_month)
             else:
                 new_start = end
                 new_end_year, new_end_month = months_to_year_and_month(
-                                                        end_months + 
+                                                        end_months +
                                                         month_diff)
                 new_end = end.replace(year=new_end_year, month=new_end_month)
             self._navigate_timeline(lambda tp: tp.update(new_start, new_end))
@@ -752,18 +751,19 @@ class DrawingArea(wx.Panel):
         pdd = wx.PrintDialogData(self.printData)
         pdd.SetToPage(1)
         printer = wx.Printer(pdd)
-        printout = prt.TimelinePrintout(self, False)
+        printout = printing.TimelinePrintout(self, False)
         frame = wx.GetApp().GetTopWindow()
         if not printer.Print(frame, printout, True):
-            wx.MessageBox(_("There was a problem printing.\nPerhaps your current printer is not set correctly?"), _("Printing"), wx.OK)
+            if printer.GetLastError() == wx.PRINTER_ERROR:
+                wx.MessageBox(_("There was a problem printing.\nPerhaps your current printer is not set correctly?"), _("Printing"), wx.OK)
         else:
             self.printData = wx.PrintData( printer.GetPrintDialogData().GetPrintData() )
         printout.Destroy()
 
     def print_preview(self, event):
         data = wx.PrintDialogData(self.printData)
-        printout_preview  = prt.TimelinePrintout(self, True)
-        printout = prt.TimelinePrintout(self, False)
+        printout_preview  = printing.TimelinePrintout(self, True)
+        printout = printing.TimelinePrintout(self, False)
         self.preview = wx.PrintPreview(printout_preview, printout, data)
         if not self.preview.Ok():
             logging.debug("Problem with preview dialog...\n")
