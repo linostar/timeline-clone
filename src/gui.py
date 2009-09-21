@@ -38,6 +38,7 @@ import wx.html
 import wx.lib.colourselect as colourselect
 from wx.lib.masked import TimeCtrl
 
+from data import TimelineIOError
 from data import Timeline
 from data import Event
 from data import Category
@@ -57,6 +58,8 @@ import help
 # Border, in pixels, between controls in a window (should always be used when
 # border is needed)
 BORDER = 5
+# Used by dialogs as a return code when a TimelineIOError has been raised
+ID_ERROR = wx.NewId()
 
 
 class MainFrame(wx.Frame):
@@ -91,10 +94,50 @@ class MainFrame(wx.Frame):
             timeline = data.get_timeline(input_file)
         except TimelineIOError, e:
             _display_error_message(e.message, self)
-            # No need to switch to the error view: the current view is still
-            # visible instead
+            self.switch_to_error_view(e)
         else:
             self._display_timeline(timeline)
+
+    def create_new_event(self, start=None, end=None):
+        try:
+            dialog = EventEditor(self, _("Create Event"), self.timeline,
+                                 start, end)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.switch_to_error_view(e)
+        else:
+            if dialog.ShowModal() == ID_ERROR:
+                self.switch_to_error_view(dialog.error)
+            dialog.Destroy()
+
+    def edit_event(self, event):
+        try:
+            dialog = EventEditor(self, _("Edit Event"), self.timeline,
+                                 event=event)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.switch_to_error_view(e)
+        else:
+            if dialog.ShowModal() == ID_ERROR:
+                self.switch_to_error_view(dialog.error)
+            dialog.Destroy()
+
+    def edit_categories(self):
+        try:
+            dialog = CategoriesEditor(self, self.timeline)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.switch_to_error_view(e)
+        else:
+            if dialog.ShowModal() == ID_ERROR:
+                self.switch_to_error_view(dialog.error)
+            dialog.Destroy()
+
+    def switch_to_error_view(self, error):
+        self._display_timeline(None)
+        self.main_panel.error_panel.populate(error)
+        self.main_panel.show_error_panel()
+        self._enable_disable_menus()
 
     def _create_gui(self):
         def add_ellipses_to_menuitem(id):
@@ -106,7 +149,7 @@ class MainFrame(wx.Frame):
                 return plain[:tab_index] + "..." + plain[tab_index:]
             return plain + "..."
         # The only content of this frame is the MainPanel
-        self.main_panel = MainPanel(self)
+        self.main_panel = MainPanel(self, self)
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
         # The status bar
         self.CreateStatusBar()
@@ -244,12 +287,10 @@ class MainFrame(wx.Frame):
         self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
 
     def _mnu_timeline_create_event_on_click(self, evt):
-        """Event handler for the New Event menu item"""
-        _create_new_event(self.timeline)
+        self.create_new_event()
 
     def _mnu_timeline_edit_categories_on_click(self, evt):
-        """Event handler for the Edit Categories menu item"""
-        _edit_categories(self.timeline)
+        self.edit_categories()
 
     def _mnu_navigate_goto_today_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.center(dt.now()))
@@ -380,7 +421,13 @@ class MainFrame(wx.Frame):
         or created or when the application is closed.
         """
         if self.timeline:
-            self.timeline.set_preferred_period(self._get_time_period())
+            try:
+                self.timeline.set_preferred_period(self._get_time_period())
+            except TimelineIOError, e:
+                _display_error_message(e.message, self)
+                # No need to switch to error view since this method is only
+                # called on a timeline that is going to be closed anyway (and
+                # another timeline, or one, will be displayed instead).
 
     def _export_to_image(self):
         extension_map = {"png": wx.BITMAP_TYPE_PNG}
@@ -500,8 +547,9 @@ class MainPanel(wx.Panel):
       * The error panel (show_error_panel)
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, main_frame):
         wx.Panel.__init__(self, parent)
+        self.main_frame = main_frame
         self._create_gui()
         # Install variables for backwards compatibility
         self.catbox = self.timeline_panel.sidebar.catbox
@@ -526,7 +574,7 @@ class MainPanel(wx.Panel):
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.welcome_panel = WelcomePanel(self)
         self.sizer.Add(self.welcome_panel, flag=wx.GROW, proportion=1)
-        self.timeline_panel = TimelinePanel(self)
+        self.timeline_panel = TimelinePanel(self, self.main_frame)
         self.sizer.Add(self.timeline_panel, flag=wx.GROW, proportion=1)
         self.error_panel = ErrorPanel(self)
         self.sizer.Add(self.error_panel, flag=wx.GROW, proportion=1)
@@ -535,7 +583,7 @@ class MainPanel(wx.Panel):
     def _show_panel(self, panel):
         # Hide all panels
         for panel_to_hide in [self.welcome_panel, self.timeline_panel,
-                self.error_panel]:
+                              self.error_panel]:
             panel_to_hide.Show(False)
         # Show this one
         panel.Show(True)
@@ -552,8 +600,9 @@ class WelcomePanel(wx.Panel):
 class TimelinePanel(wx.Panel):
     """Showing the drawn timeline and the optional sidebar."""
 
-    def __init__(self, parent):
+    def __init__(self, parent, main_frame):
         wx.Panel.__init__(self, parent)
+        self.main_frame = main_frame
         self.sidebar_width = config.get_sidebar_width()
         self._create_gui()
         self.show_sidebar()
@@ -576,7 +625,7 @@ class TimelinePanel(wx.Panel):
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED,
                   self._splitter_on_splitter_sash_pos_changed, self.splitter)
         self.sidebar = Sidebar(self.splitter)
-        self.drawing_area = DrawingArea(self.splitter)
+        self.drawing_area = DrawingArea(self.splitter, self.main_frame)
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(self.splitter, flag=wx.GROW, proportion=1)
         self.SetSizer(globalSizer)
@@ -627,20 +676,29 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
     def _checklistbox_on_checklistbox(self, e):
         i = e.GetSelection()
         self.categories[i].visible = self.IsChecked(i)
-        self.timeline.category_edited(self.categories[i])
+        try:
+            self.timeline.category_edited(self.categories[i])
+        except TimelineIOError, e:
+            _display_error_message(e.message, self.main_frame)
+            self.main_frame.switch_to_error_view(e)
 
     def _timeline_changed(self, state_change):
         if state_change == Timeline.STATE_CHANGE_CATEGORY:
             self._update_categories()
 
     def _update_categories(self):
-        self.categories = sort_categories(self.timeline.get_categories())
-        self.Clear()
-        self.AppendItems([category.name for category in self.categories])
-        for i in range(0, self.Count):
-            if self.categories[i].visible:
-                self.Check(i)
-            self.SetItemBackgroundColour(i, self.categories[i].color)
+        try:
+            self.categories = sort_categories(self.timeline.get_categories())
+        except TimelineIOError, e:
+            _display_error_message(e.message, self.main_frame)
+            self.main_frame.switch_to_error_view(e)
+        else:
+            self.Clear()
+            self.AppendItems([category.name for category in self.categories])
+            for i in range(0, self.Count):
+                if self.categories[i].visible:
+                    self.Check(i)
+                self.SetItemBackgroundColour(i, self.categories[i].color)
 
 
 class DrawingArea(wx.Panel):
@@ -677,8 +735,9 @@ class DrawingArea(wx.Panel):
     When the mouse button is released the selection ends.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, main_frame):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
+        self.main_frame = main_frame
         self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
@@ -734,7 +793,12 @@ class DrawingArea(wx.Panel):
         self.timeline = timeline
         if self.timeline:
             self.timeline.register(self._timeline_changed)
-            self.time_period = timeline.get_preferred_period()
+            try:
+                self.time_period = timeline.get_preferred_period()
+            except TimelineIOError, e:
+                _display_error_message(e.message, self.main_frame)
+                self.main_frame.switch_to_error_view(e)
+                return
             self._redraw_timeline()
             self.Enable()
             self.SetFocus()
@@ -830,16 +894,20 @@ class DrawingArea(wx.Panel):
 
         If the mouse hits an event that event will be selected.
         """
-        logging.debug("Left mouse pressed event in DrawingArea")
-        self._set_new_current_time(evt.m_x)
-        posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
-                                                  evt.m_controlDown)
-        if not posAtEvent:
-            if evt.m_controlDown:
-                self._set_select_period_cursor()
-            else:
-                self._set_drag_cursor()
-        evt.Skip()
+        try:
+            logging.debug("Left mouse pressed event in DrawingArea")
+            self._set_new_current_time(evt.m_x)
+            posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
+                                                      evt.m_controlDown)
+            if not posAtEvent:
+                if evt.m_controlDown:
+                    self._set_select_period_cursor()
+                else:
+                    self._set_drag_cursor()
+            evt.Skip()
+        except TimelineIOError, e:
+            _display_error_message(e.message, self.main_frame)
+            self.main_frame.switch_to_error_view(e)
 
     def _window_on_left_dclick(self, evt):
         """
@@ -851,10 +919,10 @@ class DrawingArea(wx.Panel):
         logging.debug("Left Mouse doubleclicked event in DrawingArea")
         event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
         if event:
-            _edit_event(self.timeline, event)
+            self.main_frame.edit_event(event)
         else:
-            _create_new_event(self.timeline, self._current_time,
-                              self._current_time)
+            self.main_frame.create_new_event(self._current_time,
+                                             self._current_time)
 
     def _window_on_left_up(self, evt):
         """
@@ -990,11 +1058,16 @@ class DrawingArea(wx.Panel):
             memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
             memdc.Clear()
             if self.timeline:
-                current_events = self.timeline.get_events(self.time_period)
-                self.drawing_algorithm.draw(memdc, self.time_period,
-                                            current_events,
-                                            period_selection,
-                                            self.show_legend)
+                try:
+                    current_events = self.timeline.get_events(self.time_period)
+                except TimelineIOError, e:
+                    _display_error_message(e.message, self.main_frame)
+                    self.main_frame.switch_to_error_view(e)
+                else:
+                    self.drawing_algorithm.draw(memdc, self.time_period,
+                                                current_events,
+                                                period_selection,
+                                                self.show_legend)
             memdc.EndDrawing()
             del memdc
             self.Refresh()
@@ -1042,7 +1115,7 @@ class DrawingArea(wx.Panel):
         self._mark_selection = False
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
-        _create_new_event(self.timeline, start, end)
+        self.main_frame.create_new_event(start, end)
         self._redraw_timeline()
 
     def _display_eventname_in_statusbar(self, xpixelpos, ypixelpos):
@@ -1072,7 +1145,11 @@ class DrawingArea(wx.Panel):
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
         if _ask_question(_("Are you sure to delete?"), self) == wx.YES:
-            self.timeline.delete_selected_events()
+            try:
+                self.timeline.delete_selected_events()
+            except TimelineIOError, e:
+                _display_error_message(e.message, self.main_frame)
+                self.main_frame.switch_to_error_view(e)
 
     def _get_period_selection(self, current_x):
         """Return a tuple containing the start and end time of a selection."""
@@ -1109,12 +1186,15 @@ class ErrorPanel(wx.Panel):
         wx.Panel.__init__(self, parent)
         wx.StaticText(self, label="Error...")
 
+    def populate(self, error):
+        print error
+
 
 class EventEditor(wx.Dialog):
     """Dialog used for creating and editing events."""
 
-    def __init__(self, parent, id, title, timeline, start=None, end=None,
-                 event=None):
+    def __init__(self, parent, title, timeline,
+                 start=None, end=None, event=None):
         """
         Create a event editor dialog.
 
@@ -1127,7 +1207,7 @@ class EventEditor(wx.Dialog):
         filled with data from the arguments 'start' and 'end' if they are
         given. Otherwise they will default to today.
         """
-        wx.Dialog.__init__(self, parent, id, title,
+        wx.Dialog.__init__(self, parent, title=title,
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self.event = event
@@ -1217,42 +1297,47 @@ class EventEditor(wx.Dialog):
 
         If the Close-on-ok checkbox is checked the dialog is also closed.
         """
-        logging.debug("_btn_ok_on_click")
         try:
-            # Input value retrieval and validation
-            start_time = self.dtp_start.get_value()
-            end_time = start_time
-            if self.chb_period.IsChecked():
-                end_time = self.dtp_end.get_value()
-            selection = self.lst_category.GetSelection()
-            category = self.lst_category.GetClientData(selection)
-            if start_time > end_time:
-                raise TxtException(_("End must be > Start"), self.dtp_start)
-            name = _parse_text_from_textbox(self.txt_text, _("Text"))
-            # Update existing event
-            if self.updatemode:
-                self.event.update(start_time, end_time, name, category)
-                for plugin, editor in self.event_data_plugins:
-                    self.event.set_data(plugin.get_id(),
-                                        plugin.get_editor_data(editor))
-                self.timeline.event_edited(self.event)
-            # Create new event
-            else:
-                self.event = Event(start_time, end_time, name, category)
-                for plugin, editor in self.event_data_plugins:
-                    self.event.set_data(plugin.get_id(),
-                                        plugin.get_editor_data(editor))
-                self.timeline.add_event(self.event)
-            # Close the dialog ?
-            if self.chb_add_more.GetValue():
-                self.txt_text.SetValue("")
-                for plugin, editor in self.event_data_plugins:
-                    plugin.clear_editor_data(editor)
-            else:
-                self._close()
-        except TxtException, ex:
-            _display_error_message("%s" % ex.error_message)
-            _set_focus_and_select(ex.control)
+            logging.debug("_btn_ok_on_click")
+            try:
+                # Input value retrieval and validation
+                start_time = self.dtp_start.get_value()
+                end_time = start_time
+                if self.chb_period.IsChecked():
+                    end_time = self.dtp_end.get_value()
+                selection = self.lst_category.GetSelection()
+                category = self.lst_category.GetClientData(selection)
+                if start_time > end_time:
+                    raise TxtException(_("End must be > Start"), self.dtp_start)
+                name = _parse_text_from_textbox(self.txt_text, _("Text"))
+                # Update existing event
+                if self.updatemode:
+                    self.event.update(start_time, end_time, name, category)
+                    for plugin, editor in self.event_data_plugins:
+                        self.event.set_data(plugin.get_id(),
+                                            plugin.get_editor_data(editor))
+                    self.timeline.event_edited(self.event)
+                # Create new event
+                else:
+                    self.event = Event(start_time, end_time, name, category)
+                    for plugin, editor in self.event_data_plugins:
+                        self.event.set_data(plugin.get_id(),
+                                            plugin.get_editor_data(editor))
+                    self.timeline.add_event(self.event)
+                # Close the dialog ?
+                if self.chb_add_more.GetValue():
+                    self.txt_text.SetValue("")
+                    for plugin, editor in self.event_data_plugins:
+                        plugin.clear_editor_data(editor)
+                else:
+                    self._close()
+            except TxtException, ex:
+                _display_error_message("%s" % ex.error_message)
+                _set_focus_and_select(ex.control)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
 
     def _chb_period_on_checkbox(self, e):
         self._show_to_time(e.IsChecked())
@@ -1379,35 +1464,65 @@ class CategoriesEditor(wx.Dialog):
         self.EndModal(wx.ID_CLOSE)
 
     def _lst_categories_on_dclick(self, e):
-        selection = e.GetSelection()
-        dialog = CategoryEditor(self, _("Edit Category"), self.timeline,
-                                e.GetClientData())
-        if dialog.ShowModal() == wx.ID_OK:
-            self.timeline.category_edited(dialog.get_edited_category())
-        dialog.Destroy()
+        try:
+            selection = e.GetSelection()
+            dialog = CategoryEditor(self, _("Edit Category"), self.timeline,
+                                    e.GetClientData())
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
+        else:
+            if dialog.ShowModal() == ID_ERROR:
+                self.error = dialog.error
+                self.EndModal(ID_ERROR)
+            dialog.Destroy()
 
     def _btn_add_on_click(self, e):
-        dialog = CategoryEditor(self, _("Add Category"), self.timeline, None)
-        if dialog.ShowModal() == wx.ID_OK:
-            self.timeline.add_category(dialog.get_edited_category())
-        dialog.Destroy()
+        try:
+            dialog = CategoryEditor(self, _("Add Category"), self.timeline,
+                                    None)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
+        else:
+            if dialog.ShowModal() == ID_ERROR:
+                self.error = dialog.error
+                self.EndModal(ID_ERROR)
+            dialog.Destroy()
 
     def _btn_del_on_click(self, e):
-        self._delete_selected_category()
+        try:
+            self._delete_selected_category()
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
 
     def _btn_close_on_click(self, e):
         self.Close()
 
     def _lst_categories_on_key_down(self, e):
-        logging.debug("Key down event in CategoriesEditor")
-        keycode = e.GetKeyCode()
-        if keycode == wx.WXK_DELETE:
-            self._delete_selected_category()
-        e.Skip()
+        try:
+            logging.debug("Key down event in CategoriesEditor")
+            keycode = e.GetKeyCode()
+            if keycode == wx.WXK_DELETE:
+                self._delete_selected_category()
+            e.Skip()
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
 
     def _timeline_changed(self, state_change):
-        if state_change == Timeline.STATE_CHANGE_CATEGORY:
-            self._update_categories()
+        try:
+            if state_change == Timeline.STATE_CHANGE_CATEGORY:
+                self._update_categories()
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
 
     def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
@@ -1434,7 +1549,9 @@ class CategoryEditor(wx.Dialog):
         self._create_gui()
         self.timeline = timeline
         self.category = category
+        self.create_new = False
         if self.category == None:
+            self.create_new = True
             self.category = Category("", (200, 200, 200), True)
         self.txt_name.SetValue(self.category.name)
         self.colorpicker.SetColour(self.category.color)
@@ -1472,19 +1589,28 @@ class CategoryEditor(wx.Dialog):
         _set_focus_and_select(self.txt_name)
 
     def _btn_ok_on_click(self, e):
-        name = self.txt_name.GetValue().strip()
-        if not self._name_valid(name):
-            _display_error_message(_("Category name '%s' not valid. Must be non-empty.") % name,
-                                   self)
-            return
-        if self._name_in_use(name):
-            _display_error_message(_("Category name '%s' already in use.") % name,
-                                   self)
-            return
-        self.category.name = name
-        self.category.color = self.colorpicker.GetColour()
-        self.category.visible = self.chb_visible.IsChecked()
-        self.EndModal(wx.ID_OK)
+        try:
+            name = self.txt_name.GetValue().strip()
+            if not self._name_valid(name):
+                msg = _("Category name '%s' not valid. Must be non-empty.")
+                _display_error_message(msg % name, self)
+                return
+            if self._name_in_use(name):
+                msg = _("Category name '%s' already in use.")
+                _display_error_message(msg % name, self)
+                return
+            self.category.name = name
+            self.category.color = self.colorpicker.GetColour()
+            self.category.visible = self.chb_visible.IsChecked()
+            if self.create_new:
+                self.timeline.add_category(self.category)
+            else:
+                self.timeline.category_edited(self.category)
+            self.EndModal(wx.ID_OK)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
 
     def _name_valid(self, name):
         return len(name) > 0
@@ -1608,26 +1734,6 @@ def sort_categories(categories):
     sorted_categories = list(categories)
     sorted_categories.sort(cmp, lambda x: x.name.lower())
     return sorted_categories
-
-
-def _create_new_event(timeline, start=None, end=None):
-    """Open a dialog for creating a new event."""
-    dlg = EventEditor(None, -1, _("Create Event"), timeline, start, end)
-    dlg.ShowModal()
-    dlg.Destroy()
-
-
-def _edit_event(timeline, event):
-    """Open a dialog for updating properties of a marked event"""
-    dlg = EventEditor(None, -1, _("Edit Event"), timeline, event=event)
-    dlg.ShowModal()
-    dlg.Destroy()
-
-
-def _edit_categories(timeline):
-    dialog = CategoriesEditor(None, timeline)
-    dialog.ShowModal()
-    dialog.Destroy()
 
 
 def _set_focus_and_select(ctrl):
