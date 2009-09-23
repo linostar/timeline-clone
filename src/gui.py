@@ -93,8 +93,7 @@ class MainFrame(wx.Frame):
         try:
             timeline = data.get_timeline(input_file)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
-            self.switch_to_error_view(e)
+            self.handle_timeline_error(e)
         else:
             self._display_timeline(timeline)
 
@@ -103,11 +102,10 @@ class MainFrame(wx.Frame):
             dialog = EventEditor(self, _("Create Event"), self.timeline,
                                  start, end)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
-            self.switch_to_error_view(e)
+            self.handle_timeline_error(e)
         else:
             if dialog.ShowModal() == ID_ERROR:
-                self.switch_to_error_view(dialog.error)
+                self._switch_to_error_view(dialog.error)
             dialog.Destroy()
 
     def edit_event(self, event):
@@ -115,29 +113,25 @@ class MainFrame(wx.Frame):
             dialog = EventEditor(self, _("Edit Event"), self.timeline,
                                  event=event)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
-            self.switch_to_error_view(e)
+            self.handle_timeline_error(e)
         else:
             if dialog.ShowModal() == ID_ERROR:
-                self.switch_to_error_view(dialog.error)
+                self._switch_to_error_view(dialog.error)
             dialog.Destroy()
 
     def edit_categories(self):
         try:
             dialog = CategoriesEditor(self, self.timeline)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
-            self.switch_to_error_view(e)
+            self.handle_timeline_error(e)
         else:
             if dialog.ShowModal() == ID_ERROR:
-                self.switch_to_error_view(dialog.error)
+                self._switch_to_error_view(dialog.error)
             dialog.Destroy()
 
-    def switch_to_error_view(self, error):
-        self._display_timeline(None)
-        self.main_panel.error_panel.populate(error)
-        self.main_panel.show_error_panel()
-        self._enable_disable_menus()
+    def handle_timeline_error(self, error):
+        _display_error_message(error.message, self)
+        self._switch_to_error_view(error)
 
     def _create_gui(self):
         def add_ellipses_to_menuitem(id):
@@ -323,6 +317,12 @@ class MainFrame(wx.Frame):
 
     def _mnu_help_about_on_click(self, e):
         display_about_dialog()
+
+    def _switch_to_error_view(self, error):
+        self._display_timeline(None)
+        self.main_panel.error_panel.populate(error)
+        self.main_panel.show_error_panel()
+        self._enable_disable_menus()
 
     def _display_timeline(self, timeline):
         self.timeline = timeline
@@ -678,8 +678,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         try:
             self.timeline.category_edited(self.categories[i])
         except TimelineIOError, e:
-            _display_error_message(e.message, self.main_frame)
-            self.main_frame.switch_to_error_view(e)
+            self.main_frame.handle_timeline_error(e)
 
     def _timeline_changed(self, state_change):
         if state_change == Timeline.STATE_CHANGE_CATEGORY:
@@ -689,8 +688,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         try:
             self.categories = sort_categories(self.timeline.get_categories())
         except TimelineIOError, e:
-            _display_error_message(e.message, self.main_frame)
-            self.main_frame.switch_to_error_view(e)
+            self.main_frame.handle_timeline_error(e)
         else:
             self.Clear()
             self.AppendItems([category.name for category in self.categories])
@@ -796,8 +794,7 @@ class DrawingArea(wx.Panel):
             try:
                 self.time_period = timeline.get_preferred_period()
             except TimelineIOError, e:
-                _display_error_message(e.message, self.main_frame)
-                self.main_frame.switch_to_error_view(e)
+                self.main_frame.handle_timeline_error(e)
                 return
             self._redraw_timeline()
             self.Enable()
@@ -906,8 +903,7 @@ class DrawingArea(wx.Panel):
                     self._set_drag_cursor()
             evt.Skip()
         except TimelineIOError, e:
-            _display_error_message(e.message, self.main_frame)
-            self.main_frame.switch_to_error_view(e)
+            self.main_frame.handle_timeline_error(e)
 
     def _window_on_left_dclick(self, evt):
         """
@@ -1061,8 +1057,7 @@ class DrawingArea(wx.Panel):
                 try:
                     current_events = self.timeline.get_events(self.time_period)
                 except TimelineIOError, e:
-                    _display_error_message(e.message, self.main_frame)
-                    self.main_frame.switch_to_error_view(e)
+                    self.main_frame.handle_timeline_error(e)
                 else:
                     self.drawing_algorithm.draw(memdc, self.time_period,
                                                 current_events,
@@ -1148,8 +1143,7 @@ class DrawingArea(wx.Panel):
             try:
                 self.timeline.delete_selected_events()
             except TimelineIOError, e:
-                _display_error_message(e.message, self.main_frame)
-                self.main_frame.switch_to_error_view(e)
+                self.main_frame.handle_timeline_error(e)
 
     def _get_period_selection(self, current_x):
         """Return a tuple containing the start and end time of a selection."""
