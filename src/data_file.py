@@ -148,6 +148,8 @@ class FileTimeline(Timeline):
         return time_period_center(datetime.now(), timedelta(days=30))
 
     def set_preferred_period(self, period):
+        if not period.is_period():
+            raise TimelineIOError(_("Preferred period must be > 0."))
         self.preferred_period = period
         self._save_data()
 
@@ -247,6 +249,8 @@ class FileTimeline(Timeline):
                 raise ParseException("Unexpected number of components")
             self.preferred_period = TimePeriod(parse_time(times[0]),
                                                parse_time(times[1]))
+            if not self.preferred_period.is_period():
+                raise ParseException("Length not > 0")
             return True
         except ParseException, e:
             logerror("Unable to parse preferred period from '%s'",

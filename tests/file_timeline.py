@@ -19,8 +19,10 @@
 import unittest
 import os
 import stat
+import datetime
 
 from data import TimelineIOError
+from data import TimePeriod
 from data_file import FileTimeline
 from data_file import quote
 from data_file import dequote
@@ -55,6 +57,23 @@ class TestFileTimeline(unittest.TestCase):
         self._write_timeline("021.timeline", [HEADER_021])
         self._set_read_only("readonly.timeline")
         self._set_write_only("writeonly.timeline")
+        invalid_time_period = [
+            "# Written by Timeline 0.5.0dev785606221dc2 on 2009-9-22 19:1:10",
+            "PREFERRED-PERIOD:2008-12-9 11:32:26;2008-12-9 11:32:26",
+            "CATEGORY:Work;173,216,230;True",
+            "CATEGORY:Private;200,200,200;True",
+            "EVENT:2009-7-13 0:0:0;2009-7-18 0:0:0;Programming course;Work",
+            "EVENT:2009-7-10 14:30:0;2009-7-10 14:30:0;Go to dentist;Private",
+            "EVENT:2009-7-20 0:0:0;2009-7-27 0:0:0;Vacation;Private",
+            "# END",
+        ]
+        self._write_timeline("invalid_time_period.timeline",
+                             invalid_time_period)
+        valid = [
+            "# Written by Timeline 0.5.0 on 2009-9-22 19:1:10",
+            "# END",
+        ]
+        self._write_timeline("valid.timeline", valid)
 
     def tearDown(self):
         self._silent_remove("readonly.timeline")
@@ -67,6 +86,10 @@ class TestFileTimeline(unittest.TestCase):
         self._silent_remove("missingeof.timeline~")
         self._silent_remove("021.timeline")
         self._silent_remove("021.timeline~")
+        self._silent_remove("invalid_time_period.timeline")
+        self._silent_remove("invalid_time_period.timeline~")
+        self._silent_remove("valid.timeline")
+        self._silent_remove("valid.timeline~")
 
     def testWriteError(self):
         """
@@ -128,6 +151,28 @@ class TestFileTimeline(unittest.TestCase):
         """
         FileTimeline("021.timeline")
 
+    def testInvalidTimePeriod(self):
+        """
+        Scenario: You open a timeline that has a PREFERRED-PERIOD of length 0.
+
+        Expected result: Even if this is a valid value for a TimePeriod it
+        should not be a valid PREFERRED-PERIOD. The length must be > 0. So we
+        should get an error when trying to read this.
+        """
+        self.assertRaises(TimelineIOError, FileTimeline,
+                          "invalid_time_period.timeline")
+
+    def testSettingInvalidPreferredPeriod(self):
+        """
+        Scenario: You try to assign a preferred period whose length is 0.
+
+        Expected result: You should get an error.
+        """
+        timeline = FileTimeline("valid.timeline")
+        now = datetime.datetime.now()
+        zero_tp = TimePeriod(now, now)
+        self.assertRaises(TimelineIOError, timeline.set_preferred_period,
+                          zero_tp)
 
 class TestHelperFunctions(unittest.TestCase):
 
