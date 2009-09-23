@@ -143,7 +143,7 @@ class MainFrame(wx.Frame):
                 return plain[:tab_index] + "..." + plain[tab_index:]
             return plain + "..."
         # The only content of this frame is the MainPanel
-        self.main_panel = MainPanel(self, self)
+        self.main_panel = MainPanel(self)
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
         # The status bar
         self.CreateStatusBar()
@@ -546,9 +546,8 @@ class MainPanel(wx.Panel):
       * The error panel (show_error_panel)
     """
 
-    def __init__(self, parent, main_frame):
+    def __init__(self, parent):
         wx.Panel.__init__(self, parent)
-        self.main_frame = main_frame
         self._create_gui()
         # Install variables for backwards compatibility
         self.catbox = self.timeline_panel.sidebar.catbox
@@ -573,7 +572,7 @@ class MainPanel(wx.Panel):
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.welcome_panel = WelcomePanel(self)
         self.sizer.Add(self.welcome_panel, flag=wx.GROW, proportion=1)
-        self.timeline_panel = TimelinePanel(self, self.main_frame)
+        self.timeline_panel = TimelinePanel(self)
         self.sizer.Add(self.timeline_panel, flag=wx.GROW, proportion=1)
         self.error_panel = ErrorPanel(self)
         self.sizer.Add(self.error_panel, flag=wx.GROW, proportion=1)
@@ -599,9 +598,8 @@ class WelcomePanel(wx.Panel):
 class TimelinePanel(wx.Panel):
     """Showing the drawn timeline and the optional sidebar."""
 
-    def __init__(self, parent, main_frame):
+    def __init__(self, parent):
         wx.Panel.__init__(self, parent)
-        self.main_frame = main_frame
         self.sidebar_width = config.get_sidebar_width()
         self._create_gui()
         self.show_sidebar()
@@ -624,7 +622,7 @@ class TimelinePanel(wx.Panel):
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED,
                   self._splitter_on_splitter_sash_pos_changed, self.splitter)
         self.sidebar = Sidebar(self.splitter)
-        self.drawing_area = DrawingArea(self.splitter, self.main_frame)
+        self.drawing_area = DrawingArea(self.splitter)
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(self.splitter, flag=wx.GROW, proportion=1)
         self.SetSizer(globalSizer)
@@ -678,7 +676,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         try:
             self.timeline.category_edited(self.categories[i])
         except TimelineIOError, e:
-            self.main_frame.handle_timeline_error(e)
+            wx.GetTopLevelParent(self).handle_timeline_error(e)
 
     def _timeline_changed(self, state_change):
         if state_change == Timeline.STATE_CHANGE_CATEGORY:
@@ -688,7 +686,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         try:
             self.categories = sort_categories(self.timeline.get_categories())
         except TimelineIOError, e:
-            self.main_frame.handle_timeline_error(e)
+            wx.GetTopLevelParent(self).handle_timeline_error(e)
         else:
             self.Clear()
             self.AppendItems([category.name for category in self.categories])
@@ -732,9 +730,8 @@ class DrawingArea(wx.Panel):
     When the mouse button is released the selection ends.
     """
 
-    def __init__(self, parent, main_frame):
+    def __init__(self, parent):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
-        self.main_frame = main_frame
         self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
@@ -794,7 +791,7 @@ class DrawingArea(wx.Panel):
             try:
                 self.time_period = timeline.get_preferred_period()
             except TimelineIOError, e:
-                self.main_frame.handle_timeline_error(e)
+                wx.GetTopLevelParent(self).handle_timeline_error(e)
                 return
             self._redraw_timeline()
             self.Enable()
@@ -903,7 +900,7 @@ class DrawingArea(wx.Panel):
                     self._set_drag_cursor()
             evt.Skip()
         except TimelineIOError, e:
-            self.main_frame.handle_timeline_error(e)
+            wx.GetTopLevelParent(self).handle_timeline_error(e)
 
     def _window_on_left_dclick(self, evt):
         """
@@ -915,10 +912,10 @@ class DrawingArea(wx.Panel):
         logging.debug("Left Mouse doubleclicked event in DrawingArea")
         event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
         if event:
-            self.main_frame.edit_event(event)
+            wx.GetTopLevelParent(self).edit_event(event)
         else:
-            self.main_frame.create_new_event(self._current_time,
-                                             self._current_time)
+            wx.GetTopLevelParent(self).create_new_event(self._current_time,
+                                                        self._current_time)
 
     def _window_on_left_up(self, evt):
         """
@@ -1057,7 +1054,7 @@ class DrawingArea(wx.Panel):
                 try:
                     current_events = self.timeline.get_events(self.time_period)
                 except TimelineIOError, e:
-                    self.main_frame.handle_timeline_error(e)
+                    wx.GetTopLevelParent(self).handle_timeline_error(e)
                 else:
                     self.drawing_algorithm.draw(memdc, self.time_period,
                                                 current_events,
@@ -1110,7 +1107,7 @@ class DrawingArea(wx.Panel):
         self._mark_selection = False
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
-        self.main_frame.create_new_event(start, end)
+        wx.GetTopLevelParent(self).create_new_event(start, end)
         self._redraw_timeline()
 
     def _display_eventname_in_statusbar(self, xpixelpos, ypixelpos):
@@ -1143,7 +1140,7 @@ class DrawingArea(wx.Panel):
             try:
                 self.timeline.delete_selected_events()
             except TimelineIOError, e:
-                self.main_frame.handle_timeline_error(e)
+                wx.GetTopLevelParent(self).handle_timeline_error(e)
 
     def _get_period_selection(self, current_x):
         """Return a tuple containing the start and end time of a selection."""
