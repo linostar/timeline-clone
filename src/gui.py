@@ -95,6 +95,7 @@ class MainFrame(wx.Frame):
         except TimelineIOError, e:
             self.handle_timeline_error(e)
         else:
+            config.append_recently_opened(input_file)
             self._display_timeline(timeline)
 
     def create_new_event(self, start=None, end=None):
