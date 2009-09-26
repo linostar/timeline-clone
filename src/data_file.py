@@ -54,10 +54,12 @@ class FileTimeline(Timeline):
     """
     Implements the Timeline interface.
 
-    The comments in the Timeline class describes what the public methods
-    should do.
+    The comments in the Timeline class describe what the public methods do.
 
-    The format of the file looks like this for version >= 0.3.0:
+    Every public method (including the constructor) can raise a TimelineIOError
+    if there was a problem reading or writing from file.
+
+    The general format of the file looks like this for version >= 0.3.0:
 
       # Written by Timeline 0.3.0 on 2009-7-23 9:40:33
       PREFERRED-PERIOD:...
@@ -68,7 +70,8 @@ class FileTimeline(Timeline):
       # END
     
     Only the first and last line are required. See comments in _load_*
-    functions for information how the format has changed.
+    functions for information how the format looks like for the different
+    parts.
     """
 
     # Errors caused by loading and saving timeline data to file
@@ -81,9 +84,7 @@ class FileTimeline(Timeline):
         """
         Create a new timeline and read data from file.
 
-        The error function is used by the timeline to display error messages.
-        It does not know where the messages get displayed, it just knows how to
-        send them. The function takes one argument: the message.
+        If the file does not exist a new timeline will be created.
         """
         Timeline.__init__(self, path)
         self._load_data()
@@ -160,7 +161,7 @@ class FileTimeline(Timeline):
 
         If an error occurs, the error_flag will be set to either ERROR_READ if
         we failed to read from the file or ERROR_CORRUPT if the data we read
-        was not valid. An error message will also be sent.
+        was not valid. A TimelineIOError will also be raised.
         """
         self.preferred_period = None
         self.categories = []
@@ -188,7 +189,6 @@ class FileTimeline(Timeline):
             raise TimelineIOError(whole_msg)
 
     def _load_from_lines(self, file):
-        """Return True if able to load, otherwise False."""
         current_line = file.readline()
         # Load header
         self._load_header(current_line.rstrip("\r\n"))
@@ -217,8 +217,9 @@ class FileTimeline(Timeline):
         """
         Expected format '# Written by Timeline <version> on <date>'.
         
-        Expected format of <version> '0.3.0[dev<revision>]'. We are just
-        interested in the first part of the version.
+        Expected format of <version> '0.3.0[dev<revision>]'.
+        
+        We are just interested in the first part of the version.
         """
         match = re.search(r"^# Written by Timeline (\d+)\.(\d+)\.(\d+)",
                           header_text)
