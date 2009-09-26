@@ -287,7 +287,24 @@ class Event(object):
     def set_data(self, plugin_id, data):
         self.data[plugin_id] = data
 
+    def has_data(self):
+        """Return True if the event has associated data, or False if not."""
+        for id in self.data:
+            if self.data[id] != None:
+                return True
+        return False
 
+    def get_description_data(self):
+        """
+        Return 'description' data, or None if the event has no 
+        'deciption' data.
+        """
+        for id in self.data:
+            if id == "description":
+                return self.data[id]
+        return None
+
+    
 class Category(object):
     """Represents a category that an event belongs to."""
 
