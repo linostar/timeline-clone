@@ -1,0 +1,8 @@
+This directory contains timeline datafiles used for testing different
+aspects of the timeline application.
+
+
+DataIndicatorTest.timeline
+--------------------------
+This file is used for testing the functions that indicate and show data
+associated with events.

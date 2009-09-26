@@ -1,0 +1,17 @@
+# Written by Timeline 0.5.0devab88f33eaf27 on 2009-9-26 10:11:38
+PREFERRED-PERIOD:2009-9-16 19:28:48;2009-10-9 2:27:33
+CATEGORY:Short text;145,219,255;True
+CATEGORY:No Data events;255,255,128;True
+CATEGORY:Red backgound;255,0,0;True
+CATEGORY:Multiple sentecnes;255,210,166;True
+CATEGORY:Long text;255,187,255;True
+EVENT:2009-9-25 14:56:0;2009-9-25 14:56:0;Event with short text;Short text;description:Hello
+EVENT:2009-9-25 0:0:0;2009-9-29 0:0:0;Event with NO data;No Data events
+EVENT:2009-9-28 11:5:0;2009-9-28 11:5:0;Event with one long text sentence;Long text;description:This is a long sentence that will show how sentences are broken into lines.
+EVENT:2009-9-22 16:56:0;2009-9-22 16:56:0;No Data;No Data events
+EVENT:2009-9-21 0:0:0;2009-9-24 0:0:0;Data and Red backgound;Red backgound;description:Red backgound
+EVENT:2009-9-28 0:0:0;2009-10-2 0:0:0;Event with multiple sentences;Multiple sentecnes;description:Sentence one\nand two\n1\n2\nHere is more
+EVENT:2009-9-21 0:0:0;2009-9-24 0:0:0;Data and Gray backgound;;description:Gray Background
+EVENT:2009-9-30 0:0:0;2009-10-5 0:0:0;More text than fits into ballon;Multiple sentecnes;description:This is sentence one.\nAnd this is senctence two.\nAnd now comes the third sentence.\n4 sentence\n5 sentence\n6 sentence\n7 sentence\n
+EVENT:2009-10-3 9:38:0;2009-10-3 9:38:0;Too long word;Long text;description:thisisawordthatistoolongtofitinthewidthoftheballon.Howdowebreakit?
+# END
