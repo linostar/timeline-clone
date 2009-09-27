@@ -804,6 +804,3 @@ def get_max_word_length(dc, max_width_in_px):
         word.append(TEMPLATE_CHAR)
         w, h = dc.GetTextExtent("".join(word))
     return len(word) - 1
-
-
-
