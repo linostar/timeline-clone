@@ -24,6 +24,7 @@ the `draw` method.
 """
 
 
+import math
 import logging
 import calendar
 from datetime import timedelta
@@ -229,6 +230,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.white_solid_brush = wx.Brush(wx.Color(255, 255, 255), wx.SOLID)
         self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
+        self.DATA_ICON_WIDTH = 5
 
     def draw(self, dc, time_period, events, period_selection=None,
              legend=False):
@@ -257,6 +259,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         if legend:
             self._draw_legend(self._extract_categories(events))
         self._draw_events()
+        self._draw_ballons()
         # Make sure to delete this one
         del self.dc
 
@@ -304,6 +307,9 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 rx = self.metrics.calc_x(event.mean_time()) - rw / 2
                 ry = self.metrics.half_height - rh - BASELINE_PADDING
                 movedir = -1
+            # Make room for the data contents indicator icon
+            if event.has_data():
+                rw += self.DATA_ICON_WIDTH
             rect = wx.Rect(rx, ry, rw, rh)
             self._prevent_overlap(rect, movedir)
             self.event_data.append((event, rect))
@@ -518,18 +524,283 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.DestroyClippingRegion()
             self.dc.SetClippingRect(rect)
             # Draw the box
-            base_color = (200, 200, 200)
-            if event.category:
-                base_color = event.category.color
-            border_color = drawing.darken_color(base_color)
-            self.dc.SetBrush(wx.Brush(base_color, wx.SOLID))
-            self.dc.SetPen(wx.Pen(border_color, 1, wx.SOLID))
+            self.dc.SetBrush(self._get_box_brush(event))
+            self.dc.SetPen(self._get_box_pen(event))
             self.dc.DrawRectangleRect(rect)
             if event.selected:
-                self.dc.SetBrush(wx.Brush(border_color, wx.BDIAGONAL_HATCH))
+                self.dc.SetBrush(self._get_selected_box_brush(event))
                 self.dc.SetPen(wx.TRANSPARENT_PEN)
                 self.dc.DrawRectangleRect(rect)
             # Draw the text
             self.dc.DrawText(event.text,
                              rect.X + INNER_PADDING,
                              rect.Y + INNER_PADDING)
+            # Draw data contents indicator
+            if event.has_data():
+                self._draw_contents_indicator(event, rect)
+
+    def _draw_contents_indicator(self, event, rect):
+        """
+        The data contents indicator is a small icon added to the end of
+        the event rectangle.
+        The icon is a rectangle with LIGHT_GRAY background and a RED
+        triangle.
+        """
+        # Icon rectangle
+        icon_rect = wx.Rect(rect.x, rect.y, rect.Width, rect.Height)
+        icon_rect.x = rect.x + rect.Width - self.DATA_ICON_WIDTH
+        icon_rect.Width = self.DATA_ICON_WIDTH
+        # Draw border and background
+        self.dc.SetBrush(wx.LIGHT_GREY_BRUSH)
+        self.dc.SetPen(self._get_box_pen(event))
+        self.dc.SetClippingRect(icon_rect)
+        self.dc.DrawRectangleRect(icon_rect)
+        # Draw triangle
+        points = (
+            wx.Point(icon_rect.x + icon_rect.Width, icon_rect.y),
+            wx.Point(icon_rect.x + icon_rect.Width, icon_rect.y + icon_rect.Height),
+            wx.Point(icon_rect.x, icon_rect.y + icon_rect.Height/2),
+        )
+        self.dc.SetBrush(wx.RED_BRUSH)
+        self.dc.DrawPolygon(points)
+
+    def _get_base_color(self, event):
+        if event.category:
+            base_color = event.category.color
+        else:
+            base_color = (200, 200, 200)
+        return base_color
+
+    def _get_border_color(self, event):
+        base_color = self._get_base_color(event)
+        border_color = drawing.darken_color(base_color)
+        return border_color
+
+    def _get_box_pen(self, event):
+        border_color = self._get_border_color(event)
+        pen = wx.Pen(border_color, 1, wx.SOLID)
+        return pen
+
+    def _get_box_brush(self, event):
+        base_color = self._get_base_color(event)
+        brush = wx.Brush(base_color, wx.SOLID)
+        return brush
+
+    def _get_selected_box_brush(self, event):
+        border_color = self._get_border_color(event)
+        brush = wx.Brush(border_color, wx.BDIAGONAL_HATCH)
+        return brush
+
+    def _draw_ballons(self):
+        """Draw ballons on selected events that has 'description' data."""
+        for (event, rect) in self.event_data:
+            if event.get_data("description") != None:
+                if event.selected:
+                    self._draw_ballon(event, rect)
+
+    def _draw_ballon(self, event, rect):
+        """Draw one ballon on a selected event that has 'description' data."""
+        BORDER_COLOR = wx.Color(127, 127, 127)
+        BG_COLOR = wx.Color(255, 255, 231)
+        PEN = wx.Pen(BORDER_COLOR, 1, wx.SOLID)
+        BRUSH = wx.Brush(BG_COLOR, wx.SOLID)
+        # Calculate points, text area position and size
+        points, text_rect = calculate_ballon_points(rect)
+        # Draw the ballon
+        self.dc.DestroyClippingRegion()
+        self.dc.SetPen(PEN)
+        self.dc.SetBrush(BRUSH)
+        self.dc.DrawPolygon(points)
+        # Break text
+        self.dc.SetFont(drawing.get_default_font(8))
+        description = event.get_data("description")
+        lines = break_text(description, self.dc, text_rect.width)
+        # Calculate max nbr of lines that fit into the ballon
+        h = self.dc.GetCharHeight()
+        max_nbr_of_lines = text_rect.height / h - 1
+        # Calculate the number of pages we have
+        # Give rome for the -- more -- text if we have more than one page
+        nbr_of_pages = len(lines) / max_nbr_of_lines
+        if len(lines) % max_nbr_of_lines > 0:
+            nbr_of_pages += 1
+        if len(lines) == max_nbr_of_lines + 1:
+            nbr_of_pages = 1
+            max_nbr_of_lines += 1
+        if nbr_of_pages == 1:
+            max_nbr_of_lines = len(lines)
+        # Draw the text
+        current_y = text_rect.y
+        for i in range(max_nbr_of_lines):
+            self.dc.DrawText(lines[i], text_rect.x, current_y)
+            current_y += h
+        # Draw the 'more text' indicator
+        if nbr_of_pages > 1:
+            more_indicator = _("-- more --")
+            w,h = self.dc.GetTextExtent(more_indicator)
+            start = text_rect.x + (text_rect.Width - w)/ 2
+            self.dc.DrawText(more_indicator, start, current_y)
+
+
+def calculate_ballon_points(rect):
+    """
+                W
+       |----------------|
+         ______________           _
+        /              \          |             R = Corner Radius
+       |                |         |            AA = Left Arrow-leg angle
+       |  W_ARROW       |         |  H     MARGIN = Text margin
+       |     |--|       |         |             * = Starting point
+        \____    ______/          _
+            /  /                  |
+           /_/                    |  H_ARROW
+          *                       -
+       |----|
+       ARROW_OFFSET
+
+    Calculation of points starts at the tip of the arrow and continues
+    clockwise around the ballon.
+    """
+    R = 15
+    W = 150
+    H = 105
+    H_ARROW = 14
+    W_ARROW = 15
+    W_ARROW_OFFSET = R + 25
+    AA = 20
+    MARGIN = 5
+    points = []
+    # Starting point at the tip of the arrow
+    p0 = wx.Point(rect.X + rect.Width / 2, rect.Y)
+    points.append(p0)
+    # Next pont is the left base of the arrow
+    p1 = wx.Point(p0.x + H_ARROW * math.tan(math.radians(AA)), p0.y - H_ARROW)
+    points.append(p1)
+    # Start of lower left rounded corner
+    p2 = wx.Point(p1.x - W_ARROW_OFFSET + R, p1.y)
+    points.append(p2)
+    bottom_y = p2.y
+    # The lower left rounded corner. p3 is the center of the arc
+    p3 = wx.Point(p2.x, p2.y - R)
+    p = calculate_arc_points(p3, R, 0, points)
+    # The left side
+    p4 = wx.Point(p.x, p.y - H + R + R)
+    points.append(p4)
+    left_x = p4.x
+    # The upper left rounded corner. p5 is the center of the arc
+    p5 = wx.Point(p4.x + R, p4.y)
+    p = calculate_arc_points(p5, R, 90, points)
+    # The upper side
+    p6 = wx.Point(p.x - R + W - R, p.y)
+    points.append(p6)
+    top_y = p6.y
+    # The upper right rounded corner. p7 is the center of the arc
+    p7 = wx.Point(p6.x, p6.y + R)
+    p = calculate_arc_points(p7, R, 180, points)
+    # The right side
+    p8 = wx.Point(p.x, p.y - R + H - R)
+    points.append(p8)
+    right_x = p8.x
+    # The lower right rounded corner. p9 is the center of the arc
+    p9 = wx.Point(p8.x - R, p8.y)
+    p = calculate_arc_points(p9, R, 270, points)
+    # The lower side
+    p10 = wx.Point(p.x + R - W + W_ARROW +  W_ARROW_OFFSET, p.y)
+    points.append(p10)
+    text_x = left_x + MARGIN
+    text_y = top_y  + MARGIN
+    text_w = right_x  - left_x - 2 * MARGIN
+    text_h = bottom_y - top_y  - 2 * MARGIN
+    return points, wx.Rect(text_x, text_y, text_w, text_h)
+
+
+def calculate_arc_points(center_point, radius, angle, points_list):
+    """
+    Calculates the points on an arc that is a quarter of a circle with
+    the given radius and appends these points to the points_list.
+    center_point, is the center of the circle.
+    angle, decides wich quarter to calculate:
+        0   = Lover left
+        90  = uper left
+        180 = upper right
+        270 = lower right
+    Returns the last point caluclat
+    """
+    NBR_OF_POINTS = 19
+    for n in range(NBR_OF_POINTS + 1):
+        v = angle + n * 90 / NBR_OF_POINTS
+        x = radius * math.sin(math.radians(v))
+        y = radius * math.cos(math.radians(v))
+        p = wx.Point(center_point.x - x, center_point.y + y)
+        points_list.append(p)
+    return p
+
+
+def break_text(text, dc, max_width_in_px):
+    """ Break the text into lines so that they fits within the given width."""
+    sentences = text.split("\n")
+    lines = []
+    for sentence in sentences:
+        w, h = dc.GetTextExtent(sentence)
+        if w <= max_width_in_px:
+            lines.append(sentence)
+        # The sentence is too long. Break it.
+        else:
+            break_sentence(dc, lines, sentence, max_width_in_px);
+    return lines
+
+
+def break_sentence(dc, lines, sentence, max_width_in_px):
+    """Break a sentence into lines."""
+    line = []
+    max_word_len_in_ch = get_max_word_length(dc, max_width_in_px)
+    words = break_line(dc, sentence, max_word_len_in_ch)
+    for word in words:
+        w, h = dc.GetTextExtent("".join(line) + word + " ")
+        # Max line length reached. Start a new line
+        if w > max_width_in_px:
+            lines.append("".join(line))
+            line = []
+        line.append(word + " ")
+        # Word edning with '-' is a broken word. Start a new line
+        if word.endswith('-'):
+            lines.append("".join(line))
+            line = []
+    if len(line) > 0:
+        lines.append("".join(line))
+
+
+def break_line(dc, sentence, max_word_len_in_ch):
+    """Break a sentence into words."""
+    words = sentence.split(" ")
+    new_words = []
+    for word in words:
+        broken_words = break_word(dc, word, max_word_len_in_ch)
+        for broken_word in broken_words:
+            new_words.append(broken_word)
+    return new_words
+
+
+def break_word(dc, word, max_word_len_in_ch):
+    """
+    Break words if they are too long.
+
+    If a single word is too long to fit we have to break it.
+    If not we just return the word given.
+    """
+    words = []
+    while len(word) > max_word_len_in_ch:
+        word1 = word[0:max_word_len_in_ch] + "-"
+        word =  word[max_word_len_in_ch:]
+        words.append(word1)
+    words.append(word)
+    return words
+
+
+def get_max_word_length(dc, max_width_in_px):
+    TEMPLATE_CHAR = 'K'
+    word = [TEMPLATE_CHAR]
+    w, h = dc.GetTextExtent("".join(word))
+    while w < max_width_in_px:
+        word.append(TEMPLATE_CHAR)
+        w, h = dc.GetTextExtent("".join(word))
+    return len(word) - 1

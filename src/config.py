@@ -25,11 +25,16 @@ configuration back to file, call the write method.
 """
 
 
-import wx
+import sys
 from ConfigParser import ConfigParser
 from ConfigParser import DEFAULTSECT
 import os.path
 from logging import error as logerror
+
+import wx
+
+
+ENCODING = "utf-8"
 
 
 WINDOW_WIDTH = "window_width"
@@ -38,13 +43,15 @@ WINDOW_MAXIMIZED = "window_maximized"
 SHOW_SIDEBAR = "show_sidebar"
 SHOW_LEGEND = "show_legend"
 SIDEBAR_WIDTH = "sidebar_width"
+RECENT_FILES = "recent_files"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
     WINDOW_MAXIMIZED: "False",
     SHOW_SIDEBAR: "True",
     SIDEBAR_WIDTH: "200",
-    SHOW_LEGEND: "False"
+    SHOW_LEGEND: "False",
+    RECENT_FILES: "",
 }
 
 
@@ -113,3 +120,21 @@ def get_sidebar_width():
 
 def set_sidebar_width(width):
     config.set(DEFAULTSECT, SIDEBAR_WIDTH, str(width))
+
+
+def get_recently_opened():
+    return config.get(DEFAULTSECT, RECENT_FILES).decode(ENCODING).split(",")
+
+
+def append_recently_opened(path):
+    if isinstance(path, str):
+        # This path might have come from the command line so we need to convert
+        # it to unicode
+        path = path.decode(sys.getfilesystemencoding())
+    current = get_recently_opened()
+    if len(current) > 0 and current[0] == path:
+        # If we open the same file again there is no point in adding it
+        return
+    current.insert(0, path)
+    config.set(DEFAULTSECT, RECENT_FILES,
+               (",".join(current[:5])).encode(ENCODING))

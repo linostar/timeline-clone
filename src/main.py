@@ -101,7 +101,7 @@ def create_wx_app(input_files):
     main_frame = MainFrame()
     main_frame.Show()
     for input_file in input_files:
-        main_frame.display_timeline(input_file)
+        main_frame.open_timeline(input_file)
     return app
 
 

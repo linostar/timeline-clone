@@ -55,6 +55,17 @@ class Observable(object):
             fn(state_change)
 
 
+class TimelineIOError(Exception):
+    """
+    Raised from a Timeline if a read/write error occurs.
+
+    The constructor and any of the public methods can raise this exception.
+
+    Also raised by the get_timeline method if loading of a timeline failed.
+    """
+    pass
+
+
 class Timeline(Observable):
     """
     Base class that represents the interface for a timeline.
@@ -76,8 +87,9 @@ class Timeline(Observable):
     # Something happened that changed the state of the timeline
     STATE_CHANGE_ANY = 2
 
-    def __init__(self):
+    def __init__(self, path):
         Observable.__init__(self)
+        self.path = path
 
     def get_events(self, time_period):
         """Return a list of all events visible within the time period whose
@@ -275,7 +287,14 @@ class Event(object):
     def set_data(self, plugin_id, data):
         self.data[plugin_id] = data
 
+    def has_data(self):
+        """Return True if the event has associated data, or False if not."""
+        for id in self.data:
+            if self.data[id] != None:
+                return True
+        return False
 
+    
 class Category(object):
     """Represents a category that an event belongs to."""
 
@@ -520,7 +539,7 @@ def time_period_center(time, length):
     return TimePeriod(start_time, end_time)
 
 
-def get_timeline(input_file, error_fn):
+def get_timeline(input_file):
     """
     Timeline factory method.
 
@@ -528,6 +547,8 @@ def get_timeline(input_file, error_fn):
     """
     if input_file.endswith(".timeline"):
         from data_file import FileTimeline
-        return FileTimeline(input_file, error_fn)
+        return FileTimeline(input_file)
     else:
-        raise Exception(_("Unknown format"))
+        msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
+                        _("Unknown format."))
+        raise TimelineIOError(msg_template % input_file)
