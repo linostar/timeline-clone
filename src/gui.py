@@ -619,7 +619,29 @@ class WelcomePanel(wx.Panel):
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
-        wx.StaticText(self, label="Welcome...")
+        self._create_gui()
+
+    def _create_gui(self):
+        vsizer = wx.BoxSizer(wx.VERTICAL)
+        # Text 1
+        t1 = wx.StaticText(self, label=_("No timeline opened."))
+        vsizer.Add(t1, flag=wx.ALIGN_CENTER_HORIZONTAL)
+        # Spacer
+        vsizer.AddSpacer(20)
+        # Text 2
+        t2 = wx.StaticText(self, label=_("First time using Timeline?"))
+        vsizer.Add(t2, flag=wx.ALIGN_CENTER_HORIZONTAL)
+        # Button
+        btn_tutorial = HyperlinkButton(self, _("Getting started tutorial"))
+        self.Bind(wx.EVT_HYPERLINK, self._btn_tutorial_on_click, btn_tutorial)
+        vsizer.Add(btn_tutorial, flag=wx.ALIGN_CENTER_HORIZONTAL)
+        # Sizer
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        hsizer.Add(vsizer, flag=wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, proportion=1)
+        self.SetSizer(hsizer)
+
+    def _btn_tutorial_on_click(self, e):
+        help.show_page("tutorial")
 
 
 class TimelinePanel(wx.Panel):
@@ -1731,6 +1753,14 @@ class DateTimePicker(wx.Panel):
         return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
                                   py_date.hour, py_date.minute,
                                   py_date.second)
+
+
+class HyperlinkButton(wx.HyperlinkCtrl):
+
+    def __init__(self, parent, label, url=""):
+        wx.HyperlinkCtrl.__init__(self, parent, wx.ID_ANY, label=label,
+                                  url=url, style=wx.HL_ALIGN_CENTRE)
+        self.SetVisitedColour(self.GetNormalColour())
 
 
 class TxtException(ValueError):
