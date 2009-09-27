@@ -651,7 +651,7 @@ class WelcomePanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_tutorial_on_click(self, e):
-        help.show_page("tutorial")
+        help_browser.show_page("tutorial")
 
 
 class TimelinePanel(wx.Panel):
