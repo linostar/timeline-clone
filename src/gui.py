@@ -461,7 +461,7 @@ class HelpBrowser(wx.Frame):
 
     def __init__(self, parent, help_system):
         wx.Frame.__init__(self, parent, title=_("Help"),
-                          size=(550, 550), style=wx.DEFAULT_FRAME_STYLE)
+                          size=(600, 550), style=wx.DEFAULT_FRAME_STYLE)
         self.help_system = help_system
         self.history = []
         self.current_pos = -1
