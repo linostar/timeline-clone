@@ -187,7 +187,7 @@ class MainFrame(wx.Frame):
         self.mnu_help.AppendSeparator()
         help_tutorial = self.mnu_help.Append(wx.ID_ANY, _("Getting started tutorial"))
         self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, help_tutorial)
-        help_contact = self.mnu_help.Append(wx.ID_ANY, _("Contact us"))
+        help_contact = self.mnu_help.Append(wx.ID_ANY, _("Contact"))
         self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, help_contact)
         self.mnu_help.AppendSeparator()
         help_about = self.mnu_help.Append(wx.ID_ABOUT)
