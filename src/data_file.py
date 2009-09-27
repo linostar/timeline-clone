@@ -28,9 +28,6 @@ import codecs
 import shutil
 import os.path
 from os.path import abspath
-from logging import error as logerror
-from logging import info as loginfo
-from logging import debug as logdebug
 from datetime import datetime
 from datetime import timedelta
 
@@ -57,10 +54,12 @@ class FileTimeline(Timeline):
     """
     Implements the Timeline interface.
 
-    The comments in the Timeline class describes what the public methods
-    should do.
+    The comments in the Timeline class describe what the public methods do.
 
-    The format of the file looks like this for version >= 0.3.0:
+    Every public method (including the constructor) can raise a TimelineIOError
+    if there was a problem reading or writing from file.
+
+    The general format of the file looks like this for version >= 0.3.0:
 
       # Written by Timeline 0.3.0 on 2009-7-23 9:40:33
       PREFERRED-PERIOD:...
@@ -71,7 +70,8 @@ class FileTimeline(Timeline):
       # END
     
     Only the first and last line are required. See comments in _load_*
-    functions for information how the format has changed.
+    functions for information how the format looks like for the different
+    parts.
     """
 
     # Errors caused by loading and saving timeline data to file
@@ -84,9 +84,7 @@ class FileTimeline(Timeline):
         """
         Create a new timeline and read data from file.
 
-        The error function is used by the timeline to display error messages.
-        It does not know where the messages get displayed, it just knows how to
-        send them. The function takes one argument: the message.
+        If the file does not exist a new timeline will be created.
         """
         Timeline.__init__(self, path)
         self._load_data()
@@ -163,23 +161,25 @@ class FileTimeline(Timeline):
 
         If an error occurs, the error_flag will be set to either ERROR_READ if
         we failed to read from the file or ERROR_CORRUPT if the data we read
-        was not valid. An error message will also be sent.
+        was not valid. A TimelineIOError will also be raised.
         """
         self.preferred_period = None
         self.categories = []
         self.events = []
         self.error_flag = FileTimeline.ERROR_NONE
         if not os.path.exists(self.path): 
-            loginfo("File '%s' does not exists, nothing to load",
-                    abspath(self.path))
+            # Nothing to load. Will create a new timeline on save.
             return
         try:
-            loginfo("Opening file '%s'", abspath(self.path))
             file = codecs.open(self.path, "r", ENCODING)
             try:
-                if not self._load_from_lines(file):
+                try:
+                    self._load_from_lines(file)
+                except ParseException, pe:
                     self.error_flag = FileTimeline.ERROR_CORRUPT
-                    raise TimelineIOError(_("Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem.") % abspath(self.path))
+                    msg1 = _("Unable to read timeline data from '%s'.")
+                    msg2 = "\n\n" + pe.message
+                    raise TimelineIOError((msg1 % abspath(self.path)) + msg2)
             finally:
                 file.close()
         except IOError, e:
@@ -189,45 +189,37 @@ class FileTimeline(Timeline):
             raise TimelineIOError(whole_msg)
 
     def _load_from_lines(self, file):
-        """Return True if able to load, otherwise False."""
         current_line = file.readline()
         # Load header
-        if not self._load_header(current_line.rstrip("\r\n")):
-            return False
+        self._load_header(current_line.rstrip("\r\n"))
         current_line = file.readline()
         # Load preferred period
         if current_line.startswith("PREFERRED-PERIOD:"):
-            if not self._load_preferred_period(current_line[17:].rstrip("\r\n")):
-                return False
+            self._load_preferred_period(current_line[17:].rstrip("\r\n"))
             current_line = file.readline()
         # Load categories
         while current_line.startswith("CATEGORY:"):
-            if not self._load_category(current_line[9:].rstrip("\r\n")):
-                return False
+            self._load_category(current_line[9:].rstrip("\r\n"))
             current_line = file.readline()
         # Load events
         while current_line.startswith("EVENT:"):
-            if not self._load_event(current_line[6:].rstrip("\r\n")):
-                return False
+            self._load_event(current_line[6:].rstrip("\r\n"))
             current_line = file.readline()
         # Check for footer if version >= 0.3.0 (version read by _load_header)
         if self.file_version >= (0, 3, 0):
-            if not self._load_footer(current_line.rstrip("\r\n")):
-                return False
+            self._load_footer(current_line.rstrip("\r\n"))
             current_line = file.readline()
             # Ensure no more data
             if current_line:
-                logerror("File continues after EOF marker")
-                return False
-        # All well
-        return True
+                raise ParseException("File continues after EOF marker.")
 
     def _load_header(self, header_text):
         """
         Expected format '# Written by Timeline <version> on <date>'.
         
-        Expected format of <version> '0.3.0[dev<revision>]'. We are just
-        interested in the first part of the version.
+        Expected format of <version> '0.3.0[dev<revision>]'.
+        
+        We are just interested in the first part of the version.
         """
         match = re.search(r"^# Written by Timeline (\d+)\.(\d+)\.(\d+)",
                           header_text)
@@ -236,26 +228,21 @@ class FileTimeline(Timeline):
             minor = int(match.group(2))
             tiny = int(match.group(3))
             self.file_version = (major, minor, tiny)
-            return True
         else:
-            logerror("Unable to load header from '%s'", header_text)
-            return False
+            raise ParseException("Unable to load header from '%s'." % header_text)
 
     def _load_preferred_period(self, period_text):
         """Expected format 'start_time;end_time'."""
         times = split_on_semicolon(period_text)
         try:
             if len(times) != 2:
-                raise ParseException("Unexpected number of components")
+                raise ParseException("Unexpected number of components.")
             self.preferred_period = TimePeriod(parse_time(times[0]),
                                                parse_time(times[1]))
             if not self.preferred_period.is_period():
-                raise ParseException("Length not > 0")
-            return True
+                raise ParseException("Length not > 0.")
         except ParseException, e:
-            logerror("Unable to parse preferred period from '%s'",
-                     period_text, exc_info=e)
-            return False
+            raise ParseException("Unable to parse preferred period from '%s': %s" % (period_text, e.message))
 
     def _load_category(self, category_text):
         """
@@ -267,18 +254,15 @@ class FileTimeline(Timeline):
         category_data = split_on_semicolon(category_text)
         try:
             if len(category_data) != 2 and len(category_data) != 3:
-                raise ParseException("Unexpected number of components")
+                raise ParseException("Unexpected number of components.")
             name = dequote(category_data[0])
             color = parse_color(category_data[1])
             visible = True
             if len(category_data) == 3:
                 visible = parse_bool(category_data[2])
             self.categories.append(Category(name, color, visible))
-            return True
         except ParseException, e:
-            logerror("Unable to parse category from '%s'", category_text,
-                     exc_info=e)
-            return False
+            raise ParseException("Unable to parse category from '%s': %s" % (category_text, e.message))
 
     def _load_event(self, event_text):
         """
@@ -297,7 +281,7 @@ class FileTimeline(Timeline):
             if self.file_version < (0, 4, 0):
                 if (len(event_specification) != 3 and
                     len(event_specification) != 4):
-                    raise ParseException("Unexpected number of components")
+                    raise ParseException("Unexpected number of components.")
                 start_time = parse_time(event_specification[0])
                 end_time = parse_time(event_specification[1])
                 text = dequote(event_specification[2])
@@ -309,7 +293,7 @@ class FileTimeline(Timeline):
                 return True
             else:
                 if len(event_specification) < 4:
-                    raise ParseException("Unexpected number of components")
+                    raise ParseException("Unexpected number of components.")
                 start_time = parse_time(event_specification[0])
                 end_time = parse_time(event_specification[1])
                 text = dequote(event_specification[2])
@@ -319,22 +303,16 @@ class FileTimeline(Timeline):
                     id, data = item.split(":", 1)
                     plugin = get_event_data_plugin(id)
                     if plugin == None:
-                        raise ParseException("Can't find event data plugin '%s'" % id)
+                        raise ParseException("Can't find event data plugin '%s'." % id)
                     event.set_data(id, plugin.decode(dequote(data)))
                 self.events.append(event)
-                return True
         except ParseException, e:
-            logerror("Unable to parse event from '%s'", event_text,
-                     exc_info=e)
-            return False
+            raise ParseException("Unable to parse event from '%s': %s" % (event_text, e.message))
 
     def _load_footer(self, footer_text):
         """Expected format '# END'."""
-        if footer_text == "# END":
-            return True
-        else:
-            logerror("Unable to load footer from '%s'", footer_text)
-            return False
+        if not footer_text == "# END":
+            raise ParseException("Unable to load footer from '%s'." % footer_text)
 
     def _get_category(self, name):
         for category in self.categories:
@@ -360,7 +338,6 @@ class FileTimeline(Timeline):
         if self.error_flag != FileTimeline.ERROR_NONE:
             raise TimelineIOError(_("Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."))
         self._create_backup()
-        loginfo("Saving file '%s'", abspath(self.path))
         try:
             file = codecs.open(self.path, "w", ENCODING)
             try:
@@ -383,7 +360,6 @@ class FileTimeline(Timeline):
         if os.path.exists(self.path):
             backup_path = self.path + "~"
             try:
-                loginfo("Creating backup to '%s'", abspath(backup_path))
                 shutil.copy(self.path, backup_path)
             except IOError, e:
                 msg = _("Unable to create backup to '%s'.")
