@@ -96,6 +96,7 @@ class MainFrame(wx.Frame):
             self.handle_timeline_error(e)
         else:
             config.append_recently_opened(input_file)
+            self._update_open_recent_submenu()
             self._display_timeline(timeline)
 
     def create_new_event(self, start=None, end=None):
@@ -155,6 +156,9 @@ class MainFrame(wx.Frame):
                              _("Create a new timeline"))
         self.mnu_file.Append(wx.ID_OPEN, add_ellipses_to_menuitem(wx.ID_OPEN),
                              _("Open an existing timeline"))
+        self.mnu_file_open_recent_submenu = wx.Menu()
+        self.mnu_file.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
+        self._update_open_recent_submenu()
         self.mnu_file.AppendSeparator()
         self.mnu_file_print_setup = self.mnu_file.Append(wx.ID_PRINT_SETUP,
                                        _("Page Set&up..."),
@@ -242,6 +246,21 @@ class MainFrame(wx.Frame):
         menuBar.Append(self.mnu_help, _("&Help"))
         self.SetMenuBar(menuBar)
 
+    def _update_open_recent_submenu(self):
+        # Clear items
+        for item in self.mnu_file_open_recent_submenu.GetMenuItems():
+            self.mnu_file_open_recent_submenu.DeleteItem(item)
+        # Create new items and map (item id > path)
+        self.open_recent_map = {}
+        for path in config.get_recently_opened():
+            name = "%s (%s)" % (
+                os.path.basename(path),
+                os.path.dirname(os.path.abspath(path)))
+            item = self.mnu_file_open_recent_submenu.Append(wx.ID_ANY, name)
+            self.open_recent_map[item.GetId()] = path
+            self.Bind(wx.EVT_MENU, self._mnu_file_open_recent_item_on_click,
+                      item)
+
     def _window_on_close(self, event):
         self._save_current_timeline_data()
         self._save_application_config()
@@ -254,6 +273,13 @@ class MainFrame(wx.Frame):
     def _mnu_file_open_on_click(self, event):
         """Event handler used when the user wants to open a new timeline."""
         self._open_existing_timeline()
+
+    def _mnu_file_open_recent_item_on_click(self, event):
+        path = self.open_recent_map[event.GetId()]
+        if os.path.exists(path):
+            self.open_timeline(path)
+        else:
+            _display_error_message(_("File '%s' does not exist.") % path, self)
 
     def _mnu_file_print_on_click(self, event):
         self.main_panel.drawing_area.print_timeline(event)
