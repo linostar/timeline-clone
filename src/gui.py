@@ -53,6 +53,7 @@ from paths import MANUAL_FILE
 from paths import HELP_RESOURCES_DIR
 import printing
 import help
+import help_pages
 
 
 # Border, in pixels, between controls in a window (should always be used when
@@ -60,6 +61,9 @@ import help
 BORDER = 5
 # Used by dialogs as a return code when a TimelineIOError has been raised
 ID_ERROR = wx.NewId()
+
+
+help_browser = None
 
 
 class MainFrame(wx.Frame):
@@ -84,7 +88,7 @@ class MainFrame(wx.Frame):
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
         self.mnu_view_legend.Check(config.get_show_legend())
         self.SetIcons(self._load_icon_bundle())
-        help.init(self, "contents", HELP_RESOURCES_DIR, ["help_pages"])
+        self._init_help_system()
         self.main_panel.show_welcome_panel()
         self._enable_disable_menus()
 
@@ -95,6 +99,8 @@ class MainFrame(wx.Frame):
         except TimelineIOError, e:
             self.handle_timeline_error(e)
         else:
+            config.append_recently_opened(input_file)
+            self._update_open_recent_submenu()
             self._display_timeline(timeline)
 
     def create_new_event(self, start=None, end=None):
@@ -154,6 +160,9 @@ class MainFrame(wx.Frame):
                              _("Create a new timeline"))
         self.mnu_file.Append(wx.ID_OPEN, add_ellipses_to_menuitem(wx.ID_OPEN),
                              _("Open an existing timeline"))
+        self.mnu_file_open_recent_submenu = wx.Menu()
+        self.mnu_file.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
+        self._update_open_recent_submenu()
         self.mnu_file.AppendSeparator()
         self.mnu_file_print_setup = self.mnu_file.Append(wx.ID_PRINT_SETUP,
                                        _("Page Set&up..."),
@@ -227,7 +236,7 @@ class MainFrame(wx.Frame):
         self.mnu_help.AppendSeparator()
         help_tutorial = self.mnu_help.Append(wx.ID_ANY, _("Getting started tutorial"))
         self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, help_tutorial)
-        help_contact = self.mnu_help.Append(wx.ID_ANY, _("Contact us"))
+        help_contact = self.mnu_help.Append(wx.ID_ANY, _("Contact"))
         self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, help_contact)
         self.mnu_help.AppendSeparator()
         help_about = self.mnu_help.Append(wx.ID_ABOUT)
@@ -241,6 +250,21 @@ class MainFrame(wx.Frame):
         menuBar.Append(self.mnu_help, _("&Help"))
         self.SetMenuBar(menuBar)
 
+    def _update_open_recent_submenu(self):
+        # Clear items
+        for item in self.mnu_file_open_recent_submenu.GetMenuItems():
+            self.mnu_file_open_recent_submenu.DeleteItem(item)
+        # Create new items and map (item id > path)
+        self.open_recent_map = {}
+        for path in config.get_recently_opened():
+            name = "%s (%s)" % (
+                os.path.basename(path),
+                os.path.dirname(os.path.abspath(path)))
+            item = self.mnu_file_open_recent_submenu.Append(wx.ID_ANY, name)
+            self.open_recent_map[item.GetId()] = path
+            self.Bind(wx.EVT_MENU, self._mnu_file_open_recent_item_on_click,
+                      item)
+
     def _window_on_close(self, event):
         self._save_current_timeline_data()
         self._save_application_config()
@@ -253,6 +277,13 @@ class MainFrame(wx.Frame):
     def _mnu_file_open_on_click(self, event):
         """Event handler used when the user wants to open a new timeline."""
         self._open_existing_timeline()
+
+    def _mnu_file_open_recent_item_on_click(self, event):
+        path = self.open_recent_map[event.GetId()]
+        if os.path.exists(path):
+            self.open_timeline(path)
+        else:
+            _display_error_message(_("File '%s' does not exist.") % path, self)
 
     def _mnu_file_print_on_click(self, event):
         self.main_panel.drawing_area.print_timeline(event)
@@ -307,16 +338,22 @@ class MainFrame(wx.Frame):
         self._navigate_timeline(lambda tp: tp.fit_day())
 
     def _mnu_help_contents_on_click(self, e):
-        help.show_page("contents")
+        help_browser.show_page("contents")
 
     def _mnu_help_tutorial_on_click(self, e):
-        help.show_page("tutorial")
+        help_browser.show_page("tutorial")
 
     def _mnu_help_contact_on_click(self, e):
-        help.show_page("contact")
+        help_browser.show_page("contact")
 
     def _mnu_help_about_on_click(self, e):
         display_about_dialog()
+
+    def _init_help_system(self):
+        help_system = help.HelpSystem("contents", HELP_RESOURCES_DIR + "/", "page:")
+        help_pages.install(help_system)
+        global help_browser
+        help_browser = HelpBrowser(self, help_system)
 
     def _switch_to_error_view(self, error):
         self._display_timeline(None)
@@ -1704,6 +1741,157 @@ class DateTimePicker(wx.Panel):
         return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
                                   py_date.hour, py_date.minute,
                                   py_date.second)
+
+
+class HelpBrowser(wx.Frame):
+
+    HOME_ID = 10
+    BACKWARD_ID = 20
+    FORWARD_ID = 30
+
+    def __init__(self, parent, help_system):
+        wx.Frame.__init__(self, parent, title=_("Help"),
+                          size=(600, 550), style=wx.DEFAULT_FRAME_STYLE)
+        self.help_system = help_system
+        self.history = []
+        self.current_pos = -1
+        self._create_gui()
+        self._update_buttons()
+
+    def show_page(self, id, type="page", change_history=True):
+        """
+        Where which is a tuple (type, id):
+
+          * (page, page_id)
+          * (search, search_string)
+        """
+        if change_history:
+            if self.current_pos != -1:
+                current_type, current_id = self.history[self.current_pos]
+                if id == current_id:
+                    return
+            self.history = self.history[:self.current_pos + 1]
+            self.history.append((type, id))
+            self.current_pos += 1
+        self._update_buttons()
+        if type == "page":
+            self.html_window.SetPage(self._generate_page(id))
+        elif type == "search":
+            self.html_window.SetPage(self.help_system.get_search_results_page(id))
+        self.Show()
+        self.Raise()
+
+    def _create_gui(self):
+        self.Bind(wx.EVT_CLOSE, self._window_on_close)
+        self.toolbar = self.CreateToolBar()
+        size = (24, 24)
+        home_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_HOME, wx.ART_TOOLBAR,
+                                            size)
+        back_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR,
+                                            size)
+        forward_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD,
+                                               wx.ART_TOOLBAR, size)
+        self.toolbar.SetToolBitmapSize(size)
+        # Home
+        home_str = _("Go to home page")
+        self.toolbar.AddLabelTool(HelpBrowser.HOME_ID, home_str,
+                                  home_bmp, shortHelp=home_str)
+        self.Bind(wx.EVT_TOOL, self._toolbar_on_click, id=HelpBrowser.HOME_ID)
+        # Separator
+        self.toolbar.AddSeparator()
+        # Backward
+        backward_str = _("Go back one page")
+        self.toolbar.AddLabelTool(HelpBrowser.BACKWARD_ID, backward_str,
+                                  back_bmp, shortHelp=backward_str)
+        self.Bind(wx.EVT_TOOL, self._toolbar_on_click,
+                  id=HelpBrowser.BACKWARD_ID)
+        # Forward
+        forward_str = _("Go forward one page")
+        self.toolbar.AddLabelTool(HelpBrowser.FORWARD_ID, forward_str,
+                                  forward_bmp, shortHelp=forward_str)
+        self.Bind(wx.EVT_TOOL, self._toolbar_on_click,
+                  id=HelpBrowser.FORWARD_ID)
+        # Separator
+        self.toolbar.AddSeparator()
+        # Search
+        self.search = wx.SearchCtrl(self.toolbar, size=(150, -1),
+                                    style=wx.TE_PROCESS_ENTER)
+        self.Bind(wx.EVT_TEXT_ENTER, self._search_on_text_enter, self.search)
+        self.toolbar.AddControl(self.search)
+        self.toolbar.Realize()
+        # Html window
+        self.html_window = wx.html.HtmlWindow(self)
+        self.Bind(wx.html.EVT_HTML_LINK_CLICKED,
+                  self._html_window_on_link_clicked, self.html_window)
+
+    def _window_on_close(self, e):
+        self.Show(False)
+
+    def _toolbar_on_click(self, e):
+        if e.GetId() == HelpBrowser.HOME_ID:
+            self._go_home()
+        elif e.GetId() == HelpBrowser.BACKWARD_ID:
+            self._go_back()
+        elif e.GetId() == HelpBrowser.FORWARD_ID:
+            self._go_forward()
+
+    def _search_on_text_enter(self, e):
+        self._search(self.search.GetValue())
+
+    def _html_window_on_link_clicked(self, e):
+        url = e.GetLinkInfo().GetHref()
+        if url.startswith("page:"):
+            self.show_page(url[5:])
+        else:
+            pass
+            # open in broswer
+
+    def _go_home(self):
+        self.show_page(self.help_system.home_page)
+
+    def _go_back(self):
+        if self.current_pos > 0:
+            self.current_pos -= 1
+            current_type, current_id = self.history[self.current_pos]
+            self.show_page(current_id, type=current_type, change_history=False)
+
+    def _go_forward(self):
+        if self.current_pos < len(self.history) - 1:
+            self.current_pos += 1
+            current_type, current_id = self.history[self.current_pos]
+            self.show_page(current_id, type=current_type, change_history=False)
+
+    def _search(self, string):
+        self.show_page(string, type="search")
+
+    def _update_buttons(self):
+        history_len = len(self.history)
+        enable_backward = history_len > 1 and self.current_pos > 0
+        enable_forward = history_len > 1 and self.current_pos < history_len - 1
+        self.toolbar.EnableTool(HelpBrowser.BACKWARD_ID, enable_backward)
+        self.toolbar.EnableTool(HelpBrowser.FORWARD_ID, enable_forward)
+
+    def _generate_page(self, id):
+        page = self.help_system.get_page(id)
+        if page == None:
+            error_page_html = "<h1>%s</h1><p>%s</p>" % (
+                _("Page not found"),
+                _("Could not find page '%s'.") % id)
+            return self._wrap_in_html(error_page_html)
+        else:
+            return self._wrap_in_html(page.render_to_html())
+
+    def _wrap_in_html(self, content):
+        HTML_SKELETON = """
+        <html>
+        <head>
+        </head>
+        <body>
+        %s
+        </body>
+        </html>
+        """
+        return HTML_SKELETON % content
 
 
 class TxtException(ValueError):

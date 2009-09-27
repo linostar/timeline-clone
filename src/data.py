@@ -294,16 +294,6 @@ class Event(object):
                 return True
         return False
 
-    def get_description_data(self):
-        """
-        Return 'description' data, or None if the event has no 
-        'deciption' data.
-        """
-        for id in self.data:
-            if id == "description":
-                return self.data[id]
-        return None
-
     
 class Category(object):
     """Represents a category that an event belongs to."""
