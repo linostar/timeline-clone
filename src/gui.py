@@ -1790,7 +1790,8 @@ class HyperlinkButton(wx.HyperlinkCtrl):
 
     def __init__(self, parent, label, url=""):
         wx.HyperlinkCtrl.__init__(self, parent, wx.ID_ANY, label=label,
-                                  url=url, style=wx.HL_ALIGN_CENTRE)
+                                  url=url,
+                                  style=wx.HL_ALIGN_CENTRE|wx.NO_BORDER)
         self.SetVisitedColour(self.GetNormalColour())
 
 
