@@ -49,7 +49,6 @@ import config
 from about import display_about_dialog
 from about import APPLICATION_NAME
 from paths import ICONS_DIR
-from paths import MANUAL_FILE
 from paths import HELP_RESOURCES_DIR
 import printing
 import help
