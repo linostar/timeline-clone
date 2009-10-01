@@ -604,14 +604,16 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         BG_COLOR = wx.Color(255, 255, 231)
         PEN = wx.Pen(BORDER_COLOR, 1, wx.SOLID)
         BRUSH = wx.Brush(BG_COLOR, wx.SOLID)
-        # Calculate points, text area position and size
-        points, text_rect = calculate_ballon_points(rect)
-        # Draw the ballon
+        # Calculate path, text area position and size
         self.dc.DestroyClippingRegion()
-        self.dc.SetPen(PEN)
-        self.dc.SetBrush(BRUSH)
-        self.dc.DrawPolygon(points)
-        # Break text
+        gc = wx.GraphicsContext.Create(self.dc)
+        path = gc.CreatePath()
+        text_rect = get_ballon_border_path_and_text_rect(rect, path)
+        # Draw the ballon
+        gc.SetPen(PEN)
+        gc.SetBrush(BRUSH)
+        gc.DrawPath(path)
+        # Break text and print it
         self.dc.SetFont(drawing.get_default_font(8))
         description = event.get_data("description")
         lines = break_text(description, self.dc, text_rect.width)
@@ -641,7 +643,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.DrawText(more_indicator, start, current_y)
 
 
-def calculate_ballon_points(rect):
+def get_ballon_border_path_and_text_rect(rect, path):
     """
                 W
        |----------------|
@@ -668,71 +670,49 @@ def calculate_ballon_points(rect):
     W_ARROW_OFFSET = R + 25
     AA = 20
     MARGIN = 5
-    points = []
     # Starting point at the tip of the arrow
     p0 = wx.Point(rect.X + rect.Width / 2, rect.Y)
-    points.append(p0)
+    path.MoveToPoint(p0.x, p0.y)
     # Next pont is the left base of the arrow
     p1 = wx.Point(p0.x + H_ARROW * math.tan(math.radians(AA)), p0.y - H_ARROW)
-    points.append(p1)
+    path.AddLineToPoint(p1.x, p1.y)
     # Start of lower left rounded corner
     p2 = wx.Point(p1.x - W_ARROW_OFFSET + R, p1.y)
-    points.append(p2)
     bottom_y = p2.y
+    path.AddLineToPoint(p2.x, p2.y)
     # The lower left rounded corner. p3 is the center of the arc
     p3 = wx.Point(p2.x, p2.y - R)
-    p = calculate_arc_points(p3, R, 0, points)
+    path.AddArc(p3.x, p3.y, R, math.radians(90), math.radians(180))
     # The left side
-    p4 = wx.Point(p.x, p.y - H + R + R)
-    points.append(p4)
+    p4 = wx.Point(p3.x - R, p3.y - H + R)
     left_x = p4.x
+    path.AddLineToPoint(p4.x, p4.y)
     # The upper left rounded corner. p5 is the center of the arc
     p5 = wx.Point(p4.x + R, p4.y)
-    p = calculate_arc_points(p5, R, 90, points)
+    path.AddArc(p5.x, p5.y, R, math.radians(180), math.radians(-90))
     # The upper side
-    p6 = wx.Point(p.x - R + W - R, p.y)
-    points.append(p6)
+    p6 = wx.Point(p5.x + W - R, p5.y - R)
     top_y = p6.y
+    path.AddLineToPoint(p6.x, p6.y)
     # The upper right rounded corner. p7 is the center of the arc
     p7 = wx.Point(p6.x, p6.y + R)
-    p = calculate_arc_points(p7, R, 180, points)
+    path.AddArc(p7.x, p7.y, R, math.radians(-90), math.radians(0))
     # The right side
-    p8 = wx.Point(p.x, p.y - R + H - R)
-    points.append(p8)
+    p8 = wx.Point(p7.x + R , p7.y + H - R)
     right_x = p8.x
+    path.AddLineToPoint(p8.x, p8.y)
     # The lower right rounded corner. p9 is the center of the arc
     p9 = wx.Point(p8.x - R, p8.y)
-    p = calculate_arc_points(p9, R, 270, points)
+    path.AddArc(p9.x, p9.y, R, math.radians(0), math.radians(90))
     # The lower side
-    p10 = wx.Point(p.x + R - W + W_ARROW +  W_ARROW_OFFSET, p.y)
-    points.append(p10)
+    p10 = wx.Point(p9.x - W + W_ARROW +  W_ARROW_OFFSET, p9.y + R)
+    path.AddLineToPoint(p10.x, p10.y)
+    path.CloseSubpath()
     text_x = left_x + MARGIN
     text_y = top_y  + MARGIN
     text_w = right_x  - left_x - 2 * MARGIN
     text_h = bottom_y - top_y  - 2 * MARGIN
-    return points, wx.Rect(text_x, text_y, text_w, text_h)
-
-
-def calculate_arc_points(center_point, radius, angle, points_list):
-    """
-    Calculates the points on an arc that is a quarter of a circle with
-    the given radius and appends these points to the points_list.
-    center_point, is the center of the circle.
-    angle, decides wich quarter to calculate:
-        0   = Lover left
-        90  = uper left
-        180 = upper right
-        270 = lower right
-    Returns the last point caluclat
-    """
-    NBR_OF_POINTS = 19
-    for n in range(NBR_OF_POINTS + 1):
-        v = angle + n * 90 / NBR_OF_POINTS
-        x = radius * math.sin(math.radians(v))
-        y = radius * math.cos(math.radians(v))
-        p = wx.Point(center_point.x - x, center_point.y + y)
-        points_list.append(p)
-    return p
+    return wx.Rect(text_x, text_y, text_w, text_h)
 
 
 def break_text(text, dc, max_width_in_px):
