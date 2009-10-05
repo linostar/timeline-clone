@@ -576,7 +576,7 @@ class MainPanel(wx.Panel):
     Panel that covers the whole client area of MainFrame.
 
     Displays one of the following panels:
-    
+
       * The welcome panel (show_welcome_panel)
       * A splitter with sidebar and DrawingArea (show_timeline_panel)
       * The error panel (show_error_panel)
@@ -968,6 +968,12 @@ class DrawingArea(wx.Panel):
         Otherwise a dialog for creating a new event is opened.
         """
         logging.debug("Left Mouse doubleclicked event in DrawingArea")
+        # Since the event sequence is, 1. EVT_LEFT_DOWN  2. EVT_LEFT_UP
+        # 3. EVT_LEFT_DCLICK we must compensate for the toggle_event_selection
+        # that occurs in the handling of EVT_LEFT_DOWN, since we still want
+        # the event(s) selected or deselected after a left doubleclick
+        # It doesn't look too god but I havent found any other way to do it.
+        self._toggle_event_selection(evt.m_x, evt.m_y,evt.m_controlDown)
         event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
         if event:
             wx.GetTopLevelParent(self).edit_event(event)
