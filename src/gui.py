@@ -951,11 +951,10 @@ class DrawingArea(wx.Panel):
             self._set_new_current_time(evt.m_x)
             posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
                                                       evt.m_controlDown)
+            self._set_drag_cursor()
             if not posAtEvent:
                 if evt.m_controlDown:
                     self._set_select_period_cursor()
-                else:
-                    self._set_drag_cursor()
             evt.Skip()
         except TimelineIOError, e:
             wx.GetTopLevelParent(self).handle_timeline_error(e)
