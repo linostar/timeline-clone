@@ -609,6 +609,9 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         gc = wx.GraphicsContext.Create(self.dc)
         path = gc.CreatePath()
         text_rect = get_ballon_border_path_and_text_rect(rect, path)
+        # Draw sharp lines on GTK which uses Cairo
+        # See: http://www.cairographics.org/FAQ/#sharp_lines
+        gc.Translate(0.5, 0.5)
         # Draw the ballon
         gc.SetPen(PEN)
         gc.SetBrush(BRUSH)
