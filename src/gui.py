@@ -1008,7 +1008,7 @@ class DrawingArea(wx.Panel):
         """
         logging.debug("Mouse move event in DrawingArea")
         if evt.Dragging:
-            self._display_eventname_in_statusbar(evt.m_x, evt.m_y)
+            self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
         if evt.m_leftDown:
             if self.is_scrolling:
                 self._scroll(evt.m_x)
@@ -1173,7 +1173,7 @@ class DrawingArea(wx.Panel):
         wx.GetTopLevelParent(self).create_new_event(start, end)
         self._redraw_timeline()
 
-    def _display_eventname_in_statusbar(self, xpixelpos, ypixelpos):
+    def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos):
         """
         If the given position is within the boundaries of an event, the name of
         that event will be displayed in the status bar, otherwise the status
@@ -1181,7 +1181,7 @@ class DrawingArea(wx.Panel):
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event != None:
-            self._display_text_in_statusbar(event.text)
+            self._display_text_in_statusbar(str(event))
         else:
             self._reset_text_in_statusbar()
 
@@ -1445,9 +1445,7 @@ class EventEditor(wx.Dialog):
                     plugin.set_editor_data(editor, data)
             self.updatemode = True
         if start != None and end != None:
-            show_time = (start.time() != time(0, 0, 0) or
-                         end.time() != time(0, 0, 0))
-            self.chb_show_time.SetValue(show_time)
+            self.chb_show_time.SetValue(self.event.time_period.show_time())
             self.chb_period.SetValue(start != end)
         self.dtp_start.set_value(start)
         self.dtp_end.set_value(end)

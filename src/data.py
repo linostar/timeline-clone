@@ -23,6 +23,7 @@ Custom data types.
 
 from datetime import timedelta
 from datetime import datetime as dt
+from datetime import time
 
 import wx
 
@@ -169,7 +170,7 @@ class EventDataPlugin(object):
     def get_name(self):
         """
         Return an internationalized string.
-        
+
         Displayed on the tabs of the notebook in the event editor dialog.
         """
         raise NotImplementedError()
@@ -179,7 +180,7 @@ class EventDataPlugin(object):
         Encode data to string.
 
         Used to save data to file.
-        
+
         For convenience, string data is assumed.
         """
         return data
@@ -187,9 +188,9 @@ class EventDataPlugin(object):
     def decode(self, string):
         """
         Decode string to data.
-        
+
         Used to load data from file.
-        
+
         For convenience, string data is assumed.
         """
         return string
@@ -294,7 +295,18 @@ class Event(object):
                 return True
         return False
 
-    
+    def __str__(self):
+        collector = [self.text, " "]
+        if self.is_period():
+            collector.append("(")
+            collector.append(str(self.time_period))
+            collector.append(")")
+        else:
+            collector.append("(")
+            collector.append(str(self.time_period))
+            collector.append(")")
+        return "".join(collector)
+
 class Category(object):
     """Represents a category that an event belongs to."""
 
@@ -380,6 +392,11 @@ class TimePeriod(object):
         point in time, otherwise the point in time for this time period.
         """
         return self.start_time + self.delta() / 2
+
+    def show_time(self):
+        show_time = (self.start_time.time() != time(0, 0, 0) or
+                     self.end_time.time()   != time(0, 0, 0))
+        return show_time
 
     def zoom(self, times):
         MAX_ZOOM_DELTA = timedelta(days=120*365)
@@ -476,6 +493,18 @@ class TimePeriod(object):
                 return (None, 1)
             else:
                 return (None, -1)
+
+    def __str__(self):
+        if self.start_time == self.end_time:
+            if self.show_time():
+                return "%s" % self.start_time
+            else:
+                return "%s" % str(self.start_time)[0:10]
+        else:
+            if self.show_time():
+                return "%s to %s" % (self.start_time, self.end_time)
+            else:
+                return "%s to %s" % (str(self.start_time)[0:10], str(self.end_time)[0:10])
 
 
 def get_event_data_plugin(id):
