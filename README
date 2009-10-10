@@ -9,6 +9,9 @@ version 3. For more information, see the file COPYING.
 Icons are licensed under the Creative Commons Attribution-Share Alike 3.0
 Unported License. For more information, see file icons/COPYING.
 
+Translations are licensed under the modern, simplified BSD license and are
+managed on Launchpad: http://translations.launchpad.net/thetimelineproj.
+
 Overview of the files in this directory:
 
 help_resources/ - Images used by the help system
