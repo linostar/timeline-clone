@@ -24,6 +24,7 @@ Custom data types.
 from datetime import timedelta
 from datetime import datetime as dt
 from datetime import time
+import calendar
 
 import wx
 
@@ -295,17 +296,10 @@ class Event(object):
                 return True
         return False
 
-    def __str__(self):
-        collector = [self.text, " "]
-        if self.is_period():
-            collector.append("(")
-            collector.append(str(self.time_period))
-            collector.append(")")
-        else:
-            collector.append("(")
-            collector.append(str(self.time_period))
-            collector.append(")")
-        return "".join(collector)
+    def get_label(self):
+        """Returns a unicode label describing the event."""
+        return u"%s (%s)" % (self.text, self.time_period.get_label())
+
 
 class Category(object):
     """Represents a category that an event belongs to."""
@@ -392,11 +386,6 @@ class TimePeriod(object):
         point in time, otherwise the point in time for this time period.
         """
         return self.start_time + self.delta() / 2
-
-    def show_time(self):
-        show_time = (self.start_time.time() != time(0, 0, 0) or
-                     self.end_time.time()   != time(0, 0, 0))
-        return show_time
 
     def zoom(self, times):
         MAX_ZOOM_DELTA = timedelta(days=120*365)
@@ -494,17 +483,33 @@ class TimePeriod(object):
             else:
                 return (None, -1)
 
-    def __str__(self):
-        if self.start_time == self.end_time:
-            if self.show_time():
-                return "%s" % self.start_time
+    def get_label(self):
+        """Returns a unicode string describing the time period."""
+        def label_with_time(time):
+            return u"%s %s" % (label_without_time(time), time_label(time))
+        def label_without_time(time):
+            return u"%s %s %s" % (time.day, calendar.month_abbr[time.month], time.year)
+        def time_label(time):
+            return time.time().isoformat()[0:5]
+        if self.is_period():
+            if has_nonzero_time(self.start_time, self.end_time):
+                label = u"%s to %s" % (label_with_time(self.start_time),
+                                      label_with_time(self.end_time))
             else:
-                return "%s" % str(self.start_time)[0:10]
+                label = u"%s to %s" % (label_without_time(self.start_time), 
+                                      label_without_time(self.end_time))
         else:
-            if self.show_time():
-                return "%s to %s" % (self.start_time, self.end_time)
+            if has_nonzero_time(self.start_time, self.end_time):
+                label = u"%s" % label_with_time(self.start_time) 
             else:
-                return "%s to %s" % (str(self.start_time)[0:10], str(self.end_time)[0:10])
+                label = u"%s" % label_without_time(self.start_time)
+        return label
+
+
+def has_nonzero_time(start_time, end_time):
+    nonzero_time = (start_time.time() != time(0, 0, 0) or
+                    end_time.time()   != time(0, 0, 0))
+    return nonzero_time
 
 
 def get_event_data_plugin(id):
