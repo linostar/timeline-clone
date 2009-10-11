@@ -43,6 +43,7 @@ from data import Timeline
 from data import Event
 from data import Category
 from data import TimePeriod
+from data import has_nonzero_time
 import data
 import drawing
 import config
@@ -1181,7 +1182,7 @@ class DrawingArea(wx.Panel):
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event != None:
-            self._display_text_in_statusbar(str(event))
+            self._display_text_in_statusbar(event.get_label())
         else:
             self._reset_text_in_statusbar()
 
@@ -1445,7 +1446,7 @@ class EventEditor(wx.Dialog):
                     plugin.set_editor_data(editor, data)
             self.updatemode = True
         if start != None and end != None:
-            self.chb_show_time.SetValue(self.event.time_period.show_time())
+            self.chb_show_time.SetValue(has_nonzero_time(start, end))
             self.chb_period.SetValue(start != end)
         self.dtp_start.set_value(start)
         self.dtp_end.set_value(end)
