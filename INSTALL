@@ -1,17 +1,41 @@
 The recommended way to install Timeline is with a binary package or installer.
 If that is not available for your platform, instructions for installing from
-source will follow below.
+source follows below.
 
 Prerequisites
 =============
 
-Timeline is written in the Python programming language and uses the wxPython
-library for the GUI. Both these components are needed in order to run
-Timeline. For further instructions on how to download and install these, go to
-their respective home pages:
+Required:
 
-  * Python (http://www.python.org)
-  * wxPython (http://www.wxpython.org)
+  * Python version 2.4 or 2.5
+      http://www.python.org
+  * wxPython version 2.8.8 or greater
+      http://www.wxpython.org
+  * Markdown version 1.7 or greater
+      http://www.freewisdom.org/projects/python-markdown/
+
+For translations (other than English) you also need the following:
+
+  * SCons
+      http://www.scons.org/
+  * gettext version 0.17
+      http://www.gnu.org/software/gettext/
+
+Installing prerequisites on a Debian-based system
+-------------------------------------------------
+
+Note: If your version of wxPython is less than 2.8.8 you need to install a
+newer version. Check out this wiki page for instructions how to do that:
+http://wiki.wxpython.org/InstallingOnUbuntuOrDebian.
+
+  apt-get install python python-wxgtk2.8 wx2.8-i18n python-markdown
+  apt-get install scons gettext
+
+gettext on Windows
+------------------
+
+Get the zipfiles gettext-tools-0.17.zip and gettext-runtime-0.17-1.zip from
+here http://ftp.acc.umu.se/pub/gnome/binaries/win32/dependencies/.
 
 Platforms
 =========
@@ -26,8 +50,16 @@ Windows (XP)          2.5.2    2.8.10.1
 Linux (Debian)        2.4.6    2.8.10.1
 Linux (Debian)        2.5.2    2.8.10.1
 
+If you are experiencing problems with a different platform, please send an
+email to the user mailing list thetimelineproj-user@lists.sourceforge.
+
 Install and Start Timeline
 ==========================
+
+To install the translations, run this command:
+
+  cd <path-to-timeline-directory>
+  scons mo
 
 To run the application, use this command:
 
@@ -35,32 +67,10 @@ To run the application, use this command:
 
 For example:
 
-  python /home/rick/timeline-0.3.0/src/main.py
+  python /home/rick/timeline/src/main.py
 
 Preferable you create a shortcut on your platform that issues this command.
 
 What options are available is displayed with the following command:
 
   python <path-to-timeline-directory>/src/main.py --help
-
-Notes for Windows
-=================
-
-Creating a desktop shortcut
----------------------------
-
-Follow the instructions below to create a desktop shortcut to the Timeline
-application.
-
-  1. Open the desktop context menu and select new->shortcut.
-  2. Enter the full path to your python exe-file, pythonw.exe and put the
-     text "main.py" as an argument, like this:
-       C:\Program\Python25\pythonw.exe  main.py
-  3. Click the <continue>-button.
-  4. Enter a shortcut name like "Timeline" in the text field
-  5. Click the <Finish>-button
-  6. Open the context menu for the shortcut and select "properties".
-  7. Change the "Start in" value to the directory where main.py is found.
-  8. Click the <Change icon>-button and select the Timeline icon from the
-     icons directory in your Timeline installation.
-  9. Click <OK>-button
