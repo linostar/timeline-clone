@@ -1,0 +1,11 @@
+# Written by Timeline 0.6.0dev5d1363624ae8+ on 2009-10-11 13:37:27
+PREFERRED-PERIOD:2009-9-29 20:20:40;2009-10-16 18:54:33
+CATEGORY:Point without time;255,128,128;True
+CATEGORY:Point with time;255,255,128;True
+CATEGORY:Period without time;128,255,128;True
+CATEGORY:Period with timwe;147,201,255;True
+EVENT:2009-10-11 0:0:0;2009-10-11 0:0:0;Åäö-Event;Point without time
+EVENT:2009-10-4 0:0:0;2009-10-7 0:0:0;ÅÄÖ åäö Event with period;Period without time
+EVENT:2009-10-8 0:1:0;2009-10-11 0:0:0;ÅÄÖ åäö again;Period with timwe
+EVENT:2009-10-7 15:10:0;2009-10-7 15:10:0;Aha;Point with time
+# END
