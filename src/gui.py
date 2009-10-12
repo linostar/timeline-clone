@@ -1880,7 +1880,6 @@ class HelpBrowser(wx.Frame):
         self.Bind(wx.html.EVT_HTML_LINK_CLICKED,
                   self._html_window_on_link_clicked, self.html_window)
         self.html_window.Connect(wx.ID_ANY, wx.ID_ANY, wx.EVT_KEY_DOWN.typeId, self._window_on_key_down)
-        self.Connect(wx.ID_ANY, wx.ID_ANY, wx.EVT_KEY_DOWN.typeId, self._window_on_key_down)
 
     def _window_on_close(self, e):
         self.Show(False)
