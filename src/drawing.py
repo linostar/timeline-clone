@@ -32,13 +32,13 @@ from data import delta_to_microseconds
 class DrawingAlgorithm(object):
     """
     Base class for timeline drawing algorithms.
-    
+
     In order to get an implementation, the `get_algorithm` factory method
     should be used.
     """
 
     def draw(self, dc, time_period, events, period_selection=None,
-             legend=False):
+             legend=False, divider_line_slider=None):
         """
         This is the interface.
 
@@ -73,10 +73,11 @@ class DrawingAlgorithm(object):
 class Metrics(object):
     """Helper class that can calculate coordinates."""
 
-    def __init__(self, dc, time_period):
+    def __init__(self, dc, time_period, divider_line_slider):
         self.width, self.height = dc.GetSizeTuple()
         self.half_width = self.width / 2
         self.half_height = self.height / 2
+        self.half_height = divider_line_slider.GetValue() * self.height / 100
         self.time_period = time_period
 
     def calc_exact_x(self, time):
@@ -126,7 +127,7 @@ def darken_color(color, factor=0.7):
 def get_algorithm():
     """
     Factory method.
-    
+
     Return the drawing algorithm that should be used by the application.
     """
     from drawing_default import DefaultDrawingAlgorithm
