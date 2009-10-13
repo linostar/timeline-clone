@@ -307,9 +307,6 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 rx = self.metrics.calc_x(event.mean_time()) - rw / 2
                 ry = self.metrics.half_height - rh - BASELINE_PADDING
                 movedir = -1
-            # Make room for the data contents indicator icon
-            if event.has_data():
-                rw += self.DATA_ICON_WIDTH
             rect = wx.Rect(rx, ry, rw, rh)
             self._prevent_overlap(rect, movedir)
             self.event_data.append((event, rect))
@@ -438,7 +435,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.DrawText(label, x, INNER_PADDING)
         # Main divider line
         self.dc.SetPen(self.black_solid_pen)
-        self.dc.DrawLine(0, self.metrics.half_height, self.metrics.width, 
+        self.dc.DrawLine(0, self.metrics.half_height, self.metrics.width,
                          self.metrics.half_height)
         # Lines to all events
         self.dc.SetBrush(self.black_solid_brush)
