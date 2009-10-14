@@ -233,7 +233,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.DATA_ICON_WIDTH = 5
 
     def draw(self, dc, time_period, events, period_selection=None,
-             legend=False):
+             legend=False,  divider_line_slider=None):
         """
         Implement the drawing interface.
 
@@ -244,7 +244,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = time_period
-        self.metrics = Metrics(dc, time_period)
+        self.metrics = Metrics(dc, time_period, divider_line_slider)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
@@ -307,9 +307,6 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 rx = self.metrics.calc_x(event.mean_time()) - rw / 2
                 ry = self.metrics.half_height - rh - BASELINE_PADDING
                 movedir = -1
-            # Make room for the data contents indicator icon
-            if event.has_data():
-                rw += self.DATA_ICON_WIDTH
             rect = wx.Rect(rx, ry, rw, rh)
             self._prevent_overlap(rect, movedir)
             self.event_data.append((event, rect))
@@ -438,8 +435,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.DrawText(label, x, INNER_PADDING)
         # Main divider line
         self.dc.SetPen(self.black_solid_pen)
-        self.dc.DrawLine(0, self.metrics.half_height,
-                         self.metrics.width, self.metrics.half_height)
+        self.dc.DrawLine(0, self.metrics.half_height, self.metrics.width,
+                         self.metrics.half_height)
         # Lines to all events
         self.dc.SetBrush(self.black_solid_brush)
         for (event, rect) in self.event_data:

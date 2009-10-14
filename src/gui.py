@@ -681,9 +681,12 @@ class TimelinePanel(wx.Panel):
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED,
                   self._splitter_on_splitter_sash_pos_changed, self.splitter)
         self.sidebar = Sidebar(self.splitter)
-        self.drawing_area = DrawingArea(self.splitter)
+        self.divider_line_slider = wx.Slider(self, value = 50, size = (20, -1),
+                                             style = wx.SL_LEFT | wx.SL_VERTICAL)
+        self.drawing_area = DrawingArea(self.splitter, self.divider_line_slider)
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
-        globalSizer.Add(self.splitter, flag=wx.GROW, proportion=1)
+        globalSizer.Add(self.splitter, 1, wx.EXPAND)
+        globalSizer.Add(self.divider_line_slider, 0, wx.EXPAND)
         self.SetSizer(globalSizer)
 
     def _splitter_on_splitter_sash_pos_changed(self, e):
@@ -789,8 +792,9 @@ class DrawingArea(wx.Panel):
     When the mouse button is released the selection ends.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, divider_line_slider):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
+        self.divider_line_slider = divider_line_slider
         self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
@@ -903,6 +907,9 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_MOUSEWHEEL, self._window_on_mousewheel)
         self.Bind(wx.EVT_KEY_DOWN, self._window_on_key_down)
         self.Bind(wx.EVT_KEY_UP, self._window_on_key_up)
+        self.divider_line_slider.Bind(wx.EVT_SLIDER, self._slider_on_slider)
+        self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU,
+                                      self._slider_on_context_menu)
 
     def _window_on_size(self, event):
         """
@@ -1060,6 +1067,25 @@ class DrawingArea(wx.Panel):
         if keycode == wx.WXK_CONTROL:
             self._set_default_cursor()
 
+    def _slider_on_slider(self, evt):
+        """The divider-line slider has been moved.""" 
+        self._redraw_timeline()
+
+    def _slider_on_context_menu(self, evt):
+        """A right click has occured in the divider-line slider."""
+        menu = wx.Menu()
+        menu_item = wx.MenuItem(menu, wx.NewId(), _("Center"))
+        self.Bind(wx.EVT_MENU, self._context_menu_on_menu_center,
+                  id=menu_item.GetId())
+        menu.AppendItem(menu_item)
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def _context_menu_on_menu_center(self, evt):
+        """The 'Center' context menu has been selected."""
+        self.divider_line_slider.SetValue(50)
+        self._redraw_timeline()
+
     def _timeline_changed(self, state_change):
         if state_change == Timeline.STATE_CHANGE_ANY:
             self._redraw_timeline()
@@ -1123,7 +1149,8 @@ class DrawingArea(wx.Panel):
                     self.drawing_algorithm.draw(memdc, self.time_period,
                                                 current_events,
                                                 period_selection,
-                                                self.show_legend)
+                                                self.show_legend,
+                                                self.divider_line_slider)
             memdc.EndDrawing()
             del memdc
             self.Refresh()
@@ -1879,7 +1906,8 @@ class HelpBrowser(wx.Frame):
         self.html_window = wx.html.HtmlWindow(self)
         self.Bind(wx.html.EVT_HTML_LINK_CLICKED,
                   self._html_window_on_link_clicked, self.html_window)
-        self.html_window.Connect(wx.ID_ANY, wx.ID_ANY, wx.EVT_KEY_DOWN.typeId, self._window_on_key_down)
+        self.html_window.Connect(wx.ID_ANY, wx.ID_ANY, wx.EVT_KEY_DOWN.typeId, 
+                                 self._window_on_key_down)
 
     def _window_on_close(self, e):
         self.Show(False)
