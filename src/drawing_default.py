@@ -256,9 +256,9 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         if period_selection:
             self._draw_period_selection(period_selection)
         self._draw_bg()
+        self._draw_events()
         if legend:
             self._draw_legend(self._extract_categories(events))
-        self._draw_events()
         self._draw_ballons()
         # Make sure to delete this one
         del self.dc
@@ -535,6 +535,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             # Draw data contents indicator
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
+        # Reset this when we are done
+        self.dc.DestroyClippingRegion()
 
     def _draw_contents_indicator(self, event, rect):
         """
