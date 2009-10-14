@@ -14,6 +14,7 @@ managed on Launchpad: http://translations.launchpad.net/thetimelineproj.
 
 Overview of the files in this directory:
 
+devdoc/         - Documentation for developers to understand the code
 help_resources/ - Images used by the help system
 icons/          - Images used for application icon
 po/             - Translation files
@@ -24,7 +25,6 @@ CHANGES         - Lists changes between releases (releases notes)
 COPYING         - A copy of the GNU General Public License, version 3
 INSTALL         - Instructions how to install Timeline
 README          - This file
-hacking.svg     - Overview of the code for developers
 release.py      - Script to generate a source package
 SConstruct      - File read by SCons to build parts of the application
 
