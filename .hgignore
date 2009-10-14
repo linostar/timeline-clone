@@ -9,3 +9,5 @@ po/timeline.pot
 src/tags
 *.swp
 *.mo
+devdoc/depgraph.gv
+devdoc/depgraph.png
