@@ -94,12 +94,14 @@ class MainFrame(wx.Frame):
 
     def open_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
+        # Make sure that we have an absolute path
+        input_file_abs = os.path.abspath(input_file)
         try:
-            timeline = data.get_timeline(input_file)
+            timeline = data.get_timeline(input_file_abs)
         except TimelineIOError, e:
             self.handle_timeline_error(e)
         else:
-            config.append_recently_opened(input_file)
+            config.append_recently_opened(input_file_abs)
             self._update_open_recent_submenu()
             self._display_timeline(timeline)
 
