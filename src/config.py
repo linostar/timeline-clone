@@ -125,7 +125,11 @@ def set_sidebar_width(width):
 
 
 def get_recently_opened():
-    return config.get(DEFAULTSECT, RECENT_FILES).decode(ENCODING).split(",")
+    ro = config.get(DEFAULTSECT, RECENT_FILES).decode(ENCODING).split(",")
+    # Filter out empty elements: "".split(",") will return [""] but we want the
+    # empty list
+    ro_filtered = [x for x in ro if x]
+    return ro_filtered
 
 
 def append_recently_opened(path):
