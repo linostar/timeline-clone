@@ -105,6 +105,12 @@ class MainFrame(wx.Frame):
             self._update_open_recent_submenu()
             self._display_timeline(timeline)
 
+    def open_timeline_if_exists(self, path):
+        if os.path.exists(path):
+            self.open_timeline(path)
+        else:
+            _display_error_message(_("File '%s' does not exist.") % path, self)
+
     def create_new_event(self, start=None, end=None):
         try:
             dialog = EventEditor(self, _("Create Event"), self.timeline,
@@ -189,6 +195,11 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click,
                   self.mnu_file_export)
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
+        # Edit menu
+        self.mnu_edit = wx.Menu()
+        mnu_edit_preferences = self.mnu_edit.Append(wx.ID_PREFERENCES)
+        self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click,
+                  mnu_edit_preferences)
         # Timeline menu
         self.mnu_timeline = wx.Menu()
         mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
@@ -246,6 +257,7 @@ class MainFrame(wx.Frame):
         # The menu bar
         menuBar = wx.MenuBar()
         menuBar.Append(self.mnu_file, _("&File"))
+        menuBar.Append(self.mnu_edit, _("&Edit"))
         menuBar.Append(self.mnu_view, _("&View"))
         menuBar.Append(self.mnu_timeline, _("&Timeline"))
         menuBar.Append(self.mnu_navigate, _("&Navigate"))
@@ -282,10 +294,7 @@ class MainFrame(wx.Frame):
 
     def _mnu_file_open_recent_item_on_click(self, event):
         path = self.open_recent_map[event.GetId()]
-        if os.path.exists(path):
-            self.open_timeline(path)
-        else:
-            _display_error_message(_("File '%s' does not exist.") % path, self)
+        self.open_timeline_if_exists(path)
 
     def _mnu_file_print_on_click(self, event):
         self.main_panel.drawing_area.print_timeline(event)
@@ -302,6 +311,11 @@ class MainFrame(wx.Frame):
     def _mnu_file_exit_on_click(self, evt):
         """Event handler for the Exit menu item"""
         self.Close()
+
+    def _mnu_edit_preferences_on_click(self, evt):
+        dialog = PreferencesDialog(self)
+        dialog.ShowModal()
+        dialog.Destroy()
 
     def _mnu_view_sidebar_on_click(self, evt):
         if evt.IsChecked():
@@ -1724,6 +1738,54 @@ class CategoryEditor(wx.Dialog):
             if cat != self.category and cat.name == name:
                 return True
         return False
+
+
+class PreferencesDialog(wx.Dialog):
+    """
+    Dialog used to edit application preferences.
+    
+    This is essentially a GUI for parts of the preferences in the config
+    module.
+    """
+
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, title=_("Preferences"))
+        self._create_gui()
+
+    def _create_gui(self):
+        notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
+        # General tab
+        panel = wx.Panel(notebook)
+        notebook.AddPage(panel, _("General"))
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        chb_open_recent_startup = wx.CheckBox(panel, label=_("Open most recent timeline on startup"))
+        chb_open_recent_startup.SetValue(config.get_open_recent_at_startup())
+        self.Bind(wx.EVT_CHECKBOX, self._chb_open_recent_startup_on_checkbox,
+                  chb_open_recent_startup)
+        sizer.Add(chb_open_recent_startup, border=BORDER, flag=wx.ALL)
+        panel.SetSizer(sizer)
+        # The close button
+        btn_close = wx.Button(self, wx.ID_CLOSE)
+        btn_close.SetDefault()
+        btn_close.SetFocus()
+        self.SetAffirmativeId(wx.ID_CLOSE)
+        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
+        # Layout
+        main_box = wx.BoxSizer(wx.VERTICAL)
+        main_box.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND,
+                     proportion=1)
+        button_box = wx.BoxSizer(wx.HORIZONTAL)
+        button_box.AddStretchSpacer()
+        button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
+        main_box.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        # Realize
+        self.SetSizerAndFit(main_box)
+
+    def _chb_open_recent_startup_on_checkbox(self, evt):
+        config.set_open_recent_at_startup(evt.IsChecked())
+
+    def _btn_close_on_click(self, e):
+        self.Close()
 
 
 class GotoDateDialog(wx.Dialog):

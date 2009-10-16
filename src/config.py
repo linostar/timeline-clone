@@ -44,6 +44,7 @@ SHOW_SIDEBAR = "show_sidebar"
 SHOW_LEGEND = "show_legend"
 SIDEBAR_WIDTH = "sidebar_width"
 RECENT_FILES = "recent_files"
+OPEN_RECENT_AT_STARTUP = "open_recent_at_startup"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
@@ -51,6 +52,7 @@ DEFAULTS = {
     SHOW_SIDEBAR: "True",
     SIDEBAR_WIDTH: "200",
     SHOW_LEGEND: "False",
+    OPEN_RECENT_AT_STARTUP: "True",
     RECENT_FILES: "",
 }
 
@@ -138,3 +140,11 @@ def append_recently_opened(path):
     current.insert(0, path)
     config.set(DEFAULTSECT, RECENT_FILES,
                (",".join(current[:5])).encode(ENCODING))
+
+
+def get_open_recent_at_startup():
+    return config.getboolean(DEFAULTSECT, OPEN_RECENT_AT_STARTUP)
+
+
+def set_open_recent_at_startup(open):
+    config.set(DEFAULTSECT, OPEN_RECENT_AT_STARTUP, str(open))
