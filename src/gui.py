@@ -1380,6 +1380,8 @@ class EventEditor(wx.Dialog):
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.lst_category)
         groupbox_sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self.Bind(wx.EVT_CHOICE, self._lst_category_on_choice,
+                  self.lst_category)
         # Plugins
         self.event_data_plugins = []
         notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
@@ -1466,6 +1468,61 @@ class EventEditor(wx.Dialog):
         self.dtp_start.show_time(e.IsChecked())
         self.dtp_end.show_time(e.IsChecked())
 
+    def _lst_category_on_choice(self, e):
+        new_selection_index = e.GetSelection()
+        if new_selection_index > self.last_real_category_index:
+            self.lst_category.SetSelection(self.current_category_selection)
+            if new_selection_index == self.add_category_item_index:
+                self._add_category()
+            elif new_selection_index == self.edit_categoris_item_index:
+                self._edit_categories()
+        else:
+            self.current_category_selection = new_selection_index
+
+    def _add_category(self):
+        try:
+            dialog = CategoryEditor(self, _("Add Category"),
+                                    self.timeline, None)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
+        else:
+            dialog_result = dialog.ShowModal()
+            if dialog_result == ID_ERROR:
+                self.error = dialog.error
+                self.EndModal(ID_ERROR)
+            elif dialog_result == wx.ID_OK:
+                try:
+                    self._update_categories(dialog.get_edited_category())
+                except TimelineIOError, e:
+                    _display_error_message(e.message, self)
+                    self.error = e
+                    self.EndModal(ID_ERROR)
+            dialog.Destroy()
+
+    def _edit_categories(self):
+        try:
+            dialog = CategoriesEditor(self, self.timeline)
+        except TimelineIOError, e:
+            _display_error_message(e.message, self)
+            self.error = e
+            self.EndModal(ID_ERROR)
+        else:
+            if dialog.ShowModal() == ID_ERROR:
+                self.error = dialog.error
+                self.EndModal(ID_ERROR)
+            else:
+                try:
+                    prev_index = self.lst_category.GetSelection()
+                    prev_category = self.lst_category.GetClientData(prev_index)
+                    self._update_categories(prev_category)
+                except TimelineIOError, e:
+                    _display_error_message(e.message, self)
+                    self.error = e
+                    self.EndModal(ID_ERROR)
+            dialog.Destroy()
+
     def _show_to_time(self, show=True):
         self.lbl_to.Show(show)
         self.dtp_end.Show(show)
@@ -1494,22 +1551,35 @@ class EventEditor(wx.Dialog):
         self.dtp_start.set_value(start)
         self.dtp_end.set_value(end)
         self.txt_text.SetValue(text)
-        # Category Choice
+        self._update_categories(category)
+        self.chb_add_more.SetValue(False)
+        self._show_to_time(self.chb_period.IsChecked())
+        self.dtp_start.show_time(self.chb_show_time.IsChecked())
+        self.dtp_end.show_time(self.chb_show_time.IsChecked())
+
+    def _update_categories(self, select_category):
+        # We can not do error handling here since this method is also called
+        # from the constructor (and then error handling is done by the code
+        # calling the constructor).
+        self.lst_category.Clear()
         self.lst_category.Append("", None) # The None-category
         selection_set = False
         current_item_index = 1
         for cat in sort_categories(self.timeline.get_categories()):
             self.lst_category.Append(cat.name, cat)
-            if cat == category:
+            if cat == select_category:
                 self.lst_category.SetSelection(current_item_index)
                 selection_set = True
             current_item_index += 1
+        self.last_real_category_index = current_item_index - 1
+        self.add_category_item_index = self.last_real_category_index + 2
+        self.edit_categoris_item_index = self.last_real_category_index + 3
+        self.lst_category.Append("", None)
+        self.lst_category.Append(_("Add new"), None)
+        self.lst_category.Append(_("Edit categories"), None)
         if not selection_set:
             self.lst_category.SetSelection(0)
-        self.chb_add_more.SetValue(False)
-        self._show_to_time(self.chb_period.IsChecked())
-        self.dtp_start.show_time(self.chb_show_time.IsChecked())
-        self.dtp_end.show_time(self.chb_show_time.IsChecked())
+        self.current_category_selection = self.lst_category.GetSelection()
 
     def _set_initial_focus(self):
         self.dtp_start.SetFocus()
