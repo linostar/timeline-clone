@@ -195,7 +195,7 @@ The visibility of categories can also be edited in the sidebar (*View* > *Sideba
         id="contact",
         header=_("Contact"),
         body=_("""
-If you have more questions about Timeline, or if you want to get in contact with users and developers of Timeline, send an email to the user mailing list: thetimelineproj-user@lists.sourceforge.net. (Please use English.)
+If you have more questions about Timeline, or if you want to get in contact with users and developers of Timeline, send an email to the user mailing list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)
 """))
 
     help_system.install_page(
