@@ -17,7 +17,7 @@ Overview of the files in this directory:
 devdoc/         - Documentation for developers to understand the code
 help_resources/ - Images used by the help system
 icons/          - Images used for application icon
-po/             - Translation files
+po/             - Translation files (imported from Launchpad)
 src/            - Python source code (run with 'python main.py')
 tests/          - Unit tests (run with 'python run.py')
 AUTHORS         - Lists all people that have contributed to the project
