@@ -7,336 +7,708 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Timeline 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-24 11:30+0200\n"
-"PO-Revision-Date: 2009-08-26 06:58-0300\n"
-"Last-Translator: Roman Gelbort (aka elproferoman) <elproferoman@gmail.com>\n"
+"POT-Creation-Date: 2009-10-01 15:46+0200\n"
+"PO-Revision-Date: 2009-10-04 08:46+0000\n"
+"Last-Translator: Roman <elproferoman@gmail.com>\n"
 "Language-Team: native-languaje <elproferoman@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-10-17 12:28+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
 "X-Poedit-Language: Spanish\n"
 "X-Poedit-Basepath: /home/roman/traducciones\n"
 
-#: src/drawing_default.py:133
+#: src/drawing_default.py:134
 msgid "Week"
 msgstr "Semana"
 
-#: src/gui.py:90
-#, python-format
-msgid "Unable to open timeline '%s'."
-msgstr "No se puede abrir la línea de tiempo '%s'."
+#: src/drawing_default.py:638
+msgid "-- more --"
+msgstr ""
 
-#: src/gui.py:119
-msgid "Create a new timeline"
-msgstr "Crear nueva línea de tiempo"
+#: src/help_pages.py:28
+msgid "Help contents"
+msgstr ""
 
-#: src/gui.py:121
-msgid "Open an existing timeline"
-msgstr "Abrir una línea de tiempo"
+#: src/help_pages.py:49
+msgid "Questions and answers"
+msgstr ""
 
-#: src/gui.py:124
-msgid "&Export to Image..."
-msgstr "&Exportar como imagen..."
+#: src/help_pages.py:49
+msgid "Concepts"
+msgstr ""
 
-#: src/gui.py:125
-msgid "Export the current view to a PNG or BMP image"
-msgstr "Exportar a imagen PNG o BMP"
+#: src/help_pages.py:49
+msgid "Tasks"
+msgstr ""
 
-#: src/gui.py:128
-msgid "Exit the program"
-msgstr "Salir del programa"
+#: src/help_pages.py:53 src/gui.py:236 src/gui.py:644
+msgid "Getting started tutorial"
+msgstr ""
 
-#: src/gui.py:137
-msgid "Create &Event..."
-msgstr "Crear &Evento..."
+#: src/help_pages.py:55
+msgid ""
+"\n"
+"The idea is to display events on a timeline and to be able to quickly change "
+"what period in time is shown. An event can be at a specific point in time or "
+"span over a period.\n"
+"\n"
+"HelpFigure(events)\n"
+"\n"
+"HelpFigure(zoom)\n"
+"\n"
+"To create a new timeline, select *New* from the *File* menu and enter a name "
+"of a file in the dialog box that opens. This is the name of the file in "
+"which information about your events will be stored. Next time you start "
+"Timeline you can choose to open the same file again. The titlebar always "
+"shows which timeline is currently opened.\n"
+"\n"
+"To add a new event at a specific point in time, double click somewhere on "
+"the timeline. This will open a dialog box in which you enter a text for the "
+"event. Click the *OK* button to save the event.  Now you will see an event "
+"above the horizontal line at the specific point in time that you double "
+"clicked on.\n"
+"\n"
+"To add an event that spans over a period, hold the *Ctrl* key down, click "
+"and drag the mouse to mark a period, and release the mouse button. Again the "
+"event dialog box will display and you enter a text for the event and click "
+"*OK*.  Now you will also see an event displayed under the horizontal line "
+"spanning over the period that you selected.\n"
+"\n"
+"Events at a specific point in time will always be displayed above the "
+"horizontal line. Events spanning over a period will be displayed below the "
+"horizontal line most of the time.  However, if the period is to small to fit "
+"within a few pixels on the screen, it will be displayed above the horizontal "
+"line (zooming in will make the event jump from above to below).\n"
+"\n"
+"To edit an event, double click on it and the event dialog box will appear.\n"
+"\n"
+"To select an event, just click on it. To select multiple events, hold down "
+"the *Ctrl* key while selecting events. To delete the selected events, press "
+"the *Delete* key.\n"
+"\n"
+"Try the mouse wheel and you will see the timeline scroll.\n"
+"\n"
+"Try pressing the left mouse button and drag and you will see the timeline "
+"scroll.\n"
+"\n"
+"Try the mouse wheel while holding the *Ctrl* key down and you will see the "
+"timeline zoom.\n"
+"\n"
+"The vertical red line indicates the current time.\n"
+"\n"
+"Hoovering an event will display the full description in the status bar.\n"
+msgstr ""
 
-#: src/gui.py:138
-msgid "Create a new event"
-msgstr "Crear nuevo evento"
+#: src/help_pages.py:87
+msgid "Where is the save button?"
+msgstr ""
 
-#: src/gui.py:140
-msgid "Edit &Categories"
-msgstr "Editar &Categorías"
+#: src/help_pages.py:88
+msgid ""
+"\n"
+"There is no save button. Timeline will automatically save your data whenever "
+"needed.\n"
+msgstr ""
 
-#: src/gui.py:141
+#: src/help_pages.py:94
+msgid "Timeline"
+msgstr ""
+
+#: src/help_pages.py:96
+msgid ""
+"\n"
+"The timeline shows dates according to the Gregorian calendar on the x-axis. "
+"Currently the dates are limited to dates between year 10 and year 9999.  \n"
+"\n"
+"Future versions might support various kinds of timelines so that you for "
+"example can specify a time in terms of number of minutes since a start time. "
+"If you are interested in such a feature, please get in touch.\n"
+msgstr ""
+
+#: src/help_pages.py:104
+msgid "Events"
+msgstr ""
+
+#: src/help_pages.py:106
+msgid ""
+"\n"
+"An event is the basic data type for representing information on the "
+"timeline.  It must specify where on the timeline is should be placed (when "
+"that event happened). This can be either a specific point in time or a "
+"period.\n"
+msgstr ""
+
+#: src/help_pages.py:112
+msgid "Categories"
+msgstr ""
+
+#: src/help_pages.py:114
+msgid ""
+"\n"
+"Categories are used to group events. An event can only belong to one "
+"category. All events that belong to the same category are displayed with the "
+"same background color.\n"
+msgstr ""
+
+#: src/help_pages.py:120
+msgid "Backups"
+msgstr ""
+
+#: src/help_pages.py:122
+msgid ""
+"\n"
+"Timeline tries its best to ensure that the data you save in a timeline never "
+"gets lost. One step in that process is to create a backup of your timeline "
+"every time before new data is saved. The backup is saved in a file with the "
+"same name as the original but with an \"~\" appended to the name.\n"
+"\n"
+"If you get an error saying that there was a problem reading timeline data "
+"there is a chance that your data is corrupt. In that case you can recover "
+"the data from the backup.\n"
+"\n"
+"If you would like to be extra certain to not loose your data, we recommend "
+"that you take regular backups of your timeline file.\n"
+msgstr ""
+
+#: src/help_pages.py:132 src/gui.py:1252
+msgid "Restore file from backup"
+msgstr ""
+
+#: src/help_pages.py:134
+msgid ""
+"\n"
+"To restore a timeline file from the backup, simply remove the \"~\" in the "
+"name of the backed up file.\n"
+msgstr ""
+
+#: src/help_pages.py:140
+msgid "Create event"
+msgstr ""
+
+#: src/help_pages.py:142
+msgid ""
+"\n"
+"The *Create Event* dialog can be opened in the following ways:\n"
+"\n"
+"- Select *File* - *Create Event* from the menu.\n"
+"- Double click with the *left* mouse button on the timeline.\n"
+"- Press the *Ctrl* key, thereafter hold *left* mouse button down on the "
+"timeline, drag the mouse and release it.\n"
+msgstr ""
+
+#: src/help_pages.py:152
+msgid "Edit event"
+msgstr ""
+
+#: src/help_pages.py:154
+msgid ""
+"\n"
+"The *Edit Event* dialog can be opened by double clicking on an event.\n"
+msgstr ""
+
+#: src/help_pages.py:160
+msgid "Selecting events"
+msgstr ""
+
+#: src/help_pages.py:161
+msgid ""
+"\n"
+"To select an event, click on it. To select multiple events, hold down the "
+"*Ctrl* key while clicking events.\n"
+"\n"
+"Selected events are indicated with a striped background:\n"
+"\n"
+"HelpFigure(selected_event)\n"
+msgstr ""
+
+#: src/help_pages.py:171
+msgid "Delete event"
+msgstr ""
+
+#: src/help_pages.py:173
+msgid ""
+"\n"
+"To delete an event, select it and press the *Del* key. Multiple events can "
+"be deleted at the same time.\n"
+msgstr ""
+
+#: src/help_pages.py:179
+msgid "Will associated events be deleted when I delete a category?"
+msgstr ""
+
+#: src/help_pages.py:180
+msgid ""
+"\n"
+"No. The events will still be there but they will not belong to a category.\n"
+msgstr ""
+
+#: src/help_pages.py:186 src/gui.py:196
 msgid "Edit categories"
 msgstr "Editar categorías"
 
-#: src/gui.py:149
-msgid "&Sidebar\tCtrl+I"
-msgstr "&Barra lateral\tCtrl+l"
+#: src/help_pages.py:188
+msgid ""
+"\n"
+"Categories can be managed in the *Edit Categories* dialog (*Timeline* > "
+"*Edit Categories*). To edit an existing category, double click on it.\n"
+"\n"
+"The visibility of categories can also be edited in the sidebar (*View* > "
+"*Sidebar*).\n"
+msgstr ""
 
-#: src/gui.py:152
-msgid "&Legend"
-msgstr "&Leyenda"
+#: src/help_pages.py:196 src/gui.py:238
+msgid "Contact"
+msgstr ""
 
-#: src/gui.py:160
-msgid "Go to &Today\tCtrl+H"
-msgstr "Ir a &Hoy\tCtrl+H"
+#: src/help_pages.py:197
+msgid ""
+"\n"
+"If you have more questions about Timeline, or if you want to get in contact "
+"with users and developers of Timeline, send an email to the user mailing "
+"list: thetimelineproj-user@lists.sourceforge.net. (Please use English.)\n"
+msgstr ""
 
-#: src/gui.py:161
-msgid "Go to D&ate...\tCtrl+G"
-msgstr "Día de Hoy...\tCtrl+G"
+#: src/help_pages.py:203
+msgid "Why is Timeline not available in my language?"
+msgstr ""
 
-#: src/gui.py:163
-msgid "Fit Year"
-msgstr "Fijar Año"
+#: src/help_pages.py:205
+msgid ""
+"\n"
+"Timeline is developed and translated by volunteers. If you would like to "
+"contribute translations you are very much welcome to contact us.\n"
+msgstr ""
 
-#: src/gui.py:164
-msgid "Fit Month"
-msgstr "Fijar Mes"
-
-#: src/gui.py:165
-msgid "Fit Day"
-msgstr "Fijar Día"
-
-#: src/gui.py:173
-msgid "&Contents\tF1"
-msgstr "&Contenidos\tF1"
-
-#: src/gui.py:179
-msgid "&File"
-msgstr "&Archivo"
-
-#: src/gui.py:180
-msgid "&View"
-msgstr "&Ver"
-
-#: src/gui.py:181
-msgid "&Timeline"
-msgstr "&Línea de tiempo"
-
-#: src/gui.py:182
-msgid "&Navigate"
-msgstr "&Navegar"
-
-#: src/gui.py:183
-msgid "&Help"
-msgstr "&Ayuda"
-
-#: src/gui.py:254
-msgid "Create Timeline"
-msgstr "Crear Línea de Tiempo"
-
-#: src/gui.py:261
-msgid "The specified timeline already exists."
-msgstr "Esta línea de tiempo ya existe."
-
-#: src/gui.py:262
-msgid "Opening timeline instead of creating new."
-msgstr "Abriendo una línea de tiempo en lugar de crear una nueva."
-
-#: src/gui.py:264
-msgid "Information"
-msgstr "Información"
-
-#: src/gui.py:275
-msgid "Open Timeline"
-msgstr "Abrir Línea de tiempo"
-
-#: src/gui.py:317
-msgid "Image files"
-msgstr "Archivos de imagen"
-
-#: src/gui.py:318
-msgid "Export to Image"
-msgstr "Exportar a imagen"
-
-#: src/gui.py:322
-#, python-format
-msgid "File '%s' exists. Overwrite?"
-msgstr "El archivo '%s' existe ¿Sobreescribir?"
-
-#: src/gui.py:340
-#, python-format
-msgid "Could not locate manual at '%s'."
-msgstr "No se puede localizar el manual en '%s'."
-
-#: src/gui.py:355
-msgid "Timeline files"
-msgstr "Archivos de Timeline"
-
-#: src/gui.py:377
-msgid "Timeline User Manual"
-msgstr "Manual del usuario de Timeline"
-
-#: src/gui.py:600
-#: src/gui.py:618
-msgid "No timeline set"
-msgstr "No hay una línea de tiempo seleccionada"
-
-#: src/gui.py:922
-#: src/gui.py:1256
-msgid "Are you sure to delete?"
-msgstr "¿Seguro que quiere borrar?"
-
-#: src/gui.py:982
-msgid "Event Properties"
-msgstr "Propiedades del evento"
-
-#: src/gui.py:988
-msgid "When:"
-msgstr "Cuando:"
-
-#: src/gui.py:991
-msgid "to"
-msgstr "a"
-
-#: src/gui.py:1004
-msgid "Period"
-msgstr "Período"
-
-#: src/gui.py:1008
-#: src/gui.py:1349
-msgid "Show time"
-msgstr "Ver hora"
-
-#: src/gui.py:1015
-msgid "Text:"
-msgstr "Texto:"
-
-#: src/gui.py:1020
-msgid "Category:"
-msgstr "Categoría:"
-
-#: src/gui.py:1043
-msgid "Add more events after this one"
-msgstr "Agregar eventos después de este"
-
-#: src/gui.py:1071
-msgid "End must be > Start"
-msgstr "La fecha de fin debe ser > que la de Inicio"
-
-#: src/gui.py:1072
-msgid "Text"
-msgstr "Texto"
-
-#: src/gui.py:1174
-msgid "Edit Categories"
-msgstr "Editar Categorías"
-
-#: src/gui.py:1224
-msgid "Edit Category"
-msgstr "Editar Categoría"
-
-#: src/gui.py:1231
-msgid "Add Category"
-msgstr "Agregar Categoría"
-
-#: src/gui.py:1298
-msgid "Name:"
-msgstr "Nombre:"
-
-#: src/gui.py:1301
-msgid "Color:"
-msgstr "Color:"
-
-#: src/gui.py:1304
-msgid "Visible:"
-msgstr "Visible:"
-
-#: src/gui.py:1318
-#, python-format
-msgid "Category name '%s' not valid. Must be non-empty."
-msgstr "El nombre de categoría '%s' no es válido. Debe contener algo."
-
-#: src/gui.py:1322
-#, python-format
-msgid "Category name '%s' already in use."
-msgstr "El nombre de categoría '%s' ya está en uso."
-
-#: src/gui.py:1343
-msgid "Go to Date"
-msgstr "Ir al día"
-
-#: src/gui.py:1395
-msgid "Create Event"
-msgstr "Crear Evento"
-
-#: src/gui.py:1402
-msgid "Edit Event"
-msgstr "Editar Evento"
-
-#: src/gui.py:1430
-#, python-format
-msgid "Field '%s' can't be empty."
-msgstr "El campo '%s' no puede estar vacío."
-
-#: src/gui.py:1436
-msgid "Error"
-msgstr "Error"
-
-#: src/gui.py:1442
-msgid "Question"
-msgstr "Pregunta"
+#: src/data_file.py:150
+msgid "Preferred period must be > 0."
+msgstr ""
 
 #: src/data_file.py:180
 #, python-format
-msgid "Unable to read timeline data from '%s'. Enable logging (see user manual for instructions how to) and open the timeline again to get more information about the problem."
-msgstr "No se puede leer datos de la linea de tiempo '%s'. Activar el log (ver el manual del usuario para ver como hacer esto) y abrir la línea de tiempo nuevamente para recoger más información sobre este problema."
+msgid "Unable to read timeline data from '%s'."
+msgstr ""
 
-#: src/data_file.py:185
+#: src/data_file.py:187
 #, python-format
 msgid "Unable to read from file '%s'."
 msgstr "No se puede leer el archivo '%s'."
 
-#: src/data_file.py:357
-msgid "Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."
-msgstr "La función de guardado fue desactivada porque hubo un problema leyendo o escribiendo la línea de tiempos antes. Esto asegura que sus datos no sean sobreescritos."
+#: src/data_file.py:339
+msgid ""
+"Save function has been disabled because there was a problem reading or "
+"writing the timeline before. This to ensure that your data will not be "
+"overwritten."
+msgstr ""
+"La función de guardado fue desactivada porque hubo un problema leyendo o "
+"escribiendo la línea de tiempos antes. Esto asegura que sus datos no sean "
+"sobreescritos."
 
-#: src/data_file.py:372
+#: src/data_file.py:354
 msgid "Unable to save timeline data."
 msgstr "No se puede guardar los datos de la línea de tiempo."
 
-#: src/data_file.py:373
-msgid "If data was corrupted, check out the backed up file that was created when the timeline was last saved."
+#: src/data_file.py:355
+msgid ""
+"If data was corrupted, check out the backed up file that was created when "
+"the timeline was last saved."
 msgstr "Si los datos están corruptos, consulte el anterior archivo guardado."
 
-#: src/data_file.py:385
+#: src/data_file.py:365
 #, python-format
 msgid "Unable to create backup to '%s'."
 msgstr "No se puede crear el backup a '%s'"
 
-#: src/data.py:222
+#: src/gui.py:107
+msgid "Create Event"
+msgstr "Crear Evento"
+
+#: src/gui.py:118
+msgid "Edit Event"
+msgstr "Editar Evento"
+
+#: src/gui.py:159
+msgid "Create a new timeline"
+msgstr "Crear nueva línea de tiempo"
+
+#: src/gui.py:161
+msgid "Open an existing timeline"
+msgstr "Abrir una línea de tiempo"
+
+#: src/gui.py:163
+msgid "Open &Recent"
+msgstr ""
+
+#: src/gui.py:167
+msgid "Page Set&up..."
+msgstr ""
+
+#: src/gui.py:168
+msgid "Setup page for printing"
+msgstr ""
+
+#: src/gui.py:170
+msgid "Print Preview"
+msgstr ""
+
+#: src/gui.py:173
+msgid "Print"
+msgstr ""
+
+#: src/gui.py:176
+msgid "&Export to Image..."
+msgstr "&Exportar como imagen..."
+
+#: src/gui.py:177
+msgid "Export the current view to a PNG image"
+msgstr ""
+
+#: src/gui.py:180
+msgid "Exit the program"
+msgstr "Salir del programa"
+
+#: src/gui.py:192
+msgid "Create &Event..."
+msgstr "Crear &Evento..."
+
+#: src/gui.py:193
+msgid "Create a new event"
+msgstr "Crear nuevo evento"
+
+#: src/gui.py:195
+msgid "Edit &Categories"
+msgstr "Editar &Categorías"
+
+#: src/gui.py:204
+msgid "&Sidebar\tCtrl+I"
+msgstr "&Barra lateral\tCtrl+l"
+
+#: src/gui.py:207
+msgid "&Legend"
+msgstr "&Leyenda"
+
+#: src/gui.py:215
+msgid "Go to &Today\tCtrl+H"
+msgstr "Ir a &Hoy\tCtrl+H"
+
+#: src/gui.py:216
+msgid "Go to D&ate...\tCtrl+G"
+msgstr "Día de Hoy...\tCtrl+G"
+
+#: src/gui.py:218
+msgid "Backward\tPgUp"
+msgstr ""
+
+#: src/gui.py:219
+msgid "Forward\tPgDn"
+msgstr ""
+
+#: src/gui.py:221
+msgid "Fit Year"
+msgstr "Fijar Año"
+
+#: src/gui.py:222
+msgid "Fit Month"
+msgstr "Fijar Mes"
+
+#: src/gui.py:223
+msgid "Fit Day"
+msgstr "Fijar Día"
+
+#: src/gui.py:233
+msgid "&Contents\tF1"
+msgstr "&Contenidos\tF1"
+
+#: src/gui.py:245
+msgid "&File"
+msgstr "&Archivo"
+
+#: src/gui.py:246
+msgid "&View"
+msgstr "&Ver"
+
+#: src/gui.py:247
+msgid "&Timeline"
+msgstr "&Línea de tiempo"
+
+#: src/gui.py:248
+msgid "&Navigate"
+msgstr "&Navegar"
+
+#: src/gui.py:249
+msgid "&Help"
+msgstr "&Ayuda"
+
+#: src/gui.py:285
+#, python-format
+msgid "File '%s' does not exist."
+msgstr ""
+
+#: src/gui.py:388
+msgid "Create Timeline"
+msgstr "Crear Línea de Tiempo"
+
+#: src/gui.py:395
+msgid "The specified timeline already exists."
+msgstr "Esta línea de tiempo ya existe."
+
+#: src/gui.py:396
+msgid "Opening timeline instead of creating new."
+msgstr "Abriendo una línea de tiempo en lugar de crear una nueva."
+
+#: src/gui.py:398
+msgid "Information"
+msgstr "Información"
+
+#: src/gui.py:409
+msgid "Open Timeline"
+msgstr "Abrir Línea de tiempo"
+
+#: src/gui.py:470
+msgid "Image files"
+msgstr "Archivos de imagen"
+
+#: src/gui.py:471
+msgid "Export to Image"
+msgstr "Exportar a imagen"
+
+#: src/gui.py:475
+#, python-format
+msgid "File '%s' exists. Overwrite?"
+msgstr "El archivo '%s' existe ¿Sobreescribir?"
+
+#: src/gui.py:507
+msgid "Timeline files"
+msgstr "Archivos de Timeline"
+
+#: src/gui.py:636
+msgid "No timeline opened."
+msgstr ""
+
+#: src/gui.py:641
+msgid "First time using Timeline?"
+msgstr ""
+
+#: src/gui.py:811
+msgid ""
+"There was a problem printing.\n"
+"Perhaps your current printer is not set correctly?"
+msgstr ""
+
+#: src/gui.py:811
+msgid "Printing"
+msgstr ""
+
+#: src/gui.py:825
+msgid "Print preview"
+msgstr ""
+
+#: src/gui.py:868 src/gui.py:886
+msgid "No timeline set"
+msgstr "No hay una línea de tiempo seleccionada"
+
+#: src/gui.py:1197 src/gui.py:1601
+msgid "Are you sure to delete?"
+msgstr "¿Seguro que quiere borrar?"
+
+#: src/gui.py:1249
+msgid "Relevant help topics:"
+msgstr ""
+
+#: src/gui.py:1292
+msgid "Event Properties"
+msgstr "Propiedades del evento"
+
+#: src/gui.py:1298
+msgid "When:"
+msgstr "Cuando:"
+
+#: src/gui.py:1301
+msgid "to"
+msgstr "a"
+
+#: src/gui.py:1314
+msgid "Period"
+msgstr "Período"
+
+#: src/gui.py:1318 src/gui.py:1705
+msgid "Show time"
+msgstr "Ver hora"
+
+#: src/gui.py:1325
+msgid "Text:"
+msgstr "Texto:"
+
+#: src/gui.py:1330
+msgid "Category:"
+msgstr "Categoría:"
+
+#: src/gui.py:1353
+msgid "Add more events after this one"
+msgstr "Agregar eventos después de este"
+
+#: src/gui.py:1382
+msgid "End must be > Start"
+msgstr "La fecha de fin debe ser > que la de Inicio"
+
+#: src/gui.py:1383
+msgid "Text"
+msgstr "Texto"
+
+#: src/gui.py:1489
+msgid "Edit Categories"
+msgstr "Editar Categorías"
+
+#: src/gui.py:1540
+msgid "Edit Category"
+msgstr "Editar Categoría"
+
+#: src/gui.py:1554
+msgid "Add Category"
+msgstr "Agregar Categoría"
+
+#: src/gui.py:1645
+msgid "Name:"
+msgstr "Nombre:"
+
+#: src/gui.py:1648
+msgid "Color:"
+msgstr "Color:"
+
+#: src/gui.py:1651
+msgid "Visible:"
+msgstr "Visible:"
+
+#: src/gui.py:1666
+#, python-format
+msgid "Category name '%s' not valid. Must be non-empty."
+msgstr "El nombre de categoría '%s' no es válido. Debe contener algo."
+
+#: src/gui.py:1670
+#, python-format
+msgid "Category name '%s' already in use."
+msgstr "El nombre de categoría '%s' ya está en uso."
+
+#: src/gui.py:1699
+msgid "Go to Date"
+msgstr "Ir al día"
+
+#: src/gui.py:1805
+msgid "Help"
+msgstr ""
+
+#: src/gui.py:1848
+msgid "Go to home page"
+msgstr ""
+
+#: src/gui.py:1855
+msgid "Go back one page"
+msgstr ""
+
+#: src/gui.py:1861
+msgid "Go forward one page"
+msgstr ""
+
+#: src/gui.py:1930
+msgid "Page not found"
+msgstr ""
+
+#: src/gui.py:1931
+#, python-format
+msgid "Could not find page '%s'."
+msgstr ""
+
+#: src/gui.py:1987
+#, python-format
+msgid "Field '%s' can't be empty."
+msgstr "El campo '%s' no puede estar vacío."
+
+#: src/gui.py:1993
+msgid "Error"
+msgstr "Error"
+
+#: src/gui.py:1999
+msgid "Question"
+msgstr "Pregunta"
+
+#: src/help.py:64
+#, python-format
+msgid "Search results for '%s'"
+msgstr ""
+
+#: src/help.py:122
+msgid "Related pages"
+msgstr ""
+
+#: src/data.py:234
 msgid "Description"
 msgstr "Descripción"
 
-#: src/data.py:326
+#: src/data.py:345
 msgid "Start time can't be after year 9989"
 msgstr "La fecha de inicio no puede ser posterior a 9989"
 
-#: src/data.py:327
+#: src/data.py:346
 msgid "Start time can't be before year 10"
 msgstr "La fecha de inicio no puede ser anterior a 10"
 
-#: src/data.py:330
+#: src/data.py:349
 msgid "End time can't be after year 9989"
 msgstr "La fecha de fin no puede ser posterior a 9989"
 
-#: src/data.py:331
+#: src/data.py:350
 msgid "End time can't be before year 10"
 msgstr "La fecha de fin no puede ser anterior a 10"
 
-#: src/data.py:335
+#: src/data.py:354
 msgid "Start time can't be after end time"
 msgstr "La fecha de inicio no puede ser posterior a la de fin"
 
-#: src/data.py:371
+#: src/data.py:390
 msgid "Can't zoom wider than 120 years"
 msgstr "No se puede hacer zoom a más de 120 años"
 
-#: src/data.py:373
+#: src/data.py:392
 msgid "Can't zoom deeper than 1 hour"
 msgstr "No se puede hacer zoom a menos de 1 hora"
 
-#: src/data.py:533
-msgid "Unknown format"
-msgstr "Formato desconocido"
+#: src/data.py:552
+#, python-format
+msgid "Unable to open timeline '%s'."
+msgstr "No se puede abrir la línea de tiempo '%s'."
+
+#: src/data.py:553
+msgid "Unknown format."
+msgstr ""
+
+#~ msgid "Export the current view to a PNG or BMP image"
+#~ msgstr "Exportar a imagen PNG o BMP"
+
+#~ msgid "Could not locate manual at '%s'."
+#~ msgstr "No se puede localizar el manual en '%s'."
+
+#~ msgid "Timeline User Manual"
+#~ msgstr "Manual del usuario de Timeline"
+
+#, python-format
+#~ msgid ""
+#~ "Unable to read timeline data from '%s'. Enable logging (see user manual for "
+#~ "instructions how to) and open the timeline again to get more information "
+#~ "about the problem."
+#~ msgstr ""
+#~ "No se puede leer datos de la linea de tiempo '%s'. Activar el log (ver el "
+#~ "manual del usuario para ver como hacer esto) y abrir la línea de tiempo "
+#~ "nuevamente para recoger más información sobre este problema."
+
+#~ msgid "Unknown format"
+#~ msgstr "Formato desconocido"
 
 #~ msgid "Close on OK"
 #~ msgstr "Ok cierra"
+
 #~ msgid "Start:"
 #~ msgstr "Inicio:"
+
 #~ msgid "End:"
 #~ msgstr "Fin:"
-
