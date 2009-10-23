@@ -59,16 +59,16 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70013358"
+     inkscape:zoom="1.9802768"
      inkscape:cx="437.89684"
-     inkscape:cy="628.66191"
+     inkscape:cy="562.96402"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g3199"
      showgrid="false"
-     inkscape:window-width="1248"
-     inkscape:window-height="950"
-     inkscape:window-x="15"
-     inkscape:window-y="13"
+     inkscape:window-width="1494"
+     inkscape:window-height="820"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      showguides="true"
      inkscape:guide-bbox="true"
      showborder="true"
@@ -199,11 +199,11 @@
                  sodipodi:role="line">WelcomePanel</tspan></text>
           </g>
           <g
-             transform="translate(98.31759,314.23302)"
+             transform="translate(116.31759,314.23302)"
              id="g3199">
             <rect
                y="96.624992"
-               x="271.63388"
+               x="263.63388"
                height="97.24041"
                width="134.54463"
                id="rect3201"
@@ -212,11 +212,11 @@
                sodipodi:linespacing="140%"
                id="text3203"
                y="115.84924"
-               x="338.8732"
+               x="330.8732"
                style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:139.99999762%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
                xml:space="preserve"><tspan
                  y="115.84924"
-                 x="338.8732"
+                 x="330.8732"
                  id="tspan3205"
                  sodipodi:role="line">ErrorPanel</tspan></text>
           </g>
@@ -224,24 +224,24 @@
              transform="translate(-4.8268486e-5,0)"
              id="g2523">
             <g
-               transform="translate(-49.143528,329.25243)"
+               transform="matrix(0.9401441,0,0,1,-31.894122,329.25243)"
                id="g3191">
               <rect
-                 y="81.605583"
-                 x="271.80899"
-                 height="97.00441"
-                 width="134.19434"
+                 y="81.635452"
+                 x="271.83887"
+                 height="96.944672"
+                 width="150.79893"
                  id="rect3193"
-                 style="opacity:1;fill:#fff4b9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.00000024;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+                 style="opacity:1;fill:#fff4b9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.05973768;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
               <text
                  sodipodi:linespacing="140%"
                  id="text3195"
                  y="100.62989"
-                 x="339.55545"
+                 x="345.93741"
                  style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:139.99999762%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
                  xml:space="preserve"><tspan
                    y="100.62989"
-                   x="339.55545"
+                   x="345.93741"
                    id="tspan3197"
                    sodipodi:role="line">TimelinePanel</tspan></text>
             </g>
@@ -259,6 +259,13 @@
                width="77.795509"
                id="rect3264"
                style="opacity:1;fill:#b9fff8;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+            <rect
+               style="opacity:1;fill:#ffb9f2;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.42487022;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+               id="rect2653"
+               width="5.4738016"
+               height="53.529274"
+               x="350.9863"
+               y="444.41577" />
           </g>
         </g>
         <g
@@ -346,6 +353,47 @@
                width="63.058029"
                id="rect3278"
                style="opacity:1;fill:#d5ffb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.00000012;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+          </g>
+          <g
+             id="g2635"
+             transform="matrix(1.0454333,0,0,1,258.48753,-0.8584385)">
+            <g
+               id="g2637"
+               transform="translate(-132.77304,444.08489)">
+              <rect
+                 style="opacity:1;fill:#ffb9f2;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.64594811;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+                 id="rect2639"
+                 width="36.579681"
+                 height="127.64125"
+                 x="294.77402"
+                 y="81.424583" />
+              <text
+                 xml:space="preserve"
+                 style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:139.99999762%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+                 x="313.01868"
+                 y="106.35423"
+                 id="text2641"
+                 sodipodi:linespacing="140%"><tspan
+                   sodipodi:role="line"
+                   id="tspan2643"
+                   x="313.01868"
+                   y="106.35423">Slider</tspan></text>
+              <text
+                 xml:space="preserve"
+                 style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+                 x="552.953"
+                 y="461.0307"
+                 id="text2647"
+                 transform="translate(-205.62852,-392.64205)"><tspan
+                   sodipodi:role="line"
+                   id="tspan2649"
+                   x="552.953"
+                   y="461.0307"></tspan><tspan
+                   sodipodi:role="line"
+                   id="tspan2651"
+                   x="552.953"
+                   y="511.0307" /></text>
+            </g>
           </g>
         </g>
         <g
@@ -538,25 +586,25 @@
       <text
          xml:space="preserve"
          style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:129.99999523%;writing-mode:lr-tb;text-anchor:start;fill:#cd0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-         x="554.57269"
+         x="592.57269"
          y="602.29437"
          id="text3875"
          sodipodi:linespacing="130%"><tspan
            y="602.29437"
-           x="554.57269"
+           x="592.57269"
            id="tspan3881"
            sodipodi:role="line">All these panels have a reference</tspan><tspan
            id="tspan3905"
            y="616.59436"
-           x="554.57269"
+           x="592.57269"
            sodipodi:role="line">to MainPanel so that they can call</tspan><tspan
            id="tspan3943"
            y="630.89435"
-           x="554.57269"
+           x="592.57269"
            sodipodi:role="line">switch_to_error_view when they</tspan><tspan
            id="tspan3907"
            y="645.1944"
-           x="554.57269"
+           x="592.57269"
            sodipodi:role="line">get a timeline error.</tspan></text>
     </g>
     <g
