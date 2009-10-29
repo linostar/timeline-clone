@@ -33,7 +33,7 @@ from version import get_version
 
 APPLICATION_NAME = "Timeline"
 COPYRIGHT_TEXT = "Copyright (C) 2009 The %s Authors" % APPLICATION_NAME
-APPLICATION_DESCRIPTION = "Timeline is a free, cross-platform application for displaying and navigating information on a timeline."
+APPLICATION_DESCRIPTION = "Timeline is a free, cross-platform application for displaying and navigating events on a timeline."
 WEBSITE = "http://thetimelineproj.sourceforge.net/"
 DEVELOPERS = ["Rickard Lindberg", "Roger Lindberg"]
 TRANSLATORS = ["Roger Lindberg (Swedish)",
