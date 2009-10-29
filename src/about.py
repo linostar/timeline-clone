@@ -40,8 +40,8 @@ TRANSLATORS = ["Roger Lindberg (Swedish)",
                "Rickard Lindberg (Swedish)",
                "Roman Gelbort (Spanish)",
                "Nils Steinger (German)",
-               u"Leonardo Frigo da Purificação (Brazilian Portuguese)",
-               "Koert Loret (Dutch)"]
+               "MixCool (German)",
+               "Leo Frigo (Portuguese, Spanish, Brazilian Portuguese)"]
 ARTISTS = ["Sara Lindberg"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
