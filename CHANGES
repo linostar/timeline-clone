@@ -1,3 +1,22 @@
+Timeline 0.6.0, released on 1 November 2009
+===========================================
+
+This is a new minor feature release.
+
+New features, enhancements:
+
+  * Added shortcuts for editing categories from the event editor dialog
+  * Mapped backspace key to previous page in help browser
+  * Added option to open most recent timeline at startup (default yes)
+  * Show exact time of an event in status bar
+  * The y position of the divider between period events and single point
+    events can now be adjusted
+
+Bug fixes:
+
+  * Period events with description now has correct width
+  * The legend is now always drawn on top of events
+
 Timeline 0.5.0, released on 1 October 2009
 ==========================================
 
