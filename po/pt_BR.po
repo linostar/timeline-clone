@@ -7,21 +7,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Timeline 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-01 15:46+0200\n"
+"POT-Creation-Date: 2009-10-17 14:47+0200\n"
 "PO-Revision-Date: 2009-10-05 15:42+0000\n"
 "Last-Translator: Leo Frigo <Unknown>\n"
 "Language-Team: Brazilian Portuguese <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-10-17 12:28+0000\n"
+"X-Launchpad-Export-Date: 2009-10-29 09:16+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: src/drawing_default.py:134
 msgid "Week"
 msgstr "Semana"
 
-#: src/drawing_default.py:638
+#: src/drawing_default.py:642
 msgid "-- more --"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
-#: src/help_pages.py:53 src/gui.py:236 src/gui.py:644
+#: src/help_pages.py:53 src/gui.py:250 src/gui.py:661
 msgid "Getting started tutorial"
 msgstr ""
 
@@ -170,7 +170,7 @@ msgid ""
 "that you take regular backups of your timeline file.\n"
 msgstr ""
 
-#: src/help_pages.py:132 src/gui.py:1252
+#: src/help_pages.py:132 src/gui.py:1301
 msgid "Restore file from backup"
 msgstr ""
 
@@ -242,7 +242,7 @@ msgid ""
 "No. The events will still be there but they will not belong to a category.\n"
 msgstr ""
 
-#: src/help_pages.py:186 src/gui.py:196
+#: src/help_pages.py:186 src/gui.py:210 src/gui.py:1579
 msgid "Edit categories"
 msgstr "Editar categorias"
 
@@ -256,7 +256,7 @@ msgid ""
 "*Sidebar*).\n"
 msgstr ""
 
-#: src/help_pages.py:196 src/gui.py:238
+#: src/help_pages.py:196 src/gui.py:252
 msgid "Contact"
 msgstr ""
 
@@ -319,315 +319,339 @@ msgstr ""
 msgid "Unable to create backup to '%s'."
 msgstr "Impossível criar backup para '%s'."
 
-#: src/gui.py:107
-msgid "Create Event"
-msgstr "Criar Evento"
-
-#: src/gui.py:118
-msgid "Edit Event"
-msgstr "Editar Evento"
-
-#: src/gui.py:159
-msgid "Create a new timeline"
-msgstr "Criar novo cronograma"
-
-#: src/gui.py:161
-msgid "Open an existing timeline"
-msgstr "Abrir um cronograma existente"
-
-#: src/gui.py:163
-msgid "Open &Recent"
-msgstr ""
-
-#: src/gui.py:167
-msgid "Page Set&up..."
-msgstr ""
-
-#: src/gui.py:168
-msgid "Setup page for printing"
-msgstr ""
-
-#: src/gui.py:170
-msgid "Print Preview"
-msgstr ""
-
-#: src/gui.py:173
-msgid "Print"
-msgstr ""
-
-#: src/gui.py:176
-msgid "&Export to Image..."
-msgstr "&Exportar para imagem..."
-
-#: src/gui.py:177
-msgid "Export the current view to a PNG image"
-msgstr ""
-
-#: src/gui.py:180
-msgid "Exit the program"
-msgstr "Sair do programa"
-
-#: src/gui.py:192
-msgid "Create &Event..."
-msgstr "Criar &Evento..."
-
-#: src/gui.py:193
-msgid "Create a new event"
-msgstr "Criar novo evento"
-
-#: src/gui.py:195
-msgid "Edit &Categories"
-msgstr "Editar &Categorias"
-
-#: src/gui.py:204
-msgid "&Sidebar\tCtrl+I"
-msgstr "&Barra Lateral\tCtrl+I"
-
-#: src/gui.py:207
-msgid "&Legend"
-msgstr "&Legenda"
-
-#: src/gui.py:215
-msgid "Go to &Today\tCtrl+H"
-msgstr "Vá para &Hoje\tCtrl+H"
-
-#: src/gui.py:216
-msgid "Go to D&ate...\tCtrl+G"
-msgstr "Vá para a D&ata...\tCtrl+G"
-
-#: src/gui.py:218
-msgid "Backward\tPgUp"
-msgstr ""
-
-#: src/gui.py:219
-msgid "Forward\tPgDn"
-msgstr ""
-
-#: src/gui.py:221
-msgid "Fit Year"
-msgstr "Ajustar Ano"
-
-#: src/gui.py:222
-msgid "Fit Month"
-msgstr "Ajustar Mês"
-
-#: src/gui.py:223
-msgid "Fit Day"
-msgstr "Ajustar Dia"
-
-#: src/gui.py:233
-msgid "&Contents\tF1"
-msgstr "&Conteúdo\tF1"
-
-#: src/gui.py:245
-msgid "&File"
-msgstr "&Arquivo"
-
-#: src/gui.py:246
-msgid "&View"
-msgstr "&Visualizar"
-
-#: src/gui.py:247
-msgid "&Timeline"
-msgstr "&Cronograma"
-
-#: src/gui.py:248
-msgid "&Navigate"
-msgstr "&Navegar"
-
-#: src/gui.py:249
-msgid "&Help"
-msgstr "&Ajuda"
-
-#: src/gui.py:285
+#: src/gui.py:112
 #, python-format
 msgid "File '%s' does not exist."
 msgstr ""
 
-#: src/gui.py:388
+#: src/gui.py:116
+msgid "Create Event"
+msgstr "Criar Evento"
+
+#: src/gui.py:127
+msgid "Edit Event"
+msgstr "Editar Evento"
+
+#: src/gui.py:168
+msgid "Create a new timeline"
+msgstr "Criar novo cronograma"
+
+#: src/gui.py:170
+msgid "Open an existing timeline"
+msgstr "Abrir um cronograma existente"
+
+#: src/gui.py:172
+msgid "Open &Recent"
+msgstr ""
+
+#: src/gui.py:176
+msgid "Page Set&up..."
+msgstr ""
+
+#: src/gui.py:177
+msgid "Setup page for printing"
+msgstr ""
+
+#: src/gui.py:179
+msgid "Print Preview"
+msgstr ""
+
+#: src/gui.py:182
+msgid "Print"
+msgstr ""
+
+#: src/gui.py:185
+msgid "&Export to Image..."
+msgstr "&Exportar para imagem..."
+
+#: src/gui.py:186
+msgid "Export the current view to a PNG image"
+msgstr ""
+
+#: src/gui.py:189
+msgid "Exit the program"
+msgstr "Sair do programa"
+
+#: src/gui.py:206
+msgid "Create &Event..."
+msgstr "Criar &Evento..."
+
+#: src/gui.py:207
+msgid "Create a new event"
+msgstr "Criar novo evento"
+
+#: src/gui.py:209
+msgid "Edit &Categories"
+msgstr "Editar &Categorias"
+
+#: src/gui.py:218
+msgid "&Sidebar\tCtrl+I"
+msgstr "&Barra Lateral\tCtrl+I"
+
+#: src/gui.py:221
+msgid "&Legend"
+msgstr "&Legenda"
+
+#: src/gui.py:229
+msgid "Go to &Today\tCtrl+H"
+msgstr "Vá para &Hoje\tCtrl+H"
+
+#: src/gui.py:230
+msgid "Go to D&ate...\tCtrl+G"
+msgstr "Vá para a D&ata...\tCtrl+G"
+
+#: src/gui.py:232
+msgid "Backward\tPgUp"
+msgstr ""
+
+#: src/gui.py:233
+msgid "Forward\tPgDn"
+msgstr ""
+
+#: src/gui.py:235
+msgid "Fit Year"
+msgstr "Ajustar Ano"
+
+#: src/gui.py:236
+msgid "Fit Month"
+msgstr "Ajustar Mês"
+
+#: src/gui.py:237
+msgid "Fit Day"
+msgstr "Ajustar Dia"
+
+#: src/gui.py:247
+msgid "&Contents\tF1"
+msgstr "&Conteúdo\tF1"
+
+#: src/gui.py:259
+msgid "&File"
+msgstr "&Arquivo"
+
+#: src/gui.py:260
+msgid "&Edit"
+msgstr ""
+
+#: src/gui.py:261
+msgid "&View"
+msgstr "&Visualizar"
+
+#: src/gui.py:262
+msgid "&Timeline"
+msgstr "&Cronograma"
+
+#: src/gui.py:263
+msgid "&Navigate"
+msgstr "&Navegar"
+
+#: src/gui.py:264
+msgid "&Help"
+msgstr "&Ajuda"
+
+#: src/gui.py:405
 msgid "Create Timeline"
 msgstr "Criar Cronograma"
 
-#: src/gui.py:395
+#: src/gui.py:412
 msgid "The specified timeline already exists."
 msgstr "O cronograma especificado já existe."
 
-#: src/gui.py:396
+#: src/gui.py:413
 msgid "Opening timeline instead of creating new."
 msgstr "Abrir cronograma em lugar de criar novo."
 
-#: src/gui.py:398
+#: src/gui.py:415
 msgid "Information"
 msgstr "Informação"
 
-#: src/gui.py:409
+#: src/gui.py:426
 msgid "Open Timeline"
 msgstr "Abrir Cronograma"
 
-#: src/gui.py:470
+#: src/gui.py:487
 msgid "Image files"
 msgstr "Arquivos de Imagem"
 
-#: src/gui.py:471
+#: src/gui.py:488
 msgid "Export to Image"
 msgstr "Exportar para Imagem"
 
-#: src/gui.py:475
+#: src/gui.py:492
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "O arquivo '%s' já existe. Sobrescrever?"
 
-#: src/gui.py:507
+#: src/gui.py:524
 msgid "Timeline files"
 msgstr "Arquivos de cronograma"
 
-#: src/gui.py:636
+#: src/gui.py:653
 msgid "No timeline opened."
 msgstr ""
 
-#: src/gui.py:641
+#: src/gui.py:658
 msgid "First time using Timeline?"
 msgstr ""
 
-#: src/gui.py:811
+#: src/gui.py:832
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
 msgstr ""
 
-#: src/gui.py:811
+#: src/gui.py:832
 msgid "Printing"
 msgstr ""
 
-#: src/gui.py:825
+#: src/gui.py:846
 msgid "Print preview"
 msgstr ""
 
-#: src/gui.py:868 src/gui.py:886
+#: src/gui.py:889 src/gui.py:907
 msgid "No timeline set"
 msgstr "Nenhum cronograma definido"
 
-#: src/gui.py:1197 src/gui.py:1601
+#: src/gui.py:1093
+msgid "Center"
+msgstr ""
+
+#: src/gui.py:1246 src/gui.py:1718
 msgid "Are you sure to delete?"
 msgstr "Tem certeza que deseja apagar?"
 
-#: src/gui.py:1249
+#: src/gui.py:1298
 msgid "Relevant help topics:"
 msgstr ""
 
-#: src/gui.py:1292
+#: src/gui.py:1341
 msgid "Event Properties"
 msgstr "Propriedades de Eventos"
 
-#: src/gui.py:1298
+#: src/gui.py:1347
 msgid "When:"
 msgstr "Quando:"
 
-#: src/gui.py:1301
+#: src/gui.py:1350
 msgid "to"
 msgstr "para"
 
-#: src/gui.py:1314
+#: src/gui.py:1363
 msgid "Period"
 msgstr "Período"
 
-#: src/gui.py:1318 src/gui.py:1705
+#: src/gui.py:1367 src/gui.py:1870
 msgid "Show time"
 msgstr "Mostrar hora"
 
-#: src/gui.py:1325
+#: src/gui.py:1374
 msgid "Text:"
 msgstr "Texto:"
 
-#: src/gui.py:1330
+#: src/gui.py:1379
 msgid "Category:"
 msgstr "Categoria:"
 
-#: src/gui.py:1353
+#: src/gui.py:1404
 msgid "Add more events after this one"
 msgstr "Adicionar mais eventos após este"
 
-#: src/gui.py:1382
+#: src/gui.py:1433
 msgid "End must be > Start"
 msgstr "Final deve ser > Início"
 
-#: src/gui.py:1383
+#: src/gui.py:1434
 msgid "Text"
 msgstr "Texto"
 
-#: src/gui.py:1489
-msgid "Edit Categories"
-msgstr "Editar Categorias"
-
-#: src/gui.py:1540
-msgid "Edit Category"
-msgstr "Editar Categoria"
-
-#: src/gui.py:1554
+#: src/gui.py:1484 src/gui.py:1671
 msgid "Add Category"
 msgstr "Adicionar Categoria"
 
-#: src/gui.py:1645
+#: src/gui.py:1578
+msgid "Add new"
+msgstr ""
+
+#: src/gui.py:1606
+msgid "Edit Categories"
+msgstr "Editar Categorias"
+
+#: src/gui.py:1657
+msgid "Edit Category"
+msgstr "Editar Categoria"
+
+#: src/gui.py:1762
 msgid "Name:"
 msgstr "Nome:"
 
-#: src/gui.py:1648
+#: src/gui.py:1765
 msgid "Color:"
 msgstr "Cor:"
 
-#: src/gui.py:1651
+#: src/gui.py:1768
 msgid "Visible:"
 msgstr "Visível:"
 
-#: src/gui.py:1666
+#: src/gui.py:1783
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
 msgstr "Nome de categoria '%s' é inválido. Precisa ser preenchido."
 
-#: src/gui.py:1670
+#: src/gui.py:1787
 #, python-format
 msgid "Category name '%s' already in use."
 msgstr "Nome de categoria '%s' já é usado."
 
-#: src/gui.py:1699
+#: src/gui.py:1822
+msgid "Preferences"
+msgstr ""
+
+#: src/gui.py:1829
+msgid "General"
+msgstr ""
+
+#: src/gui.py:1831
+msgid "Open most recent timeline on startup"
+msgstr ""
+
+#: src/gui.py:1864
 msgid "Go to Date"
 msgstr "Vá para Data"
 
-#: src/gui.py:1805
+#: src/gui.py:1970
 msgid "Help"
 msgstr ""
 
-#: src/gui.py:1848
+#: src/gui.py:2013
 msgid "Go to home page"
 msgstr ""
 
-#: src/gui.py:1855
+#: src/gui.py:2020
 msgid "Go back one page"
 msgstr ""
 
-#: src/gui.py:1861
+#: src/gui.py:2026
 msgid "Go forward one page"
 msgstr ""
 
-#: src/gui.py:1930
+#: src/gui.py:2112
 msgid "Page not found"
 msgstr ""
 
-#: src/gui.py:1931
+#: src/gui.py:2113
 #, python-format
 msgid "Could not find page '%s'."
 msgstr ""
 
-#: src/gui.py:1987
+#: src/gui.py:2169
 #, python-format
 msgid "Field '%s' can't be empty."
 msgstr "Campo '%s' não pode ser vazio."
 
-#: src/gui.py:1993
+#: src/gui.py:2175
 msgid "Error"
 msgstr "Erro"
 
-#: src/gui.py:1999
+#: src/gui.py:2181
 msgid "Question"
 msgstr "Questão"
 
@@ -640,44 +664,44 @@ msgstr ""
 msgid "Related pages"
 msgstr ""
 
-#: src/data.py:234
+#: src/data.py:236
 msgid "Description"
 msgstr "Descrição"
 
-#: src/data.py:345
+#: src/data.py:351
 msgid "Start time can't be after year 9989"
 msgstr "Data de início não pode ser após o ano de 9989"
 
-#: src/data.py:346
+#: src/data.py:352
 msgid "Start time can't be before year 10"
 msgstr "Data de início não pode ser antes do ano 10"
 
-#: src/data.py:349
+#: src/data.py:355
 msgid "End time can't be after year 9989"
 msgstr "Data de término não pode ser após o ano de 9989"
 
-#: src/data.py:350
+#: src/data.py:356
 msgid "End time can't be before year 10"
 msgstr "Data de término não pode ser antes do ano 10"
 
-#: src/data.py:354
+#: src/data.py:360
 msgid "Start time can't be after end time"
 msgstr "Data de início não pode ser após data de término"
 
-#: src/data.py:390
+#: src/data.py:396
 msgid "Can't zoom wider than 120 years"
 msgstr "Não é possível abrir zoom para mais de 120 anos"
 
-#: src/data.py:392
+#: src/data.py:398
 msgid "Can't zoom deeper than 1 hour"
 msgstr "Não é possível fechar zoom para menos de 1 hora"
 
-#: src/data.py:552
+#: src/data.py:586
 #, python-format
 msgid "Unable to open timeline '%s'."
 msgstr "Impossível abrir cronograma '%s'."
 
-#: src/data.py:553
+#: src/data.py:587
 msgid "Unknown format."
 msgstr ""
 
