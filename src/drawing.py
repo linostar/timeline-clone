@@ -53,6 +53,10 @@ class DrawingAlgorithm(object):
         """
         pass
 
+    def snap(self, time, snap_region=10):
+        """Snap time to minor strip if within snap_region pixels."""
+        return time
+
     def snap_selection(self, period_selection):
         """
         Return a tuple where the selection has been stretched to fit to minor

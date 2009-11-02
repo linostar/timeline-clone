@@ -263,12 +263,23 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         # Make sure to delete this one
         del self.dc
 
-    def snap_selection(self, period_selection):
+    def snap(self, time, snap_region=10):
         major_strip, minor_strip = self._choose_strip()
+        time_x = self.metrics.calc_exact_x(time)
+        left_strip_time = minor_strip.start(time)
+        right_strip_time = minor_strip.increment(left_strip_time)
+        left_diff = abs(time_x - self.metrics.calc_exact_x(left_strip_time))
+        right_diff = abs(time_x - self.metrics.calc_exact_x(right_strip_time))
+        if left_diff < snap_region:
+            return left_strip_time
+        elif right_diff < snap_region:
+            return right_strip_time
+        else:
+            return time
+
+    def snap_selection(self, period_selection):
         start, end = period_selection
-        new_start = minor_strip.start(start)
-        new_end = minor_strip.increment(minor_strip.start(end))
-        return (new_start, new_end)
+        return (self.snap(start), self.snap(end))
 
     def event_at(self, x, y):
         for (event, rect) in self.event_data:
