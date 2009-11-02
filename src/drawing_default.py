@@ -287,6 +287,12 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 return event
         return None
 
+    def event_with_rect_at(self, x, y):
+        for (event, rect) in self.event_data:
+            if rect.Contains(wx.Point(x, y)):
+                return (event, rect)
+        return None
+
     def _calc_rects(self, events):
         """
         Calculate rectangles for all events.

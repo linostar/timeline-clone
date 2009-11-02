@@ -73,6 +73,13 @@ class DrawingAlgorithm(object):
         """
         return None
 
+    def event_with_rect_at(self, x, y):
+        """
+        Return the event at pixel coordinate (x, y) and its rect in a tuple
+        (event, rect) or None if no event there.
+        """
+        return None
+
 
 class Metrics(object):
     """Helper class that can calculate coordinates."""
