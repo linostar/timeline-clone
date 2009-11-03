@@ -271,6 +271,24 @@ class Event(object):
         self.text = text
         self.category = category
 
+    def update_period(self, start_time, end_time):
+        """Change the event period."""
+        self.time_period = TimePeriod(start_time, end_time)
+        
+    def update_start(self, start_time):
+        """Change the event data."""
+        if start_time <= self.time_period.end_time:
+            self.time_period = TimePeriod(start_time, self.time_period.end_time)
+            return True
+        return False            
+
+    def update_end(self, end_time):
+        """Change the event data."""
+        if end_time >= self.time_period.start_time:
+            self.time_period = TimePeriod(self.time_period.start_time, end_time)
+            return True
+        return False            
+
     def inside_period(self, time_period):
         """Wrapper for time period method."""
         return self.time_period.overlap(time_period)
@@ -496,11 +514,11 @@ class TimePeriod(object):
                 label = u"%s to %s" % (label_with_time(self.start_time),
                                       label_with_time(self.end_time))
             else:
-                label = u"%s to %s" % (label_without_time(self.start_time), 
+                label = u"%s to %s" % (label_without_time(self.start_time),
                                       label_without_time(self.end_time))
         else:
             if has_nonzero_time(self.start_time, self.end_time):
-                label = u"%s" % label_with_time(self.start_time) 
+                label = u"%s" % label_with_time(self.start_time)
             else:
                 label = u"%s" % label_without_time(self.start_time)
         return label

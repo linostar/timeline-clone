@@ -232,6 +232,10 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
         self.DATA_ICON_WIDTH = 5
 
+    def event_is_period(self, time_period):
+        ew = self.metrics.calc_width(time_period)
+        return ew > PERIOD_THRESHOLD
+    
     def draw(self, dc, time_period, events, period_selection=None,
              legend=False,  divider_line_slider=None):
         """
@@ -291,6 +295,12 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         for (event, rect) in self.event_data:
             if rect.Contains(wx.Point(x, y)):
                 return (event, rect)
+        return None
+
+    def event_rect(self, evt):
+        for (event, rect) in self.event_data:
+            if evt == event:
+                return rect
         return None
 
     def _calc_rects(self, events):

@@ -61,7 +61,8 @@ import help_pages
 BORDER = 5
 # Used by dialogs as a return code when a TimelineIOError has been raised
 ID_ERROR = wx.NewId()
-
+# Used by Sizer and Mover classes to detect when to go into action
+HIT_REGION_PX_WITH = 5
 
 help_browser = None
 
@@ -773,6 +774,142 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
                     self.Check(i)
                 self.SetItemBackgroundColour(i, self.categories[i].color)
 
+class EventSizer(object):
+    """Objects of this class are used to simplify resizing of events."""
+
+    def __init__(self, drawing_area, m_x = 0, m_y = 0):
+        self.direction = wx.LEFT
+        self.drawing_area = drawing_area
+        self.metrics = self.drawing_area.drawing_algorithm.metrics
+        self.sizing = False
+        self.event = None
+        if m_x + m_y > 0:
+            self.sizing = self._hit(m_x, m_y)
+
+    def is_sizing(self):
+        """Return True if we are in a resizing state, otherwise return False."""
+        return self.sizing
+
+    def set_cursor(self, m_x, m_y):
+        """
+        Used in mouse-move events to set the size cursor before the left mouse
+        button is pressed, to indicate that a resize is possible (if it is!).
+        Return True if the size-indicator-cursor is set, otherwise return False.
+        """
+        hit = self._hit(m_x, m_y)
+        if hit:
+            self.drawing_area._set_size_cursor()
+        else:
+            self.drawing_area._set_default_cursor()
+        return hit
+
+    def _hit(self, m_x, m_y):
+        """
+        Calculate the 'hit-for-resize' coordinates and return True if
+        the mouse is within this area. Otherwise return False.
+        The 'hit-for-resize' area is the are at the left and right edges of the
+        event rectangle with a width of HIT_REGION_PX_WITH.
+        """
+        event_info = self.drawing_area.drawing_algorithm.event_with_rect_at(m_x, m_y)
+        if event_info == None:
+            return False
+        self.event, rect = event_info
+        if abs(m_x - rect.X) < HIT_REGION_PX_WITH:
+            self.direction = wx.LEFT
+            return True
+        elif abs(rect.X + rect.Width - m_x) < HIT_REGION_PX_WITH:
+            self.direction = wx.RIGHT
+            return True
+        return False
+
+    def resize(self, m_x, m_y):
+        """
+        Resize the event either on the left or the right side. 
+        The event edge is snapped to the grid.
+        """
+        time = self.metrics.get_time(m_x)
+        time = self.drawing_area.drawing_algorithm.snap(time)
+        resized = False
+        if self.direction == wx.LEFT:
+            resized = self.event.update_start(time)
+        else:
+            resized = self.event.update_end(time)
+        if resized:
+            self.drawing_area._redraw_timeline()
+
+class EventMover(object):
+    """Objects of this class are used to simplify moving of events."""
+
+    def __init__(self, drawing_area, m_x = 0, m_y = 0):
+        self.drawing_area = drawing_area
+        self.drawing_algorithm = self.drawing_area.drawing_algorithm
+        self.x = m_x
+        self.y = m_y
+        self.moving = False
+        self.event = None
+        if m_x + m_y > 0:
+            self.moving = self._hit(m_x, m_y)
+
+    def is_moving(self):
+        """Return True if we are in a moving state, otherwise return False."""
+        return self.moving
+    
+    def set_cursor(self, m_x, m_y):
+        """
+        Used in mouse-move events to set the move cursor before the left mouse
+        button is pressed, to indicate that a move is possible (if it is!).
+        Return True if the move-indicator-cursor is set, otherwise return False.
+        """
+        hit = self._hit(m_x, m_y) 
+        if hit:
+            self.drawing_area._set_move_cursor()
+        else:
+            self.drawing_area._set_default_cursor()
+        return hit
+
+    def move(self, m_x, m_y):
+        """
+        Move the event the time distance, difftime, represented by the distance the 
+        mouse has moved since the last move (m_x - self.x).
+        Events found above the center line are snapped to the grid.
+        """
+        difftime = self.drawing_algorithm.metrics.get_difftime(m_x, self.x)
+        start = self.event.time_period.start_time + difftime
+        end = self.event.time_period.end_time + difftime
+        # Snap events found above the center line
+        if not self.drawing_algorithm.event_is_period(self.event.time_period):
+            halfperiod = (end - start) / 2
+            middletime = self.drawing_algorithm.snap(start + halfperiod)
+            start = middletime - halfperiod
+            end = middletime + halfperiod
+        # Update and redraw the event
+        self.event.update_period(start, end)
+        self.drawing_area._redraw_timeline()
+        # Adjust the coordinates  to get a smooth movement of cursor and event.
+        # We can't use event_with_rect_at() method to get hold of the rect since 
+        # events can jump over each other when moved.
+        rect = self.drawing_algorithm.event_rect(self.event)
+        if rect != None:
+            self.x = rect.X + rect.Width / 2
+        else:
+            self.x = m_x
+        self.y = m_y
+
+    def _hit(self, m_x, m_y):
+        """
+        Calculate the 'hit-for-move' coordinates and return True if
+        the mouse is within this area. Otherwise return False.
+        The 'hit-for-move' area is the are at the center of an event
+        with a width of 2 * HIT_REGION_PX_WITH.
+        """
+        event_info = self.drawing_area.drawing_algorithm.event_with_rect_at(m_x, m_y)
+        if event_info == None:
+            return False
+        self.event, rect = event_info
+        center = rect.X + rect.Width / 2
+        if abs(m_x - center) <= HIT_REGION_PX_WITH:
+            return True
+        return False
 
 class DrawingArea(wx.Panel):
     """
@@ -973,9 +1110,17 @@ class DrawingArea(wx.Panel):
         try:
             logging.debug("Left mouse pressed event in DrawingArea")
             self._set_new_current_time(evt.m_x)
+            # If we hit the event resize area of an event, start resizing
+            self.event_sizer = EventSizer(self, evt.m_x, evt.m_y)
+            if self.event_sizer.is_sizing():
+                return
+            # If we hit the event move area of an event, start moving
+            self.event_mover = EventMover(self, evt.m_x, evt.m_y)
+            if self.event_mover.is_moving():
+                return
+            # No resizing or moving of events...
             posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
-                                                      evt.m_controlDown)
-            self._set_drag_cursor()
+                                                    evt.m_controlDown)
             if not posAtEvent:
                 if evt.m_controlDown:
                     self._set_select_period_cursor()
@@ -1031,8 +1176,17 @@ class DrawingArea(wx.Panel):
         the Control key is up the timeline will scroll.
         """
         logging.debug("Mouse move event in DrawingArea")
+        # Create helper objects that makes event resizing and moving easier
+        if self.event_sizer == None:
+            self.event_sizer = EventSizer(self, evt.m_x, evt.m_y)
+        if self.event_mover == None:
+            self.event_mover = EventMover(self, evt.m_x, evt.m_y)
         if evt.Dragging:
             self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
+            if not evt.m_leftDown:
+                cursor_set = self.event_sizer.set_cursor(evt.m_x, evt.m_y)
+                if not cursor_set:
+                    self.event_mover.set_cursor(evt.m_x, evt.m_y)
         if evt.m_leftDown:
             if self.is_scrolling:
                 self._scroll(evt.m_x)
@@ -1043,8 +1197,13 @@ class DrawingArea(wx.Panel):
                     self._mark_selected_minor_strips(evt.m_x)
                     self.is_selecting = True
                 else:
-                    self._scroll(evt.m_x)
-                    self.is_scrolling = True
+                    if self.event_sizer.is_sizing():
+                        self.event_sizer.resize(evt.m_x, evt.m_y)
+                    elif self.event_mover.is_moving():
+                        self.event_mover.move(evt.m_x, evt.m_y)
+                    else:
+                        self._scroll(evt.m_x)
+                        self.is_scrolling = True
 
     def _window_on_mousewheel(self, evt):
         """
@@ -1084,7 +1243,7 @@ class DrawingArea(wx.Panel):
             self._set_default_cursor()
 
     def _slider_on_slider(self, evt):
-        """The divider-line slider has been moved.""" 
+        """The divider-line slider has been moved."""
         self._redraw_timeline()
 
     def _slider_on_context_menu(self, evt):
@@ -1137,6 +1296,8 @@ class DrawingArea(wx.Panel):
         self.time_period = None
         self.drawing_algorithm = drawing.get_algorithm()
         self.is_scrolling = False
+        self.event_sizer = None
+        self.event_mover = None
         self.is_selecting = False
         self.show_legend = config.get_show_legend()
 
@@ -1270,13 +1431,18 @@ class DrawingArea(wx.Panel):
     def _set_drag_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
+    def _set_size_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_SIZEWE))
+
+    def _set_move_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_SIZING))
+
     def _set_default_cursor(self):
         """
         Set the cursor to it's default shape when it is in the timeline
         drawing area.
         """
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
-
 
 class ErrorPanel(wx.Panel):
 
@@ -1813,7 +1979,7 @@ class CategoryEditor(wx.Dialog):
 class PreferencesDialog(wx.Dialog):
     """
     Dialog used to edit application preferences.
-    
+
     This is essentially a GUI for parts of the preferences in the config
     module.
     """
@@ -2040,7 +2206,7 @@ class HelpBrowser(wx.Frame):
         self.html_window = wx.html.HtmlWindow(self)
         self.Bind(wx.html.EVT_HTML_LINK_CLICKED,
                   self._html_window_on_link_clicked, self.html_window)
-        self.html_window.Connect(wx.ID_ANY, wx.ID_ANY, wx.EVT_KEY_DOWN.typeId, 
+        self.html_window.Connect(wx.ID_ANY, wx.ID_ANY, wx.EVT_KEY_DOWN.typeId,
                                  self._window_on_key_down)
 
     def _window_on_close(self, e):

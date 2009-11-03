@@ -53,6 +53,13 @@ class DrawingAlgorithm(object):
         """
         pass
 
+    def event_is_period(self, time_period):
+        """
+        Return True if the event time_period will make the event appear
+        below the center line, as a period event.
+        """
+        return None
+     
     def snap(self, time, snap_region=10):
         """Snap time to minor strip if within snap_region pixels."""
         return time
@@ -80,6 +87,11 @@ class DrawingAlgorithm(object):
         """
         return None
 
+    def event_rect_at(self, event):
+        """
+        Return the rect for the given event or None if no event isn't found.
+        """
+        return None
 
 class Metrics(object):
     """Helper class that can calculate coordinates."""
@@ -117,6 +129,11 @@ class Metrics(object):
         microsecs = delta_to_microseconds(self.time_period.delta())
         microsecs = microsecs * float(x) / self.width
         return self.time_period.start_time + microseconds_to_delta(microsecs)
+
+    def get_difftime(self, x1, x2):
+        """Return the time length between two x positions."""
+        return self.get_time(x1) - self.get_time(x2)
+    
 
 
 def get_default_font(size, bold=False):
