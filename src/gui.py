@@ -784,7 +784,7 @@ class EventSizer(object):
         self.sizing = False
         self.event = None
         if m_x + m_y > 0:
-            self.sizing = self._hit(m_x, m_y)
+            self.sizing = self._hit(m_x, m_y) and self.event.selected
 
     def is_sizing(self):
         """Return True if we are in a resizing state, otherwise return False."""
@@ -798,6 +798,8 @@ class EventSizer(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
+            if not self.event.selected:
+                return False
             self.drawing_area._set_size_cursor()
         else:
             self.drawing_area._set_default_cursor()
@@ -848,7 +850,7 @@ class EventMover(object):
         self.moving = False
         self.event = None
         if m_x + m_y > 0:
-            self.moving = self._hit(m_x, m_y)
+            self.moving = self._hit(m_x, m_y) and self.event.selected
 
     def is_moving(self):
         """Return True if we are in a moving state, otherwise return False."""
@@ -862,6 +864,8 @@ class EventMover(object):
         """
         hit = self._hit(m_x, m_y) 
         if hit:
+            if not self.event.selected:
+                return False
             self.drawing_area._set_move_cursor()
         else:
             self.drawing_area._set_default_cursor()
@@ -882,6 +886,14 @@ class EventMover(object):
             middletime = self.drawing_algorithm.snap(start + halfperiod)
             start = middletime - halfperiod
             end = middletime + halfperiod
+        else:
+            width = start - end
+            if m_x > self.x:
+                end = self.drawing_area.drawing_algorithm.snap(end)
+                start = end + width
+            else:
+                start = self.drawing_area.drawing_algorithm.snap(start)
+                end = start - width
         # Update and redraw the event
         self.event.update_period(start, end)
         self.drawing_area._redraw_timeline()

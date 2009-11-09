@@ -555,6 +555,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 self.dc.SetBrush(self._get_selected_box_brush(event))
                 self.dc.SetPen(wx.TRANSPARENT_PEN)
                 self.dc.DrawRectangleRect(rect)
+                self._draw_handles(rect)
             # Draw the text
             self.dc.DrawText(event.text,
                              rect.X + INNER_PADDING,
@@ -565,6 +566,22 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         # Reset this when we are done
         self.dc.DestroyClippingRegion()
 
+    def _draw_handles(self, rect):
+        SIZE = 4
+        big_rect = wx.Rect(rect.X - SIZE, rect.Y - SIZE, rect.Width + 2 * SIZE, rect.Height + 2 * SIZE)
+        self.dc.DestroyClippingRegion()
+        self.dc.SetClippingRect(big_rect)
+        y = rect.Y + rect.Height/2 - SIZE/2
+        x = rect.X - SIZE / 2
+        west_rect   = wx.Rect(x                 , y, SIZE, SIZE)
+        center_rect = wx.Rect(x + rect.Width / 2, y, SIZE, SIZE)
+        east_rect   = wx.Rect(x + rect.Width    , y, SIZE, SIZE)
+        self.dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
+        self.dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
+        self.dc.DrawRectangleRect(east_rect)
+        self.dc.DrawRectangleRect(west_rect)
+        self.dc.DrawRectangleRect(center_rect)
+        
     def _draw_contents_indicator(self, event, rect):
         """
         The data contents indicator is a small icon added to the end of
