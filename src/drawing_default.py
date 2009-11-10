@@ -638,7 +638,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         """Draw ballons on selected events that has 'description' data."""
         for (event, rect) in self.event_data:
             if event.get_data("description") != None:
-                if event.selected:
+                if event.selected or event.draw_ballon:
                     self._draw_ballon(event, rect)
 
     def _draw_ballon(self, event, rect):
@@ -685,8 +685,15 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         if nbr_of_pages > 1:
             more_indicator = _("-- more --")
             w,h = self.dc.GetTextExtent(more_indicator)
-            start = text_rect.x + (text_rect.Width - w)/ 2
+            start = text_rect.x + (text_rect.Width - w) / 2
             self.dc.DrawText(more_indicator, start, current_y)
+
+    def notify_events(self, notification, data):
+        """
+        Send notification to all visible events
+        """
+        for (event, rect) in self.event_data:
+            event.notify(notification, data)
 
 
 def get_ballon_border_path_and_text_rect(rect, path):

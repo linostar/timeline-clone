@@ -33,6 +33,9 @@ import wx
 US_PER_SEC = 1000000
 US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
 
+# Notification messages
+MSG_BALLON_VISIBILITY_CHANGED   = 1
+
 
 class Observable(object):
     """
@@ -262,6 +265,7 @@ class Event(object):
         `start_time` and `end_time` should be of the type datetime.
         """
         self.selected = False
+        self.draw_ballon = False
         self.update(start_time, end_time, text, category)
         self.data = {}
 
@@ -318,7 +322,14 @@ class Event(object):
         """Returns a unicode label describing the event."""
         return u"%s (%s)" % (self.text, self.time_period.get_label())
 
-
+    def notify(self, notification, data):
+        """A notification has been sent to the event."""
+        if notification == MSG_BALLON_VISIBILITY_CHANGED:
+            if data == self:
+                self.draw_ballon = True
+            else:    
+                self.draw_ballon = False
+                
 class Category(object):
     """Represents a category that an event belongs to."""
 

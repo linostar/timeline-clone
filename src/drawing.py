@@ -92,7 +92,12 @@ class DrawingAlgorithm(object):
         Return the rect for the given event or None if no event isn't found.
         """
         return None
-
+    
+    def notify_events(self, notification, data):
+        """
+        Send notification to all visible events
+        """
+        
 class Metrics(object):
     """Helper class that can calculate coordinates."""
 

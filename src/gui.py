@@ -221,10 +221,16 @@ class MainFrame(wx.Frame):
         self.mnu_view_legend = self.mnu_view.Append(wx.ID_ANY,
                                                     _("&Legend"),
                                                     kind=wx.ITEM_CHECK)
+        self.mnu_view.AppendSeparator()
+        self.mnu_view_balloons = self.mnu_view.Append(wx.ID_ANY,
+                                                    _("&Balloons on hover"),
+                                                    kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click,
                   self.mnu_view_sidebar)
         self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click,
                   self.mnu_view_legend)
+        self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click,
+                  self.mnu_view_balloons)
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, _("Go to &Today\tCtrl+H"))
@@ -326,6 +332,9 @@ class MainFrame(wx.Frame):
 
     def _mnu_view_legend_on_click(self, evt):
         self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
+
+    def _mnu_view_balloons_on_click(self, evt):
+        self.main_panel.drawing_area.balloon_visibility_changed(evt.IsChecked())
 
     def _mnu_timeline_create_event_on_click(self, evt):
         self.create_new_event()
@@ -1195,6 +1204,7 @@ class DrawingArea(wx.Panel):
             self.event_mover = EventMover(self, evt.m_x, evt.m_y)
         if evt.Dragging:
             self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
+            self._display_balloon_on_hoover(evt.m_x, evt.m_y)
             if not evt.m_leftDown:
                 cursor_set = self.event_sizer.set_cursor(evt.m_x, evt.m_y)
                 if not cursor_set:
@@ -1300,6 +1310,7 @@ class DrawingArea(wx.Panel):
         is_selecting        True when selecting with the mouse takes place
                             It is set True in mouse_has_moved and set False
                             in left_mouse_button_released.
+        show_balloons_on_hover Show ballons on mouse hoover without clicking
         """
         self._current_time = None
         self._mark_selection = False
@@ -1312,6 +1323,7 @@ class DrawingArea(wx.Panel):
         self.event_mover = None
         self.is_selecting = False
         self.show_legend = config.get_show_legend()
+        self.show_balloons_on_hover = False
 
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
@@ -1401,7 +1413,14 @@ class DrawingArea(wx.Panel):
             self._display_text_in_statusbar(event.get_label())
         else:
             self._reset_text_in_statusbar()
-
+            
+    def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
+        event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
+        if self.show_balloons_on_hover:    
+            self.drawing_algorithm.notify_events(
+                                 data.MSG_BALLON_VISIBILITY_CHANGED, event)
+            self._redraw_timeline()
+        
     def _mark_selected_minor_strips(self, current_x):
         """Selection-marking starts or continues."""
         self._mark_selection = True
@@ -1455,6 +1474,15 @@ class DrawingArea(wx.Panel):
         drawing area.
         """
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
+
+    def balloon_visibility_changed(self, visible):
+        self.show_balloons_on_hover = visible
+        # When display on hovering is disabled we have to make sure 
+        # that any visible balloon is removed.
+        if not visible:
+            self.drawing_algorithm.notify_events(
+                            data.MSG_BALLON_VISIBILITY_CHANGED, None)
+            self._redraw_timeline()
 
 class ErrorPanel(wx.Panel):
 
