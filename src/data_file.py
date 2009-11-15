@@ -398,7 +398,7 @@ class FileTimeline(Timeline):
                 data = event.get_data(plugin.get_id())
                 if data != None:
                     file.write(";%s:%s" % (plugin.get_id(),
-                                           quote(plugin.decode(data))))
+                                           quote(plugin.encode(data))))
             file.write("\n")
 
     def _write_footer(self, file):
