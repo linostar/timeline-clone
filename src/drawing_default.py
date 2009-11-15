@@ -634,13 +634,6 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         brush = wx.Brush(border_color, wx.BDIAGONAL_HATCH)
         return brush
 
-    def get_selected_events(self):
-        selected_events = []
-        for (event, rect) in self.event_data:
-            if event.selected:
-                selected_events.append(event)
-        return selected_events
-    
     def _draw_ballons(self):
         """Draw ballons on selected events that has 'description' data."""
         for (event, rect) in self.event_data:
