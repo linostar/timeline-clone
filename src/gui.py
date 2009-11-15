@@ -1432,7 +1432,7 @@ class DrawingArea(wx.Panel):
     def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if self.show_balloons_on_hover:
-            if event:
+            if event and not event.selected:
                 self.event_just_hoverd = event    
                 self.timer = wx.Timer(self, -1)
                 self.Bind(wx.EVT_TIMER, self.on_balloon_timer, self.timer)
