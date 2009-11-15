@@ -221,10 +221,16 @@ class MainFrame(wx.Frame):
         self.mnu_view_legend = self.mnu_view.Append(wx.ID_ANY,
                                                     _("&Legend"),
                                                     kind=wx.ITEM_CHECK)
+        self.mnu_view.AppendSeparator()
+        self.mnu_view_balloons = self.mnu_view.Append(wx.ID_ANY,
+                                                    _("&Balloons on hover"),
+                                                    kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click,
                   self.mnu_view_sidebar)
         self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click,
                   self.mnu_view_legend)
+        self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click,
+                  self.mnu_view_balloons)
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         goto_today = self.mnu_navigate.Append(wx.ID_ANY, _("Go to &Today\tCtrl+H"))
@@ -326,6 +332,9 @@ class MainFrame(wx.Frame):
 
     def _mnu_view_legend_on_click(self, evt):
         self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
+
+    def _mnu_view_balloons_on_click(self, evt):
+        self.main_panel.drawing_area.balloon_visibility_changed(evt.IsChecked())
 
     def _mnu_timeline_create_event_on_click(self, evt):
         self.create_new_event()
@@ -784,7 +793,7 @@ class EventSizer(object):
         self.sizing = False
         self.event = None
         if m_x + m_y > 0:
-            self.sizing = self._hit(m_x, m_y)
+            self.sizing = self._hit(m_x, m_y) and self.event.selected
 
     def is_sizing(self):
         """Return True if we are in a resizing state, otherwise return False."""
@@ -798,6 +807,8 @@ class EventSizer(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
+            if not self.event.selected:
+                return False
             self.drawing_area._set_size_cursor()
         else:
             self.drawing_area._set_default_cursor()
@@ -824,7 +835,7 @@ class EventSizer(object):
 
     def resize(self, m_x, m_y):
         """
-        Resize the event either on the left or the right side. 
+        Resize the event either on the left or the right side.
         The event edge is snapped to the grid.
         """
         time = self.metrics.get_time(m_x)
@@ -848,20 +859,22 @@ class EventMover(object):
         self.moving = False
         self.event = None
         if m_x + m_y > 0:
-            self.moving = self._hit(m_x, m_y)
+            self.moving = self._hit(m_x, m_y) and self.event.selected
 
     def is_moving(self):
         """Return True if we are in a moving state, otherwise return False."""
         return self.moving
-    
+
     def set_cursor(self, m_x, m_y):
         """
         Used in mouse-move events to set the move cursor before the left mouse
         button is pressed, to indicate that a move is possible (if it is!).
         Return True if the move-indicator-cursor is set, otherwise return False.
         """
-        hit = self._hit(m_x, m_y) 
+        hit = self._hit(m_x, m_y)
         if hit:
+            if not self.event.selected:
+                return False
             self.drawing_area._set_move_cursor()
         else:
             self.drawing_area._set_default_cursor()
@@ -869,24 +882,35 @@ class EventMover(object):
 
     def move(self, m_x, m_y):
         """
-        Move the event the time distance, difftime, represented by the distance the 
+        Move the event the time distance, difftime, represented by the distance the
         mouse has moved since the last move (m_x - self.x).
         Events found above the center line are snapped to the grid.
         """
         difftime = self.drawing_algorithm.metrics.get_difftime(m_x, self.x)
+        # Snap events found above the center line
         start = self.event.time_period.start_time + difftime
         end = self.event.time_period.end_time + difftime
-        # Snap events found above the center line
         if not self.drawing_algorithm.event_is_period(self.event.time_period):
             halfperiod = (end - start) / 2
             middletime = self.drawing_algorithm.snap(start + halfperiod)
             start = middletime - halfperiod
             end = middletime + halfperiod
+        else:
+            width = start - end
+            startSnapped = self.drawing_area.drawing_algorithm.snap(start)
+            endSnapped = self.drawing_area.drawing_algorithm.snap(end)
+            if startSnapped != start:
+                # Prefer to snap at left edge (in case end snapped as well)
+                start = startSnapped
+                end = start - width
+            elif endSnapped != end:
+                end = endSnapped
+                start = end + width
         # Update and redraw the event
         self.event.update_period(start, end)
         self.drawing_area._redraw_timeline()
         # Adjust the coordinates  to get a smooth movement of cursor and event.
-        # We can't use event_with_rect_at() method to get hold of the rect since 
+        # We can't use event_with_rect_at() method to get hold of the rect since
         # events can jump over each other when moved.
         rect = self.drawing_algorithm.event_rect(self.event)
         if rect != None:
@@ -1054,6 +1078,7 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
         self.Bind(wx.EVT_PAINT, self._window_on_paint)
         self.Bind(wx.EVT_LEFT_DOWN, self._window_on_left_down)
+        self.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
         self.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
         self.Bind(wx.EVT_LEFT_UP, self._window_on_left_up)
         self.Bind(wx.EVT_MOTION, self._window_on_motion)
@@ -1128,6 +1153,36 @@ class DrawingArea(wx.Panel):
         except TimelineIOError, e:
             wx.GetTopLevelParent(self).handle_timeline_error(e)
 
+    def _window_on_right_down(self, evt):
+        """
+        Event handler used when the right mouse button has been pressed.
+
+        If the mouse hits an event the context menu for that event is displayed.
+        """
+        self.context_menu_event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
+        if self.context_menu_event == None:
+            return
+        menu_definitions = (
+            ("Edit", self._context_menu_on_edit_event),
+            ("Delete", self._context_menu_on_delete_event),
+        )
+        menu = wx.Menu()
+        for menu_definition in menu_definitions:
+            text, method = menu_definition
+            menu_item = wx.MenuItem(menu, wx.NewId(), text)
+            self.Bind(wx.EVT_MENU, method, id=menu_item.GetId())
+            menu.AppendItem(menu_item)
+        self.PopupMenu(menu)
+        menu.Destroy()
+        
+    def _context_menu_on_edit_event(self, evt):
+        frame = wx.GetTopLevelParent(self)
+        frame.edit_event(self.context_menu_event)
+        
+    def _context_menu_on_delete_event(self, evt):
+        self.context_menu_event.selected = True
+        self._delete_selected_events()
+    
     def _window_on_left_dclick(self, evt):
         """
         Event handler used when the left mouse button has been double clicked.
@@ -1183,6 +1238,7 @@ class DrawingArea(wx.Panel):
             self.event_mover = EventMover(self, evt.m_x, evt.m_y)
         if evt.Dragging:
             self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
+            self._display_balloon_on_hoover(evt.m_x, evt.m_y)
             if not evt.m_leftDown:
                 cursor_set = self.event_sizer.set_cursor(evt.m_x, evt.m_y)
                 if not cursor_set:
@@ -1288,6 +1344,7 @@ class DrawingArea(wx.Panel):
         is_selecting        True when selecting with the mouse takes place
                             It is set True in mouse_has_moved and set False
                             in left_mouse_button_released.
+        show_balloons_on_hover Show ballons on mouse hoover without clicking
         """
         self._current_time = None
         self._mark_selection = False
@@ -1300,6 +1357,7 @@ class DrawingArea(wx.Panel):
         self.event_mover = None
         self.is_selecting = False
         self.show_legend = config.get_show_legend()
+        self.show_balloons_on_hover = False
 
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
@@ -1389,7 +1447,27 @@ class DrawingArea(wx.Panel):
             self._display_text_in_statusbar(event.get_label())
         else:
             self._reset_text_in_statusbar()
-
+            
+    def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
+        event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
+        if self.show_balloons_on_hover:
+            if event and not event.selected:
+                self.event_just_hoverd = event    
+                self.timer = wx.Timer(self, -1)
+                self.Bind(wx.EVT_TIMER, self.on_balloon_timer, self.timer)
+                self.timer.Start(milliseconds=500, oneShot=True)
+            else:
+                self.event_just_hoverd = None
+                self.redraw_balloons(None)
+                
+    def on_balloon_timer(self, event):
+        self.redraw_balloons(self.event_just_hoverd)
+   
+    def redraw_balloons(self, event):
+        self.drawing_algorithm.notify_events(
+                data.MSG_BALLON_VISIBILITY_CHANGED, event)
+        self._redraw_timeline()
+        
     def _mark_selected_minor_strips(self, current_x):
         """Selection-marking starts or continues."""
         self._mark_selection = True
@@ -1404,7 +1482,14 @@ class DrawingArea(wx.Panel):
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
-        if _ask_question(_("Are you sure to delete?"), self) == wx.YES:
+        selected_events = self.drawing_algorithm.get_selected_events()
+        nbr_of_selected_events = len(selected_events)
+        if nbr_of_selected_events > 1:
+            text = _("Are you sure to delete %d events?" % 
+                     nbr_of_selected_events)
+        else:
+            text = _("Are you sure to delete?")
+        if _ask_question(text, self) == wx.YES:
             try:
                 self.timeline.delete_selected_events()
             except TimelineIOError, e:
@@ -1443,6 +1528,15 @@ class DrawingArea(wx.Panel):
         drawing area.
         """
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
+
+    def balloon_visibility_changed(self, visible):
+        self.show_balloons_on_hover = visible
+        # When display on hovering is disabled we have to make sure 
+        # that any visible balloon is removed.
+        if not visible:
+            self.drawing_algorithm.notify_events(
+                            data.MSG_BALLON_VISIBILITY_CHANGED, None)
+            self._redraw_timeline()
 
 class ErrorPanel(wx.Panel):
 

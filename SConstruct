@@ -54,4 +54,38 @@ Export("env")
 SConscript("po/SConscript")
 SConscript("src/SConscript")
 
+### devdoc
+
+def devdoc_convert(target, source, env):
+    import markdown
+    import codecs
+    import re
+    html_body = markdown.markdown(codecs.open(source[0].abspath, "r", "utf-8").read())
+    # replace txt links with html links for local pages
+    html_body = re.sub(r'(<a href="(html){0}.*?\.)txt(".*?</a>)', r"\1html\3", html_body)
+    title = str(target[0])
+    title_match = re.search(r"<h1>(.*?)</h1>", html_body)
+    if title_match:
+        title = title_match.group(1)
+    html_template = """
+    <html>
+    <head>
+    <title>%s</title>
+    </head>
+    <body>
+    %s
+    <hr>
+    <center>
+    <a href="index.html">Home</a>
+    </center>
+    </body>
+    </html>
+    """
+    html = html_template % (title, html_body)
+    codecs.open(target[0].abspath, "w", "utf-8").write(html)
+
+for f in env.Glob("devdoc/*.txt"):
+    html = env.Command(f.abspath[:-3] + "html", f, devdoc_convert)
+    env.Alias("devdoc", html)
+
 # vim: syntax=python

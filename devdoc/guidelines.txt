@@ -1,0 +1,141 @@
+Guidelines
+==========
+
+Coding
+------
+
+We try to follow the [Style Guide for Python Code](http://www.python.org/dev/peps/pep-0008/). Other guidelines and
+exceptions to the standard are listed here.
+
+### Multiline docstrings
+
+We prefer to write **multiline** docstrings like this:
+
+    """
+    One line summary.
+
+    More comments...
+    """
+
+instead of like this:
+
+    """One line summary.
+
+    More comments...
+
+    """
+
+### Strings
+
+We use the `"` character for strings. **Not** the `'` character.
+
+### Order of blocks inside a module (.py file)
+
+All these blocks should be separated with two blank lines.
+
+  * Module docstring
+  * Imports
+  * Global variables
+  * Classes
+    * `__init__`
+    * Public methods
+    * Private methods
+      * `_create_gui` (if it exists)
+      * Event handlers (if they exist)
+      * Others
+  * Functions
+
+### Naming convention for private attributes
+
+All methods inside a class that are not supposed to be called outside the class
+should be marked private by prefixing it with **one** underscore.
+
+All member variables should always be considered private but we don't append
+any underscores. The preferred way to access a class' variable is to write a
+get-method. In general member variables should never be directly accessed
+outside a class.
+
+### Naming convention for event handlers
+
+`_(object)_on_(name of event)`
+
+Examples:
+
+`_btn_close_on_click`
+
+`_window_on_close`
+
+### GUI components construction
+
+All GUI components should construct the GUI in a method called
+`_create_gui`. Should there be any need to call other methods to simplify
+the creation of the GUI the preferred way is to make those methods inner
+methods of `_create_gui`. Example:
+
+    class MainPanel(wx.Panel):
+
+        def __init__(self, parent):
+            wx.Panel.__init__(self, parent)
+            self._create_gui()
+
+        def _create_gui(self):
+            def create_something_complex():
+                ...
+            ...
+            create_something_complex()
+            ...
+
+### wx sizers
+
+Use them for the layout of components.
+
+Some documentation:
+
+  * [What Do These Sizer Things Do?](http://neume.sourceforge.net/sizerdemo/)
+
+### Handling events
+
+All events should be hooked up in `_create_gui` using the `Bind` method
+of the `wx.Window`. ID's should not be used for events. We prefer to pass an
+object instead. Example:
+
+    FileMenu = wx.Menu()
+    item = FileMenu.append(wx.ID_ANY, "&Quit")
+    self.Bind(wx.EVT_MENU, self.OnQuit, item)
+
+ID's can be used for standard ID's.
+
+Documentation supporting this:
+
+  * [wx.EvtHandler API Documentation](http://www.wxpython.org/docs/api/wx.EvtHandler-class.html#Bind)
+  * [wxPython Migration Guide](http://www.wxpython.org/migrationguide.php) (the "Binding events" part)
+
+GUI
+---
+
+Guidelines for how the GUI should look like to conform to as many standards as possible.
+
+Some good resources:
+
+  * [When to use ellipsis after menu items](http://stackoverflow.com/questions/637683/when-to-use-ellipsis-after-menu-items)
+  * [UI Style Guides](http://www.experiencedynamics.com/science-usability/ui-style-guides) (index with links to other style guides)
+
+From the [GNOME guidelines](http://developer.gnome.org/projects/gup/hig/1.0/menus.html):
+
+> Label the menu item with a trailing ellipsis ("...") only if the command
+> requires further input from the user before it can be performed. Do not add
+> an ellipsis to items that only present a confirmation dialog (such as
+> Delete), or that do not require further input (such as Properties,
+> Preferences or About).
+
+Commit messages
+---------------
+
+  * Try to limit the first line to a 79-character summary
+  * If a ticket was fixed in this commit, include a message like "Fixed ticket #32" (example in r77)
+
+Ticket messages
+---------------
+
+  * When closing a ticket, write the reason for closing it
+    * If it was closed because it has been fixed, include the revision number that fixed it (example in #2)
