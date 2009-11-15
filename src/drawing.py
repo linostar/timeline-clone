@@ -98,6 +98,10 @@ class DrawingAlgorithm(object):
         Send notification to all visible events
         """
         
+    def get_selected_events(self):
+        """Return a list with all selected events."""
+        return []
+            
 class Metrics(object):
     """Helper class that can calculate coordinates."""
 

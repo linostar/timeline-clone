@@ -1078,6 +1078,7 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
         self.Bind(wx.EVT_PAINT, self._window_on_paint)
         self.Bind(wx.EVT_LEFT_DOWN, self._window_on_left_down)
+        self.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
         self.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
         self.Bind(wx.EVT_LEFT_UP, self._window_on_left_up)
         self.Bind(wx.EVT_MOTION, self._window_on_motion)
@@ -1152,6 +1153,36 @@ class DrawingArea(wx.Panel):
         except TimelineIOError, e:
             wx.GetTopLevelParent(self).handle_timeline_error(e)
 
+    def _window_on_right_down(self, evt):
+        """
+        Event handler used when the right mouse button has been pressed.
+
+        If the mouse hits an event the context menu for that event is displayed.
+        """
+        self.context_menu_event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
+        if self.context_menu_event == None:
+            return
+        menu_definitions = (
+            ("Edit", self._context_menu_on_edit_event),
+            ("Delete", self._context_menu_on_delete_event),
+        )
+        menu = wx.Menu()
+        for menu_definition in menu_definitions:
+            text, method = menu_definition
+            menu_item = wx.MenuItem(menu, wx.NewId(), text)
+            self.Bind(wx.EVT_MENU, method, id=menu_item.GetId())
+            menu.AppendItem(menu_item)
+        self.PopupMenu(menu)
+        menu.Destroy()
+        
+    def _context_menu_on_edit_event(self, evt):
+        frame = wx.GetTopLevelParent(self)
+        frame.edit_event(self.context_menu_event)
+        
+    def _context_menu_on_delete_event(self, evt):
+        self.context_menu_event.selected = True
+        self._delete_selected_events()
+    
     def _window_on_left_dclick(self, evt):
         """
         Event handler used when the left mouse button has been double clicked.
@@ -1451,7 +1482,14 @@ class DrawingArea(wx.Panel):
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
-        if _ask_question(_("Are you sure to delete?"), self) == wx.YES:
+        selected_events = self.drawing_algorithm.get_selected_events()
+        nbr_of_selected_events = len(selected_events)
+        if nbr_of_selected_events > 1:
+            text = _("Are you sure to delete %d events?" % 
+                     nbr_of_selected_events)
+        else:
+            text = _("Are you sure to delete?")
+        if _ask_question(text, self) == wx.YES:
             try:
                 self.timeline.delete_selected_events()
             except TimelineIOError, e:

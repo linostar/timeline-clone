@@ -303,6 +303,13 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 return rect
         return None
 
+    def get_selected_events(self):
+        selected_events = []
+        for (event, rect) in self.event_data:
+            if event.selected:
+                selected_events.append(event)
+        return selected_events
+ 
     def _calc_rects(self, events):
         """
         Calculate rectangles for all events.
