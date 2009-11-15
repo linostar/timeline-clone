@@ -25,6 +25,9 @@ from datetime import timedelta
 from datetime import datetime as dt
 from datetime import time
 import calendar
+import base64
+import StringIO
+import os.path
 
 import wx
 
@@ -250,6 +253,81 @@ class DescriptionEventDataPlugin(EventDataPlugin):
 
     def clear_editor_data(self, editor):
         editor.SetValue("")
+
+
+class IconEventDataPlugin(EventDataPlugin):
+
+    class IconEditor(wx.Panel):
+        def __init__(self, parent):
+            wx.Panel.__init__(self, parent)
+            self.btn_icon = wx.BitmapButton(self, size=(64, 64))
+            self.btn_clear = wx.Button(self, label=_("Clear"))
+            self.Bind(wx.EVT_BUTTON, self._btn_icon_on_click, self.btn_icon)
+            self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, self.btn_clear)
+            # Layout
+            sizer = wx.BoxSizer(wx.HORIZONTAL)
+            sizer.Add(self.btn_icon)
+            sizer.Add(self.btn_clear)
+            self.SetSizerAndFit(sizer)
+            # Data
+            self.bmp = None
+        def set_icon(self, bmp):
+            self.bmp = bmp
+            if self.bmp == None:
+                self.btn_icon.SetBitmapLabel(wx.EmptyBitmap(1, 1))
+            else:
+                self.btn_icon.SetBitmapLabel(bmp)
+            self.GetSizer().Layout()
+        def get_icon(self):
+            return self.bmp
+        def _btn_icon_on_click(self, evt):
+            dialog = wx.FileDialog(self, message=_("Select Icon"),
+                                   wildcard="*", style=wx.FD_OPEN)
+            if dialog.ShowModal() == wx.ID_OK:
+                path = dialog.GetPath()
+                if os.path.exists(path):
+                    self.set_icon(wx.Image(path).ConvertToBitmap())
+            dialog.Destroy()
+        def _btn_clear_on_click(self, evt):
+            self.set_icon(None)
+
+    def get_id(self):
+        return "icon"
+
+    def get_name(self):
+        return _("Icon")
+
+    def encode(self, data):
+        """Data is wx.Bitmap."""
+        try:
+            output = StringIO.StringIO()
+            image = wx.ImageFromBitmap(data)
+            image.SaveStream(output, wx.BITMAP_TYPE_PNG)
+            return base64.b64encode(output.getvalue())
+        except Exception:
+            raise IOError("TODO: Handle this in a better way")
+
+    def decode(self, string):
+        """Return is wx.Bitmap."""
+        try:
+            input = StringIO.StringIO(base64.b64decode(string))
+            image = wx.ImageFromStream(input, wx.BITMAP_TYPE_PNG)
+            return image.ConvertToBitmap()
+        except Exception:
+            raise IOError("TODO: Handle this in a better way")
+
+    def create_editor(self, parent):
+        ctrl = IconEventDataPlugin.IconEditor(parent)
+        return ctrl
+
+    def get_editor_data(self, editor):
+        return editor.get_icon()
+
+    def set_editor_data(self, editor, bmp):
+        editor.set_icon(bmp)
+
+    def clear_editor_data(self, editor):
+        editor.set_icon(None)
 
 
 class Event(object):
@@ -544,7 +622,7 @@ def get_event_data_plugins():
 
     Configure by returning a list of instances of event data plugins.
     """
-    return [DescriptionEventDataPlugin()]
+    return [DescriptionEventDataPlugin(), IconEventDataPlugin()]
 
 
 def delta_to_microseconds(delta):

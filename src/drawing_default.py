@@ -43,6 +43,7 @@ OUTER_PADDING = 5      # Space between event boxes (pixels)
 INNER_PADDING = 3      # Space inside event box to text (pixels)
 BASELINE_PADDING = 15  # Extra space to move events away from baseline (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
+BALLOON_RADIUS = 12
 
 
 class Strip(object):
@@ -620,128 +621,141 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
     def _draw_ballons(self):
         """Draw ballons on selected events that has 'description' data."""
         for (event, rect) in self.event_data:
-            if event.get_data("description") != None:
+            if event.get_data("description") != None or event.get_data("icon") != None:
                 if event.selected:
                     self._draw_ballon(event, rect)
 
-    def _draw_ballon(self, event, rect):
+    def _draw_ballon(self, event, event_rect):
         """Draw one ballon on a selected event that has 'description' data."""
-        BORDER_COLOR = wx.Color(127, 127, 127)
-        BG_COLOR = wx.Color(255, 255, 231)
-        PEN = wx.Pen(BORDER_COLOR, 1, wx.SOLID)
-        BRUSH = wx.Brush(BG_COLOR, wx.SOLID)
-        # Calculate path, text area position and size
-        self.dc.DestroyClippingRegion()
+        # Constants
+        MAX_TEXT_WIDTH = 200
+        MIN_WIDTH = 100
+        inner_rect_w = 0
+        inner_rect_h = 0
+        # Icon
+        (iw, ih) = (0, 0)
+        icon = event.get_data("icon")
+        if icon != None:
+            (iw, ih) = icon.Size
+            inner_rect_w = iw
+            inner_rect_h = ih
+        # Text
+        self.dc.SetFont(drawing.get_default_font(8))
+        (tw, th) = (0, 0)
+        description = event.get_data("description")
+        text = None
+        if description != None:
+            lines = break_text(description, self.dc, MAX_TEXT_WIDTH)
+            text = "\n".join(lines)
+            (tw, th) = self.dc.GetTextExtent(text)
+            if icon != None:
+                inner_rect_w += BALLOON_RADIUS
+            inner_rect_w += min(tw, MAX_TEXT_WIDTH)
+            inner_rect_h = max(inner_rect_h, th)
+        inner_rect_w = max(MIN_WIDTH, inner_rect_w)
+        x, y = self._draw_balloon_bg(self.dc, (inner_rect_w, inner_rect_h),
+                              (event_rect.X + event_rect.Width / 2,
+                               event_rect.Y),
+                              True)
+        if icon != None:
+            self.dc.DrawBitmap(icon, x, y, False)
+            x += iw + BALLOON_RADIUS
+        if text != None:
+            self.dc.DrawText(text, x, y)
+            x += tw
+
+    def _draw_balloon_bg(self, dc, inner_size, tip_pos, above):
+        """
+        Draw the balloon background leaving inner_size for content.
+
+        tip_pos determines where the tip of the ballon should be.
+
+        above determines if the balloon should be above the tip (True) or below
+        (False). This is not currently implemented.
+
+                    W
+           |----------------|
+             ______________           _
+            /              \          |             R = Corner Radius
+           |                |         |            AA = Left Arrow-leg angle
+           |  W_ARROW       |         |  H     MARGIN = Text margin
+           |     |--|       |         |             * = Starting point
+            \____    ______/          _
+                /  /                  |
+               /_/                    |  H_ARROW
+              *                       -
+           |----|
+           ARROW_OFFSET
+    
+        Calculation of points starts at the tip of the arrow and continues
+        clockwise around the ballon.
+
+        Return (x, y) which is at top of inner region.
+        """
+        # Prepare path object
         gc = wx.GraphicsContext.Create(self.dc)
         path = gc.CreatePath()
-        text_rect = get_ballon_border_path_and_text_rect(rect, path)
+        # Calculate path
+        R = BALLOON_RADIUS
+        W = 1 * R + inner_size[0]
+        H = 1 * R + inner_size[1]
+        H_ARROW = 14
+        W_ARROW = 15
+        W_ARROW_OFFSET = R + 25
+        AA = 20
+        # Starting point at the tip of the arrow
+        (tipx, tipy) = tip_pos
+        p0 = wx.Point(tipx, tipy)
+        path.MoveToPoint(p0.x, p0.y)
+        # Next point is the left base of the arrow
+        p1 = wx.Point(p0.x + H_ARROW * math.tan(math.radians(AA)),
+                      p0.y - H_ARROW)
+        path.AddLineToPoint(p1.x, p1.y)
+        # Start of lower left rounded corner
+        p2 = wx.Point(p1.x - W_ARROW_OFFSET + R, p1.y)
+        bottom_y = p2.y
+        path.AddLineToPoint(p2.x, p2.y)
+        # The lower left rounded corner. p3 is the center of the arc
+        p3 = wx.Point(p2.x, p2.y - R)
+        path.AddArc(p3.x, p3.y, R, math.radians(90), math.radians(180))
+        # The left side
+        p4 = wx.Point(p3.x - R, p3.y - H + R)
+        left_x = p4.x
+        path.AddLineToPoint(p4.x, p4.y)
+        # The upper left rounded corner. p5 is the center of the arc
+        p5 = wx.Point(p4.x + R, p4.y)
+        path.AddArc(p5.x, p5.y, R, math.radians(180), math.radians(-90))
+        # The upper side
+        p6 = wx.Point(p5.x + W - R, p5.y - R)
+        top_y = p6.y
+        path.AddLineToPoint(p6.x, p6.y)
+        # The upper right rounded corner. p7 is the center of the arc
+        p7 = wx.Point(p6.x, p6.y + R)
+        path.AddArc(p7.x, p7.y, R, math.radians(-90), math.radians(0))
+        # The right side
+        p8 = wx.Point(p7.x + R , p7.y + H - R)
+        right_x = p8.x
+        path.AddLineToPoint(p8.x, p8.y)
+        # The lower right rounded corner. p9 is the center of the arc
+        p9 = wx.Point(p8.x - R, p8.y)
+        path.AddArc(p9.x, p9.y, R, math.radians(0), math.radians(90))
+        # The lower side
+        p10 = wx.Point(p9.x - W + W_ARROW +  W_ARROW_OFFSET, p9.y + R)
+        path.AddLineToPoint(p10.x, p10.y)
+        path.CloseSubpath()
         # Draw sharp lines on GTK which uses Cairo
         # See: http://www.cairographics.org/FAQ/#sharp_lines
         gc.Translate(0.5, 0.5)
         # Draw the ballon
+        BORDER_COLOR = wx.Color(127, 127, 127)
+        BG_COLOR = wx.Color(255, 255, 231)
+        PEN = wx.Pen(BORDER_COLOR, 1, wx.SOLID)
+        BRUSH = wx.Brush(BG_COLOR, wx.SOLID)
         gc.SetPen(PEN)
         gc.SetBrush(BRUSH)
         gc.DrawPath(path)
-        # Break text and print it
-        self.dc.SetFont(drawing.get_default_font(8))
-        description = event.get_data("description")
-        lines = break_text(description, self.dc, text_rect.width)
-        # Calculate max nbr of lines that fit into the ballon
-        h = self.dc.GetCharHeight()
-        max_nbr_of_lines = text_rect.height / h - 1
-        # Calculate the number of pages we have
-        # Give rome for the -- more -- text if we have more than one page
-        nbr_of_pages = len(lines) / max_nbr_of_lines
-        if len(lines) % max_nbr_of_lines > 0:
-            nbr_of_pages += 1
-        if len(lines) == max_nbr_of_lines + 1:
-            nbr_of_pages = 1
-            max_nbr_of_lines += 1
-        if nbr_of_pages == 1:
-            max_nbr_of_lines = len(lines)
-        # Draw the text
-        current_y = text_rect.y
-        for i in range(max_nbr_of_lines):
-            self.dc.DrawText(lines[i], text_rect.x, current_y)
-            current_y += h
-        # Draw the 'more text' indicator
-        if nbr_of_pages > 1:
-            more_indicator = _("-- more --")
-            w,h = self.dc.GetTextExtent(more_indicator)
-            start = text_rect.x + (text_rect.Width - w)/ 2
-            self.dc.DrawText(more_indicator, start, current_y)
-
-
-def get_ballon_border_path_and_text_rect(rect, path):
-    """
-                W
-       |----------------|
-         ______________           _
-        /              \          |             R = Corner Radius
-       |                |         |            AA = Left Arrow-leg angle
-       |  W_ARROW       |         |  H     MARGIN = Text margin
-       |     |--|       |         |             * = Starting point
-        \____    ______/          _
-            /  /                  |
-           /_/                    |  H_ARROW
-          *                       -
-       |----|
-       ARROW_OFFSET
-
-    Calculation of points starts at the tip of the arrow and continues
-    clockwise around the ballon.
-    """
-    R = 15
-    W = 150
-    H = 105
-    H_ARROW = 14
-    W_ARROW = 15
-    W_ARROW_OFFSET = R + 25
-    AA = 20
-    MARGIN = 5
-    # Starting point at the tip of the arrow
-    p0 = wx.Point(rect.X + rect.Width / 2, rect.Y)
-    path.MoveToPoint(p0.x, p0.y)
-    # Next pont is the left base of the arrow
-    p1 = wx.Point(p0.x + H_ARROW * math.tan(math.radians(AA)), p0.y - H_ARROW)
-    path.AddLineToPoint(p1.x, p1.y)
-    # Start of lower left rounded corner
-    p2 = wx.Point(p1.x - W_ARROW_OFFSET + R, p1.y)
-    bottom_y = p2.y
-    path.AddLineToPoint(p2.x, p2.y)
-    # The lower left rounded corner. p3 is the center of the arc
-    p3 = wx.Point(p2.x, p2.y - R)
-    path.AddArc(p3.x, p3.y, R, math.radians(90), math.radians(180))
-    # The left side
-    p4 = wx.Point(p3.x - R, p3.y - H + R)
-    left_x = p4.x
-    path.AddLineToPoint(p4.x, p4.y)
-    # The upper left rounded corner. p5 is the center of the arc
-    p5 = wx.Point(p4.x + R, p4.y)
-    path.AddArc(p5.x, p5.y, R, math.radians(180), math.radians(-90))
-    # The upper side
-    p6 = wx.Point(p5.x + W - R, p5.y - R)
-    top_y = p6.y
-    path.AddLineToPoint(p6.x, p6.y)
-    # The upper right rounded corner. p7 is the center of the arc
-    p7 = wx.Point(p6.x, p6.y + R)
-    path.AddArc(p7.x, p7.y, R, math.radians(-90), math.radians(0))
-    # The right side
-    p8 = wx.Point(p7.x + R , p7.y + H - R)
-    right_x = p8.x
-    path.AddLineToPoint(p8.x, p8.y)
-    # The lower right rounded corner. p9 is the center of the arc
-    p9 = wx.Point(p8.x - R, p8.y)
-    path.AddArc(p9.x, p9.y, R, math.radians(0), math.radians(90))
-    # The lower side
-    p10 = wx.Point(p9.x - W + W_ARROW +  W_ARROW_OFFSET, p9.y + R)
-    path.AddLineToPoint(p10.x, p10.y)
-    path.CloseSubpath()
-    text_x = left_x + MARGIN
-    text_y = top_y  + MARGIN
-    text_w = right_x  - left_x - 2 * MARGIN
-    text_h = bottom_y - top_y  - 2 * MARGIN
-    return wx.Rect(text_x, text_y, text_w, text_h)
+        # Return
+        return (left_x + BALLOON_RADIUS, top_y + BALLOON_RADIUS)
 
 
 def break_text(text, dc, max_width_in_px):
