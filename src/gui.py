@@ -1431,10 +1431,23 @@ class DrawingArea(wx.Panel):
             
     def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
-        if self.show_balloons_on_hover:    
-            self.drawing_algorithm.notify_events(
-                                 data.MSG_BALLON_VISIBILITY_CHANGED, event)
-            self._redraw_timeline()
+        if self.show_balloons_on_hover:
+            if event:
+                self.event_just_hoverd = event    
+                self.timer = wx.Timer(self, -1)
+                self.Bind(wx.EVT_TIMER, self.on_balloon_timer, self.timer)
+                self.timer.Start(milliseconds=500, oneShot=True)
+            else:
+                self.event_just_hoverd = None
+                self.redraw_balloons(None)
+                
+    def on_balloon_timer(self, event):
+        self.redraw_balloons(self.event_just_hoverd)
+   
+    def redraw_balloons(self, event):
+        self.drawing_algorithm.notify_events(
+                data.MSG_BALLON_VISIBILITY_CHANGED, event)
+        self._redraw_timeline()
         
     def _mark_selected_minor_strips(self, current_x):
         """Selection-marking starts or continues."""

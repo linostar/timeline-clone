@@ -645,7 +645,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         """Draw ballons on selected events that has 'description' data."""
         for (event, rect) in self.event_data:
             if event.get_data("description") != None:
-                if event.selected or event.draw_ballon:
+                if event.draw_ballon:
                     self._draw_ballon(event, rect)
 
     def _draw_ballon(self, event, rect):
