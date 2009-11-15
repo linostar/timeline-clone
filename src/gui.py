@@ -835,7 +835,7 @@ class EventSizer(object):
 
     def resize(self, m_x, m_y):
         """
-        Resize the event either on the left or the right side. 
+        Resize the event either on the left or the right side.
         The event edge is snapped to the grid.
         """
         time = self.metrics.get_time(m_x)
@@ -864,14 +864,14 @@ class EventMover(object):
     def is_moving(self):
         """Return True if we are in a moving state, otherwise return False."""
         return self.moving
-    
+
     def set_cursor(self, m_x, m_y):
         """
         Used in mouse-move events to set the move cursor before the left mouse
         button is pressed, to indicate that a move is possible (if it is!).
         Return True if the move-indicator-cursor is set, otherwise return False.
         """
-        hit = self._hit(m_x, m_y) 
+        hit = self._hit(m_x, m_y)
         if hit:
             if not self.event.selected:
                 return False
@@ -882,32 +882,37 @@ class EventMover(object):
 
     def move(self, m_x, m_y):
         """
-        Move the event the time distance, difftime, represented by the distance the 
+        Move the event the time distance, difftime, represented by the distance the
         mouse has moved since the last move (m_x - self.x).
         Events found above the center line are snapped to the grid.
         """
         difftime = self.drawing_algorithm.metrics.get_difftime(m_x, self.x)
-        start = self.event.time_period.start_time + difftime
-        end = self.event.time_period.end_time + difftime
         # Snap events found above the center line
-        if not self.drawing_algorithm.event_is_period(self.event.time_period):
-            halfperiod = (end - start) / 2
-            middletime = self.drawing_algorithm.snap(start + halfperiod)
-            start = middletime - halfperiod
-            end = middletime + halfperiod
-        else:
-            width = start - end
-            if m_x > self.x:
-                end = self.drawing_area.drawing_algorithm.snap(end)
-                start = end + width
+        for event in self.drawing_algorithm.get_selected_events():
+            start = event.time_period.start_time + difftime
+            end = event.time_period.end_time + difftime
+            if not self.drawing_algorithm.event_is_period(event.time_period):
+                halfperiod = (end - start) / 2
+                middletime = self.drawing_algorithm.snap(start + halfperiod)
+                start = middletime - halfperiod
+                end = middletime + halfperiod
             else:
-                start = self.drawing_area.drawing_algorithm.snap(start)
-                end = start - width
-        # Update and redraw the event
-        self.event.update_period(start, end)
+                width = start - end
+                startSnapped = self.drawing_area.drawing_algorithm.snap(start)
+                endSnapped = self.drawing_area.drawing_algorithm.snap(end)
+                if startSnapped != start:
+                    # Prefer to snap at left edge (in case end snapped as well)
+                    start = startSnapped
+                    end = start - width
+                elif endSnapped != end:
+                    end = endSnapped
+                    start = end + width
+            # Update and redraw the event
+            event.update_period(start, end)
+
         self.drawing_area._redraw_timeline()
         # Adjust the coordinates  to get a smooth movement of cursor and event.
-        # We can't use event_with_rect_at() method to get hold of the rect since 
+        # We can't use event_with_rect_at() method to get hold of the rect since
         # events can jump over each other when moved.
         rect = self.drawing_algorithm.event_rect(self.event)
         if rect != None:
@@ -1343,7 +1348,17 @@ class DrawingArea(wx.Panel):
             memdc.Clear()
             if self.timeline:
                 try:
-                    current_events = self.timeline.get_events(self.time_period)
+                    # To get the multiple event move function to work when
+                    # one of two events is moved outside of the visible
+                    # time period region, we have to include events that
+                    # are not visible in the current_events list.
+                    time_period_length = (self.time_period.end_time -
+                                          self.time_period.start_time)
+                    time_period = TimePeriod(self.time_period.start_time -
+                                             time_period_length,
+                                             self.time_period.end_time +
+                                             time_period_length)
+                    current_events = self.timeline.get_events(time_period)
                 except TimelineIOError, e:
                     wx.GetTopLevelParent(self).handle_timeline_error(e)
                 else:
