@@ -826,7 +826,7 @@ class EventSizer(object):
 
     def resize(self, m_x, m_y):
         """
-        Resize the event either on the left or the right side. 
+        Resize the event either on the left or the right side.
         The event edge is snapped to the grid.
         """
         time = self.metrics.get_time(m_x)
@@ -855,14 +855,14 @@ class EventMover(object):
     def is_moving(self):
         """Return True if we are in a moving state, otherwise return False."""
         return self.moving
-    
+
     def set_cursor(self, m_x, m_y):
         """
         Used in mouse-move events to set the move cursor before the left mouse
         button is pressed, to indicate that a move is possible (if it is!).
         Return True if the move-indicator-cursor is set, otherwise return False.
         """
-        hit = self._hit(m_x, m_y) 
+        hit = self._hit(m_x, m_y)
         if hit:
             if not self.event.selected:
                 return False
@@ -873,7 +873,7 @@ class EventMover(object):
 
     def move(self, m_x, m_y):
         """
-        Move the event the time distance, difftime, represented by the distance the 
+        Move the event the time distance, difftime, represented by the distance the
         mouse has moved since the last move (m_x - self.x).
         Events found above the center line are snapped to the grid.
         """
@@ -900,10 +900,10 @@ class EventMover(object):
                     start = end + width
             # Update and redraw the event
             event.update_period(start, end)
-        
+
         self.drawing_area._redraw_timeline()
         # Adjust the coordinates  to get a smooth movement of cursor and event.
-        # We can't use event_with_rect_at() method to get hold of the rect since 
+        # We can't use event_with_rect_at() method to get hold of the rect since
         # events can jump over each other when moved.
         rect = self.drawing_algorithm.event_rect(self.event)
         if rect != None:
@@ -1336,12 +1336,16 @@ class DrawingArea(wx.Panel):
             memdc.Clear()
             if self.timeline:
                 try:
-                    # To get the multiple event move function to work when 
-                    # one of two events is moved outside of the visible 
-                    # time period region, we have to include events that 
-                    # are not visible in the current_events list. 
-                    time_period_length = self.time_period.end_time - self.time_period.start_time
-                    time_period = TimePeriod(self.time_period.start_time - time_period_length, self.time_period.end_time + time_period_length)
+                    # To get the multiple event move function to work when
+                    # one of two events is moved outside of the visible
+                    # time period region, we have to include events that
+                    # are not visible in the current_events list.
+                    time_period_length = (self.time_period.end_time -
+                                          self.time_period.start_time)
+                    time_period = TimePeriod(self.time_period.start_time -
+                                             time_period_length,
+                                             self.time_period.end_time +
+                                             time_period_length)
                     current_events = self.timeline.get_events(time_period)
                 except TimelineIOError, e:
                     wx.GetTopLevelParent(self).handle_timeline_error(e)
