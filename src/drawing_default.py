@@ -666,13 +666,16 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             inner_rect_h = ih
         # Text
         self.dc.SetFont(drawing.get_default_font(8))
+        font_h = self.dc.GetCharHeight()
         (tw, th) = (0, 0)
         description = event.get_data("description")
-        text = None
+        lines = None
         if description != None:
             lines = break_text(description, self.dc, MAX_TEXT_WIDTH)
-            text = "\n".join(lines)
-            (tw, th) = self.dc.GetTextExtent(text)
+            th = len(lines) * self.dc.GetCharHeight()
+            for line in lines:
+                (lw, lh) = self.dc.GetTextExtent(line)
+                tw = max(lw, tw)
             if icon != None:
                 inner_rect_w += BALLOON_RADIUS
             inner_rect_w += min(tw, MAX_TEXT_WIDTH)
@@ -685,8 +688,11 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         if icon != None:
             self.dc.DrawBitmap(icon, x, y, False)
             x += iw + BALLOON_RADIUS
-        if text != None:
-            self.dc.DrawText(text, x, y)
+        if lines != None:
+            ty = y
+            for line in lines:
+                self.dc.DrawText(line, x, ty)
+                ty += font_h
             x += tw
 
     def _draw_balloon_bg(self, dc, inner_size, tip_pos, above):
