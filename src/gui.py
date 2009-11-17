@@ -88,6 +88,7 @@ class MainFrame(wx.Frame):
         self.SetTitle(APPLICATION_NAME)
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
         self.mnu_view_legend.Check(config.get_show_legend())
+        self.mnu_view_balloons.Check(config.get_balloon_on_hover())
         self.SetIcons(self._load_icon_bundle())
         self._init_help_system()
         self.main_panel.show_welcome_panel()
@@ -334,6 +335,7 @@ class MainFrame(wx.Frame):
         self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
 
     def _mnu_view_balloons_on_click(self, evt):
+        config.set_balloon_on_hover(evt.IsChecked())
         self.main_panel.drawing_area.balloon_visibility_changed(evt.IsChecked())
 
     def _mnu_timeline_create_event_on_click(self, evt):
@@ -1357,7 +1359,7 @@ class DrawingArea(wx.Panel):
         self.event_mover = None
         self.is_selecting = False
         self.show_legend = config.get_show_legend()
-        self.show_balloons_on_hover = False
+        self.show_balloons_on_hover = config.get_balloon_on_hover()
 
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""

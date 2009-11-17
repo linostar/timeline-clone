@@ -45,6 +45,7 @@ SHOW_LEGEND = "show_legend"
 SIDEBAR_WIDTH = "sidebar_width"
 RECENT_FILES = "recent_files"
 OPEN_RECENT_AT_STARTUP = "open_recent_at_startup"
+BALLOON_ON_HOVER = "balloon_on_hover"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
@@ -54,6 +55,7 @@ DEFAULTS = {
     SHOW_LEGEND: "False",
     OPEN_RECENT_AT_STARTUP: "True",
     RECENT_FILES: "",
+    BALLOON_ON_HOVER: "True",
 }
 
 
@@ -152,3 +154,11 @@ def get_open_recent_at_startup():
 
 def set_open_recent_at_startup(open):
     config.set(DEFAULTSECT, OPEN_RECENT_AT_STARTUP, str(open))
+
+
+def get_balloon_on_hover():
+    return config.getboolean(DEFAULTSECT, BALLOON_ON_HOVER)
+
+
+def set_balloon_on_hover(balloon_on_hover):
+    config.set(DEFAULTSECT, BALLOON_ON_HOVER, str(balloon_on_hover))
