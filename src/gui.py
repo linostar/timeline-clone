@@ -851,16 +851,35 @@ class EventSizer(object):
 class EventMover(object):
     """Objects of this class are used to simplify moving of events."""
 
-    def __init__(self, drawing_area, m_x = 0, m_y = 0):
-        self.drawing_area = drawing_area
-        self.drawing_algorithm = self.drawing_area.drawing_algorithm
-        self.x = m_x
-        self.y = m_y
-        self.moving = False
-        self.event = None
-        if m_x + m_y > 0:
-            self.moving = self._hit(m_x, m_y) and self.event.selected
+    _singletons = {}
+    _initialized = False
+    
+    def __new__(cls, *args, **kwds):
+        """Implement the Singleton pattern for this class."""
+        if cls not in cls._singletons:
+            cls._singletons[cls] = super(EventMover, cls).__new__(cls)
+        return cls._singletons[cls]    
+    
+    def __init__(self, drawing_area):
+        """Initialize only the first time the class constructor is called."""
+        if not EventMover._initialized:
+            self.drawing_area = drawing_area
+            self.drawing_algorithm = self.drawing_area.drawing_algorithm
+            self.moving = False
+            self.event = None
+            EventMover._initialized = True
 
+    def move_starts(self, m_x, m_y):
+        """
+        If it is ok to start a move... initialize the move and return True.
+        Otherwise return False.
+        """
+        self.moving = self._hit(m_x, m_y) and self.event.selected
+        if self.moving:
+            self.x = m_x
+            self.y = m_y
+        return self.moving
+        
     def is_moving(self):
         """Return True if we are in a moving state, otherwise return False."""
         return self.moving
@@ -1140,8 +1159,7 @@ class DrawingArea(wx.Panel):
             if self.event_sizer.is_sizing():
                 return
             # If we hit the event move area of an event, start moving
-            self.event_mover = EventMover(self, evt.m_x, evt.m_y)
-            if self.event_mover.is_moving():
+            if EventMover(self).move_starts(evt.m_x, evt.m_y):
                 return
             # No resizing or moving of events...
             posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
@@ -1234,15 +1252,14 @@ class DrawingArea(wx.Panel):
         # Create helper objects that makes event resizing and moving easier
         if self.event_sizer == None:
             self.event_sizer = EventSizer(self, evt.m_x, evt.m_y)
-        if self.event_mover == None:
-            self.event_mover = EventMover(self, evt.m_x, evt.m_y)
+        event_mover = EventMover(self)
         if evt.Dragging:
             self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
             self._display_balloon_on_hoover(evt.m_x, evt.m_y)
             if not evt.m_leftDown:
                 cursor_set = self.event_sizer.set_cursor(evt.m_x, evt.m_y)
                 if not cursor_set:
-                    self.event_mover.set_cursor(evt.m_x, evt.m_y)
+                    event_mover.set_cursor(evt.m_x, evt.m_y)
         if evt.m_leftDown:
             if self.is_scrolling:
                 self._scroll(evt.m_x)
@@ -1255,8 +1272,8 @@ class DrawingArea(wx.Panel):
                 else:
                     if self.event_sizer.is_sizing():
                         self.event_sizer.resize(evt.m_x, evt.m_y)
-                    elif self.event_mover.is_moving():
-                        self.event_mover.move(evt.m_x, evt.m_y)
+                    elif event_mover.is_moving():
+                        event_mover.move(evt.m_x, evt.m_y)
                     else:
                         self._scroll(evt.m_x)
                         self.is_scrolling = True
@@ -1354,7 +1371,6 @@ class DrawingArea(wx.Panel):
         self.drawing_algorithm = drawing.get_algorithm()
         self.is_scrolling = False
         self.event_sizer = None
-        self.event_mover = None
         self.is_selecting = False
         self.show_legend = config.get_show_legend()
         self.show_balloons_on_hover = False
