@@ -576,6 +576,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 self.dc.DrawText(event.text, text_x, text_y)
             # Draw data contents indicator
             self.dc.DestroyClippingRegion()
+            self.dc.SetClippingRect(rect)
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
             # Draw selection and handles
