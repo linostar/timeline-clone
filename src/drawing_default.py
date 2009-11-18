@@ -562,11 +562,6 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.SetBrush(self._get_box_brush(event))
             self.dc.SetPen(self._get_box_pen(event))
             self.dc.DrawRectangleRect(rect)
-            if event.selected:
-                self.dc.SetBrush(self._get_selected_box_brush(event))
-                self.dc.SetPen(wx.TRANSPARENT_PEN)
-                self.dc.DrawRectangleRect(rect)
-                self._draw_handles(rect)
             # Ensure that we can't draw content outside inner rectangle
             self.dc.DestroyClippingRegion()
             rect_copy = wx.Rect(*rect)
@@ -583,6 +578,17 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.DestroyClippingRegion()
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
+            # Draw selection and handles
+            if event.selected:
+                small_rect = wx.Rect(*rect)
+                small_rect.Deflate(1, 1)
+                border_color = self._get_border_color(event)
+                border_color = drawing.darken_color(border_color)
+                pen = wx.Pen(border_color, 1, wx.SOLID)
+                self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
+                self.dc.SetPen(pen)
+                self.dc.DrawRectangleRect(small_rect)
+                self._draw_handles(rect)
         # Reset this when we are done
         self.dc.DestroyClippingRegion()
 
@@ -593,9 +599,9 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         self.dc.SetClippingRect(big_rect)
         y = rect.Y + rect.Height/2 - SIZE/2
         x = rect.X - SIZE / 2
-        west_rect   = wx.Rect(x                 , y, SIZE, SIZE)
+        west_rect   = wx.Rect(x + 1             , y, SIZE, SIZE)
         center_rect = wx.Rect(x + rect.Width / 2, y, SIZE, SIZE)
-        east_rect   = wx.Rect(x + rect.Width    , y, SIZE, SIZE)
+        east_rect   = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
         self.dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
         self.dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
         self.dc.DrawRectangleRect(east_rect)
