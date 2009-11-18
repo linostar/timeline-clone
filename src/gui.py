@@ -1257,7 +1257,8 @@ class DrawingArea(wx.Panel):
         event_mover = EventMover(self)
         if evt.Dragging:
             self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
-            self._display_balloon_on_hoover(evt.m_x, evt.m_y)
+            if not evt.m_controlDown:
+                self._display_balloon_on_hoover(evt.m_x, evt.m_y)
             if not evt.m_leftDown:
                 cursor_set = self.event_sizer.set_cursor(evt.m_x, evt.m_y)
                 if not cursor_set:
