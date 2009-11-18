@@ -44,6 +44,7 @@ INNER_PADDING = 3      # Space inside event box to text (pixels)
 BASELINE_PADDING = 15  # Extra space to move events away from baseline (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 BALLOON_RADIUS = 12
+DATA_INDICATOR_SIZE = 10
 
 
 class Strip(object):
@@ -339,6 +340,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 # indicates length of text)
                 rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
                 rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
+                if event.has_data():
+                    rw += DATA_INDICATOR_SIZE / 3
                 rx = self.metrics.calc_x(event.mean_time()) - rw / 2
                 ry = self.metrics.half_height - rh - BASELINE_PADDING
                 movedir = -1
@@ -348,13 +351,13 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         for (event, rect) in self.event_data:
             # Remove outer padding
             rect.Deflate(OUTER_PADDING, OUTER_PADDING)
-            # Make sure rectangle are not far outside the screen
-            if rect.X < -1:
-                move = -rect.X - 1
-                rect.X += move
-                rect.Width -= move
-            if rect.Width > self.metrics.width:
-                rect.Width = self.metrics.width + 2
+#            # Make sure rectangle are not far outside the screen
+#            if rect.X < -1:
+#                move = -rect.X - 1
+#                rect.X += move
+#                rect.Width -= move
+#            if rect.Width > self.metrics.width:
+#                rect.Width = self.metrics.width + 2
 
     def _prevent_overlap(self, rect, movedir):
         """
@@ -564,11 +567,20 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 self.dc.SetPen(wx.TRANSPARENT_PEN)
                 self.dc.DrawRectangleRect(rect)
                 self._draw_handles(rect)
-            # Draw the text
-            self.dc.DrawText(event.text,
-                             rect.X + INNER_PADDING,
-                             rect.Y + INNER_PADDING)
+            # Ensure that we can't draw content outside inner rectangle
+            self.dc.DestroyClippingRegion()
+            rect_copy = wx.Rect(*rect)
+            rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
+            self.dc.SetClippingRect(rect_copy)
+            if rect_copy.Width > 0:
+                # Draw the text (if there is room for it)
+                text_x = rect.X + INNER_PADDING
+                text_y = rect.Y + INNER_PADDING
+                if text_x < INNER_PADDING:
+                    text_x = INNER_PADDING
+                self.dc.DrawText(event.text, text_x, text_y)
             # Draw data contents indicator
+            self.dc.DestroyClippingRegion()
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
         # Reset this when we are done
@@ -597,22 +609,16 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         The icon is a rectangle with LIGHT_GRAY background and a RED
         triangle.
         """
-        # Icon rectangle
-        icon_rect = wx.Rect(rect.x, rect.y, rect.Width, rect.Height)
-        icon_rect.x = rect.x + rect.Width - self.DATA_ICON_WIDTH
-        icon_rect.Width = self.DATA_ICON_WIDTH
-        # Draw border and background
-        self.dc.SetBrush(wx.LIGHT_GREY_BRUSH)
-        self.dc.SetPen(self._get_box_pen(event))
-        self.dc.SetClippingRect(icon_rect)
-        self.dc.DrawRectangleRect(icon_rect)
-        # Draw triangle
+        corner_x = rect.X + rect.Width
+        if corner_x > self.metrics.width:
+            corner_x = self.metrics.width
         points = (
-            wx.Point(icon_rect.x + icon_rect.Width, icon_rect.y),
-            wx.Point(icon_rect.x + icon_rect.Width, icon_rect.y + icon_rect.Height),
-            wx.Point(icon_rect.x, icon_rect.y + icon_rect.Height/2),
+            wx.Point(corner_x - DATA_INDICATOR_SIZE, rect.Y),
+            wx.Point(corner_x, rect.Y),
+            wx.Point(corner_x, rect.Y + DATA_INDICATOR_SIZE),
         )
-        self.dc.SetBrush(wx.RED_BRUSH)
+        self.dc.SetBrush(self._get_box_indicator_brush(event))
+        self.dc.SetPen(wx.TRANSPARENT_PEN)
         self.dc.DrawPolygon(points)
 
     def _get_base_color(self, event):
@@ -635,6 +641,12 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
     def _get_box_brush(self, event):
         base_color = self._get_base_color(event)
         brush = wx.Brush(base_color, wx.SOLID)
+        return brush
+
+    def _get_box_indicator_brush(self, event):
+        base_color = self._get_base_color(event)
+        darker_color = drawing.darken_color(base_color, 0.6)
+        brush = wx.Brush(darker_color, wx.SOLID)
         return brush
 
     def _get_selected_box_brush(self, event):
