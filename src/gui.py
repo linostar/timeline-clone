@@ -788,14 +788,34 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
 class EventSizer(object):
     """Objects of this class are used to simplify resizing of events."""
 
+    _singletons = {}
+    _initialized = False
+    
+    def __new__(cls, *args, **kwds):
+        """Implement the Singleton pattern for this class."""
+        if cls not in cls._singletons:
+            cls._singletons[cls] = super(EventSizer, cls).__new__(cls)
+        return cls._singletons[cls]    
+    
     def __init__(self, drawing_area, m_x = 0, m_y = 0):
-        self.direction = wx.LEFT
-        self.drawing_area = drawing_area
-        self.metrics = self.drawing_area.drawing_algorithm.metrics
-        self.sizing = False
-        self.event = None
-        if m_x + m_y > 0:
-            self.sizing = self._hit(m_x, m_y) and self.event.selected
+        if not EventSizer._initialized:
+            self.direction = wx.LEFT
+            self.drawing_area = drawing_area
+            self.metrics = self.drawing_area.drawing_algorithm.metrics
+            self.sizing = False
+            self.event = None
+            EventSizer._initialized = True
+
+    def sizing_starts(self, m_x, m_y):
+        """
+        If it is ok to start a resize... initialize the resize and return True.
+        Otherwise return False.
+        """
+        self.sizing = self._hit(m_x, m_y) and self.event.selected
+        if self.sizing:
+            self.x = m_x
+            self.y = m_y
+        return self.sizing
 
     def is_sizing(self):
         """Return True if we are in a resizing state, otherwise return False."""
@@ -1157,8 +1177,7 @@ class DrawingArea(wx.Panel):
             logging.debug("Left mouse pressed event in DrawingArea")
             self._set_new_current_time(evt.m_x)
             # If we hit the event resize area of an event, start resizing
-            self.event_sizer = EventSizer(self, evt.m_x, evt.m_y)
-            if self.event_sizer.is_sizing():
+            if EventSizer(self).sizing_starts(evt.m_x, evt.m_y):
                 return
             # If we hit the event move area of an event, start moving
             if EventMover(self).move_starts(evt.m_x, evt.m_y):
@@ -1252,15 +1271,14 @@ class DrawingArea(wx.Panel):
         """
         logging.debug("Mouse move event in DrawingArea")
         # Create helper objects that makes event resizing and moving easier
-        if self.event_sizer == None:
-            self.event_sizer = EventSizer(self, evt.m_x, evt.m_y)
+        event_sizer = EventSizer(self)
         event_mover = EventMover(self)
         if evt.Dragging:
             self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
             if not evt.m_controlDown:
                 self._display_balloon_on_hoover(evt.m_x, evt.m_y)
             if not evt.m_leftDown:
-                cursor_set = self.event_sizer.set_cursor(evt.m_x, evt.m_y)
+                cursor_set = event_sizer.set_cursor(evt.m_x, evt.m_y)
                 if not cursor_set:
                     event_mover.set_cursor(evt.m_x, evt.m_y)
         if evt.m_leftDown:
@@ -1273,8 +1291,8 @@ class DrawingArea(wx.Panel):
                     self._mark_selected_minor_strips(evt.m_x)
                     self.is_selecting = True
                 else:
-                    if self.event_sizer.is_sizing():
-                        self.event_sizer.resize(evt.m_x, evt.m_y)
+                    if event_sizer.is_sizing():
+                        event_sizer.resize(evt.m_x, evt.m_y)
                     elif event_mover.is_moving():
                         event_mover.move(evt.m_x, evt.m_y)
                     else:
@@ -1373,7 +1391,6 @@ class DrawingArea(wx.Panel):
         self.time_period = None
         self.drawing_algorithm = drawing.get_algorithm()
         self.is_scrolling = False
-        self.event_sizer = None
         self.is_selecting = False
         self.show_legend = config.get_show_legend()
         self.show_balloons_on_hover = config.get_balloon_on_hover()
