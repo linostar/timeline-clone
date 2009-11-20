@@ -1270,35 +1270,46 @@ class DrawingArea(wx.Panel):
         the Control key is up the timeline will scroll.
         """
         logging.debug("Mouse move event in DrawingArea")
-        # Create helper objects that makes event resizing and moving easier
-        event_sizer = EventSizer(self)
-        event_mover = EventMover(self)
-        if evt.Dragging:
-            self._display_eventinfo_in_statusbar(evt.m_x, evt.m_y)
-            if not evt.m_controlDown:
-                self._display_balloon_on_hoover(evt.m_x, evt.m_y)
-            if not evt.m_leftDown:
-                cursor_set = event_sizer.set_cursor(evt.m_x, evt.m_y)
-                if not cursor_set:
-                    event_mover.set_cursor(evt.m_x, evt.m_y)
         if evt.m_leftDown:
-            if self.is_scrolling:
-                self._scroll(evt.m_x)
-            elif self.is_selecting:
-                self._mark_selected_minor_strips(evt.m_x)
+            self._mouse_drag(evt.m_x, evt.m_y, evt.m_controlDown)
+        else:
+            if not evt.m_controlDown:
+                self._mouse_move(evt.m_x, evt.m_y)                
+                
+    def _mouse_drag(self, x, y, ctrl=False):
+        """
+        The mouse has been moved.
+        The left mouse button is depressed
+        ctrl indicates if the Ctrl-key is depressed or not
+        """
+        if self.is_scrolling:
+            self._scroll(x)
+        elif self.is_selecting:
+            self._mark_selected_minor_strips(x)
+        elif EventSizer(self).is_sizing():
+            EventSizer(self).resize(x, y)
+        elif EventMover(self).is_moving():
+            EventMover(self).move(x, y)
+        else:
+            if ctrl:
+                self._mark_selected_minor_strips(x)
+                self.is_selecting = True
             else:
-                if evt.m_controlDown:
-                    self._mark_selected_minor_strips(evt.m_x)
-                    self.is_selecting = True
-                else:
-                    if event_sizer.is_sizing():
-                        event_sizer.resize(evt.m_x, evt.m_y)
-                    elif event_mover.is_moving():
-                        event_mover.move(evt.m_x, evt.m_y)
-                    else:
-                        self._scroll(evt.m_x)
-                        self.is_scrolling = True
-
+                self._scroll(x)
+                self.is_scrolling = True
+    
+    def _mouse_move(self, x, y):
+        """
+        The mouse has been moved.
+        The left mouse button is not depressed
+        The Ctrl-key is not depressed
+        """
+        self._display_balloon_on_hoover(x, y)
+        self._display_eventinfo_in_statusbar(x, y)
+        cursor_set = EventSizer(self).set_cursor(x, y)
+        if not cursor_set:
+            EventMover(self).set_cursor(x, y)
+                
     def _window_on_mousewheel(self, evt):
         """
         Event handler used when the mouse wheel is rotated.
