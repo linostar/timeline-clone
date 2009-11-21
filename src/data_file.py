@@ -482,28 +482,24 @@ def split_on_semicolon(text):
 
 
 def dequote(text):
-    map = {"n": "\n",
-           "r": "\r"}
-    res = ""
-    dequote_next = False
-    for char in text:
-        if dequote_next:
-            res += map.get(char, char)
-            dequote_next = False
+    def repl(match):
+        after_backslash = match.group(1)
+        if after_backslash == "n":
+            return "\n"
+        elif after_backslash == "r":
+            return "\r"
         else:
-            if char == "\\":
-                dequote_next = True
-            else:
-                res += char
-    return res
+            return after_backslash
+    return re.sub(r"\\(.)", repl, text)
 
 
 def quote(text):
-    map = {";": "\\;",
-           "\n": "\\n",
-           "\r": "\\r",
-           "\\": "\\\\"}
-    res = ""
-    for char in text:
-        res += map.get(char, char)
-    return res
+    def repl(match):
+        match_char = match.group(0)
+        if match_char == "\n":
+            return "\\n"
+        elif match_char == "\r":
+            return "\\r"
+        else:
+            return "\\" + match_char
+    return re.sub(";|\n|\r|\\\\", repl, text)
