@@ -263,33 +263,55 @@ class IconEventDataPlugin(EventDataPlugin):
     class IconEditor(wx.Panel):
         def __init__(self, parent):
             wx.Panel.__init__(self, parent)
-            self.btn_icon = wx.BitmapButton(self, size=(64, 64))
-            self.btn_clear = wx.Button(self, label=_("Clear"))
-            self.Bind(wx.EVT_BUTTON, self._btn_icon_on_click, self.btn_icon)
-            self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, self.btn_clear)
+            self.MAX_SIZE = (128, 128)
+            # Controls
+            self.img_icon = wx.StaticBitmap(self, size=self.MAX_SIZE)
+            description = wx.StaticText(self, label=_("Images will be scaled to fit inside a %ix%i box.") % self.MAX_SIZE)
+            btn_select = wx.Button(self, wx.ID_OPEN)
+            btn_clear = wx.Button(self, wx.ID_CLEAR)
+            self.Bind(wx.EVT_BUTTON, self._btn_select_on_click, btn_select)
+            self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, btn_clear)
             # Layout
-            sizer = wx.BoxSizer(wx.HORIZONTAL)
-            sizer.Add(self.btn_icon)
-            sizer.Add(self.btn_clear)
+            sizer = wx.GridBagSizer(5, 5)
+            sizer.Add(description, wx.GBPosition(0, 0), wx.GBSpan(1, 2))
+            sizer.Add(btn_select, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
+            sizer.Add(btn_clear, wx.GBPosition(1, 1), wx.GBSpan(1, 1))
+            sizer.Add(self.img_icon, wx.GBPosition(0, 2), wx.GBSpan(2, 1))
             self.SetSizerAndFit(sizer)
             # Data
             self.bmp = None
         def set_icon(self, bmp):
             self.bmp = bmp
             if self.bmp == None:
-                self.btn_icon.SetBitmapLabel(wx.EmptyBitmap(1, 1))
+                self.img_icon.SetBitmap(wx.EmptyBitmap(1, 1))
             else:
-                self.btn_icon.SetBitmapLabel(bmp)
+                self.img_icon.SetBitmap(bmp)
             self.GetSizer().Layout()
         def get_icon(self):
             return self.bmp
-        def _btn_icon_on_click(self, evt):
+        def _btn_select_on_click(self, evt):
             dialog = wx.FileDialog(self, message=_("Select Icon"),
                                    wildcard="*", style=wx.FD_OPEN)
             if dialog.ShowModal() == wx.ID_OK:
                 path = dialog.GetPath()
                 if os.path.exists(path):
-                    self.set_icon(wx.Image(path).ConvertToBitmap())
+                    image = wx.EmptyImage(0, 0)
+                    success = image.LoadFile(path)
+                    # LoadFile will show error popup if not successful
+                    if success:
+                        # Resize image if too large
+                        (w, h) = image.GetSize()
+                        (W, H) = self.MAX_SIZE
+                        if w > W:
+                            factor = float(W) / float(w)
+                            w = w * factor
+                            h = h * factor
+                        if h > H:
+                            factor = float(H) / float(h)
+                            w = w * factor
+                            h = h * factor
+                        image = image.Scale(w, h, wx.IMAGE_QUALITY_HIGH)
+                        self.set_icon(image.ConvertToBitmap())
             dialog.Destroy()
         def _btn_clear_on_click(self, evt):
             self.set_icon(None)
