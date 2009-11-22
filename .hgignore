@@ -1,14 +1,9 @@
 syntax: glob
 
 .sconsign.dblite
-manual/manual.html
-po/es
-po/sv
 po/timeline.pot
 *.pyc
 src/tags
 *.swp
 *.mo
-devdoc/depgraph.gv
-devdoc/depgraph.png
 devdoc/*.html
