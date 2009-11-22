@@ -4,19 +4,36 @@ Developer Documentation
 About these documents
 ---------------------
 
-The developer documentation is written in
+The developer documentation is written to help developers understand how to
+work with the source code.
+
+The documents are written in
 [Markdown](http://daringfireball.net/projects/markdown/) syntax. You can
 generate HTML versions of these documents by typing `scons devdoc` in the root
 directory or `scons -u` in this directory.
 
-Getting started
----------------
+Content
+-------
 
-Every developer should read this:
+Understanding the source code:
+
+  * See `hacking.svg` in this directory
+  * TODO: Write short intro to the code if there is a need
+
+Contributing changes to the source code:
 
   * [Guidelines](guidelines.txt) - So that your contributions look like ours
   * [How to contribute a change](how-to-contribute.txt) - Describes how your changes gets into our repos
 
-Notes:
+Improving the design of the program:
 
   * [Design](design.txt) - How to think about the design of a program?
+  * [Code Review](code-review.txt)
+
+Notes:
+
+  * [Compatibility](compatibility.txt)
+
+Documented problems and solutions:
+
+  * [wx Dialogs](wx-dialogs.txt)
