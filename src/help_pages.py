@@ -142,7 +142,7 @@ To restore a timeline file from the backup, simply remove the "~" in the name of
         body=_("""
 The *Create Event* dialog can be opened in the following ways:
 
-- Select *File* - *Create Event* from the menu.
+- Select *Timeline* - *Create Event* from the menu.
 - Double click with the *left* mouse button on the timeline.
 - Press the *Ctrl* key, thereafter hold *left* mouse button down on the timeline, drag the mouse and release it.
 """))
