@@ -324,22 +324,16 @@ class IconEventDataPlugin(EventDataPlugin):
 
     def encode(self, data):
         """Data is wx.Bitmap."""
-        try:
-            output = StringIO.StringIO()
-            image = wx.ImageFromBitmap(data)
-            image.SaveStream(output, wx.BITMAP_TYPE_PNG)
-            return base64.b64encode(output.getvalue())
-        except Exception:
-            raise IOError("TODO: Handle this in a better way")
+        output = StringIO.StringIO()
+        image = wx.ImageFromBitmap(data)
+        image.SaveStream(output, wx.BITMAP_TYPE_PNG)
+        return base64.b64encode(output.getvalue())
 
     def decode(self, string):
         """Return is wx.Bitmap."""
-        try:
-            input = StringIO.StringIO(base64.b64decode(string))
-            image = wx.ImageFromStream(input, wx.BITMAP_TYPE_PNG)
-            return image.ConvertToBitmap()
-        except Exception:
-            raise IOError("TODO: Handle this in a better way")
+        input = StringIO.StringIO(base64.b64decode(string))
+        image = wx.ImageFromStream(input, wx.BITMAP_TYPE_PNG)
+        return image.ConvertToBitmap()
 
     def create_editor(self, parent):
         ctrl = IconEventDataPlugin.IconEditor(parent)

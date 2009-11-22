@@ -175,7 +175,10 @@ class FileTimeline(Timeline):
             try:
                 try:
                     self._load_from_lines(file)
-                except ParseException, pe:
+                except Exception, pe:
+                    # This should always be a ParseException, but if we made a
+                    # mistake somewhere we still would like to mark the file as
+                    # corrupt so we don't overwrite it later.
                     self.error_flag = FileTimeline.ERROR_CORRUPT
                     msg1 = _("Unable to read timeline data from '%s'.")
                     msg2 = "\n\n" + pe.message
@@ -341,12 +344,21 @@ class FileTimeline(Timeline):
         try:
             file = codecs.open(self.path, "w", ENCODING)
             try:
-                self._write_header(file)
-                self._write_preferred_period(file)
-                self._write_categories(file)
-                self._write_events(file)
-                self._write_footer(file)
-                self._notify(Timeline.STATE_CHANGE_ANY)
+                try:
+                    self._write_header(file)
+                    self._write_preferred_period(file)
+                    self._write_categories(file)
+                    self._write_events(file)
+                    self._write_footer(file)
+                    self._notify(Timeline.STATE_CHANGE_ANY)
+                except Exception, e:
+                    # This should never happen. But if we have made a mistake
+                    # somewhere, data should still not become corrupt.
+                    self.error_flag = FileTimeline.ERROR_WRITE
+                    msg_part1 = _("Unable to save timeline data.")
+                    msg_part2 = _("If data was corrupted, check out the backed up file that was created when the timeline was last saved.")
+                    msg = msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e
+                    raise TimelineIOError(msg)
             finally:
                 file.close()
         except IOError, e:
