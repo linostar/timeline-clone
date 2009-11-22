@@ -1,0 +1,8 @@
+This folder contains two things:
+
+  * Unit tests that can be run with 'python run.py'
+  * Timeline files filled with data suitable for testing something
+
+We don't believe that unit test are that necessary. We prefer to ensure good
+code quality with code reviews. However, some parts of the source code is well
+suited for unit testing, and in those cases we use it.
