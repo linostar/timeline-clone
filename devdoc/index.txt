@@ -16,3 +16,7 @@ Every developer should read this:
 
   * [Guidelines](guidelines.txt) - So that your contributions look like ours
   * [How to contribute a change](how-to-contribute.txt) - Describes how your changes gets into our repos
+
+Notes:
+
+  * [Design](design.txt) - How to think about the design of a program?
