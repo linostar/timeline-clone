@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Timeline 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-17 14:47+0200\n"
-"PO-Revision-Date: 2009-10-04 08:46+0000\n"
+"POT-Creation-Date: 2009-10-29 10:31+0100\n"
+"PO-Revision-Date: 2009-11-07 18:37+0000\n"
 "Last-Translator: Roman <elproferoman@gmail.com>\n"
 "Language-Team: native-languaje <elproferoman@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-10-29 09:16+0000\n"
+"X-Launchpad-Export-Date: 2009-11-22 12:56+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 "X-Poedit-Language: Spanish\n"
 "X-Poedit-Basepath: /home/roman/traducciones\n"
@@ -25,27 +25,27 @@ msgstr "Semana"
 
 #: src/drawing_default.py:642
 msgid "-- more --"
-msgstr ""
+msgstr "-- más --"
 
 #: src/help_pages.py:28
 msgid "Help contents"
-msgstr ""
+msgstr "Contenidos de ayuda"
 
 #: src/help_pages.py:49
 msgid "Questions and answers"
-msgstr ""
+msgstr "Preguntas y respuestas"
 
 #: src/help_pages.py:49
 msgid "Concepts"
-msgstr ""
+msgstr "Conceptos"
 
 #: src/help_pages.py:49
 msgid "Tasks"
-msgstr ""
+msgstr "Tareas"
 
 #: src/help_pages.py:53 src/gui.py:250 src/gui.py:661
 msgid "Getting started tutorial"
-msgstr ""
+msgstr "Bienvenido al tutorial"
 
 #: src/help_pages.py:55
 msgid ""
@@ -100,10 +100,66 @@ msgid ""
 "\n"
 "Hoovering an event will display the full description in the status bar.\n"
 msgstr ""
+"\n"
+"La idea es observar eventos en una línea de tiempo y poder cambiar "
+"rápidamente el período de tiempo que se observa. Un evento puede ser un solo "
+"punto en el tiempo o el tiempo transcurrido entre dos sucesos.\n"
+"\n"
+"HelpFigure(events)\n"
+"\n"
+"HelpFigure(zoom)\n"
+"\n"
+"Para crear una nueva línea de tiempo, seleccione * Nueva * del  menú "
+"*Archivo * y escriba un nombre de archivo en el cuadro de diálogo que se "
+"abre. Este es el nombre del archivo en el que será almacenada la información "
+"sobre los eventos. La próxima vez que inicie TimeLine se puede elegir que se "
+"abra el mismo archivo. La barra de título siempre muestra que línea de "
+"tiempo está actualmente abierta.\n"
+"\n"
+"Para agregar un nuevo evento en un punto específico del tiempo, haga doble "
+"clic en un punto de la línea de tiempo. Esto abrirá un cuadro de diálogo "
+"donde podrá agregar texto para ese evento, así como corregir el punto de "
+"inserción en la línea de tiempo, si fuese necesario. Pulsando el botón "
+"*Aceptar* se tendrá un evento en el mismo punto donde se hizo el doble clic "
+"en la línea de tiempo.\n"
+"\n"
+"Para agregar un evento de período, mantenga apretada la tecla *Ctrl* junto "
+"con el botón principal del ratón. Arrastre entre el punto de inicio y final "
+"del período en la línea de tiempo. Nuevamente aparecerá el cuadro de diálogo "
+"que le permita agregar texto al evento, así como corregir alguna "
+"imperfección en el punto de inicio y final del evento. Luego de pulsar el "
+"botón *Aceptar* verá el evento en el período que usted lo quería.\n"
+"\n"
+"Los eventos puntuales, siempre se verán sobre la línea de tiempo. Los "
+"eventos de período, se verán casi siempre por debajo de la línea de tiempo. "
+"Salvo para períodos extremadamente cortos, que podrían verse por encima de "
+"esta.\n"
+"\n"
+"Para editar un evento, solo tiene que hacer clic sobre el mismo para que "
+"aparezca el cuadro de diálogo correspondiente.\n"
+"\n"
+"Para seleccionar múltiples eventos, solo mantenga apretada la tecla *Ctrl* "
+"mientras hace clic sobre los que desee. Para borrar los eventos "
+"seleccionados, presione la tecla *Supr*.\n"
+"\n"
+"Girando la rueda del ratón puede desplazarse a lo largo de la línea de "
+"tiempo.\n"
+"\n"
+"Presionando el botón principal del ratón y arrastrando a un lado y al otro, "
+"puede desplazarse a lo largo de la línea de tiempo.\n"
+"\n"
+"Girando la rueda del ratón mientras mantiene apretada la tecla *Ctrl*, puede "
+"cambiar la escala de tiempo.\n"
+"\n"
+"La línea roja vertical indica el punto de hoy en la línea de tiempo.\n"
+"\n"
+"Cada vez que se ubica el puntero del ratón sobre un evento, se puede leer su "
+"título completo en la barra de estado. Y si se hace clic sobre él, se puede "
+"ver la descripción como un globo.\n"
 
 #: src/help_pages.py:87
 msgid "Where is the save button?"
-msgstr ""
+msgstr "¿Dónde está el botón Guardar?"
 
 #: src/help_pages.py:88
 msgid ""
@@ -111,10 +167,13 @@ msgid ""
 "There is no save button. Timeline will automatically save your data whenever "
 "needed.\n"
 msgstr ""
+"\n"
+"No hay botón Guardar. Timeline guardará automáticamente los datos cada vez "
+"que lo necesite.\n"
 
 #: src/help_pages.py:94
 msgid "Timeline"
-msgstr ""
+msgstr "Timeline"
 
 #: src/help_pages.py:96
 msgid ""
@@ -126,10 +185,18 @@ msgid ""
 "example can specify a time in terms of number of minutes since a start time. "
 "If you are interested in such a feature, please get in touch.\n"
 msgstr ""
+"\n"
+"Timeline muestra fechas de acuerdo con el calendario Gregoriano en el eje x. "
+"Actualmente esas fechas están delimitadas entre los años 10 y 9999.\n"
+"\n"
+"En futuras versiones podría soportarse varios tipos de líneas de tiempo "
+"donde, por ejemplo, usted pueda especificar la duración de un evento, en "
+"minutos contados desde el comienzo del mismo. Si usted está interesado en "
+"esa característica, por favor póngase en contacto.\n"
 
 #: src/help_pages.py:104
 msgid "Events"
-msgstr ""
+msgstr "Eventos"
 
 #: src/help_pages.py:106
 msgid ""
@@ -139,10 +206,14 @@ msgid ""
 "that event happened). This can be either a specific point in time or a "
 "period.\n"
 msgstr ""
+"\n"
+"Un evento es el tipo de dato básico para representar información en "
+"Timeline. Se debe especificar donde será puesto dicho evento. También se "
+"puede especificar si se trata de un evento o un período.\n"
 
 #: src/help_pages.py:112
 msgid "Categories"
-msgstr ""
+msgstr "Categorías"
 
 #: src/help_pages.py:114
 msgid ""
@@ -151,10 +222,14 @@ msgid ""
 "category. All events that belong to the same category are displayed with the "
 "same background color.\n"
 msgstr ""
+"\n"
+"Las categorías son usadas para un grupo de eventos. Pero cada evento puede "
+"pertenecer solo a una categoría. Todos los eventos de una categoría se verán "
+"con el mismo color de fondo.\n"
 
 #: src/help_pages.py:120
 msgid "Backups"
-msgstr ""
+msgstr "Copias de seguridad"
 
 #: src/help_pages.py:122
 msgid ""
@@ -171,10 +246,22 @@ msgid ""
 "If you would like to be extra certain to not loose your data, we recommend "
 "that you take regular backups of your timeline file.\n"
 msgstr ""
+"\n"
+"TimeLine está hecho para que usted nunca pierda los datos guardados. El "
+"primer paso para este proceso es crear el archivo donde la línea de tiempo "
+"se guardará. \n"
+"\n"
+"En caso de error de lectura de su línea de tiempo, podrá recuperar los datos "
+"del archivo de backup, que tiene el mismo nombre que el archivo principal, "
+"pero precedido de \"~\".\n"
+"\n"
+"Si quiere todavía más seguridad sobre sus datos, le recomendamos que haga "
+"backups independientes cada cierto tiempo de los archivos creados por "
+"TimeLine.\n"
 
 #: src/help_pages.py:132 src/gui.py:1301
 msgid "Restore file from backup"
-msgstr ""
+msgstr "Restaurar archivo del respaldo"
 
 #: src/help_pages.py:134
 msgid ""
@@ -182,10 +269,13 @@ msgid ""
 "To restore a timeline file from the backup, simply remove the \"~\" in the "
 "name of the backed up file.\n"
 msgstr ""
+"\n"
+"Para restaurar un archivo de Timeline desde el archivo de respaldo, "
+"solamente tiene que remover el caracter \"~\" en el nombre de este último.\n"
 
 #: src/help_pages.py:140
 msgid "Create event"
-msgstr ""
+msgstr "Crear evento"
 
 #: src/help_pages.py:142
 msgid ""
@@ -197,20 +287,30 @@ msgid ""
 "- Press the *Ctrl* key, thereafter hold *left* mouse button down on the "
 "timeline, drag the mouse and release it.\n"
 msgstr ""
+"\n"
+"El diálogo *Crear Evento* puede abrirse de la siguiente manera:\n"
+"\n"
+"- Menú *Línea de tiempo* > *Crear evento*\n"
+"- Doble clic con el botón principal del ratón sobre la línea de tiempo.\n"
+"- Mantener apretada la tecla *Ctrl* mientras se hace clic con el botón "
+"principal del ratón sobre la línea de tiempo. También se puede arrastrar el "
+"ratón antes de soltar para crear un período.\n"
 
 #: src/help_pages.py:152
 msgid "Edit event"
-msgstr ""
+msgstr "Editar evento"
 
 #: src/help_pages.py:154
 msgid ""
 "\n"
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
 msgstr ""
+"\n"
+"El diálogo *Editar Evento* puede ser abierto con doble clic en el evento.\n"
 
 #: src/help_pages.py:160
 msgid "Selecting events"
-msgstr ""
+msgstr "Seleccionar evento"
 
 #: src/help_pages.py:161
 msgid ""
@@ -222,10 +322,18 @@ msgid ""
 "\n"
 "HelpFigure(selected_event)\n"
 msgstr ""
+"\n"
+"Para seleccionar un evento, hacer clic sobre el. Para seleccionar múltiples "
+"eventos, mantenga presionada la tecla * Ctrl* mientras hace clic en los "
+"eventos.\n"
+"\n"
+"Los eventos seleccionados se indican con un rayado diagonal de fondo.\n"
+"\n"
+"HelpFigure(selected_event)\n"
 
 #: src/help_pages.py:171
 msgid "Delete event"
-msgstr ""
+msgstr "Eliminar evento"
 
 #: src/help_pages.py:173
 msgid ""
@@ -233,16 +341,23 @@ msgid ""
 "To delete an event, select it and press the *Del* key. Multiple events can "
 "be deleted at the same time.\n"
 msgstr ""
+"\n"
+"Para eliminar un evento, seleccionelo y presione la tecla *Supr*. Puede "
+"borrar múltiples eventos al mismo tiempo.\n"
 
 #: src/help_pages.py:179
 msgid "Will associated events be deleted when I delete a category?"
 msgstr ""
+"¿Se pueden eliminar múltiples eventos si elimino la categoría a la que "
+"pertenecen?"
 
 #: src/help_pages.py:180
 msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
 msgstr ""
+"\n"
+"No. Los eventos seguirán ahí, solo que no pertenecerán a ninguna categoría.\n"
 
 #: src/help_pages.py:186 src/gui.py:210 src/gui.py:1579
 msgid "Edit categories"
@@ -257,22 +372,34 @@ msgid ""
 "The visibility of categories can also be edited in the sidebar (*View* > "
 "*Sidebar*).\n"
 msgstr ""
+"\n"
+"Las categorías pueden administrarse en el diálogo de *Editar Categorías* "
+"(*Líneas de tiempo* > *Editar Categorías*). Para editar una categoría, doble "
+"clic sobre ella.\n"
+"\n"
+"Las categorías pueden también editarse desde la barra lateral (*Ver* > "
+"*Barra lateral*).\n"
 
 #: src/help_pages.py:196 src/gui.py:252
 msgid "Contact"
-msgstr ""
+msgstr "Contacto"
 
 #: src/help_pages.py:197
 msgid ""
 "\n"
 "If you have more questions about Timeline, or if you want to get in contact "
 "with users and developers of Timeline, send an email to the user mailing "
-"list: thetimelineproj-user@lists.sourceforge.net. (Please use English.)\n"
+"list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)\n"
 msgstr ""
+"\n"
+"Si usted tiene más preguntas sobre Timeline o si quiere contactarse con "
+"usuarios y desarrolladores de Timeline, envíe un correo a la lista de correo "
+"de usuarios: <thetimelineproj-user@lists.sourceforge.net>. Por favor escriba "
+"en inglés.\n"
 
 #: src/help_pages.py:203
 msgid "Why is Timeline not available in my language?"
-msgstr ""
+msgstr "¿Por qué Timeline no está disponible en mi idioma?"
 
 #: src/help_pages.py:205
 msgid ""
@@ -280,15 +407,19 @@ msgid ""
 "Timeline is developed and translated by volunteers. If you would like to "
 "contribute translations you are very much welcome to contact us.\n"
 msgstr ""
+"\n"
+"Timeline está desarrollado y traducido por voluntarios. Si usted está "
+"interesado en contribuir con las traducciones será muy bienvenido. "
+"Contáctese con nosotros.\n"
 
 #: src/data_file.py:150
 msgid "Preferred period must be > 0."
-msgstr ""
+msgstr "El período debe ser > 0"
 
 #: src/data_file.py:180
 #, python-format
 msgid "Unable to read timeline data from '%s'."
-msgstr ""
+msgstr "Timeline no puede leer los datos de '%s'."
 
 #: src/data_file.py:187
 #, python-format
@@ -323,7 +454,7 @@ msgstr "No se puede crear el backup a '%s'"
 #: src/gui.py:112
 #, python-format
 msgid "File '%s' does not exist."
-msgstr ""
+msgstr "El archivo '%s' no existe"
 
 #: src/gui.py:116
 msgid "Create Event"
@@ -343,23 +474,23 @@ msgstr "Abrir una línea de tiempo"
 
 #: src/gui.py:172
 msgid "Open &Recent"
-msgstr ""
+msgstr "Abrir &Reciente"
 
 #: src/gui.py:176
 msgid "Page Set&up..."
-msgstr ""
+msgstr "Config&uración de Página..."
 
 #: src/gui.py:177
 msgid "Setup page for printing"
-msgstr ""
+msgstr "Configuración de impresión"
 
 #: src/gui.py:179
 msgid "Print Preview"
-msgstr ""
+msgstr "Vista preliminar"
 
 #: src/gui.py:182
 msgid "Print"
-msgstr ""
+msgstr "Imprimir"
 
 #: src/gui.py:185
 msgid "&Export to Image..."
@@ -367,7 +498,7 @@ msgstr "&Exportar como imagen..."
 
 #: src/gui.py:186
 msgid "Export the current view to a PNG image"
-msgstr ""
+msgstr "Exportar a imagen PNG"
 
 #: src/gui.py:189
 msgid "Exit the program"
@@ -403,11 +534,11 @@ msgstr "Día de Hoy...\tCtrl+G"
 
 #: src/gui.py:232
 msgid "Backward\tPgUp"
-msgstr ""
+msgstr "Volver\tPgUp"
 
 #: src/gui.py:233
 msgid "Forward\tPgDn"
-msgstr ""
+msgstr "Avanzar\tPgDn"
 
 #: src/gui.py:235
 msgid "Fit Year"
@@ -431,7 +562,7 @@ msgstr "&Archivo"
 
 #: src/gui.py:260
 msgid "&Edit"
-msgstr ""
+msgstr "&Editar"
 
 #: src/gui.py:261
 msgid "&View"
@@ -488,25 +619,27 @@ msgstr "Archivos de Timeline"
 
 #: src/gui.py:653
 msgid "No timeline opened."
-msgstr ""
+msgstr "No hay línea de tiempo abierta."
 
 #: src/gui.py:658
 msgid "First time using Timeline?"
-msgstr ""
+msgstr "¿Su primera vez usando Timeline?"
 
 #: src/gui.py:832
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
 msgstr ""
+"Se ha detectado un problema en la impresión.\n"
+"¿Quizás su impresora actual no está correctamente configurada?"
 
 #: src/gui.py:832
 msgid "Printing"
-msgstr ""
+msgstr "Imprimiendo"
 
 #: src/gui.py:846
 msgid "Print preview"
-msgstr ""
+msgstr "Vista previa"
 
 #: src/gui.py:889 src/gui.py:907
 msgid "No timeline set"
@@ -514,7 +647,7 @@ msgstr "No hay una línea de tiempo seleccionada"
 
 #: src/gui.py:1093
 msgid "Center"
-msgstr ""
+msgstr "Centrar"
 
 #: src/gui.py:1246 src/gui.py:1718
 msgid "Are you sure to delete?"
@@ -522,7 +655,7 @@ msgstr "¿Seguro que quiere borrar?"
 
 #: src/gui.py:1298
 msgid "Relevant help topics:"
-msgstr ""
+msgstr "Temas importantes de la ayuda:"
 
 #: src/gui.py:1341
 msgid "Event Properties"
@@ -570,7 +703,7 @@ msgstr "Agregar Categoría"
 
 #: src/gui.py:1578
 msgid "Add new"
-msgstr ""
+msgstr "Añadir nueva"
 
 #: src/gui.py:1606
 msgid "Edit Categories"
@@ -604,15 +737,15 @@ msgstr "El nombre de categoría '%s' ya está en uso."
 
 #: src/gui.py:1822
 msgid "Preferences"
-msgstr ""
+msgstr "Preferencias"
 
 #: src/gui.py:1829
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: src/gui.py:1831
 msgid "Open most recent timeline on startup"
-msgstr ""
+msgstr "Abrir la última línea de tiempo al inicio"
 
 #: src/gui.py:1864
 msgid "Go to Date"
@@ -620,28 +753,28 @@ msgstr "Ir al día"
 
 #: src/gui.py:1970
 msgid "Help"
-msgstr ""
+msgstr "Ayuda"
 
 #: src/gui.py:2013
 msgid "Go to home page"
-msgstr ""
+msgstr "Ir a la página de inicio"
 
 #: src/gui.py:2020
 msgid "Go back one page"
-msgstr ""
+msgstr "Retroceder una página"
 
 #: src/gui.py:2026
 msgid "Go forward one page"
-msgstr ""
+msgstr "Avanzar una página"
 
 #: src/gui.py:2112
 msgid "Page not found"
-msgstr ""
+msgstr "Página no encontrada"
 
 #: src/gui.py:2113
 #, python-format
 msgid "Could not find page '%s'."
-msgstr ""
+msgstr "No se puede encontrar la página '%s'."
 
 #: src/gui.py:2169
 #, python-format
@@ -659,11 +792,11 @@ msgstr "Pregunta"
 #: src/help.py:64
 #, python-format
 msgid "Search results for '%s'"
-msgstr ""
+msgstr "Resultados de la búsqueda '%s'"
 
 #: src/help.py:122
 msgid "Related pages"
-msgstr ""
+msgstr "Páginas relacionadas"
 
 #: src/data.py:236
 msgid "Description"
@@ -704,7 +837,7 @@ msgstr "No se puede abrir la línea de tiempo '%s'."
 
 #: src/data.py:587
 msgid "Unknown format."
-msgstr ""
+msgstr "Formato desconocido."
 
 #~ msgid "Export the current view to a PNG or BMP image"
 #~ msgstr "Exportar a imagen PNG o BMP"
