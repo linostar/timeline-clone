@@ -12,27 +12,10 @@ Unported License. For more information, see file icons/COPYING.
 Translations are licensed under the modern, simplified BSD license and are
 managed on Launchpad: http://translations.launchpad.net/thetimelineproj.
 
-Overview of the files in this directory:
+To learn what is new in this version of Timeline, see CHANGES.
 
-devdoc/         - Documentation for developers to understand the code
-help_resources/ - Images used by the help system
-icons/          - Images used for application icon
-po/             - Translation files (imported from Launchpad)
-src/            - Python source code (run with 'python main.py')
-tests/          - Unit tests (run with 'python run.py')
-AUTHORS         - Lists all people that have contributed to the project
-CHANGES         - Lists changes between releases (releases notes)
-COPYING         - A copy of the GNU General Public License, version 3
-INSTALL         - Instructions how to install Timeline
-release.py      - Script to generate a source package
-SConstruct      - File read by SCons to build parts of the application
+For installation instructions, see INSTALL.
 
-The project's website is intended as the first source of information about the
-project. It includes information about how to download the software, how to get
-help, and how to participate:
-
-  http://thetimelineproj.sourceforge.net/
-
-All development takes place here:
-
-  http://sourceforge.net/apps/trac/thetimelineproj/
+For more information about Timeline, visit its website at
+http://thetimelineproj.sourceforge.net/ or send an email to the user mailing
+list at <thetimelineproj-user@lists.sourceforge.net>.
