@@ -34,7 +34,7 @@ from subprocess import call
 
 # The root of the source archive corresponds to the directory in which this
 # file is
-ROOT_DIR = os.path.dirname(__file__)
+ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
 # Make sure that we can import modules from the src directory
 sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
