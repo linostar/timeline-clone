@@ -18,6 +18,14 @@
 
 """
 All help pages for the help system.
+
+Template for translator comments (should be before all body parts):
+
+# TRANSLATORS: This text uses special markup.
+# DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+# Just write them as they are.
+# Stars produce emphasized text. DON'T remove them.
+# Dashes produce bullet lists. DON'T remove them.
 """
 
 
@@ -52,6 +60,11 @@ def install(help_system):
         id="tutorial",
         header=_("Getting started tutorial"),
         related_pages=["where_is_save", "timeline", "events", "categories", "backups"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 The idea is to display events on a timeline and to be able to quickly change what period in time is shown. An event can be at a specific point in time or span over a period.
 
@@ -85,6 +98,11 @@ Hoovering an event will display the full description in the status bar.
     help_system.install_page(
         id="where_is_save",
         header=_("Where is the save button?"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 There is no save button. Timeline will automatically save your data whenever needed.
 """))
@@ -93,6 +111,11 @@ There is no save button. Timeline will automatically save your data whenever nee
         id="timeline",
         header=_("Timeline"),
         related_pages=["events", "categories"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 The timeline shows dates according to the Gregorian calendar on the x-axis. Currently the dates are limited to dates between year 10 and year 9999.  
 
@@ -103,6 +126,11 @@ Future versions might support various kinds of timelines so that you for example
         id="events",
         header=_("Events"),
         related_pages=["categories"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 An event is the basic data type for representing information on the timeline.  It must specify where on the timeline is should be placed (when that event happened). This can be either a specific point in time or a period.
 """))
@@ -111,6 +139,11 @@ An event is the basic data type for representing information on the timeline.  I
         id="categories",
         header=_("Categories"),
         related_pages=["categories_delete", "events"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 Categories are used to group events. An event can only belong to one category. All events that belong to the same category are displayed with the same background color.
 """))
@@ -119,6 +152,11 @@ Categories are used to group events. An event can only belong to one category. A
         id="backups",
         header=_("Backups"),
         related_pages=["restore_from_backup"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 Timeline tries its best to ensure that the data you save in a timeline never gets lost. One step in that process is to create a backup of your timeline every time before new data is saved. The backup is saved in a file with the same name as the original but with an "~" appended to the name.
 
@@ -131,6 +169,11 @@ If you would like to be extra certain to not loose your data, we recommend that 
         id="restore_from_backup",
         header=_("Restore file from backup"),
         related_pages=["backups"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 To restore a timeline file from the backup, simply remove the "~" in the name of the backed up file.
 """))
@@ -139,6 +182,11 @@ To restore a timeline file from the backup, simply remove the "~" in the name of
         id="create_event",
         header=_("Create event"),
         related_pages=["events", "delete_event"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 The *Create Event* dialog can be opened in the following ways:
 
@@ -151,6 +199,11 @@ The *Create Event* dialog can be opened in the following ways:
         id="edit_event",
         header=_("Edit event"),
         related_pages=["events", "delete_event"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 The *Edit Event* dialog can be opened by double clicking on an event.
 """))
@@ -158,6 +211,11 @@ The *Edit Event* dialog can be opened by double clicking on an event.
     help_system.install_page(
         id="select_events",
         header=_("Selecting events"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 To select an event, click on it. To select multiple events, hold down the *Ctrl* key while clicking events.
 
@@ -170,6 +228,11 @@ HelpFigure(selected_event)
         id="delete_event",
         header=_("Delete event"),
         related_pages=["select_events", "events"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 To delete an event, select it and press the *Del* key. Multiple events can be deleted at the same time.
 """))
@@ -177,6 +240,11 @@ To delete an event, select it and press the *Del* key. Multiple events can be de
     help_system.install_page(
         id="categories_delete",
         header=_("Will associated events be deleted when I delete a category?"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 No. The events will still be there but they will not belong to a category.
 """))
@@ -185,6 +253,11 @@ No. The events will still be there but they will not belong to a category.
         id="edit_categories",
         header=_("Edit categories"),
         related_pages=["categories"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 Categories can be managed in the *Edit Categories* dialog (*Timeline* > *Edit Categories*). To edit an existing category, double click on it.
 
@@ -194,6 +267,11 @@ The visibility of categories can also be edited in the sidebar (*View* > *Sideba
     help_system.install_page(
         id="contact",
         header=_("Contact"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 If you have more questions about Timeline, or if you want to get in contact with users and developers of Timeline, send an email to the user mailing list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)
 """))
@@ -202,6 +280,11 @@ If you have more questions about Timeline, or if you want to get in contact with
         id="why_not_timeline_in_my_language",
         header=_("Why is Timeline not available in my language?"),
         related_pages=["contact"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 Timeline is developed and translated by volunteers. If you would like to contribute translations you are very much welcome to contact us.
 """))
