@@ -1,0 +1,33 @@
+Release Actions
+===============
+
+Describes the actions to make a source release.
+
+Binary releases are created from source releases. Scripts in our other
+repositories (win, and deb) are used for those purposes.
+
+Before
+------
+
+  * Check that README, CHANGES, and INSTALL are up to date
+  * Import translations from Launchpad
+  * Check that authors are correct in AUTHORS and src/about.py
+  * Run unit tests
+
+Under
+-----
+
+  * Update version.py so that version number is correct and DEV=False
+  * Run python release.py
+    * Look out for warning messages at the end 
+  * Try running the unzipped release to make a basic check that it works
+  * Tag with x.y.x
+  * Create a downloadable release on SF
+
+After
+-----
+
+  * Close the milestone in Trac
+  * Add the new version in Trac 
+  * Change version in version.py to next version, DEV=True
+  * Write news on SF and Freshmeat
