@@ -1,0 +1,29 @@
+Code Review
+===========
+
+The purpose of code review is to improve the quality of the program and the
+skills of the programmers.
+
+How?
+----
+
+Our code reviews are informal and done on the project's developer mailing list.
+If you feel like reviewing some code, go ahead, and then submit your comments
+to the mailing list.
+
+It is **important** that you include the filename together with the revision
+number that you reviewed.
+
+One idea would be to always do a code review when a new commit is made. Review
+all changes and make sure they are ok. If they do not look right, changes can
+be discussed on the mailing list.
+
+Checklists
+----------
+
+Here are some points to have in mind when doing a code review:
+
+  * Does the code follow the [coding guidelines](guidelines.txt)?
+  * Are variable names meaningful?
+  * Is it possible to guess what a method does by just looking at the name and
+    comment?
