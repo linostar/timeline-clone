@@ -22,7 +22,8 @@ if not env["XGETTEXT"]:
 else:
     flags = " --copyright-holder=\"Rickard Lindberg\"" \
             " --package-name=Timeline" \
-            " --package-version=0.4.0"
+            " --package-version=0.4.0" \
+            " --add-comments=TRANSLATORS"
     env.Alias("pot", env.Pot("timeline.pot", Glob("../src/*.py"),
                              XGETTEXTFLAGS=flags))
 
