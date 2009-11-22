@@ -33,10 +33,11 @@ gets less responsibilities but more collaborators (other objects that does some
 tasks for it).
 
 Another way to think of an object (which is maybe the same as CRC cards) is by
-asking these two questions:
+asking these questions:
 
   * What is it? (Class name)
   * What can it do? (Responsibilities)
+  * What problems does it solve? (Responsibilities)
 
 See also:
 
