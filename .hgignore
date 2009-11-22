@@ -11,3 +11,4 @@ src/tags
 *.mo
 devdoc/depgraph.gv
 devdoc/depgraph.png
+devdoc/*.html
