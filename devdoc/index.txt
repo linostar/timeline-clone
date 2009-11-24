@@ -42,3 +42,7 @@ Notes:
 Documented problems and solutions:
 
   * [wx Dialogs](wx-dialogs.txt)
+
+Documented discussions/decisions:
+
+  * [Refactoring for 0.8.0 release](refactoring-080.txt)
