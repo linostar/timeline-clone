@@ -18,6 +18,7 @@ Content
 Understanding the source code:
 
   * See `hacking.svg` in this directory
+  * [API Documentation](api/index.html) - Generate with `scons api`
   * TODO: Write short intro to the code if there is a need
 
 Contributing changes to the source code:

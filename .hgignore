@@ -7,3 +7,4 @@ src/tags
 *.swp
 *.mo
 devdoc/*.html
+devdoc/api

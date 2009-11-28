@@ -88,4 +88,11 @@ for f in env.Glob("devdoc/*.txt"):
     html = env.Command(f.abspath[:-3] + "html", f, devdoc_convert)
     env.Alias("devdoc", html)
 
+### api doc
+
+api = env.Command("devdoc/api", env.Glob("src/*.py"),
+                  "epydoc -o $TARGET $SOURCES")
+env.Clean("api", api)
+env.Alias("api", api)
+
 # vim: syntax=python
