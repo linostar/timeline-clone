@@ -90,8 +90,10 @@ for f in env.Glob("devdoc/*.txt"):
 
 ### api doc
 
-api = env.Command("devdoc/api", env.Glob("timelinelib/*.py"),
-                  "epydoc -o $TARGET $SOURCES")
+src = env.Glob("timelinelib/*.py") + env.Glob("timelinelib/*/*.py") + env.Glob("timelinelib/*/*/*.py")
+
+api = env.Command("dummy", src,
+                  "epydoc -o devdoc/api $SOURCES")
 env.Clean("api", api)
 env.Alias("api", api)
 

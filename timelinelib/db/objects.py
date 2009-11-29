@@ -17,7 +17,7 @@
 
 
 """
-Custom data types.
+Objects that can be read from and written to a timeline database.
 """
 
 
@@ -32,126 +32,91 @@ import os.path
 import wx
 
 
-# To save computation power (used by `delta_to_microseconds`)
-US_PER_SEC = 1000000
-US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
+class Event(object):
+    """Represents an event on a timeline."""
 
-# Notification messages
-MSG_BALLON_VISIBILITY_CHANGED   = 1
-
-
-class Observable(object):
-    """
-    Base class for objects that would like to be observable.
-
-    The function registered should take one argument which represent the state
-    change. It can be any object.
-    """
-
-    def __init__(self):
-        self.observers = []
-
-    def register(self, fn):
-        self.observers.append(fn)
-
-    def unregister(self, fn):
-        if fn in self.observers:
-            self.observers.remove(fn)
-
-    def _notify(self, state_change):
-        for fn in self.observers:
-            fn(state_change)
-
-
-class TimelineIOError(Exception):
-    """
-    Raised from a Timeline if a read/write error occurs.
-
-    The constructor and any of the public methods can raise this exception.
-
-    Also raised by the get_timeline method if loading of a timeline failed.
-    """
-    pass
-
-
-class Timeline(Observable):
-    """
-    Base class that represents the interface for a timeline.
-
-    A possible implementation could be for a timeline stored in a flat file or
-    in a SQL database.
-
-    In order to get an implementation, the `get_timeline` factory method should
-    be used.
-
-    All methods that modify the timeline should automatically save it.
-
-    A timeline is observable so that GUI components can update themselves when
-    it changes. The two types of state changes are given as constants below.
-    """
-
-    # A category was added, edited, or deleted
-    STATE_CHANGE_CATEGORY = 1
-    # Something happened that changed the state of the timeline
-    STATE_CHANGE_ANY = 2
-
-    def __init__(self, path):
-        Observable.__init__(self)
-        self.path = path
-
-    def get_events(self, time_period):
-        """Return a list of all events visible within the time period whose
-        category is visible."""
-        raise NotImplementedError()
-
-    def add_event(self, event):
-        """Add `event` to the timeline."""
-        raise NotImplementedError()
-
-    def event_edited(self, event):
-        """Notify that `event` has been modified so that it can be saved."""
-        raise NotImplementedError()
-
-    def select_event(self, event, selected=True):
+    def __init__(self, start_time, end_time, text, category=None):
         """
-        Notify that event should be marked as selected.
+        Create an event.
 
-        Must ensure that subsequent calls to get_events maintains this selected
-        state.
+        `start_time` and `end_time` should be of the type datetime.
         """
-        raise NotImplementedError()
+        self.selected = False
+        self.draw_ballon = False
+        self.update(start_time, end_time, text, category)
+        self.data = {}
 
-    def delete_selected_events(self):
-        """Delete all events that have been marked as selected."""
-        raise NotImplementedError()
+    def update(self, start_time, end_time, text, category=None):
+        """Change the event data."""
+        self.time_period = TimePeriod(start_time, end_time)
+        self.text = text
+        self.category = category
 
-    def reset_selected_events(self):
-        """Mark all selected events as unselected."""
-        raise NotImplementedError()
+    def update_period(self, start_time, end_time):
+        """Change the event period."""
+        self.time_period = TimePeriod(start_time, end_time)
+        
+    def update_start(self, start_time):
+        """Change the event data."""
+        if start_time <= self.time_period.end_time:
+            self.time_period = TimePeriod(start_time, self.time_period.end_time)
+            return True
+        return False            
 
-    def get_categories(self):
-        """Return a list of all available categories."""
-        raise NotImplementedError()
+    def update_end(self, end_time):
+        """Change the event data."""
+        if end_time >= self.time_period.start_time:
+            self.time_period = TimePeriod(self.time_period.start_time, end_time)
+            return True
+        return False            
 
-    def add_category(self, category):
-        """Add `category` to the timeline."""
-        raise NotImplementedError()
+    def inside_period(self, time_period):
+        """Wrapper for time period method."""
+        return self.time_period.overlap(time_period)
 
-    def category_edited(self, category):
-        """Notify that `category` has been modified so that it can be saved."""
-        raise NotImplementedError()
+    def is_period(self):
+        """Wrapper for time period method."""
+        return self.time_period.is_period()
 
-    def delete_category(self, category):
-        """Delete `category` and remove it from all events."""
-        raise NotImplementedError()
+    def mean_time(self):
+        """Wrapper for time period method."""
+        return self.time_period.mean_time()
 
-    def get_preferred_period(self):
-        """Return the preferred period to display of this timeline."""
-        raise NotImplementedError()
+    def get_data(self, plugin_id):
+        return self.data.get(plugin_id, None)
 
-    def set_preferred_period(self, period):
-        """Set the preferred period to display of this timeline."""
-        raise NotImplementedError()
+    def set_data(self, plugin_id, data):
+        self.data[plugin_id] = data
+
+    def has_data(self):
+        """Return True if the event has associated data, or False if not."""
+        for id in self.data:
+            if self.data[id] != None:
+                return True
+        return False
+
+    def get_label(self):
+        """Returns a unicode label describing the event."""
+        return u"%s (%s)" % (self.text, self.time_period.get_label())
+
+    def notify(self, notification, data):
+        """A notification has been sent to the event."""
+        pass
+
+
+class Category(object):
+    """Represents a category that an event belongs to."""
+
+    def __init__(self, name, color, visible):
+        """
+        Create a category with the given name and color.
+
+        name = string
+        color = (r, g, b)
+        """
+        self.name = name
+        self.color = color
+        self.visible = visible
 
 
 class EventDataPlugin(object):
@@ -349,96 +314,6 @@ class IconEventDataPlugin(EventDataPlugin):
         editor.set_icon(None)
 
 
-class Event(object):
-    """Represents an event on a timeline."""
-
-    def __init__(self, start_time, end_time, text, category=None):
-        """
-        Create an event.
-
-        `start_time` and `end_time` should be of the type datetime.
-        """
-        self.selected = False
-        self.draw_ballon = False
-        self.update(start_time, end_time, text, category)
-        self.data = {}
-
-    def update(self, start_time, end_time, text, category=None):
-        """Change the event data."""
-        self.time_period = TimePeriod(start_time, end_time)
-        self.text = text
-        self.category = category
-
-    def update_period(self, start_time, end_time):
-        """Change the event period."""
-        self.time_period = TimePeriod(start_time, end_time)
-        
-    def update_start(self, start_time):
-        """Change the event data."""
-        if start_time <= self.time_period.end_time:
-            self.time_period = TimePeriod(start_time, self.time_period.end_time)
-            return True
-        return False            
-
-    def update_end(self, end_time):
-        """Change the event data."""
-        if end_time >= self.time_period.start_time:
-            self.time_period = TimePeriod(self.time_period.start_time, end_time)
-            return True
-        return False            
-
-    def inside_period(self, time_period):
-        """Wrapper for time period method."""
-        return self.time_period.overlap(time_period)
-
-    def is_period(self):
-        """Wrapper for time period method."""
-        return self.time_period.is_period()
-
-    def mean_time(self):
-        """Wrapper for time period method."""
-        return self.time_period.mean_time()
-
-    def get_data(self, plugin_id):
-        return self.data.get(plugin_id, None)
-
-    def set_data(self, plugin_id, data):
-        self.data[plugin_id] = data
-
-    def has_data(self):
-        """Return True if the event has associated data, or False if not."""
-        for id in self.data:
-            if self.data[id] != None:
-                return True
-        return False
-
-    def get_label(self):
-        """Returns a unicode label describing the event."""
-        return u"%s (%s)" % (self.text, self.time_period.get_label())
-
-    def notify(self, notification, data):
-        """A notification has been sent to the event."""
-        if notification == MSG_BALLON_VISIBILITY_CHANGED:
-            if data == self:
-                self.draw_ballon = True
-            else:    
-                self.draw_ballon = False
-                
-class Category(object):
-    """Represents a category that an event belongs to."""
-
-    def __init__(self, name, color, visible):
-        """
-        Create a category with the given name and color.
-
-        name = string
-        color = (r, g, b)
-        """
-        self.name = name
-        self.color = color
-        self.visible = visible
-
-
 class TimePeriod(object):
     """
     Represents a period in time using a start and end time.
@@ -615,24 +490,23 @@ class TimePeriod(object):
         def time_label(time):
             return time.time().isoformat()[0:5]
         if self.is_period():
-            if has_nonzero_time(self.start_time, self.end_time):
+            if self.has_nonzero_time():
                 label = u"%s to %s" % (label_with_time(self.start_time),
                                       label_with_time(self.end_time))
             else:
                 label = u"%s to %s" % (label_without_time(self.start_time),
                                       label_without_time(self.end_time))
         else:
-            if has_nonzero_time(self.start_time, self.end_time):
+            if self.has_nonzero_time():
                 label = u"%s" % label_with_time(self.start_time)
             else:
                 label = u"%s" % label_without_time(self.start_time)
         return label
 
-
-def has_nonzero_time(start_time, end_time):
-    nonzero_time = (start_time.time() != time(0, 0, 0) or
-                    end_time.time()   != time(0, 0, 0))
-    return nonzero_time
+    def has_nonzero_time(self):
+        nonzero_time = (self.start_time.time() != time(0, 0, 0) or
+                        self.end_time.time()   != time(0, 0, 0))
+        return nonzero_time
 
 
 def get_event_data_plugin(id):
@@ -652,37 +526,6 @@ def get_event_data_plugins():
     return [DescriptionEventDataPlugin(), IconEventDataPlugin()]
 
 
-def delta_to_microseconds(delta):
-    """Return the number of microseconds that the timedelta represents."""
-    return (delta.days * US_PER_DAY +
-            delta.seconds * US_PER_SEC +
-            delta.microseconds)
-
-
-def microseconds_to_delta(microsecs):
-    """Return a timedelta representing the given number of microseconds."""
-    return timedelta(microseconds=microsecs)
-
-
-def mult_timedelta(delta, num):
-    """Return a new timedelta that is `num` times larger than `delta`."""
-    days = delta.days * num
-    seconds = delta.seconds * num
-    microseconds = delta.microseconds * num
-    return timedelta(days, seconds, microseconds)
-
-
-def div_timedeltas(delta1, delta2):
-    """Return how many times delta2 fit in delta1."""
-    # Since Python can handle infinitely large numbers, this solution works. It
-    # might however not be optimal. If you are clever, you should be able to
-    # treat the different parts individually. But this is simple.
-    total_us1 = delta_to_microseconds(delta1)
-    total_us2 = delta_to_microseconds(delta2)
-    # Make sure that the result is a floating point number
-    return total_us1 / float(total_us2)
-
-
 def time_period_center(time, length):
     """
     TimePeriod factory method.
@@ -694,18 +537,3 @@ def time_period_center(time, length):
     start_time = time - half_length
     end_time = time + half_length
     return TimePeriod(start_time, end_time)
-
-
-def get_timeline(input_file):
-    """
-    Timeline factory method.
-
-    Return a specific timeline depending on the input_file.
-    """
-    if input_file.endswith(".timeline"):
-        from data_file import FileTimeline
-        return FileTimeline(input_file)
-    else:
-        msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
-                        _("Unknown format."))
-        raise TimelineIOError(msg_template % input_file)

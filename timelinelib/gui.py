@@ -38,13 +38,15 @@ import wx.html
 import wx.lib.colourselect as colourselect
 from wx.lib.masked import TimeCtrl
 
-from data import TimelineIOError
-from data import Timeline
-from data import Event
-from data import Category
-from data import TimePeriod
-from data import has_nonzero_time
-import data
+from timelinelib.db import open as db_open
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.interface import TimelineDB
+from timelinelib.db.interface import STATE_CHANGE_ANY
+from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.objects import get_event_data_plugins
 import drawing
 import config
 from about import display_about_dialog
@@ -99,7 +101,7 @@ class MainFrame(wx.Frame):
         # Make sure that we have an absolute path
         input_file_abs = os.path.abspath(input_file)
         try:
-            timeline = data.get_timeline(input_file_abs)
+            timeline = db_open(input_file_abs)
         except TimelineIOError, e:
             self.handle_timeline_error(e)
         else:
@@ -769,7 +771,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
             wx.GetTopLevelParent(self).handle_timeline_error(e)
 
     def _timeline_changed(self, state_change):
-        if state_change == Timeline.STATE_CHANGE_CATEGORY:
+        if state_change == STATE_CHANGE_CATEGORY:
             self._update_categories()
 
     def _update_categories(self):
@@ -1322,8 +1324,8 @@ class DrawingArea(wx.Panel):
         if evt.ControlDown():
             self._zoom_timeline(direction)
         else:
-            delta = data.mult_timedelta(self.time_period.delta(),
-                                        direction / 10.0)
+            delta = drawing.mult_timedelta(self.time_period.delta(),
+                                           direction / 10.0)
             self._scroll_timeline(delta)
 
     def _window_on_key_down(self, evt):
@@ -1367,7 +1369,7 @@ class DrawingArea(wx.Panel):
         self._redraw_timeline()
 
     def _timeline_changed(self, state_change):
-        if state_change == Timeline.STATE_CHANGE_ANY:
+        if state_change == STATE_CHANGE_ANY:
             self._redraw_timeline()
 
     def _set_initial_values_to_member_variables(self):
@@ -1512,7 +1514,7 @@ class DrawingArea(wx.Panel):
    
     def redraw_balloons(self, event):
         self.drawing_algorithm.notify_events(
-                data.MSG_BALLON_VISIBILITY_CHANGED, event)
+                1, event)
         self._redraw_timeline()
         
     def _mark_selected_minor_strips(self, current_x):
@@ -1582,7 +1584,7 @@ class DrawingArea(wx.Panel):
         # that any visible balloon is removed.
         if not visible:
             self.drawing_algorithm.notify_events(
-                            data.MSG_BALLON_VISIBILITY_CHANGED, None)
+                            1, None)
             self._redraw_timeline()
 
 class ErrorPanel(wx.Panel):
@@ -1692,7 +1694,7 @@ class EventEditor(wx.Dialog):
         # Plugins
         self.event_data_plugins = []
         notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
-        for plugin in data.get_event_data_plugins():
+        for plugin in get_event_data_plugins():
             panel = wx.Panel(notebook)
             notebook.AddPage(panel, plugin.get_name())
             editor = plugin.create_editor(panel)
@@ -1853,7 +1855,7 @@ class EventEditor(wx.Dialog):
                     plugin.set_editor_data(editor, data)
             self.updatemode = True
         if start != None and end != None:
-            self.chb_show_time.SetValue(has_nonzero_time(start, end))
+            self.chb_show_time.SetValue(TimePeriod(start, end).has_nonzero_time())
             self.chb_period.SetValue(start != end)
         self.dtp_start.set_value(start)
         self.dtp_end.set_value(end)
@@ -2012,7 +2014,7 @@ class CategoriesEditor(wx.Dialog):
 
     def _timeline_changed(self, state_change):
         try:
-            if state_change == Timeline.STATE_CHANGE_CATEGORY:
+            if state_change == STATE_CHANGE_CATEGORY:
                 self._update_categories()
         except TimelineIOError, e:
             _display_error_message(e.message, self)

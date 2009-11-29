@@ -17,9 +17,7 @@
 
 
 """
-Implementation of Timeline with flat file storage.
-
-The class FileTimeline implements the Timeline interface.
+Implementation of timeline database with flat file storage.
 """
 
 
@@ -31,15 +29,17 @@ from os.path import abspath
 from datetime import datetime
 from datetime import timedelta
 
-from data import TimelineIOError
-from data import Timeline
-from data import TimePeriod
-from data import Event
-from data import Category
-from data import time_period_center
-from data import get_event_data_plugins
-from data import get_event_data_plugin
-from version import get_version
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.interface import TimelineDB
+from timelinelib.db.interface import STATE_CHANGE_ANY
+from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import time_period_center
+from timelinelib.db.objects import get_event_data_plugins
+from timelinelib.db.objects import get_event_data_plugin
+from timelinelib.version import get_version
 
 
 ENCODING = "utf-8"
@@ -50,7 +50,7 @@ class ParseException(Exception):
     pass
 
 
-class FileTimeline(Timeline):
+class FileTimeline(TimelineDB):
     """
     Implements the Timeline interface.
 
@@ -86,7 +86,7 @@ class FileTimeline(Timeline):
 
         If the file does not exist a new timeline will be created.
         """
-        Timeline.__init__(self, path)
+        TimelineDB.__init__(self, path)
         self._load_data()
 
     def get_events(self, time_period):
@@ -107,7 +107,7 @@ class FileTimeline(Timeline):
 
     def select_event(self, event, selected=True):
         event.selected = selected
-        self._notify(Timeline.STATE_CHANGE_ANY)
+        self._notify(STATE_CHANGE_ANY)
 
     def delete_selected_events(self):
         self.events = [event for event in self.events if not event.selected]
@@ -116,7 +116,7 @@ class FileTimeline(Timeline):
     def reset_selected_events(self):
         for event in self.events:
             event.selected = False
-        self._notify(Timeline.STATE_CHANGE_ANY)
+        self._notify(STATE_CHANGE_ANY)
 
     def get_categories(self):
         # Make sure the original list can't be modified
@@ -125,11 +125,11 @@ class FileTimeline(Timeline):
     def add_category(self, category):
         self.categories.append(category)
         self._save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+        self._notify(STATE_CHANGE_CATEGORY)
 
     def category_edited(self, category):
         self._save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+        self._notify(STATE_CHANGE_CATEGORY)
 
     def delete_category(self, category):
         if category in self.categories:
@@ -138,7 +138,7 @@ class FileTimeline(Timeline):
             if event.category == category:
                 event.category = None
         self._save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+        self._notify(STATE_CHANGE_CATEGORY)
 
     def get_preferred_period(self):
         if self.preferred_period != None:
@@ -350,7 +350,7 @@ class FileTimeline(Timeline):
                     self._write_categories(file)
                     self._write_events(file)
                     self._write_footer(file)
-                    self._notify(Timeline.STATE_CHANGE_ANY)
+                    self._notify(STATE_CHANGE_ANY)
                 except Exception, e:
                     # This should never happen. But if we have made a mistake
                     # somewhere, data should still not become corrupt.

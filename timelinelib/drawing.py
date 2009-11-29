@@ -22,11 +22,14 @@ drawing.
 """
 
 
+from datetime import timedelta
+
 import wx
 
-from data import div_timedeltas
-from data import microseconds_to_delta
-from data import delta_to_microseconds
+
+# To save computation power (used by `delta_to_microseconds`)
+US_PER_SEC = 1000000
+US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
 
 
 class DrawingAlgorithm(object):
@@ -169,3 +172,34 @@ def get_algorithm():
     """
     from drawing_default import DefaultDrawingAlgorithm
     return DefaultDrawingAlgorithm()
+
+
+def delta_to_microseconds(delta):
+    """Return the number of microseconds that the timedelta represents."""
+    return (delta.days * US_PER_DAY +
+            delta.seconds * US_PER_SEC +
+            delta.microseconds)
+
+
+def microseconds_to_delta(microsecs):
+    """Return a timedelta representing the given number of microseconds."""
+    return timedelta(microseconds=microsecs)
+
+
+def mult_timedelta(delta, num):
+    """Return a new timedelta that is `num` times larger than `delta`."""
+    days = delta.days * num
+    seconds = delta.seconds * num
+    microseconds = delta.microseconds * num
+    return timedelta(days, seconds, microseconds)
+
+
+def div_timedeltas(delta1, delta2):
+    """Return how many times delta2 fit in delta1."""
+    # Since Python can handle infinitely large numbers, this solution works. It
+    # might however not be optimal. If you are clever, you should be able to
+    # treat the different parts individually. But this is simple.
+    total_us1 = delta_to_microseconds(delta1)
+    total_us2 = delta_to_microseconds(delta2)
+    # Make sure that the result is a floating point number
+    return total_us1 / float(total_us2)

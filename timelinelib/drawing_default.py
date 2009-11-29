@@ -36,7 +36,7 @@ import wx
 import drawing
 from drawing import DrawingAlgorithm
 from drawing import Metrics
-from data import TimePeriod
+from timelinelib.db.objects import TimePeriod
 
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
