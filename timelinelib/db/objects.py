@@ -35,6 +35,8 @@ import wx
 class Event(object):
     """Represents an event on a timeline."""
 
+    next_id = 1
+
     def __init__(self, start_time, end_time, text, category=None):
         """
         Create an event.
@@ -45,6 +47,8 @@ class Event(object):
         self.draw_ballon = False
         self.update(start_time, end_time, text, category)
         self.data = {}
+        self.id = Event.next_id
+        Event.next_id += 1
 
     def update(self, start_time, end_time, text, category=None):
         """Change the event data."""
