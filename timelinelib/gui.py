@@ -47,7 +47,10 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import get_event_data_plugins
-import drawing
+from timelinelib.drawing import get_drawer
+from timelinelib.drawing.interface import DrawingHints
+from timelinelib.drawing.interface import EventRuntimeData
+from timelinelib.drawing.utils import mult_timedelta
 import config
 from about import display_about_dialog
 from about import APPLICATION_NAME
@@ -1324,8 +1327,7 @@ class DrawingArea(wx.Panel):
         if evt.ControlDown():
             self._zoom_timeline(direction)
         else:
-            delta = drawing.mult_timedelta(self.time_period.delta(),
-                                           direction / 10.0)
+            delta = mult_timedelta(self.time_period.delta(), direction / 10.0)
             self._scroll_timeline(delta)
 
     def _window_on_key_down(self, evt):
@@ -1402,7 +1404,7 @@ class DrawingArea(wx.Panel):
         self.bgbuf = None
         self.timeline = None
         self.time_period = None
-        self.drawing_algorithm = drawing.get_algorithm()
+        self.drawing_algorithm = get_drawer()
         self.is_scrolling = False
         self.is_selecting = False
         self.show_legend = config.get_show_legend()
@@ -1426,15 +1428,16 @@ class DrawingArea(wx.Panel):
             memdc.Clear()
             if self.timeline:
                 try:
-                    current_events = self.timeline.get_events(self.time_period)
+                    settings = DrawingHints()
+                    settings.period_selection = period_selection
+                    settings.draw_legend = True
+                    settings.divider_position = 0.5
+                    self.drawing_algorithm.draw(memdc, self.time_period,
+                                                self.timeline,
+                                                settings,
+                                                EventRuntimeData())
                 except TimelineIOError, e:
                     wx.GetTopLevelParent(self).handle_timeline_error(e)
-                else:
-                    self.drawing_algorithm.draw(memdc, self.time_period,
-                                                current_events,
-                                                period_selection,
-                                                self.show_legend,
-                                                self.divider_line_slider)
             memdc.EndDrawing()
             del memdc
             self.Refresh()

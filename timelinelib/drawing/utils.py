@@ -17,8 +17,7 @@
 
 
 """
-Defines the interface for drawing algorithms and provides common utilities for
-drawing.
+Utilities used by drawers.
 """
 
 
@@ -32,87 +31,16 @@ US_PER_SEC = 1000000
 US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
 
 
-class DrawingAlgorithm(object):
-    """
-    Base class for timeline drawing algorithms.
-
-    In order to get an implementation, the `get_algorithm` factory method
-    should be used.
-    """
-
-    def draw(self, dc, time_period, events, period_selection=None,
-             legend=False, divider_line_slider=None):
-        """
-        This is the interface.
-
-        - dc: used to do the actual drawing
-        - time_period: what period of the timeline should be visible
-        - events: events inside time_period that should be drawn
-        - period_selection: tuple with start and end time indicating selection
-        - legend: draw a legend for the categories
-
-        When the dc is temporarily stored in a class variable such as self.dc,
-        this class variable must be deleted before the draw method ends.
-        """
-        pass
-
-    def event_is_period(self, time_period):
-        """
-        Return True if the event time_period will make the event appear
-        below the center line, as a period event.
-        """
-        return None
-     
-    def snap(self, time, snap_region=10):
-        """Snap time to minor strip if within snap_region pixels."""
-        return time
-
-    def snap_selection(self, period_selection):
-        """
-        Return a tuple where the selection has been stretched to fit to minor
-        strip.
-
-        period_selection: (start, end)
-        Return: (new_start, new_end)
-        """
-        return period_selection
-
-    def event_at(self, x, y):
-        """
-        Return the event at pixel coordinate (x, y) or None if no event there.
-        """
-        return None
-
-    def event_with_rect_at(self, x, y):
-        """
-        Return the event at pixel coordinate (x, y) and its rect in a tuple
-        (event, rect) or None if no event there.
-        """
-        return None
-
-    def event_rect_at(self, event):
-        """
-        Return the rect for the given event or None if no event isn't found.
-        """
-        return None
-    
-    def notify_events(self, notification, data):
-        """
-        Send notification to all visible events
-        """
-        
-    def get_selected_events(self):
-        """Return a list with all selected events."""
-        return []
-            
 class Metrics(object):
-    """Helper class that can calculate coordinates."""
+    """
+    Convert between pixel coordinates and time coordinates.
+    """
 
     def __init__(self, dc, time_period, divider_line_slider):
         self.width, self.height = dc.GetSizeTuple()
         self.half_width = self.width / 2
         self.half_height = self.height / 2
-        self.half_height = divider_line_slider.GetValue() * self.height / 100
+        self.half_height = divider_line_slider * self.height
         self.time_period = time_period
 
     def calc_exact_x(self, time):
@@ -147,7 +75,6 @@ class Metrics(object):
         return self.get_time(x1) - self.get_time(x2)
     
 
-
 def get_default_font(size, bold=False):
     if bold:
         weight = wx.FONTWEIGHT_BOLD
@@ -162,16 +89,6 @@ def darken_color(color, factor=0.7):
     new_g = int(g * factor)
     new_b = int(b * factor)
     return (new_r, new_g, new_b)
-
-
-def get_algorithm():
-    """
-    Factory method.
-
-    Return the drawing algorithm that should be used by the application.
-    """
-    from drawing_default import DefaultDrawingAlgorithm
-    return DefaultDrawingAlgorithm()
 
 
 def delta_to_microseconds(delta):

@@ -17,10 +17,7 @@
 
 
 """
-Implements the default algorithm for drawing a timeline.
-
-The drawing interface is implemented in the `DefaultDrawingAlgorithm` class in
-the `draw` method.
+Implements a Drawer that draws the default timeline view.
 """
 
 
@@ -29,13 +26,14 @@ import logging
 import calendar
 from datetime import timedelta
 from datetime import datetime
-from gui import sort_categories
 
 import wx
 
-import drawing
-from drawing import DrawingAlgorithm
-from drawing import Metrics
+from timelinelib.drawing.interface import Drawer
+from timelinelib.drawing.utils import Metrics
+from timelinelib.drawing.utils import get_default_font
+from timelinelib.drawing.utils import darken_color
+from timelinelib.gui import sort_categories
 from timelinelib.db.objects import TimePeriod
 
 
@@ -216,12 +214,12 @@ class StripHour(Strip):
         return time + timedelta(hours=1)
 
 
-class DefaultDrawingAlgorithm(DrawingAlgorithm):
+class DefaultDrawingAlgorithm(Drawer):
 
     def __init__(self):
         # Fonts and pens we use when drawing
-        self.header_font = drawing.get_default_font(12, True)
-        self.small_text_font = drawing.get_default_font(8)
+        self.header_font = get_default_font(12, True)
+        self.small_text_font = get_default_font(8)
         self.red_solid_pen = wx.Pen(wx.Color(255,0, 0), 1, wx.SOLID)
         self.black_solid_pen = wx.Pen(wx.Color(0, 0, 0), 1, wx.SOLID)
         self.darkred_solid_pen = wx.Pen(wx.Color(200, 0, 0), 1, wx.SOLID)
@@ -237,9 +235,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
     def event_is_period(self, time_period):
         ew = self.metrics.calc_width(time_period)
         return ew > PERIOD_THRESHOLD
-    
-    def draw(self, dc, time_period, events, period_selection=None,
-             legend=False,  divider_line_slider=None):
+
+    def draw(self, dc, time_period, timeline, settings, event_runtime_data):
         """
         Implement the drawing interface.
 
@@ -250,21 +247,21 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = time_period
-        self.metrics = Metrics(dc, time_period, divider_line_slider)
+        self.metrics = Metrics(dc, time_period, settings.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
         # Calculate stuff later used for drawing
-        self._calc_rects(events)
+        self._calc_rects(timeline.get_events(time_period))
         self._calc_strips()
         # Perform the actual drawing
-        if period_selection:
-            self._draw_period_selection(period_selection)
+        if settings.period_selection:
+            self._draw_period_selection(settings.period_selection)
         self._draw_bg()
         self._draw_events()
-        if legend:
-            self._draw_legend(self._extract_categories(events))
+        if settings.draw_legend:
+            self._draw_legend(self._extract_categories())
         self._draw_ballons()
         # Make sure to delete this one
         del self.dc
@@ -305,13 +302,6 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 return rect
         return None
 
-    def get_selected_events(self):
-        selected_events = []
-        for (event, rect) in self.event_data:
-            if event.selected:
-                selected_events.append(event)
-        return selected_events
- 
     def _calc_rects(self, events):
         """
         Calculate rectangles for all events.
@@ -490,9 +480,9 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             x = self.metrics.calc_x(now_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
 
-    def _extract_categories(self, events):
+    def _extract_categories(self):
         categories = []
-        for event in events:
+        for (event, rect) in self.event_data:
             cat = event.category
             if cat and not cat in categories:
                 categories.append(cat)
@@ -540,7 +530,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         cur_y = self.metrics.height - height - OUTER_PADDING + INNER_PADDING
         for cat in categories:
             base_color = cat.color
-            border_color = drawing.darken_color(base_color)
+            border_color = darken_color(base_color)
             self.dc.SetBrush(wx.Brush(base_color, wx.SOLID))
             self.dc.SetPen(wx.Pen(border_color, 1, wx.SOLID))
             color_box_rect = (OUTER_PADDING + width - item_height -
@@ -580,11 +570,12 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
             # Draw selection and handles
-            if event.selected:
+            # TODO: use event_runtime_data to query
+            if False: #event.selected:
                 small_rect = wx.Rect(*rect)
                 small_rect.Deflate(1, 1)
                 border_color = self._get_border_color(event)
-                border_color = drawing.darken_color(border_color)
+                border_color = darken_color(border_color)
                 pen = wx.Pen(border_color, 1, wx.SOLID)
                 self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
                 self.dc.SetPen(pen)
@@ -637,7 +628,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
 
     def _get_border_color(self, event):
         base_color = self._get_base_color(event)
-        border_color = drawing.darken_color(base_color)
+        border_color = darken_color(base_color)
         return border_color
 
     def _get_box_pen(self, event):
@@ -652,7 +643,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
 
     def _get_box_indicator_brush(self, event):
         base_color = self._get_base_color(event)
-        darker_color = drawing.darken_color(base_color, 0.6)
+        darker_color = darken_color(base_color, 0.6)
         brush = wx.Brush(darker_color, wx.SOLID)
         return brush
 
@@ -666,7 +657,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         for (event, rect) in self.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
-                if event.draw_ballon:
+                # TODO: use event_runtime_data to query
+                if False: #event.draw_ballon:
                     self._draw_ballon(event, rect)
 
     def _draw_ballon(self, event, event_rect):
@@ -684,7 +676,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             inner_rect_w = iw
             inner_rect_h = ih
         # Text
-        self.dc.SetFont(drawing.get_default_font(8))
+        self.dc.SetFont(get_default_font(8))
         font_h = self.dc.GetCharHeight()
         (tw, th) = (0, 0)
         description = event.get_data("description")
