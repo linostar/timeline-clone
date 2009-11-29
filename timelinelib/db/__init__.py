@@ -41,4 +41,4 @@ def open(path):
     else:
         msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
                         _("Unknown format."))
-        raise TimelineIOError(msg_template % input_file)
+        raise TimelineIOError(msg_template % path)
