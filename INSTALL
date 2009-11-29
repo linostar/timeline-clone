@@ -63,14 +63,14 @@ To install the translations, run this command:
 
 To run the application, use this command:
 
-  python <path-to-timeline-directory>/src/main.py [options]
+  python <path-to-timeline-directory>/timeline.py [options]
 
 For example:
 
-  python /home/rick/timeline/src/main.py
+  python /home/rick/timeline-0.8.0/timeline.py
 
 Preferable you create a shortcut on your platform that issues this command.
 
 What options are available is displayed with the following command:
 
-  python <path-to-timeline-directory>/src/main.py --help
+  python <path-to-timeline-directory>/timeline.py --help

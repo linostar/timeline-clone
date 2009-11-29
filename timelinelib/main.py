@@ -118,7 +118,3 @@ def main():
     log_versions()
     app = create_wx_app(input_files)
     app.MainLoop()
-
-
-if __name__ == "__main__":
-    main()
