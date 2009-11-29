@@ -34,7 +34,7 @@ class Drawer(object):
         - time_period: what period of the timeline should be visible
         - timeline: which timeline to visualize
         - settings: DrawingHints
-        - event_rect_at: EventRuntimeData
+        - event_runtime_data: EventRuntimeData
 
         When the dc is temporarily stored in a class variable such as self.dc,
         this class variable must be deleted before the draw method ends.

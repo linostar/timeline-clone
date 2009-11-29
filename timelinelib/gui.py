@@ -1026,6 +1026,7 @@ class DrawingArea(wx.Panel):
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
+        self.event_rt_data = EventRuntimeData()
         logging.debug("Init done in DrawingArea")
 
     def print_timeline(self, event):
@@ -1240,7 +1241,7 @@ class DrawingArea(wx.Panel):
         # that occurs in the handling of EVT_LEFT_DOWN, since we still want
         # the event(s) selected or deselected after a left doubleclick
         # It doesn't look too god but I havent found any other way to do it.
-        self._toggle_event_selection(evt.m_x, evt.m_y,evt.m_controlDown)
+        self._toggle_event_selection(evt.m_x, evt.m_y, evt.m_controlDown)
         event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
         if event:
             wx.GetTopLevelParent(self).edit_event(event)
@@ -1430,12 +1431,15 @@ class DrawingArea(wx.Panel):
                 try:
                     settings = DrawingHints()
                     settings.period_selection = period_selection
-                    settings.draw_legend = True
-                    settings.divider_position = 0.5
+                    settings.draw_legend = self.show_legend
+                    settings.divider_position = (
+                        self.divider_line_slider.GetValue())
+                    settings.divider_position = (
+                        float(self.divider_line_slider.GetValue()) / 100.0)
                     self.drawing_algorithm.draw(memdc, self.time_period,
                                                 self.timeline,
                                                 settings,
-                                                EventRuntimeData())
+                                                self.event_rt_data)
                 except TimelineIOError, e:
                     wx.GetTopLevelParent(self).handle_timeline_error(e)
             memdc.EndDrawing()
@@ -1473,12 +1477,13 @@ class DrawingArea(wx.Panel):
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event:
-            selected = event.selected
+            selected = not self.event_rt_data.is_selected(event)
             if not control_down:
                 self.timeline.reset_selected_events()
-            self.timeline.select_event(event, not selected)
+            self.event_rt_data.set_selected(event, selected)
         else:
             self.timeline.reset_selected_events()
+        self._redraw_timeline()
         return event != None
 
     def _end_selection_and_create_event(self, current_x):

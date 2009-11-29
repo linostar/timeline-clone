@@ -259,7 +259,7 @@ class DefaultDrawingAlgorithm(Drawer):
         if settings.period_selection:
             self._draw_period_selection(settings.period_selection)
         self._draw_bg()
-        self._draw_events()
+        self._draw_events(event_runtime_data)
         if settings.draw_legend:
             self._draw_legend(self._extract_categories())
         self._draw_ballons()
@@ -540,7 +540,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
             cur_y = cur_y + item_height + INNER_PADDING
 
-    def _draw_events(self):
+    def _draw_events(self, event_runtime_data):
         """Draw all event boxes and the text inside them."""
         self.dc.SetFont(self.small_text_font)
         self.dc.SetTextForeground((0, 0, 0))
@@ -570,8 +570,7 @@ class DefaultDrawingAlgorithm(Drawer):
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
             # Draw selection and handles
-            # TODO: use event_runtime_data to query
-            if False: #event.selected:
+            if event_runtime_data.is_selected(event):
                 small_rect = wx.Rect(*rect)
                 small_rect.Deflate(1, 1)
                 border_color = self._get_border_color(event)
