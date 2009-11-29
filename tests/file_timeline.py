@@ -21,12 +21,12 @@ import os
 import stat
 import datetime
 
-from data import TimelineIOError
-from data import TimePeriod
-from data_file import FileTimeline
-from data_file import quote
-from data_file import dequote
-from data_file import split_on_semicolon
+from timelinelib.data import TimelineIOError
+from timelinelib.data import TimePeriod
+from timelinelib.data_file import FileTimeline
+from timelinelib.data_file import quote
+from timelinelib.data_file import dequote
+from timelinelib.data_file import split_on_semicolon
 
 
 class TestFileTimeline(unittest.TestCase):

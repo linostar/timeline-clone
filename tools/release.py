@@ -36,11 +36,11 @@ from subprocess import call
 # file is
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
-# Make sure that we can import modules from the src directory
-sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
+# Make sure that we can import timelinelib
+sys.path.insert(0, ROOT_DIR)
 
-import about
-import version
+import timelinelib.about as about
+import timelinelib.version as version
 
 REL_NAME_ZIP = "%s-%s.zip" % (about.APPLICATION_NAME.lower(),
                               version.get_version())

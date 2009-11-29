@@ -24,13 +24,13 @@ import os.path
 import unittest
 import gettext
 
-src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-sys.path.insert(0, src_dir)
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, root_dir)
 
 import time_period
 import file_timeline
-from about import APPLICATION_NAME
-from paths import LOCALE_DIR
+from timelinelib.about import APPLICATION_NAME
+from timelinelib.paths import LOCALE_DIR
 
 if __name__ == '__main__':
     verbosity = 2

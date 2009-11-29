@@ -11,7 +11,7 @@ Before
 
   * Check that README, CHANGES, and INSTALL are up to date
   * Import translations from Launchpad
-  * Check that authors are correct in AUTHORS and src/about.py
+  * Check that authors are correct in AUTHORS and timelinelib/about.py
   * Run unit tests
 
 Under

@@ -35,7 +35,7 @@ import re
 import os.path
 import glob
 
-MODULES = glob.glob("../src/*.py")
+MODULES = glob.glob("../timelinelib/*.py")
 IMPORT_RE = r'^import ([^ \r\n]+)'
 FROM_IMPORT_RE = r'^from ([^ ]+) import ([^ \r\n]+)'
 
