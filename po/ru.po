@@ -7,45 +7,46 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-10-29 10:31+0100\n"
-"PO-Revision-Date: 2009-11-18 15:23+0000\n"
+"POT-Creation-Date: 2009-11-22 16:26+0100\n"
+"PO-Revision-Date: 2009-11-29 07:05+0000\n"
 "Last-Translator: Sergey Sedov <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-11-22 12:56+0000\n"
+"X-Launchpad-Export-Date: 2009-11-30 15:52+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: src/drawing_default.py:134
+#: src/drawing_default.py:136
 msgid "Week"
 msgstr "Неделя"
 
-#: src/drawing_default.py:642
-msgid "-- more --"
-msgstr ""
-
-#: src/help_pages.py:28
+#: src/help_pages.py:36
 msgid "Help contents"
 msgstr "Содержание справки"
 
-#: src/help_pages.py:49
+#: src/help_pages.py:57
 msgid "Questions and answers"
 msgstr "Вопросы и ответы"
 
-#: src/help_pages.py:49
+#: src/help_pages.py:57
 msgid "Concepts"
 msgstr ""
 
-#: src/help_pages.py:49
+#: src/help_pages.py:57
 msgid "Tasks"
 msgstr "Задачи"
 
-#: src/help_pages.py:53 src/gui.py:250 src/gui.py:661
+#: src/help_pages.py:61 src/gui.py:258 src/gui.py:673
 msgid "Getting started tutorial"
-msgstr ""
+msgstr "Изучить руководство"
 
-#: src/help_pages.py:55
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:68
 msgid ""
 "\n"
 "The idea is to display events on a timeline and to be able to quickly change "
@@ -99,11 +100,16 @@ msgid ""
 "Hoovering an event will display the full description in the status bar.\n"
 msgstr ""
 
-#: src/help_pages.py:87
+#: src/help_pages.py:100
 msgid "Where is the save button?"
-msgstr "Где кнопка сохранения?"
+msgstr "Где находится кнопка сохранения?"
 
-#: src/help_pages.py:88
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:106
 msgid ""
 "\n"
 "There is no save button. Timeline will automatically save your data whenever "
@@ -112,11 +118,16 @@ msgstr ""
 "\n"
 "Кнопки сохранения просто нет, оно происходит автоматически.\n"
 
-#: src/help_pages.py:94
+#: src/help_pages.py:112
 msgid "Timeline"
 msgstr "Хронология"
 
-#: src/help_pages.py:96
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:119
 msgid ""
 "\n"
 "The timeline shows dates according to the Gregorian calendar on the x-axis. "
@@ -127,11 +138,16 @@ msgid ""
 "If you are interested in such a feature, please get in touch.\n"
 msgstr ""
 
-#: src/help_pages.py:104
+#: src/help_pages.py:127
 msgid "Events"
 msgstr "События"
 
-#: src/help_pages.py:106
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:134
 msgid ""
 "\n"
 "An event is the basic data type for representing information on the "
@@ -140,11 +156,16 @@ msgid ""
 "period.\n"
 msgstr ""
 
-#: src/help_pages.py:112
+#: src/help_pages.py:140
 msgid "Categories"
 msgstr "Категории"
 
-#: src/help_pages.py:114
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:147
 msgid ""
 "\n"
 "Categories are used to group events. An event can only belong to one "
@@ -152,11 +173,16 @@ msgid ""
 "same background color.\n"
 msgstr ""
 
-#: src/help_pages.py:120
+#: src/help_pages.py:153
 msgid "Backups"
 msgstr "Резервные копии"
 
-#: src/help_pages.py:122
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:160
 msgid ""
 "\n"
 "Timeline tries its best to ensure that the data you save in a timeline never "
@@ -172,47 +198,67 @@ msgid ""
 "that you take regular backups of your timeline file.\n"
 msgstr ""
 
-#: src/help_pages.py:132 src/gui.py:1301
+#: src/help_pages.py:170 src/gui.py:1608
 msgid "Restore file from backup"
 msgstr "Восстановить файл из резервной копии"
 
-#: src/help_pages.py:134
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:177
 msgid ""
 "\n"
 "To restore a timeline file from the backup, simply remove the \"~\" in the "
 "name of the backed up file.\n"
 msgstr ""
 
-#: src/help_pages.py:140
+#: src/help_pages.py:183
 msgid "Create event"
 msgstr "Создать событие"
 
-#: src/help_pages.py:142
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:190
 msgid ""
 "\n"
 "The *Create Event* dialog can be opened in the following ways:\n"
 "\n"
-"- Select *File* - *Create Event* from the menu.\n"
+"- Select *Timeline* - *Create Event* from the menu.\n"
 "- Double click with the *left* mouse button on the timeline.\n"
 "- Press the *Ctrl* key, thereafter hold *left* mouse button down on the "
 "timeline, drag the mouse and release it.\n"
 msgstr ""
 
-#: src/help_pages.py:152
+#: src/help_pages.py:200
 msgid "Edit event"
 msgstr "Редактировать событие"
 
-#: src/help_pages.py:154
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:207
 msgid ""
 "\n"
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
 msgstr ""
 
-#: src/help_pages.py:160
+#: src/help_pages.py:213
 msgid "Selecting events"
-msgstr ""
+msgstr "Выбор событий"
 
-#: src/help_pages.py:161
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:219
 msgid ""
 "\n"
 "To select an event, click on it. To select multiple events, hold down the "
@@ -223,32 +269,50 @@ msgid ""
 "HelpFigure(selected_event)\n"
 msgstr ""
 
-#: src/help_pages.py:171
+#: src/help_pages.py:229
 msgid "Delete event"
 msgstr "Удалить событие"
 
-#: src/help_pages.py:173
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:236
 msgid ""
 "\n"
 "To delete an event, select it and press the *Del* key. Multiple events can "
 "be deleted at the same time.\n"
 msgstr ""
 
-#: src/help_pages.py:179
+#: src/help_pages.py:242
 msgid "Will associated events be deleted when I delete a category?"
-msgstr ""
+msgstr "Будут ли удалены события при удалении категории?"
 
-#: src/help_pages.py:180
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:248
 msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
 msgstr ""
+"\n"
+"Нет. События не будут удалены, но они не будут принадлежать какой-либо "
+"категории.\n"
 
-#: src/help_pages.py:186 src/gui.py:210 src/gui.py:1579
+#: src/help_pages.py:254 src/gui.py:212 src/gui.py:1886
 msgid "Edit categories"
-msgstr "Изменить категории"
+msgstr "Редактировать категории"
 
-#: src/help_pages.py:188
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:261
 msgid ""
 "\n"
 "Categories can be managed in the *Edit Categories* dialog (*Timeline* > "
@@ -258,11 +322,16 @@ msgid ""
 "*Sidebar*).\n"
 msgstr ""
 
-#: src/help_pages.py:196 src/gui.py:252
+#: src/help_pages.py:269 src/gui.py:260
 msgid "Contact"
 msgstr "Контакт"
 
-#: src/help_pages.py:197
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:275
 msgid ""
 "\n"
 "If you have more questions about Timeline, or if you want to get in contact "
@@ -270,435 +339,470 @@ msgid ""
 "list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)\n"
 msgstr ""
 
-#: src/help_pages.py:203
+#: src/help_pages.py:281
 msgid "Why is Timeline not available in my language?"
-msgstr ""
+msgstr "Почему Хронология не доступна на моём языке?"
 
-#: src/help_pages.py:205
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: src/help_pages.py:288
 msgid ""
 "\n"
 "Timeline is developed and translated by volunteers. If you would like to "
 "contribute translations you are very much welcome to contact us.\n"
 msgstr ""
+"\n"
+"Хронология разрабатывается и переводится добровольцами. Если вы желаете "
+"принять участие в переводах - всегда пожалуйста, пишите нам.\n"
 
 #: src/data_file.py:150
 msgid "Preferred period must be > 0."
 msgstr ""
 
-#: src/data_file.py:180
+#: src/data_file.py:183
 #, python-format
 msgid "Unable to read timeline data from '%s'."
 msgstr ""
 
-#: src/data_file.py:187
+#: src/data_file.py:190
 #, python-format
 msgid "Unable to read from file '%s'."
-msgstr ""
+msgstr "Невозможно прочесть из файла '%s'."
 
-#: src/data_file.py:339
+#: src/data_file.py:342
 msgid ""
 "Save function has been disabled because there was a problem reading or "
 "writing the timeline before. This to ensure that your data will not be "
 "overwritten."
 msgstr ""
 
-#: src/data_file.py:354
+#: src/data_file.py:358 src/data_file.py:366
 msgid "Unable to save timeline data."
-msgstr ""
+msgstr "Невозможно сохранить данные хронологии."
 
-#: src/data_file.py:355
+#: src/data_file.py:359 src/data_file.py:367
 msgid ""
 "If data was corrupted, check out the backed up file that was created when "
 "the timeline was last saved."
 msgstr ""
+"Если данные были повреждены, проверьте файл резервной копии, который был "
+"создан при последнем сохранении."
 
-#: src/data_file.py:365
+#: src/data_file.py:377
 #, python-format
 msgid "Unable to create backup to '%s'."
-msgstr ""
+msgstr "Невозможно создать резервную копию в '%s'."
 
-#: src/gui.py:112
+#: src/gui.py:114
 #, python-format
 msgid "File '%s' does not exist."
-msgstr ""
+msgstr "Файл '%s' не существует."
 
-#: src/gui.py:116
+#: src/gui.py:118
 msgid "Create Event"
-msgstr ""
+msgstr "Создать событие"
 
-#: src/gui.py:127
+#: src/gui.py:129
 msgid "Edit Event"
-msgstr ""
-
-#: src/gui.py:168
-msgid "Create a new timeline"
-msgstr ""
+msgstr "Редактировать событие"
 
 #: src/gui.py:170
-msgid "Open an existing timeline"
-msgstr ""
+msgid "Create a new timeline"
+msgstr "Создать новую хронологию"
 
 #: src/gui.py:172
+msgid "Open an existing timeline"
+msgstr "Открыть существующую хронологию"
+
+#: src/gui.py:174
 msgid "Open &Recent"
-msgstr ""
+msgstr "&Недавние файлы"
 
-#: src/gui.py:176
+#: src/gui.py:178
 msgid "Page Set&up..."
-msgstr ""
-
-#: src/gui.py:177
-msgid "Setup page for printing"
-msgstr ""
+msgstr "&Настройка страницы..."
 
 #: src/gui.py:179
+msgid "Setup page for printing"
+msgstr "Настройка страницы для печати"
+
+#: src/gui.py:181
 msgid "Print Preview"
-msgstr ""
+msgstr "Предварительный просмотр"
 
-#: src/gui.py:182
+#: src/gui.py:184
 msgid "Print"
-msgstr ""
+msgstr "Печать"
 
-#: src/gui.py:185
+#: src/gui.py:187
 msgid "&Export to Image..."
-msgstr ""
+msgstr "&Экспорт в изображение..."
 
-#: src/gui.py:186
+#: src/gui.py:188
 msgid "Export the current view to a PNG image"
-msgstr ""
+msgstr "Эскпортировать текущий вид в изображение формата PNG"
 
-#: src/gui.py:189
+#: src/gui.py:191
 msgid "Exit the program"
-msgstr ""
+msgstr "Выйти из программы"
 
-#: src/gui.py:206
+#: src/gui.py:208
 msgid "Create &Event..."
-msgstr ""
-
-#: src/gui.py:207
-msgid "Create a new event"
-msgstr ""
+msgstr "Создать &событие..."
 
 #: src/gui.py:209
-msgid "Edit &Categories"
-msgstr ""
+msgid "Create a new event"
+msgstr "Создать новое событие"
 
-#: src/gui.py:218
+#: src/gui.py:211
+msgid "Edit &Categories"
+msgstr "Редактировать &категории"
+
+#: src/gui.py:220
 msgid "&Sidebar\tCtrl+I"
 msgstr ""
 
-#: src/gui.py:221
+#: src/gui.py:223
 msgid "&Legend"
-msgstr ""
+msgstr "&Легенда"
 
-#: src/gui.py:229
-msgid "Go to &Today\tCtrl+H"
-msgstr ""
-
-#: src/gui.py:230
-msgid "Go to D&ate...\tCtrl+G"
-msgstr ""
-
-#: src/gui.py:232
-msgid "Backward\tPgUp"
-msgstr ""
-
-#: src/gui.py:233
-msgid "Forward\tPgDn"
-msgstr ""
-
-#: src/gui.py:235
-msgid "Fit Year"
-msgstr ""
-
-#: src/gui.py:236
-msgid "Fit Month"
+#: src/gui.py:227
+msgid "&Balloons on hover"
 msgstr ""
 
 #: src/gui.py:237
+msgid "Go to &Today\tCtrl+H"
+msgstr ""
+
+#: src/gui.py:238
+msgid "Go to D&ate...\tCtrl+G"
+msgstr ""
+
+#: src/gui.py:240
+msgid "Backward\tPgUp"
+msgstr ""
+
+#: src/gui.py:241
+msgid "Forward\tPgDn"
+msgstr ""
+
+#: src/gui.py:243
+msgid "Fit Year"
+msgstr ""
+
+#: src/gui.py:244
+msgid "Fit Month"
+msgstr ""
+
+#: src/gui.py:245
 msgid "Fit Day"
 msgstr ""
 
-#: src/gui.py:247
+#: src/gui.py:255
 msgid "&Contents\tF1"
 msgstr ""
 
-#: src/gui.py:259
+#: src/gui.py:267
 msgid "&File"
-msgstr ""
+msgstr "&Файл"
 
-#: src/gui.py:260
+#: src/gui.py:268
 msgid "&Edit"
-msgstr ""
+msgstr "&Редактировать"
 
-#: src/gui.py:261
+#: src/gui.py:269
 msgid "&View"
-msgstr ""
+msgstr "&Вид"
 
-#: src/gui.py:262
+#: src/gui.py:270
 msgid "&Timeline"
-msgstr ""
+msgstr "&Хронология"
 
-#: src/gui.py:263
+#: src/gui.py:271
 msgid "&Navigate"
-msgstr ""
+msgstr "&Навигация"
 
-#: src/gui.py:264
+#: src/gui.py:272
 msgid "&Help"
-msgstr ""
+msgstr "&Помощь"
 
-#: src/gui.py:405
+#: src/gui.py:417
 msgid "Create Timeline"
-msgstr ""
+msgstr "Создать хронологию"
 
-#: src/gui.py:412
+#: src/gui.py:424
 msgid "The specified timeline already exists."
-msgstr ""
+msgstr "Указанная хронология уже существует."
 
-#: src/gui.py:413
+#: src/gui.py:425
 msgid "Opening timeline instead of creating new."
-msgstr ""
+msgstr "Открыть хронологию вместо того, чтобы создать новую."
 
-#: src/gui.py:415
+#: src/gui.py:427
 msgid "Information"
-msgstr ""
+msgstr "Сведения"
 
-#: src/gui.py:426
+#: src/gui.py:438
 msgid "Open Timeline"
-msgstr ""
+msgstr "Открыть хронологию"
 
-#: src/gui.py:487
+#: src/gui.py:499
 msgid "Image files"
-msgstr ""
+msgstr "Файлы изображений"
 
-#: src/gui.py:488
+#: src/gui.py:500
 msgid "Export to Image"
-msgstr ""
+msgstr "Экспорт в изображения"
 
-#: src/gui.py:492
+#: src/gui.py:504
 #, python-format
 msgid "File '%s' exists. Overwrite?"
-msgstr ""
+msgstr "Файл '%s' существует. Перезаписать?"
 
-#: src/gui.py:524
+#: src/gui.py:536
 msgid "Timeline files"
-msgstr ""
+msgstr "Файлы хронологии"
 
-#: src/gui.py:653
+#: src/gui.py:665
 msgid "No timeline opened."
-msgstr ""
+msgstr "Нет открытой хронологии"
 
-#: src/gui.py:658
+#: src/gui.py:670
 msgid "First time using Timeline?"
-msgstr ""
+msgstr "Используете программу в первый раз?"
 
-#: src/gui.py:832
+#: src/gui.py:1034
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
 msgstr ""
+"Возникла проблема во время печати.\n"
+"Возможно, ваш текущий принтер неправильно настроен?"
 
-#: src/gui.py:832
+#: src/gui.py:1034
 msgid "Printing"
-msgstr ""
+msgstr "Идёт печать"
 
-#: src/gui.py:846
+#: src/gui.py:1048
 msgid "Print preview"
-msgstr ""
+msgstr "Просмотр печати"
 
-#: src/gui.py:889 src/gui.py:907
+#: src/gui.py:1091 src/gui.py:1109
 msgid "No timeline set"
 msgstr ""
 
-#: src/gui.py:1093
+#: src/gui.py:1357
 msgid "Center"
-msgstr ""
+msgstr "По центру"
 
-#: src/gui.py:1246 src/gui.py:1718
+#: src/gui.py:1535
+#, python-format
+msgid "Are you sure to delete %d events?"
+msgstr "Удалить события %d ?"
+
+#: src/gui.py:1538 src/gui.py:2025
 msgid "Are you sure to delete?"
-msgstr ""
+msgstr "Вы уверены в том, что хотите удалить?"
 
-#: src/gui.py:1298
+#: src/gui.py:1605
 msgid "Relevant help topics:"
 msgstr ""
 
-#: src/gui.py:1341
+#: src/gui.py:1648
 msgid "Event Properties"
-msgstr ""
+msgstr "Свойства события"
 
-#: src/gui.py:1347
+#: src/gui.py:1654
 msgid "When:"
-msgstr ""
+msgstr "Когда:"
 
-#: src/gui.py:1350
+#: src/gui.py:1657
 msgid "to"
 msgstr ""
 
-#: src/gui.py:1363
+#: src/gui.py:1670
 msgid "Period"
-msgstr ""
+msgstr "Период"
 
-#: src/gui.py:1367 src/gui.py:1870
+#: src/gui.py:1674 src/gui.py:2177
 msgid "Show time"
-msgstr ""
+msgstr "Показывать время"
 
-#: src/gui.py:1374
+#: src/gui.py:1681
 msgid "Text:"
-msgstr ""
+msgstr "Текст:"
 
-#: src/gui.py:1379
+#: src/gui.py:1686
 msgid "Category:"
-msgstr ""
+msgstr "Категория:"
 
-#: src/gui.py:1404
+#: src/gui.py:1711
 msgid "Add more events after this one"
 msgstr ""
 
-#: src/gui.py:1433
+#: src/gui.py:1740
 msgid "End must be > Start"
 msgstr ""
 
-#: src/gui.py:1434
+#: src/gui.py:1741
 msgid "Text"
-msgstr ""
+msgstr "Текст"
 
-#: src/gui.py:1484 src/gui.py:1671
+#: src/gui.py:1791 src/gui.py:1978
 msgid "Add Category"
-msgstr ""
+msgstr "Добавить категорию"
 
-#: src/gui.py:1578
+#: src/gui.py:1885
 msgid "Add new"
-msgstr ""
+msgstr "Добавить новую"
 
-#: src/gui.py:1606
+#: src/gui.py:1913
 msgid "Edit Categories"
-msgstr ""
+msgstr "Редактировать категории"
 
-#: src/gui.py:1657
+#: src/gui.py:1964
 msgid "Edit Category"
-msgstr ""
+msgstr "Редактировать категорию"
 
-#: src/gui.py:1762
+#: src/gui.py:2069
 msgid "Name:"
-msgstr ""
+msgstr "Название:"
 
-#: src/gui.py:1765
+#: src/gui.py:2072
 msgid "Color:"
-msgstr ""
+msgstr "Цвет:"
 
-#: src/gui.py:1768
+#: src/gui.py:2075
 msgid "Visible:"
-msgstr ""
+msgstr "Видимость:"
 
-#: src/gui.py:1783
+#: src/gui.py:2090
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
 msgstr ""
+"Название категории  '%s' не верное. Не должно содержать пустые символы."
 
-#: src/gui.py:1787
+#: src/gui.py:2094
 #, python-format
 msgid "Category name '%s' already in use."
-msgstr ""
+msgstr "Название категории '%s' уже используется."
 
-#: src/gui.py:1822
+#: src/gui.py:2129
 msgid "Preferences"
-msgstr ""
+msgstr "Параметры"
 
-#: src/gui.py:1829
+#: src/gui.py:2136
 msgid "General"
-msgstr ""
+msgstr "Общие"
 
-#: src/gui.py:1831
+#: src/gui.py:2138
 msgid "Open most recent timeline on startup"
-msgstr ""
+msgstr "Открыть последнюю использовавшуюся хронологию при старте"
 
-#: src/gui.py:1864
+#: src/gui.py:2171
 msgid "Go to Date"
-msgstr ""
+msgstr "Перейти к дате"
 
-#: src/gui.py:1970
+#: src/gui.py:2277
 msgid "Help"
-msgstr ""
+msgstr "Помощь"
 
-#: src/gui.py:2013
+#: src/gui.py:2320
 msgid "Go to home page"
-msgstr ""
+msgstr "Перейти к домашней странице"
 
-#: src/gui.py:2020
+#: src/gui.py:2327
 msgid "Go back one page"
-msgstr ""
+msgstr "Назад на одну страницу"
 
-#: src/gui.py:2026
+#: src/gui.py:2333
 msgid "Go forward one page"
-msgstr ""
+msgstr "Вперёд на одну страницу"
 
-#: src/gui.py:2112
+#: src/gui.py:2419
 msgid "Page not found"
-msgstr ""
+msgstr "Страница не найдена"
 
-#: src/gui.py:2113
+#: src/gui.py:2420
 #, python-format
 msgid "Could not find page '%s'."
-msgstr ""
+msgstr "Не могу найти страницу '%s'."
 
-#: src/gui.py:2169
+#: src/gui.py:2476
 #, python-format
 msgid "Field '%s' can't be empty."
-msgstr ""
+msgstr "Поле '%s' не должно быть пустым."
 
-#: src/gui.py:2175
+#: src/gui.py:2482
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
-#: src/gui.py:2181
+#: src/gui.py:2488
 msgid "Question"
-msgstr ""
+msgstr "Вопрос"
 
 #: src/help.py:64
 #, python-format
 msgid "Search results for '%s'"
-msgstr ""
+msgstr "Результаты поиска для '%s'"
 
 #: src/help.py:122
 msgid "Related pages"
-msgstr ""
+msgstr "Связанные страницы"
 
-#: src/data.py:236
+#: src/data.py:242
 msgid "Description"
+msgstr "Описание"
+
+#: src/data.py:269
+#, python-format
+msgid "Images will be scaled to fit inside a %ix%i box."
 msgstr ""
 
-#: src/data.py:351
+#: src/data.py:293
+msgid "Select Icon"
+msgstr "Выберите значок"
+
+#: src/data.py:323
+msgid "Icon"
+msgstr "Значок"
+
+#: src/data.py:474
 msgid "Start time can't be after year 9989"
-msgstr ""
+msgstr "Время начала не должно быть позже 9989 года"
 
-#: src/data.py:352
+#: src/data.py:475
 msgid "Start time can't be before year 10"
-msgstr ""
+msgstr "Время начала не должно быть до 10 года"
 
-#: src/data.py:355
+#: src/data.py:478
 msgid "End time can't be after year 9989"
-msgstr ""
+msgstr "Время окончания не должно быть после 9989 года"
 
-#: src/data.py:356
+#: src/data.py:479
 msgid "End time can't be before year 10"
-msgstr ""
+msgstr "Время окончания не должно быть до 10 года"
 
-#: src/data.py:360
+#: src/data.py:483
 msgid "Start time can't be after end time"
-msgstr ""
+msgstr "Время начала не должно быть позже времени окончания"
 
-#: src/data.py:396
+#: src/data.py:519
 msgid "Can't zoom wider than 120 years"
-msgstr ""
+msgstr "Не могу масштабировать больше чем на 120 лет"
 
-#: src/data.py:398
+#: src/data.py:521
 msgid "Can't zoom deeper than 1 hour"
-msgstr ""
+msgstr "Не могу масштабировать глубже чем на 1 час"
 
-#: src/data.py:586
+#: src/data.py:709
 #, python-format
 msgid "Unable to open timeline '%s'."
-msgstr ""
+msgstr "Не могу открыть хронологию '%s'."
 
-#: src/data.py:587
+#: src/data.py:710
 msgid "Unknown format."
-msgstr ""
+msgstr "Неизвестный формат."
