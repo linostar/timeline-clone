@@ -18,7 +18,8 @@ Under
 -----
 
   * Update version.py so that version number is correct and DEV=False
-  * Run python release.py
+    * Commit the above change
+  * Run python tools/release.py
     * Look out for warning messages at the end 
   * Try running the unzipped release to make a basic check that it works
   * Tag with x.y.x
