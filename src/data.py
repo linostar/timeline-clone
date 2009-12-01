@@ -28,6 +28,7 @@ import calendar
 import base64
 import StringIO
 import os.path
+import locale
 
 import wx
 
@@ -611,7 +612,7 @@ class TimePeriod(object):
         def label_with_time(time):
             return u"%s %s" % (label_without_time(time), time_label(time))
         def label_without_time(time):
-            return u"%s %s %s" % (time.day, calendar.month_abbr[time.month], time.year)
+            return u"%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]), time.year)
         def time_label(time):
             return time.time().isoformat()[0:5]
         if self.is_period():
@@ -627,6 +628,20 @@ class TimePeriod(object):
             else:
                 label = u"%s" % label_without_time(self.start_time)
         return label
+
+
+def local_to_unicode(local_string):
+    """Try to convert a local string to unicode."""
+    encoding = locale.getlocale()[1]
+    if encoding is None:
+        # TODO: What should we do here?
+        return u"ERROR"
+    else:
+        try:
+            return local_string.decode(encoding)
+        except Exception:
+            # TODO: What should we do here?
+            return u"ERROR"
 
 
 def has_nonzero_time(start_time, end_time):

@@ -37,6 +37,7 @@ import drawing
 from drawing import DrawingAlgorithm
 from drawing import Metrics
 from data import TimePeriod
+from data import local_to_unicode
 
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
@@ -114,7 +115,7 @@ class StripMonth(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s" % (calendar.month_abbr[time.month], time.year)
+            return "%s %s" % (local_to_unicode(calendar.month_abbr[time.month]),                              time.year)
         return calendar.month_abbr[time.month]
 
     def start(self, time):
@@ -155,18 +156,18 @@ class StripWeek(Strip):
         if time1.year == time2.year:
             if time1.month == time2.month:
                 return "%s-%s %s %s" % (time1.day, time2.day,
-                                        calendar.month_abbr[time1.month],
+                                        local_to_unicode(calendar.month_abbr[time1.month]),
                                         time1.year)
             return "%s %s-%s %s %s" % (time1.day,
-                                       calendar.month_abbr[time1.month],
+                                       local_to_unicode(calendar.month_abbr[time1.month]),
                                        time2.day,
-                                       calendar.month_abbr[time2.month],
+                                       local_to_unicode(calendar.month_abbr[time2.month]),
                                        time1.year)
         return "%s %s %s-%s %s %s" % (time1.day,
-                                      calendar.month_abbr[time1.month],
+                                      local_to_unicode(calendar.month_abbr[time1.month]),
                                       time1.year,
                                       time2.day,
-                                      calendar.month_abbr[time2.month],
+                                      local_to_unicode(calendar.month_abbr[time2.month]),
                                       time2.year)
 
 
@@ -174,7 +175,7 @@ class StripDay(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s %s" % (time.day, calendar.month_abbr[time.month],
+            return "%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
                                  time.year)
         return str(time.day)
 
@@ -189,8 +190,9 @@ class StripWeekday(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s %s %s" % (calendar.day_abbr[time.weekday()],
-                                    time.day, calendar.month_abbr[time.month],
+            return "%s %s %s %s" % (local_to_unicode(calendar.day_abbr[time.weekday()]),
+                                    time.day,
+                                    local_to_unicode(calendar.month_abbr[time.month]),
                                     time.year)
         return str(calendar.day_abbr[time.weekday()])
 
@@ -205,7 +207,7 @@ class StripHour(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s %s %s" % (time.day, calendar.month_abbr[time.month],
+            return "%s %s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
                                     time.year, time.hour)
         return str(time.hour)
 
