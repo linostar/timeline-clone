@@ -31,6 +31,8 @@ import os.path
 
 import wx
 
+from timelinelib.db.utils import local_to_unicode
+
 
 class Event(object):
     """Represents an event on a timeline."""
@@ -490,7 +492,7 @@ class TimePeriod(object):
         def label_with_time(time):
             return u"%s %s" % (label_without_time(time), time_label(time))
         def label_without_time(time):
-            return u"%s %s %s" % (time.day, calendar.month_abbr[time.month], time.year)
+            return u"%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]), time.year)
         def time_label(time):
             return time.time().isoformat()[0:5]
         if self.is_period():

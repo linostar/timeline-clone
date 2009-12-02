@@ -810,6 +810,7 @@ class EventSizer(object):
             self.sizing = False
             self.event = None
             EventSizer._initialized = True
+        self.metrics = self.drawing_area.drawing_algorithm.metrics
 
     def sizing_starts(self, m_x, m_y):
         """

@@ -1,3 +1,21 @@
+Timeline 0.7.0, released on 1 December 2009
+===========================================
+
+This is a new minor feature release.
+
+New features, enhancements:
+
+  * Visual move and resize of events
+  * Snap when creating, moving, and resizing events
+  * Show balloons with event information on hover
+  * Associate icons with events (shown in balloons)
+  * Improved drawing of events: new selection and data indicator
+  * Added context menu for events
+
+New translations:
+
+  * Russian (Sergey Sedov)
+
 Timeline 0.6.0, released on 1 November 2009
 ===========================================
 
