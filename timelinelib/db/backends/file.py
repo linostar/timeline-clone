@@ -45,6 +45,16 @@ from timelinelib.version import get_version
 ENCODING = "utf-8"
 
 
+class IdCounter(object):
+
+    def __init__(self, initial_id=0):
+        self.id = initial_id
+
+    def get_next(self):
+        self.id += 1
+        return self.id
+
+
 class ParseException(Exception):
     """Thrown if parsing of data read from file fails."""
     pass
@@ -87,6 +97,10 @@ class FileTimeline(TimelineDB):
         If the file does not exist a new timeline will be created.
         """
         TimelineDB.__init__(self, path)
+        self.new_events = []
+        self.event_id_counter = IdCounter()
+        self.new_categories = []
+        self.category_id_counter = IdCounter()
         self._load_data()
 
     def get_events(self, time_period):
@@ -99,20 +113,23 @@ class FileTimeline(TimelineDB):
         return [event for event in self.events if include_event(event)]
 
     def add_event(self, event):
-        self.events.append(event)
+        self.new_events.append(event)
         self._save_data()
 
     def event_edited(self, event):
         self._save_data()
 
+    # TODO: Remove this when we can
     def select_event(self, event, selected=True):
         event.selected = selected
         self._notify(STATE_CHANGE_ANY)
 
+    # TODO: Remove this when we can
     def delete_selected_events(self):
         self.events = [event for event in self.events if not event.selected]
         self._save_data()
 
+    # TODO: Remove this when we can
     def reset_selected_events(self):
         for event in self.events:
             event.selected = False
@@ -123,7 +140,7 @@ class FileTimeline(TimelineDB):
         return tuple(self.categories)
 
     def add_category(self, category):
-        self.categories.append(category)
+        self.new_categories.append(category)
         self._save_data()
         self._notify(STATE_CHANGE_CATEGORY)
 
@@ -134,6 +151,7 @@ class FileTimeline(TimelineDB):
     def delete_category(self, category):
         if category in self.categories:
             self.categories.remove(category)
+            category.set_id(None)
         for event in self.events:
             if event.category == category:
                 event.category = None
@@ -263,7 +281,9 @@ class FileTimeline(TimelineDB):
             visible = True
             if len(category_data) == 3:
                 visible = parse_bool(category_data[2])
-            self.categories.append(Category(name, color, visible))
+            cat = Category(name, color, visible)
+            cat.set_id(self.category_id_counter.get_next())
+            self.categories.append(cat)
         except ParseException, e:
             raise ParseException("Unable to parse category from '%s': %s" % (category_text, e.message))
 
@@ -292,7 +312,9 @@ class FileTimeline(TimelineDB):
                 if len(event_specification) == 4:
                     cat_name = dequote(event_specification[3])
                 category = self._get_category(cat_name)
-                self.events.append(Event(start_time, end_time, text, category))
+                evt = Event(start_time, end_time, text, category)
+                evt.set_id(self.event_id_counter.get_next())
+                self.events.append(evt)
                 return True
             else:
                 if len(event_specification) < 4:
@@ -308,6 +330,7 @@ class FileTimeline(TimelineDB):
                     if plugin == None:
                         raise ParseException("Can't find event data plugin '%s'." % id)
                     event.set_data(id, plugin.decode(dequote(data)))
+                event.set_id(self.event_id_counter.get_next())
                 self.events.append(event)
         except ParseException, e:
             raise ParseException("Unable to parse event from '%s': %s" % (event_text, e.message))
@@ -390,14 +413,21 @@ class FileTimeline(TimelineDB):
                 time_string(self.preferred_period.end_time)))
 
     def _write_categories(self, file):
-        for cat in self.categories:
+        def save(category):
             r, g, b = cat.color
             file.write("CATEGORY:%s;%s,%s,%s;%s\n" % (quote(cat.name),
                                                       r, g, b,
                                                       cat.visible))
+        for cat in self.categories:
+            save(cat)
+        while self.new_categories:
+            cat = self.new_categories.pop()
+            save(cat)
+            cat.set_id(self.category_id_counter.get_next())
+            self.categories.append(cat)
 
     def _write_events(self, file):
-        for event in self.events:
+        def save(event):
             file.write("EVENT:%s;%s;%s" % (
                 time_string(event.time_period.start_time),
                 time_string(event.time_period.end_time),
@@ -412,6 +442,13 @@ class FileTimeline(TimelineDB):
                     file.write(";%s:%s" % (plugin.get_id(),
                                            quote(plugin.encode(data))))
             file.write("\n")
+        for event in self.events:
+            save(event)
+        while self.new_events:
+            event = self.new_events.pop()
+            save(event)
+            event.set_id(self.event_id_counter.get_next())
+            self.events.append(event)
 
     def _write_footer(self, file):
         file.write(u"# END\n")

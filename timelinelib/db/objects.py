@@ -32,12 +32,17 @@ import os.path
 import wx
 
 from timelinelib.db.utils import local_to_unicode
+from timelinelib.drawing.utils import mult_timedelta
 
 
 class Event(object):
-    """Represents an event on a timeline."""
+    """
+    Store persistent data about an event.
 
-    next_id = 1
+    The event's id is managed by the database. An event with id None is viewed
+    as an event not saved to a database. After a successful save by a database,
+    it will set the event id to a unique integer.
+    """
 
     def __init__(self, start_time, end_time, text, category=None):
         """
@@ -45,12 +50,14 @@ class Event(object):
 
         `start_time` and `end_time` should be of the type datetime.
         """
+        self.id = None
         self.selected = False
         self.draw_ballon = False
         self.update(start_time, end_time, text, category)
         self.data = {}
-        self.id = Event.next_id
-        Event.next_id += 1
+
+    def set_id(self, id):
+        self.id = id
 
     def update(self, start_time, end_time, text, category=None):
         """Change the event data."""
@@ -105,13 +112,18 @@ class Event(object):
         """Returns a unicode label describing the event."""
         return u"%s (%s)" % (self.text, self.time_period.get_label())
 
+    # TODO: Remove this method when we can
     def notify(self, notification, data):
         """A notification has been sent to the event."""
         pass
 
 
 class Category(object):
-    """Represents a category that an event belongs to."""
+    """
+    Store persistent data about a category.
+
+    Its id is managed in the same way as for events.
+    """
 
     def __init__(self, name, color, visible):
         """
@@ -120,9 +132,13 @@ class Category(object):
         name = string
         color = (r, g, b)
         """
+        self.id = None
         self.name = name
         self.color = color
         self.visible = visible
+
+    def set_id(self, id):
+        self.id = id
 
 
 class EventDataPlugin(object):
