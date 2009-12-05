@@ -17,7 +17,8 @@
 
 
 """
-Implementation of timeline database with flat file storage.
+Implementation of timeline database with flat file storage using our own custom
+format.
 """
 
 
@@ -62,9 +63,9 @@ class ParseException(Exception):
 
 class FileTimeline(TimelineDB):
     """
-    Implements the Timeline interface.
+    Implements the timeline database interface.
 
-    The comments in the Timeline class describe what the public methods do.
+    The comments in the TimelineDB class describe what the public methods do.
 
     Every public method (including the constructor) can raise a TimelineIOError
     if there was a problem reading or writing from file.
@@ -103,6 +104,9 @@ class FileTimeline(TimelineDB):
         self.category_id_counter = IdCounter()
         self._load_data()
 
+    def is_read_only(self):
+        return False
+
     def get_events(self, time_period):
         def include_event(event):
             if not event.inside_period(time_period):
@@ -112,51 +116,48 @@ class FileTimeline(TimelineDB):
             return True
         return [event for event in self.events if include_event(event)]
 
-    def add_event(self, event):
-        self.new_events.append(event)
+    def save_event(self, event):
+        if not event.has_id():
+            self.new_events.append(event)
         self._save_data()
 
-    def event_edited(self, event):
-        self._save_data()
-
-    # TODO: Remove this when we can
-    def select_event(self, event, selected=True):
-        event.selected = selected
-        self._notify(STATE_CHANGE_ANY)
-
-    # TODO: Remove this when we can
-    def delete_selected_events(self):
-        self.events = [event for event in self.events if not event.selected]
-        self._save_data()
-
-    # TODO: Remove this when we can
-    def reset_selected_events(self):
-        for event in self.events:
-            event.selected = False
-        self._notify(STATE_CHANGE_ANY)
+    def delete_event(self, event_or_id):
+        def find_event():
+            for e in self.events:
+                if e == event_or_id or e.id == event_or_id:
+                    return e
+            return None
+        e = find_event()
+        if e is not None:
+            self.events.remove(e)
+            e.set_id(None)
+            self._save_data()
 
     def get_categories(self):
         # Make sure the original list can't be modified
         return tuple(self.categories)
 
-    def add_category(self, category):
-        self.new_categories.append(category)
+    def save_category(self, category):
+        if not category.has_id():
+            self.new_categories.append(category)
         self._save_data()
         self._notify(STATE_CHANGE_CATEGORY)
 
-    def category_edited(self, category):
-        self._save_data()
-        self._notify(STATE_CHANGE_CATEGORY)
-
-    def delete_category(self, category):
-        if category in self.categories:
+    def delete_category(self, category_or_id):
+        def find_category():
+            for c in self.categories:
+                if c == category_or_id or c.id == category_or_id:
+                    return c
+            return None
+        category = find_category()
+        if category is not None:
             self.categories.remove(category)
             category.set_id(None)
-        for event in self.events:
-            if event.category == category:
-                event.category = None
-        self._save_data()
-        self._notify(STATE_CHANGE_CATEGORY)
+            for event in self.events:
+                if event.category == category:
+                    event.category = None
+            self._save_data()
+            self._notify(STATE_CHANGE_CATEGORY)
 
     def get_preferred_period(self):
         if self.preferred_period != None:

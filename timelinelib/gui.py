@@ -769,7 +769,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         i = e.GetSelection()
         self.categories[i].visible = self.IsChecked(i)
         try:
-            self.timeline.category_edited(self.categories[i])
+            self.timeline.save_category(self.categories[i])
         except TimelineIOError, e:
             wx.GetTopLevelParent(self).handle_timeline_error(e)
 
@@ -1480,10 +1480,14 @@ class DrawingArea(wx.Panel):
         if event:
             selected = not self.event_rt_data.is_selected(event)
             if not control_down:
-                self.timeline.reset_selected_events()
+                # TODO: Replace with EventRuntimeData
+                #self.timeline.reset_selected_events()
+                pass
             self.event_rt_data.set_selected(event, selected)
         else:
-            self.timeline.reset_selected_events()
+            # TODO: Replace with EventRuntimeData
+            #self.timeline.reset_selected_events()
+            pass
         self._redraw_timeline()
         return event != None
 
@@ -1549,7 +1553,9 @@ class DrawingArea(wx.Panel):
             text = _("Are you sure to delete?")
         if _ask_question(text, self) == wx.YES:
             try:
-                self.timeline.delete_selected_events()
+                # TODO: Replace with EventRuntimeData
+                #self.timeline.delete_selected_events()
+                pass
             except TimelineIOError, e:
                 wx.GetTopLevelParent(self).handle_timeline_error(e)
 
@@ -1756,14 +1762,14 @@ class EventEditor(wx.Dialog):
                     for plugin, editor in self.event_data_plugins:
                         self.event.set_data(plugin.get_id(),
                                             plugin.get_editor_data(editor))
-                    self.timeline.event_edited(self.event)
+                    self.timeline.save_event(self.event)
                 # Create new event
                 else:
                     self.event = Event(start_time, end_time, name, category)
                     for plugin, editor in self.event_data_plugins:
                         self.event.set_data(plugin.get_id(),
                                             plugin.get_editor_data(editor))
-                    self.timeline.add_event(self.event)
+                    self.timeline.save_event(self.event)
                 # Close the dialog ?
                 if self.chb_add_more.GetValue():
                     self.txt_text.SetValue("")
@@ -1908,7 +1914,8 @@ class EventEditor(wx.Dialog):
 
         Make sure that no events are selected after the dialog is closed.
         """
-        self.timeline.reset_selected_events()
+        # TODO: Replace with EventRuntimeData
+        #self.timeline.reset_selected_events()
         self.EndModal(wx.ID_OK)
 
 
@@ -2111,7 +2118,7 @@ class CategoryEditor(wx.Dialog):
             if self.create_new:
                 self.timeline.add_category(self.category)
             else:
-                self.timeline.category_edited(self.category)
+                self.timeline.save_category(self.category)
             self.EndModal(wx.ID_OK)
         except TimelineIOError, e:
             _display_error_message(e.message, self)

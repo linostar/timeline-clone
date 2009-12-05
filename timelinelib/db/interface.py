@@ -34,63 +34,80 @@ STATE_CHANGE_ANY = 2
 
 class TimelineDB(Observable):
     """
-    Read (and write) timeline data to persistent storage.
+    Read (and write) timeline data from persistent storage.
 
-    All methods that modify the timeline should automatically save it.
+    All methods that modify timeline data should automatically write it to
+    persistent storage.
 
-    A TimelineDB is observable so that GUI components can update themselves
-    when it changes. The two types of state changes are given as constants
-    below.
+    A TimelineIOError should be raised if reading or writing fails. After such
+    a failure the database it not guarantied to return correct data. (Read and
+    write errors are however very rare.)
+
+    A timeline database is observable so that GUI components can update
+    themselves when data changes. The two types of state changes are given as
+    constants above.
+
+    Future considerations: If databases get large it might be inefficient to
+    save to persistent storage every time we modify the database. A solution is
+    to add an explicit save method and have all the other methods just modify
+    the database in memory.
     """
 
     def __init__(self, path):
         Observable.__init__(self)
         self.path = path
 
+    def is_read_only(self):
+        """
+        Return True if you can only read from this database and False if you
+        can both read and write.
+        """
+        raise NotImplementedError()
+
     def get_events(self, time_period):
-        """Return a list of all events visible within the time period whose
-        category is visible."""
-        raise NotImplementedError()
-
-    def add_event(self, event):
-        """Add `event` to the timeline."""
-        raise NotImplementedError()
-
-    def event_edited(self, event):
-        """Notify that `event` has been modified so that it can be saved."""
-        raise NotImplementedError()
-
-    def select_event(self, event, selected=True):
         """
-        Notify that event should be marked as selected.
+        Return a list of events visible within the time period.
 
-        Must ensure that subsequent calls to get_events maintains this selected
-        state.
+        An event is visible if its associated category is visible or of it does
+        not belong to a category.
         """
         raise NotImplementedError()
 
-    def delete_selected_events(self):
-        """Delete all events that have been marked as selected."""
+    def save_event(self, event):
+        """
+        Make sure that the given event is saved to persistent storage.
+
+        If the event is new it is given a new unique id. Otherwise the
+        information in the database is just updated.
+        """
         raise NotImplementedError()
 
-    def reset_selected_events(self):
-        """Mark all selected events as unselected."""
+    def delete_event(self, event_or_id):
+        """
+        Delete the event (or the event with the given id) from the database.
+        """
         raise NotImplementedError()
 
     def get_categories(self):
-        """Return a list of all available categories."""
+        """
+        Return a list of all available categories.
+        """
         raise NotImplementedError()
 
-    def add_category(self, category):
-        """Add `category` to the timeline."""
+    def save_category(self, category):
+        """
+        Make sure that the given category is saved to persistent storage.
+
+        If the category is new it is given a new unique id. Otherwise the
+        information in the database is just updated.
+        """
         raise NotImplementedError()
 
-    def category_edited(self, category):
-        """Notify that `category` has been modified so that it can be saved."""
-        raise NotImplementedError()
-
-    def delete_category(self, category):
-        """Delete `category` and remove it from all events."""
+    def delete_category(self, category_or_id):
+        """
+        Delete the category (or the category with the given id) from the
+        database.
+        """
         raise NotImplementedError()
 
     def get_preferred_period(self):
