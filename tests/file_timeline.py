@@ -21,12 +21,12 @@ import os
 import stat
 import datetime
 
-from timelinelib.data import TimelineIOError
-from timelinelib.data import TimePeriod
-from timelinelib.data_file import FileTimeline
-from timelinelib.data_file import quote
-from timelinelib.data_file import dequote
-from timelinelib.data_file import split_on_semicolon
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.backends.file import FileTimeline
+from timelinelib.db.backends.file import quote
+from timelinelib.db.backends.file import dequote
+from timelinelib.db.backends.file import split_on_semicolon
 
 
 class TestFileTimeline(unittest.TestCase):
@@ -77,41 +77,14 @@ class TestFileTimeline(unittest.TestCase):
 
     def tearDown(self):
         self._silent_remove("readonly.timeline")
-        self._silent_remove("readonly.timeline~")
         self._silent_remove("writeonly.timeline")
-        self._silent_remove("writeonly.timeline~")
         self._silent_remove("corrupt.timeline")
-        self._silent_remove("corrupt.timeline~")
         self._silent_remove("missingeof.timeline")
-        self._silent_remove("missingeof.timeline~")
         self._silent_remove("021.timeline")
-        self._silent_remove("021.timeline~")
         self._silent_remove("invalid_time_period.timeline")
-        self._silent_remove("invalid_time_period.timeline~")
         self._silent_remove("valid.timeline")
-        self._silent_remove("valid.timeline~")
 
-    def testWriteError(self):
-        """
-        Scenario: You open a timeline without errors. When you do something
-        that causes a save it fails to save your data.
-
-        Expected result: You get an exception and subsequent tries to save will
-        not have any effect. The first save attempt will create a backup even
-        though the save itself will fail. Subsequent saves should not create
-        backups.
-
-        The write error is simulated with a read-only file.
-        """
-        timeline = FileTimeline("readonly.timeline")
-        self.assertFalse(os.path.exists("readonly.timeline~"))
-        self.assertRaises(TimelineIOError, timeline._save_data)
-        self.assertTrue(os.path.exists("readonly.timeline~"))
-        modified_time = os.stat("readonly.timeline").st_mtime
-        backup_modified_time = os.stat("readonly.timeline~").st_mtime
-        self.assertRaises(TimelineIOError, timeline._save_data)
-        self.assertEqual(modified_time, os.stat("readonly.timeline").st_mtime)
-        self.assertEqual(backup_modified_time, os.stat("readonly.timeline~").st_mtime)
+    # TODO: How to test write error?
 
     def testReadError(self):
         """
@@ -123,7 +96,6 @@ class TestFileTimeline(unittest.TestCase):
         The read error is simulated with a write-only file.
         """
         self.assertRaises(TimelineIOError, FileTimeline, "writeonly.timeline")
-        self.assertFalse(os.path.exists("writeonly.timeline~"))
 
     def testCorruptData(self):
         """
@@ -173,6 +145,7 @@ class TestFileTimeline(unittest.TestCase):
         zero_tp = TimePeriod(now, now)
         self.assertRaises(TimelineIOError, timeline.set_preferred_period,
                           zero_tp)
+
 
 class TestHelperFunctions(unittest.TestCase):
 

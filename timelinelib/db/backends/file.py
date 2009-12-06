@@ -40,6 +40,7 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import time_period_center
 from timelinelib.db.objects import get_event_data_plugins
 from timelinelib.db.objects import get_event_data_plugin
+from timelinelib.db.utils import safe_write
 from timelinelib.version import get_version
 
 
@@ -84,12 +85,6 @@ class FileTimeline(TimelineDB):
     functions for information how the format looks like for the different
     parts.
     """
-
-    # Errors caused by loading and saving timeline data to file
-    ERROR_NONE    = 0
-    ERROR_READ    = 1 # Unable to read from file
-    ERROR_CORRUPT = 2 # Able to read from file but content corrupt
-    ERROR_WRITE   = 3 # Unable to write to file
 
     def __init__(self, path):
         """
@@ -178,14 +173,11 @@ class FileTimeline(TimelineDB):
 
         The data is stored internally until we do a save.
 
-        If an error occurs, the error_flag will be set to either ERROR_READ if
-        we failed to read from the file or ERROR_CORRUPT if the data we read
-        was not valid. A TimelineIOError will also be raised.
+        If a read error occurs a TimelineIOError will be raised.
         """
         self.preferred_period = None
         self.categories = []
         self.events = []
-        self.error_flag = FileTimeline.ERROR_NONE
         if not os.path.exists(self.path): 
             # Nothing to load. Will create a new timeline on save.
             return
@@ -198,14 +190,12 @@ class FileTimeline(TimelineDB):
                     # This should always be a ParseException, but if we made a
                     # mistake somewhere we still would like to mark the file as
                     # corrupt so we don't overwrite it later.
-                    self.error_flag = FileTimeline.ERROR_CORRUPT
                     msg1 = _("Unable to read timeline data from '%s'.")
                     msg2 = "\n\n" + pe.message
                     raise TimelineIOError((msg1 % abspath(self.path)) + msg2)
             finally:
                 file.close()
         except IOError, e:
-            self.error_flag = FileTimeline.ERROR_READ
             msg = _("Unable to read from file '%s'.")
             whole_msg = (msg + "\n\n%s") % (abspath(self.path), e)
             raise TimelineIOError(whole_msg)
@@ -351,56 +341,17 @@ class FileTimeline(TimelineDB):
         """
         Save timeline data to the file that this timeline points to.
 
-        It is extremely important to ensure that we never loose data. We can
-        only loose data when we write. Here is how we try to minimize data
-        loss:
-
-          * Before we write the timeline we take a backup of the original
-            * A backup can only be taken if the original file is healthy
-            * If we encountered problems while reading the original file, it is
-              not healthy (error_flag != ERROR_NONE)
-            * If we read a file correctly and encounter error while writing new
-              data, the error flag is also set to prevent further writes
+        If we have read corrupt data from a file it is not possible to still
+        have an instance of this database. So it is always safe to write.
         """
-        if self.error_flag != FileTimeline.ERROR_NONE:
-            raise TimelineIOError(_("Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."))
-        self._create_backup()
-        try:
-            file = codecs.open(self.path, "w", ENCODING)
-            try:
-                try:
-                    self._write_header(file)
-                    self._write_preferred_period(file)
-                    self._write_categories(file)
-                    self._write_events(file)
-                    self._write_footer(file)
-                    self._notify(STATE_CHANGE_ANY)
-                except Exception, e:
-                    # This should never happen. But if we have made a mistake
-                    # somewhere, data should still not become corrupt.
-                    self.error_flag = FileTimeline.ERROR_WRITE
-                    msg_part1 = _("Unable to save timeline data.")
-                    msg_part2 = _("If data was corrupted, check out the backed up file that was created when the timeline was last saved.")
-                    msg = msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e
-                    raise TimelineIOError(msg)
-            finally:
-                file.close()
-        except IOError, e:
-            self.error_flag = FileTimeline.ERROR_WRITE
-            msg_part1 = _("Unable to save timeline data.")
-            msg_part2 = _("If data was corrupted, check out the backed up file that was created when the timeline was last saved.")
-            msg = msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e
-            raise TimelineIOError(msg)
-
-    def _create_backup(self):
-        if os.path.exists(self.path):
-            backup_path = self.path + "~"
-            try:
-                shutil.copy(self.path, backup_path)
-            except IOError, e:
-                msg = _("Unable to create backup to '%s'.")
-                whole_msg = (msg + "\n\n%s") % (abspath(backup_path), e)
-                raise TimelineIOError(whole_msg)
+        def write_fn(file):
+            self._write_header(file)
+            self._write_preferred_period(file)
+            self._write_categories(file)
+            self._write_events(file)
+            self._write_footer(file)
+        safe_write(self.path, ENCODING, write_fn)
+        self._notify(STATE_CHANGE_ANY)
 
     def _write_header(self, file):
         file.write("# Written by Timeline %s on %s\n" % (
