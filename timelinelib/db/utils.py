@@ -64,21 +64,23 @@ def safe_write(path, encoding, write_fn):
             file.close()
     except IOError, e:
         raise_error(_("Unable to write to temporary file '%s'.") % tmp_path, e)
-    # Copy original to backup
-    try:
-        os.rename(path, backup_path)
-    except Exception, e: # Can this only be a OSError?
-        raise_error(_("Unable to take backup to '%s'.") % backup_path, e)
+    # Copy original to backup (if original exists)
+    if os.path.exists(path):
+        try:
+            os.rename(path, backup_path)
+        except Exception, e: # Can this only be a OSError?
+            raise_error(_("Unable to take backup to '%s'.") % backup_path, e)
     # Copy tmp to original
     try:
         os.rename(tmp_path, path)
     except Exception, e: # Can this only be a OSError?
         raise_error(_("Unable to rename temporary file '%s' to original.") % tmp_path, e)
-    # Delete backup
-    try:
-        os.remove(backup_path)
-    except Exception, e: # Can this only be a OSError?
-        raise_error(_("Unable to delete backup file '%s'.") % backup_path, e)
+    # Delete backup (if backup was created)
+    if os.path.exists(backup_path):
+        try:
+            os.remove(backup_path)
+        except Exception, e: # Can this only be a OSError?
+            raise_error(_("Unable to delete backup file '%s'.") % backup_path, e)
 
 
 def _create_non_exising_path(base, suffix):
