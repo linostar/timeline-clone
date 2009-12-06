@@ -25,11 +25,6 @@ from datetime import timedelta
 from datetime import datetime as dt
 from datetime import time
 import calendar
-import base64
-import StringIO
-import os.path
-
-import wx
 
 from timelinelib.db.utils import local_to_unicode
 from timelinelib.drawing.utils import mult_timedelta
@@ -98,11 +93,24 @@ class Event(object):
         """Wrapper for time period method."""
         return self.time_period.mean_time()
 
-    def get_data(self, plugin_id):
-        return self.data.get(plugin_id, None)
+    def get_data(self, id):
+        """
+        Return data with the given id or None if no data with that id exists.
 
-    def set_data(self, plugin_id, data):
-        self.data[plugin_id] = data
+        See set_data for information how ids map to data.
+        """
+        return self.data.get(id, None)
+
+    def set_data(self, id, data):
+        """
+        Set data with the given id.
+
+        Here is how ids map to data:
+
+            description - string
+            icon - wx.Bitmap
+        """
+        self.data[id] = data
 
     def has_data(self):
         """Return True if the event has associated data, or False if not."""
@@ -142,201 +150,6 @@ class Category(object):
 
     def set_id(self, id):
         self.id = id
-
-
-class EventDataPlugin(object):
-    """
-    Base class for plugins that extend events by adding additional data fields.
-
-    Access an event's additional data like this:
-
-      data_object = event.get_data("plugin_id")
-      event.set_data("plugin_id", data_object)
-
-    Available plugins must be configured in get_event_data_plugins.
-    """
-
-    def get_id(self):
-        """
-        Return a string [a-z]+.
-
-        Must be unique among all plugins configured in get_event_data_plugins.
-        """
-        raise NotImplementedError()
-
-    def get_name(self):
-        """
-        Return an internationalized string.
-
-        Displayed on the tabs of the notebook in the event editor dialog.
-        """
-        raise NotImplementedError()
-
-    def encode(self, data):
-        """
-        Encode data to string.
-
-        Used to save data to file.
-
-        For convenience, string data is assumed.
-        """
-        return data
-
-    def decode(self, string):
-        """
-        Decode string to data.
-
-        Used to load data from file.
-
-        For convenience, string data is assumed.
-        """
-        return string
-
-    def create_editor(self, parent):
-        """
-        Create and return a wx control with the given parent.
-
-        Used in the event editor dialog to edit the data objects that this
-        plugin handles.
-        """
-        raise NotImplementedError()
-
-    def get_editor_data(self, editor):
-        """
-        Return data object given the editor created in create_editor or None if
-        no data has been entered in the editor control.
-        """
-        raise NotImplementedError()
-
-    def set_editor_data(self, editor, data):
-        """
-        Configure the editor created in create_editor with the given data
-        object.
-        """
-        raise NotImplementedError()
-
-    def clear_editor_data(self, editor):
-        """
-        Configure the editor created in create_editor so that get_editor_data
-        will return None.
-        """
-        raise NotImplementedError()
-
-
-class DescriptionEventDataPlugin(EventDataPlugin):
-
-    def get_id(self):
-        return "description"
-
-    def get_name(self):
-        return _("Description")
-
-    def create_editor(self, parent):
-        ctrl = wx.TextCtrl(parent, style=wx.TE_MULTILINE)
-        return ctrl
-
-    def get_editor_data(self, editor):
-        description = editor.GetValue()
-        if description.strip() != "":
-            return description
-        return None
-
-    def set_editor_data(self, editor, description):
-        editor.SetValue(description)
-
-    def clear_editor_data(self, editor):
-        editor.SetValue("")
-
-
-class IconEventDataPlugin(EventDataPlugin):
-
-    class IconEditor(wx.Panel):
-        def __init__(self, parent):
-            wx.Panel.__init__(self, parent)
-            self.MAX_SIZE = (128, 128)
-            # Controls
-            self.img_icon = wx.StaticBitmap(self, size=self.MAX_SIZE)
-            description = wx.StaticText(self, label=_("Images will be scaled to fit inside a %ix%i box.") % self.MAX_SIZE)
-            btn_select = wx.Button(self, wx.ID_OPEN)
-            btn_clear = wx.Button(self, wx.ID_CLEAR)
-            self.Bind(wx.EVT_BUTTON, self._btn_select_on_click, btn_select)
-            self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, btn_clear)
-            # Layout
-            sizer = wx.GridBagSizer(5, 5)
-            sizer.Add(description, wx.GBPosition(0, 0), wx.GBSpan(1, 2))
-            sizer.Add(btn_select, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
-            sizer.Add(btn_clear, wx.GBPosition(1, 1), wx.GBSpan(1, 1))
-            sizer.Add(self.img_icon, wx.GBPosition(0, 2), wx.GBSpan(2, 1))
-            self.SetSizerAndFit(sizer)
-            # Data
-            self.bmp = None
-        def set_icon(self, bmp):
-            self.bmp = bmp
-            if self.bmp == None:
-                self.img_icon.SetBitmap(wx.EmptyBitmap(1, 1))
-            else:
-                self.img_icon.SetBitmap(bmp)
-            self.GetSizer().Layout()
-        def get_icon(self):
-            return self.bmp
-        def _btn_select_on_click(self, evt):
-            dialog = wx.FileDialog(self, message=_("Select Icon"),
-                                   wildcard="*", style=wx.FD_OPEN)
-            if dialog.ShowModal() == wx.ID_OK:
-                path = dialog.GetPath()
-                if os.path.exists(path):
-                    image = wx.EmptyImage(0, 0)
-                    success = image.LoadFile(path)
-                    # LoadFile will show error popup if not successful
-                    if success:
-                        # Resize image if too large
-                        (w, h) = image.GetSize()
-                        (W, H) = self.MAX_SIZE
-                        if w > W:
-                            factor = float(W) / float(w)
-                            w = w * factor
-                            h = h * factor
-                        if h > H:
-                            factor = float(H) / float(h)
-                            w = w * factor
-                            h = h * factor
-                        image = image.Scale(w, h, wx.IMAGE_QUALITY_HIGH)
-                        self.set_icon(image.ConvertToBitmap())
-            dialog.Destroy()
-        def _btn_clear_on_click(self, evt):
-            self.set_icon(None)
-
-    def get_id(self):
-        return "icon"
-
-    def get_name(self):
-        return _("Icon")
-
-    def encode(self, data):
-        """Data is wx.Bitmap."""
-        output = StringIO.StringIO()
-        image = wx.ImageFromBitmap(data)
-        image.SaveStream(output, wx.BITMAP_TYPE_PNG)
-        return base64.b64encode(output.getvalue())
-
-    def decode(self, string):
-        """Return is wx.Bitmap."""
-        input = StringIO.StringIO(base64.b64decode(string))
-        image = wx.ImageFromStream(input, wx.BITMAP_TYPE_PNG)
-        return image.ConvertToBitmap()
-
-    def create_editor(self, parent):
-        ctrl = IconEventDataPlugin.IconEditor(parent)
-        return ctrl
-
-    def get_editor_data(self, editor):
-        return editor.get_icon()
-
-    def set_editor_data(self, editor, bmp):
-        editor.set_icon(bmp)
-
-    def clear_editor_data(self, editor):
-        editor.set_icon(None)
 
 
 class TimePeriod(object):
@@ -532,23 +345,6 @@ class TimePeriod(object):
         nonzero_time = (self.start_time.time() != time(0, 0, 0) or
                         self.end_time.time()   != time(0, 0, 0))
         return nonzero_time
-
-
-def get_event_data_plugin(id):
-    """Return an instance of the event data plugin with the given id."""
-    for plugin in get_event_data_plugins():
-        if plugin.get_id() == id:
-            return plugin
-    return None
-
-
-def get_event_data_plugins():
-    """
-    Configure event data plugins to use.
-
-    Configure by returning a list of instances of event data plugins.
-    """
-    return [DescriptionEventDataPlugin(), IconEventDataPlugin()]
 
 
 def time_period_center(time, length):

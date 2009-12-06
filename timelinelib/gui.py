@@ -46,7 +46,6 @@ from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.objects import get_event_data_plugins
 from timelinelib.drawing import get_drawer
 from timelinelib.drawing.interface import DrawingHints
 from timelinelib.drawing.interface import EventRuntimeData
@@ -1706,17 +1705,25 @@ class EventEditor(wx.Dialog):
         groupbox_sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.Bind(wx.EVT_CHOICE, self._lst_category_on_choice,
                   self.lst_category)
-        # Plugins
-        self.event_data_plugins = []
+        # Event data
+        self.event_data = []
         notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
-        for plugin in get_event_data_plugins():
+        for data_id in self.timeline.supported_event_data():
+            if data_id == "description":
+                name = _("Description")
+                editor_class = DescriptionEditor
+            elif data_id == "icon":
+                name = _("Icon")
+                editor_class = IconEditor
+            else:
+                continue
             panel = wx.Panel(notebook)
-            notebook.AddPage(panel, plugin.get_name())
-            editor = plugin.create_editor(panel)
+            editor = editor_class(panel)
+            notebook.AddPage(panel, name)
             sizer = wx.BoxSizer(wx.VERTICAL)
             sizer.Add(editor, flag=wx.EXPAND, proportion=1)
             panel.SetSizer(sizer)
-            self.event_data_plugins.append((plugin, editor))
+            self.event_data.append((data_id, editor))
         groupbox_sizer.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND,
                            proportion=1)
         # Main (vertical layout)
@@ -1759,22 +1766,22 @@ class EventEditor(wx.Dialog):
                 # Update existing event
                 if self.updatemode:
                     self.event.update(start_time, end_time, name, category)
-                    for plugin, editor in self.event_data_plugins:
-                        self.event.set_data(plugin.get_id(),
-                                            plugin.get_editor_data(editor))
+                    for data_id, editor in self.event_data:
+                        self.event.set_data(data_id,
+                                            editor.get_data())
                     self.timeline.save_event(self.event)
                 # Create new event
                 else:
                     self.event = Event(start_time, end_time, name, category)
-                    for plugin, editor in self.event_data_plugins:
-                        self.event.set_data(plugin.get_id(),
-                                            plugin.get_editor_data(editor))
+                    for data_id, editor in self.event_data:
+                        self.event.set_data(data_id,
+                                            editor.get_data())
                     self.timeline.save_event(self.event)
                 # Close the dialog ?
                 if self.chb_add_more.GetValue():
                     self.txt_text.SetValue("")
-                    for plugin, editor in self.event_data_plugins:
-                        plugin.clear_editor_data(editor)
+                    for data_id, editor in self.event_data:
+                        editor.clear_data(editor)
                 else:
                     self._close()
             except TxtException, ex:
@@ -1864,10 +1871,10 @@ class EventEditor(wx.Dialog):
             end = self.event.time_period.end_time
             text = self.event.text
             category = self.event.category
-            for plugin, editor in self.event_data_plugins:
-                data = self.event.get_data(plugin.get_id())
+            for data_id, editor in self.event_data:
+                data = self.event.get_data(data_id)
                 if data != None:
-                    plugin.set_editor_data(editor, data)
+                    editor.set_data(data)
             self.updatemode = True
         if start != None and end != None:
             self.chb_show_time.SetValue(TimePeriod(start, end).has_nonzero_time())
@@ -2451,6 +2458,95 @@ class HelpBrowser(wx.Frame):
         </html>
         """
         return HTML_SKELETON % content
+
+
+class DescriptionEditor(wx.TextCtrl):
+
+    def __init__(self, parent):
+        wx.TextCtrl.__init__(self, parent, style=wx.TE_MULTILINE)
+
+    def get_data(self):
+        description = self.GetValue()
+        if description.strip() != "":
+            return description
+        return None
+
+    def set_data(self, data):
+        self.SetValue(data)
+
+    def clear_data(self):
+        self.SetValue("")
+
+
+class IconEditor(wx.Panel):
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+        self.MAX_SIZE = (128, 128)
+        # Controls
+        self.img_icon = wx.StaticBitmap(self, size=self.MAX_SIZE)
+        description = wx.StaticText(self, label=_("Images will be scaled to fit inside a %ix%i box.") % self.MAX_SIZE)
+        btn_select = wx.Button(self, wx.ID_OPEN)
+        btn_clear = wx.Button(self, wx.ID_CLEAR)
+        self.Bind(wx.EVT_BUTTON, self._btn_select_on_click, btn_select)
+        self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, btn_clear)
+        # Layout
+        sizer = wx.GridBagSizer(5, 5)
+        sizer.Add(description, wx.GBPosition(0, 0), wx.GBSpan(1, 2))
+        sizer.Add(btn_select, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
+        sizer.Add(btn_clear, wx.GBPosition(1, 1), wx.GBSpan(1, 1))
+        sizer.Add(self.img_icon, wx.GBPosition(0, 2), wx.GBSpan(2, 1))
+        self.SetSizerAndFit(sizer)
+        # Data
+        self.bmp = None
+
+    def get_data(self):
+        return self.get_icon()
+
+    def set_data(self, data):
+        self.set_icon(data)
+
+    def clear_data(self):
+        self.set_icon(None)
+
+    def set_icon(self, bmp):
+        self.bmp = bmp
+        if self.bmp == None:
+            self.img_icon.SetBitmap(wx.EmptyBitmap(1, 1))
+        else:
+            self.img_icon.SetBitmap(bmp)
+        self.GetSizer().Layout()
+
+    def get_icon(self):
+        return self.bmp
+
+    def _btn_select_on_click(self, evt):
+        dialog = wx.FileDialog(self, message=_("Select Icon"),
+                               wildcard="*", style=wx.FD_OPEN)
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+            if os.path.exists(path):
+                image = wx.EmptyImage(0, 0)
+                success = image.LoadFile(path)
+                # LoadFile will show error popup if not successful
+                if success:
+                    # Resize image if too large
+                    (w, h) = image.GetSize()
+                    (W, H) = self.MAX_SIZE
+                    if w > W:
+                        factor = float(W) / float(w)
+                        w = w * factor
+                        h = h * factor
+                    if h > H:
+                        factor = float(H) / float(h)
+                        w = w * factor
+                        h = h * factor
+                    image = image.Scale(w, h, wx.IMAGE_QUALITY_HIGH)
+                    self.set_icon(image.ConvertToBitmap())
+        dialog.Destroy()
+
+    def _btn_clear_on_click(self, evt):
+        self.set_icon(None)
 
 
 class TxtException(ValueError):

@@ -64,6 +64,15 @@ class TimelineDB(Observable):
         """
         raise NotImplementedError()
 
+    def supported_event_data(self):
+        """
+        Return a list of event data that we can read and write.
+
+        Event data is represented by a string id. See event.set_data for
+        information what string id map to what data.
+        """
+        raise NotImplementedError()
+
     def get_events(self, time_period):
         """
         Return a list of events visible within the time period.

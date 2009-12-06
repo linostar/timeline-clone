@@ -29,6 +29,10 @@ import os.path
 from os.path import abspath
 from datetime import datetime
 from datetime import timedelta
+import base64
+import StringIO
+
+import wx
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import TimelineDB
@@ -38,8 +42,6 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import time_period_center
-from timelinelib.db.objects import get_event_data_plugins
-from timelinelib.db.objects import get_event_data_plugin
 from timelinelib.db.utils import safe_write
 from timelinelib.version import get_version
 
@@ -101,6 +103,9 @@ class FileTimeline(TimelineDB):
 
     def is_read_only(self):
         return False
+
+    def supported_event_data(self):
+        return ["description", "icon"]
 
     def get_events(self, time_period):
         def include_event(event):
@@ -317,10 +322,10 @@ class FileTimeline(TimelineDB):
                 event = Event(start_time, end_time, text, category)
                 for item in event_specification[4:]:
                     id, data = item.split(":", 1)
-                    plugin = get_event_data_plugin(id)
-                    if plugin == None:
-                        raise ParseException("Can't find event data plugin '%s'." % id)
-                    event.set_data(id, plugin.decode(dequote(data)))
+                    if id not in self.supported_event_data():
+                        raise ParseException("Can't parse event data with id '%s'." % id)
+                    decode = get_decode_function(id)
+                    event.set_data(id, decode(dequote(data)))
                 event.set_id(self.event_id_counter.get_next())
                 self.events.append(event)
         except ParseException, e:
@@ -388,11 +393,12 @@ class FileTimeline(TimelineDB):
                 file.write(";%s" % quote(event.category.name))
             else:
                 file.write(";")
-            for plugin in get_event_data_plugins():
-                data = event.get_data(plugin.get_id())
+            for data_id in self.supported_event_data():
+                data = event.get_data(data_id)
                 if data != None:
-                    file.write(";%s:%s" % (plugin.get_id(),
-                                           quote(plugin.encode(data))))
+                    encode = get_encode_function(data_id)
+                    file.write(";%s:%s" % (data_id,
+                                           quote(encode(data))))
             file.write("\n")
         for event in self.events:
             save(event)
@@ -504,3 +510,40 @@ def quote(text):
         else:
             return "\\" + match_char
     return re.sub(";|\n|\r|\\\\", repl, text)
+
+
+def identity(obj):
+    return obj
+
+
+def encode_icon(data):
+    """Data is wx.Bitmap."""
+    output = StringIO.StringIO()
+    image = wx.ImageFromBitmap(data)
+    image.SaveStream(output, wx.BITMAP_TYPE_PNG)
+    return base64.b64encode(output.getvalue())
+
+
+def decode_icon(string):
+    """Return is wx.Bitmap."""
+    input = StringIO.StringIO(base64.b64decode(string))
+    image = wx.ImageFromStream(input, wx.BITMAP_TYPE_PNG)
+    return image.ConvertToBitmap()
+
+
+def get_encode_function(id):
+    if id == "description":
+        return identity
+    elif id == "icon":
+        return encode_icon
+    else:
+        raise ValueError("Can't find encode function for event data with id '%s'." % id)
+
+
+def get_decode_function(id):
+    if id == "description":
+        return identity
+    elif id == "icon":
+        return decode_icon
+    else:
+        raise ValueError("Can't find decode function for event data with id '%s'." % id)
