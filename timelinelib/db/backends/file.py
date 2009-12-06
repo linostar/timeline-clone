@@ -353,16 +353,6 @@ class FileTimeline(TimelineDB):
         safe_write(self.path, ENCODING, write_fn)
         self._notify(STATE_CHANGE_ANY)
 
-    def _create_backup(self):
-        if os.path.exists(self.path):
-            backup_path = self.path + "~"
-            try:
-                shutil.copy(self.path, backup_path)
-            except IOError, e:
-                msg = _("Unable to create backup to '%s'.")
-                whole_msg = (msg + "\n\n%s") % (abspath(backup_path), e)
-                raise TimelineIOError(whole_msg)
-
     def _write_header(self, file):
         file.write("# Written by Timeline %s on %s\n" % (
             get_version(),
