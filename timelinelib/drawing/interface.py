@@ -99,6 +99,7 @@ class EventRuntimeData(object):
     """
 
     SELECTED_KEY = 0
+    BALLOON_KEY = 1
 
     def __init__(self):
         self.data = {}
@@ -106,6 +107,21 @@ class EventRuntimeData(object):
     def is_selected(self, event):
         return self._id_in_list(event.id, EventRuntimeData.SELECTED_KEY)
 
+    def has_balloon(self, event):
+        return self._id_in_list(event.id, EventRuntimeData.BALLOON_KEY)
+
+    def clear_selected(self):
+        self._clear_key(EventRuntimeData.SELECTED_KEY)
+
+    def clear_balloons(self):
+        self._clear_key(EventRuntimeData.BALLOON_KEY)
+
+    def set_balloon(self, event, has_balloon=True):
+        if has_balloon:
+            self._append_id_to_list(event.id, EventRuntimeData.BALLOON_KEY)
+        else:
+            self._remove_id_from_list(event.id, EventRuntimeData.BALLOON_KEY)
+        
     def set_selected(self, event, is_selected=True):
         if is_selected:
             self._append_id_to_list(event.id, EventRuntimeData.SELECTED_KEY)
@@ -116,7 +132,8 @@ class EventRuntimeData(object):
         if self.data.has_key(list_key):
             if not id in self.data[list_key]:
                 self.data[list_key].append(id)
-        self.data[list_key] = [id]
+        else:        
+            self.data[list_key] = [id]
 
     def _remove_id_from_list(self, id, list_key):
         if self.data.has_key(list_key):
@@ -127,6 +144,12 @@ class EventRuntimeData(object):
             return id in self.data[list_key]
         return False
 
+    def _clear_key(self, key):
+        try:
+            del (self.data[key])
+        except:
+            pass
+        
 
 class DrawingHints(object):
     """
