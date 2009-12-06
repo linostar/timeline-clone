@@ -1622,16 +1622,16 @@ class ErrorPanel(wx.Panel):
         txt_help = wx.StaticText(self, label=_("Relevant help topics:"))
         vsizer.Add(txt_help, flag=wx.ALIGN_CENTER_HORIZONTAL)
         # Button
-        btn_restore = HyperlinkButton(self, _("Restore file from backup"))
-        self.Bind(wx.EVT_HYPERLINK, self._btn_restore_on_click, btn_restore)
-        vsizer.Add(btn_restore, flag=wx.ALIGN_CENTER_HORIZONTAL)
+        btn_contact = HyperlinkButton(self, _("Contact"))
+        self.Bind(wx.EVT_HYPERLINK, self._btn_contact_on_click, btn_contact)
+        vsizer.Add(btn_contact, flag=wx.ALIGN_CENTER_HORIZONTAL)
         # Sizer
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
         hsizer.Add(vsizer, flag=wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, proportion=1)
         self.SetSizer(hsizer)
 
-    def _btn_restore_on_click(self, e):
-        help_browser.show_page("restore_from_backup")
+    def _btn_contact_on_click(self, e):
+        help_browser.show_page("contact")
 
 
 class EventEditor(wx.Dialog):
