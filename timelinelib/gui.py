@@ -817,7 +817,8 @@ class EventSizer(object):
         If it is ok to start a resize... initialize the resize and return True.
         Otherwise return False.
         """
-        self.sizing = self._hit(m_x, m_y) and self.event.selected
+        is_selected = self.drawing_area.event_rt_data.is_selected(self.event)
+        self.sizing = self._hit(m_x, m_y) and is_selected 
         if self.sizing:
             self.x = m_x
             self.y = m_y
@@ -835,7 +836,8 @@ class EventSizer(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            if not self.event.selected:
+            is_selected = self.drawing_area.event_rt_data.is_selected(self.event)
+            if not is_selected:
                 return False
             self.drawing_area._set_size_cursor()
         else:
@@ -902,7 +904,8 @@ class EventMover(object):
         If it is ok to start a move... initialize the move and return True.
         Otherwise return False.
         """
-        self.moving = self._hit(m_x, m_y) and self.event.selected
+        is_selected = self.drawing_area.event_rt_data.is_selected(self.event) 
+        self.moving = self._hit(m_x, m_y) and is_selected
         if self.moving:
             self.x = m_x
             self.y = m_y
@@ -920,7 +923,8 @@ class EventMover(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            if not self.event.selected:
+            is_selected = self.drawing_area.event_rt_data.is_selected(self.event) 
+            if not is_selected:
                 return False
             self.drawing_area._set_move_cursor()
         else:
@@ -1467,27 +1471,23 @@ class DrawingArea(wx.Panel):
         will be selected or unselected depending on the current selection
         state of the event. If the Control key is down all other events
         selection state are preserved. This means that previously selected
-        events will stay selected. If the Control keys is not down all other
+        events will stay selected. If the Control key is not down all other
         events will be unselected.
 
         If the given position isn't within an event all selected events will
         be unselected.
 
-        Return True if the given position was with an event, otherwise
+        Return True if the given position was within an event, otherwise
         return False.
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event:
             selected = not self.event_rt_data.is_selected(event)
             if not control_down:
-                # TODO: Replace with EventRuntimeData
-                #self.timeline.reset_selected_events()
-                pass
+                self.event_rt_data.clear_selected()
             self.event_rt_data.set_selected(event, selected)
         else:
-            # TODO: Replace with EventRuntimeData
-            #self.timeline.reset_selected_events()
-            pass
+            self.event_rt_data.clear_selected()
         self._redraw_timeline()
         return event != None
 
@@ -1513,7 +1513,7 @@ class DrawingArea(wx.Panel):
     def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if self.show_balloons_on_hover:
-            if event and not event.selected:
+            if event and not self.event_rt_data.is_selected(event):
                 self.event_just_hoverd = event    
                 self.timer = wx.Timer(self, -1)
                 self.Bind(wx.EVT_TIMER, self.on_balloon_timer, self.timer)
@@ -1526,8 +1526,10 @@ class DrawingArea(wx.Panel):
         self.redraw_balloons(self.event_just_hoverd)
    
     def redraw_balloons(self, event):
-        self.drawing_algorithm.notify_events(
-                1, event)
+        if event:
+            self.event_rt_data.set_balloon(event)
+        else:    
+            self.event_rt_data.clear_balloons()
         self._redraw_timeline()
         
     def _mark_selected_minor_strips(self, current_x):

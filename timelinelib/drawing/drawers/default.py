@@ -264,7 +264,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self._draw_events(event_runtime_data)
         if settings.draw_legend:
             self._draw_legend(self._extract_categories())
-        self._draw_ballons()
+        self._draw_ballons(event_runtime_data)
         # Make sure to delete this one
         del self.dc
 
@@ -653,13 +653,12 @@ class DefaultDrawingAlgorithm(Drawer):
         brush = wx.Brush(border_color, wx.BDIAGONAL_HATCH)
         return brush
 
-    def _draw_ballons(self):
+    def _draw_ballons(self, event_runtime_data):
         """Draw ballons on selected events that has 'description' data."""
         for (event, rect) in self.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
-                # TODO: use event_runtime_data to query
-                if False: #event.draw_ballon:
+                if event_runtime_data.has_balloon(event):
                     self._draw_ballon(event, rect)
 
     def _draw_ballon(self, event, event_rect):
