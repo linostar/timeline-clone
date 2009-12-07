@@ -85,10 +85,6 @@ class Drawer(object):
         Send notification to all visible events
         """
         
-    def get_selected_events(self):
-        """Return a list with all selected events."""
-        return []
-
 
 class EventRuntimeData(object):
     """
@@ -107,11 +103,23 @@ class EventRuntimeData(object):
     def is_selected(self, event):
         return self._id_in_list(event.id, EventRuntimeData.SELECTED_KEY)
 
-    def has_balloon(self, event):
-        return self._id_in_list(event.id, EventRuntimeData.BALLOON_KEY)
-
     def clear_selected(self):
         self._clear_key(EventRuntimeData.SELECTED_KEY)
+
+    def set_selected(self, event, is_selected=True):
+        if is_selected:
+            self._append_id_to_list(event.id, EventRuntimeData.SELECTED_KEY)
+        else:
+            self._remove_id_from_list(event.id, EventRuntimeData.SELECTED_KEY)
+
+    def get_selected_event_ids(self):
+        if self.data.has_key(EventRuntimeData.SELECTED_KEY):
+            return self.data[EventRuntimeData.SELECTED_KEY]
+        else:
+            return []
+        
+    def has_balloon(self, event):
+        return self._id_in_list(event.id, EventRuntimeData.BALLOON_KEY)
 
     def clear_balloons(self):
         self._clear_key(EventRuntimeData.BALLOON_KEY)
@@ -122,12 +130,6 @@ class EventRuntimeData(object):
         else:
             self._remove_id_from_list(event.id, EventRuntimeData.BALLOON_KEY)
         
-    def set_selected(self, event, is_selected=True):
-        if is_selected:
-            self._append_id_to_list(event.id, EventRuntimeData.SELECTED_KEY)
-        else:
-            self._remove_id_from_list(event.id, EventRuntimeData.SELECTED_KEY)
-
     def _append_id_to_list(self, id, list_key):
         if self.data.has_key(list_key):
             if not id in self.data[list_key]:

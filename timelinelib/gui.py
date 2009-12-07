@@ -816,8 +816,8 @@ class EventSizer(object):
         If it is ok to start a resize... initialize the resize and return True.
         Otherwise return False.
         """
-        is_selected = self.drawing_area.event_rt_data.is_selected(self.event)
-        self.sizing = self._hit(m_x, m_y) and is_selected 
+        self.sizing = (self._hit(m_x, m_y) and 
+                       self.drawing_area.event_rt_data.is_selected(self.event))
         if self.sizing:
             self.x = m_x
             self.y = m_y
@@ -903,8 +903,8 @@ class EventMover(object):
         If it is ok to start a move... initialize the move and return True.
         Otherwise return False.
         """
-        is_selected = self.drawing_area.event_rt_data.is_selected(self.event) 
-        self.moving = self._hit(m_x, m_y) and is_selected
+        self.moving = (self._hit(m_x, m_y) and 
+                       self.drawing_area.event_rt_data.is_selected(self.event))
         if self.moving:
             self.x = m_x
             self.y = m_y
@@ -1545,18 +1545,17 @@ class DrawingArea(wx.Panel):
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
-        selected_events = self.drawing_algorithm.get_selected_events()
-        nbr_of_selected_events = len(selected_events)
-        if nbr_of_selected_events > 1:
+        selected_event_ids = self.event_rt_data.get_selected_event_ids()
+        nbr_of_selected_event_ids = len(selected_event_ids)
+        if nbr_of_selected_event_ids > 1:
             text = _("Are you sure to delete %d events?" % 
-                     nbr_of_selected_events)
+                     nbr_of_selected_event_ids)
         else:
             text = _("Are you sure to delete?")
         if _ask_question(text, self) == wx.YES:
             try:
-                # TODO: Replace with EventRuntimeData
-                #self.timeline.delete_selected_events()
-                pass
+                for event_id in selected_event_ids:
+                    self.timeline.delete_event(event_id)
             except TimelineIOError, e:
                 wx.GetTopLevelParent(self).handle_timeline_error(e)
 
