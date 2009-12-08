@@ -170,8 +170,17 @@ class MainFrame(wx.Frame):
         # The menu
         # File menu
         self.mnu_file = wx.Menu()
-        self.mnu_file.Append(wx.ID_NEW, add_ellipses_to_menuitem(wx.ID_NEW),
-                             _("Create a new timeline"))
+        mnu_file_new = wx.Menu()
+        accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
+        accel = accel.split("\t", 1)[1]
+        self.mnu_file_new_file = mnu_file_new.Append(wx.ID_NEW, 
+                                                     _("File Timeline...") + "\t" + accel, 
+                                                     _("File Timeline..."))
+        self.mnu_file_new_dir = mnu_file_new.Append(wx.ID_ANY, 
+                                                    _("Directory Timeline..."), 
+                                                    _("Directory Timeline..."))
+        self.mnu_file.AppendMenu(wx.ID_ANY, _("New"), mnu_file_new,
+                                 _("Create a new timeline"))
         self.mnu_file.Append(wx.ID_OPEN, add_ellipses_to_menuitem(wx.ID_OPEN),
                              _("Open an existing timeline"))
         self.mnu_file_open_recent_submenu = wx.Menu()
@@ -194,6 +203,7 @@ class MainFrame(wx.Frame):
         self.mnu_file.Append(wx.ID_EXIT, "",
                              _("Exit the program"))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, self.mnu_file_new_dir)
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
@@ -208,16 +218,16 @@ class MainFrame(wx.Frame):
                   mnu_edit_preferences)
         # Timeline menu
         self.mnu_timeline = wx.Menu()
-        mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
+        self.mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
                                     _("Create &Event..."),
                                     _("Create a new event"))
-        mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
+        self.mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
                                        _("Edit &Categories"),
                                        _("Edit categories"))
         self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
-                  mnu_timeline_create_event)
+                  self.mnu_timeline_create_event)
         self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
-                  mnu_timeline_edit_categories)
+                  self.mnu_timeline_edit_categories)
         # View menu
         self.mnu_view = wx.Menu()
         self.mnu_view_sidebar = self.mnu_view.Append(wx.ID_ANY,
@@ -299,6 +309,9 @@ class MainFrame(wx.Frame):
     def _mnu_file_new_on_click(self, event):
         """Event handler used when the user wants to create a new timeline."""
         self._create_new_timeline()
+
+    def _mnu_file_new_dir_on_click(self, event):
+        self._create_new_dir_timeline()
 
     def _mnu_file_open_on_click(self, event):
         """Event handler used when the user wants to open a new timeline."""
@@ -433,6 +446,22 @@ class MainFrame(wx.Frame):
             self.open_timeline(path)
         dialog.Destroy()
 
+    def _create_new_dir_timeline(self):
+        """
+        Create a new empty timeline.
+
+        The user is asked to enter the path to a dircetory from which files are
+        to be read.
+
+        If the new path entered, should already exist, the existing
+        timeline is opened. The user will be informed about this situation.
+        """
+        dialog = wx.DirDialog(self, message=_("Create Timeline"))
+        if dialog.ShowModal() == wx.ID_OK:
+            self._save_current_timeline_data()
+            self.open_timeline(dialog.GetPath())
+        dialog.Destroy()
+
     def _open_existing_timeline(self):
         """
         Open a new timeline.
@@ -460,16 +489,23 @@ class MainFrame(wx.Frame):
             self.mnu_file_export,
             self.mnu_view_legend,
         ]
+        items_requiring_update = [
+            self.mnu_timeline_create_event, 
+            self.mnu_timeline_edit_categories, 
+        ]
         for item in self.mnu_timeline.GetMenuItems():
             items_requiring_timeline.append(item)
         for item in self.mnu_navigate.GetMenuItems():
             items_requiring_timeline.append(item)
         have_timeline_view = self.main_panel.timeline_panel_visible()
         have_timeline = self.timeline != None
+        is_read_only = have_timeline and self.timeline.is_read_only()     
         for item in items_requiring_timeline_view:
             item.Enable(have_timeline_view)
         for item in items_requiring_timeline:
             item.Enable(have_timeline)
+        for item in items_requiring_update:
+            item.Enable(not is_read_only)
 
     def _save_application_config(self):
         config.set_window_size(self.GetSize())
@@ -1193,11 +1229,12 @@ class DrawingArea(wx.Panel):
             if EventMover(self).move_starts(evt.m_x, evt.m_y):
                 return
             # No resizing or moving of events...
-            posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
-                                                    evt.m_controlDown)
-            if not posAtEvent:
-                if evt.m_controlDown:
-                    self._set_select_period_cursor()
+            if not self.timeline.is_read_only():
+                posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
+                                                          evt.m_controlDown)
+                if not posAtEvent:
+                    if evt.m_controlDown:
+                        self._set_select_period_cursor()
             evt.Skip()
         except TimelineIOError, e:
             wx.GetTopLevelParent(self).handle_timeline_error(e)
@@ -1206,8 +1243,11 @@ class DrawingArea(wx.Panel):
         """
         Event handler used when the right mouse button has been pressed.
 
-        If the mouse hits an event the context menu for that event is displayed.
+        If the mouse hits an event and the timeline is not readonly, the 
+        context menu for that event is displayed.
         """
+        if self.timeline.is_read_only():
+            return
         self.context_menu_event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
         if self.context_menu_event == None:
             return
@@ -1236,10 +1276,13 @@ class DrawingArea(wx.Panel):
         """
         Event handler used when the left mouse button has been double clicked.
 
-        If the mouse hits an event, a dialog opens for editing this event.
+        If the timeline is readonly, no action is taken.
+        If the mouse hits an event, a dialog opens for editing this event. 
         Otherwise a dialog for creating a new event is opened.
         """
         logging.debug("Left Mouse doubleclicked event in DrawingArea")
+        if self.timeline.is_read_only():
+            return
         # Since the event sequence is, 1. EVT_LEFT_DOWN  2. EVT_LEFT_UP
         # 3. EVT_LEFT_DCLICK we must compensate for the toggle_event_selection
         # that occurs in the handling of EVT_LEFT_DOWN, since we still want
@@ -1296,12 +1339,15 @@ class DrawingArea(wx.Panel):
             self._scroll(x)
         elif self.is_selecting:
             self._mark_selected_minor_strips(x)
-        elif EventSizer(self).is_sizing():
+        # Resizing is only allowed if timeline is not readonly    
+        elif EventSizer(self).is_sizing() and not self.timeline.is_read_only():
             EventSizer(self).resize(x, y)
-        elif EventMover(self).is_moving():
+        # Moving is only allowed if timeline is not readonly    
+        elif EventMover(self).is_moving() and not self.timeline.is_read_only():
             EventMover(self).move(x, y)
         else:
-            if ctrl:
+            # Marking strips is only allowed if timeline is not readonly    
+            if ctrl and not self.timeline.is_read_only():
                 self._mark_selected_minor_strips(x)
                 self.is_selecting = True
             else:

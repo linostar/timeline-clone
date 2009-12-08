@@ -21,6 +21,8 @@ Functionality for reading (and writing) timeline data from persistent storage.
 """
 
 
+import os.path
+
 from timelinelib.db.interface import TimelineIOError
 
 
@@ -31,11 +33,16 @@ def open(path):
 
     Throw a TimelineIOError exception if not able to read from the given path.
 
-    Valid values of path:
-
+    Valid values of path for FileTimeline:
       - string with suffix .timeline
+      
+    Valid values of path for DirTimeline:
+      - path to a directory
     """
-    if path.endswith(".timeline"):
+    if os.path.isdir(path):
+        from timelinelib.db.backends.dir import DirTimeline
+        return DirTimeline(path)
+    elif path.endswith(".timeline"):
         from timelinelib.db.backends.file import FileTimeline
         return FileTimeline(path)
     else:
