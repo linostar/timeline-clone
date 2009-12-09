@@ -257,6 +257,9 @@ class MainFrame(wx.Frame):
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
         fit_month = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Month"))
         fit_day = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Day"))
+        self.mnu_navigate.AppendSeparator()
+        find_first = self.mnu_navigate.Append(wx.ID_ANY, _("Find First Event"))
+        find_last  = self.mnu_navigate.Append(wx.ID_ANY, _("Find Last Event"))
         self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_today_on_click, goto_today)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_date_on_click, goto_date)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_on_click, backward)
@@ -264,6 +267,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_month_on_click, fit_month)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_day_on_click, fit_day)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_first_on_click, find_first)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_last_on_click, find_last)
         # Help menu
         self.mnu_help = wx.Menu()
         help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
@@ -382,6 +387,22 @@ class MainFrame(wx.Frame):
     def _mnu_navigate_fit_day_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_day())
 
+    def _mnu_navigate_find_first_on_click(self, evt):
+        event = self.timeline.get_first_event()
+        if event:
+            start = event.time_period.start_time
+            end   = (start + (self.main_panel.drawing_area.time_period.end_time -
+                              self.main_panel.drawing_area.time_period.start_time)) 
+            self._navigate_timeline(lambda tp: tp.update(start, end))
+
+    def _mnu_navigate_find_last_on_click(self, evt):
+        event = self.timeline.get_last_event()
+        if event:
+            end = event.time_period.end_time
+            start = (end - (self.main_panel.drawing_area.time_period.end_time -
+                              self.main_panel.drawing_area.time_period.start_time)) 
+            self._navigate_timeline(lambda tp: tp.update(start, end))
+    
     def _mnu_help_contents_on_click(self, e):
         help_browser.show_page("contents")
 

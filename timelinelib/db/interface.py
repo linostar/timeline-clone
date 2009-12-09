@@ -82,6 +82,14 @@ class TimelineDB(Observable):
         """
         raise NotImplementedError()
 
+    def get_first_event(self):
+        """Return the event with the lowest start time"""
+        raise NotImplementedError()
+        
+    def get_last_event(self):
+        """Return the event with the highest end time"""
+        raise NotImplementedError()
+        
     def save_event(self, event):
         """
         Make sure that the given event is saved to persistent storage.
