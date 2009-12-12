@@ -489,7 +489,11 @@ class MainFrame(wx.Frame):
 
         The user is asked to enter the filename of the timeline to be opened.
         """
+        dir = ""
+        if self.timeline is not None:
+            dir = os.path.dirname(self.timeline.path)
         dialog = wx.FileDialog(self, message=_("Open Timeline"),
+                               defaultDir=dir,
                                wildcard=self.wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
