@@ -8,3 +8,4 @@ timelinelib/tags
 *.mo
 devdoc/*.html
 devdoc/api
+icalendar/

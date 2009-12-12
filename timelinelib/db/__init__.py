@@ -17,7 +17,8 @@
 
 
 """
-Functionality for reading (and writing) timeline data from persistent storage.
+Functionality for reading and writing timeline data from and to persistent
+storage.
 """
 
 
@@ -28,8 +29,8 @@ from timelinelib.db.interface import TimelineIOError
 
 def open(path):
     """
-    Create timeline database that can read (and write) timeline data from the
-    given path.
+    Create timeline database that can read and write timeline data from and to
+    persistent storage identified by path.
 
     Throw a TimelineIOError exception if not able to read from the given path.
 
@@ -45,6 +46,9 @@ def open(path):
     elif path.endswith(".timeline"):
         from timelinelib.db.backends.file import FileTimeline
         return FileTimeline(path)
+    elif path.endswith(".ics"):
+        from timelinelib.db.backends.ics import IcsTimeline
+        return IcsTimeline(path)
     else:
         msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
                         _("Unknown format."))

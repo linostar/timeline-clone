@@ -43,20 +43,11 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import time_period_center
 from timelinelib.db.utils import safe_write
+from timelinelib.db.utils import IdCounter
 from timelinelib.version import get_version
 
 
 ENCODING = "utf-8"
-
-
-class IdCounter(object):
-
-    def __init__(self, initial_id=0):
-        self.id = initial_id
-
-    def get_next(self):
-        self.id += 1
-        return self.id
 
 
 class ParseException(Exception):

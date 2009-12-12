@@ -13,6 +13,8 @@ Required:
       http://www.wxpython.org
   * Markdown version 1.7 or greater
       http://www.freewisdom.org/projects/python-markdown/
+  * iCalendar version 1.2 or greater
+      http://codespeak.net/icalendar/
 
 For translations (other than English) you also need the following:
 
@@ -31,11 +33,23 @@ http://wiki.wxpython.org/InstallingOnUbuntuOrDebian.
   apt-get install python python-wxgtk2.8 wx2.8-i18n python-markdown
   apt-get install scons gettext
 
-gettext on Windows
-------------------
+You have to install iCalendar manually since there is no Debian package for it.
+See section on installing iCalendar below.
+
+Installing gettext on Windows
+-----------------------------
 
 Get the zipfiles gettext-tools-0.17.zip and gettext-runtime-0.17-1.zip from
 here http://ftp.acc.umu.se/pub/gnome/binaries/win32/dependencies/.
+
+Installing iCalendar
+--------------------
+
+The easiest way to install iCalendar is to download the source code from its
+website and then copy the iCalendar-1.2/src/icalendar folder to the root folder
+of Timeline.
+
+The important thing is that you can do 'import icalendar' from Python.
 
 Platforms
 =========

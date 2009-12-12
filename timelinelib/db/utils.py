@@ -24,6 +24,16 @@ import os.path
 from timelinelib.db.interface import TimelineIOError
 
 
+class IdCounter(object):
+
+    def __init__(self, initial_id=0):
+        self.id = initial_id
+
+    def get_next(self):
+        self.id += 1
+        return self.id
+
+
 def local_to_unicode(local_string):
     """Try to convert a local string to unicode."""
     encoding = locale.getlocale()[1]
@@ -54,7 +64,10 @@ def safe_write(path, encoding, write_fn):
     backup_path = _create_non_exising_path(path, "bak")
     # Write data to tmp file
     try:
-        file = codecs.open(tmp_path, "w", encoding)
+        if encoding is None:
+            file = open(tmp_path, "wb")
+        else:
+            file = codecs.open(tmp_path, "w", encoding)
         try:
             try:
                 write_fn(file)

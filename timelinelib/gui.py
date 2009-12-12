@@ -592,7 +592,7 @@ class MainFrame(wx.Frame):
         wildcard            The wildcard used in FileDialog
         """
         self.timeline = None
-        self.extensions = ["timeline"]
+        self.extensions = ["timeline", "ics"]
         self.default_extension = self.extensions[0]
         self.wildcard = _create_wildcard(_("Timeline files"), self.extensions)
 
