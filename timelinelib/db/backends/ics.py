@@ -59,18 +59,24 @@ class IcsTimeline(TimelineDB):
         return ["description"]
 
     def get_events(self, time_period):
-        events = []
-        for event in self.cal.walk("VEVENT"):
-            start, end = extract_start_end(event)
-            txt = ""
-            if event.has_key("summary"):
-                txt = event["summary"]
-            e = Event(start, end, txt)
-            if e.inside_period(time_period):
-                e.set_id(event["timeline_id"])
-                events.append(e)
-        return events
+        def decider(event):
+            return event.inside_period(time_period)
+        return self._get_events(decider)
 
+    def get_first_event(self):
+        events = self._get_events()
+        if events:
+            return min(events, key=lambda x: x.time_period.start_time)
+        else:
+            return None
+
+    def get_last_event(self):
+        events = self._get_events()
+        if events:
+            return max(events, key=lambda x: x.time_period.end_time)
+        else:
+            return None
+        
     def save_event(self, event):
         pass
 
@@ -91,6 +97,19 @@ class IcsTimeline(TimelineDB):
 
     def set_preferred_period(self, period):
         pass
+
+    def _get_events(self, decider_fn=None):
+        events = []
+        for event in self.cal.walk("VEVENT"):
+            start, end = extract_start_end(event)
+            txt = ""
+            if event.has_key("summary"):
+                txt = event["summary"]
+            e = Event(start, end, txt)
+            e.set_id(event["timeline_id"])
+            if decider_fn is None or decider_fn(e):
+                events.append(e)
+        return events
 
     def _load_data(self):
         self.cal = Calendar()
