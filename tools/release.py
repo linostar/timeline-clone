@@ -69,11 +69,17 @@ print("-----")
 if unittest_ret != 0:
     print("Warning: Failed unit test")
 
-f = open(os.path.join(ROOT_DIR, "README"))
-redme_first_line = f.readline()
-f.close()
-if not version.get_version() in redme_first_line:
+def version_in_first_line(file):
+    f = open(file)
+    first_line = f.readline()
+    f.close()
+    return version.get_version() in first_line
+
+if not version_in_first_line(os.path.join(ROOT_DIR, "README")):
     print("Warning: Version mismatch between README and version module")
+
+if not version_in_first_line(os.path.join(ROOT_DIR, "man", "man1", "timeline.1")):
+    print("Warning: Version mismatch between manpage and version module")
 
 if version.DEV:
     print("Warning: This is a development version")
