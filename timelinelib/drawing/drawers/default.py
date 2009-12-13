@@ -33,7 +33,7 @@ from timelinelib.drawing.interface import Drawer
 from timelinelib.drawing.utils import Metrics
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.drawing.utils import darken_color
-from timelinelib.gui import sort_categories
+from timelinelib.guinew.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import local_to_unicode
 

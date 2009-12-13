@@ -50,6 +50,15 @@ from timelinelib.drawing import get_drawer
 from timelinelib.drawing.interface import DrawingHints
 from timelinelib.drawing.interface import EventRuntimeData
 from timelinelib.drawing.utils import mult_timedelta
+from timelinelib.guinew.utils import TxtException
+from timelinelib.guinew.utils import sort_categories
+from timelinelib.guinew.utils import _set_focus_and_select
+from timelinelib.guinew.utils import _parse_text_from_textbox
+from timelinelib.guinew.utils import _display_error_message
+from timelinelib.guinew.utils import _ask_question
+from timelinelib.guinew.utils import _step_function
+from timelinelib.guinew.utils import _create_wildcard
+from timelinelib.guinew.utils import _extend_path
 import config
 from about import display_about_dialog
 from about import APPLICATION_NAME
@@ -2619,113 +2628,3 @@ class IconEditor(wx.Panel):
 
     def _btn_clear_on_click(self, evt):
         self.set_icon(None)
-
-
-class TxtException(ValueError):
-    """
-    Thrown if a text control contains an invalid value.
-
-    The constructor takes two arguments.
-
-    The first is a text string containing any exception text.
-    The seocond is a TextCtrl object.
-    """
-    def __init__(self, error_message, control):
-        ValueError.__init__(self, error_message)
-        self.error_message = error_message
-        self.control = control
-
-
-def sort_categories(categories):
-    sorted_categories = list(categories)
-    sorted_categories.sort(cmp, lambda x: x.name.lower())
-    return sorted_categories
-
-
-def _set_focus_and_select(ctrl):
-    ctrl.SetFocus()
-    if hasattr(ctrl, "SelectAll"):
-        ctrl.SelectAll()
-
-
-def _parse_text_from_textbox(txt, name):
-    """
-    Return a text control field.
-
-    If the value is an empty string the method raises a ValueError
-    exception and sets focus on the control.
-
-    If the value is valid the text in the control is returned
-    """
-    data = txt.GetValue().strip()
-    if len(data) == 0:
-        raise TxtException, (_("Field '%s' can't be empty.") % name, txt)
-    return data
-
-
-def _display_error_message(message, parent=None):
-    """Display an error message in a modal dialog box"""
-    dial = wx.MessageDialog(parent, message, _("Error"), wx.OK | wx.ICON_ERROR)
-    dial.ShowModal()
-
-
-def _ask_question(question, parent=None):
-    """Ask a yes/no question and return the reply."""
-    return wx.MessageBox(question, _("Question"),
-                         wx.YES_NO|wx.CENTRE|wx.NO_DEFAULT, parent)
-
-
-def _step_function(x_value):
-    """
-    A step function.
-
-            {-1   when x < 0
-    F(x) =  { 0   when x = 0
-            { 1   when x > 0
-    """
-    y_value = 0
-    if x_value < 0:
-        y_value = -1
-    elif x_value > 0:
-        y_value = 1
-    return y_value
-
-
-def _create_wildcard(text, extensions):
-    """
-    Create wildcard for use in open/save dialogs.
-    """
-    return "%s (%s)|%s" % (text,
-                           ", ".join(["*." + e for e in extensions]),
-                           ";".join(["*." + e for e in extensions]))
-
-
-def _extend_path(path, valid_extensions, default_extension):
-    """Return tuple (path, extension) ensuring that path has extension."""
-    for extension in valid_extensions:
-        if path.endswith("." + extension):
-            return (path, extension)
-    return (path + "." + default_extension, default_extension)
-
-
-def _create_button_box(parent, ok_method, cancel_method=None):
-    """
-    Convenience method for creating a button box control.
-
-    The control contains one OK button and one Cancel or Close button.
-    """
-    button_box = wx.StdDialogButtonSizer()
-    btn_ok = wx.Button(parent, wx.ID_OK)
-    btn_cancel = wx.Button(parent, wx.ID_CANCEL)
-    btn_ok.SetDefault()
-    button_box.SetCancelButton(btn_cancel)
-    button_box.SetAffirmativeButton(btn_ok)
-    button_box.Realize()
-    parent.Bind(wx.EVT_BUTTON, ok_method, btn_ok)
-    if cancel_method != None:
-        parent.Bind(wx.EVT_BUTTON, cancel_method, id=wx.ID_CANCEL)
-        parent.Bind(wx.EVT_BUTTON, cancel_method, btn_cancel)
-    parent.SetEscapeId(btn_cancel.GetId())
-    parent.SetDefaultItem(btn_ok)
-    parent.SetAffirmativeId(btn_ok.GetId())
-    return button_box
