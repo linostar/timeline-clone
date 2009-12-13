@@ -148,6 +148,9 @@ class Category(object):
         self.color = color
         self.visible = visible
 
+    def has_id(self):
+        return self.id is not None
+
     def set_id(self, id):
         self.id = id
 

@@ -93,10 +93,7 @@ class CategoryEditor(wx.Dialog):
             self.category.name = name
             self.category.color = self.colorpicker.GetColour()
             self.category.visible = self.chb_visible.IsChecked()
-            if self.create_new:
-                self.timeline.add_category(self.category)
-            else:
-                self.timeline.save_category(self.category)
+            self.timeline.save_category(self.category)
             self.EndModal(wx.ID_OK)
         except TimelineIOError, e:
             _display_error_message(e.message, self)
