@@ -24,6 +24,13 @@ Utility functions for working with GUI.
 import wx
 
 
+# Border, in pixels, between controls in a window (should always be used when
+# border is needed)
+BORDER = 5
+# Used by dialogs as a return code when a TimelineIOError has been raised
+ID_ERROR = wx.NewId()
+
+
 class TxtException(ValueError):
     """
     Thrown if a text control contains an invalid value.
