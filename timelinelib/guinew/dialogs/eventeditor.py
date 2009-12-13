@@ -38,7 +38,7 @@ from timelinelib.guinew.utils import BORDER
 from timelinelib.guinew.utils import ID_ERROR
 from timelinelib.guinew.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.guinew.dialogs.categoryeditor import CategoryEditor
-from timelinelib.gui import DateTimePicker
+from timelinelib.guinew.components.datetimepicker import DateTimePicker
 
 
 class EventEditor(wx.Dialog):

@@ -16,89 +16,27 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-GUI components.
-
-The GUI components are mainly for interacting with the user and should not
-contain much logic. For example, the drawing algorithm is responsible for
-drawing the timeline, but the `DrawingArea` class in this module provides the
-GUI component on which it will draw.
-"""
-
-
-import datetime
-import calendar
 import logging
-import os.path
 from datetime import datetime as dt
-from datetime import time
 
 import wx
-from wx.lib.masked import TimeCtrl
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_ANY
-from timelinelib.db.interface import STATE_CHANGE_CATEGORY
-from timelinelib.db.objects import TimePeriod
-from timelinelib.drawing import get_drawer
 from timelinelib.drawing.interface import DrawingHints
 from timelinelib.drawing.interface import EventRuntimeData
 from timelinelib.drawing.utils import mult_timedelta
+from timelinelib.drawing import get_drawer
 from timelinelib.guinew.utils import sort_categories
 from timelinelib.guinew.utils import _ask_question
 from timelinelib.guinew.utils import _step_function
-import config
-import printing
+import timelinelib.config as config
+import timelinelib.printing as printing
 
 
 # Used by Sizer and Mover classes to detect when to go into action
 HIT_REGION_PX_WITH = 5
 
-
-class CategoriesVisibleCheckListBox(wx.CheckListBox):
-    # ClientData can not be used in this control
-    # (see http://docs.wxwidgets.org/stable/wx_wxchecklistbox.html)
-    # This workaround will not work if items are reordered
-
-    def __init__(self, parent):
-        wx.CheckListBox.__init__(self, parent)
-        self.timeline = None
-        self.Bind(wx.EVT_CHECKLISTBOX, self._checklistbox_on_checklistbox, self)
-
-    def set_timeline(self, timeline):
-        if self.timeline != None:
-            self.timeline.unregister(self._timeline_changed)
-        self.timeline = timeline
-        if self.timeline:
-            self.timeline.register(self._timeline_changed)
-            self._update_categories()
-        else:
-            self.Clear()
-
-    def _checklistbox_on_checklistbox(self, e):
-        i = e.GetSelection()
-        self.categories[i].visible = self.IsChecked(i)
-        try:
-            self.timeline.save_category(self.categories[i])
-        except TimelineIOError, e:
-            wx.GetTopLevelParent(self).handle_timeline_error(e)
-
-    def _timeline_changed(self, state_change):
-        if state_change == STATE_CHANGE_CATEGORY:
-            self._update_categories()
-
-    def _update_categories(self):
-        try:
-            self.categories = sort_categories(self.timeline.get_categories())
-        except TimelineIOError, e:
-            wx.GetTopLevelParent(self).handle_timeline_error(e)
-        else:
-            self.Clear()
-            self.AppendItems([category.name for category in self.categories])
-            for i in range(0, self.Count):
-                if self.categories[i].visible:
-                    self.Check(i)
-                self.SetItemBackgroundColour(i, self.categories[i].color)
 
 class EventSizer(object):
     """Objects of this class are used to simplify resizing of events."""
@@ -922,73 +860,3 @@ class DrawingArea(wx.Panel):
             self.drawing_algorithm.notify_events(
                             1, None)
             self._redraw_timeline()
-
-
-class DateTimePicker(wx.Panel):
-    """
-    Control to pick a Python datetime object.
-
-    The time part will default to 00:00:00 if none is entered.
-    """
-
-    def __init__(self, parent, show_time=True):
-        wx.Panel.__init__(self, parent)
-        self._create_gui()
-        self.show_time(show_time)
-
-    def show_time(self, show=True):
-        self.time_picker.Show(show)
-        self.GetSizer().Layout()
-
-    def get_value(self):
-        """Return the selected date time as a Python datetime object."""
-        date = self.date_picker.GetValue()
-        date_time = dt(date.Year, date.Month+1, date.Day)
-        if self.time_picker.IsShown():
-            time = self.time_picker.GetValue(as_wxDateTime=True)
-            date_time = date_time.replace(hour=time.Hour,
-                                          minute=time.Minute)
-        return date_time
-
-    def set_value(self, value):
-        if value == None:
-            now = dt.now()
-            value = dt(now.year, now.month, now.day)
-        wx_date_time = self._python_date_to_wx_date(value)
-        self.date_picker.SetValue(wx_date_time)
-        self.time_picker.SetValue(wx_date_time)
-
-    def _create_gui(self):
-        self.date_picker = wx.GenericDatePickerCtrl(self,
-                               style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
-        self.Bind(wx.EVT_DATE_CHANGED, self._date_picker_on_date_changed,
-                  self.date_picker)
-        self.time_picker = TimeCtrl(self, format="24HHMM")
-        # Layout
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(self.date_picker, proportion=1,
-                  flag=wx.ALIGN_CENTER_VERTICAL)
-        sizer.Add(self.time_picker, proportion=0,
-                  flag=wx.ALIGN_CENTER_VERTICAL)
-        self.SetSizerAndFit(sizer)
-
-    def _date_picker_on_date_changed(self, e):
-        date = self.get_value()
-        if date < TimePeriod.MIN_TIME:
-            self.set_value(TimePeriod.MIN_TIME)
-        if date > TimePeriod.MAX_TIME:
-            self.set_value(TimePeriod.MAX_TIME)
-
-    def _python_date_to_wx_date(self, py_date):
-        return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
-                                  py_date.hour, py_date.minute,
-                                  py_date.second)
-
-
-class HyperlinkButton(wx.HyperlinkCtrl):
-
-    def __init__(self, parent, label, url=""):
-        wx.HyperlinkCtrl.__init__(self, parent, wx.ID_ANY, label=label,
-                                  url=url,
-                                  style=wx.HL_ALIGN_CENTRE|wx.NO_BORDER)
-        self.SetVisitedColour(self.GetNormalColour())

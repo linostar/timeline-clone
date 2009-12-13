@@ -47,9 +47,9 @@ from timelinelib.guinew.dialogs.eventeditor import EventEditor
 from timelinelib.guinew.dialogs.gotodate import GotoDateDialog
 from timelinelib.guinew.dialogs.helpbrowser import HelpBrowser
 from timelinelib.guinew.dialogs.preferences import PreferencesDialog
-from timelinelib.gui import CategoriesVisibleCheckListBox
-from timelinelib.gui import HyperlinkButton
-from timelinelib.gui import DrawingArea
+from timelinelib.guinew.components.categorieslistbox import CategoriesVisibleCheckListBox
+from timelinelib.guinew.components.hyperlinkbutton import HyperlinkButton
+from timelinelib.guinew.components.timelineview import DrawingArea
 
 
 class MainFrame(wx.Frame):
