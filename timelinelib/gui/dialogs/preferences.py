@@ -19,7 +19,7 @@
 import wx
 
 import timelinelib.config as config
-from timelinelib.guinew.utils import BORDER
+from timelinelib.gui.utils import BORDER
 
 
 class PreferencesDialog(wx.Dialog):

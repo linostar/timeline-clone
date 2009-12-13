@@ -18,8 +18,8 @@
 
 import wx
 
-from timelinelib.guinew.utils import BORDER
-from timelinelib.guinew.components.datetimepicker import DateTimePicker
+from timelinelib.gui.utils import BORDER
+from timelinelib.gui.components.datetimepicker import DateTimePicker
 
 
 class GotoDateDialog(wx.Dialog):

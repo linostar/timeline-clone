@@ -28,10 +28,10 @@ import wx
 
 from timelinelib.db import open as db_open
 from timelinelib.db.interface import TimelineIOError
-from timelinelib.guinew.utils import _display_error_message
-from timelinelib.guinew.utils import _ask_question
-from timelinelib.guinew.utils import _create_wildcard
-from timelinelib.guinew.utils import _extend_path
+from timelinelib.gui.utils import _display_error_message
+from timelinelib.gui.utils import _ask_question
+from timelinelib.gui.utils import _create_wildcard
+from timelinelib.gui.utils import _extend_path
 from timelinelib import config
 from timelinelib.about import display_about_dialog
 from timelinelib.about import APPLICATION_NAME
@@ -40,16 +40,16 @@ from timelinelib.paths import HELP_RESOURCES_DIR
 import timelinelib.printing as printing
 import timelinelib.help as help
 import timelinelib.help_pages as help_pages
-from timelinelib.guinew.utils import BORDER
-from timelinelib.guinew.utils import ID_ERROR
-from timelinelib.guinew.dialogs.categorieseditor import CategoriesEditor
-from timelinelib.guinew.dialogs.eventeditor import EventEditor
-from timelinelib.guinew.dialogs.gotodate import GotoDateDialog
-from timelinelib.guinew.dialogs.helpbrowser import HelpBrowser
-from timelinelib.guinew.dialogs.preferences import PreferencesDialog
-from timelinelib.guinew.components.categorieslistbox import CategoriesVisibleCheckListBox
-from timelinelib.guinew.components.hyperlinkbutton import HyperlinkButton
-from timelinelib.guinew.components.timelineview import DrawingArea
+from timelinelib.gui.utils import BORDER
+from timelinelib.gui.utils import ID_ERROR
+from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
+from timelinelib.gui.dialogs.eventeditor import EventEditor
+from timelinelib.gui.dialogs.gotodate import GotoDateDialog
+from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
+from timelinelib.gui.dialogs.preferences import PreferencesDialog
+from timelinelib.gui.components.categorieslistbox import CategoriesVisibleCheckListBox
+from timelinelib.gui.components.hyperlinkbutton import HyperlinkButton
+from timelinelib.gui.components.timelineview import DrawingArea
 
 
 class MainFrame(wx.Frame):

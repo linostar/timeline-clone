@@ -21,11 +21,11 @@ import wx.lib.colourselect as colourselect
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
-from timelinelib.guinew.utils import _display_error_message
-from timelinelib.guinew.utils import _set_focus_and_select
-from timelinelib.guinew.utils import _display_error_message
-from timelinelib.guinew.utils import BORDER
-from timelinelib.guinew.utils import ID_ERROR
+from timelinelib.gui.utils import _display_error_message
+from timelinelib.gui.utils import _set_focus_and_select
+from timelinelib.gui.utils import _display_error_message
+from timelinelib.gui.utils import BORDER
+from timelinelib.gui.utils import ID_ERROR
 
 
 class CategoryEditor(wx.Dialog):

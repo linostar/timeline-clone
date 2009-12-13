@@ -27,9 +27,9 @@ from timelinelib.drawing.interface import DrawingHints
 from timelinelib.drawing.interface import EventRuntimeData
 from timelinelib.drawing.utils import mult_timedelta
 from timelinelib.drawing import get_drawer
-from timelinelib.guinew.utils import sort_categories
-from timelinelib.guinew.utils import _ask_question
-from timelinelib.guinew.utils import _step_function
+from timelinelib.gui.utils import sort_categories
+from timelinelib.gui.utils import _ask_question
+from timelinelib.gui.utils import _step_function
 import timelinelib.config as config
 import timelinelib.printing as printing
 

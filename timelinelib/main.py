@@ -34,7 +34,7 @@ import gettext
 
 import wx
 
-from timelinelib.guinew.dialogs.mainframe import MainFrame
+from timelinelib.gui.dialogs.mainframe import MainFrame
 from version import get_version
 import config
 from about import APPLICATION_NAME

@@ -18,7 +18,7 @@
 
 import wx
 
-from timelinelib.guinew.utils import sort_categories
+from timelinelib.gui.utils import sort_categories
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 
