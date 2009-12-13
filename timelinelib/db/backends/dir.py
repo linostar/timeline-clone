@@ -203,8 +203,6 @@ class DirTimeline(TimelineDB):
         counter = 0
         for file_or_dir in dirlist:
             counter += 1
-            if counter % 10 == 0:
-                print counter
             if counter > 100:
                 message = _("Max 100 events are displayed")
                 dial = wx.MessageDialog(None, message, _("Warning"), wx.OK | wx.ICON_WARNING)
