@@ -47,3 +47,7 @@ Documented problems and solutions:
 Documented discussions/decisions:
 
   * [Refactoring for 0.8.0 release](refactoring-080.txt)
+  
+Test and checklists:
+
+  * [Checklist for test of menu actions](menu-test-cases-list.txt)  
