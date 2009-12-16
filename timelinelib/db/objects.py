@@ -269,6 +269,18 @@ class TimePeriod(object):
             delta = TimePeriod.MAX_TIME - self.end_time
         self.move_delta(delta)
 
+    def fit_century(self):
+        mean = self.mean_time()
+        start = dt(int(mean.year/100)*100, 1, 1)
+        end = dt(int(mean.year/100)*100 + 100, 1, 1)
+        self.update(start, end)
+
+    def fit_decade(self):
+        mean = self.mean_time()
+        start = dt(int(mean.year/10)*10, 1, 1)
+        end = dt(int(mean.year/10)*10+10, 1, 1)
+        self.update(start, end)
+
     def fit_year(self):
         mean = self.mean_time()
         start = dt(mean.year, 1, 1)

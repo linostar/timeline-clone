@@ -235,6 +235,8 @@ class MainFrame(wx.Frame):
         backward = self.mnu_navigate.Append(wx.ID_ANY, _("Backward\tPgUp"))
         forward = self.mnu_navigate.Append(wx.ID_ANY, _("Forward\tPgDn"))
         self.mnu_navigate.AppendSeparator()
+        fit_century = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Century"))
+        fit_decade = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Decade"))
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
         fit_month = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Month"))
         fit_day = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Day"))
@@ -245,6 +247,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_date_on_click, goto_date)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_on_click, backward)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_on_click, forward)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_century_on_click, fit_century)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_decade_on_click, fit_decade)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_month_on_click, fit_month)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_day_on_click, fit_day)
@@ -361,6 +365,12 @@ class MainFrame(wx.Frame):
 
     def _mnu_navigate_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_year())
+
+    def _mnu_navigate_fit_century_on_click(self, evt):
+        self._navigate_timeline(lambda tp: tp.fit_century())
+
+    def _mnu_navigate_fit_decade_on_click(self, evt):
+        self._navigate_timeline(lambda tp: tp.fit_decade())
 
     def _mnu_navigate_fit_month_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_month())
