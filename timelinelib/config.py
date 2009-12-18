@@ -59,6 +59,9 @@ DEFAULTS = {
 }
 
 
+MAX_NBR_OF_RECENT_FILES_SAVED = 5
+
+
 path = None
 config = None
 
@@ -145,7 +148,7 @@ def append_recently_opened(path):
         current.remove(path)
     current.insert(0, path)
     config.set(DEFAULTSECT, RECENT_FILES,
-               (",".join(current[:5])).encode(ENCODING))
+          (",".join(current[:MAX_NBR_OF_RECENT_FILES_SAVED])).encode(ENCODING))
 
 
 def get_open_recent_at_startup():
