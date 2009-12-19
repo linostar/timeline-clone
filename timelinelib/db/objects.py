@@ -290,7 +290,10 @@ class TimePeriod(object):
     def fit_month(self):
         mean = self.mean_time()
         start = dt(mean.year, mean.month, 1)
-        end = dt(mean.year, mean.month + 1, 1)
+        if mean.month == 12:
+            end = dt(mean.year + 1, 1, 1)
+        else:
+            end = dt(mean.year, mean.month + 1, 1)
         self.update(start, end)
 
     def fit_day(self):
