@@ -50,13 +50,15 @@ class HelpBrowser(wx.Frame):
           * (search, search_string)
         """
         if change_history:
+            same_page_as_last = False
             if self.current_pos != -1:
                 current_type, current_id = self.history[self.current_pos]
                 if id == current_id:
-                    return
-            self.history = self.history[:self.current_pos + 1]
-            self.history.append((type, id))
-            self.current_pos += 1
+                    same_page_as_last = True
+            if same_page_as_last == False:
+                self.history = self.history[:self.current_pos + 1]
+                self.history.append((type, id))
+                self.current_pos += 1
         self._update_buttons()
         if type == "page":
             self.html_window.SetPage(self._generate_page(id))
