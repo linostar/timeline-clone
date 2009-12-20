@@ -777,7 +777,7 @@ class WelcomePanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_tutorial_on_click(self, e):
-        self.show_help_page("tutorial")
+        wx.GetTopLevelParent(self).show_help_page("tutorial")
 
 
 class TimelinePanel(wx.Panel):
@@ -848,7 +848,7 @@ class ErrorPanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_contact_on_click(self, e):
-        self.show_help_page("contact")
+        wx.GetTopLevelParent(self).show_help_page("contact")
 
 
 class Sidebar(wx.Panel):
