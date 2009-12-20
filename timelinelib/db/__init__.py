@@ -47,8 +47,13 @@ def open(path):
         from timelinelib.db.backends.file import FileTimeline
         return FileTimeline(path)
     elif path.endswith(".ics"):
-        from timelinelib.db.backends.ics import IcsTimeline
-        return IcsTimeline(path)
+        try:
+            import icalendar
+        except ImportError:
+            raise TimelineIOError(_("Could not find iCalendar Python package. It is required for working with ICS files. See the Timeline website or the INSTALL file for instructions how to install it."))
+        else:
+            from timelinelib.db.backends.ics import IcsTimeline
+            return IcsTimeline(path)
     else:
         msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
                         _("Unknown format."))

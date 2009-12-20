@@ -13,7 +13,7 @@ Required:
       http://www.wxpython.org
   * Markdown version 1.7 or greater
       http://www.freewisdom.org/projects/python-markdown/
-  * iCalendar version 1.2 or greater
+  * iCalendar version 1.2 or greater (for working with ICS files)
       http://codespeak.net/icalendar/
 
 For translations (other than English) you also need the following:
