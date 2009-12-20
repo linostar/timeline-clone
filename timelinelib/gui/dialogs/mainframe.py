@@ -38,8 +38,6 @@ from timelinelib.about import APPLICATION_NAME
 from timelinelib.paths import ICONS_DIR
 from timelinelib.paths import HELP_RESOURCES_DIR
 import timelinelib.printing as printing
-import timelinelib.help as help
-import timelinelib.help_pages as help_pages
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
@@ -426,21 +424,35 @@ class MainFrame(wx.Frame):
         return start, end
         
     def _mnu_help_contents_on_click(self, e):
-        self.help_browser.show_page("contents")
+        self.show_help_page("contents")
 
     def _mnu_help_tutorial_on_click(self, e):
-        self.help_browser.show_page("tutorial")
+        self.show_help_page("tutorial")
 
     def _mnu_help_contact_on_click(self, e):
-        self.help_browser.show_page("contact")
+        self.show_help_page("contact")
 
     def _mnu_help_about_on_click(self, e):
         display_about_dialog()
 
+    def show_help_page(self, page):
+        if self.help_browser is None:
+            _display_error_message(_("Could not find markdown Python package.  It is needed by the help system. See the Timeline website or the INSTALL file for instructions how to install it."), self)
+        else:
+            self.help_browser.show_page(page)
+
     def _init_help_system(self):
-        help_system = help.HelpSystem("contents", HELP_RESOURCES_DIR + "/", "page:")
-        help_pages.install(help_system)
-        self.help_browser = HelpBrowser(self, help_system)
+        try:
+            import markdown
+        except ImportError:
+            self.help_browser = None
+        else:
+            import timelinelib.help as help
+            import timelinelib.help_pages as help_pages
+            help_system = help.HelpSystem("contents", HELP_RESOURCES_DIR + "/",
+                                          "page:")
+            help_pages.install(help_system)
+            self.help_browser = HelpBrowser(self, help_system)
 
     def _switch_to_error_view(self, error):
         self._display_timeline(None)
@@ -765,7 +777,7 @@ class WelcomePanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_tutorial_on_click(self, e):
-        self.help_browser.show_page("tutorial")
+        self.show_help_page("tutorial")
 
 
 class TimelinePanel(wx.Panel):
@@ -836,7 +848,7 @@ class ErrorPanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_contact_on_click(self, e):
-        self.help_browser.show_page("contact")
+        self.show_help_page("contact")
 
 
 class Sidebar(wx.Panel):

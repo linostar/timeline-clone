@@ -26,8 +26,6 @@ import logging
 import wx
 import wx.html
 
-import timelinelib.help as help
-
 
 class HelpBrowser(wx.Frame):
 
