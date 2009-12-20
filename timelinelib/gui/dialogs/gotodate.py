@@ -44,6 +44,7 @@ class GotoDateDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self.dtpc.SetFocus()
         self.SetSizerAndFit(vbox)
 
     def _chb_show_time_on_checkbox(self, e):
