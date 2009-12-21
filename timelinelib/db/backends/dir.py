@@ -107,24 +107,12 @@ class DirTimeline(TimelineDB):
     def get_first_event(self):
         if len(self.events) == 0:
             return None
-        start_event = self.events[0]
-        start_time = start_event.time_period.start_time
-        for event in self.events[1:]:
-            if event.time_period.start_time < start_time:
-                start_event = event
-                start_time = event.time_period.start_time
-        return start_event
+        return min(self.events, key=lambda e: e.time_period.start_time)
 
     def get_last_event(self):
         if len(self.events) == 0:
             return None
-        end_event = self.events[0]
-        end_time = end_event.time_period.end_time
-        for event in self.events[1:]:
-            if event.time_period.end_time > end_time:
-                end_event = event
-                end_time = event.time_period.end_time
-        return end_event
+        return max(self.events, key=lambda e: e.time_period.end_time)
     
     def add_event(self, event):
         self.events.append(event)

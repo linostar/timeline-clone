@@ -382,47 +382,39 @@ class MainFrame(wx.Frame):
         event = self.timeline.get_first_event()
         if event:
             start = event.time_period.start_time
-            end   = (start + (self.main_panel.drawing_area.time_period.end_time -
-                              self.main_panel.drawing_area.time_period.start_time)) 
-            start,end = self._add_time_margins(start, end)
-            self._navigate_timeline(lambda tp: tp.update(start, end))
+            delta = self.main_panel.drawing_area.time_period.delta()
+            end   = start + delta 
+            margin_delta = delta / 24
+            self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
 
     def _mnu_navigate_find_last_on_click(self, evt):
         event = self.timeline.get_last_event()
         if event:
             end = event.time_period.end_time
-            start = (end - (self.main_panel.drawing_area.time_period.end_time -
-                              self.main_panel.drawing_area.time_period.start_time)) 
-            start,end = self._add_time_margins(start, end)
-            self._navigate_timeline(lambda tp: tp.update(start, end))
+            delta = self.main_panel.drawing_area.time_period.delta()
+            start = end - delta
+            margin_delta = delta / 24
+            self._navigate_timeline(lambda tp: tp.update(start, end, 
+                                                       end_delta=margin_delta))
 
     def _mnu_navigate_fit_all_events_on_click(self, evt):
         firstEvent = self.timeline.get_first_event()
         lastEvent  = self.timeline.get_last_event()
         try:
             if firstEvent == lastEvent:
-                start = (firstEvent.time_period.start_time + 
-                         (firstEvent.time_period.end_time - 
-                          firstEvent.time_period.start_time ) / 2)
-                self._navigate_timeline(lambda tp: tp.center(start))
+                mean = firstEvent.time_period.mean_time()
+                self._navigate_timeline(lambda tp: tp.center(mean))
             else:
                 start = firstEvent.time_period.start_time
                 end   = lastEvent.time_period.end_time
-                start,end = self._add_time_margins(start, end)
-                self._navigate_timeline(lambda tp: tp.update(start, end))
+                margin_delta = (end - start) / 24
+                self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta, margin_delta))
         except AttributeError:
             # None events
             pass        
         except:
             raise
     
-    def _add_time_margins(self, start, end):
-        range = end - start
-        margin_range = range / 24
-        start -= margin_range
-        end += margin_range
-        return start, end
-        
     def _mnu_help_contents_on_click(self, e):
         self.show_help_page("contents")
 

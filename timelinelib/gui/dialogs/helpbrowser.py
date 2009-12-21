@@ -22,10 +22,13 @@ GUI front-end to the help system.
 
 
 import logging
+import os.path
 
 import wx
 import wx.html
 
+import timelinelib.help as help
+from timelinelib.paths import ICONS_DIR
 
 class HelpBrowser(wx.Frame):
 
@@ -71,12 +74,17 @@ class HelpBrowser(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
         self.toolbar = self.CreateToolBar()
         size = (24, 24)
-        home_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_HOME, wx.ART_TOOLBAR,
-                                            size)
-        back_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR,
-                                            size)
-        forward_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD,
-                                               wx.ART_TOOLBAR, size)
+        if 'wxMSW' in wx.PlatformInfo:
+            home_bmp = wx.Bitmap(os.path.join(ICONS_DIR, "home.png"))
+            back_bmp = wx.Bitmap(os.path.join(ICONS_DIR, "backward.png"))
+            forward_bmp = wx.Bitmap(os.path.join(ICONS_DIR, "forward.png"))
+        else:
+            home_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_HOME, wx.ART_TOOLBAR,
+                                                size)
+            back_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR,
+                                                size)
+            forward_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD,
+                                                   wx.ART_TOOLBAR, size)
         self.toolbar.SetToolBitmapSize(size)
         # Home
         home_str = _("Go to home page")
