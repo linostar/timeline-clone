@@ -48,6 +48,7 @@ from timelinelib.gui.dialogs.preferences import PreferencesDialog
 from timelinelib.gui.components.categorieslistbox import CategoriesVisibleCheckListBox
 from timelinelib.gui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.gui.components.timelineview import DrawingArea
+from timelinelib.gui.components.search import SearchBar
 
 
 class MainFrame(wx.Frame):
@@ -192,6 +193,10 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
         # Edit menu
         self.mnu_edit = wx.Menu()
+        mnu_edit_find = self.mnu_edit.Append(wx.ID_FIND)
+        self.Bind(wx.EVT_MENU, self._mnu_edit_find_on_click,
+                  mnu_edit_find)
+        self.mnu_edit.AppendSeparator()
         mnu_edit_preferences = self.mnu_edit.Append(wx.ID_PREFERENCES)
         self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click,
                   mnu_edit_preferences)
@@ -327,6 +332,9 @@ class MainFrame(wx.Frame):
         """Event handler for the Exit menu item"""
         self.Close()
 
+    def _mnu_edit_find_on_click(self, evt):
+        self.main_panel.show_searchbar(True)
+
     def _mnu_edit_preferences_on_click(self, evt):
         dialog = PreferencesDialog(self)
         dialog.ShowModal()
@@ -456,6 +464,7 @@ class MainFrame(wx.Frame):
         self.timeline = timeline
         self.main_panel.catbox.set_timeline(self.timeline)
         self.main_panel.drawing_area.set_timeline(self.timeline)
+        self.main_panel.searchbar.set_view(self.main_panel.drawing_area)
         if timeline == None:
             self.main_panel.show_welcome_panel()
             self.SetTitle(APPLICATION_NAME)
@@ -699,6 +708,8 @@ class MainPanel(wx.Panel):
       * The welcome panel (show_welcome_panel)
       * A splitter with sidebar and DrawingArea (show_timeline_panel)
       * The error panel (show_error_panel)
+
+    Also displays the search bar.
     """
 
     def __init__(self, parent):
@@ -723,15 +734,31 @@ class MainPanel(wx.Panel):
     def show_error_panel(self):
         self._show_panel(self.error_panel)
 
+    def show_searchbar(self, show=True):
+        self.searchbar.Show(show)
+        if show == True:
+            self.searchbar.search.SetFocus()
+        self.GetSizer().Layout()
+
     def _create_gui(self):
-        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Search bar
+        def search_close():
+            self.show_searchbar(False)
+        self.searchbar = SearchBar(self, search_close)
+        self.searchbar.Show(False)
+        # Panels
         self.welcome_panel = WelcomePanel(self)
-        self.sizer.Add(self.welcome_panel, flag=wx.GROW, proportion=1)
         self.timeline_panel = TimelinePanel(self)
-        self.sizer.Add(self.timeline_panel, flag=wx.GROW, proportion=1)
         self.error_panel = ErrorPanel(self)
+        # Layout
+        self.sizerOuter = wx.BoxSizer(wx.VERTICAL)
+        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.sizer.Add(self.welcome_panel, flag=wx.GROW, proportion=1)
+        self.sizer.Add(self.timeline_panel, flag=wx.GROW, proportion=1)
         self.sizer.Add(self.error_panel, flag=wx.GROW, proportion=1)
-        self.SetSizer(self.sizer)
+        self.sizerOuter.Add(self.sizer, flag=wx.GROW, proportion=1)
+        self.sizerOuter.Add(self.searchbar, flag=wx.GROW, proportion=0)
+        self.SetSizer(self.sizerOuter)
 
     def _show_panel(self, panel):
         # Hide all panels
@@ -740,7 +767,7 @@ class MainPanel(wx.Panel):
             panel_to_hide.Show(False)
         # Show this one
         panel.Show(True)
-        self.sizer.Layout()
+        self.sizerOuter.Layout()
 
 
 class WelcomePanel(wx.Panel):
@@ -773,7 +800,9 @@ class WelcomePanel(wx.Panel):
 
 
 class TimelinePanel(wx.Panel):
-    """Showing the drawn timeline and the optional sidebar."""
+    """
+    Showing the drawn timeline, the vertical sizer, and the optional sidebar.
+    """
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)

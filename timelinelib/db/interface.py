@@ -73,6 +73,12 @@ class TimelineDB(Observable):
         """
         raise NotImplementedError()
 
+    def search(self, search_string):
+        """
+        Return a list of events matching the search string.
+        """
+        raise NotImplementedError()
+
     def get_events(self, time_period):
         """
         Return a list of events visible within the time period.

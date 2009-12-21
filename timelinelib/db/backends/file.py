@@ -42,6 +42,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import time_period_center
+from timelinelib.db.utils import generic_event_search
 from timelinelib.db.utils import safe_write
 from timelinelib.db.utils import IdCounter
 from timelinelib.version import get_version
@@ -97,6 +98,9 @@ class FileTimeline(TimelineDB):
 
     def supported_event_data(self):
         return ["description", "icon"]
+
+    def search(self, search_string):
+        return generic_event_search(self.events, search_string)
 
     def get_events(self, time_period):
         def include_event(event):
