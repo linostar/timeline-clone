@@ -34,6 +34,16 @@ class IdCounter(object):
         return self.id
 
 
+def generic_event_search(events, search_string):
+    def match(event):
+        return search_string.lower() in event.text.lower()
+    def mean_time(event):
+        return event.mean_time()
+    matches = [event for event in events if match(event)]
+    matches.sort(key=mean_time)
+    return matches
+
+
 def local_to_unicode(local_string):
     """Try to convert a local string to unicode."""
     encoding = locale.getlocale()[1]
