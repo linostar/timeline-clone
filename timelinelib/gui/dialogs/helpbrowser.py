@@ -27,8 +27,8 @@ import os.path
 import wx
 import wx.html
 
-import timelinelib.help as help
 from timelinelib.paths import ICONS_DIR
+
 
 class HelpBrowser(wx.Frame):
 
