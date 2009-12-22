@@ -299,7 +299,7 @@ class TimePeriod(object):
     def fit_day(self):
         mean = self.mean_time()
         start = dt(mean.year, mean.month, mean.day)
-        end = dt(mean.year, mean.month, mean.day + 1)
+        end = start + timedelta(days=1)
         self.update(start, end)
 
     def _ensure_within_range(self, time, delta, pos_error, neg_error):
