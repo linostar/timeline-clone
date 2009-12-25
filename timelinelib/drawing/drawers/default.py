@@ -361,6 +361,11 @@ class DefaultDrawingAlgorithm(Drawer):
                 rect.Y += movedir * h
             else:
                 break
+            # Don't prevent overlap if rect is outside screen
+            if movedir == 1 and rect.Y > self.metrics.height:
+                break
+            if movedir == -1 and (rect.Y + rect.Height) < 0:
+                break
 
     def _intersection_height(self, rect):
         """
