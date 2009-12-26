@@ -34,11 +34,11 @@ def open(path):
 
     Throw a TimelineIOError exception if not able to read from the given path.
 
-    Valid values of path for FileTimeline:
+    Valid values for path:
+
       - string with suffix .timeline
-      
-    Valid values of path for DirTimeline:
-      - path to a directory
+      - string with suffix .ics
+      - string denoting a directory
     """
     if os.path.isdir(path):
         from timelinelib.db.backends.dir import DirTimeline

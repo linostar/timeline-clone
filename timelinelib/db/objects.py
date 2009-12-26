@@ -134,6 +134,11 @@ class Category(object):
     Store persistent data about a category.
 
     Its id is managed in the same way as for events.
+
+    NOTE: The visible flag of categories should not be used any longer.
+    Visibility of categories are now managed in ViewProperties. However some
+    timeline databases still use this flag to manage the saving. This flag
+    should be removed when we can.
     """
 
     def __init__(self, name, color, visible):
