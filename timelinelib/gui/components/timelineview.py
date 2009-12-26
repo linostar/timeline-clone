@@ -857,7 +857,6 @@ class DrawingArea(wx.Panel):
         self.show_balloons_on_hover = visible
         # When display on hovering is disabled we have to make sure 
         # that any visible balloon is removed.
+        # TODO: Do we really need that?
         if not visible:
-            self.drawing_algorithm.notify_events(
-                            1, None)
             self._redraw_timeline()

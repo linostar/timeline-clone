@@ -79,11 +79,6 @@ class Drawer(object):
         """
         return None
     
-    def notify_events(self, notification, data):
-        """
-        Send notification to all visible events
-        """
-        
 
 class ViewProperties(object):
     """

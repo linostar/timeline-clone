@@ -123,11 +123,6 @@ class Event(object):
         """Returns a unicode label describing the event."""
         return u"%s (%s)" % (self.text, self.time_period.get_label())
 
-    # TODO: Remove this method when we can
-    def notify(self, notification, data):
-        """A notification has been sent to the event."""
-        pass
-
 
 class Category(object):
     """

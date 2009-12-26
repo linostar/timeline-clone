@@ -817,13 +817,6 @@ class DefaultDrawingAlgorithm(Drawer):
         # Return
         return (left_x + BALLOON_RADIUS, top_y + BALLOON_RADIUS)
 
-    def notify_events(self, notification, data):
-        """
-        Send notification to all visible events
-        """
-        for (event, rect) in self.event_data:
-            event.notify(notification, data)
-
 
 def break_text(text, dc, max_width_in_px):
     """ Break the text into lines so that they fits within the given width."""
