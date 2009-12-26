@@ -17,49 +17,29 @@
 
 
 """
-Implementation of Timeline for directories and readonly.
-
-The class FileTimeline implements the Timeline interface.
+Implementation of read-only timeline database whose data is files in a
+directory and their modification times.
 """
 
 
-import re
-import codecs
-import shutil
 import os
 import os.path
-from os.path import abspath
+import colorsys
 from datetime import datetime
 from datetime import timedelta
 import time
+
 import wx
 
-from timelinelib.db.interface  import TimelineIOError
-from timelinelib.db.interface  import TimelineDB
-from timelinelib.db.objects  import TimePeriod
-from timelinelib.db.objects  import Event
-from timelinelib.db.objects  import Category
-from timelinelib.db.objects  import time_period_center
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.interface import TimelineDB
+from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import time_period_center
+from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import generic_event_search
 from timelinelib.version import get_version
-
-
-ENCODING = "utf-8"
-
-
-class IdCounter(object):
-
-    def __init__(self, initial_id=0):
-        self.id = initial_id
-
-    def get_next(self):
-        self.id += 1
-        return self.id
-
-
-class ParseException(Exception):
-    """Thrown if parsing of data read from file fails."""
-    pass
 
 
 class DirTimeline(TimelineDB):
@@ -68,33 +48,25 @@ class DirTimeline(TimelineDB):
 
     The comments in the TimelineDB class describe what the public methods do.
 
-    The class is a read-only timeline database, where each event represents a 
-    file found in a given parent directory. The parent directory is given
-    at construction time. The time for an event is the files 'last modified' time.
+    The class is a read-only timeline database, where each event represents a
+    file found in a given directory. The directory is given at construction
+    time. The time for an event is the files 'last modified' time.
     
     Every public method (including the constructor) can raise a TimelineIOError
     if there was a problem reading data from a directory.
     """
 
-    # Errors caused by loading and saving timeline data to file
-    ERROR_NONE    = 0
-    ERROR_READ    = 1 # Unable to read from file
-    ERROR_CORRUPT = 2 # Able to read from file but content corrupt
-    ERROR_WRITE   = 3 # Unable to write to file
-
     def __init__(self, path):
-        """
-        Create a new timeline and read data from the given directory.
-        """
         TimelineDB.__init__(self, path)
         self.event_id_counter = IdCounter()
+        self.category_id_counter = IdCounter()
         self._load_data()
 
     def is_read_only(self):
         return True
 
     def supported_event_data(self):
-        return []
+        pass
 
     def search(self, search_string):
         return generic_event_search(self.events, search_string)
@@ -102,8 +74,6 @@ class DirTimeline(TimelineDB):
     def get_events(self, time_period):
         def include_event(event):
             if not event.inside_period(time_period):
-                return False
-            if event.category != None and event.category.visible == False:
                 return False
             return True
         return [event for event in self.events if include_event(event)]
@@ -117,56 +87,34 @@ class DirTimeline(TimelineDB):
         if len(self.events) == 0:
             return None
         return max(self.events, key=lambda e: e.time_period.end_time)
-    
-    def add_event(self, event):
-        self.events.append(event)
 
     def save_event(self, event):
-        """Noop"""
+        pass
     
     def delete_event(self, event_or_id):
-        def find_event():
-            for e in self.events:
-                if e == event_or_id or e.id == event_or_id:
-                    return e
-            return None
-        e = find_event()
-        if e is not None:
-            self.events.remove(e)
-            e.set_id(None)
+        pass
                 
     def get_categories(self):
-        return tuple(self.categories)
+        # Make sure the original list can't be modified
+        return self.categories[:]
         
     def save_category(self, category):
-        if not category.has_id():
-            self.new_categories.append(category)
-        self._notify(STATE_CHANGE_CATEGORY)
+        pass
 
     def delete_category(self, category_or_id):
-        def find_category():
-            for c in self.categories:
-                if c == category_or_id or c.id == category_or_id:
-                    return c
-            return None
-        category = find_category()
-        if category is not None:
-            self.categories.remove(category)
-            category.set_id(None)
-            for event in self.events:
-                if event.category == category:
-                    event.category = None
-            self._notify(STATE_CHANGE_CATEGORY)
+        pass
 
-    def get_preferred_period(self):
-        if self.preferred_period != None:
-            return self.preferred_period
-        return time_period_center(datetime.now(), timedelta(days=30))
+    def load_view_properties(self, view_properties):
+        if self.preferred_period is not None:
+            view_properties.preferred_period = self.preferred_period
+        else:
+            default_tp = time_period_center(datetime.now(), timedelta(days=30))
+            view_properties.preferred_period = default_tp
+        for cat in self.categories:
+            view_properties.set_category_visible(cat, cat.visible)
 
-    def set_preferred_period(self, period):
-        if not period.is_period():
-            raise TimelineIOError(_("Preferred period must be > 0."))
-        self.preferred_period = period
+    def save_view_properties(self, period):
+        pass
 
     def _load_data(self):
         """
@@ -189,45 +137,67 @@ class DirTimeline(TimelineDB):
         if not os.path.isdir(self.path): 
             # Nothing to load
             return
-        dirlist = os.listdir(self.path)
-        min_time = datetime.now()
-        max_time = datetime.now()
-        counter = 0
-        for file_or_dir in dirlist:
-            counter += 1
-            if counter > 100:
-                message = _("Max 100 events are displayed")
-                dial = wx.MessageDialog(None, message, _("Warning"), wx.OK | wx.ICON_WARNING)
-                dial.ShowModal()
-                break    
-            path = os.path.join(self.path, file_or_dir)
-            if not os.path.isfile(path):
-                continue
-            stat = os.stat(path)
-            # st_atime (time of most recent access), 
-            # st_mtime (time of most recent content modification), 
-            # st_ctime (platform dependent; time of most recent metadata change on Unix, 
-            # or the time of creation on Windows):
-            start_time = datetime.fromtimestamp(int(stat.st_mtime))
-            end_time = start_time
-            if start_time > end_time:
-                start_time, end_time = end_time, start_time
-            if not min_time:
-                min_time = start_time
-                max_time = start_time
-            else:
-                if start_time < min_time:
-                    min_time = start_time
-                elif start_time > max_time:
-                    max_time = start_time        
-            text = file_or_dir
-            category = None
-            evt = Event(start_time, end_time, text, category)
-            evt.set_id(self.event_id_counter.get_next())
-            self.events.append(evt)
-        min_time -= timedelta(7)
-        max_time += timedelta(7)
-        td = max_time - min_time
-        if td > timedelta(365):
-            min_time = max_time - timedelta(365)
-        self.preferred_period = TimePeriod(min_time, max_time)
+        color_ranges = {}
+        color_ranges[self.path] = (0.0, 1.0, 1.0)
+        for (dirpath, dirnames, filenames) in os.walk(self.path):
+            # Assign color ranges
+            range = (rstart, rend, b) = color_ranges[dirpath]
+            step = (rend - rstart) / (len(dirnames) + 1)
+            next_start = rstart + step
+            new_b = b - 0.2
+            if new_b < 0:
+                new_b = 0
+            for dir in dirnames:
+                next_end = next_start + step
+                color_ranges[os.path.join(dirpath, dir)] = (next_start,
+                                                            next_end, new_b)
+                next_start = next_end
+            # Create the stuff
+            cat = Category(dirpath, (233, 233, 233), False)
+            cat.set_id(self.category_id_counter.get_next())
+            self.categories.append(cat)
+            for file in filenames:
+                path = os.path.join(dirpath, file)
+                evt = self._event_from_path(path)
+                evt.set_id(self.event_id_counter.get_next())
+                self.events.append(evt)
+        self.categories[0].visible = True
+        # Set colors and remove prefix
+        prefix_len = len(self.path)
+        for cat in self.categories:
+            cat.color = self._color_from_range(color_ranges[cat.name])
+            cat.name = "." + cat.name[prefix_len:]
+        self.preferred_period = time_period_center(datetime.now(),
+                                                   timedelta(days=30))
+
+    def _event_from_path(self, path):
+        stat = os.stat(path)
+        # st_atime (time of most recent access), 
+        # st_mtime (time of most recent content modification), 
+        # st_ctime (platform dependent; time of most recent metadata change on
+        #           Unix, or the time of creation on Windows):
+        start_time = datetime.fromtimestamp(int(stat.st_mtime))
+        end_time = start_time
+        if start_time > end_time:
+            start_time, end_time = end_time, start_time
+        text = os.path.basename(path)
+        category = self._category_from_path(path)
+        evt = Event(start_time, end_time, text, category)
+        return evt
+
+    def _category_from_path(self, path):
+        for cat in self.categories:
+            if cat.name == os.path.dirname(path):
+                return cat
+        return None
+
+    def _category_from_name(self, name):
+        for cat in self.categories:
+            if cat.name == name:
+                return cat
+        return None
+
+    def _color_from_range(self, range):
+        (rstart, rend, b) = range
+        (r, g, b) = colorsys.hsv_to_rgb(rstart, b, 1)
+        return (r*255, g*255, b*255)
