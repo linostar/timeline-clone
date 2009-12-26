@@ -46,7 +46,6 @@ class CategoryEditor(wx.Dialog):
             self.category = Category("", (200, 200, 200), True)
         self.txt_name.SetValue(self.category.name)
         self.colorpicker.SetColour(self.category.color)
-        self.chb_visible.SetValue(self.category.visible)
 
     def get_edited_category(self):
         return self.category
@@ -56,21 +55,16 @@ class CategoryEditor(wx.Dialog):
         self.txt_name = wx.TextCtrl(self, size=(150, -1))
         # The color chooser
         self.colorpicker = colourselect.ColourSelect(self)
-        # The visible check box
-        self.chb_visible = wx.CheckBox(self)
         # Setup layout
         vbox = wx.BoxSizer(wx.VERTICAL)
         # Grid for controls
-        field_grid = wx.FlexGridSizer(3, 2, BORDER, BORDER)
+        field_grid = wx.FlexGridSizer(2, 2, BORDER, BORDER)
         field_grid.Add(wx.StaticText(self, label=_("Name:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.txt_name)
         field_grid.Add(wx.StaticText(self, label=_("Color:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.colorpicker)
-        field_grid.Add(wx.StaticText(self, label=_("Visible:")),
-                       flag=wx.ALIGN_CENTER_VERTICAL)
-        field_grid.Add(self.chb_visible)
         vbox.Add(field_grid, flag=wx.EXPAND|wx.ALL, border=BORDER)
         # Buttons
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
@@ -92,7 +86,6 @@ class CategoryEditor(wx.Dialog):
                 return
             self.category.name = name
             self.category.color = self.colorpicker.GetColour()
-            self.category.visible = self.chb_visible.IsChecked()
             self.timeline.save_category(self.category)
             self.EndModal(wx.ID_OK)
         except TimelineIOError, e:
