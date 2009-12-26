@@ -26,14 +26,14 @@ class Drawer(object):
     Draw timeline onto a device context and provide information about drawing.
     """
 
-    def draw(self, dc, time_period, timeline, event_runtime_data):
+    def draw(self, dc, time_period, timeline, view_properties):
         """
         Draw a representation of a timeline.
 
-        - dc: used to do the actual drawing
-        - time_period: what period of the timeline should be visible
-        - timeline: which timeline to visualize
-        - event_runtime_data: ViewProperties
+        The dc is used to do the actual drawing. The time period suggests which
+        period should be visualized. The timeline is used to get the events to
+        visualize. The view properties contains information like which events
+        are selected in the view we are drawing for.
 
         When the dc is temporarily stored in a class variable such as self.dc,
         this class variable must be deleted before the draw method ends.

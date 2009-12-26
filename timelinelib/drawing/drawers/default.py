@@ -239,7 +239,7 @@ class DefaultDrawingAlgorithm(Drawer):
         ew = self.metrics.calc_width(time_period)
         return ew > PERIOD_THRESHOLD
 
-    def draw(self, dc, time_period, timeline, event_runtime_data):
+    def draw(self, dc, time_period, timeline, view_properties):
         """
         Implement the drawing interface.
 
@@ -249,13 +249,13 @@ class DefaultDrawingAlgorithm(Drawer):
         """
         def include_event(event):
             if (event.category is not None and not
-                event_runtime_data.category_visible(event.category)):
+                view_properties.category_visible(event.category)):
                 return False
             return True
         # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = time_period
-        self.metrics = Metrics(dc, time_period, event_runtime_data.divider_position)
+        self.metrics = Metrics(dc, time_period, view_properties.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
@@ -266,13 +266,13 @@ class DefaultDrawingAlgorithm(Drawer):
         self._calc_rects(events)
         self._calc_strips()
         # Perform the actual drawing
-        if event_runtime_data.period_selection:
-            self._draw_period_selection(event_runtime_data.period_selection)
+        if view_properties.period_selection:
+            self._draw_period_selection(view_properties.period_selection)
         self._draw_bg()
-        self._draw_events(event_runtime_data)
-        if event_runtime_data.draw_legend:
+        self._draw_events(view_properties)
+        if view_properties.draw_legend:
             self._draw_legend(self._extract_categories())
-        self._draw_ballons(event_runtime_data)
+        self._draw_ballons(view_properties)
         # Make sure to delete this one
         del self.dc
 
@@ -560,7 +560,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
             cur_y = cur_y + item_height + INNER_PADDING
 
-    def _draw_events(self, event_runtime_data):
+    def _draw_events(self, view_properties):
         """Draw all event boxes and the text inside them."""
         self.dc.SetFont(self.small_text_font)
         self.dc.SetTextForeground((0, 0, 0))
@@ -590,7 +590,7 @@ class DefaultDrawingAlgorithm(Drawer):
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
             # Draw selection and handles
-            if event_runtime_data.is_selected(event):
+            if view_properties.is_selected(event):
                 small_rect = wx.Rect(*rect)
                 small_rect.Deflate(1, 1)
                 border_color = self._get_border_color(event)
@@ -671,12 +671,12 @@ class DefaultDrawingAlgorithm(Drawer):
         brush = wx.Brush(border_color, wx.BDIAGONAL_HATCH)
         return brush
 
-    def _draw_ballons(self, event_runtime_data):
+    def _draw_ballons(self, view_properties):
         """Draw ballons on selected events that has 'description' data."""
         for (event, rect) in self.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
-                if event_runtime_data.has_balloon(event):
+                if view_properties.has_balloon(event):
                     self._draw_ballon(event, rect)
 
     def _draw_ballon(self, event, event_rect):
