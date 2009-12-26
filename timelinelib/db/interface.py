@@ -66,10 +66,12 @@ class TimelineDB(Observable):
 
     def supported_event_data(self):
         """
-        Return a list of event data that we can read and write.
+        Return a list of event data that we can write.
 
-        Event data is represented by a string id. See event.set_data for
+        Event data is represented by a string id. See Event.set_data for
         information what string id map to what data.
+
+        Not required if is_read_only returns True.
         """
         raise NotImplementedError()
 
@@ -81,19 +83,16 @@ class TimelineDB(Observable):
 
     def get_events(self, time_period):
         """
-        Return a list of events visible within the time period.
-
-        An event is visible if its associated category is visible or of it does
-        not belong to a category.
+        Return a list of events within the time period.
         """
         raise NotImplementedError()
 
     def get_first_event(self):
-        """Return the event with the lowest start time"""
+        """Return the event with the earliest start time."""
         raise NotImplementedError()
         
     def get_last_event(self):
-        """Return the event with the highest end time"""
+        """Return the event with the latest end time."""
         raise NotImplementedError()
         
     def save_event(self, event):
@@ -102,12 +101,16 @@ class TimelineDB(Observable):
 
         If the event is new it is given a new unique id. Otherwise the
         information in the database is just updated.
+
+        Not required if is_read_only returns True.
         """
         raise NotImplementedError()
 
     def delete_event(self, event_or_id):
         """
         Delete the event (or the event with the given id) from the database.
+
+        Not required if is_read_only returns True.
         """
         raise NotImplementedError()
 
@@ -123,6 +126,8 @@ class TimelineDB(Observable):
 
         If the category is new it is given a new unique id. Otherwise the
         information in the database is just updated.
+
+        Not required if is_read_only returns True.
         """
         raise NotImplementedError()
 
@@ -130,15 +135,26 @@ class TimelineDB(Observable):
         """
         Delete the category (or the category with the given id) from the
         database.
+
+        Not required if is_read_only returns True.
         """
         raise NotImplementedError()
     
     def load_view_properties(self, view_properties):
-        """Get properties info from db and load properites object."""
+        """
+        Load saved view properties from persistent storage into view_properties
+        object.
+        """
         raise NotImplementedError()
 
     def save_view_properties(self, view_properties):
+        """
+        Save subset of view properties to persistent storage.
+
+        Not required if is_read_only returns True.
+        """
         raise NotImplementedError()
+
 
 class TimelineIOError(Exception):
     """
