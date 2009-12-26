@@ -135,16 +135,16 @@ class ViewProperties(object):
             self._remove_id_from_list(event.id, ViewProperties.BALLOON_KEY)
         
     def category_visible(self, category):
-        return self._id_in_list(category.id, 
-                                ViewProperties.CATEGORY_VISIBLE_KEY)
+        return not self._id_in_list(category.id, 
+                                    ViewProperties.CATEGORY_VISIBLE_KEY)
     
     def set_category_visible(self, category, is_visible=True):
         if is_visible:
-            self._append_id_to_list(category.id, 
-                                    ViewProperties.CATEGORY_VISIBLE_KEY)
-        else:
             self._remove_id_from_list(category.id, 
                                       ViewProperties.CATEGORY_VISIBLE_KEY)
+        else:
+            self._append_id_to_list(category.id, 
+                                    ViewProperties.CATEGORY_VISIBLE_KEY)
         
     def _append_id_to_list(self, id, list_key):
         if self.data.has_key(list_key):
