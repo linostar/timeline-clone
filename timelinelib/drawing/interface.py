@@ -104,6 +104,14 @@ class ViewProperties(object):
         self.divider_position = 0.5
         self.preferred_period = None
 
+    def filter_events(self, events):
+        def event_visible(event):
+            if (event.category is not None and not
+                self.category_visible(event.category)):
+                return False
+            return True
+        return [e for e in events if event_visible(e)]
+
     def is_selected(self, event):
         return self._id_in_list(event.id, ViewProperties.SELECTED_KEY)
 
