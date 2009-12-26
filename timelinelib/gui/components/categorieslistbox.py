@@ -45,8 +45,8 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         
     def _checklistbox_on_checklistbox(self, e):
         i = e.GetSelection()
-        self.view.event_rt_data.set_category_visible(self.categories[i], 
-                                                     self.IsChecked(i))
+        self.view.view_properties.set_category_visible(self.categories[i], 
+                                                       self.IsChecked(i))
         self.view.redraw_timeline()
 
     def _timeline_changed(self, state_change):
@@ -62,6 +62,6 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
             self.Clear()
             self.AppendItems([category.name for category in self.categories])
             for i in range(0, self.Count):
-                if self.view.event_rt_data.category_visible(self.categories[i]):    
+                if self.view.view_properties.category_visible(self.categories[i]):
                     self.Check(i)
                 self.SetItemBackgroundColour(i, self.categories[i].color)

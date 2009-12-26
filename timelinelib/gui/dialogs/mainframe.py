@@ -585,8 +585,8 @@ class MainFrame(wx.Frame):
         """
         if self.timeline:
             try:
-                self.main_panel.drawing_area.event_rt_data.preferred_period = self._get_time_period()
-                self.timeline.save_view_properties(self.main_panel.drawing_area.event_rt_data)
+                self.main_panel.drawing_area.view_properties.preferred_period = self._get_time_period()
+                self.timeline.save_view_properties(self.main_panel.drawing_area.view_properties)
             except TimelineIOError, e:
                 _display_error_message(e.message, self)
                 # No need to switch to error view since this method is only

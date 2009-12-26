@@ -65,7 +65,7 @@ class EventSizer(object):
         Otherwise return False.
         """
         self.sizing = (self._hit(m_x, m_y) and 
-                       self.drawing_area.event_rt_data.is_selected(self.event))
+                       self.drawing_area.view_properties.is_selected(self.event))
         if self.sizing:
             self.x = m_x
             self.y = m_y
@@ -83,7 +83,7 @@ class EventSizer(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            is_selected = self.drawing_area.event_rt_data.is_selected(self.event)
+            is_selected = self.drawing_area.view_properties.is_selected(self.event)
             if not is_selected:
                 return False
             self.drawing_area._set_size_cursor()
@@ -152,7 +152,7 @@ class EventMover(object):
         Otherwise return False.
         """
         self.moving = (self._hit(m_x, m_y) and 
-                       self.drawing_area.event_rt_data.is_selected(self.event))
+                       self.drawing_area.view_properties.is_selected(self.event))
         if self.moving:
             self.x = m_x
             self.y = m_y
@@ -170,7 +170,7 @@ class EventMover(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            is_selected = self.drawing_area.event_rt_data.is_selected(self.event) 
+            is_selected = self.drawing_area.view_properties.is_selected(self.event) 
             if not is_selected:
                 return False
             self.drawing_area._set_move_cursor()
@@ -278,7 +278,7 @@ class DrawingArea(wx.Panel):
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
-        self.event_rt_data = ViewProperties()
+        self.view_properties = ViewProperties()
         logging.debug("Init done in DrawingArea")
 
     def print_timeline(self, event):
@@ -328,8 +328,8 @@ class DrawingArea(wx.Panel):
         if self.timeline:
             self.timeline.register(self._timeline_changed)
             try:
-                timeline.load_view_properties(self.event_rt_data)
-                self.time_period = self.event_rt_data.preferred_period
+                timeline.load_view_properties(self.view_properties)
+                self.time_period = self.view_properties.preferred_period
             except TimelineIOError, e:
                 wx.GetTopLevelParent(self).handle_timeline_error(e)
                 return
@@ -695,15 +695,15 @@ class DrawingArea(wx.Panel):
             memdc.Clear()
             if self.timeline:
                 try:
-                    self.event_rt_data.period_selection = period_selection
-                    self.event_rt_data.draw_legend = self.show_legend
-                    self.event_rt_data.divider_position = (
+                    self.view_properties.period_selection = period_selection
+                    self.view_properties.draw_legend = self.show_legend
+                    self.view_properties.divider_position = (
                         self.divider_line_slider.GetValue())
-                    self.event_rt_data.divider_position = (
+                    self.view_properties.divider_position = (
                         float(self.divider_line_slider.GetValue()) / 100.0)
                     self.drawing_algorithm.draw(memdc, self.time_period,
                                                 self.timeline,
-                                                self.event_rt_data)
+                                                self.view_properties)
                 except TimelineIOError, e:
                     wx.GetTopLevelParent(self).handle_timeline_error(e)
             memdc.EndDrawing()
@@ -741,12 +741,12 @@ class DrawingArea(wx.Panel):
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event:
-            selected = not self.event_rt_data.is_selected(event)
+            selected = not self.view_properties.is_selected(event)
             if not control_down:
-                self.event_rt_data.clear_selected()
-            self.event_rt_data.set_selected(event, selected)
+                self.view_properties.clear_selected()
+            self.view_properties.set_selected(event, selected)
         else:
-            self.event_rt_data.clear_selected()
+            self.view_properties.clear_selected()
         self._redraw_timeline()
         return event != None
 
@@ -772,7 +772,7 @@ class DrawingArea(wx.Panel):
     def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if self.show_balloons_on_hover:
-            if event and not self.event_rt_data.is_selected(event):
+            if event and not self.view_properties.is_selected(event):
                 self.event_just_hoverd = event    
                 self.timer = wx.Timer(self, -1)
                 self.Bind(wx.EVT_TIMER, self.on_balloon_timer, self.timer)
@@ -786,9 +786,9 @@ class DrawingArea(wx.Panel):
    
     def redraw_balloons(self, event):
         if event:
-            self.event_rt_data.set_balloon(event)
+            self.view_properties.set_balloon(event)
         else:    
-            self.event_rt_data.clear_balloons()
+            self.view_properties.clear_balloons()
         self._redraw_timeline()
         
     def _mark_selected_minor_strips(self, current_x):
@@ -805,7 +805,7 @@ class DrawingArea(wx.Panel):
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""
-        selected_event_ids = self.event_rt_data.get_selected_event_ids()
+        selected_event_ids = self.view_properties.get_selected_event_ids()
         nbr_of_selected_event_ids = len(selected_event_ids)
         if nbr_of_selected_event_ids > 1:
             text = _("Are you sure to delete %d events?" % 

@@ -92,7 +92,7 @@ class SearchBar(wx.ToolBar):
             self.last_search = new_search
             if self.view is not None:
                 events = self.view.timeline.search(self.last_search)
-                filtered_events = self.view.event_rt_data.filter_events(events)
+                filtered_events = self.view.view_properties.filter_events(events)
                 self.result = filtered_events
             else:
                 self.result = []
