@@ -23,8 +23,7 @@ import wx
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_ANY
-from timelinelib.drawing.interface import DrawingHints
-from timelinelib.drawing.interface import EventRuntimeData
+from timelinelib.drawing.interface import ViewProperties
 from timelinelib.drawing.utils import mult_timedelta
 from timelinelib.drawing import get_drawer
 from timelinelib.gui.utils import sort_categories
@@ -279,7 +278,7 @@ class DrawingArea(wx.Panel):
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
-        self.event_rt_data = EventRuntimeData()
+        self.event_rt_data = ViewProperties()
         logging.debug("Init done in DrawingArea")
 
     def print_timeline(self, event):
@@ -329,7 +328,8 @@ class DrawingArea(wx.Panel):
         if self.timeline:
             self.timeline.register(self._timeline_changed)
             try:
-                self.time_period = timeline.get_preferred_period()
+                timeline.load_view_properties(self.event_rt_data)
+                self.time_period = self.event_rt_data.preferred_period
             except TimelineIOError, e:
                 wx.GetTopLevelParent(self).handle_timeline_error(e)
                 return
@@ -692,16 +692,14 @@ class DrawingArea(wx.Panel):
             memdc.Clear()
             if self.timeline:
                 try:
-                    settings = DrawingHints()
-                    settings.period_selection = period_selection
-                    settings.draw_legend = self.show_legend
-                    settings.divider_position = (
+                    self.event_rt_data.period_selection = period_selection
+                    self.event_rt_data.draw_legend = self.show_legend
+                    self.event_rt_data.divider_position = (
                         self.divider_line_slider.GetValue())
-                    settings.divider_position = (
+                    self.event_rt_data.divider_position = (
                         float(self.divider_line_slider.GetValue()) / 100.0)
                     self.drawing_algorithm.draw(memdc, self.time_period,
                                                 self.timeline,
-                                                settings,
                                                 self.event_rt_data)
                 except TimelineIOError, e:
                     wx.GetTopLevelParent(self).handle_timeline_error(e)

@@ -30,24 +30,25 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
 
     def __init__(self, parent):
         wx.CheckListBox.__init__(self, parent)
-        self.timeline = None
+        self.view = None
         self.Bind(wx.EVT_CHECKLISTBOX, self._checklistbox_on_checklistbox, self)
 
-    def set_timeline(self, timeline):
-        if self.timeline != None:
-            self.timeline.unregister(self._timeline_changed)
-        self.timeline = timeline
-        if self.timeline:
-            self.timeline.register(self._timeline_changed)
+    def set_view(self, view):
+        if self.view is not None:
+            self.view.timeline.unregister(self._timeline_changed)
+        self.view = view
+        if self.view:
+            self.view.timeline.register(self._timeline_changed)
             self._update_categories()
         else:
             self.Clear()
-
+        
     def _checklistbox_on_checklistbox(self, e):
         i = e.GetSelection()
-        self.categories[i].visible = self.IsChecked(i)
+        self.view.event_rt_data.set_category_visible(self.categories[i], 
+                                                     self.IsChecked(i))
         try:
-            self.timeline.save_category(self.categories[i])
+            self.view.timeline.save_category(self.categories[i])
         except TimelineIOError, e:
             wx.GetTopLevelParent(self).handle_timeline_error(e)
 
@@ -57,13 +58,13 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
 
     def _update_categories(self):
         try:
-            self.categories = sort_categories(self.timeline.get_categories())
+            self.categories = sort_categories(self.view.timeline.get_categories())
         except TimelineIOError, e:
             wx.GetTopLevelParent(self).handle_timeline_error(e)
         else:
             self.Clear()
             self.AppendItems([category.name for category in self.categories])
             for i in range(0, self.Count):
-                if self.categories[i].visible:
+                if self.view.event_rt_data.category_visible(self.categories[i]):    
                     self.Check(i)
                 self.SetItemBackgroundColour(i, self.categories[i].color)

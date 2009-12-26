@@ -238,7 +238,7 @@ class DefaultDrawingAlgorithm(Drawer):
         ew = self.metrics.calc_width(time_period)
         return ew > PERIOD_THRESHOLD
 
-    def draw(self, dc, time_period, timeline, settings, event_runtime_data):
+    def draw(self, dc, time_period, timeline, event_runtime_data):
         """
         Implement the drawing interface.
 
@@ -246,23 +246,30 @@ class DefaultDrawingAlgorithm(Drawer):
         and strips are calculated and then they are drawn. Positions can also
         be used later to answer questions like what event is at position (x, y).
         """
+        def include_event(event):
+            if (event.category is not None and not
+                event_runtime_data.category_visible(event.category)):
+                return False
+            return True
         # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = time_period
-        self.metrics = Metrics(dc, time_period, settings.divider_position)
+        self.metrics = Metrics(dc, time_period, event_runtime_data.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
         # Calculate stuff later used for drawing
-        self._calc_rects(timeline.get_events(time_period))
+        events = [event for event in timeline.get_events(time_period)
+                  if include_event(event)]
+        self._calc_rects(events)
         self._calc_strips()
         # Perform the actual drawing
-        if settings.period_selection:
-            self._draw_period_selection(settings.period_selection)
+        if event_runtime_data.period_selection:
+            self._draw_period_selection(event_runtime_data.period_selection)
         self._draw_bg()
         self._draw_events(event_runtime_data)
-        if settings.draw_legend:
+        if event_runtime_data.draw_legend:
             self._draw_legend(self._extract_categories())
         self._draw_ballons(event_runtime_data)
         # Make sure to delete this one

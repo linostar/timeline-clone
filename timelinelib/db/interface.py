@@ -132,15 +132,13 @@ class TimelineDB(Observable):
         database.
         """
         raise NotImplementedError()
-
-    def get_preferred_period(self):
-        """Return the preferred period to display of this timeline."""
+    
+    def load_view_properties(self, view_properties):
+        """Get properties info from db and load properites object."""
         raise NotImplementedError()
 
-    def set_preferred_period(self, period):
-        """Set the preferred period to display of this timeline."""
+    def save_view_properties(self, view_properties):
         raise NotImplementedError()
-
 
 class TimelineIOError(Exception):
     """

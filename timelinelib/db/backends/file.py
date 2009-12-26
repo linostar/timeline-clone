@@ -106,8 +106,6 @@ class FileTimeline(TimelineDB):
         def include_event(event):
             if not event.inside_period(time_period):
                 return False
-            if event.category != None and event.category.visible == False:
-                return False
             return True
         return [event for event in self.events if include_event(event)]
 
@@ -164,15 +162,21 @@ class FileTimeline(TimelineDB):
             self._save_data()
             self._notify(STATE_CHANGE_CATEGORY)
 
-    def get_preferred_period(self):
+    def load_view_properties(self, view_properties):
         if self.preferred_period != None:
-            return self.preferred_period
-        return time_period_center(datetime.now(), timedelta(days=30))
-
-    def set_preferred_period(self, period):
-        if not period.is_period():
+            view_properties.preferred_period = self.preferred_period
+        else:
+            view_properties.preferred_period = time_period_center(datetime.now(),
+                                                                  timedelta(days=30))
+        for category in self.categories:
+            view_properties.set_category_visible(category, category.visible)
+            
+    def save_view_properties(self, view_properties):
+        if not view_properties.preferred_period.is_period():
             raise TimelineIOError(_("Preferred period must be > 0."))
-        self.preferred_period = period
+        self.preferred_period = view_properties.preferred_period
+        for category in self.categories:
+            category.visible = view_properties.category_visible(category)
         self._save_data()
 
     def _load_data(self):
