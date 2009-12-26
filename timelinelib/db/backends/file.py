@@ -138,7 +138,7 @@ class FileTimeline(TimelineDB):
 
     def get_categories(self):
         # Make sure the original list can't be modified
-        return tuple(self.categories)
+        return self.categories[:]
 
     def save_category(self, category):
         if not category.has_id():
@@ -166,8 +166,8 @@ class FileTimeline(TimelineDB):
         if self.preferred_period != None:
             view_properties.preferred_period = self.preferred_period
         else:
-            view_properties.preferred_period = time_period_center(datetime.now(),
-                                                                  timedelta(days=30))
+            default_tp = time_period_center(datetime.now(), timedelta(days=30))
+            view_properties.preferred_period = default_tp
         for category in self.categories:
             view_properties.set_category_visible(category, category.visible)
             
