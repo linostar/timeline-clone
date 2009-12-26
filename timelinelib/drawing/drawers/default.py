@@ -222,6 +222,7 @@ class DefaultDrawingAlgorithm(Drawer):
         # Fonts and pens we use when drawing
         self.header_font = get_default_font(12, True)
         self.small_text_font = get_default_font(8)
+        self.small_text_font_bold = get_default_font(8, True)
         self.red_solid_pen = wx.Pen(wx.Color(255,0, 0), 1, wx.SOLID)
         self.black_solid_pen = wx.Pen(wx.Color(0, 0, 0), 1, wx.SOLID)
         self.darkred_solid_pen = wx.Pen(wx.Color(200, 0, 0), 1, wx.SOLID)
@@ -426,9 +427,14 @@ class DefaultDrawingAlgorithm(Drawer):
         """
         major_strip, minor_strip = self._choose_strip()
         # Minor strips
-        self.dc.SetFont(self.small_text_font)
         self.dc.SetPen(self.black_dashed_pen)
         for tp in self.minor_strip_data:
+            # Chose font
+            if (isinstance(minor_strip, StripDay) and
+                tp.start_time.weekday() in (5, 6)):
+                self.dc.SetFont(self.small_text_font_bold)
+            else:
+                self.dc.SetFont(self.small_text_font)
             # Divider line
             x = self.metrics.calc_x(tp.end_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
