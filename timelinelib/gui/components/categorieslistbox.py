@@ -47,10 +47,7 @@ class CategoriesVisibleCheckListBox(wx.CheckListBox):
         i = e.GetSelection()
         self.view.event_rt_data.set_category_visible(self.categories[i], 
                                                      self.IsChecked(i))
-        try:
-            self.view.timeline.save_category(self.categories[i])
-        except TimelineIOError, e:
-            wx.GetTopLevelParent(self).handle_timeline_error(e)
+        self.view.redraw_timeline()
 
     def _timeline_changed(self, state_change):
         if state_change == STATE_CHANGE_CATEGORY:

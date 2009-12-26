@@ -373,6 +373,9 @@ class DrawingArea(wx.Panel):
         except (ValueError, OverflowError), e:
             wx.GetTopLevelParent(self).SetStatusText(e.message)
 
+    def redraw_timeline(self):
+        self._redraw_timeline()
+
     def _create_gui(self):
         self.Bind(wx.EVT_SIZE, self._window_on_size)
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
