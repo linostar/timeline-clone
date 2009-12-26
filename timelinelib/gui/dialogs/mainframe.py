@@ -462,8 +462,8 @@ class MainFrame(wx.Frame):
 
     def _display_timeline(self, timeline):
         self.timeline = timeline
-        self.main_panel.catbox.set_timeline(self.timeline)
         self.main_panel.drawing_area.set_timeline(self.timeline)
+        self.main_panel.catbox.set_view(self.main_panel.drawing_area)
         self.main_panel.searchbar.set_view(self.main_panel.drawing_area)
         if timeline == None:
             self.main_panel.show_welcome_panel()
@@ -585,7 +585,8 @@ class MainFrame(wx.Frame):
         """
         if self.timeline:
             try:
-                self.timeline.set_preferred_period(self._get_time_period())
+                self.main_panel.drawing_area.view_properties.preferred_period = self._get_time_period()
+                self.timeline.save_view_properties(self.main_panel.drawing_area.view_properties)
             except TimelineIOError, e:
                 _display_error_message(e.message, self)
                 # No need to switch to error view since this method is only

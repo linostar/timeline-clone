@@ -26,15 +26,14 @@ class Drawer(object):
     Draw timeline onto a device context and provide information about drawing.
     """
 
-    def draw(self, dc, time_period, timeline, settings, event_runtime_data):
+    def draw(self, dc, time_period, timeline, event_runtime_data):
         """
         Draw a representation of a timeline.
 
         - dc: used to do the actual drawing
         - time_period: what period of the timeline should be visible
         - timeline: which timeline to visualize
-        - settings: DrawingHints
-        - event_runtime_data: EventRuntimeData
+        - event_runtime_data: ViewProperties
 
         When the dc is temporarily stored in a class variable such as self.dc,
         this class variable must be deleted before the draw method ends.
@@ -86,7 +85,7 @@ class Drawer(object):
         """
         
 
-class EventRuntimeData(object):
+class ViewProperties(object):
     """
     Store non-persistent information about events.
 
@@ -96,39 +95,64 @@ class EventRuntimeData(object):
 
     SELECTED_KEY = 0
     BALLOON_KEY = 1
+    CATEGORY_VISIBLE_KEY = 2
 
     def __init__(self):
         self.data = {}
+        self.period_selection = None
+        self.draw_legend = True
+        self.divider_position = 0.5
+        self.preferred_period = None
+
+    def filter_events(self, events):
+        def event_visible(event):
+            if (event.category is not None and not
+                self.category_visible(event.category)):
+                return False
+            return True
+        return [e for e in events if event_visible(e)]
 
     def is_selected(self, event):
-        return self._id_in_list(event.id, EventRuntimeData.SELECTED_KEY)
+        return self._id_in_list(event.id, ViewProperties.SELECTED_KEY)
 
     def clear_selected(self):
-        self._clear_key(EventRuntimeData.SELECTED_KEY)
+        self._clear_key(ViewProperties.SELECTED_KEY)
 
     def set_selected(self, event, is_selected=True):
         if is_selected:
-            self._append_id_to_list(event.id, EventRuntimeData.SELECTED_KEY)
+            self._append_id_to_list(event.id, ViewProperties.SELECTED_KEY)
         else:
-            self._remove_id_from_list(event.id, EventRuntimeData.SELECTED_KEY)
+            self._remove_id_from_list(event.id, ViewProperties.SELECTED_KEY)
 
     def get_selected_event_ids(self):
-        if self.data.has_key(EventRuntimeData.SELECTED_KEY):
-            return self.data[EventRuntimeData.SELECTED_KEY]
+        if self.data.has_key(ViewProperties.SELECTED_KEY):
+            return self.data[ViewProperties.SELECTED_KEY]
         else:
             return []
         
     def has_balloon(self, event):
-        return self._id_in_list(event.id, EventRuntimeData.BALLOON_KEY)
+        return self._id_in_list(event.id, ViewProperties.BALLOON_KEY)
 
     def clear_balloons(self):
-        self._clear_key(EventRuntimeData.BALLOON_KEY)
+        self._clear_key(ViewProperties.BALLOON_KEY)
 
     def set_balloon(self, event, has_balloon=True):
         if has_balloon:
-            self._append_id_to_list(event.id, EventRuntimeData.BALLOON_KEY)
+            self._append_id_to_list(event.id, ViewProperties.BALLOON_KEY)
         else:
-            self._remove_id_from_list(event.id, EventRuntimeData.BALLOON_KEY)
+            self._remove_id_from_list(event.id, ViewProperties.BALLOON_KEY)
+        
+    def category_visible(self, category):
+        return not self._id_in_list(category.id, 
+                                    ViewProperties.CATEGORY_VISIBLE_KEY)
+    
+    def set_category_visible(self, category, is_visible=True):
+        if is_visible:
+            self._remove_id_from_list(category.id, 
+                                      ViewProperties.CATEGORY_VISIBLE_KEY)
+        else:
+            self._append_id_to_list(category.id, 
+                                    ViewProperties.CATEGORY_VISIBLE_KEY)
         
     def _append_id_to_list(self, id, list_key):
         if self.data.has_key(list_key):
@@ -138,7 +162,7 @@ class EventRuntimeData(object):
             self.data[list_key] = [id]
 
     def _remove_id_from_list(self, id, list_key):
-        if self.data.has_key(list_key):
+        if self.data.has_key(list_key) and id in self.data[list_key]:
             self.data[list_key].remove(id)
 
     def _id_in_list(self, id, list_key):
@@ -151,14 +175,3 @@ class EventRuntimeData(object):
             del (self.data[key])
         except:
             pass
-        
-
-class DrawingHints(object):
-    """
-    Store hints about how a drawer should draw a timeline.
-    """
-
-    def __init__(self):
-        self.period_selection = None
-        self.draw_legend = True
-        self.divider_position = 0.5
