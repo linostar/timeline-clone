@@ -260,6 +260,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
+        self.balloon_data = []     # List of (event, rect)
         # Calculate stuff later used for drawing
         events = [event for event in timeline.get_events(self.time_period)
                   if include_event(event)]
@@ -311,6 +312,12 @@ class DefaultDrawingAlgorithm(Drawer):
             if evt == event:
                 return rect
         return None
+
+    def is_balloon_at(self, event, x, y):
+        for (event_in_list, rect) in self.balloon_data:
+            if rect.Contains(wx.Point(x, y)) and event == event_in_list:
+                return True
+        return False
 
     def _calc_rects(self, events):
         """
@@ -711,10 +718,11 @@ class DefaultDrawingAlgorithm(Drawer):
             inner_rect_w += min(tw, MAX_TEXT_WIDTH)
             inner_rect_h = max(inner_rect_h, th)
         inner_rect_w = max(MIN_WIDTH, inner_rect_w)
-        x, y = self._draw_balloon_bg(self.dc, (inner_rect_w, inner_rect_h),
-                              (event_rect.X + event_rect.Width / 2,
-                               event_rect.Y),
-                              True)
+        bounding_rect, x, y = self._draw_balloon_bg(
+            self.dc, (inner_rect_w, inner_rect_h),
+            (event_rect.X + event_rect.Width / 2,
+            event_rect.Y),
+            True)
         if icon != None:
             self.dc.DrawBitmap(icon, x, y, False)
             x += iw + BALLOON_RADIUS
@@ -724,6 +732,11 @@ class DefaultDrawingAlgorithm(Drawer):
                 self.dc.DrawText(line, x, ty)
                 ty += font_h
             x += tw
+        # Write data so we know where the balloon was drawn
+        # Following two lines can be used when debugging the rectangle
+        #self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
+        #self.dc.DrawRectangleRect(bounding_rect)
+        self.balloon_data.append((event, bounding_rect))
 
     def _draw_balloon_bg(self, dc, inner_size, tip_pos, above):
         """
@@ -751,7 +764,7 @@ class DefaultDrawingAlgorithm(Drawer):
         Calculation of points starts at the tip of the arrow and continues
         clockwise around the ballon.
 
-        Return (x, y) which is at top of inner region.
+        Return (bounding_rect, x, y) where x and y is at top of inner region.
         """
         # Prepare path object
         gc = wx.GraphicsContext.Create(self.dc)
@@ -816,7 +829,12 @@ class DefaultDrawingAlgorithm(Drawer):
         gc.SetBrush(BRUSH)
         gc.DrawPath(path)
         # Return
-        return (left_x + BALLOON_RADIUS, top_y + BALLOON_RADIUS)
+        bx = left_x
+        by = top_y
+        bw = W + R + 1
+        bh = H + R + H_ARROW + 1
+        bounding_rect = wx.Rect(bx, by, bw, bh)
+        return (bounding_rect, left_x + BALLOON_RADIUS, top_y + BALLOON_RADIUS)
 
 
 def break_text(text, dc, max_width_in_px):

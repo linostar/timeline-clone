@@ -78,8 +78,13 @@ class Drawer(object):
         Return the rect for the given event or None if no event isn't found.
         """
         return None
-    
 
+    def is_balloon_at(self, event, x, y):
+        """
+        Return True if a balloon for event is drawn at (x, y), otherwise False.
+        """
+
+    
 class ViewProperties(object):
     """
     Store properties of a view.
