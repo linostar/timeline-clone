@@ -145,7 +145,7 @@ class TestFileTimeline(unittest.TestCase):
         now = datetime.datetime.now()
         zero_tp = TimePeriod(now, now)
         vp = ViewProperties()
-        vp.preferred_period = zero_tp
+        vp.displayed_period = zero_tp
         self.assertRaises(TimelineIOError, timeline.save_view_properties, vp)
 
 

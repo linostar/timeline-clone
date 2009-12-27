@@ -18,11 +18,13 @@
 
 import logging
 from datetime import datetime as dt
+from datetime import timedelta
 
 import wx
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_ANY
+from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import ViewProperties
 from timelinelib.drawing.utils import mult_timedelta
 from timelinelib.drawing import get_drawer
@@ -273,12 +275,10 @@ class DrawingArea(wx.Panel):
         self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
-        self.timeline = None
         self.printData = wx.PrintData()
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
-        self.view_properties = ViewProperties()
         logging.debug("Init done in DrawingArea")
 
     def print_timeline(self, event):
@@ -329,7 +329,9 @@ class DrawingArea(wx.Panel):
             self.timeline.register(self._timeline_changed)
             try:
                 timeline.load_view_properties(self.view_properties)
-                self.time_period = self.view_properties.preferred_period
+                if self.view_properties.displayed_period is None:
+                    default_tp = time_period_center(dt.now(), timedelta(days=30))
+                    self.view_properties.displayed_period = default_tp
             except TimelineIOError, e:
                 wx.GetTopLevelParent(self).handle_timeline_error(e)
                 return
@@ -340,7 +342,7 @@ class DrawingArea(wx.Panel):
             self.Disable()
 
     def show_hide_legend(self, show):
-        self.show_legend = show
+        self.view_properties.show_legend = show
         if self.timeline:
             self._redraw_timeline()
 
@@ -348,7 +350,7 @@ class DrawingArea(wx.Panel):
         """Return currently displayed time period."""
         if self.timeline == None:
             raise Exception(_("No timeline set"))
-        return self.time_period
+        return self.view_properties.displayed_period
 
     def navigate_timeline(self, navigation_fn):
         """
@@ -367,7 +369,7 @@ class DrawingArea(wx.Panel):
         if self.timeline == None:
             raise Exception(_("No timeline set"))
         try:
-            navigation_fn(self.time_period)
+            navigation_fn(self.view_properties.displayed_period)
             self._redraw_timeline()
             wx.GetTopLevelParent(self).SetStatusText("")
         except (ValueError, OverflowError), e:
@@ -594,7 +596,7 @@ class DrawingArea(wx.Panel):
         if evt.ControlDown():
             self._zoom_timeline(direction)
         else:
-            delta = mult_timedelta(self.time_period.delta(), direction / 10.0)
+            delta = mult_timedelta(self.view_properties.displayed_period.delta(), direction / 10.0)
             self._scroll_timeline(delta)
 
     def _window_on_key_down(self, evt):
@@ -651,8 +653,6 @@ class DrawingArea(wx.Panel):
         _mark_selection     Processing flag indicating ongoing selection of a
                             time period
         timeline            The timeline currently handled by the application
-        time_period         The part of the timeline currently displayed in the
-                            drawing area
         drawing_algorithm   The algorithm used to draw the timeline
         bgbuf               The bitmap to which the drawing methods draw the
                             timeline. When the EVT_PAINT occurs this bitmap
@@ -664,18 +664,17 @@ class DrawingArea(wx.Panel):
         is_selecting        True when selecting with the mouse takes place
                             It is set True in mouse_has_moved and set False
                             in left_mouse_button_released.
-        show_balloons_on_hover Show ballons on mouse hoover without clicking
         """
         self._current_time = None
         self._mark_selection = False
         self.bgbuf = None
-        self.timeline = None
-        self.time_period = None
         self.drawing_algorithm = get_drawer()
         self.is_scrolling = False
         self.is_selecting = False
-        self.show_legend = config.get_show_legend()
-        self.show_balloons_on_hover = config.get_balloon_on_hover()
+        self.timeline = None
+        self.view_properties = ViewProperties()
+        self.view_properties.show_legend = config.get_show_legend()
+        self.view_properties.show_balloons_on_hover = config.get_balloon_on_hover()
 
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
@@ -696,13 +695,11 @@ class DrawingArea(wx.Panel):
             if self.timeline:
                 try:
                     self.view_properties.period_selection = period_selection
-                    self.view_properties.draw_legend = self.show_legend
                     self.view_properties.divider_position = (
                         self.divider_line_slider.GetValue())
                     self.view_properties.divider_position = (
                         float(self.divider_line_slider.GetValue()) / 100.0)
-                    self.drawing_algorithm.draw(memdc, self.time_period,
-                                                self.timeline,
+                    self.drawing_algorithm.draw(memdc, self.timeline,
                                                 self.view_properties)
                 except TimelineIOError, e:
                     wx.GetTopLevelParent(self).handle_timeline_error(e)
@@ -771,7 +768,7 @@ class DrawingArea(wx.Panel):
             
     def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
-        if self.show_balloons_on_hover:
+        if self.view_properties.show_balloons_on_hover:
             if event and not self.view_properties.is_selected(event):
                 self.event_just_hoverd = event    
                 self.timer = wx.Timer(self, -1)
@@ -854,7 +851,7 @@ class DrawingArea(wx.Panel):
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
     def balloon_visibility_changed(self, visible):
-        self.show_balloons_on_hover = visible
+        self.view_properties.show_balloons_on_hover = visible
         # When display on hovering is disabled we have to make sure 
         # that any visible balloon is removed.
         # TODO: Do we really need that?

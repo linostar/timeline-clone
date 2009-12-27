@@ -105,11 +105,6 @@ class DirTimeline(TimelineDB):
         pass
 
     def load_view_properties(self, view_properties):
-        if self.preferred_period is not None:
-            view_properties.preferred_period = self.preferred_period
-        else:
-            default_tp = time_period_center(datetime.now(), timedelta(days=30))
-            view_properties.preferred_period = default_tp
         for cat in self.categories:
             view_properties.set_category_visible(cat, cat.visible)
 
@@ -128,7 +123,6 @@ class DirTimeline(TimelineDB):
         we failed to read from the directory or ERROR_CORRUPT if the data we 
         read was not valid. A TimelineIOError will also be raised.
         """
-        self.preferred_period = None
         self.categories = []
         self.events = []
         if not os.path.exists(self.path): 
@@ -167,8 +161,6 @@ class DirTimeline(TimelineDB):
         for cat in self.categories:
             cat.color = self._color_from_range(color_ranges[cat.name])
             cat.name = "." + cat.name[prefix_len:]
-        self.preferred_period = time_period_center(datetime.now(),
-                                                   timedelta(days=30))
 
     def _event_from_path(self, path):
         stat = os.stat(path)

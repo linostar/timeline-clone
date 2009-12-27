@@ -239,7 +239,7 @@ class DefaultDrawingAlgorithm(Drawer):
         ew = self.metrics.calc_width(time_period)
         return ew > PERIOD_THRESHOLD
 
-    def draw(self, dc, time_period, timeline, view_properties):
+    def draw(self, dc, timeline, view_properties):
         """
         Implement the drawing interface.
 
@@ -254,14 +254,14 @@ class DefaultDrawingAlgorithm(Drawer):
             return True
         # Store data so we can use it in other functions
         self.dc = dc
-        self.time_period = time_period
-        self.metrics = Metrics(dc, time_period, view_properties.divider_position)
+        self.time_period = view_properties.displayed_period
+        self.metrics = Metrics(dc, self.time_period, view_properties.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
         # Calculate stuff later used for drawing
-        events = [event for event in timeline.get_events(time_period)
+        events = [event for event in timeline.get_events(self.time_period)
                   if include_event(event)]
         self._calc_rects(events)
         self._calc_strips()
@@ -270,7 +270,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self._draw_period_selection(view_properties.period_selection)
         self._draw_bg()
         self._draw_events(view_properties)
-        if view_properties.draw_legend:
+        if view_properties.show_legend:
             self._draw_legend(self._extract_categories())
         self._draw_ballons(view_properties)
         # Make sure to delete this one

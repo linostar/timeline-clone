@@ -390,7 +390,7 @@ class MainFrame(wx.Frame):
         event = self.timeline.get_first_event()
         if event:
             start = event.time_period.start_time
-            delta = self.main_panel.drawing_area.time_period.delta()
+            delta = self.main_panel.drawing_area.view_properties.displayed_period.delta()
             end   = start + delta 
             margin_delta = delta / 24
             self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
@@ -399,7 +399,7 @@ class MainFrame(wx.Frame):
         event = self.timeline.get_last_event()
         if event:
             end = event.time_period.end_time
-            delta = self.main_panel.drawing_area.time_period.delta()
+            delta = self.main_panel.drawing_area.view_properties.displayed_period.delta()
             start = end - delta
             margin_delta = delta / 24
             self._navigate_timeline(lambda tp: tp.update(start, end, 
@@ -585,7 +585,6 @@ class MainFrame(wx.Frame):
         """
         if self.timeline:
             try:
-                self.main_panel.drawing_area.view_properties.preferred_period = self._get_time_period()
                 self.timeline.save_view_properties(self.main_panel.drawing_area.view_properties)
             except TimelineIOError, e:
                 _display_error_message(e.message, self)

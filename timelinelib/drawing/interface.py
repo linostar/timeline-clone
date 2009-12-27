@@ -26,14 +26,14 @@ class Drawer(object):
     Draw timeline onto a device context and provide information about drawing.
     """
 
-    def draw(self, dc, time_period, timeline, view_properties):
+    def draw(self, dc, timeline, view_properties):
         """
         Draw a representation of a timeline.
 
-        The dc is used to do the actual drawing. The time period suggests which
-        period should be visualized. The timeline is used to get the events to
-        visualize. The view properties contains information like which events
-        are selected in the view we are drawing for.
+        The dc is used to do the actual drawing. The timeline is used to get
+        the events to visualize. The view properties contains information like
+        which events are selected in the view we are drawing for and what
+        period is currently displayed.
 
         When the dc is temporarily stored in a class variable such as self.dc,
         this class variable must be deleted before the draw method ends.
@@ -82,22 +82,22 @@ class Drawer(object):
 
 class ViewProperties(object):
     """
-    Store non-persistent information about events.
+    Store properties of a view.
 
-    TODO: how to handle a method like `get_selected`? Should it return a list
-          of id numbers or a list of events?
+    Some timeline databases support storing some of these view properties
+    together with the data.
     """
 
-    SELECTED_KEY = 0
     BALLOON_KEY = 1
-    CATEGORY_VISIBLE_KEY = 2
 
     def __init__(self):
         self.data = {}
+        self.selected_event_ids = []
+        self.hidden_categories = []
         self.period_selection = None
-        self.draw_legend = True
+        self.show_legend = True
         self.divider_position = 0.5
-        self.preferred_period = None
+        self.displayed_period = None
 
     def filter_events(self, events):
         def event_visible(event):
@@ -108,22 +108,19 @@ class ViewProperties(object):
         return [e for e in events if event_visible(e)]
 
     def is_selected(self, event):
-        return self._id_in_list(event.id, ViewProperties.SELECTED_KEY)
+        return event.id in self.selected_event_ids
 
     def clear_selected(self):
-        self._clear_key(ViewProperties.SELECTED_KEY)
+        self.selected_event_ids = []
 
     def set_selected(self, event, is_selected=True):
-        if is_selected:
-            self._append_id_to_list(event.id, ViewProperties.SELECTED_KEY)
-        else:
-            self._remove_id_from_list(event.id, ViewProperties.SELECTED_KEY)
+        if is_selected == True and not event.id in self.selected_event_ids:
+            self.selected_event_ids.append(event.id)
+        elif is_selected == False and event.id in self.selected_event_ids:
+            self.selected_event_ids.remove(event.id)
 
     def get_selected_event_ids(self):
-        if self.data.has_key(ViewProperties.SELECTED_KEY):
-            return self.data[ViewProperties.SELECTED_KEY]
-        else:
-            return []
+        return self.selected_event_ids[:]
         
     def has_balloon(self, event):
         return self._id_in_list(event.id, ViewProperties.BALLOON_KEY)
@@ -138,16 +135,13 @@ class ViewProperties(object):
             self._remove_id_from_list(event.id, ViewProperties.BALLOON_KEY)
         
     def category_visible(self, category):
-        return not self._id_in_list(category.id, 
-                                    ViewProperties.CATEGORY_VISIBLE_KEY)
+        return not category.id in self.hidden_categories
     
     def set_category_visible(self, category, is_visible=True):
-        if is_visible:
-            self._remove_id_from_list(category.id, 
-                                      ViewProperties.CATEGORY_VISIBLE_KEY)
-        else:
-            self._append_id_to_list(category.id, 
-                                    ViewProperties.CATEGORY_VISIBLE_KEY)
+        if is_visible == True and category.id in self.hidden_categories:
+            self.hidden_categories.remove(category.id)
+        elif is_visible == False and not category.id in self.hidden_categories:
+            self.hidden_categories.append(category.id)
         
     def _append_id_to_list(self, id, list_key):
         if self.data.has_key(list_key):

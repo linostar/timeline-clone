@@ -163,18 +163,14 @@ class FileTimeline(TimelineDB):
             self._notify(STATE_CHANGE_CATEGORY)
 
     def load_view_properties(self, view_properties):
-        if self.preferred_period != None:
-            view_properties.preferred_period = self.preferred_period
-        else:
-            default_tp = time_period_center(datetime.now(), timedelta(days=30))
-            view_properties.preferred_period = default_tp
+        view_properties.displayed_period = self.preferred_period
         for category in self.categories:
             view_properties.set_category_visible(category, category.visible)
             
     def save_view_properties(self, view_properties):
-        if not view_properties.preferred_period.is_period():
+        if not view_properties.displayed_period.is_period():
             raise TimelineIOError(_("Preferred period must be > 0."))
-        self.preferred_period = view_properties.preferred_period
+        self.preferred_period = view_properties.displayed_period
         for category in self.categories:
             category.visible = view_properties.category_visible(category)
         self._save_data()
