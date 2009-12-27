@@ -782,10 +782,7 @@ class DrawingArea(wx.Panel):
         self.redraw_balloons(self.event_just_hoverd)
    
     def redraw_balloons(self, event):
-        if event:
-            self.view_properties.set_balloon(event)
-        else:    
-            self.view_properties.clear_balloons()
+        self.view_properties.hovered_event = event
         self._redraw_timeline()
         
     def _mark_selected_minor_strips(self, current_x):

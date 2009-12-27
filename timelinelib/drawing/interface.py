@@ -88,10 +88,9 @@ class ViewProperties(object):
     together with the data.
     """
 
-    BALLOON_KEY = 1
-
     def __init__(self):
-        self.data = {}
+        self.sticky_balloon_event_ids = []
+        self.hovered_event = None
         self.selected_event_ids = []
         self.hidden_categories = []
         self.period_selection = None
@@ -113,6 +112,19 @@ class ViewProperties(object):
     def clear_selected(self):
         self.selected_event_ids = []
 
+    def event_is_hovered(self, event):
+        return (self.hovered_event is not None and
+                event.id == self.hovered_event.id)
+
+    def event_has_sticky_balloon(self, event):
+        return event.id in self.sticky_balloon_event_ids
+
+    def set_event_has_sticky_balloon(self, event, has_sticky=True):
+        if has_sticky == True and not event.id in self.sticky_balloon_event_ids:
+            self.sticky_balloon_event_ids.append(event.id)
+        elif has_sticky == False and event.id in self.sticky_balloon_event_ids:
+            self.sticky_balloon_event_ids.remove(event.id)
+
     def set_selected(self, event, is_selected=True):
         if is_selected == True and not event.id in self.selected_event_ids:
             self.selected_event_ids.append(event.id)
@@ -122,18 +134,6 @@ class ViewProperties(object):
     def get_selected_event_ids(self):
         return self.selected_event_ids[:]
         
-    def has_balloon(self, event):
-        return self._id_in_list(event.id, ViewProperties.BALLOON_KEY)
-
-    def clear_balloons(self):
-        self._clear_key(ViewProperties.BALLOON_KEY)
-
-    def set_balloon(self, event, has_balloon=True):
-        if has_balloon:
-            self._append_id_to_list(event.id, ViewProperties.BALLOON_KEY)
-        else:
-            self._remove_id_from_list(event.id, ViewProperties.BALLOON_KEY)
-        
     def category_visible(self, category):
         return not category.id in self.hidden_categories
     
@@ -142,25 +142,3 @@ class ViewProperties(object):
             self.hidden_categories.remove(category.id)
         elif is_visible == False and not category.id in self.hidden_categories:
             self.hidden_categories.append(category.id)
-        
-    def _append_id_to_list(self, id, list_key):
-        if self.data.has_key(list_key):
-            if not id in self.data[list_key]:
-                self.data[list_key].append(id)
-        else:        
-            self.data[list_key] = [id]
-
-    def _remove_id_from_list(self, id, list_key):
-        if self.data.has_key(list_key) and id in self.data[list_key]:
-            self.data[list_key].remove(id)
-
-    def _id_in_list(self, id, list_key):
-        if self.data.has_key(list_key):
-            return id in self.data[list_key]
-        return False
-
-    def _clear_key(self, key):
-        try:
-            del (self.data[key])
-        except:
-            pass

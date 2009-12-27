@@ -676,7 +676,8 @@ class DefaultDrawingAlgorithm(Drawer):
         for (event, rect) in self.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
-                if view_properties.has_balloon(event):
+                if (view_properties.event_is_hovered(event) or
+                    view_properties.event_has_sticky_balloon(event)):
                     self._draw_ballon(event, rect)
 
     def _draw_ballon(self, event, event_rect):
