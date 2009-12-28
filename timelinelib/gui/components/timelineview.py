@@ -455,7 +455,12 @@ class DrawingArea(wx.Panel):
                     if stick:
                         self._redraw_timeline()
                     else:
-                        self.redraw_balloons(None)
+                        # This makes the sticky balloon unsticky
+                        if self.view_properties.show_balloons_on_hover:
+                            self.redraw_balloons(eventWithBalloon)
+                        # This makes the balloon disapear
+                        else:
+                            self.redraw_balloons(None)
                 else:        
                     posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
                                                               evt.m_controlDown)
@@ -475,12 +480,14 @@ class DrawingArea(wx.Panel):
         if self.timeline.is_read_only():
             return
         self.context_menu_event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
-        if self.context_menu_event == None:
+        if self.context_menu_event is None:
             return
-        menu_definitions = (
-            ("Edit", self._context_menu_on_edit_event),
-            ("Delete", self._context_menu_on_delete_event),
-        )
+        menu_definitions = [
+            (_("Edit"), self._context_menu_on_edit_event),
+            (_("Delete"), self._context_menu_on_delete_event),
+        ]
+        if self.context_menu_event.has_data():
+            menu_definitions.append((_("Sticky Balloon"), self._context_menu_on_sticky_balloon_event))
         menu = wx.Menu()
         for menu_definition in menu_definitions:
             text, method = menu_definition
@@ -497,6 +504,10 @@ class DrawingArea(wx.Panel):
     def _context_menu_on_delete_event(self, evt):
         self.context_menu_event.selected = True
         self._delete_selected_events()
+
+    def _context_menu_on_sticky_balloon_event(self, evt):
+        self.view_properties.set_event_has_sticky_balloon(self.context_menu_event, has_sticky=True)
+        self._redraw_timeline()
     
     def _window_on_left_dclick(self, evt):
         """
@@ -683,10 +694,6 @@ class DrawingArea(wx.Panel):
         self.view_properties = ViewProperties()
         self.view_properties.show_legend = config.get_show_legend()
         self.view_properties.show_balloons_on_hover = config.get_balloon_on_hover()
-        
-        self.remove_hoverd_balloon = False
-        self.timer2_done = True
-        self.event_just_hoverd = None
         self.timer1_running = False
         self.timer2_running = False
         
@@ -820,7 +827,6 @@ class DrawingArea(wx.Panel):
                 # Otherwise Timer-2 is started.
                 if self.balloon_event != self.view_properties.hovered_event:
                     #print "Timer-2 Started"
-                    self.timer2_done = False         
                     self.timer2 = wx.Timer(self, -1)
                     self.Bind(wx.EVT_TIMER, self._on_balloon_timer2, self.timer2)
                     self.timer2.Start(milliseconds=500, oneShot=True)
@@ -853,7 +859,6 @@ class DrawingArea(wx.Panel):
     
     def redraw_balloons(self, event):
         self.view_properties.hovered_event = event
-        self.event_just_hoverd = event
         self._redraw_timeline()
         
     def _mark_selected_minor_strips(self, current_x):
