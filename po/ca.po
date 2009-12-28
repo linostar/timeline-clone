@@ -1,16 +1,16 @@
-# Swedish translations for the Timeline application.
-# Copyright (C) 2009 ORGANIZATION
-# This file is distributed under the same license as the Timeline package.
-# Roger Lindberg <roger@rolidata.se>, 2009.
+# Catalan translation for thetimelineproj
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# This file is distributed under the same license as the thetimelineproj package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Timeline 0.4.0\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: thetimelineproj\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-11-22 16:26+0100\n"
-"PO-Revision-Date: 2009-12-01 22:26+0000\n"
-"Last-Translator: rogerlindberg <roger@rolidata.se>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2009-12-15 02:56+0000\n"
+"Last-Translator: BennyBeat <Unknown>\n"
+"Language-Team: Catalan <ca@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,27 +19,27 @@ msgstr ""
 
 #: src/drawing_default.py:136
 msgid "Week"
-msgstr "Vecka"
+msgstr "Setmana"
 
 #: src/help_pages.py:36
 msgid "Help contents"
-msgstr "Hjälpinnehåll"
+msgstr "Continguts de l'ajuda"
 
 #: src/help_pages.py:57
 msgid "Questions and answers"
-msgstr "Frågor och svar"
+msgstr "Preguntes més freqüents"
 
 #: src/help_pages.py:57
 msgid "Concepts"
-msgstr "Begrepp"
+msgstr "Conceptes"
 
 #: src/help_pages.py:57
 msgid "Tasks"
-msgstr "Aktiviteter"
+msgstr "Tasques"
 
 #: src/help_pages.py:61 src/gui.py:258 src/gui.py:673
 msgid "Getting started tutorial"
-msgstr "Kom igång övning"
+msgstr "Inicia el manual d'ajuda"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -100,65 +100,69 @@ msgid ""
 "Hoovering an event will display the full description in the status bar.\n"
 msgstr ""
 "\n"
-"Tanken är att visa händelser på en tidsaxel och ha möjlighet att snabbt "
-"ändra dentidsperiod som visas. En händelse vara vid en specifik tidpunkt "
-"eller sträcka sig över en tidsperiod.\n"
+"La idea és mostrar els esdeveniments en una línia de temps i poder canviar "
+"ràpidament el període de temps el qual és mostrat. Un esdeveniment pot ser "
+"en un punt específic al temps o una franja durant un període.\n"
 "\n"
-"HelpFigure(events)\n"
 "\n"
-"HelpFigure(zoom)\n"
+"HelpFigure (events)\n"
 "\n"
-"För att skapa en ny tidsaxel, välj *Ny* från *Fil* menyn och ange ett namn "
-"på filen som ska skapas i dialogrutan som då visas. Det är i denna fil som "
-"all information om registrerade händelser lagras. Nästa gång du startar "
-"Timeline så kan du välja att öppna samma fil igen. I programmets titelrad "
-"visas alltid vilken Timeline-file som för tillfället är öppnad.\n"
+"HelpFigure (zoom)\n"
 "\n"
-"För att skapa en ny händelse som inträffat vid en viss tidpunkt så "
-"dubbelklickar du på önskad tid på tidsaxeln. Då öppnas en dialogruta i "
-"vilken du får fylla i egenskaper för händelsen. Klicka op *OK* knappen för "
-"att spara informationen. Nu kommer händelsen att visas ovanför den "
-"horisontala linjen, 'fastknuten' till den tidpunkt på tidsaxeln som du "
-"dubbelklickade på.\n"
+"Per crear una nova línia de temps, seleccioneu *Nou* des del menú *Arxiu*, i "
+"inseriu un nom per l'arxiu que desitgeu crear al quadre de diàleg que "
+"s'obre. Aquest serà el nom de l'arxiu emprat per a emmagatzemar tota la "
+"informació respecte a aquest esdeveniment. La propera vegada que inicieu "
+"línia de temps podreu triar si desitgeu obrir el mateix arxiu altre vegada. "
+"A la barra del títol sempre si us mostrarà la línia de temps que actualment "
+"teniu oberta.\n"
 "\n"
-"För att skapa en händelse som sträcker sig över  en tidsperiod så håller du "
-"*Ctrl* knappen nedtrycjt samtidigt som du drar musen över den perid som du "
-"vill ha. Återigen visas dialogrutan dör du får fylla i egenskaper för "
-"händelsen och på vanligt sätt så sparas informationen när du klickar på *OK* "
-"knappen. Händelsen kommer nu att visas under den horisontella linjen "
-"utsträckt över den period som du valt.\n"
+"Per afegir un nou esdeveniment en un punt específic en el temps, feu doble "
+"clic en algun lloc de la línia de temps. Això us obrirà un quadre de diàleg "
+"on podeu inserir un text per a l'esdeveniment. Feu clic al botó *D'acord* "
+"per a desar l'esdeveniment. Aleshores veureu un nou esdeveniment just al "
+"punt d'on heu clicat a sobre de la línia horitzontal.\n"
 "\n"
-"Händelser som intraäffar vid en specifik tidpunkt visas alltid ovanför "
-"mittlinjen och periodhändelser visas alltid under. Detta innebär att man "
-"genom att zooma tid in eller ut på tidaxeln kan få perider som blir små att "
-"hamn ovanför mittlinjen och tvärtom.\n"
+"Per a afegir un esdeveniment que s'estén durant un període, mantingueu "
+"premuda la tecla *Control*, cliqueu i arrossegueu amb el ratolí per sobre de "
+"la barra horitzontal per a marcar un període, i després deixeu anar el "
+"ratolí i la tecla premuda. Això us obrirà altre quadre de diàleg on podeu "
+"inserir un text per a aquest període.  Després, prement  *D'acord* veureu un "
+"nou esdeveniment ocupant tota la zona per on heu arrossegat el ratolí.\n"
 "\n"
-"För att ändra informationen om en händelse så dubbelklickar man på den för "
-"att få upp dialogrutan för ändring.\n"
+"Els esdeveniments a un punt específic en el temps sempre es mostraran a "
+"sobre de la línia horitzontal. Els esdeveniments que s'estenen durant un "
+"període, però, es mostraran a sota de la línia horitzontal la major part del "
+"temps. Tanmateix, si aquest període és massa petit per a ser mostrat en uns "
+"quants píxels de la pantalla, llavors es mostrarà per sobre de la línia "
+"horitzontal (emprant la vista ampliada s'ajustarà per sobre o per sota de la "
+"línia horitzontal).\n"
 "\n"
-"För att markera en händelse så enkelklickar man på den. För att markera "
-"flera händelser på samma gång så håller man *Ctrl* knappen nedtryckt "
-"samtidigt som man klickar på de händelser man vill markera. För att radera "
-"en eller flera händelser så markerar man dom först och trycker sedna  "
-"*Delete* knappen.\n"
+"Per a editar un esdeveniment, feu doble clic a sobre d'ell i si us obrirà un "
+"quadre de diàleg.\n"
 "\n"
-"Vrid på musjhulet så förstår du hur man skjuter tidsaxeln fram och "
-"tillbaka.\n"
+"Per a triar un esdeveniment, feu clic a sobre d'ell. Si voleu seleccionar "
+"diversos, llavors mantingueu premuda la tecla *Control* mentre marqueu els "
+"esdeveniments. Per a esborrar els esdeveniments seleccionats, premeu la "
+"tecla *Suprimeix*.\n"
 "\n"
-"Håll ner vänster musknapp och dra musen över skärmen så ser du att detta är "
-"ett alternativt sätt att skjuta tidsaxeln på.\n"
+"Amb la roda del ratolí veureu que podeu desplaçar-vos per la línia de "
+"temps.\n"
 "\n"
-"Vrid på musjhulet samtidigt som du håller *Ctrl* tangenten nedtrykt så ser "
-"du hur man zoomar in och ut.\n"
+"També podeu prémer el botó esquerre del ratolí i arrossegar-lo per a "
+"desplaçar-vos per la línia de temps.\n"
 "\n"
-"Den vertikala röda linjen som syns på skärmen markerar nuvarande tid\n"
+"Podreu emprar la vista ampliada si mantingueu premuda la tecla *Control* "
+"mentre llisqueu la roda del ratolí.\n"
 "\n"
-"Om man rör musen över en händelse så visas information om händelsen på "
-"statusraden i nedre delan av applikationen.\n"
+"La línia vermella vertical indica el temps actual.\n"
+"\n"
+"En analitzar un esdeveniment, es mostrarà la descripció completa a la barra "
+"d'estat.\n"
 
 #: src/help_pages.py:100
 msgid "Where is the save button?"
-msgstr "Var är sparaknappen?"
+msgstr "On està el botó Desa?"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -172,12 +176,12 @@ msgid ""
 "needed.\n"
 msgstr ""
 "\n"
-"Det finns ingen sparaknapp. Timeline sparar automatiskt ditt data när det "
-"behövs.\n"
+"No existeix aquest botó, d'ençà que la línia de temps desa automàticament "
+"qualsevol canvi que efectueu sobre ella.\n"
 
 #: src/help_pages.py:112
 msgid "Timeline"
-msgstr "Tidslinje"
+msgstr "Línia de temps"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -195,17 +199,17 @@ msgid ""
 "If you are interested in such a feature, please get in touch.\n"
 msgstr ""
 "\n"
-"Timeline visar datum enligt denGregorianksa kalendern på x-axeln. För "
-"närvarande är datum begränsade till åren 10 - 9999.\n"
+"La línia de temps mostra les dates acord a en l'eix-x del calendari "
+"Gregorià. Actualment les dates estan limitades entre l'any 10 i any 9999.\n"
 "\n"
-"Det är tänkt att framtida versioner ska kunna ha olika typer av tidslinjer "
-"så att man t.ex. skulle kunna definiera en tid som antal minuter från en "
-"viss starttid. Om du är intresserad av en sådan möjlighet, så hör gärna av "
-"dig.\n"
+"En futures versions es podria donar suport a diferents tipus de línies de "
+"temps per a que, per exemple, podeu especificar el temps en termes amb un "
+"nombre de minuts des de l'hora d'inici. Si n'esteu interessats en aquesta "
+"característica, si us plau contacteu amb nosaltres.\n"
 
 #: src/help_pages.py:127
 msgid "Events"
-msgstr "Händelser"
+msgstr "Esdeveniments"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -221,14 +225,14 @@ msgid ""
 "period.\n"
 msgstr ""
 "\n"
-"En händelse är den bastyp som används för att representera information på "
-"tidslinjen. Den måste specificera var på tidslinjen den ska placeras (när "
-"händelsen inträffar). Detta can vara antingen en specifik tidpunkt eller en "
-"tidsperiod.\n"
+"Un esdeveniment és el tipus de data bàsica per a la representació de la "
+"informació a la línia de temps. Cal especificar a la línia de temps on s'ha "
+"de posar (quan succeeix aquest esdeveniment). Això pot ser un punt de temps "
+"específic o bé un període de temps.\n"
 
 #: src/help_pages.py:140
 msgid "Categories"
-msgstr "Kategorier"
+msgstr "Categories"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -243,13 +247,13 @@ msgid ""
 "same background color.\n"
 msgstr ""
 "\n"
-"Kategorier används för att gruppera händelser. En händelse kan tillhöra en "
-"och endast en kategori. Alla händelser som tillhör samma kategori visas med "
-"den bakgrundsfärg som man valt för kategorin.\n"
+"Les categories són emprades per a agrupar esdeveniments. Un esdeveniment "
+"només pot pertànyer a una categoria. Tots els esdeveniments que pertanyen a "
+"la mateixa categoria es mostren amb el mateix color de fons.\n"
 
 #: src/help_pages.py:153
 msgid "Backups"
-msgstr "Säkerhetskopior"
+msgstr "Còpies de seguretat"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -272,21 +276,23 @@ msgid ""
 "that you take regular backups of your timeline file.\n"
 msgstr ""
 "\n"
-"Timeline försöker att se till att data som sparas om en tidslinje aldrig går "
-"förlorad. Ett steg i den processen är att skapa en backup av ditt Timeline-"
-"data varje gång som nytt data ska sparas. Backupen sparas i en fil med samma "
-"namn som originalfilen men med ett \"~\" tillagt sist i filnamnet\n"
+"La línia de temps posa els màxims esforços per tal de garantir que les dades "
+"desades mai no es perdin. Un pas en aquest procés és crear a cada instant "
+"una còpia de seguretat de la seva línia de temps abans de desar les noves "
+"dades. La còpia de seguretat es desa en un arxiu amb el mateix nom que "
+"l'original però amb el símbol \"~\" annexat al nom.\n"
 "\n"
-"Om du får ett fel som säger att det är problem med att läsa ditt Timeline-"
-"data så är det möjligt att ditt data blivit korrupt. I så fall kan du "
-"använda backupen för att få tillbaka ditt data.\n"
+"Si obteniu un error dient que hi havia un problema de lectura de les dades a "
+"la línia de temps, hi ha la possibilitat que les seves dades siguin "
+"corruptes. En aquest cas, podreu recuperar les dades mitjançant la còpia de "
+"seguretat.\n"
 "\n"
-"Om du vill vara extra säker på att inte förlora data så rekommnederar vi att "
-"du själv tar regelbundna backupper av dina Timeline-filer.\n"
+"Si voleu la certesa que mai perdreu cap dada, us recomanem que feu còpies de "
+"seguretat de la vostra línia de temps.\n"
 
 #: src/help_pages.py:170 src/gui.py:1608
 msgid "Restore file from backup"
-msgstr "Återskapa fil från säkerhetskopia"
+msgstr "Restaura des d'una còpia de seguretat"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -300,12 +306,13 @@ msgid ""
 "name of the backed up file.\n"
 msgstr ""
 "\n"
-"För att återskapa en fil från säkerhetskopia, ta bort \"~\" i namnet på "
-"säkerhetskopian.\n"
+"Per a restaurar un arxiu de la línia de temps des d'una còpia de seguretat, "
+"només heu d'esborrar el símbol \"~\" al nom de l'arxiu de la còpia de "
+"seguretat.\n"
 
 #: src/help_pages.py:183
 msgid "Create event"
-msgstr "Skapa händelse"
+msgstr "Crea un esdeveniment"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -322,17 +329,10 @@ msgid ""
 "- Press the *Ctrl* key, thereafter hold *left* mouse button down on the "
 "timeline, drag the mouse and release it.\n"
 msgstr ""
-"\n"
-"Dialogen *Skapa Händelse* kan öppnas på följande sätt:\n"
-"\n"
-"- Välj *Tidslinje* - *Skapa Händelse* från menyn\n"
-"- Dubbelklicka med den *vänstra* musknappen på tidslinjen\n"
-"- Håll *Ctrl* tangenten, håll *vänster* musknapp nedtryckt, dra den över "
-"tidslinjen och släpp den.\n"
 
 #: src/help_pages.py:200
 msgid "Edit event"
-msgstr "Redigera händelse"
+msgstr "Edita l'esdeveniment"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -345,12 +345,12 @@ msgid ""
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
 msgstr ""
 "\n"
-"Dialogen \"Uppdatera Händelse\" öppnas genom att dubbelklicka på en "
-"händelse.\n"
+"El diàleg *Edita l'esdeveniment* pot ser obert en clicar a sobre de "
+"qualsevol esdeveniment.\n"
 
 #: src/help_pages.py:213
 msgid "Selecting events"
-msgstr "Markera händelser"
+msgstr "Seleccionant esdeveniments"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -367,17 +367,10 @@ msgid ""
 "\n"
 "HelpFigure(selected_event)\n"
 msgstr ""
-"\n"
-"För att markera en händelse, klicka på den. För att markera flera händelser, "
-"håll nere *Ctrl* och klicka på händelser.\n"
-"\n"
-"Markerade händelser visas med en streckad bakgrund:\n"
-"\n"
-"HelpFigure(selected_event)\n"
 
 #: src/help_pages.py:229
 msgid "Delete event"
-msgstr "Ta bort händelse"
+msgstr "Esborra un esdeveniment"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -391,12 +384,12 @@ msgid ""
 "be deleted at the same time.\n"
 msgstr ""
 "\n"
-"För att ta bort en händelse, markera den och tryck på *Del*. Flera händelser "
-"kan tas bort samtidigt.\n"
+"Podeu emprar la funció *Esborra un esdeveniment* prement la tecla "
+"*Suprimeix*. Es poden esborrar diversos esdeveniments al mateix temps.\n"
 
 #: src/help_pages.py:242
 msgid "Will associated events be deleted when I delete a category?"
-msgstr "Kommer associerade händelser tas bort när jag tar bort en kategori?"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -408,13 +401,10 @@ msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
 msgstr ""
-"\n"
-"Nej. Händelserna kommer fortfarande att vara kvar men de kommer inte att "
-"tillhöra någon kategori.\n"
 
 #: src/help_pages.py:254 src/gui.py:212 src/gui.py:1886
 msgid "Edit categories"
-msgstr "Redigera kategorier"
+msgstr "Edita les categories"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -430,17 +420,10 @@ msgid ""
 "The visibility of categories can also be edited in the sidebar (*View* > "
 "*Sidebar*).\n"
 msgstr ""
-"\n"
-"Kategorier kan redigerasi dialogen \"Redigera Kategorier\" (*Timeline* > * "
-"Redigera Kategorier*). För att ändra data för en kategori så dubbelklickar "
-"du på den.\n"
-"\n"
-"Om befintliga kategorier ska visas  i sidopanelen eller inte är valfritt "
-"(*Visa* > *Sidopanel*)\n"
 
 #: src/help_pages.py:269 src/gui.py:260
 msgid "Contact"
-msgstr "Kontakta"
+msgstr "Contacteu amb nosaltres"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -455,14 +438,14 @@ msgid ""
 "list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)\n"
 msgstr ""
 "\n"
-"Om du har fler frågor om Timeline eller om du vill komma i kontakt med "
-"användare och utvecklare av Timeline, skicka ett email till mailinglistan "
-"för användare: <thetimelineproj-user@lists.sourceforge.net>. (Vänligen skriv "
-"på engelska.)\n"
+"Si teniu més dubtes quant a Timeline, o si voleu contactar amb altres "
+"usuaris i desenvolupadors de Timeline, envieu-nos un correu electrònic a la "
+"nostra llista de correu: <thetimelineproj-user@lists.sourceforge.net>. (En "
+"Anglès, si us plau...)\n"
 
 #: src/help_pages.py:281
 msgid "Why is Timeline not available in my language?"
-msgstr "Varför finns inte Timeline på mitt språk?"
+msgstr "Per què Timeline no està disponible al meu idioma?"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -476,22 +459,22 @@ msgid ""
 "contribute translations you are very much welcome to contact us.\n"
 msgstr ""
 "\n"
-"Timeline utvecklas och översätts av volontärer. Om du vill hjälpa till att "
-"översätta så är du mycket välkommen att kontakta oss.\n"
+"Timeline està desenvolupat i traduït per voluntaris. Si voleu contribuir amb "
+"les traduccions, sigueu benvinguts i contacteu amb nosaltres.\n"
 
 #: src/data_file.py:150
 msgid "Preferred period must be > 0."
-msgstr "Önskad period måste vara > 0."
+msgstr "El període preferit ha de ser > 0."
 
 #: src/data_file.py:183
 #, python-format
 msgid "Unable to read timeline data from '%s'."
-msgstr "Kunde inte läsa tidslinjedata från '%s'."
+msgstr "No s'ha pogut llegir la informació de la línia de temps '%s'."
 
 #: src/data_file.py:190
 #, python-format
 msgid "Unable to read from file '%s'."
-msgstr "Kan inte läsa från filen '%s'."
+msgstr "No s'ha pogut llegir la informació d l'arxiu '%s'."
 
 #: src/data_file.py:342
 msgid ""
@@ -499,260 +482,256 @@ msgid ""
 "writing the timeline before. This to ensure that your data will not be "
 "overwritten."
 msgstr ""
-"Sparafunktionen har inaktiverats på grund av att det var problem att läsa "
-"eller skriva tidslinjedata förut. Detta för att inte skriva över ditt data."
 
 #: src/data_file.py:358 src/data_file.py:366
 msgid "Unable to save timeline data."
-msgstr "Kan inte spara tidslinjedata."
+msgstr "No s'ha pogut desar la informació de la línia de temps."
 
 #: src/data_file.py:359 src/data_file.py:367
 msgid ""
 "If data was corrupted, check out the backed up file that was created when "
 "the timeline was last saved."
 msgstr ""
-"Om data har blivit korrupt så kolla in backupfilen som skapades då "
-"tidslinjen senast sparades."
 
 #: src/data_file.py:377
 #, python-format
 msgid "Unable to create backup to '%s'."
-msgstr "Kan inte skriva en backup till '%s'."
+msgstr "No s'ha pogut crear una còpia de seguretat a '%s'."
 
 #: src/gui.py:114
 #, python-format
 msgid "File '%s' does not exist."
-msgstr "Filen '%s' finns inte."
+msgstr "L'arxiu '%s' no existeix."
 
 #: src/gui.py:118
 msgid "Create Event"
-msgstr "Skapa Händelse"
+msgstr "Crea un esdeveniment"
 
 #: src/gui.py:129
 msgid "Edit Event"
-msgstr "Redigera Händelse"
+msgstr "Edita un esdeveniment"
 
 #: src/gui.py:170
 msgid "Create a new timeline"
-msgstr "Skapa en ny tidslinje"
+msgstr "Crea una nova linia de temps"
 
 #: src/gui.py:172
 msgid "Open an existing timeline"
-msgstr "Öppna en befintlig tidslinje"
+msgstr "Obre una línia de temps existent"
 
 #: src/gui.py:174
 msgid "Open &Recent"
-msgstr "Öppna S&enaste"
+msgstr "Obre &recent"
 
 #: src/gui.py:178
 msgid "Page Set&up..."
-msgstr "Sid&inställning..."
+msgstr "Config&uració de la pàgina"
 
 #: src/gui.py:179
 msgid "Setup page for printing"
-msgstr "Definiera utskriftsformat"
+msgstr "Configuració d'imprssió"
 
 #: src/gui.py:181
 msgid "Print Preview"
-msgstr "Förhandsgranska"
+msgstr "Previsualització de la impressió"
 
 #: src/gui.py:184
 msgid "Print"
-msgstr "Skriv ut"
+msgstr "Imprimeix"
 
 #: src/gui.py:187
 msgid "&Export to Image..."
-msgstr "&Exportera till Bild..."
+msgstr "&Exporta a una imatge..."
 
 #: src/gui.py:188
 msgid "Export the current view to a PNG image"
-msgstr "Exportera nuvarande vy till en PNG-bild"
+msgstr "Exporta la vista actual a un arxiu PNG"
 
 #: src/gui.py:191
 msgid "Exit the program"
-msgstr "Avsluta programmet"
+msgstr "Tanca l'aplicació"
 
 #: src/gui.py:208
 msgid "Create &Event..."
-msgstr "Skapa &Händelse..."
+msgstr "Crea un &esdeveniment..."
 
 #: src/gui.py:209
 msgid "Create a new event"
-msgstr "Skapa en ny händelse"
+msgstr "Crea un nou esdeveniment"
 
 #: src/gui.py:211
 msgid "Edit &Categories"
-msgstr "Redigera &Kategorier"
+msgstr "Edita les &categories"
 
 #: src/gui.py:220
 msgid "&Sidebar\tCtrl+I"
-msgstr "&Sidopanel\tCtrl+I"
+msgstr ""
 
 #: src/gui.py:223
 msgid "&Legend"
-msgstr "&Teckenförklaring"
+msgstr "&Llegenda"
 
 #: src/gui.py:227
 msgid "&Balloons on hover"
-msgstr "&Ballonger vid hovring"
+msgstr ""
 
 #: src/gui.py:237
 msgid "Go to &Today\tCtrl+H"
-msgstr "Gå till &Idag\tCtrl+H"
+msgstr ""
 
 #: src/gui.py:238
 msgid "Go to D&ate...\tCtrl+G"
-msgstr "Gå till D&atum...\tCtrl+G"
+msgstr ""
 
 #: src/gui.py:240
 msgid "Backward\tPgUp"
-msgstr "Bakåt\tPgUp"
+msgstr "Enrere\tPgUp"
 
 #: src/gui.py:241
 msgid "Forward\tPgDn"
-msgstr "Framåt\tPgDn"
+msgstr "Endavant\tPgDn"
 
 #: src/gui.py:243
 msgid "Fit Year"
-msgstr "Anpassa År"
+msgstr "Mostra l'any"
 
 #: src/gui.py:244
 msgid "Fit Month"
-msgstr "Anpassa Månad"
+msgstr "Mostra el mesMos"
 
 #: src/gui.py:245
 msgid "Fit Day"
-msgstr "Anpassa Dag"
+msgstr "Mostra el dia"
 
 #: src/gui.py:255
 msgid "&Contents\tF1"
-msgstr "&Innehåll\tF1"
+msgstr "&Continguts\tF1"
 
 #: src/gui.py:267
 msgid "&File"
-msgstr "&Arkiv"
+msgstr "&Arxiu"
 
 #: src/gui.py:268
 msgid "&Edit"
-msgstr "&Redigera"
+msgstr "&Edita"
 
 #: src/gui.py:269
 msgid "&View"
-msgstr "&Visa"
+msgstr "&Visualitza"
 
 #: src/gui.py:270
 msgid "&Timeline"
-msgstr "&Tidslinje"
+msgstr "Línia de &temps"
 
 #: src/gui.py:271
 msgid "&Navigate"
-msgstr "&Navigera"
+msgstr "&Navega"
 
 #: src/gui.py:272
 msgid "&Help"
-msgstr "&Hjälp"
+msgstr "A&juda"
 
 #: src/gui.py:417
 msgid "Create Timeline"
-msgstr "Skapa Tidslinje"
+msgstr "Crea una línia de temps"
 
 #: src/gui.py:424
 msgid "The specified timeline already exists."
-msgstr "Den angivna tidslinjen finns redan."
+msgstr "La línia de temps especificada ja existeix."
 
 #: src/gui.py:425
 msgid "Opening timeline instead of creating new."
-msgstr "Öppnar tidslinje istället för att skapa ny."
+msgstr "Obre una línia de temps en comptes de crear una nova."
 
 #: src/gui.py:427
 msgid "Information"
-msgstr "Information"
+msgstr "Informació"
 
 #: src/gui.py:438
 msgid "Open Timeline"
-msgstr "Öppna Tidslinje"
+msgstr "Obre la línia de temps"
 
 #: src/gui.py:499
 msgid "Image files"
-msgstr "Bildfiler"
+msgstr "Arxius d'imatge"
 
 #: src/gui.py:500
 msgid "Export to Image"
-msgstr "Exportera till Bild"
+msgstr "Exporta a una imatge"
 
 #: src/gui.py:504
 #, python-format
 msgid "File '%s' exists. Overwrite?"
-msgstr "Filen '%s' finns redan. Vill du skriva över den?"
+msgstr "L'arxiu '%s' ja existeix. Voleu sobreescriure'l?"
 
 #: src/gui.py:536
 msgid "Timeline files"
-msgstr "Tidslinjefiler"
+msgstr "Arxius de línia de temps"
 
 #: src/gui.py:665
 msgid "No timeline opened."
-msgstr "Ingen tidslinje öppnad."
+msgstr "No hi ha cap línia de temps oberta"
 
 #: src/gui.py:670
 msgid "First time using Timeline?"
-msgstr "Första gången du använder Timeline?"
+msgstr "La primera vegada que empreu Timeline?"
 
 #: src/gui.py:1034
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
 msgstr ""
-"Det gick inte att skriva ut.\n"
-"Kontrollera så att din skrivare är inställd korrekt."
+"Hi ha hagut un problema en imprimir.\n"
+"Potser la teva impressora no està establerta correctament?"
 
 #: src/gui.py:1034
 msgid "Printing"
-msgstr "Utskrift"
+msgstr "S'està imprimint"
 
 #: src/gui.py:1048
 msgid "Print preview"
-msgstr "Förhandsgranska"
+msgstr "Previsualització de la impressió"
 
 #: src/gui.py:1091 src/gui.py:1109
 msgid "No timeline set"
-msgstr "Ingen tidslinje vald"
+msgstr "No s'ha establert cap línia de temps"
 
 #: src/gui.py:1357
 msgid "Center"
-msgstr "Centrera"
+msgstr "Centre"
 
 #: src/gui.py:1535
 #, python-format
 msgid "Are you sure to delete %d events?"
-msgstr "Vill du verkligen radera %d händelser?"
+msgstr "Realment voleu esborrar els esdeveniments %d ?"
 
 #: src/gui.py:1538 src/gui.py:2025
 msgid "Are you sure to delete?"
-msgstr "Är du säker på att du vill ta bort?"
+msgstr "Realment ho voleu esborrar?"
 
 #: src/gui.py:1605
 msgid "Relevant help topics:"
-msgstr "Relevanta hjälpavsnitt:"
+msgstr ""
 
 #: src/gui.py:1648
 msgid "Event Properties"
-msgstr "Egenskaper för Händelse"
+msgstr "Propietats de l'esdeveniment"
 
 #: src/gui.py:1654
 msgid "When:"
-msgstr "När:"
+msgstr "Quan:"
 
 #: src/gui.py:1657
 msgid "to"
-msgstr "till"
+msgstr "Fins a"
 
 #: src/gui.py:1670
 msgid "Period"
-msgstr "Period"
+msgstr "Període"
 
 #: src/gui.py:1674 src/gui.py:2177
 msgid "Show time"
-msgstr "Visa tid"
+msgstr "Mostra l'hora"
 
 #: src/gui.py:1681
 msgid "Text:"
@@ -760,15 +739,15 @@ msgstr "Text:"
 
 #: src/gui.py:1686
 msgid "Category:"
-msgstr "Kategori:"
+msgstr "Categoria:"
 
 #: src/gui.py:1711
 msgid "Add more events after this one"
-msgstr "Lägg till fler händelser efter denna"
+msgstr "Afegeix més esdeveniments després de crear aquest"
 
 #: src/gui.py:1740
 msgid "End must be > Start"
-msgstr "Slut måste vara > Start"
+msgstr "El final ha de ser posterior a l'inici"
 
 #: src/gui.py:1741
 msgid "Text"
@@ -776,219 +755,157 @@ msgstr "Text"
 
 #: src/gui.py:1791 src/gui.py:1978
 msgid "Add Category"
-msgstr "Lägg till Kategori"
+msgstr "Afegeix una categoria"
 
 #: src/gui.py:1885
 msgid "Add new"
-msgstr "Lägg till ny"
+msgstr "Afegeix nou"
 
 #: src/gui.py:1913
 msgid "Edit Categories"
-msgstr "Redigera Kategorier"
+msgstr ""
 
 #: src/gui.py:1964
 msgid "Edit Category"
-msgstr "Redigera Kategori"
+msgstr "Edita la categoria"
 
 #: src/gui.py:2069
 msgid "Name:"
-msgstr "Namn:"
+msgstr "Nom:"
 
 #: src/gui.py:2072
 msgid "Color:"
-msgstr "Färg:"
+msgstr "Color:"
 
 #: src/gui.py:2075
 msgid "Visible:"
-msgstr "Synlig:"
+msgstr "Visible:"
 
 #: src/gui.py:2090
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
-msgstr "Ogiltigt kategorinamn '%s'. Får inte vara blankt."
+msgstr "El nom de la categoria'%s' no és vàlid. No pot estar buit."
 
 #: src/gui.py:2094
 #, python-format
 msgid "Category name '%s' already in use."
-msgstr "Kategorinamnet '%s' används redan."
+msgstr "El nom de la categoria'%s'  ja està en ús."
 
 #: src/gui.py:2129
 msgid "Preferences"
-msgstr "Inställningar"
+msgstr "Preferències"
 
 #: src/gui.py:2136
 msgid "General"
-msgstr "Allmänt"
+msgstr "General"
 
 #: src/gui.py:2138
 msgid "Open most recent timeline on startup"
-msgstr "Öppna senaste tidslinje vid start"
+msgstr "Mostra la línia de temps més recent en obrir l'aplicació."
 
 #: src/gui.py:2171
 msgid "Go to Date"
-msgstr "Gå till Datum"
+msgstr "Vés a una data"
 
 #: src/gui.py:2277
 msgid "Help"
-msgstr "Hjälp"
+msgstr "Ajuda"
 
 #: src/gui.py:2320
 msgid "Go to home page"
-msgstr "Gå till startsidan"
+msgstr "Vés a la pàgina d'inici"
 
 #: src/gui.py:2327
 msgid "Go back one page"
-msgstr "Gå bakåt en sida"
+msgstr "Retrocedeix una pàgina"
 
 #: src/gui.py:2333
 msgid "Go forward one page"
-msgstr "Gå framåt en sida"
+msgstr "Avança una pàgina"
 
 #: src/gui.py:2419
 msgid "Page not found"
-msgstr "Sidan hittades inte"
+msgstr "No s'ha trobat la pàgina"
 
 #: src/gui.py:2420
 #, python-format
 msgid "Could not find page '%s'."
-msgstr "Kunde inte hitta sidan '%s'."
+msgstr "No s'ha trobat la pàgina '%s'."
 
 #: src/gui.py:2476
 #, python-format
 msgid "Field '%s' can't be empty."
-msgstr "Fältet '%s' får inte vara tomt."
+msgstr "El camp '%s' no pot estar buit"
 
 #: src/gui.py:2482
 msgid "Error"
-msgstr "Fel"
+msgstr "S'ha produït un error"
 
 #: src/gui.py:2488
 msgid "Question"
-msgstr "Fråga"
+msgstr "Pregunta"
 
 #: src/help.py:64
 #, python-format
 msgid "Search results for '%s'"
-msgstr "Sökresultat för '%s'"
+msgstr "Resultats de la cerca per '%s'"
 
 #: src/help.py:122
 msgid "Related pages"
-msgstr "Relaterade sidor"
+msgstr "Pàgines relevants"
 
 #: src/data.py:242
 msgid "Description"
-msgstr "Beskrivning"
+msgstr "Descripció"
 
 #: src/data.py:269
 #, python-format
 msgid "Images will be scaled to fit inside a %ix%i box."
-msgstr "Bilder kommer skalas ner så att de inte är större än %ix%i."
+msgstr ""
+"Les imatges s'escapçaran inside a %ix%i per a poder mostrar-se dins el "
+"requadre."
 
 #: src/data.py:293
 msgid "Select Icon"
-msgstr "Välj Ikon"
+msgstr "Trieu una icona"
 
 #: src/data.py:323
 msgid "Icon"
-msgstr "Ikon"
+msgstr "Icona"
 
 #: src/data.py:474
 msgid "Start time can't be after year 9989"
-msgstr "Starttiden kan inte vara efter år 9989"
+msgstr "El temps d'inici no pot ser superior a l'any 9989"
 
 #: src/data.py:475
 msgid "Start time can't be before year 10"
-msgstr "Starttiden kan inte vara före år 10"
+msgstr "El temps d'inici no pot ser inferior a l'any 10"
 
 #: src/data.py:478
 msgid "End time can't be after year 9989"
-msgstr "Sluttiden kan inte vara efter år 9989"
+msgstr "El temps de finalització no pot ser superior a l'any 9989"
 
 #: src/data.py:479
 msgid "End time can't be before year 10"
-msgstr "Sluttiden kan inte vara före år 10"
+msgstr "El temps de finalització no pot ser inferior a l'any 10"
 
 #: src/data.py:483
 msgid "Start time can't be after end time"
-msgstr "Starttiden kan inte vara efter sluttiden"
+msgstr "El temps d'inici no pot ser posterior al de finalització"
 
 #: src/data.py:519
 msgid "Can't zoom wider than 120 years"
-msgstr "Kan inte zooma bredare än 120 år"
+msgstr "No es pot ampliar més de 120 anys"
 
 #: src/data.py:521
 msgid "Can't zoom deeper than 1 hour"
-msgstr "Kan inte zooma djupare än 1 timme"
+msgstr "No es pot emprar la vista ampliada més d'una hora"
 
 #: src/data.py:709
 #, python-format
 msgid "Unable to open timeline '%s'."
-msgstr "Kan inte öppna tidslinje '%s'."
+msgstr "No es pot obrir la línia de temps '%s'."
 
 #: src/data.py:710
 msgid "Unknown format."
-msgstr "Okänt format."
-
-#~ msgid "Export the current view to a PNG or BMP image"
-#~ msgstr "Exportera nuvarande vy till en PNG- eller BMP-bild"
-
-#~ msgid "Could not locate manual at '%s'."
-#~ msgstr "Kan inte hitta manualen i '%s'."
-
-#~ msgid "Timeline User Manual"
-#~ msgstr "Timeline Användarmanual"
-
-#, python-format
-#~ msgid ""
-#~ "Unable to read timeline data from '%s'. Enable logging (see user manual for "
-#~ "instructions how to) and open the timeline again to get more information "
-#~ "about the problem."
-#~ msgstr ""
-#~ "Kan inte läsa tidslinjedata från '%s'. Slå på loggning (se användarmanualen "
-#~ "för instruktioner hur) och öppna tidslinjen igen för att få mer information "
-#~ "om problemet."
-
-#~ msgid "Unknown format"
-#~ msgstr "Okänt format"
-
-#~ msgid "&New...\tCtrl+N"
-#~ msgstr "&Ny...\tCtrl+N"
-
-#~ msgid "&Open...\tCtrl+O"
-#~ msgstr "&Öppna...\tCtrl+O"
-
-#~ msgid "&Quit\tCtrl+Q"
-#~ msgstr "&Avsluta\tCtrl+Q"
-
-#~ msgid "&About"
-#~ msgstr "&Om"
-
-#~ msgid "Close on OK"
-#~ msgstr "Stäng vid OK"
-
-#~ msgid "Start:"
-#~ msgstr "Start:"
-
-#~ msgid "End:"
-#~ msgstr "Slut:"
-
-#~ msgid "Add"
-#~ msgstr "Lägg till"
-
-#~ msgid "&Delete"
-#~ msgstr "Ta &bort"
-
-#~ msgid "Close"
-#~ msgstr "Stäng"
-
-#~ msgid "&OK"
-#~ msgstr "&OK"
-
-#~ msgid "&Cancel"
-#~ msgstr "&Avbryt"
-
-#~ msgid "Start"
-#~ msgstr "Start"
-
-#~ msgid "End"
-#~ msgstr "Slut"
+msgstr "Format desconegut."
