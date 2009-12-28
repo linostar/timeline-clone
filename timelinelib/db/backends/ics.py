@@ -57,7 +57,7 @@ class IcsTimeline(TimelineDB):
         return True
 
     def supported_event_data(self):
-        return ["description"]
+        return []
 
     def search(self, search_string):
         return generic_event_search(self._get_events(), search_string)
@@ -96,10 +96,10 @@ class IcsTimeline(TimelineDB):
     def delete_category(self, category_or_id):
         pass
 
-    def get_preferred_period(self):
-        return time_period_center(datetime.now(), timedelta(days=30))
+    def load_view_properties(self, view_properties):
+        pass
 
-    def set_preferred_period(self, period):
+    def save_view_properties(self, view_properties):
         pass
 
     def _get_events(self, decider_fn=None):
@@ -142,7 +142,7 @@ class IcsTimeline(TimelineDB):
     def _save_data(self):
         #def save(file):
         #    file.write(self.cal.as_string())
-        #safe_write(self.path, NONE, save)
+        #safe_write(self.path, None, save)
         pass
 
 
@@ -151,8 +151,10 @@ def extract_start_end(vevent):
     start = ensure_datetime(vevent.decoded("dtstart"))
     if vevent.has_key("dtend"):
         end = ensure_datetime(vevent.decoded("dtend"))
-    else:
+    elif vevent.has_key("duration"):
         end = start + vevent.decoded("duration")
+    else:
+        end = ensure_datetime(vevent.decoded("dtstart"))
     return (start, end)
 
 
@@ -162,4 +164,4 @@ def ensure_datetime(d):
     elif isinstance(d, date):
         return datetime(d.year, d.month, d.day)
     else:
-        raise Exception("Unknown date")
+        raise TimelineIOError("Unknown date.")
