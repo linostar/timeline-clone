@@ -16,7 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os.path
+
 import wx
+
+from timelinelib.paths import ICONS_DIR
 
 
 class SearchBar(wx.ToolBar):
@@ -37,7 +41,10 @@ class SearchBar(wx.ToolBar):
     def _create_gui(self):
         icon_size = (16, 16)
         # Close button
-        close_bmp = wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, wx.ART_TOOLBAR,
+        if 'wxMSW' in wx.PlatformInfo:
+            close_bmp = wx.Bitmap(os.path.join(ICONS_DIR, "close.png"))
+        else:
+            close_bmp = wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, wx.ART_TOOLBAR,
                                              icon_size)
         self.AddLabelTool(wx.ID_CLOSE, "", close_bmp, shortHelp="")
         self.Bind(wx.EVT_TOOL, self._btn_close_on_click, id=wx.ID_CLOSE)
