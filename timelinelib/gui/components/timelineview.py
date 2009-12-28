@@ -448,9 +448,17 @@ class DrawingArea(wx.Panel):
                 return
             # No resizing or moving of events...
             if not self.timeline.is_read_only():
-                posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
-                                                          evt.m_controlDown)
-                if not posAtEvent:
+                eventWithBalloon = self.drawing_algorithm.balloon_at(evt.m_x, evt.m_y)
+                if eventWithBalloon: 
+                    stick = not self.view_properties.event_has_sticky_balloon(eventWithBalloon)
+                    self.view_properties.set_event_has_sticky_balloon(eventWithBalloon, has_sticky=stick)
+                    if stick:
+                        self._redraw_timeline()
+                    else:
+                        self.redraw_balloons(None)
+                else:        
+                    posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
+                                                              evt.m_controlDown)
                     if evt.m_controlDown:
                         self._set_select_period_cursor()
             evt.Skip()
@@ -675,7 +683,13 @@ class DrawingArea(wx.Panel):
         self.view_properties = ViewProperties()
         self.view_properties.show_legend = config.get_show_legend()
         self.view_properties.show_balloons_on_hover = config.get_balloon_on_hover()
-
+        
+        self.remove_hoverd_balloon = False
+        self.timer2_done = True
+        self.event_just_hoverd = None
+        self.timer1_running = False
+        self.timer2_running = False
+        
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
         self.SetBackgroundColour(wx.WHITE)
@@ -767,22 +781,79 @@ class DrawingArea(wx.Panel):
             self._reset_text_in_statusbar()
             
     def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
-        event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
-        if self.view_properties.show_balloons_on_hover:
-            if event and not self.view_properties.is_selected(event):
-                self.event_just_hoverd = event    
-                self.timer = wx.Timer(self, -1)
-                self.Bind(wx.EVT_TIMER, self.on_balloon_timer, self.timer)
-                self.timer.Start(milliseconds=500, oneShot=True)
-            else:
-                self.event_just_hoverd = None
-                self.redraw_balloons(None)
-                
-    def on_balloon_timer(self, event):
-        self.redraw_balloons(self.event_just_hoverd)
-   
+        """
+        Show or hide balloons depending on current situation.
+           self.current_event: The event pointed to, or None
+           self.balloon_event: The event that belongs to the balloon pointed
+                               to, or None.
+        """
+        # The balloon functionality is not enabled
+        if not self.view_properties.show_balloons_on_hover:
+            return
+        self.current_event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
+        self.balloon_event = self.drawing_algorithm.balloon_at(xpixelpos, ypixelpos)
+        # No balloon handling for selected events
+        if self.current_event and self.view_properties.is_selected(self.current_event):
+            return
+        # Timer-1 is running. We have to wait for it to finish before doing anything
+        if self.timer1_running:
+            return
+        # Timer-2 is running. We have to wait for it to finish before doing anything
+        if self.timer2_running:
+            return
+        # We are pointing to an event... 
+        if self.current_event is not None:
+            # We are not pointing on a balloon...
+            if self.balloon_event is None:
+                # We have no balloon, so we start Timer-1
+                if self.view_properties.hovered_event != self.current_event:
+                    #print "Timer-1 Started ", self.current_event
+                    self.timer1 = wx.Timer(self, -1)
+                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer1, self.timer1)
+                    self.timer1.Start(milliseconds=500, oneShot=True)
+                    self.timer1_running = True
+        # We are not pointing to any event....        
+        else:
+            # We have a balloon...
+            if self.view_properties.hovered_event is not None:
+                # When we are moving within our 'own' balloon we dont't start Timer-2
+                # Otherwise Timer-2 is started.
+                if self.balloon_event != self.view_properties.hovered_event:
+                    #print "Timer-2 Started"
+                    self.timer2_done = False         
+                    self.timer2 = wx.Timer(self, -1)
+                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer2, self.timer2)
+                    self.timer2.Start(milliseconds=500, oneShot=True)
+                    
+    def _on_balloon_timer1(self, event):
+        """
+        Timer-1 has timed out, which means we are ready to display the balloon
+        for the current event.
+        """
+        self.timer1_running = False
+        self.redraw_balloons(self.current_event)
+
+    def _on_balloon_timer2(self, event):
+        """
+        Timer-2 has timed out, which means we are ready to delete the current
+        balloon if we are no longer pointing to the current event or it's
+        balloon.
+        """
+        self.timer2_running = False
+        hevt = self.view_properties.hovered_event
+        # If there is no balloon visible we don't have to do anything
+        if hevt is None:
+            return
+        cevt = self.current_event
+        bevt = self.balloon_event
+        # If the visible balloon doesn't belong to the event pointed to
+        # we remove the ballloon.
+        if hevt != cevt and hevt != bevt: 
+            self.redraw_balloons(None)
+    
     def redraw_balloons(self, event):
         self.view_properties.hovered_event = event
+        self.event_just_hoverd = event
         self._redraw_timeline()
         
     def _mark_selected_minor_strips(self, current_x):
