@@ -51,6 +51,9 @@ from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.components.search import SearchBar
 
 
+STATUS_READ_ONLY = 1
+
+
 class MainFrame(wx.Frame):
     """
     The main frame of the application.
@@ -90,6 +93,11 @@ class MainFrame(wx.Frame):
             config.append_recently_opened(input_file_abs)
             self._update_open_recent_submenu()
             self._display_timeline(timeline)
+            if timeline.is_read_only():
+                self.GetStatusBar().SetStatusText(_("read-only"),
+                                                  STATUS_READ_ONLY)
+            else:
+                self.GetStatusBar().SetStatusText("", STATUS_READ_ONLY)
 
     def open_timeline_if_exists(self, path):
         if os.path.exists(path):
@@ -147,6 +155,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
         # The status bar
         self.CreateStatusBar()
+        self.GetStatusBar().SetFieldsCount(2)
+        self.GetStatusBar().SetStatusWidths([-1, 200])
         # The menu
         # File menu
         self.mnu_file = wx.Menu()
