@@ -26,6 +26,7 @@ import logging
 import calendar
 from datetime import timedelta
 from datetime import datetime
+import os.path
 
 import wx
 
@@ -36,6 +37,7 @@ from timelinelib.drawing.utils import darken_color
 from timelinelib.gui.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import local_to_unicode
+from timelinelib.paths import ICONS_DIR
 
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
@@ -313,11 +315,12 @@ class DefaultDrawingAlgorithm(Drawer):
                 return rect
         return None
 
-    def is_balloon_at(self, event, x, y):
+    def balloon_at(self, x, y):
+        event = None
         for (event_in_list, rect) in self.balloon_data:
-            if rect.Contains(wx.Point(x, y)) and event == event_in_list:
-                return True
-        return False
+            if rect.Contains(wx.Point(x, y)): 
+                event = event_in_list
+        return event
 
     def _calc_rects(self, events):
         """
@@ -680,14 +683,21 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _draw_ballons(self, view_properties):
         """Draw ballons on selected events that has 'description' data."""
+        top_event = None
+        top_rect = None
         for (event, rect) in self.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
-                if (view_properties.event_is_hovered(event) or
-                    view_properties.event_has_sticky_balloon(event)):
-                    self._draw_ballon(event, rect)
+                sticky = view_properties.event_has_sticky_balloon(event) 
+                if (view_properties.event_is_hovered(event) or sticky):
+                    if not sticky:
+                        top_event, top_rect = event, rect
+                    self._draw_ballon(event, rect, sticky)
+        # Make the unsticky balloon appear on top            
+        if top_event is not None:
+            self._draw_ballon(top_event, top_rect, False)
 
-    def _draw_ballon(self, event, event_rect):
+    def _draw_ballon(self, event, event_rect, sticky):
         """Draw one ballon on a selected event that has 'description' data."""
         # Constants
         MAX_TEXT_WIDTH = 200
@@ -722,7 +732,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc, (inner_rect_w, inner_rect_h),
             (event_rect.X + event_rect.Width / 2,
             event_rect.Y),
-            True)
+            True, sticky)
         if icon != None:
             self.dc.DrawBitmap(icon, x, y, False)
             x += iw + BALLOON_RADIUS
@@ -738,7 +748,7 @@ class DefaultDrawingAlgorithm(Drawer):
         #self.dc.DrawRectangleRect(bounding_rect)
         self.balloon_data.append((event, bounding_rect))
 
-    def _draw_balloon_bg(self, dc, inner_size, tip_pos, above):
+    def _draw_balloon_bg(self, dc, inner_size, tip_pos, above, sticky):
         """
         Draw the balloon background leaving inner_size for content.
 
@@ -828,6 +838,13 @@ class DefaultDrawingAlgorithm(Drawer):
         gc.SetPen(PEN)
         gc.SetBrush(BRUSH)
         gc.DrawPath(path)
+        # Draw the pin
+        if sticky:
+            pin = wx.Bitmap(os.path.join(ICONS_DIR, "stickypin.png"))
+        else:
+            pin = wx.Bitmap(os.path.join(ICONS_DIR, "unstickypin.png"))
+        self.dc.DrawBitmap(pin, p7.x -5, p6.y + 5, True)
+                
         # Return
         bx = left_x
         by = top_y
