@@ -4,31 +4,45 @@ Release Actions
 Describes the actions to make a source release.
 
 Binary releases are created from source releases. Scripts in our other
-repositories (win, and deb) are used for those purposes.
+repositories (win and deb) are used for those purposes.
 
-Before
-------
+Feature freeze
+--------------
 
-  * Check that README, CHANGES, and INSTALL are up to date
-  * Import translations from Launchpad
-  * Check that authors are correct in AUTHORS and timelinelib/about.py
-  * Run unit tests
+When all features for a version has been implemented in main we move the
+development over to stable. Features for the next version can continue to be
+developed in main.
 
-Under
------
+  1. Move main repo to stable repo
+     1. `cd stable`
+     2. `hg pull ../main`
+     3. `hg push`
+  2. Notify developers of repo change
+  3. Change versions numbers in main to denote the next version
 
-  * Update version.py so that version number is correct and DEV=False
-    * Commit the above change
-  * Run python tools/release.py
-    * Look out for warning messages at the end 
-  * Try running the unzipped release to make a basic check that it works
-  * Tag with x.y.x
-  * Create a downloadable release on SF
+Stabilize stable
+----------------
+
+  1. Import translations from Launchpad
+  2. Check that README, CHANGES, and INSTALL are up to date
+  3. Run `python tools/release.py check` to find possible errors
+
+Last changes
+------------
+
+  1. Update version.py so that DEV=False and commit
+  2. Run `python tools/release.py` (look out for warning messages at the end)
+  3. Try running the unzipped release to make a basic check that it works
+  4. Tag with x.y.z
+
+If there will be a bugfix release, the first change after the tag-commit should
+be one were the version number is changed so that z is increased and DEV=True.
 
 After
 -----
 
+  * Create a downloadable release on SF
+  * Create binary packages
+  * Write news on SF and Freshmeat
   * Close the milestone in Trac
   * Add the new version in Trac 
-  * Change version in version.py to next version, DEV=True
-  * Write news on SF and Freshmeat
