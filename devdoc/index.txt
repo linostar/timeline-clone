@@ -17,8 +17,9 @@ Content
 
 Understanding the source code:
 
+  * [System Overview](system-overview.txt)
+  * [API Documentation](api/index.html) - Generate with `scons api`
   * See `hacking.svg` in this directory
-  * TODO: Write short intro to the code if there is a need
 
 Contributing changes to the source code:
 
@@ -42,3 +43,11 @@ Notes:
 Documented problems and solutions:
 
   * [wx Dialogs](wx-dialogs.txt)
+
+Documented discussions/decisions:
+
+  * [Refactoring for 0.8.0 release](refactoring-080.txt)
+  
+Test and checklists:
+
+  * [Checklist for test of menu actions](menu-test-cases-list.txt)  

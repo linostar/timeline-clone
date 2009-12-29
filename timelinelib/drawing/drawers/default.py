@@ -17,10 +17,7 @@
 
 
 """
-Implements the default algorithm for drawing a timeline.
-
-The drawing interface is implemented in the `DefaultDrawingAlgorithm` class in
-the `draw` method.
+Implements a Drawer that draws the default timeline view.
 """
 
 
@@ -29,15 +26,18 @@ import logging
 import calendar
 from datetime import timedelta
 from datetime import datetime
-from gui import sort_categories
+import os.path
 
 import wx
 
-import drawing
-from drawing import DrawingAlgorithm
-from drawing import Metrics
-from data import TimePeriod
-from data import local_to_unicode
+from timelinelib.drawing.interface import Drawer
+from timelinelib.drawing.utils import Metrics
+from timelinelib.drawing.utils import get_default_font
+from timelinelib.drawing.utils import darken_color
+from timelinelib.gui.utils import sort_categories
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.utils import local_to_unicode
+from timelinelib.paths import ICONS_DIR
 
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
@@ -218,12 +218,13 @@ class StripHour(Strip):
         return time + timedelta(hours=1)
 
 
-class DefaultDrawingAlgorithm(DrawingAlgorithm):
+class DefaultDrawingAlgorithm(Drawer):
 
     def __init__(self):
         # Fonts and pens we use when drawing
-        self.header_font = drawing.get_default_font(12, True)
-        self.small_text_font = drawing.get_default_font(8)
+        self.header_font = get_default_font(12, True)
+        self.small_text_font = get_default_font(8)
+        self.small_text_font_bold = get_default_font(8, True)
         self.red_solid_pen = wx.Pen(wx.Color(255,0, 0), 1, wx.SOLID)
         self.black_solid_pen = wx.Pen(wx.Color(0, 0, 0), 1, wx.SOLID)
         self.darkred_solid_pen = wx.Pen(wx.Color(200, 0, 0), 1, wx.SOLID)
@@ -239,9 +240,8 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
     def event_is_period(self, time_period):
         ew = self.metrics.calc_width(time_period)
         return ew > PERIOD_THRESHOLD
-    
-    def draw(self, dc, time_period, events, period_selection=None,
-             legend=False,  divider_line_slider=None):
+
+    def draw(self, dc, timeline, view_properties):
         """
         Implement the drawing interface.
 
@@ -249,25 +249,33 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         and strips are calculated and then they are drawn. Positions can also
         be used later to answer questions like what event is at position (x, y).
         """
+        def include_event(event):
+            if (event.category is not None and not
+                view_properties.category_visible(event.category)):
+                return False
+            return True
         # Store data so we can use it in other functions
         self.dc = dc
-        self.time_period = time_period
-        self.metrics = Metrics(dc, time_period, divider_line_slider)
+        self.time_period = view_properties.displayed_period
+        self.metrics = Metrics(dc, self.time_period, view_properties.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
+        self.balloon_data = []     # List of (event, rect)
         # Calculate stuff later used for drawing
+        events = [event for event in timeline.get_events(self.time_period)
+                  if include_event(event)]
         self._calc_rects(events)
         self._calc_strips()
         # Perform the actual drawing
-        if period_selection:
-            self._draw_period_selection(period_selection)
+        if view_properties.period_selection:
+            self._draw_period_selection(view_properties.period_selection)
         self._draw_bg()
-        self._draw_events()
-        if legend:
-            self._draw_legend(self._extract_categories(events))
-        self._draw_ballons()
+        self._draw_events(view_properties)
+        if view_properties.show_legend:
+            self._draw_legend(self._extract_categories())
+        self._draw_ballons(view_properties)
         # Make sure to delete this one
         del self.dc
 
@@ -307,13 +315,13 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 return rect
         return None
 
-    def get_selected_events(self):
-        selected_events = []
-        for (event, rect) in self.event_data:
-            if event.selected:
-                selected_events.append(event)
-        return selected_events
- 
+    def balloon_at(self, x, y):
+        event = None
+        for (event_in_list, rect) in self.balloon_data:
+            if rect.Contains(wx.Point(x, y)): 
+                event = event_in_list
+        return event
+
     def _calc_rects(self, events):
         """
         Calculate rectangles for all events.
@@ -370,6 +378,11 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             if h > 0:
                 rect.Y += movedir * h
             else:
+                break
+            # Don't prevent overlap if rect is outside screen
+            if movedir == 1 and rect.Y > self.metrics.height:
+                break
+            if movedir == -1 and (rect.Y + rect.Height) < 0:
                 break
 
     def _intersection_height(self, rect):
@@ -436,9 +449,14 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         """
         major_strip, minor_strip = self._choose_strip()
         # Minor strips
-        self.dc.SetFont(self.small_text_font)
         self.dc.SetPen(self.black_dashed_pen)
         for tp in self.minor_strip_data:
+            # Chose font
+            if (isinstance(minor_strip, StripDay) and
+                tp.start_time.weekday() in (5, 6)):
+                self.dc.SetFont(self.small_text_font_bold)
+            else:
+                self.dc.SetFont(self.small_text_font)
             # Divider line
             x = self.metrics.calc_x(tp.end_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
@@ -492,9 +510,9 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             x = self.metrics.calc_x(now_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
 
-    def _extract_categories(self, events):
+    def _extract_categories(self):
         categories = []
-        for event in events:
+        for (event, rect) in self.event_data:
             cat = event.category
             if cat and not cat in categories:
                 categories.append(cat)
@@ -542,7 +560,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         cur_y = self.metrics.height - height - OUTER_PADDING + INNER_PADDING
         for cat in categories:
             base_color = cat.color
-            border_color = drawing.darken_color(base_color)
+            border_color = darken_color(base_color)
             self.dc.SetBrush(wx.Brush(base_color, wx.SOLID))
             self.dc.SetPen(wx.Pen(border_color, 1, wx.SOLID))
             color_box_rect = (OUTER_PADDING + width - item_height -
@@ -552,7 +570,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
             cur_y = cur_y + item_height + INNER_PADDING
 
-    def _draw_events(self):
+    def _draw_events(self, view_properties):
         """Draw all event boxes and the text inside them."""
         self.dc.SetFont(self.small_text_font)
         self.dc.SetTextForeground((0, 0, 0))
@@ -582,11 +600,11 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
             # Draw selection and handles
-            if event.selected:
+            if view_properties.is_selected(event):
                 small_rect = wx.Rect(*rect)
                 small_rect.Deflate(1, 1)
                 border_color = self._get_border_color(event)
-                border_color = drawing.darken_color(border_color)
+                border_color = darken_color(border_color)
                 pen = wx.Pen(border_color, 1, wx.SOLID)
                 self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
                 self.dc.SetPen(pen)
@@ -639,7 +657,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
 
     def _get_border_color(self, event):
         base_color = self._get_base_color(event)
-        border_color = drawing.darken_color(base_color)
+        border_color = darken_color(base_color)
         return border_color
 
     def _get_box_pen(self, event):
@@ -654,7 +672,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
 
     def _get_box_indicator_brush(self, event):
         base_color = self._get_base_color(event)
-        darker_color = drawing.darken_color(base_color, 0.6)
+        darker_color = darken_color(base_color, 0.6)
         brush = wx.Brush(darker_color, wx.SOLID)
         return brush
 
@@ -663,15 +681,23 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         brush = wx.Brush(border_color, wx.BDIAGONAL_HATCH)
         return brush
 
-    def _draw_ballons(self):
+    def _draw_ballons(self, view_properties):
         """Draw ballons on selected events that has 'description' data."""
+        top_event = None
+        top_rect = None
         for (event, rect) in self.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
-                if event.draw_ballon:
-                    self._draw_ballon(event, rect)
+                sticky = view_properties.event_has_sticky_balloon(event) 
+                if (view_properties.event_is_hovered(event) or sticky):
+                    if not sticky:
+                        top_event, top_rect = event, rect
+                    self._draw_ballon(event, rect, sticky)
+        # Make the unsticky balloon appear on top            
+        if top_event is not None:
+            self._draw_ballon(top_event, top_rect, False)
 
-    def _draw_ballon(self, event, event_rect):
+    def _draw_ballon(self, event, event_rect, sticky):
         """Draw one ballon on a selected event that has 'description' data."""
         # Constants
         MAX_TEXT_WIDTH = 200
@@ -686,7 +712,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             inner_rect_w = iw
             inner_rect_h = ih
         # Text
-        self.dc.SetFont(drawing.get_default_font(8))
+        self.dc.SetFont(get_default_font(8))
         font_h = self.dc.GetCharHeight()
         (tw, th) = (0, 0)
         description = event.get_data("description")
@@ -702,10 +728,11 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
             inner_rect_w += min(tw, MAX_TEXT_WIDTH)
             inner_rect_h = max(inner_rect_h, th)
         inner_rect_w = max(MIN_WIDTH, inner_rect_w)
-        x, y = self._draw_balloon_bg(self.dc, (inner_rect_w, inner_rect_h),
-                              (event_rect.X + event_rect.Width / 2,
-                               event_rect.Y),
-                              True)
+        bounding_rect, x, y = self._draw_balloon_bg(
+            self.dc, (inner_rect_w, inner_rect_h),
+            (event_rect.X + event_rect.Width / 2,
+            event_rect.Y),
+            True, sticky)
         if icon != None:
             self.dc.DrawBitmap(icon, x, y, False)
             x += iw + BALLOON_RADIUS
@@ -715,8 +742,13 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
                 self.dc.DrawText(line, x, ty)
                 ty += font_h
             x += tw
+        # Write data so we know where the balloon was drawn
+        # Following two lines can be used when debugging the rectangle
+        #self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
+        #self.dc.DrawRectangleRect(bounding_rect)
+        self.balloon_data.append((event, bounding_rect))
 
-    def _draw_balloon_bg(self, dc, inner_size, tip_pos, above):
+    def _draw_balloon_bg(self, dc, inner_size, tip_pos, above, sticky):
         """
         Draw the balloon background leaving inner_size for content.
 
@@ -742,7 +774,7 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         Calculation of points starts at the tip of the arrow and continues
         clockwise around the ballon.
 
-        Return (x, y) which is at top of inner region.
+        Return (bounding_rect, x, y) where x and y is at top of inner region.
         """
         # Prepare path object
         gc = wx.GraphicsContext.Create(self.dc)
@@ -806,15 +838,20 @@ class DefaultDrawingAlgorithm(DrawingAlgorithm):
         gc.SetPen(PEN)
         gc.SetBrush(BRUSH)
         gc.DrawPath(path)
+        # Draw the pin
+        if sticky:
+            pin = wx.Bitmap(os.path.join(ICONS_DIR, "stickypin.png"))
+        else:
+            pin = wx.Bitmap(os.path.join(ICONS_DIR, "unstickypin.png"))
+        self.dc.DrawBitmap(pin, p7.x -5, p6.y + 5, True)
+                
         # Return
-        return (left_x + BALLOON_RADIUS, top_y + BALLOON_RADIUS)
-
-    def notify_events(self, notification, data):
-        """
-        Send notification to all visible events
-        """
-        for (event, rect) in self.event_data:
-            event.notify(notification, data)
+        bx = left_x
+        by = top_y
+        bw = W + R + 1
+        bh = H + R + H_ARROW + 1
+        bounding_rect = wx.Rect(bx, by, bw, bh)
+        return (bounding_rect, left_x + BALLOON_RADIUS, top_y + BALLOON_RADIUS)
 
 
 def break_text(text, dc, max_width_in_px):

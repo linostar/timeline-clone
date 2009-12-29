@@ -3,7 +3,9 @@ syntax: glob
 .sconsign.dblite
 po/timeline.pot
 *.pyc
-src/tags
+timelinelib/tags
 *.swp
 *.mo
 devdoc/*.html
+devdoc/api
+icalendar/

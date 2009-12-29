@@ -35,15 +35,23 @@ APPLICATION_NAME = "Timeline"
 COPYRIGHT_TEXT = "Copyright (C) 2009 The %s Authors" % APPLICATION_NAME
 APPLICATION_DESCRIPTION = "Timeline is a free, cross-platform application for displaying and navigating events on a timeline."
 WEBSITE = "http://thetimelineproj.sourceforge.net/"
-DEVELOPERS = ["Rickard Lindberg", "Roger Lindberg"]
+DEVELOPERS = ["Developers:",
+              "Rickard Lindberg",
+              "Roger Lindberg",
+              "",
+              "Contributors:",
+              "Alan Jackson"]
 TRANSLATORS = ["Roger Lindberg (Swedish)",
                "Rickard Lindberg (Swedish)",
                "Roman Gelbort (Spanish)",
                "Nils Steinger (German)",
                "MixCool (German)",
                "Leo Frigo (Portuguese, Spanish, Brazilian Portuguese)",
-               "Sergey Sedov (Russian)"]
-ARTISTS = ["Sara Lindberg"]
+               "Sergey Sedov (Russian)",
+               "Yaron Shahrabani (Hebrew)",
+               "BennyBeat (Catalan)"]
+ARTISTS = ["Sara Lindberg",
+           "Tango Desktop Project (Icons on Windows)"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or

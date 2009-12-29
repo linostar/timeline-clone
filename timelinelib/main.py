@@ -34,7 +34,7 @@ import gettext
 
 import wx
 
-from gui import MainFrame
+from timelinelib.gui.dialogs.mainframe import MainFrame
 from version import get_version
 import config
 from about import APPLICATION_NAME
@@ -118,7 +118,3 @@ def main():
     log_versions()
     app = create_wx_app(input_files)
     app.MainLoop()
-
-
-if __name__ == "__main__":
-    main()

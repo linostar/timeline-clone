@@ -1,0 +1,49 @@
+.TH timeline "1" "January 2010" "0.8.0" "User Commands"
+.SH NAME
+
+timeline \- display and navigate events on a timeline
+
+.SH SYNOPSIS
+
+.BR timeline " [" OPTIONS "] [" filename "]"
+
+.SH DESCRIPTION
+
+.B timeline
+is a cross-platform application for displaying an navigating events on a
+timeline.
+
+.P
+If no filename is given,
+.B timeline
+will open the last opened timeline by default.
+
+.P
+filename can be one of the following:
+a directory,
+a .timeline file,
+an .ics file.
+
+.SH OPTIONS
+.TP
+\-\-version
+show program's version number and exit
+
+.SH FILES
+
+.TP
+.I ~/.thetimelineproj.cfg
+The user's application settings and things like list of recently opened
+timelines.
+
+.\" (AUTHOR)
+
+.SH "REPORTING BUGS"
+
+Report bugs to <thetimelineproj-user@lists.sourceforge.net>.
+
+.\" (COPYRIGHT)
+
+.\" SEE ALSO
+
+.\" vim: ft=groff

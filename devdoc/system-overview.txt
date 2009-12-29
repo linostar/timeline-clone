@@ -1,0 +1,11 @@
+System Overview
+===============
+
+This document explains how the problem of writing this application has been
+decomposed into smaller problems.
+
+DB
+--
+
+Drawing
+-------

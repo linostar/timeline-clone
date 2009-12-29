@@ -17,9 +17,8 @@
 
 
 """
-Implementation of Timeline with flat file storage.
-
-The class FileTimeline implements the Timeline interface.
+Implementation of timeline database with flat file storage using our own custom
+format.
 """
 
 
@@ -30,16 +29,23 @@ import os.path
 from os.path import abspath
 from datetime import datetime
 from datetime import timedelta
+import base64
+import StringIO
 
-from data import TimelineIOError
-from data import Timeline
-from data import TimePeriod
-from data import Event
-from data import Category
-from data import time_period_center
-from data import get_event_data_plugins
-from data import get_event_data_plugin
-from version import get_version
+import wx
+
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.interface import TimelineDB
+from timelinelib.db.interface import STATE_CHANGE_ANY
+from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import time_period_center
+from timelinelib.db.utils import generic_event_search
+from timelinelib.db.utils import safe_write
+from timelinelib.db.utils import IdCounter
+from timelinelib.version import get_version
 
 
 ENCODING = "utf-8"
@@ -50,11 +56,11 @@ class ParseException(Exception):
     pass
 
 
-class FileTimeline(Timeline):
+class FileTimeline(TimelineDB):
     """
-    Implements the Timeline interface.
+    Implements the timeline database interface.
 
-    The comments in the Timeline class describe what the public methods do.
+    The comments in the TimelineDB class describe what the public methods do.
 
     Every public method (including the constructor) can raise a TimelineIOError
     if there was a problem reading or writing from file.
@@ -74,81 +80,99 @@ class FileTimeline(Timeline):
     parts.
     """
 
-    # Errors caused by loading and saving timeline data to file
-    ERROR_NONE    = 0
-    ERROR_READ    = 1 # Unable to read from file
-    ERROR_CORRUPT = 2 # Able to read from file but content corrupt
-    ERROR_WRITE   = 3 # Unable to write to file
-
     def __init__(self, path):
         """
         Create a new timeline and read data from file.
 
         If the file does not exist a new timeline will be created.
         """
-        Timeline.__init__(self, path)
+        TimelineDB.__init__(self, path)
+        self.new_events = []
+        self.event_id_counter = IdCounter()
+        self.new_categories = []
+        self.category_id_counter = IdCounter()
         self._load_data()
+
+    def is_read_only(self):
+        return False
+
+    def supported_event_data(self):
+        return ["description", "icon"]
+
+    def search(self, search_string):
+        return generic_event_search(self.events, search_string)
 
     def get_events(self, time_period):
         def include_event(event):
             if not event.inside_period(time_period):
                 return False
-            if event.category != None and event.category.visible == False:
-                return False
             return True
         return [event for event in self.events if include_event(event)]
 
-    def add_event(self, event):
-        self.events.append(event)
+    def get_first_event(self):
+        if len(self.events) == 0:
+            return None
+        return min(self.events, key=lambda e: e.time_period.start_time)
+
+    def get_last_event(self):
+        if len(self.events) == 0:
+            return None
+        return max(self.events, key=lambda e: e.time_period.end_time)
+        
+    def save_event(self, event):
+        if not event.has_id():
+            self.new_events.append(event)
         self._save_data()
 
-    def event_edited(self, event):
-        self._save_data()
-
-    def select_event(self, event, selected=True):
-        event.selected = selected
-        self._notify(Timeline.STATE_CHANGE_ANY)
-
-    def delete_selected_events(self):
-        self.events = [event for event in self.events if not event.selected]
-        self._save_data()
-
-    def reset_selected_events(self):
-        for event in self.events:
-            event.selected = False
-        self._notify(Timeline.STATE_CHANGE_ANY)
+    def delete_event(self, event_or_id):
+        def find_event():
+            for e in self.events:
+                if e == event_or_id or e.id == event_or_id:
+                    return e
+            return None
+        e = find_event()
+        if e is not None:
+            self.events.remove(e)
+            e.set_id(None)
+            self._save_data()
 
     def get_categories(self):
         # Make sure the original list can't be modified
-        return tuple(self.categories)
+        return self.categories[:]
 
-    def add_category(self, category):
-        self.categories.append(category)
+    def save_category(self, category):
+        if not category.has_id():
+            self.new_categories.append(category)
         self._save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+        self._notify(STATE_CHANGE_CATEGORY)
 
-    def category_edited(self, category):
-        self._save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
-
-    def delete_category(self, category):
-        if category in self.categories:
+    def delete_category(self, category_or_id):
+        def find_category():
+            for c in self.categories:
+                if c == category_or_id or c.id == category_or_id:
+                    return c
+            return None
+        category = find_category()
+        if category is not None:
             self.categories.remove(category)
-        for event in self.events:
-            if event.category == category:
-                event.category = None
-        self._save_data()
-        self._notify(Timeline.STATE_CHANGE_CATEGORY)
+            category.set_id(None)
+            for event in self.events:
+                if event.category == category:
+                    event.category = None
+            self._save_data()
+            self._notify(STATE_CHANGE_CATEGORY)
 
-    def get_preferred_period(self):
-        if self.preferred_period != None:
-            return self.preferred_period
-        return time_period_center(datetime.now(), timedelta(days=30))
-
-    def set_preferred_period(self, period):
-        if not period.is_period():
+    def load_view_properties(self, view_properties):
+        view_properties.displayed_period = self.preferred_period
+        for category in self.categories:
+            view_properties.set_category_visible(category, category.visible)
+            
+    def save_view_properties(self, view_properties):
+        if not view_properties.displayed_period.is_period():
             raise TimelineIOError(_("Preferred period must be > 0."))
-        self.preferred_period = period
+        self.preferred_period = view_properties.displayed_period
+        for category in self.categories:
+            category.visible = view_properties.category_visible(category)
         self._save_data()
 
     def _load_data(self):
@@ -159,14 +183,11 @@ class FileTimeline(Timeline):
 
         The data is stored internally until we do a save.
 
-        If an error occurs, the error_flag will be set to either ERROR_READ if
-        we failed to read from the file or ERROR_CORRUPT if the data we read
-        was not valid. A TimelineIOError will also be raised.
+        If a read error occurs a TimelineIOError will be raised.
         """
         self.preferred_period = None
         self.categories = []
         self.events = []
-        self.error_flag = FileTimeline.ERROR_NONE
         if not os.path.exists(self.path): 
             # Nothing to load. Will create a new timeline on save.
             return
@@ -179,14 +200,12 @@ class FileTimeline(Timeline):
                     # This should always be a ParseException, but if we made a
                     # mistake somewhere we still would like to mark the file as
                     # corrupt so we don't overwrite it later.
-                    self.error_flag = FileTimeline.ERROR_CORRUPT
                     msg1 = _("Unable to read timeline data from '%s'.")
                     msg2 = "\n\n" + pe.message
                     raise TimelineIOError((msg1 % abspath(self.path)) + msg2)
             finally:
                 file.close()
         except IOError, e:
-            self.error_flag = FileTimeline.ERROR_READ
             msg = _("Unable to read from file '%s'.")
             whole_msg = (msg + "\n\n%s") % (abspath(self.path), e)
             raise TimelineIOError(whole_msg)
@@ -263,7 +282,9 @@ class FileTimeline(Timeline):
             visible = True
             if len(category_data) == 3:
                 visible = parse_bool(category_data[2])
-            self.categories.append(Category(name, color, visible))
+            cat = Category(name, color, visible)
+            cat.set_id(self.category_id_counter.get_next())
+            self.categories.append(cat)
         except ParseException, e:
             raise ParseException("Unable to parse category from '%s': %s" % (category_text, e.message))
 
@@ -292,7 +313,9 @@ class FileTimeline(Timeline):
                 if len(event_specification) == 4:
                     cat_name = dequote(event_specification[3])
                 category = self._get_category(cat_name)
-                self.events.append(Event(start_time, end_time, text, category))
+                evt = Event(start_time, end_time, text, category)
+                evt.set_id(self.event_id_counter.get_next())
+                self.events.append(evt)
                 return True
             else:
                 if len(event_specification) < 4:
@@ -304,10 +327,11 @@ class FileTimeline(Timeline):
                 event = Event(start_time, end_time, text, category)
                 for item in event_specification[4:]:
                     id, data = item.split(":", 1)
-                    plugin = get_event_data_plugin(id)
-                    if plugin == None:
-                        raise ParseException("Can't find event data plugin '%s'." % id)
-                    event.set_data(id, plugin.decode(dequote(data)))
+                    if id not in self.supported_event_data():
+                        raise ParseException("Can't parse event data with id '%s'." % id)
+                    decode = get_decode_function(id)
+                    event.set_data(id, decode(dequote(data)))
+                event.set_id(self.event_id_counter.get_next())
                 self.events.append(event)
         except ParseException, e:
             raise ParseException("Unable to parse event from '%s': %s" % (event_text, e.message))
@@ -327,56 +351,17 @@ class FileTimeline(Timeline):
         """
         Save timeline data to the file that this timeline points to.
 
-        It is extremely important to ensure that we never loose data. We can
-        only loose data when we write. Here is how we try to minimize data
-        loss:
-
-          * Before we write the timeline we take a backup of the original
-            * A backup can only be taken if the original file is healthy
-            * If we encountered problems while reading the original file, it is
-              not healthy (error_flag != ERROR_NONE)
-            * If we read a file correctly and encounter error while writing new
-              data, the error flag is also set to prevent further writes
+        If we have read corrupt data from a file it is not possible to still
+        have an instance of this database. So it is always safe to write.
         """
-        if self.error_flag != FileTimeline.ERROR_NONE:
-            raise TimelineIOError(_("Save function has been disabled because there was a problem reading or writing the timeline before. This to ensure that your data will not be overwritten."))
-        self._create_backup()
-        try:
-            file = codecs.open(self.path, "w", ENCODING)
-            try:
-                try:
-                    self._write_header(file)
-                    self._write_preferred_period(file)
-                    self._write_categories(file)
-                    self._write_events(file)
-                    self._write_footer(file)
-                    self._notify(Timeline.STATE_CHANGE_ANY)
-                except Exception, e:
-                    # This should never happen. But if we have made a mistake
-                    # somewhere, data should still not become corrupt.
-                    self.error_flag = FileTimeline.ERROR_WRITE
-                    msg_part1 = _("Unable to save timeline data.")
-                    msg_part2 = _("If data was corrupted, check out the backed up file that was created when the timeline was last saved.")
-                    msg = msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e
-                    raise TimelineIOError(msg)
-            finally:
-                file.close()
-        except IOError, e:
-            self.error_flag = FileTimeline.ERROR_WRITE
-            msg_part1 = _("Unable to save timeline data.")
-            msg_part2 = _("If data was corrupted, check out the backed up file that was created when the timeline was last saved.")
-            msg = msg_part1 + "\n\n" + msg_part2 + "\n\n%s" % e
-            raise TimelineIOError(msg)
-
-    def _create_backup(self):
-        if os.path.exists(self.path):
-            backup_path = self.path + "~"
-            try:
-                shutil.copy(self.path, backup_path)
-            except IOError, e:
-                msg = _("Unable to create backup to '%s'.")
-                whole_msg = (msg + "\n\n%s") % (abspath(backup_path), e)
-                raise TimelineIOError(whole_msg)
+        def write_fn(file):
+            self._write_header(file)
+            self._write_preferred_period(file)
+            self._write_categories(file)
+            self._write_events(file)
+            self._write_footer(file)
+        safe_write(self.path, ENCODING, write_fn)
+        self._notify(STATE_CHANGE_ANY)
 
     def _write_header(self, file):
         file.write("# Written by Timeline %s on %s\n" % (
@@ -390,14 +375,21 @@ class FileTimeline(Timeline):
                 time_string(self.preferred_period.end_time)))
 
     def _write_categories(self, file):
-        for cat in self.categories:
+        def save(category):
             r, g, b = cat.color
             file.write("CATEGORY:%s;%s,%s,%s;%s\n" % (quote(cat.name),
                                                       r, g, b,
                                                       cat.visible))
+        for cat in self.categories:
+            save(cat)
+        while self.new_categories:
+            cat = self.new_categories.pop()
+            save(cat)
+            cat.set_id(self.category_id_counter.get_next())
+            self.categories.append(cat)
 
     def _write_events(self, file):
-        for event in self.events:
+        def save(event):
             file.write("EVENT:%s;%s;%s" % (
                 time_string(event.time_period.start_time),
                 time_string(event.time_period.end_time),
@@ -406,12 +398,20 @@ class FileTimeline(Timeline):
                 file.write(";%s" % quote(event.category.name))
             else:
                 file.write(";")
-            for plugin in get_event_data_plugins():
-                data = event.get_data(plugin.get_id())
+            for data_id in self.supported_event_data():
+                data = event.get_data(data_id)
                 if data != None:
-                    file.write(";%s:%s" % (plugin.get_id(),
-                                           quote(plugin.encode(data))))
+                    encode = get_encode_function(data_id)
+                    file.write(";%s:%s" % (data_id,
+                                           quote(encode(data))))
             file.write("\n")
+        for event in self.events:
+            save(event)
+        while self.new_events:
+            event = self.new_events.pop()
+            save(event)
+            event.set_id(self.event_id_counter.get_next())
+            self.events.append(event)
 
     def _write_footer(self, file):
         file.write(u"# END\n")
@@ -515,3 +515,40 @@ def quote(text):
         else:
             return "\\" + match_char
     return re.sub(";|\n|\r|\\\\", repl, text)
+
+
+def identity(obj):
+    return obj
+
+
+def encode_icon(data):
+    """Data is wx.Bitmap."""
+    output = StringIO.StringIO()
+    image = wx.ImageFromBitmap(data)
+    image.SaveStream(output, wx.BITMAP_TYPE_PNG)
+    return base64.b64encode(output.getvalue())
+
+
+def decode_icon(string):
+    """Return is wx.Bitmap."""
+    input = StringIO.StringIO(base64.b64decode(string))
+    image = wx.ImageFromStream(input, wx.BITMAP_TYPE_PNG)
+    return image.ConvertToBitmap()
+
+
+def get_encode_function(id):
+    if id == "description":
+        return identity
+    elif id == "icon":
+        return encode_icon
+    else:
+        raise ValueError("Can't find encode function for event data with id '%s'." % id)
+
+
+def get_decode_function(id):
+    if id == "description":
+        return identity
+    elif id == "icon":
+        return decode_icon
+    else:
+        raise ValueError("Can't find decode function for event data with id '%s'." % id)

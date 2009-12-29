@@ -11,8 +11,10 @@ Required:
       http://www.python.org
   * wxPython version 2.8.8 or greater
       http://www.wxpython.org
-  * Markdown version 1.7 or greater
+  * Markdown version 1.7 or greater (for viewing help pages)
       http://www.freewisdom.org/projects/python-markdown/
+  * iCalendar version 1.2 or greater (for working with ICS files)
+      http://codespeak.net/icalendar/
 
 For translations (other than English) you also need the following:
 
@@ -31,11 +33,23 @@ http://wiki.wxpython.org/InstallingOnUbuntuOrDebian.
   apt-get install python python-wxgtk2.8 wx2.8-i18n python-markdown
   apt-get install scons gettext
 
-gettext on Windows
-------------------
+You have to install iCalendar manually since there is no Debian package for it.
+See section on installing iCalendar below.
+
+Installing gettext on Windows
+-----------------------------
 
 Get the zipfiles gettext-tools-0.17.zip and gettext-runtime-0.17-1.zip from
 here http://ftp.acc.umu.se/pub/gnome/binaries/win32/dependencies/.
+
+Installing iCalendar
+--------------------
+
+The easiest way to install iCalendar is to download the source code from its
+website and then copy the iCalendar-1.2/src/icalendar folder to the root folder
+of Timeline.
+
+The important thing is that you can do 'import icalendar' from Python.
 
 Platforms
 =========
@@ -63,14 +77,14 @@ To install the translations, run this command:
 
 To run the application, use this command:
 
-  python <path-to-timeline-directory>/src/main.py [options]
+  python <path-to-timeline-directory>/timeline.py [options]
 
 For example:
 
-  python /home/rick/timeline/src/main.py
+  python /home/rick/timeline-0.8.0/timeline.py
 
 Preferable you create a shortcut on your platform that issues this command.
 
 What options are available is displayed with the following command:
 
-  python <path-to-timeline-directory>/src/main.py --help
+  python <path-to-timeline-directory>/timeline.py --help

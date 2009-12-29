@@ -15,11 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-Import("env")
+"""
+Script that starts the Timeline application.
+"""
 
-if not env["CTAGS"]:
-    print("WARNING: tags target disabled because ctags was not found")
-else:
-    env.Alias("tags", env.VimTags("tags", Glob("*.py")))
+import sys
+import os
 
-# vim: syntax=python
+# Make sure that we can import timelinelib
+sys.path.insert(0, os.path.dirname(__file__))
+
+from timelinelib.main import main
+
+main()

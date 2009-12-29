@@ -45,13 +45,11 @@ def install(help_system):
     - Help(timeline)
     - Help(events)
     - Help(categories)
-    - Help(backups)
 - **%s**
     - Help(create_event)
     - Help(edit_event)
     - Help(delete_event)
     - Help(edit_categories)
-    - Help(restore_from_backup)
     - Help(select_events)
 - **Help(contact)**
 """ % (_("Questions and answers"), _("Concepts"), _("Tasks"))))
@@ -59,7 +57,7 @@ def install(help_system):
     help_system.install_page(
         id="tutorial",
         header=_("Getting started tutorial"),
-        related_pages=["where_is_save", "timeline", "events", "categories", "backups"],
+        related_pages=["where_is_save", "timeline", "events", "categories"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
@@ -146,36 +144,6 @@ An event is the basic data type for representing information on the timeline.  I
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 Categories are used to group events. An event can only belong to one category. All events that belong to the same category are displayed with the same background color.
-"""))
-
-    help_system.install_page(
-        id="backups",
-        header=_("Backups"),
-        related_pages=["restore_from_backup"],
-        # TRANSLATORS: This text uses special markup.
-        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
-        # Just write them as they are.
-        # Stars produce emphasized text. DON'T remove them.
-        # Dashes produce bullet lists. DON'T remove them.
-        body=_("""
-Timeline tries its best to ensure that the data you save in a timeline never gets lost. One step in that process is to create a backup of your timeline every time before new data is saved. The backup is saved in a file with the same name as the original but with an "~" appended to the name.
-
-If you get an error saying that there was a problem reading timeline data there is a chance that your data is corrupt. In that case you can recover the data from the backup.
-
-If you would like to be extra certain to not loose your data, we recommend that you take regular backups of your timeline file.
-"""))
-
-    help_system.install_page(
-        id="restore_from_backup",
-        header=_("Restore file from backup"),
-        related_pages=["backups"],
-        # TRANSLATORS: This text uses special markup.
-        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
-        # Just write them as they are.
-        # Stars produce emphasized text. DON'T remove them.
-        # Dashes produce bullet lists. DON'T remove them.
-        body=_("""
-To restore a timeline file from the backup, simply remove the "~" in the name of the backed up file.
 """))
 
     help_system.install_page(

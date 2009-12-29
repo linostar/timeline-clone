@@ -59,6 +59,9 @@ DEFAULTS = {
 }
 
 
+MAX_NBR_OF_RECENT_FILES_SAVED = 5
+
+
 path = None
 config = None
 
@@ -140,12 +143,12 @@ def append_recently_opened(path):
         # it to unicode
         path = path.decode(sys.getfilesystemencoding())
     current = get_recently_opened()
-    if len(current) > 0 and current[0] == path:
-        # If we open the same file again there is no point in adding it
-        return
+    # Just keep one entry of the same path in the list
+    if path in current:
+        current.remove(path)
     current.insert(0, path)
     config.set(DEFAULTSECT, RECENT_FILES,
-               (",".join(current[:5])).encode(ENCODING))
+          (",".join(current[:MAX_NBR_OF_RECENT_FILES_SAVED])).encode(ENCODING))
 
 
 def get_open_recent_at_startup():

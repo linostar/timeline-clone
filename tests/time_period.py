@@ -21,7 +21,7 @@ import unittest
 from datetime import datetime as dt
 from datetime import timedelta
 
-from data import TimePeriod
+from timelinelib.db.objects import TimePeriod
 
 
 class TestTimePeriod(unittest.TestCase):
