@@ -48,7 +48,8 @@ TRANSLATORS = ["Roger Lindberg (Swedish)",
                "MixCool (German)",
                "Leo Frigo (Portuguese, Spanish, Brazilian Portuguese)",
                "Sergey Sedov (Russian)",
-               "Yaron Shahrabani (Hebrew)"]
+               "Yaron Shahrabani (Hebrew)",
+               "BennyBeat (Catalan)"]
 ARTISTS = ["Sara Lindberg",
            "Tango Desktop Project (Icons on Windows)"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
