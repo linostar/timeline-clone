@@ -15,25 +15,30 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
+
 """
 Script that generates a source archive and does some checks.
 
-Can be run from anywhere and will create a file xyz.zip in the directory from
-which it is run.
+Can be run from anywhere and will create a file timeline-x.y.z.zip in the
+directory from which it is run.
 
-The zipfile will contain a single directory, xyz, corresponding to the
-directory in which this file exists.
+The zip file contains a single directory, timeline-x.y.z, corresponding to the
+root directory.
 """
+
 
 import sys
 import glob
 import os
 import os.path
 import shutil
+import re
 from subprocess import call
+from datetime import datetime
+import time
 
-# The root of the source archive corresponds to the directory in which this
-# file is
+# The root of the source archive corresponds to the parent directory of the
+# directory in which this file is
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
 # Make sure that we can import timelinelib
@@ -42,44 +47,93 @@ sys.path.insert(0, ROOT_DIR)
 import timelinelib.about as about
 import timelinelib.version as version
 
-REL_NAME_ZIP = "%s-%s.zip" % (about.APPLICATION_NAME.lower(),
-                              version.get_version())
+
+VERSION_STR = version.get_version()
+REL_NAME_ZIP = "%s-%s.zip" % (about.APPLICATION_NAME.lower(), VERSION_STR)
+MANPAGE = os.path.join(ROOT_DIR, "man", "man1", "timeline.1")
+README = os.path.join(ROOT_DIR, "README")
+CHANGES = os.path.join(ROOT_DIR, "CHANGES")
+AUTHORS = os.path.join(ROOT_DIR, "AUTHORS")
+
+
+def text_in_file(file, text):
+    f = open(file)
+    contents = f.read()
+    f.close()
+    return text in contents
+
+def read_first_line(file):
+    f = open(file)
+    first_line = f.readline()
+    f.close()
+    return first_line
+
+def text_in_first_line(file, text):
+    return text in read_first_line(file)
+
+def version_in_first_line(file):
+    text_in_first_line(file, VERSION_STR)
+
+def get_all_authors():
+    def is_author(text):
+        return text and ":" not in text
+    def extract_author(text):
+        first_left_paren_pos = text.find("(")
+        if first_left_paren_pos == -1:
+            return text
+        return text[0:first_left_paren_pos-1]
+    source = about.DEVELOPERS + about.TRANSLATORS + about.ARTISTS
+    return [extract_author(x) for x in source if is_author(x)]
+
+def read_release_date():
+    rel_line = read_first_line(CHANGES)
+    bfr_str = "released on "
+    date_str = rel_line[rel_line.find(bfr_str)+len(bfr_str):].strip()
+    release_date = datetime.strptime(date_str, "%d %B %Y")
+    return release_date
+
 
 if os.path.exists(REL_NAME_ZIP):
     print("Error: Archive '%s' already exists" % REL_NAME_ZIP)
     sys.exit()
 
-print("Exporting from Mercurial")
-cmd = ["hg", "archive",
-       "-R", ROOT_DIR,
-       "-t", "zip",
-       "--exclude", "%s/.hgignore" % (ROOT_DIR or "."),
-       "--exclude", "%s/.hgtags" % (ROOT_DIR or "."),
-       "--exclude", "%s/.hg_archival.txt" % (ROOT_DIR or "."),
-       REL_NAME_ZIP]
-if call(cmd) != 0:
-    print("Error: Could not export from Mercurial")
-    sys.exit()
+if not "check" in sys.argv:
+    print("Exporting from Mercurial")
+    cmd = ["hg", "archive",
+           "-R", ROOT_DIR,
+           "-t", "zip",
+           "--exclude", "%s/.hgignore" % (ROOT_DIR or "."),
+           "--exclude", "%s/.hgtags" % (ROOT_DIR or "."),
+           "--exclude", "%s/.hg_archival.txt" % (ROOT_DIR or "."),
+           REL_NAME_ZIP]
+    if call(cmd) != 0:
+        print("Error: Could not export from Mercurial")
+        sys.exit()
 
 print("Running unit tests")
 unittest_ret = call(["python", "%s/tests/run.py" % (ROOT_DIR or "."), "quiet"])
 
-print("-----")
+print
+print("Warnings:")
 
 if unittest_ret != 0:
-    print("Warning: Failed unit test")
-
-def version_in_first_line(file):
-    f = open(file)
-    first_line = f.readline()
-    f.close()
-    return version.get_version() in first_line
-
-if not version_in_first_line(os.path.join(ROOT_DIR, "README")):
-    print("Warning: Version mismatch between README and version module")
-
-if not version_in_first_line(os.path.join(ROOT_DIR, "man", "man1", "timeline.1")):
-    print("Warning: Version mismatch between manpage and version module")
+    print("* Failed unit test")
 
 if version.DEV:
-    print("Warning: This is a development version")
+    print("* This is a development version")
+
+if not version_in_first_line(README):
+    print("* Version mismatch between README and version module")
+
+if not version_in_first_line(CHANGES):
+    print("* Version mismatch between CHANGES and version module")
+
+if not version_in_first_line(MANPAGE):
+    print("* Version mismatch between manpage and version module")
+
+if not text_in_first_line(MANPAGE, read_release_date().strftime("%B %Y")):
+    print("* Date mismatch between manpage and release date in CHANGES")
+
+for author in get_all_authors():
+    if not text_in_file(AUTHORS, author):
+        print("* '%s' not in AUTHORS" % author)
