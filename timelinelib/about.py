@@ -49,7 +49,8 @@ TRANSLATORS = ["Roger Lindberg (Swedish)",
                "Leo Frigo (Portuguese, Spanish, Brazilian Portuguese)",
                "Sergey Sedov (Russian)",
                "Yaron Shahrabani (Hebrew)"]
-ARTISTS = ["Sara Lindberg"]
+ARTISTS = ["Sara Lindberg",
+           "Tango Desktop Project (Icons on Windows)"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
