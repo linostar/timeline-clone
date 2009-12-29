@@ -1,3 +1,32 @@
+Timeline 0.8.0, released on 1 January 2010
+==========================================
+
+This is a new minor feature release.
+
+New features, enhancements:
+
+  * Basic search function
+  * Weekend day numbers are drawn in bold in month view
+  * Experimental read-only support for ics files
+  * Timeline that shows last modified dates of files in a directory
+  * Allow balloons to stick
+  * Write files in a safer way without permanent backups
+  * New navigation functions: find first, find last, fit century, fit decade,
+    fit all
+  * New icons in help browser (Windows)
+  * Man page (GNU/Linux)
+
+Bug fixes:
+
+  * Fit month and fit day now work for December and last day of month
+  * The same help page can now be opened again after the help browser is closed
+  * Recently opened list can't contain the same file twice now
+
+New translations:
+
+  * Hebrew (Yaron Shahrabani)
+  * Catalan (BennyBeat)
+
 Timeline 0.7.0, released on 1 December 2009
 ===========================================
 
