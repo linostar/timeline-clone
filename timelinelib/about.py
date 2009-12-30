@@ -40,7 +40,8 @@ DEVELOPERS = ["Developers:",
               "Roger Lindberg",
               "",
               "Contributors:",
-              "Alan Jackson"]
+              "Alan Jackson",
+              "Joe Gilmour"]
 TRANSLATORS = ["Roger Lindberg (Swedish)",
                "Rickard Lindberg (Swedish)",
                "Roman Gelbort (Spanish)",
