@@ -103,6 +103,14 @@ class ViewProperties(object):
         self.divider_position = 0.5
         self.displayed_period = None
 
+    def clear_db_specific(self):
+        self.sticky_balloon_event_ids = []
+        self.hovered_event = None
+        self.selected_event_ids = []
+        self.hidden_categories = []
+        self.period_selection = None
+        self.displayed_period = None
+
     def filter_events(self, events):
         def event_visible(event):
             if (event.category is not None and not
