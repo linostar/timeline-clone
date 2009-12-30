@@ -23,6 +23,7 @@ The main frame of the application.
 
 import os.path
 from datetime import datetime as dt
+import datetime
 
 import wx
 
@@ -247,6 +248,8 @@ class MainFrame(wx.Frame):
         self.mnu_navigate.AppendSeparator()
         backward = self.mnu_navigate.Append(wx.ID_ANY, _("Backward\tPgUp"))
         forward = self.mnu_navigate.Append(wx.ID_ANY, _("Forward\tPgDn"))
+        forward_one_week = self.mnu_navigate.Append(wx.ID_ANY, _("Forward One Wee&k\tK"))
+        backward_one_week = self.mnu_navigate.Append(wx.ID_ANY, _("Back One &Week\tW"))
         self.mnu_navigate.AppendSeparator()
         fit_century = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Century"))
         fit_decade = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Decade"))
@@ -261,6 +264,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_date_on_click, goto_date)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_on_click, backward)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_on_click, forward)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_week_on_click, forward_one_week)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_week_on_click, backward_one_week)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_century_on_click, fit_century)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_decade_on_click, fit_decade)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
@@ -380,6 +385,12 @@ class MainFrame(wx.Frame):
 
     def _mnu_navigate_forward_on_click(self, evt):
         self._navigate_forward()
+
+    def _mnu_navigate_forward_one_week_on_click(self, evt):
+	self._navigate_week_step(1)
+
+    def _mnu_navigate_backward_one_week_on_click(self, evt):
+	self._navigate_week_step(-1)
 
     def _mnu_navigate_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_year())
@@ -651,6 +662,10 @@ class MainFrame(wx.Frame):
             icon = wx.IconFromBitmap(wx.BitmapFromImage(wx.Image(iconpath)))
             bundle.AddIcon(icon)
         return bundle
+
+    def _navigate_week_step(self, direction):
+        wk = datetime.timedelta(days=7)
+        self._navigate_timeline(lambda tp: tp.move_delta(direction*wk))
 
     def _navigate_smart_step(self, direction):
 
