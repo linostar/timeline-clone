@@ -17,7 +17,7 @@
 
 
 VERSION = (0, 8, 0)
-DEV = True
+DEV = False
 
 
 def get_version():
