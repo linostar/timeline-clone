@@ -597,7 +597,7 @@ class DrawingArea(wx.Panel):
         The left mouse button is not depressed
         The Ctrl-key is not depressed
         """
-        self._display_balloon_on_hoover(x, y)
+        self._display_balloon_on_hover(x, y)
         self._display_eventinfo_in_statusbar(x, y)
         cursor_set = EventSizer(self).set_cursor(x, y)
         if not cursor_set:
@@ -787,7 +787,7 @@ class DrawingArea(wx.Panel):
         else:
             self._reset_text_in_statusbar()
             
-    def _display_balloon_on_hoover(self, xpixelpos, ypixelpos):
+    def _display_balloon_on_hover(self, xpixelpos, ypixelpos):
         """
         Show or hide balloons depending on current situation.
            self.current_event: The event pointed to, or None

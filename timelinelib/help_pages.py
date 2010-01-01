@@ -90,7 +90,7 @@ Try the mouse wheel while holding the *Ctrl* key down and you will see the timel
 
 The vertical red line indicates the current time.
 
-Hoovering an event will display the full description in the status bar.
+Hovering over an event will display the full description in the status bar.
 """))
 
     help_system.install_page(
