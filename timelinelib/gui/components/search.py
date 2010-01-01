@@ -37,6 +37,7 @@ class SearchBar(wx.ToolBar):
 
     def set_view(self, view):
         self.view = view
+        self.Enable(view is not None)
 
     def _create_gui(self):
         icon_size = (16, 16)

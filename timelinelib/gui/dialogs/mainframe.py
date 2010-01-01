@@ -204,9 +204,9 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
         # Edit menu
         self.mnu_edit = wx.Menu()
-        mnu_edit_find = self.mnu_edit.Append(wx.ID_FIND)
+        self.mnu_edit_find = self.mnu_edit.Append(wx.ID_FIND)
         self.Bind(wx.EVT_MENU, self._mnu_edit_find_on_click,
-                  mnu_edit_find)
+                  self.mnu_edit_find)
         self.mnu_edit.AppendSeparator()
         mnu_edit_preferences = self.mnu_edit.Append(wx.ID_PREFERENCES)
         self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click,
@@ -483,13 +483,18 @@ class MainFrame(wx.Frame):
 
     def _display_timeline(self, timeline):
         self.timeline = timeline
+        if timeline == None:
+            # Do this before the next line so that we still have a timeline to
+            # unregister
+            self.main_panel.catbox.set_view(None)
+            self.main_panel.searchbar.set_view(None)
         self.main_panel.drawing_area.set_timeline(self.timeline)
-        self.main_panel.catbox.set_view(self.main_panel.drawing_area)
-        self.main_panel.searchbar.set_view(self.main_panel.drawing_area)
         if timeline == None:
             self.main_panel.show_welcome_panel()
             self.SetTitle(APPLICATION_NAME)
         else:
+            self.main_panel.catbox.set_view(self.main_panel.drawing_area)
+            self.main_panel.searchbar.set_view(self.main_panel.drawing_area)
             self.main_panel.show_timeline_panel()
             self.SetTitle("%s (%s) - %s" % (
                 os.path.basename(self.timeline.path),
@@ -568,6 +573,7 @@ class MainFrame(wx.Frame):
             self.mnu_file_print_setup,
             self.mnu_file_export,
             self.mnu_view_legend,
+            self.mnu_edit_find,
         ]
         items_requiring_update = [
             self.mnu_timeline_create_event, 
@@ -586,6 +592,8 @@ class MainFrame(wx.Frame):
             item.Enable(have_timeline)
         for item in items_requiring_update:
             item.Enable(not is_read_only)
+        if not have_timeline:
+            self.main_panel.show_searchbar(False)
 
     def _save_application_config(self):
         config.set_window_size(self.GetSize())

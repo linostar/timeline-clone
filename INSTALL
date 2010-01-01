@@ -13,8 +13,8 @@ Required:
       http://www.wxpython.org
   * Markdown version 1.7 or greater (for viewing help pages)
       http://www.freewisdom.org/projects/python-markdown/
-  * iCalendar version 1.2 or greater (for working with ICS files)
-      http://codespeak.net/icalendar/
+  * iCalendar version 2.1 or greater (for working with ics files)
+      http://pypi.python.org/pypi/icalendar/2.1
 
 For translations (other than English) you also need the following:
 
@@ -46,8 +46,8 @@ Installing iCalendar
 --------------------
 
 The easiest way to install iCalendar is to download the source code from its
-website and then copy the iCalendar-1.2/src/icalendar folder to the root folder
-of Timeline.
+website and then copy the iCalendar-2.1/src/icalendar folder to the root folder
+of Timeline. Or you can follow their installation instructions.
 
 The important thing is that you can do 'import icalendar' from Python.
 
@@ -77,14 +77,6 @@ To install the translations, run this command:
 
 To run the application, use this command:
 
-  python <path-to-timeline-directory>/timeline.py [options]
-
-For example:
-
-  python /home/rick/timeline-0.8.0/timeline.py
+  python <path-to-timeline-directory>/timeline.py
 
 Preferable you create a shortcut on your platform that issues this command.
-
-What options are available is displayed with the following command:
-
-  python <path-to-timeline-directory>/timeline.py --help

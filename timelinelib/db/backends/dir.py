@@ -131,36 +131,41 @@ class DirTimeline(TimelineDB):
         if not os.path.isdir(self.path): 
             # Nothing to load
             return
-        color_ranges = {}
-        color_ranges[self.path] = (0.0, 1.0, 1.0)
-        for (dirpath, dirnames, filenames) in os.walk(self.path):
-            # Assign color ranges
-            range = (rstart, rend, b) = color_ranges[dirpath]
-            step = (rend - rstart) / (len(dirnames) + 1)
-            next_start = rstart + step
-            new_b = b - 0.2
-            if new_b < 0:
-                new_b = 0
-            for dir in dirnames:
-                next_end = next_start + step
-                color_ranges[os.path.join(dirpath, dir)] = (next_start,
-                                                            next_end, new_b)
-                next_start = next_end
-            # Create the stuff
-            cat = Category(dirpath, (233, 233, 233), False)
-            cat.set_id(self.category_id_counter.get_next())
-            self.categories.append(cat)
-            for file in filenames:
-                path = os.path.join(dirpath, file)
-                evt = self._event_from_path(path)
-                evt.set_id(self.event_id_counter.get_next())
-                self.events.append(evt)
-        self.categories[0].visible = True
-        # Set colors and remove prefix
-        prefix_len = len(self.path)
-        for cat in self.categories:
-            cat.color = self._color_from_range(color_ranges[cat.name])
-            cat.name = "." + cat.name[prefix_len:]
+        try:
+            color_ranges = {}
+            color_ranges[self.path] = (0.0, 1.0, 1.0)
+            for (dirpath, dirnames, filenames) in os.walk(self.path):
+                # Assign color ranges
+                range = (rstart, rend, b) = color_ranges[dirpath]
+                step = (rend - rstart) / (len(dirnames) + 1)
+                next_start = rstart + step
+                new_b = b - 0.2
+                if new_b < 0:
+                    new_b = 0
+                for dir in dirnames:
+                    next_end = next_start + step
+                    color_ranges[os.path.join(dirpath, dir)] = (next_start,
+                                                                next_end, new_b)
+                    next_start = next_end
+                # Create the stuff
+                cat = Category(dirpath, (233, 233, 233), False)
+                cat.set_id(self.category_id_counter.get_next())
+                self.categories.append(cat)
+                for file in filenames:
+                    path = os.path.join(dirpath, file)
+                    evt = self._event_from_path(path)
+                    evt.set_id(self.event_id_counter.get_next())
+                    self.events.append(evt)
+            self.categories[0].visible = True
+            # Set colors and remove prefix
+            prefix_len = len(self.path)
+            for cat in self.categories:
+                cat.color = self._color_from_range(color_ranges[cat.name])
+                cat.name = "." + cat.name[prefix_len:]
+        except Exception, e:
+            msg = _("Unable to read from file '%s'.") % self.path
+            whole_msg = "%s\n\n%s" % (msg, e)
+            raise TimelineIOError(whole_msg)
 
     def _event_from_path(self, path):
         stat = os.stat(path)

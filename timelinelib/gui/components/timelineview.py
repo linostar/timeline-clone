@@ -328,6 +328,7 @@ class DrawingArea(wx.Panel):
         if self.timeline:
             self.timeline.register(self._timeline_changed)
             try:
+                self.view_properties.clear_db_specific()
                 timeline.load_view_properties(self.view_properties)
                 if self.view_properties.displayed_period is None:
                     default_tp = time_period_center(dt.now(), timedelta(days=30))

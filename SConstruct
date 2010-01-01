@@ -76,7 +76,7 @@ languages = ["sv", "es", "de", "pt_BR", "pt", "ru", "ca", "he"]
 for language in languages:
     target = "po/%s/LC_MESSAGES/timeline.mo" % language
     env.Alias("mo", env.Command(target, "po/%s.po" % language,
-                                "$MSGFMT -o $TARGET $SOURCE"))
+                                '"$MSGFMT" -o $TARGET $SOURCE'))
     env.Clean(target, "po/"+language) # Removed the folder
 
 # Target: pot
@@ -85,7 +85,7 @@ env["XGETTEXTFLAGS"] = " --copyright-holder=\"Rickard Lindberg\"" \
                        " --package-name=Timeline" \
                        " --add-comments=TRANSLATORS"
 pot = env.Command("po/timeline.pot", sources,
-                  "$XGETTEXT -o $TARGET $XGETTEXTFLAGS $SOURCES")
+                  '"$XGETTEXT" -o $TARGET $XGETTEXTFLAGS $SOURCES')
 env.Alias("pot", pot)
 
 # Target: tags
