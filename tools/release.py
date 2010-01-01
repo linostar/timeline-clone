@@ -72,7 +72,7 @@ def text_in_first_line(file, text):
     return text in read_first_line(file)
 
 def version_in_first_line(file):
-    text_in_first_line(file, VERSION_STR)
+    return text_in_first_line(file, VERSION_STR)
 
 def get_all_authors():
     def is_author(text):
