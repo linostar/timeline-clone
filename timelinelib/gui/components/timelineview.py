@@ -279,7 +279,6 @@ class DrawingArea(wx.Panel):
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
-        logging.debug("Init done in DrawingArea")
 
     def print_timeline(self, event):
         pdd = wx.PrintDialogData(self.printData)
@@ -404,7 +403,6 @@ class DrawingArea(wx.Panel):
         Here we create a new background buffer with the new size and draw the
         timeline onto it.
         """
-        logging.debug("Resize event in DrawingArea: %s", self.GetSizeTuple())
         width, height = self.GetSizeTuple()
         self.bgbuf = wx.EmptyBitmap(width, height)
         self._redraw_timeline()
@@ -424,7 +422,6 @@ class DrawingArea(wx.Panel):
 
         Defining a dc is crucial. Even if it is not used.
         """
-        logging.debug("Paint event in DrawingArea")
         dc = wx.AutoBufferedPaintDC(self)
         dc.BeginDrawing()
         dc.DrawBitmap(self.bgbuf, 0, 0, True)
@@ -439,7 +436,6 @@ class DrawingArea(wx.Panel):
         If the mouse hits an event that event will be selected.
         """
         try:
-            logging.debug("Left mouse pressed event in DrawingArea")
             self._set_new_current_time(evt.m_x)
             # If we hit the event resize area of an event, start resizing
             if EventSizer(self).sizing_starts(evt.m_x, evt.m_y):
@@ -518,7 +514,6 @@ class DrawingArea(wx.Panel):
         If the mouse hits an event, a dialog opens for editing this event. 
         Otherwise a dialog for creating a new event is opened.
         """
-        logging.debug("Left Mouse doubleclicked event in DrawingArea")
         if self.timeline.is_read_only():
             return
         # Since the event sequence is, 1. EVT_LEFT_DOWN  2. EVT_LEFT_UP
@@ -541,7 +536,6 @@ class DrawingArea(wx.Panel):
         If there is an ongoing selection-marking, the dialog for creating an
         event will be opened, and the selection-marking will be ended.
         """
-        logging.debug("Left mouse released event in DrawingArea")
         if self.is_selecting:
             self._end_selection_and_create_event(evt.m_x)
         self.is_selecting = False
@@ -560,7 +554,6 @@ class DrawingArea(wx.Panel):
         place and the minor strips passed by the mouse will be selected.  If
         the Control key is up the timeline will scroll.
         """
-        logging.debug("Mouse move event in DrawingArea")
         if evt.m_leftDown:
             self._mouse_drag(evt.m_x, evt.m_y, evt.m_controlDown)
         else:
@@ -611,7 +604,6 @@ class DrawingArea(wx.Panel):
         If the Control key is pressed at the same time as the mouse wheel is
         scrolled the timeline will be zoomed, otherwise it will be scrolled.
         """
-        logging.debug("Mouse wheel event in DrawingArea")
         direction = _step_function(evt.m_wheelRotation)
         if evt.ControlDown():
             self._zoom_timeline(direction)
@@ -629,7 +621,6 @@ class DrawingArea(wx.Panel):
         Delete      Delete any selected event(s)
         Control     Change cursor
         """
-        logging.debug("Key down event in DrawingArea")
         keycode = evt.GetKeyCode()
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()
@@ -707,7 +698,6 @@ class DrawingArea(wx.Panel):
 
     def _redraw_timeline(self, period_selection=None):
         """Draw the timeline onto the background buffer."""
-        logging.debug("Draw timeline to bgbuf")
         memdc = wx.MemoryDC()
         memdc.SelectObject(self.bgbuf)
         try:
@@ -741,7 +731,6 @@ class DrawingArea(wx.Panel):
 
     def _set_new_current_time(self, current_x):
         self._current_time = self.drawing_algorithm.metrics.get_time(current_x)
-        logging.debug("Marked time " + self._current_time.isoformat("-"))
 
     def _toggle_event_selection(self, xpixelpos, ypixelpos, control_down):
         """

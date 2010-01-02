@@ -21,7 +21,6 @@ Dialog used for creating and editing events.
 """
 
 
-import logging
 import os.path
 
 import wx
@@ -159,7 +158,6 @@ class EventEditor(wx.Dialog):
         If the Close-on-ok checkbox is checked the dialog is also closed.
         """
         try:
-            logging.debug("_btn_ok_on_click")
             try:
                 # Input value retrieval and validation
                 start_time = self.dtp_start.get_value()

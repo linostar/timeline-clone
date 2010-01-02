@@ -16,8 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import logging
-
 import wx
 
 from timelinelib.db.interface import TimelineIOError
@@ -137,7 +135,6 @@ class CategoriesEditor(wx.Dialog):
 
     def _lst_categories_on_key_down(self, e):
         try:
-            logging.debug("Key down event in CategoriesEditor")
             keycode = e.GetKeyCode()
             if keycode == wx.WXK_DELETE:
                 self._delete_selected_category()
@@ -168,4 +165,3 @@ class CategoriesEditor(wx.Dialog):
         for category in sort_categories(self.timeline.get_categories()):
             self.lst_categories.Append(category.name, category)
         self.btn_del.Disable()
-        

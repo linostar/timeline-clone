@@ -21,7 +21,6 @@ GUI front-end to the help system.
 """
 
 
-import logging
 import os.path
 
 import wx
@@ -132,7 +131,6 @@ class HelpBrowser(wx.Frame):
         --------    ------------------------------------
         Backspace   Go to previous page
         """
-        logging.debug("Key down event in HelpBrowser")
         keycode = evt.GetKeyCode()
         if keycode == wx.WXK_BACK:
             self._go_back()

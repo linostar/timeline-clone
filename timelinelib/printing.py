@@ -22,7 +22,6 @@ Printing framework.
 
 
 import wx
-import logging
 
 
 class TimelinePrintout(wx.Printout):
@@ -39,34 +38,27 @@ class TimelinePrintout(wx.Printout):
         self.preview = preview
 
     def OnBeginDocument(self, start, end):
-        logging.debug("TimelinePrintout.OnBeginDocument")
         return super(TimelinePrintout, self).OnBeginDocument(start, end)
 
     def OnEndDocument(self):
-        logging.debug("TimelinePrintout.OnEndDocument")
         super(TimelinePrintout, self).OnEndDocument()
 
     def OnBeginPrinting(self):
-        logging.debug("TimelinePrintout.OnBeginPrinting")
         super(TimelinePrintout, self).OnBeginPrinting()
 
     def OnEndPrinting(self):
-        logging.debug("TimelinePrintout.OnEndPrinting")
         super(TimelinePrintout, self).OnEndPrinting()
 
     def OnPreparePrinting(self):
-        logging.debug("TimelinePrintout.OnPreparePrinting")
         super(TimelinePrintout, self).OnPreparePrinting()
 
     def HasPage(self, page):
-        logging.debug("TimelinePrintout.HasPage")
         if page <= 1:
             return True
         else:
             return False
 
     def GetPageInfo(self):
-        logging.debug("TimelinePrintout.GetPageInfo")
         minPage  = 1
         maxPage  = 1
         pageFrom = 1
@@ -96,7 +88,6 @@ class TimelinePrintout(wx.Printout):
             dc.SetUserScale(scale, scale)
             dc.SetDeviceOrigin(int(x_pos), int(y_pos))
 
-        logging.debug("TimelinePrintout.OnPrintPage: %d\n" % page)
         dc = self.GetDC()
         SetScaleAndDeviceOrigin(dc)
         dc.BeginDrawing()
