@@ -40,9 +40,7 @@ class CategoryEditor(wx.Dialog):
         self._create_gui()
         self.timeline = timeline
         self.category = category
-        self.create_new = False
         if self.category == None:
-            self.create_new = True
             self.category = Category("", (200, 200, 200), True)
         self.txt_name.SetValue(self.category.name)
         self.colorpicker.SetColour(self.category.color)
