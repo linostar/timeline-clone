@@ -29,6 +29,7 @@ sys.path.insert(0, root_dir)
 
 import time_period
 import file_timeline
+import wildcard_helper
 from timelinelib.about import APPLICATION_NAME
 from timelinelib.paths import LOCALE_DIR
 
@@ -38,7 +39,7 @@ if __name__ == '__main__':
         verbosity = 0
     gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
     loader = unittest.TestLoader()
-    test_modules = [time_period, file_timeline]
+    test_modules = [time_period, file_timeline, wildcard_helper]
     test_suites = [loader.loadTestsFromModule(x) for x in test_modules]
     the_suite = unittest.TestSuite(test_suites)
     res = unittest.TextTestRunner(verbosity=verbosity).run(the_suite)

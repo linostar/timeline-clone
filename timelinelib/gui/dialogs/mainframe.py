@@ -29,10 +29,9 @@ import wx
 
 from timelinelib.db import open as db_open
 from timelinelib.db.interface import TimelineIOError
+from timelinelib.gui.utils import WildcardHelper
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import _ask_question
-from timelinelib.gui.utils import _create_wildcard
-from timelinelib.gui.utils import _extend_path
 from timelinelib import config
 from timelinelib.about import display_about_dialog
 from timelinelib.about import APPLICATION_NAME
@@ -512,12 +511,12 @@ class MainFrame(wx.Frame):
         If the new filename entered, should already exist, the existing
         timeline is opened. The user will be informed about this situation.
         """
+        wildcard = self.timeline_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Create Timeline"),
-                               wildcard=self.wildcard, style=wx.FD_SAVE)
+                               wildcard=wildcard, style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
-            path, extension = _extend_path(dialog.GetPath(), self.extensions,
-                                           self.default_extension)
+            path = self.timeline_wildcard_helper.get_path(dialog)
             if os.path.exists(path):
                 msg_first_part = _("The specified timeline already exists.")
                 msg_second_part = _("Opening timeline instead of creating new.")
@@ -552,9 +551,10 @@ class MainFrame(wx.Frame):
         dir = ""
         if self.timeline is not None:
             dir = os.path.dirname(self.timeline.path)
+        wildcard = self.timeline_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Open Timeline"),
                                defaultDir=dir,
-                               wildcard=self.wildcard, style=wx.FD_OPEN)
+                               wildcard=wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
             self.open_timeline(dialog.GetPath())
@@ -622,19 +622,18 @@ class MainFrame(wx.Frame):
                 # another timeline, or one, will be displayed instead).
 
     def _export_to_image(self):
-        extension_map = {"png": wx.BITMAP_TYPE_PNG}
-        extensions = extension_map.keys()
-        wildcard = _create_wildcard(_("Image files"), extensions)
+        wildcard = self.images_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Export to Image"),
                                wildcard=wildcard, style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
-            path, extension = _extend_path(dialog.GetPath(), extensions, "png")
+            path = self.images_wildcard_helper.get_path(dialog)
             overwrite_question = _("File '%s' exists. Overwrite?") % path
             if (not os.path.exists(path) or
                 _ask_question(overwrite_question, self) == wx.YES):
                 bitmap = self.main_panel.drawing_area.bgbuf
                 image = wx.ImageFromBitmap(bitmap)
-                image.SaveFile(path, extension_map[extension])
+                type = self.images_wildcard_helper.get_extension_data(path)
+                image.SaveFile(path, type)
         dialog.Destroy()
 
     def _goto_date(self):
@@ -654,14 +653,12 @@ class MainFrame(wx.Frame):
         Instance variables usage:
 
         timeline            The timeline currently handled by the application
-        extensions          Valid extensions for files containing timeline info
-        default_extension   The default extension used in FileDialog
-        wildcard            The wildcard used in FileDialog
         """
         self.timeline = None
-        self.extensions = ["timeline", "ics"]
-        self.default_extension = self.extensions[0]
-        self.wildcard = _create_wildcard(_("Timeline files"), self.extensions)
+        self.timeline_wildcard_helper = WildcardHelper(
+            _("Timeline files"), ["timeline", "ics"])
+        self.images_wildcard_helper = WildcardHelper(
+            _("Image files"), [("png", wx.BITMAP_TYPE_PNG)])
 
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()

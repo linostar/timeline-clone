@@ -46,6 +46,49 @@ class TxtException(ValueError):
         self.control = control
 
 
+class WildcardHelper(object):
+    """
+    Help manage wildcards for wx.FileDialog.
+
+    Tested in ../../tests/wildcard_helper.py.
+    """
+
+    def __init__(self, name, extensions):
+        self.name = name
+        self.ext_data = {}
+        self.ext_names = []
+        self._extract_ext_info(extensions)
+
+    def wildcard_string(self):
+        return "%s (%s)|%s" % (
+            self.name,
+            ", ".join(["*." + e for e in self.ext_names]),
+            ";".join(["*." + e for e in self.ext_names]))
+
+    def get_path(self, dialog):
+        path = dialog.GetPath()
+        for ext_name in self.ext_names:
+            if path.endswith("." + ext_name):
+                return path
+        return "%s.%s" % (path, self.ext_names[0])
+
+    def get_extension_data(self, path):
+        split_path = path.split(".")
+        if len(split_path) > 1:
+            ext_name = split_path[-1]
+            return self.ext_data.get(ext_name, None)
+        return None
+        
+    def _extract_ext_info(self, extensions):
+        for ext in extensions:
+            if isinstance(ext, tuple):
+                name, data = ext
+                self.ext_data[name] = data
+                self.ext_names.append(name)
+            else:
+                self.ext_names.append(ext)
+
+
 def sort_categories(categories):
     sorted_categories = list(categories)
     sorted_categories.sort(cmp, lambda x: x.name.lower())
@@ -99,20 +142,3 @@ def _step_function(x_value):
     elif x_value > 0:
         y_value = 1
     return y_value
-
-
-def _create_wildcard(text, extensions):
-    """
-    Create wildcard for use in open/save dialogs.
-    """
-    return "%s (%s)|%s" % (text,
-                           ", ".join(["*." + e for e in extensions]),
-                           ";".join(["*." + e for e in extensions]))
-
-
-def _extend_path(path, valid_extensions, default_extension):
-    """Return tuple (path, extension) ensuring that path has extension."""
-    for extension in valid_extensions:
-        if path.endswith("." + extension):
-            return (path, extension)
-    return (path + "." + default_extension, default_extension)
