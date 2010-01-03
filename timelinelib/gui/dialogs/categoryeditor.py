@@ -16,6 +16,14 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+"""
+Dialog for editing a category.
+
+Implemented as a humble dialog with a controller that is also tested in
+../../../tests/category_editor.py.
+"""
+
+
 import wx
 import wx.lib.colourselect as colourselect
 
@@ -28,24 +36,45 @@ from timelinelib.gui.utils import ID_ERROR
 
 
 class CategoryEditor(wx.Dialog):
-    """
-    Dialog used to edit a category.
-
-    The edited category can be fetched with get_edited_category.
-    """
 
     def __init__(self, parent, title, timeline, category):
         wx.Dialog.__init__(self, parent, title=title)
         self._create_gui()
-        self.timeline = timeline
-        self.category = category
-        if self.category == None:
-            self.category = Category("", (200, 200, 200), True)
-        self.txt_name.SetValue(self.category.name)
-        self.colorpicker.SetColour(self.category.color)
+        self.controller = CategoryEditorController(self, timeline, category)
+        self.controller.initialize()
+
+    def get_name(self):
+        return self.txt_name.GetValue().strip()
+
+    def set_name(self, new_name):
+        self.txt_name.SetValue(new_name)
+
+    def get_color(self):
+        return self.colorpicker.GetValue()
+
+    def set_color(self, new_color):
+        self.colorpicker.SetValue(new_color)
+
+    def close(self):
+        self.EndModal(wx.ID_OK)
+
+    def handle_invalid_name(self):
+        msg = _("Category name '%s' not valid. Must be non-empty.")
+        _display_error_message(msg % name, self)
+        _set_focus_and_select(self.txt_name)
+
+    def handle_used_name(self):
+        msg = _("Category name '%s' already in use.")
+        _display_error_message(msg % name, self)
+        _set_focus_and_select(self.txt_name)
+
+    def handle_db_error(self, e):
+        _display_error_message(e.message, self)
+        self.error = e
+        self.EndModal(ID_ERROR)
 
     def get_edited_category(self):
-        return self.category
+        return self.controller.category
 
     def _create_gui(self):
         # The name text box
@@ -71,30 +100,49 @@ class CategoryEditor(wx.Dialog):
         _set_focus_and_select(self.txt_name)
 
     def _btn_ok_on_click(self, e):
+        self.controller.save()
+
+
+class CategoryEditorController(object):
+
+    def __init__(self, view, db, category):
+        self.view = view
+        self.db = db
+        self.category = category
+
+    def initialize(self):
+        if self.category is None:
+            self.view.set_name("")
+            self.view.set_color((255, 0, 0))
+        else:
+            self.view.set_name(self.category.name)
+            self.view.set_color(self.category.color)
+
+    def save(self):
         try:
-            name = self.txt_name.GetValue().strip()
-            if not self._name_valid(name):
-                msg = _("Category name '%s' not valid. Must be non-empty.")
-                _display_error_message(msg % name, self)
+            new_name = self.view.get_name()
+            new_color = self.view.get_color()
+            if not self._name_valid(new_name):
+                self.view.handle_invalid_name()
                 return
-            if self._name_in_use(name):
-                msg = _("Category name '%s' already in use.")
-                _display_error_message(msg % name, self)
+            if self._name_in_use(new_name):
+                self.view.handle_used_name()
                 return
-            self.category.name = name
-            self.category.color = self.colorpicker.GetColour()
-            self.timeline.save_category(self.category)
-            self.EndModal(wx.ID_OK)
+            if self.category is None:
+                self.category = Category(new_name, new_color, True)
+            else:
+                self.category.name = new_name
+                self.category.color = new_color
+            self.db.save_category(self.category)
+            self.view.close()
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
-            self.error = e
-            self.EndModal(ID_ERROR)
+            self.view.handle_db_error(e)
 
     def _name_valid(self, name):
         return len(name) > 0
 
     def _name_in_use(self, name):
-        for cat in self.timeline.get_categories():
+        for cat in self.db.get_categories():
             if cat != self.category and cat.name == name:
                 return True
         return False
