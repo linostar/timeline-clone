@@ -23,6 +23,11 @@ For translations (other than English) you also need the following:
   * gettext version 0.17
       http://www.gnu.org/software/gettext/
 
+For running tests you also need the following:
+
+  * Mock version 0.6.0
+      http://www.voidspace.org.uk/python/mock/
+
 Installing prerequisites on a Debian-based system
 -------------------------------------------------
 
@@ -33,8 +38,8 @@ http://wiki.wxpython.org/InstallingOnUbuntuOrDebian.
   apt-get install python python-wxgtk2.8 wx2.8-i18n python-markdown
   apt-get install scons gettext
 
-You have to install iCalendar manually since there is no Debian package for it.
-See section on installing iCalendar below.
+You have to install iCalendar and Mock manually since there are no Debian
+packages for them. See sections below.
 
 Installing gettext on Windows
 -----------------------------
@@ -50,6 +55,15 @@ website and then copy the iCalendar-2.1/src/icalendar folder to the root folder
 of Timeline. Or you can follow their installation instructions.
 
 The important thing is that you can do 'import icalendar' from Python.
+
+Installing Mock
+---------------
+
+The easiest way to install Mock is to download the python module from
+http://www.voidspace.org.uk/downloads/mock.py and put it into the test
+directory.
+
+The important thing is that you can do 'import mock' from Python.
 
 Platforms
 =========
