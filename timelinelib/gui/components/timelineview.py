@@ -38,6 +38,12 @@ import timelinelib.printing as printing
 # Used by Sizer and Mover classes to detect when to go into action
 HIT_REGION_PX_WITH = 5
 
+# The width in pixels of the vertical scroll zones.
+# When the mouse reaches the any of the two scroll zone areas, scrolling 
+# of the timeline will take place if there is an ongoing selection of the 
+# timeline. The scroll zone areas are found at the beginning and at the
+# end of the timeline.
+SCROLL_ZONE_WIDTH = 20
 
 class EventSizer(object):
     """Objects of this class are used to simplify resizing of events."""
@@ -386,6 +392,7 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
         self.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
         self.Bind(wx.EVT_LEFT_UP, self._window_on_left_up)
+        self.Bind(wx.EVT_ENTER_WINDOW, self._window_on_enter)
         self.Bind(wx.EVT_MOTION, self._window_on_motion)
         self.Bind(wx.EVT_MOUSEWHEEL, self._window_on_mousewheel)
         self.Bind(wx.EVT_KEY_DOWN, self._window_on_key_down)
@@ -435,6 +442,7 @@ class DrawingArea(wx.Panel):
 
         If the mouse hits an event that event will be selected.
         """
+        self.mouse_x = evt.m_x
         try:
             self._set_new_current_time(evt.m_x)
             # If we hit the event resize area of an event, start resizing
@@ -514,6 +522,7 @@ class DrawingArea(wx.Panel):
         If the mouse hits an event, a dialog opens for editing this event. 
         Otherwise a dialog for creating a new event is opened.
         """
+        self.mouse_x = evt.m_x
         if self.timeline.is_read_only():
             return
         # Since the event sequence is, 1. EVT_LEFT_DOWN  2. EVT_LEFT_UP
@@ -536,11 +545,25 @@ class DrawingArea(wx.Panel):
         If there is an ongoing selection-marking, the dialog for creating an
         event will be opened, and the selection-marking will be ended.
         """
+        self.mouse_x = evt.m_x
         if self.is_selecting:
             self._end_selection_and_create_event(evt.m_x)
         self.is_selecting = False
         self.is_scrolling = False
         self._set_default_cursor()
+
+    def _window_on_enter(self, evt):
+        """
+        Mouse event handler, when the mouse is entering the window.
+        
+        If there is an ongoing selection-marking (selectscroll timer running)
+        and the left mouse button is not down when we enter the window, we 
+        want to simulate a 'mouse left up'-event, so that the dialog for 
+        creating an event will be opened. 
+        """
+        if self.selectscroll_timer_running:
+            if not evt.LeftIsDown():
+                self._window_on_left_up(evt)
 
     def _window_on_motion(self, evt):
         """
@@ -554,6 +577,7 @@ class DrawingArea(wx.Panel):
         place and the minor strips passed by the mouse will be selected.  If
         the Control key is up the timeline will scroll.
         """
+        self.mouse_x = evt.m_x
         if evt.m_leftDown:
             self._mouse_drag(evt.m_x, evt.m_y, evt.m_controlDown)
         else:
@@ -608,8 +632,7 @@ class DrawingArea(wx.Panel):
         if evt.ControlDown():
             self._zoom_timeline(direction)
         else:
-            delta = mult_timedelta(self.view_properties.displayed_period.delta(), direction / 10.0)
-            self._scroll_timeline(delta)
+            self._scroll_timeline_view(direction)
 
     def _window_on_key_down(self, evt):
         """
@@ -661,9 +684,8 @@ class DrawingArea(wx.Panel):
         _current_time       This variable is set to the time on the timeline
                             where the mouse button is clicked when the left
                             mouse button is used
-        _mark_selection     Processing flag indicating ongoing selection of a
-                            time period
         timeline            The timeline currently handled by the application
+        view_properties     Runtime properties for this view
         drawing_algorithm   The algorithm used to draw the timeline
         bgbuf               The bitmap to which the drawing methods draw the
                             timeline. When the EVT_PAINT occurs this bitmap
@@ -675,9 +697,13 @@ class DrawingArea(wx.Panel):
         is_selecting        True when selecting with the mouse takes place
                             It is set True in mouse_has_moved and set False
                             in left_mouse_button_released.
+        timer1_running      Indicates if the balloon-timer-1 is running.
+        timer2_running      Indicates if the balloon-timer-2 is running.
+        selectscroll_timer_running
+                            Indicates if the select-scroll-timer is running.
+        mouse_x             The current pixel position of the mouse
         """
         self._current_time = None
-        self._mark_selection = False
         self.bgbuf = None
         self.drawing_algorithm = get_drawer()
         self.is_scrolling = False
@@ -688,6 +714,8 @@ class DrawingArea(wx.Panel):
         self.view_properties.show_balloons_on_hover = config.get_balloon_on_hover()
         self.timer1_running = False
         self.timer2_running = False
+        self.selectscroll_timer_running = False
+        self.mouse_x = 0
         
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
@@ -759,7 +787,8 @@ class DrawingArea(wx.Panel):
         return event != None
 
     def _end_selection_and_create_event(self, current_x):
-        self._mark_selection = False
+        if self.selectscroll_timer_running:
+            self._stop_selectscroll_timer()
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
         wx.GetTopLevelParent(self).create_new_event(start, end)
@@ -853,9 +882,55 @@ class DrawingArea(wx.Panel):
         
     def _mark_selected_minor_strips(self, current_x):
         """Selection-marking starts or continues."""
-        self._mark_selection = True
         period_selection = self._get_period_selection(current_x)
         self._redraw_timeline(period_selection)
+        if self._in_scroll_zone(current_x):
+            if not self.selectscroll_timer_running:
+                self._start_selectscroll_timer()
+
+    def _in_scroll_zone(self, x):
+        """
+        Return True if x is within the left hand or right hand area
+        where timed scrolling shall start/continue.
+        """
+        width, height = self.GetSizeTuple()
+        if width - x < SCROLL_ZONE_WIDTH or x < SCROLL_ZONE_WIDTH:
+            return True
+        return False
+        
+    def _on_selectscroll(self, event):
+        """
+        Timer event handler that scrolls the timeline.
+        
+        If the mouse is still in the autoscroll zone continue
+        scrolling, otherwise stop the timer.
+        """
+        if not self._in_scroll_zone(self.mouse_x):
+            self._stop_selectscroll_timer()
+        else:    
+            if self.mouse_x < SCROLL_ZONE_WIDTH:
+                direction = 1
+            else:
+                direction = -1
+            self._scroll_timeline_view(direction)
+            self._mark_selected_minor_strips(self.mouse_x)
+
+    def _start_selectscroll_timer(self):
+        # The timer must be associated with the DrawingArea 
+        # to work properly. Therefore the self. prefix
+        self.selectscroll_timer = wx.Timer(self, -1)
+        self.Bind(wx.EVT_TIMER, self._on_selectscroll, 
+                  self.selectscroll_timer)
+        self.selectscroll_timer.Start(milliseconds=300)
+        self.selectscroll_timer_running = True
+        
+    def _stop_selectscroll_timer(self):
+        self.selectscroll_timer.Stop()
+        self.selectscroll_timer_running = False
+        
+    def _scroll_timeline_view(self, direction):
+            delta = mult_timedelta(self.view_properties.displayed_period.delta(), direction / 10.0)
+            self._scroll_timeline(delta)
 
     def _scroll_timeline(self, delta):
         self.navigate_timeline(lambda tp: tp.move_delta(-delta))
