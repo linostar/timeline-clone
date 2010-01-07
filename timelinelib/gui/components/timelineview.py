@@ -45,6 +45,16 @@ HIT_REGION_PX_WITH = 5
 # end of the timeline.
 SCROLL_ZONE_WIDTH = 20
 
+# dragscroll timer interval in milliseconds
+DRAGSCROLL_TIMER_MSINTERVAL = 300
+
+# Identification of the object in play when dragging
+DRAG_NONE   = 0
+DRAG_MOVE   = 1
+DRAG_SIZE   = 2
+DRAG_SELECT = 3
+
+
 class EventSizer(object):
     """Objects of this class are used to simplify resizing of events."""
 
@@ -118,7 +128,7 @@ class EventSizer(object):
             return True
         return False
 
-    def resize(self, m_x, m_y):
+    def resize(self, m_x):
         """
         Resize the event either on the left or the right side.
         The event edge is snapped to the grid.
@@ -132,6 +142,7 @@ class EventSizer(object):
             resized = self.event.update_end(time)
         if resized:
             self.drawing_area._redraw_timeline()
+
 
 class EventMover(object):
     """Objects of this class are used to simplify moving of events."""
@@ -186,7 +197,7 @@ class EventMover(object):
             self.drawing_area._set_default_cursor()
         return hit
 
-    def move(self, m_x, m_y):
+    def move(self, m_x):
         """
         Move the event the time distance, difftime, represented by the distance the
         mouse has moved since the last move (m_x - self.x).
@@ -223,7 +234,6 @@ class EventMover(object):
             self.x = rect.X + rect.Width / 2
         else:
             self.x = m_x
-        self.y = m_y
 
     def _hit(self, m_x, m_y):
         """
@@ -545,6 +555,8 @@ class DrawingArea(wx.Panel):
         If there is an ongoing selection-marking, the dialog for creating an
         event will be opened, and the selection-marking will be ended.
         """
+        if self.dragscroll_timer_running:
+            self._stop_dragscroll_timer()
         self.mouse_x = evt.m_x
         if self.is_selecting:
             self._end_selection_and_create_event(evt.m_x)
@@ -556,12 +568,12 @@ class DrawingArea(wx.Panel):
         """
         Mouse event handler, when the mouse is entering the window.
         
-        If there is an ongoing selection-marking (selectscroll timer running)
+        If there is an ongoing selection-marking (dragscroll timer running)
         and the left mouse button is not down when we enter the window, we 
         want to simulate a 'mouse left up'-event, so that the dialog for 
-        creating an event will be opened. 
+        creating an event will be opened or sizing, moving stops. 
         """
-        if self.selectscroll_timer_running:
+        if self.dragscroll_timer_running:
             if not evt.LeftIsDown():
                 self._window_on_left_up(evt)
 
@@ -596,10 +608,17 @@ class DrawingArea(wx.Panel):
             self._mark_selected_minor_strips(x)
         # Resizing is only allowed if timeline is not readonly    
         elif EventSizer(self).is_sizing() and not self.timeline.is_read_only():
-            EventSizer(self).resize(x, y)
+            EventSizer(self).resize(x)
+            if self._in_scroll_zone(x):
+                if not self.dragscroll_timer_running:
+                    self._start_dragscroll_timer(DRAG_SIZE)
+
         # Moving is only allowed if timeline is not readonly    
         elif EventMover(self).is_moving() and not self.timeline.is_read_only():
-            EventMover(self).move(x, y)
+            EventMover(self).move(x)
+            if self._in_scroll_zone(x):
+                if not self.dragscroll_timer_running:
+                    self._start_dragscroll_timer(DRAG_MOVE)
         else:
             # Marking strips is only allowed if timeline is not readonly    
             if ctrl and not self.timeline.is_read_only():
@@ -699,9 +718,10 @@ class DrawingArea(wx.Panel):
                             in left_mouse_button_released.
         timer1_running      Indicates if the balloon-timer-1 is running.
         timer2_running      Indicates if the balloon-timer-2 is running.
-        selectscroll_timer_running
-                            Indicates if the select-scroll-timer is running.
         mouse_x             The current pixel position of the mouse
+        drag_object         The id of the object in play when dragging
+        dragscroll_timer_running
+                            Indicates if the drag-scroll-timer is running.
         """
         self._current_time = None
         self.bgbuf = None
@@ -714,8 +734,9 @@ class DrawingArea(wx.Panel):
         self.view_properties.show_balloons_on_hover = config.get_balloon_on_hover()
         self.timer1_running = False
         self.timer2_running = False
-        self.selectscroll_timer_running = False
         self.mouse_x = 0
+        self.drag_object = DRAG_NONE
+        self.dragscroll_timer_running = False
         
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
@@ -787,8 +808,6 @@ class DrawingArea(wx.Panel):
         return event != None
 
     def _end_selection_and_create_event(self, current_x):
-        if self.selectscroll_timer_running:
-            self._stop_selectscroll_timer()
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
         wx.GetTopLevelParent(self).create_new_event(start, end)
@@ -885,8 +904,8 @@ class DrawingArea(wx.Panel):
         period_selection = self._get_period_selection(current_x)
         self._redraw_timeline(period_selection)
         if self._in_scroll_zone(current_x):
-            if not self.selectscroll_timer_running:
-                self._start_selectscroll_timer()
+            if not self.dragscroll_timer_running:
+                self._start_dragscroll_timer(DRAG_SELECT)
 
     def _in_scroll_zone(self, x):
         """
@@ -898,7 +917,7 @@ class DrawingArea(wx.Panel):
             return True
         return False
         
-    def _on_selectscroll(self, event):
+    def _on_dragscroll(self, event):
         """
         Timer event handler that scrolls the timeline.
         
@@ -906,27 +925,31 @@ class DrawingArea(wx.Panel):
         scrolling, otherwise stop the timer.
         """
         if not self._in_scroll_zone(self.mouse_x):
-            self._stop_selectscroll_timer()
+            self._stop_dragscroll_timer()
         else:    
             if self.mouse_x < SCROLL_ZONE_WIDTH:
                 direction = 1
             else:
                 direction = -1
             self._scroll_timeline_view(direction)
-            self._mark_selected_minor_strips(self.mouse_x)
+            if (self.drag_object == DRAG_MOVE):
+                EventMover(self).move(self.mouse_x)
+            elif (self.drag_object == DRAG_SIZE):
+                EventSizer(self).resize(self.mouse_x)
+            elif (self.drag_object == DRAG_SELECT):
+                self._mark_selected_minor_strips(self.mouse_x)
 
-    def _start_selectscroll_timer(self):
-        # The timer must be associated with the DrawingArea 
-        # to work properly. Therefore the self. prefix
-        self.selectscroll_timer = wx.Timer(self, -1)
-        self.Bind(wx.EVT_TIMER, self._on_selectscroll, 
-                  self.selectscroll_timer)
-        self.selectscroll_timer.Start(milliseconds=300)
-        self.selectscroll_timer_running = True
-        
-    def _stop_selectscroll_timer(self):
-        self.selectscroll_timer.Stop()
-        self.selectscroll_timer_running = False
+    def _start_dragscroll_timer(self, drag_object):
+        self.dragscroll_timer_running = True
+        self.drag_object = drag_object
+        self.dragscroll_timer = wx.Timer(self, -1)
+        self.Bind(wx.EVT_TIMER, self._on_dragscroll, self.dragscroll_timer)
+        self.dragscroll_timer.Start(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
+
+    def _stop_dragscroll_timer(self):
+        self.dragscroll_timer_running = False
+        self.drag_object = DRAG_NONE
+        self.dragscroll_timer.Stop()
         
     def _scroll_timeline_view(self, direction):
             delta = mult_timedelta(self.view_properties.displayed_period.delta(), direction / 10.0)
