@@ -1,4 +1,4 @@
-# Copyright (C) 2009  Rickard Lindberg, Roger Lindberg
+# Copyright (C) 2009, 2010  Rickard Lindberg, Roger Lindberg
 #
 # This file is part of Timeline.
 #
