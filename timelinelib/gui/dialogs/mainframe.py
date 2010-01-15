@@ -601,7 +601,12 @@ class MainFrame(wx.Frame):
         config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
         config.set_show_legend(self.mnu_view_legend.IsChecked())
         config.set_sidebar_width(self.main_panel.get_sidebar_width())
-        config.write()
+        try:
+            config.write()
+        except IOError, ex:
+            friendly = _("Unable to write configuration file.")
+            msg = "%s\n\n%s" % (friendly, ex.message)
+            _display_error_message(msg, self)
 
     def _save_current_timeline_data(self):
         """
