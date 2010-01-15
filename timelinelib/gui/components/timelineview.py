@@ -769,8 +769,11 @@ class DrawingArea(wx.Panel):
             self.Refresh()
             self.Update()
         except Exception, ex:
-            self.bgbuf = None
-            logging.fatal("Error in drawing", exc_info=ex)
+            # It is a bug in the application if we end up here. Perhaps we
+            # should not handle the exception at all? Setting an empty bitmap
+            # at least prevents other errors in case we end up here.
+            self.bgbuf = wx.EmptyBitmap(width, height)
+            _display_error_message("Error in drawing\n\n%s" % ex.message, self)
 
     def _scroll(self, xpixelpos):
         if self._current_time:
