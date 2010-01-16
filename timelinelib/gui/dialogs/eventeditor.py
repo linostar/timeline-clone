@@ -160,10 +160,16 @@ class EventEditor(wx.Dialog):
         try:
             try:
                 # Input value retrieval and validation
-                start_time = self.dtp_start.get_value()
+                try:
+                    start_time = self.dtp_start.get_value()
+                except ValueError, ex:
+                    raise TxtException(ex.message, self.dtp_start)
                 end_time = start_time
                 if self.chb_period.IsChecked():
-                    end_time = self.dtp_end.get_value()
+                    try:
+                        end_time = self.dtp_end.get_value()
+                    except ValueError, ex:
+                        raise TxtException(ex.message, self.dtp_end)
                 selection = self.lst_category.GetSelection()
                 category = self.lst_category.GetClientData(selection)
                 if start_time > end_time:
