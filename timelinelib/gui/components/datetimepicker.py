@@ -24,7 +24,6 @@ import wx
 from wx.lib.masked import TimeCtrl
 
 from timelinelib.db.objects import TimePeriod
-from timelinelib.gui.utils import _display_error_message
 
 
 class DateTimePicker(wx.Panel):
