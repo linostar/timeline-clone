@@ -37,6 +37,7 @@ from timelinelib.gui.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import local_to_unicode
 from timelinelib.paths import ICONS_DIR
+import timelinelib.config as config
 
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
@@ -133,13 +134,21 @@ class StripWeek(Strip):
             next_first_weekday = self.increment(first_weekday)
             last_weekday = next_first_weekday - timedelta(days=1)
             range_string = self._time_range_string(first_weekday, last_weekday)
-            return (_("Week") + " %s (%s)") % (time.isocalendar()[1], range_string)
+            if config.global_config.week_start == "monday":
+                return (_("Week") + " %s (%s)") % (time.isocalendar()[1], range_string)
+            else:
+                # It is sunday (don't know what to do about week numbers here)
+                return range_string
         # This strip should never be used as minor
         return ""
 
     def start(self, time):
         stripped_date = datetime(time.year, time.month, time.day)
-        return stripped_date - timedelta(stripped_date.weekday())
+        if config.global_config.week_start == "monday":
+            return stripped_date - timedelta(stripped_date.weekday())
+        else:
+            # It is sunday
+            return stripped_date - timedelta(days=stripped_date.weekday()+1)
 
     def increment(self, time):
         return time + timedelta(7)

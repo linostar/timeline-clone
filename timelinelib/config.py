@@ -43,6 +43,7 @@ SIDEBAR_WIDTH = "sidebar_width"
 RECENT_FILES = "recent_files"
 OPEN_RECENT_AT_STARTUP = "open_recent_at_startup"
 BALLOON_ON_HOVER = "balloon_on_hover"
+WEEK_START = "week_start"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
@@ -53,6 +54,7 @@ DEFAULTS = {
     OPEN_RECENT_AT_STARTUP: "True",
     RECENT_FILES: "",
     BALLOON_ON_HOVER: "True",
+    WEEK_START: "monday",
 }
 # Some settings
 MAX_NBR_OF_RECENT_FILES_SAVED = 5
@@ -188,3 +190,11 @@ class Config(object):
     def set_balloon_on_hover(self, balloon_on_hover):
         self.config_parser.set(DEFAULTSECT, BALLOON_ON_HOVER, str(balloon_on_hover))
     balloon_on_hover = property(get_balloon_on_hover, set_balloon_on_hover)
+
+    def get_week_start(self):
+        return self.config_parser.get(DEFAULTSECT, WEEK_START)
+    def set_week_start(self, week_start):
+        if not week_start in ["monday", "sunday"]:
+            raise ValueError("Invalid week start.")
+        self.config_parser.set(DEFAULTSECT, WEEK_START, week_start)
+    week_start = property(get_week_start, set_week_start)

@@ -32,6 +32,7 @@ class PreferencesDialog(wx.Dialog):
 
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, title=_("Preferences"))
+        self.weeks_map = ((0, "monday"), (1, "sunday"))
         self._create_gui()
 
     def _create_gui(self):
@@ -45,6 +46,20 @@ class PreferencesDialog(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self._chb_open_recent_startup_on_checkbox,
                   chb_open_recent_startup)
         sizer.Add(chb_open_recent_startup, border=BORDER, flag=wx.ALL)
+        panel.SetSizer(sizer)
+        # Date/Time tab
+        panel = wx.Panel(notebook)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        notebook.AddPage(panel, _("Date && Time"))
+        grid = wx.FlexGridSizer(1, 2, BORDER, BORDER)
+        flag = wx.ALIGN_CENTER_VERTICAL
+        grid.Add(wx.StaticText(panel, label=_("Week start on:")), flag=flag)
+        choice_week = wx.Choice(panel, choices=[_("Monday"), _("Sunday")])
+        index = self._week_index(config.global_config.week_start)
+        choice_week.SetSelection(index)
+        grid.Add(choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        self.Bind(wx.EVT_CHOICE, self._choice_week_on_choice, choice_week)
+        sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
         panel.SetSizer(sizer)
         # The close button
         btn_close = wx.Button(self, wx.ID_CLOSE)
@@ -66,5 +81,20 @@ class PreferencesDialog(wx.Dialog):
     def _chb_open_recent_startup_on_checkbox(self, evt):
         config.set_open_recent_at_startup(evt.IsChecked())
 
+    def _choice_week_on_choice(self, evt):
+        config.global_config.week_start = self._index_week(evt.GetSelection())
+
     def _btn_close_on_click(self, e):
         self.Close()
+
+    def _week_index(self, week):
+        for (i, w) in self.weeks_map:
+            if w == week:
+                return i
+        raise ValueError("Unknown week '%s'." % week)
+
+    def _index_week(self, index):
+        for (i, w) in self.weeks_map:
+            if i == index:
+                return w
+        raise ValueError("Unknown week index '%s'." % index)

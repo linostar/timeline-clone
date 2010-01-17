@@ -33,6 +33,7 @@ class TestConfig(unittest.TestCase):
         self.assertEquals(config.recently_opened, [])
         self.assertEquals(config.open_recent_at_startup, True)
         self.assertEquals(config.balloon_on_hover, True)
+        self.assertEquals(config.week_start, "monday")
 
     def testSettingValues(self):
         """
@@ -56,6 +57,8 @@ class TestConfig(unittest.TestCase):
         self.assertEquals(config.open_recent_at_startup, False)
         config.balloon_on_hover = False
         self.assertEquals(config.balloon_on_hover, False)
+        config.week_start = "sunday"
+        self.assertEquals(config.week_start, "sunday")
 
     def testRecentlyOpenedNotSameTwice(self):
         config = Config("")
@@ -84,3 +87,12 @@ class TestConfig(unittest.TestCase):
         config = Config("")
         config.append_recently_opened("non-unicode-path")
         self.assertTrue(isinstance(config.recently_opened[0], unicode))
+
+    def testInvalidWeekStart(self):
+        config = Config("")
+        # "sunday" and "monday" are ok, others are not
+        config.week_start = "sunday"
+        config.week_start = "monday"
+        def set_invalid_week():
+            config.week_start = "friday"
+        self.assertRaises(ValueError, set_invalid_week)
