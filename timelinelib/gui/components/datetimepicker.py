@@ -35,6 +35,8 @@ class DateTimePicker(wx.Panel):
 
     def __init__(self, parent, show_time=True):
         wx.Panel.__init__(self, parent)
+        self.min = wx.DateTimeFromDMY(1, wx.DateTime.Jan, 10)
+        self.max = wx.DateTimeFromDMY(1, wx.DateTime.Jan, 9990)
         self._create_gui()
         self.show_time(show_time)
 
@@ -43,13 +45,19 @@ class DateTimePicker(wx.Panel):
         self.GetSizer().Layout()
 
     def get_value(self):
-        """Return the selected date time as a Python datetime object."""
+        """
+        Return the selected date time as a Python datetime object or raise
+        ValueError if no valid date is selected.
+        """
         date = self.date_picker.GetValue()
+        if not date.IsValid():
+            raise ValueError(_("Invalid date."))
+        if date < self.min or date > self.max:
+            raise ValueError(_("Date not within allowed period."))
         date_time = dt(date.Year, date.Month+1, date.Day)
         if self.time_picker.IsShown():
             time = self.time_picker.GetValue(as_wxDateTime=True)
-            date_time = date_time.replace(hour=time.Hour,
-                                          minute=time.Minute)
+            date_time = date_time.replace(hour=time.Hour, minute=time.Minute)
         return date_time
 
     def set_value(self, value):
@@ -61,10 +69,11 @@ class DateTimePicker(wx.Panel):
         self.time_picker.SetValue(wx_date_time)
 
     def _create_gui(self):
-        self.date_picker = wx.GenericDatePickerCtrl(self,
-                               style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
-        self.Bind(wx.EVT_DATE_CHANGED, self._date_picker_on_date_changed,
-                  self.date_picker)
+        # ALLOWNONE will allow us to enter invalid dates. When we do that the
+        # field is filled with just blanks. The get_value method will raise
+        # ValueErrors and it is up to the calling code to handle those.
+        style = wx.DP_DROPDOWN | wx.DP_SHOWCENTURY | wx.DP_ALLOWNONE
+        self.date_picker = wx.GenericDatePickerCtrl(self, style=style)
         self.time_picker = TimeCtrl(self, format="24HHMM")
         # Layout
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -73,13 +82,6 @@ class DateTimePicker(wx.Panel):
         sizer.Add(self.time_picker, proportion=0,
                   flag=wx.ALIGN_CENTER_VERTICAL)
         self.SetSizerAndFit(sizer)
-
-    def _date_picker_on_date_changed(self, e):
-        date = self.get_value()
-        if date < TimePeriod.MIN_TIME:
-            self.set_value(TimePeriod.MIN_TIME)
-        if date > TimePeriod.MAX_TIME:
-            self.set_value(TimePeriod.MAX_TIME)
 
     def _python_date_to_wx_date(self, py_date):
         return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,

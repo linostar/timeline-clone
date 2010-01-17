@@ -16,7 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import logging
 from datetime import datetime as dt
 from datetime import timedelta
 
@@ -315,7 +314,6 @@ class DrawingArea(wx.Panel):
         printout = printing.TimelinePrintout(self, False)
         self.preview = wx.PrintPreview(printout_preview, printout, data)
         if not self.preview.Ok():
-            logging.debug("Problem with preview dialog...\n")
             return
         frame = wx.GetApp().GetTopWindow()
         pfrm = wx.PreviewFrame(self.preview, frame, _("Print preview"))
