@@ -30,6 +30,7 @@ from timelinelib.drawing import get_drawer
 from timelinelib.gui.utils import sort_categories
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _step_function
+from timelinelib.gui.utils import _display_error_message
 import timelinelib.config as config
 import timelinelib.printing as printing
 
@@ -770,6 +771,7 @@ class DrawingArea(wx.Panel):
             # It is a bug in the application if we end up here. Perhaps we
             # should not handle the exception at all? Setting an empty bitmap
             # at least prevents other errors in case we end up here.
+            width, height = self.GetSizeTuple()
             self.bgbuf = wx.EmptyBitmap(width, height)
             _display_error_message("Error in drawing\n\n%s" % ex.message, self)
 
