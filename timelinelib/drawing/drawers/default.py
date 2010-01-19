@@ -145,10 +145,11 @@ class StripWeek(Strip):
     def start(self, time):
         stripped_date = datetime(time.year, time.month, time.day)
         if config.global_config.week_start == "monday":
-            return stripped_date - timedelta(stripped_date.weekday())
+            days_to_subtract = stripped_date.weekday()
         else:
             # It is sunday
-            return stripped_date - timedelta(days=stripped_date.weekday()+1)
+            days_to_subtract = (stripped_date.weekday() + 1) % 7
+        return stripped_date - timedelta(days=days_to_subtract)
 
     def increment(self, time):
         return time + timedelta(7)
