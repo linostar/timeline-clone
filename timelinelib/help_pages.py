@@ -41,6 +41,7 @@ def install(help_system):
     - Help(where_is_save)
     - Help(categories_delete)
     - Help(why_not_timeline_in_my_language)
+    - Help(week_numbers_sunday_week_start)
 - **%s**
     - Help(timeline)
     - Help(events)
@@ -104,6 +105,20 @@ Hovering over an event will display the full description in the status bar.
         body=_("""
 There is no save button. Timeline will automatically save your data whenever needed.
 """))
+
+
+    help_system.install_page(
+        id="week_numbers_sunday_week_start",
+        header=_("Where do the week numbers go if I start my weeks on Sunday?"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+The date data object used does not support week numbers for weeks that start on Sunday at present.  We plan on using a different date object that will support this in future versions.
+"""))
+
 
     help_system.install_page(
         id="timeline",

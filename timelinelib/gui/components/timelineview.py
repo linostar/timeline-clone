@@ -969,10 +969,10 @@ class DrawingArea(wx.Panel):
         selected_event_ids = self.view_properties.get_selected_event_ids()
         nbr_of_selected_event_ids = len(selected_event_ids)
         if nbr_of_selected_event_ids > 1:
-            text = _("Are you sure to delete %d events?" % 
+            text = _("Are you sure you want to delete %d events?" % 
                      nbr_of_selected_event_ids)
         else:
-            text = _("Are you sure to delete?")
+            text = _("Are you sure you want to delete this event?")
         if _ask_question(text, self) == wx.YES:
             try:
                 for event_id in selected_event_ids:

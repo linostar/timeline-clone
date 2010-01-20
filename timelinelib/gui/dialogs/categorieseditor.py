@@ -156,7 +156,7 @@ class CategoriesEditor(wx.Dialog):
     def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
         if selection != wx.NOT_FOUND:
-            if _ask_question(_("Are you sure to delete?"), self) == wx.YES:
+            if _ask_question(_("Are you sure you want to delete this category?"), self) == wx.YES:
                 cat = self.lst_categories.GetClientData(selection)
                 self.timeline.delete_category(cat)
 
