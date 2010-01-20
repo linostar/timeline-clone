@@ -49,6 +49,13 @@ class DateTimePicker(wx.Panel):
         Return the selected date time as a Python datetime object or raise
         ValueError if no valid date is selected.
         """
+        # Move to the next field so that the text field in the
+        # GenericDatePickerCtrl looses focus. The date retrieved with GetValue
+        # only gets updated when the text field looses focus. If this control
+        # is used in a dialog we can have problems if we don't do this. See
+        # http://stackoverflow.com/questions/1568491/wx-datepickerctrl-in-dialog-ignores-value-entered-after-hitting-return-on-wxgtk
+        # for more info.
+        self.date_picker.Navigate()
         date = self.date_picker.GetValue()
         if not date.IsValid():
             raise ValueError(_("Invalid date."))
