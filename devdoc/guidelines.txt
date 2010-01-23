@@ -31,7 +31,8 @@ We use the `"` character for strings. **Not** the `'` character.
 
 ### Order of blocks inside a module (.py file)
 
-All these blocks should be separated with two blank lines.
+All top-level blocks should be separated with two blank lines. Methods inside a
+class should be separated with one blank line.
 
   * Module docstring
   * Imports
