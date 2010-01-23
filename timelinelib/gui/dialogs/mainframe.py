@@ -249,6 +249,10 @@ class MainFrame(wx.Frame):
         forward = self.mnu_navigate.Append(wx.ID_ANY, _("Forward\tPgDn"))
         forward_one_week = self.mnu_navigate.Append(wx.ID_ANY, _("Forward One Wee&k\tK"))
         backward_one_week = self.mnu_navigate.Append(wx.ID_ANY, _("Back One &Week\tW"))
+        forward_one_month = self.mnu_navigate.Append(wx.ID_ANY, _("Forward One Mont&h\tH"))
+        backward_one_month = self.mnu_navigate.Append(wx.ID_ANY, _("Back One &Month\tM"))
+        forward_one_year = self.mnu_navigate.Append(wx.ID_ANY, _("Forward One Yea&r\tR"))
+        backward_one_year = self.mnu_navigate.Append(wx.ID_ANY, _("Back One &Year\tY"))
         self.mnu_navigate.AppendSeparator()
         fit_century = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Century"))
         fit_decade = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Decade"))
@@ -265,6 +269,10 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_on_click, forward)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_week_on_click, forward_one_week)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_week_on_click, backward_one_week)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_month_on_click, forward_one_month)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_month_on_click, backward_one_month)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_year_on_click, forward_one_year)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_year_on_click, backward_one_year)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_century_on_click, fit_century)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_decade_on_click, fit_decade)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
@@ -386,10 +394,22 @@ class MainFrame(wx.Frame):
         self._navigate_forward()
 
     def _mnu_navigate_forward_one_week_on_click(self, evt):
-	self._navigate_week_step(1)
+        self._navigate_week_step(1)
 
     def _mnu_navigate_backward_one_week_on_click(self, evt):
-	self._navigate_week_step(-1)
+        self._navigate_week_step(-1)
+
+    def _mnu_navigate_forward_one_month_on_click(self, evt):
+        self._navigate_month_step(1)
+
+    def _mnu_navigate_backward_one_month_on_click(self, evt):
+        self._navigate_month_step(-1)
+
+    def _mnu_navigate_forward_one_year_on_click(self, evt):
+        self._navigate_year_step(1)
+
+    def _mnu_navigate_backward_one_year_on_click(self, evt):
+        self._navigate_year_step(-1)
 
     def _mnu_navigate_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_year())
@@ -675,6 +695,35 @@ class MainFrame(wx.Frame):
 
     def _navigate_week_step(self, direction):
         wk = datetime.timedelta(days=7)
+        self._navigate_timeline(lambda tp: tp.move_delta(direction*wk))
+
+    def _navigate_month_step(self, direction):
+        """
+        Currently does notice leap years.
+        """
+        tm = self._get_time_period().mean_time()
+        if direction > 0:
+            if tm.month == 2:
+                d = 28
+            elif tm.month in (4,6,9,11):
+                d = 30
+            else:
+                d = 31
+        else:
+            if tm.month == 3:
+                d = 28
+            elif tm.month in (5,7,10,12):
+                d = 30
+            else:
+                d = 31
+        mv = datetime.timedelta(days=d)
+        self._navigate_timeline(lambda tp: tp.move_delta(direction*mv))
+
+    def _navigate_year_step(self, direction):
+        """
+        Currently does notice leap years.
+        """
+        wk = datetime.timedelta(days=365)
         self._navigate_timeline(lambda tp: tp.move_delta(direction*wk))
 
     def _navigate_smart_step(self, direction):
