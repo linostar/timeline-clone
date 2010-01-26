@@ -400,6 +400,7 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self._window_on_left_down)
         self.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
         self.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
+        self.Bind(wx.EVT_MIDDLE_UP, self._window_on_middle_up)
         self.Bind(wx.EVT_LEFT_UP, self._window_on_left_up)
         self.Bind(wx.EVT_ENTER_WINDOW, self._window_on_enter)
         self.Bind(wx.EVT_MOTION, self._window_on_motion)
@@ -546,6 +547,15 @@ class DrawingArea(wx.Panel):
         else:
             wx.GetTopLevelParent(self).create_new_event(self._current_time,
                                                         self._current_time)
+
+    def _window_on_middle_up(self, evt):
+        """
+        Event handler used when the middle mouse button has been clicked.
+
+        This will recenter the timeline to the area clicked on.
+        """
+        self._set_new_current_time(evt.m_x)
+        self.navigate_timeline(lambda tp: tp.center(self._current_time))
 
     def _window_on_left_up(self, evt):
         """

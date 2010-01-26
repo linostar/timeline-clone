@@ -723,8 +723,8 @@ class MainFrame(wx.Frame):
         """
         Currently does notice leap years.
         """
-        wk = datetime.timedelta(days=365)
-        self._navigate_timeline(lambda tp: tp.move_delta(direction*wk))
+        yr = datetime.timedelta(days=365)
+        self._navigate_timeline(lambda tp: tp.move_delta(direction*yr))
 
     def _navigate_smart_step(self, direction):
 
