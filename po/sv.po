@@ -7,37 +7,43 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Timeline 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 16:26+0100\n"
+"POT-Creation-Date: 2009-12-28 12:38+0100\n"
 "PO-Revision-Date: 2009-12-01 22:26+0000\n"
 "Last-Translator: rogerlindberg <roger@rolidata.se>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-28 11:44+0000\n"
+"X-Launchpad-Export-Date: 2010-01-26 12:16+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: src/drawing_default.py:136
-msgid "Week"
-msgstr "Vecka"
+#: timelinelib/help.py:64
+#, python-format
+msgid "Search results for '%s'"
+msgstr "Sökresultat för '%s'"
 
-#: src/help_pages.py:36
+#: timelinelib/help.py:122
+msgid "Related pages"
+msgstr "Relaterade sidor"
+
+#: timelinelib/help_pages.py:36
 msgid "Help contents"
 msgstr "Hjälpinnehåll"
 
-#: src/help_pages.py:57
+#: timelinelib/help_pages.py:55
 msgid "Questions and answers"
 msgstr "Frågor och svar"
 
-#: src/help_pages.py:57
+#: timelinelib/help_pages.py:55
 msgid "Concepts"
 msgstr "Begrepp"
 
-#: src/help_pages.py:57
+#: timelinelib/help_pages.py:55
 msgid "Tasks"
 msgstr "Aktiviteter"
 
-#: src/help_pages.py:61 src/gui.py:258 src/gui.py:673
+#: timelinelib/help_pages.py:59 timelinelib/gui/dialogs/mainframe.py:277
+#: timelinelib/gui/dialogs/mainframe.py:800
 msgid "Getting started tutorial"
 msgstr "Kom igång övning"
 
@@ -46,7 +52,7 @@ msgstr "Kom igång övning"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:68
+#: timelinelib/help_pages.py:66
 msgid ""
 "\n"
 "The idea is to display events on a timeline and to be able to quickly change "
@@ -156,7 +162,7 @@ msgstr ""
 "Om man rör musen över en händelse så visas information om händelsen på "
 "statusraden i nedre delan av applikationen.\n"
 
-#: src/help_pages.py:100
+#: timelinelib/help_pages.py:98
 msgid "Where is the save button?"
 msgstr "Var är sparaknappen?"
 
@@ -165,7 +171,7 @@ msgstr "Var är sparaknappen?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:106
+#: timelinelib/help_pages.py:104
 msgid ""
 "\n"
 "There is no save button. Timeline will automatically save your data whenever "
@@ -175,7 +181,7 @@ msgstr ""
 "Det finns ingen sparaknapp. Timeline sparar automatiskt ditt data när det "
 "behövs.\n"
 
-#: src/help_pages.py:112
+#: timelinelib/help_pages.py:110
 msgid "Timeline"
 msgstr "Tidslinje"
 
@@ -184,7 +190,7 @@ msgstr "Tidslinje"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:119
+#: timelinelib/help_pages.py:117
 msgid ""
 "\n"
 "The timeline shows dates according to the Gregorian calendar on the x-axis. "
@@ -203,7 +209,7 @@ msgstr ""
 "viss starttid. Om du är intresserad av en sådan möjlighet, så hör gärna av "
 "dig.\n"
 
-#: src/help_pages.py:127
+#: timelinelib/help_pages.py:125
 msgid "Events"
 msgstr "Händelser"
 
@@ -212,7 +218,7 @@ msgstr "Händelser"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:134
+#: timelinelib/help_pages.py:132
 msgid ""
 "\n"
 "An event is the basic data type for representing information on the "
@@ -226,7 +232,7 @@ msgstr ""
 "händelsen inträffar). Detta can vara antingen en specifik tidpunkt eller en "
 "tidsperiod.\n"
 
-#: src/help_pages.py:140
+#: timelinelib/help_pages.py:138
 msgid "Categories"
 msgstr "Kategorier"
 
@@ -235,7 +241,7 @@ msgstr "Kategorier"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:147
+#: timelinelib/help_pages.py:145
 msgid ""
 "\n"
 "Categories are used to group events. An event can only belong to one "
@@ -247,63 +253,7 @@ msgstr ""
 "och endast en kategori. Alla händelser som tillhör samma kategori visas med "
 "den bakgrundsfärg som man valt för kategorin.\n"
 
-#: src/help_pages.py:153
-msgid "Backups"
-msgstr "Säkerhetskopior"
-
-#. TRANSLATORS: This text uses special markup.
-#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
-#. Just write them as they are.
-#. Stars produce emphasized text. DON'T remove them.
-#. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:160
-msgid ""
-"\n"
-"Timeline tries its best to ensure that the data you save in a timeline never "
-"gets lost. One step in that process is to create a backup of your timeline "
-"every time before new data is saved. The backup is saved in a file with the "
-"same name as the original but with an \"~\" appended to the name.\n"
-"\n"
-"If you get an error saying that there was a problem reading timeline data "
-"there is a chance that your data is corrupt. In that case you can recover "
-"the data from the backup.\n"
-"\n"
-"If you would like to be extra certain to not loose your data, we recommend "
-"that you take regular backups of your timeline file.\n"
-msgstr ""
-"\n"
-"Timeline försöker att se till att data som sparas om en tidslinje aldrig går "
-"förlorad. Ett steg i den processen är att skapa en backup av ditt Timeline-"
-"data varje gång som nytt data ska sparas. Backupen sparas i en fil med samma "
-"namn som originalfilen men med ett \"~\" tillagt sist i filnamnet\n"
-"\n"
-"Om du får ett fel som säger att det är problem med att läsa ditt Timeline-"
-"data så är det möjligt att ditt data blivit korrupt. I så fall kan du "
-"använda backupen för att få tillbaka ditt data.\n"
-"\n"
-"Om du vill vara extra säker på att inte förlora data så rekommnederar vi att "
-"du själv tar regelbundna backupper av dina Timeline-filer.\n"
-
-#: src/help_pages.py:170 src/gui.py:1608
-msgid "Restore file from backup"
-msgstr "Återskapa fil från säkerhetskopia"
-
-#. TRANSLATORS: This text uses special markup.
-#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
-#. Just write them as they are.
-#. Stars produce emphasized text. DON'T remove them.
-#. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:177
-msgid ""
-"\n"
-"To restore a timeline file from the backup, simply remove the \"~\" in the "
-"name of the backed up file.\n"
-msgstr ""
-"\n"
-"För att återskapa en fil från säkerhetskopia, ta bort \"~\" i namnet på "
-"säkerhetskopian.\n"
-
-#: src/help_pages.py:183
+#: timelinelib/help_pages.py:151
 msgid "Create event"
 msgstr "Skapa händelse"
 
@@ -312,7 +262,7 @@ msgstr "Skapa händelse"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:190
+#: timelinelib/help_pages.py:158
 msgid ""
 "\n"
 "The *Create Event* dialog can be opened in the following ways:\n"
@@ -330,7 +280,7 @@ msgstr ""
 "- Håll *Ctrl* tangenten, håll *vänster* musknapp nedtryckt, dra den över "
 "tidslinjen och släpp den.\n"
 
-#: src/help_pages.py:200
+#: timelinelib/help_pages.py:168
 msgid "Edit event"
 msgstr "Redigera händelse"
 
@@ -339,7 +289,7 @@ msgstr "Redigera händelse"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:207
+#: timelinelib/help_pages.py:175
 msgid ""
 "\n"
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
@@ -348,7 +298,7 @@ msgstr ""
 "Dialogen \"Uppdatera Händelse\" öppnas genom att dubbelklicka på en "
 "händelse.\n"
 
-#: src/help_pages.py:213
+#: timelinelib/help_pages.py:181
 msgid "Selecting events"
 msgstr "Markera händelser"
 
@@ -357,7 +307,7 @@ msgstr "Markera händelser"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:219
+#: timelinelib/help_pages.py:187
 msgid ""
 "\n"
 "To select an event, click on it. To select multiple events, hold down the "
@@ -375,7 +325,7 @@ msgstr ""
 "\n"
 "HelpFigure(selected_event)\n"
 
-#: src/help_pages.py:229
+#: timelinelib/help_pages.py:197
 msgid "Delete event"
 msgstr "Ta bort händelse"
 
@@ -384,7 +334,7 @@ msgstr "Ta bort händelse"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:236
+#: timelinelib/help_pages.py:204
 msgid ""
 "\n"
 "To delete an event, select it and press the *Del* key. Multiple events can "
@@ -394,7 +344,7 @@ msgstr ""
 "För att ta bort en händelse, markera den och tryck på *Del*. Flera händelser "
 "kan tas bort samtidigt.\n"
 
-#: src/help_pages.py:242
+#: timelinelib/help_pages.py:210
 msgid "Will associated events be deleted when I delete a category?"
 msgstr "Kommer associerade händelser tas bort när jag tar bort en kategori?"
 
@@ -403,7 +353,7 @@ msgstr "Kommer associerade händelser tas bort när jag tar bort en kategori?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:248
+#: timelinelib/help_pages.py:216
 msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
@@ -412,7 +362,8 @@ msgstr ""
 "Nej. Händelserna kommer fortfarande att vara kvar men de kommer inte att "
 "tillhöra någon kategori.\n"
 
-#: src/help_pages.py:254 src/gui.py:212 src/gui.py:1886
+#: timelinelib/help_pages.py:222 timelinelib/gui/dialogs/mainframe.py:220
+#: timelinelib/gui/dialogs/eventeditor.py:318
 msgid "Edit categories"
 msgstr "Redigera kategorier"
 
@@ -421,7 +372,7 @@ msgstr "Redigera kategorier"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:261
+#: timelinelib/help_pages.py:229
 msgid ""
 "\n"
 "Categories can be managed in the *Edit Categories* dialog (*Timeline* > "
@@ -438,7 +389,8 @@ msgstr ""
 "Om befintliga kategorier ska visas  i sidopanelen eller inte är valfritt "
 "(*Visa* > *Sidopanel*)\n"
 
-#: src/help_pages.py:269 src/gui.py:260
+#: timelinelib/help_pages.py:237 timelinelib/gui/dialogs/mainframe.py:279
+#: timelinelib/gui/dialogs/mainframe.py:873
 msgid "Contact"
 msgstr "Kontakta"
 
@@ -447,7 +399,7 @@ msgstr "Kontakta"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:275
+#: timelinelib/help_pages.py:243
 msgid ""
 "\n"
 "If you have more questions about Timeline, or if you want to get in contact "
@@ -460,7 +412,7 @@ msgstr ""
 "för användare: <thetimelineproj-user@lists.sourceforge.net>. (Vänligen skriv "
 "på engelska.)\n"
 
-#: src/help_pages.py:281
+#: timelinelib/help_pages.py:249
 msgid "Why is Timeline not available in my language?"
 msgstr "Varför finns inte Timeline på mitt språk?"
 
@@ -469,7 +421,7 @@ msgstr "Varför finns inte Timeline på mitt språk?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: src/help_pages.py:288
+#: timelinelib/help_pages.py:256
 msgid ""
 "\n"
 "Timeline is developed and translated by volunteers. If you would like to "
@@ -479,225 +431,399 @@ msgstr ""
 "Timeline utvecklas och översätts av volontärer. Om du vill hjälpa till att "
 "översätta så är du mycket välkommen att kontakta oss.\n"
 
-#: src/data_file.py:150
-msgid "Preferred period must be > 0."
-msgstr "Önskad period måste vara > 0."
+#: timelinelib/drawing/drawers/default.py:135
+msgid "Week"
+msgstr "Vecka"
 
-#: src/data_file.py:183
+#: timelinelib/gui/utils.py:72
 #, python-format
-msgid "Unable to read timeline data from '%s'."
-msgstr "Kunde inte läsa tidslinjedata från '%s'."
+msgid "Field '%s' can't be empty."
+msgstr "Fältet '%s' får inte vara tomt."
 
-#: src/data_file.py:190
-#, python-format
-msgid "Unable to read from file '%s'."
-msgstr "Kan inte läsa från filen '%s'."
+#: timelinelib/gui/utils.py:78
+msgid "Error"
+msgstr "Fel"
 
-#: src/data_file.py:342
-msgid ""
-"Save function has been disabled because there was a problem reading or "
-"writing the timeline before. This to ensure that your data will not be "
-"overwritten."
+#: timelinelib/gui/utils.py:84
+msgid "Question"
+msgstr "Fråga"
+
+#: timelinelib/gui/dialogs/mainframe.py:97
+msgid "read-only"
 msgstr ""
-"Sparafunktionen har inaktiverats på grund av att det var problem att läsa "
-"eller skriva tidslinjedata förut. Detta för att inte skriva över ditt data."
 
-#: src/data_file.py:358 src/data_file.py:366
-msgid "Unable to save timeline data."
-msgstr "Kan inte spara tidslinjedata."
-
-#: src/data_file.py:359 src/data_file.py:367
-msgid ""
-"If data was corrupted, check out the backed up file that was created when "
-"the timeline was last saved."
-msgstr ""
-"Om data har blivit korrupt så kolla in backupfilen som skapades då "
-"tidslinjen senast sparades."
-
-#: src/data_file.py:377
-#, python-format
-msgid "Unable to create backup to '%s'."
-msgstr "Kan inte skriva en backup till '%s'."
-
-#: src/gui.py:114
+#: timelinelib/gui/dialogs/mainframe.py:106
 #, python-format
 msgid "File '%s' does not exist."
 msgstr "Filen '%s' finns inte."
 
-#: src/gui.py:118
+#: timelinelib/gui/dialogs/mainframe.py:110
 msgid "Create Event"
 msgstr "Skapa Händelse"
 
-#: src/gui.py:129
+#: timelinelib/gui/dialogs/mainframe.py:121
 msgid "Edit Event"
 msgstr "Redigera Händelse"
 
-#: src/gui.py:170
+#: timelinelib/gui/dialogs/mainframe.py:167
+#: timelinelib/gui/dialogs/mainframe.py:168
+msgid "File Timeline..."
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:170
+#: timelinelib/gui/dialogs/mainframe.py:171
+msgid "Directory Timeline..."
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:172
+msgid "New"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:173
 msgid "Create a new timeline"
 msgstr "Skapa en ny tidslinje"
 
-#: src/gui.py:172
+#: timelinelib/gui/dialogs/mainframe.py:175
 msgid "Open an existing timeline"
 msgstr "Öppna en befintlig tidslinje"
 
-#: src/gui.py:174
+#: timelinelib/gui/dialogs/mainframe.py:177
 msgid "Open &Recent"
 msgstr "Öppna S&enaste"
 
-#: src/gui.py:178
+#: timelinelib/gui/dialogs/mainframe.py:181
 msgid "Page Set&up..."
 msgstr "Sid&inställning..."
 
-#: src/gui.py:179
+#: timelinelib/gui/dialogs/mainframe.py:182
 msgid "Setup page for printing"
 msgstr "Definiera utskriftsformat"
 
-#: src/gui.py:181
+#: timelinelib/gui/dialogs/mainframe.py:184
 msgid "Print Preview"
 msgstr "Förhandsgranska"
 
-#: src/gui.py:184
+#: timelinelib/gui/dialogs/mainframe.py:187
 msgid "Print"
 msgstr "Skriv ut"
 
-#: src/gui.py:187
+#: timelinelib/gui/dialogs/mainframe.py:190
 msgid "&Export to Image..."
 msgstr "&Exportera till Bild..."
 
-#: src/gui.py:188
+#: timelinelib/gui/dialogs/mainframe.py:191
 msgid "Export the current view to a PNG image"
 msgstr "Exportera nuvarande vy till en PNG-bild"
 
-#: src/gui.py:191
+#: timelinelib/gui/dialogs/mainframe.py:194
 msgid "Exit the program"
 msgstr "Avsluta programmet"
 
-#: src/gui.py:208
+#: timelinelib/gui/dialogs/mainframe.py:216
 msgid "Create &Event..."
 msgstr "Skapa &Händelse..."
 
-#: src/gui.py:209
+#: timelinelib/gui/dialogs/mainframe.py:217
 msgid "Create a new event"
 msgstr "Skapa en ny händelse"
 
-#: src/gui.py:211
+#: timelinelib/gui/dialogs/mainframe.py:219
 msgid "Edit &Categories"
 msgstr "Redigera &Kategorier"
 
-#: src/gui.py:220
+#: timelinelib/gui/dialogs/mainframe.py:228
 msgid "&Sidebar\tCtrl+I"
 msgstr "&Sidopanel\tCtrl+I"
 
-#: src/gui.py:223
+#: timelinelib/gui/dialogs/mainframe.py:231
 msgid "&Legend"
 msgstr "&Teckenförklaring"
 
-#: src/gui.py:227
+#: timelinelib/gui/dialogs/mainframe.py:235
 msgid "&Balloons on hover"
 msgstr "&Ballonger vid hovring"
 
-#: src/gui.py:237
+#: timelinelib/gui/dialogs/mainframe.py:245
 msgid "Go to &Today\tCtrl+H"
 msgstr "Gå till &Idag\tCtrl+H"
 
-#: src/gui.py:238
+#: timelinelib/gui/dialogs/mainframe.py:246
 msgid "Go to D&ate...\tCtrl+G"
 msgstr "Gå till D&atum...\tCtrl+G"
 
-#: src/gui.py:240
+#: timelinelib/gui/dialogs/mainframe.py:248
 msgid "Backward\tPgUp"
 msgstr "Bakåt\tPgUp"
 
-#: src/gui.py:241
+#: timelinelib/gui/dialogs/mainframe.py:249
 msgid "Forward\tPgDn"
 msgstr "Framåt\tPgDn"
 
-#: src/gui.py:243
+#: timelinelib/gui/dialogs/mainframe.py:251
+msgid "Fit Century"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:252
+msgid "Fit Decade"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:253
 msgid "Fit Year"
 msgstr "Anpassa År"
 
-#: src/gui.py:244
+#: timelinelib/gui/dialogs/mainframe.py:254
 msgid "Fit Month"
 msgstr "Anpassa Månad"
 
-#: src/gui.py:245
+#: timelinelib/gui/dialogs/mainframe.py:255
 msgid "Fit Day"
 msgstr "Anpassa Dag"
 
-#: src/gui.py:255
+#: timelinelib/gui/dialogs/mainframe.py:257
+msgid "Find First Event"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:258
+msgid "Find Last Event"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:259
+msgid "Fit All Events"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:274
 msgid "&Contents\tF1"
 msgstr "&Innehåll\tF1"
 
-#: src/gui.py:267
+#: timelinelib/gui/dialogs/mainframe.py:286
 msgid "&File"
 msgstr "&Arkiv"
 
-#: src/gui.py:268
+#: timelinelib/gui/dialogs/mainframe.py:287
 msgid "&Edit"
 msgstr "&Redigera"
 
-#: src/gui.py:269
+#: timelinelib/gui/dialogs/mainframe.py:288
 msgid "&View"
 msgstr "&Visa"
 
-#: src/gui.py:270
+#: timelinelib/gui/dialogs/mainframe.py:289
 msgid "&Timeline"
 msgstr "&Tidslinje"
 
-#: src/gui.py:271
+#: timelinelib/gui/dialogs/mainframe.py:290
 msgid "&Navigate"
 msgstr "&Navigera"
 
-#: src/gui.py:272
+#: timelinelib/gui/dialogs/mainframe.py:291
 msgid "&Help"
 msgstr "&Hjälp"
 
-#: src/gui.py:417
+#: timelinelib/gui/dialogs/mainframe.py:450
+msgid ""
+"Could not find markdown Python package.  It is needed by the help system. "
+"See the Timeline website or the INSTALL file for instructions how to install "
+"it."
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:499
+#: timelinelib/gui/dialogs/mainframe.py:524
 msgid "Create Timeline"
 msgstr "Skapa Tidslinje"
 
-#: src/gui.py:424
+#: timelinelib/gui/dialogs/mainframe.py:506
 msgid "The specified timeline already exists."
 msgstr "Den angivna tidslinjen finns redan."
 
-#: src/gui.py:425
+#: timelinelib/gui/dialogs/mainframe.py:507
 msgid "Opening timeline instead of creating new."
 msgstr "Öppnar tidslinje istället för att skapa ny."
 
-#: src/gui.py:427
+#: timelinelib/gui/dialogs/mainframe.py:509
 msgid "Information"
 msgstr "Information"
 
-#: src/gui.py:438
+#: timelinelib/gui/dialogs/mainframe.py:539
 msgid "Open Timeline"
 msgstr "Öppna Tidslinje"
 
-#: src/gui.py:499
+#: timelinelib/gui/dialogs/mainframe.py:608
 msgid "Image files"
 msgstr "Bildfiler"
 
-#: src/gui.py:500
+#: timelinelib/gui/dialogs/mainframe.py:609
 msgid "Export to Image"
 msgstr "Exportera till Bild"
 
-#: src/gui.py:504
+#: timelinelib/gui/dialogs/mainframe.py:613
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "Filen '%s' finns redan. Vill du skriva över den?"
 
-#: src/gui.py:536
+#: timelinelib/gui/dialogs/mainframe.py:645
 msgid "Timeline files"
 msgstr "Tidslinjefiler"
 
-#: src/gui.py:665
+#: timelinelib/gui/dialogs/mainframe.py:792
 msgid "No timeline opened."
 msgstr "Ingen tidslinje öppnad."
 
-#: src/gui.py:670
+#: timelinelib/gui/dialogs/mainframe.py:797
 msgid "First time using Timeline?"
 msgstr "Första gången du använder Timeline?"
 
-#: src/gui.py:1034
+#: timelinelib/gui/dialogs/mainframe.py:870
+msgid "Relevant help topics:"
+msgstr "Relevanta hjälpavsnitt:"
+
+#: timelinelib/gui/dialogs/categorieseditor.py:42
+msgid "Edit Categories"
+msgstr "Redigera Kategorier"
+
+#: timelinelib/gui/dialogs/categorieseditor.py:96
+msgid "Edit Category"
+msgstr "Redigera Kategori"
+
+#: timelinelib/gui/dialogs/categorieseditor.py:115
+#: timelinelib/gui/dialogs/eventeditor.py:223
+msgid "Add Category"
+msgstr "Lägg till Kategori"
+
+#: timelinelib/gui/dialogs/categorieseditor.py:162
+#: timelinelib/gui/components/timelineview.py:808
+msgid "Are you sure to delete?"
+msgstr "Är du säker på att du vill ta bort?"
+
+#: timelinelib/gui/dialogs/categoryeditor.py:62
+msgid "Name:"
+msgstr "Namn:"
+
+#: timelinelib/gui/dialogs/categoryeditor.py:65
+msgid "Color:"
+msgstr "Färg:"
+
+#: timelinelib/gui/dialogs/categoryeditor.py:80
+#, python-format
+msgid "Category name '%s' not valid. Must be non-empty."
+msgstr "Ogiltigt kategorinamn '%s'. Får inte vara blankt."
+
+#: timelinelib/gui/dialogs/categoryeditor.py:84
+#, python-format
+msgid "Category name '%s' already in use."
+msgstr "Kategorinamnet '%s' används redan."
+
+#: timelinelib/gui/dialogs/eventeditor.py:72
+msgid "Event Properties"
+msgstr "Egenskaper för Händelse"
+
+#: timelinelib/gui/dialogs/eventeditor.py:78
+msgid "When:"
+msgstr "När:"
+
+#: timelinelib/gui/dialogs/eventeditor.py:81
+msgid "to"
+msgstr "till"
+
+#: timelinelib/gui/dialogs/eventeditor.py:94
+msgid "Period"
+msgstr "Period"
+
+#: timelinelib/gui/dialogs/eventeditor.py:98
+#: timelinelib/gui/dialogs/gotodate.py:34
+msgid "Show time"
+msgstr "Visa tid"
+
+#: timelinelib/gui/dialogs/eventeditor.py:105
+msgid "Text:"
+msgstr "Text:"
+
+#: timelinelib/gui/dialogs/eventeditor.py:110
+msgid "Category:"
+msgstr "Kategori:"
+
+#: timelinelib/gui/dialogs/eventeditor.py:121
+msgid "Description"
+msgstr "Beskrivning"
+
+#: timelinelib/gui/dialogs/eventeditor.py:124
+msgid "Icon"
+msgstr "Ikon"
+
+#: timelinelib/gui/dialogs/eventeditor.py:143
+msgid "Add more events after this one"
+msgstr "Lägg till fler händelser efter denna"
+
+#: timelinelib/gui/dialogs/eventeditor.py:172
+msgid "End must be > Start"
+msgstr "Slut måste vara > Start"
+
+#: timelinelib/gui/dialogs/eventeditor.py:173
+msgid "Text"
+msgstr "Text"
+
+#: timelinelib/gui/dialogs/eventeditor.py:317
+msgid "Add new"
+msgstr "Lägg till ny"
+
+#: timelinelib/gui/dialogs/eventeditor.py:362
+#, python-format
+msgid "Images will be scaled to fit inside a %ix%i box."
+msgstr "Bilder kommer skalas ner så att de inte är större än %ix%i."
+
+#: timelinelib/gui/dialogs/eventeditor.py:398
+msgid "Select Icon"
+msgstr "Välj Ikon"
+
+#: timelinelib/gui/dialogs/helpbrowser.py:40
+msgid "Help"
+msgstr "Hjälp"
+
+#: timelinelib/gui/dialogs/helpbrowser.py:90
+msgid "Go to home page"
+msgstr "Gå till startsidan"
+
+#: timelinelib/gui/dialogs/helpbrowser.py:97
+msgid "Go back one page"
+msgstr "Gå bakåt en sida"
+
+#: timelinelib/gui/dialogs/helpbrowser.py:103
+msgid "Go forward one page"
+msgstr "Gå framåt en sida"
+
+#: timelinelib/gui/dialogs/helpbrowser.py:189
+msgid "Page not found"
+msgstr "Sidan hittades inte"
+
+#: timelinelib/gui/dialogs/helpbrowser.py:190
+#, python-format
+msgid "Could not find page '%s'."
+msgstr "Kunde inte hitta sidan '%s'."
+
+#: timelinelib/gui/dialogs/gotodate.py:28
+msgid "Go to Date"
+msgstr "Gå till Datum"
+
+#: timelinelib/gui/dialogs/preferences.py:34
+msgid "Preferences"
+msgstr "Inställningar"
+
+#: timelinelib/gui/dialogs/preferences.py:41
+msgid "General"
+msgstr "Allmänt"
+
+#: timelinelib/gui/dialogs/preferences.py:43
+msgid "Open most recent timeline on startup"
+msgstr "Öppna senaste tidslinje vid start"
+
+#: timelinelib/gui/components/search.py:62
+msgid "No match"
+msgstr ""
+
+#: timelinelib/gui/components/search.py:66
+msgid "Only one match"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:292
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
@@ -705,229 +831,114 @@ msgstr ""
 "Det gick inte att skriva ut.\n"
 "Kontrollera så att din skrivare är inställd korrekt."
 
-#: src/gui.py:1034
+#: timelinelib/gui/components/timelineview.py:292
 msgid "Printing"
 msgstr "Utskrift"
 
-#: src/gui.py:1048
+#: timelinelib/gui/components/timelineview.py:306
 msgid "Print preview"
 msgstr "Förhandsgranska"
 
-#: src/gui.py:1091 src/gui.py:1109
+#: timelinelib/gui/components/timelineview.py:352
+#: timelinelib/gui/components/timelineview.py:370
 msgid "No timeline set"
 msgstr "Ingen tidslinje vald"
 
-#: src/gui.py:1357
+#: timelinelib/gui/components/timelineview.py:630
 msgid "Center"
 msgstr "Centrera"
 
-#: src/gui.py:1535
+#: timelinelib/gui/components/timelineview.py:805
 #, python-format
 msgid "Are you sure to delete %d events?"
 msgstr "Vill du verkligen radera %d händelser?"
 
-#: src/gui.py:1538 src/gui.py:2025
-msgid "Are you sure to delete?"
-msgstr "Är du säker på att du vill ta bort?"
-
-#: src/gui.py:1605
-msgid "Relevant help topics:"
-msgstr "Relevanta hjälpavsnitt:"
-
-#: src/gui.py:1648
-msgid "Event Properties"
-msgstr "Egenskaper för Händelse"
-
-#: src/gui.py:1654
-msgid "When:"
-msgstr "När:"
-
-#: src/gui.py:1657
-msgid "to"
-msgstr "till"
-
-#: src/gui.py:1670
-msgid "Period"
-msgstr "Period"
-
-#: src/gui.py:1674 src/gui.py:2177
-msgid "Show time"
-msgstr "Visa tid"
-
-#: src/gui.py:1681
-msgid "Text:"
-msgstr "Text:"
-
-#: src/gui.py:1686
-msgid "Category:"
-msgstr "Kategori:"
-
-#: src/gui.py:1711
-msgid "Add more events after this one"
-msgstr "Lägg till fler händelser efter denna"
-
-#: src/gui.py:1740
-msgid "End must be > Start"
-msgstr "Slut måste vara > Start"
-
-#: src/gui.py:1741
-msgid "Text"
-msgstr "Text"
-
-#: src/gui.py:1791 src/gui.py:1978
-msgid "Add Category"
-msgstr "Lägg till Kategori"
-
-#: src/gui.py:1885
-msgid "Add new"
-msgstr "Lägg till ny"
-
-#: src/gui.py:1913
-msgid "Edit Categories"
-msgstr "Redigera Kategorier"
-
-#: src/gui.py:1964
-msgid "Edit Category"
-msgstr "Redigera Kategori"
-
-#: src/gui.py:2069
-msgid "Name:"
-msgstr "Namn:"
-
-#: src/gui.py:2072
-msgid "Color:"
-msgstr "Färg:"
-
-#: src/gui.py:2075
-msgid "Visible:"
-msgstr "Synlig:"
-
-#: src/gui.py:2090
-#, python-format
-msgid "Category name '%s' not valid. Must be non-empty."
-msgstr "Ogiltigt kategorinamn '%s'. Får inte vara blankt."
-
-#: src/gui.py:2094
-#, python-format
-msgid "Category name '%s' already in use."
-msgstr "Kategorinamnet '%s' används redan."
-
-#: src/gui.py:2129
-msgid "Preferences"
-msgstr "Inställningar"
-
-#: src/gui.py:2136
-msgid "General"
-msgstr "Allmänt"
-
-#: src/gui.py:2138
-msgid "Open most recent timeline on startup"
-msgstr "Öppna senaste tidslinje vid start"
-
-#: src/gui.py:2171
-msgid "Go to Date"
-msgstr "Gå till Datum"
-
-#: src/gui.py:2277
-msgid "Help"
-msgstr "Hjälp"
-
-#: src/gui.py:2320
-msgid "Go to home page"
-msgstr "Gå till startsidan"
-
-#: src/gui.py:2327
-msgid "Go back one page"
-msgstr "Gå bakåt en sida"
-
-#: src/gui.py:2333
-msgid "Go forward one page"
-msgstr "Gå framåt en sida"
-
-#: src/gui.py:2419
-msgid "Page not found"
-msgstr "Sidan hittades inte"
-
-#: src/gui.py:2420
-#, python-format
-msgid "Could not find page '%s'."
-msgstr "Kunde inte hitta sidan '%s'."
-
-#: src/gui.py:2476
-#, python-format
-msgid "Field '%s' can't be empty."
-msgstr "Fältet '%s' får inte vara tomt."
-
-#: src/gui.py:2482
-msgid "Error"
-msgstr "Fel"
-
-#: src/gui.py:2488
-msgid "Question"
-msgstr "Fråga"
-
-#: src/help.py:64
-#, python-format
-msgid "Search results for '%s'"
-msgstr "Sökresultat för '%s'"
-
-#: src/help.py:122
-msgid "Related pages"
-msgstr "Relaterade sidor"
-
-#: src/data.py:242
-msgid "Description"
-msgstr "Beskrivning"
-
-#: src/data.py:269
-#, python-format
-msgid "Images will be scaled to fit inside a %ix%i box."
-msgstr "Bilder kommer skalas ner så att de inte är större än %ix%i."
-
-#: src/data.py:293
-msgid "Select Icon"
-msgstr "Välj Ikon"
-
-#: src/data.py:323
-msgid "Icon"
-msgstr "Ikon"
-
-#: src/data.py:474
+#: timelinelib/db/objects.py:190
 msgid "Start time can't be after year 9989"
 msgstr "Starttiden kan inte vara efter år 9989"
 
-#: src/data.py:475
+#: timelinelib/db/objects.py:191
 msgid "Start time can't be before year 10"
 msgstr "Starttiden kan inte vara före år 10"
 
-#: src/data.py:478
+#: timelinelib/db/objects.py:194
 msgid "End time can't be after year 9989"
 msgstr "Sluttiden kan inte vara efter år 9989"
 
-#: src/data.py:479
+#: timelinelib/db/objects.py:195
 msgid "End time can't be before year 10"
 msgstr "Sluttiden kan inte vara före år 10"
 
-#: src/data.py:483
+#: timelinelib/db/objects.py:199
 msgid "Start time can't be after end time"
 msgstr "Starttiden kan inte vara efter sluttiden"
 
-#: src/data.py:519
+#: timelinelib/db/objects.py:235
 msgid "Can't zoom wider than 120 years"
 msgstr "Kan inte zooma bredare än 120 år"
 
-#: src/data.py:521
+#: timelinelib/db/objects.py:237
 msgid "Can't zoom deeper than 1 hour"
 msgstr "Kan inte zooma djupare än 1 timme"
 
-#: src/data.py:709
+#: timelinelib/db/utils.py:70
+#, python-format
+msgid "Unable to save timeline data to '%s'. File left unmodified."
+msgstr ""
+
+#: timelinelib/db/utils.py:85
+msgid "Unable to write timeline data."
+msgstr ""
+
+#: timelinelib/db/utils.py:89
+#, python-format
+msgid "Unable to write to temporary file '%s'."
+msgstr ""
+
+#: timelinelib/db/utils.py:95
+#, python-format
+msgid "Unable to take backup to '%s'."
+msgstr ""
+
+#: timelinelib/db/utils.py:100
+#, python-format
+msgid "Unable to rename temporary file '%s' to original."
+msgstr ""
+
+#: timelinelib/db/utils.py:106
+#, python-format
+msgid "Unable to delete backup file '%s'."
+msgstr ""
+
+#: timelinelib/db/__init__.py:53
+msgid ""
+"Could not find iCalendar Python package. It is required for working with ICS "
+"files. See the Timeline website or the INSTALL file for instructions how to "
+"install it."
+msgstr ""
+
+#: timelinelib/db/__init__.py:58
 #, python-format
 msgid "Unable to open timeline '%s'."
 msgstr "Kan inte öppna tidslinje '%s'."
 
-#: src/data.py:710
+#: timelinelib/db/__init__.py:59
 msgid "Unknown format."
 msgstr "Okänt format."
+
+#: timelinelib/db/backends/ics.py:132 timelinelib/db/backends/file.py:203
+#, python-format
+msgid "Unable to read timeline data from '%s'."
+msgstr "Kunde inte läsa tidslinjedata från '%s'."
+
+#: timelinelib/db/backends/ics.py:138 timelinelib/db/backends/file.py:209
+#, python-format
+msgid "Unable to read from file '%s'."
+msgstr "Kan inte läsa från filen '%s'."
+
+#: timelinelib/db/backends/file.py:172
+msgid "Preferred period must be > 0."
+msgstr "Önskad period måste vara > 0."
 
 #~ msgid "Export the current view to a PNG or BMP image"
 #~ msgstr "Exportera nuvarande vy till en PNG- eller BMP-bild"
@@ -938,6 +949,9 @@ msgstr "Okänt format."
 #~ msgid "Timeline User Manual"
 #~ msgstr "Timeline Användarmanual"
 
+#~ msgid "Visible:"
+#~ msgstr "Synlig:"
+
 #, python-format
 #~ msgid ""
 #~ "Unable to read timeline data from '%s'. Enable logging (see user manual for "
@@ -947,6 +961,28 @@ msgstr "Okänt format."
 #~ "Kan inte läsa tidslinjedata från '%s'. Slå på loggning (se användarmanualen "
 #~ "för instruktioner hur) och öppna tidslinjen igen för att få mer information "
 #~ "om problemet."
+
+#~ msgid ""
+#~ "Save function has been disabled because there was a problem reading or "
+#~ "writing the timeline before. This to ensure that your data will not be "
+#~ "overwritten."
+#~ msgstr ""
+#~ "Sparafunktionen har inaktiverats på grund av att det var problem att läsa "
+#~ "eller skriva tidslinjedata förut. Detta för att inte skriva över ditt data."
+
+#~ msgid "Unable to save timeline data."
+#~ msgstr "Kan inte spara tidslinjedata."
+
+#~ msgid ""
+#~ "If data was corrupted, check out the backed up file that was created when "
+#~ "the timeline was last saved."
+#~ msgstr ""
+#~ "Om data har blivit korrupt så kolla in backupfilen som skapades då "
+#~ "tidslinjen senast sparades."
+
+#, python-format
+#~ msgid "Unable to create backup to '%s'."
+#~ msgstr "Kan inte skriva en backup till '%s'."
 
 #~ msgid "Unknown format"
 #~ msgstr "Okänt format"
