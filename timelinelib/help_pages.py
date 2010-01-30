@@ -89,6 +89,10 @@ Try pressing the left mouse button and drag and you will see the timeline scroll
 
 Try the mouse wheel while holding the *Ctrl* key down and you will see the timeline zoom.
 
+Press the middle mouse button to centre the timeline on that spot.
+
+Other navigation options are available in the *Navigate* menu with their shortcut keys shown.
+
 The vertical red line indicates the current time.
 
 Hovering over an event will display the full description in the status bar.

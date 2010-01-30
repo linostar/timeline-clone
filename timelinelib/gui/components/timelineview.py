@@ -659,6 +659,9 @@ class DrawingArea(wx.Panel):
         direction = _step_function(evt.m_wheelRotation)
         if evt.ControlDown():
             self._zoom_timeline(direction)
+        elif evt.ShiftDown():
+            self.divider_line_slider.SetValue(self.divider_line_slider.GetValue() + direction)
+            self._redraw_timeline()
         else:
             self._scroll_timeline_view(direction)
 
