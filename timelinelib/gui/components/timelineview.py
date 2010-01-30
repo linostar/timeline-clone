@@ -867,8 +867,9 @@ class DrawingArea(wx.Panel):
                 if self.view_properties.hovered_event != self.current_event:
                     #print "Timer-1 Started ", self.current_event
                     self.timer1 = wx.Timer(self, -1)
-                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer1, self.timer1)
-                    self.timer1.Start(milliseconds=500, oneShot=True)
+                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer1, 
+                              self.timer1)
+                    self.timer1.Start(milliseconds = 500, oneShot = True)
                     self.timer1_running = True
         # We are not pointing to any event....        
         else:
@@ -879,8 +880,9 @@ class DrawingArea(wx.Panel):
                 if self.balloon_event != self.view_properties.hovered_event:
                     #print "Timer-2 Started"
                     self.timer2 = wx.Timer(self, -1)
-                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer2, self.timer2)
-                    self.timer2.Start(milliseconds=500, oneShot=True)
+                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer2, 
+                              self.timer2)
+                    self.timer2.Start(milliseconds = 100, oneShot = True)
                     
     def _on_balloon_timer1(self, event):
         """
