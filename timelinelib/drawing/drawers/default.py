@@ -370,13 +370,16 @@ class DefaultDrawingAlgorithm(Drawer):
         for (event, rect) in self.event_data:
             # Remove outer padding
             rect.Deflate(OUTER_PADDING, OUTER_PADDING)
-#            # Make sure rectangle are not far outside the screen
-#            if rect.X < -1:
-#                move = -rect.X - 1
-#                rect.X += move
-#                rect.Width -= move
-#            if rect.Width > self.metrics.width:
-#                rect.Width = self.metrics.width + 2
+            # Make sure rectangle is not far outside the screen. MARGIN must be
+            # big enough to hide borders end selection markers.
+            MARGIN = 10
+            if rect.X < -MARGIN:
+                move = -rect.X - MARGIN
+                rect.X += move
+                rect.Width -= move
+            right_edge_x = rect.X + rect.Width
+            if right_edge_x > self.metrics.width + MARGIN:
+                rect.Width -= right_edge_x - self.metrics.width - MARGIN
 
     def _prevent_overlap(self, rect, movedir):
         """
