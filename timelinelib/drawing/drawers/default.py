@@ -640,10 +640,8 @@ class DefaultDrawingAlgorithm(Drawer):
         
     def _draw_contents_indicator(self, event, rect):
         """
-        The data contents indicator is a small icon added to the end of
-        the event rectangle.
-        The icon is a rectangle with LIGHT_GRAY background and a RED
-        triangle.
+        The data contents indicator is a small triangle drawn in the upper
+        right corner of the event rectangle.
         """
         corner_x = rect.X + rect.Width
         if corner_x > self.metrics.width:
