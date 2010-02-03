@@ -19,6 +19,7 @@ developed in main.
      3. `hg push`
   2. Notify developers of repo change
   3. Change versions numbers in main to denote the next version
+     1. `README`, manpage, `version.py`
 
 Stabilize stable
 ----------------
