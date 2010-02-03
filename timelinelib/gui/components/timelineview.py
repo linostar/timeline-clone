@@ -569,6 +569,8 @@ class DrawingArea(wx.Panel):
         self.mouse_x = evt.m_x
         if self.is_selecting:
             self._end_selection_and_create_event(evt.m_x)
+        if self.is_zooming:
+            self._end_selection_and_zoom(evt.m_x)
         self.is_selecting = False
         self.is_scrolling = False
         self._set_default_cursor()
@@ -600,12 +602,12 @@ class DrawingArea(wx.Panel):
         """
         self.mouse_x = evt.m_x
         if evt.m_leftDown:
-            self._mouse_drag(evt.m_x, evt.m_y, evt.m_controlDown)
+            self._mouse_drag(evt.m_x, evt.m_y, evt.m_controlDown, evt.m_shiftDown)
         else:
             if not evt.m_controlDown:
                 self._mouse_move(evt.m_x, evt.m_y)                
                 
-    def _mouse_drag(self, x, y, ctrl=False):
+    def _mouse_drag(self, x, y, ctrl=False, shift=False):
         """
         The mouse has been moved.
         The left mouse button is depressed
@@ -633,6 +635,9 @@ class DrawingArea(wx.Panel):
             if ctrl and not self.timeline.is_read_only():
                 self._mark_selected_minor_strips(x)
                 self.is_selecting = True
+            elif shift:
+                self._mark_selected_minor_strips(x)
+                self.is_zooming = True
             else:
                 self._scroll(x)
                 self.is_scrolling = True
@@ -655,6 +660,7 @@ class DrawingArea(wx.Panel):
 
         If the Control key is pressed at the same time as the mouse wheel is
         scrolled the timeline will be zoomed, otherwise it will be scrolled.
+        If the Shift key is pressed then the slider will scroll.
         """
         direction = _step_function(evt.m_wheelRotation)
         if evt.ControlDown():
@@ -740,6 +746,7 @@ class DrawingArea(wx.Panel):
         self.drawing_algorithm = get_drawer()
         self.is_scrolling = False
         self.is_selecting = False
+        self.is_zooming = False
         self.timeline = None
         self.view_properties = ViewProperties()
         self.view_properties.show_legend = config.get_show_legend()
@@ -827,6 +834,17 @@ class DrawingArea(wx.Panel):
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
         wx.GetTopLevelParent(self).create_new_event(start, end)
+        self._redraw_timeline()
+
+    def _end_selection_and_zoom(self, current_x):
+        self.is_zooming = False
+        start, end = self._get_period_selection(current_x)
+        td = end - start
+        if (td.seconds > 3600) or (td.days > 0):
+            """
+            Don't zoom in to less than an hour which upsets things.
+            """
+            self.navigate_timeline(lambda tp: tp.update(start, end))
         self._redraw_timeline()
 
     def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos):
