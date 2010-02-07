@@ -67,3 +67,36 @@ class TestTimePeriod(unittest.TestCase):
         tp.center(self.upper)
         self.assertEquals(tp.start_time, start_time)
         self.assertEquals(tp.end_time, self.upper)
+
+    def testMovePageSmartNotSmart(self):
+        tp = TimePeriod(dt(2010, 1, 1), dt(2010, 1, 5))
+        tp.move_page_smart(1)
+        self.assertEquals(tp.start_time, dt(2010, 1, 5))
+        self.assertEquals(tp.end_time, dt(2010, 1, 9))
+        tp.move_page_smart(-1)
+        self.assertEquals(tp.start_time, dt(2010, 1, 1))
+        self.assertEquals(tp.end_time, dt(2010, 1, 5))
+
+    def testMovePageSmartMonth(self):
+        tp = TimePeriod(dt(2010, 1, 1), dt(2010, 2, 1))
+        tp.move_page_smart(1)
+        self.assertEquals(tp.start_time, dt(2010, 2, 1))
+        self.assertEquals(tp.end_time, dt(2010, 3, 1))
+        tp.move_page_smart(-1)
+        self.assertEquals(tp.start_time, dt(2010, 1, 1))
+        self.assertEquals(tp.end_time, dt(2010, 2, 1))
+
+    def testMovePageSmartYear(self):
+        tp = TimePeriod(dt(2010, 1, 1), dt(2011, 1, 1))
+        tp.move_page_smart(1)
+        self.assertEquals(tp.start_time, dt(2011, 1, 1))
+        self.assertEquals(tp.end_time, dt(2012, 1, 1))
+        tp.move_page_smart(-1)
+        self.assertEquals(tp.start_time, dt(2010, 1, 1))
+        self.assertEquals(tp.end_time, dt(2011, 1, 1))
+
+    def testMovePageSmartMonthOverYearBoundry(self):
+        tp = TimePeriod(dt(2010, 1, 1), dt(2010, 3, 1))
+        tp.move_page_smart(-1)
+        self.assertEquals(tp.start_time, dt(2009, 11, 1))
+        self.assertEquals(tp.end_time, dt(2010, 1, 1))
