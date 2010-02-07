@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-12-28 12:38+0100\n"
+"POT-Creation-Date: 2010-01-26 13:27+0100\n"
 "PO-Revision-Date: 2009-12-15 02:56+0000\n"
 "Last-Translator: BennyBeat <Unknown>\n"
 "Language-Team: Catalan <ca@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-01-26 12:16+0000\n"
+"X-Launchpad-Export-Date: 2010-02-07 13:48+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: timelinelib/help.py:64
@@ -30,20 +30,20 @@ msgstr "Pàgines relevants"
 msgid "Help contents"
 msgstr "Continguts de l'ajuda"
 
-#: timelinelib/help_pages.py:55
+#: timelinelib/help_pages.py:56
 msgid "Questions and answers"
 msgstr "Preguntes més freqüents"
 
-#: timelinelib/help_pages.py:55
+#: timelinelib/help_pages.py:56
 msgid "Concepts"
 msgstr "Conceptes"
 
-#: timelinelib/help_pages.py:55
+#: timelinelib/help_pages.py:56
 msgid "Tasks"
 msgstr "Tasques"
 
-#: timelinelib/help_pages.py:59 timelinelib/gui/dialogs/mainframe.py:277
-#: timelinelib/gui/dialogs/mainframe.py:800
+#: timelinelib/help_pages.py:60 timelinelib/gui/dialogs/mainframe.py:289
+#: timelinelib/gui/dialogs/mainframe.py:874
 msgid "Getting started tutorial"
 msgstr "Inicia el manual d'ajuda"
 
@@ -52,7 +52,7 @@ msgstr "Inicia el manual d'ajuda"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:66
+#: timelinelib/help_pages.py:67
 msgid ""
 "\n"
 "The idea is to display events on a timeline and to be able to quickly change "
@@ -103,70 +103,10 @@ msgid ""
 "\n"
 "The vertical red line indicates the current time.\n"
 "\n"
-"Hoovering an event will display the full description in the status bar.\n"
+"Hovering over an event will display the full description in the status bar.\n"
 msgstr ""
-"\n"
-"La idea és mostrar els esdeveniments en una línia de temps i poder canviar "
-"ràpidament el període de temps el qual és mostrat. Un esdeveniment pot ser "
-"en un punt específic al temps o una franja durant un període.\n"
-"\n"
-"\n"
-"HelpFigure (events)\n"
-"\n"
-"HelpFigure (zoom)\n"
-"\n"
-"Per crear una nova línia de temps, seleccioneu *Nou* des del menú *Arxiu*, i "
-"inseriu un nom per l'arxiu que desitgeu crear al quadre de diàleg que "
-"s'obre. Aquest serà el nom de l'arxiu emprat per a emmagatzemar tota la "
-"informació respecte a aquest esdeveniment. La propera vegada que inicieu "
-"línia de temps podreu triar si desitgeu obrir el mateix arxiu altre vegada. "
-"A la barra del títol sempre si us mostrarà la línia de temps que actualment "
-"teniu oberta.\n"
-"\n"
-"Per afegir un nou esdeveniment en un punt específic en el temps, feu doble "
-"clic en algun lloc de la línia de temps. Això us obrirà un quadre de diàleg "
-"on podeu inserir un text per a l'esdeveniment. Feu clic al botó *D'acord* "
-"per a desar l'esdeveniment. Aleshores veureu un nou esdeveniment just al "
-"punt d'on heu clicat a sobre de la línia horitzontal.\n"
-"\n"
-"Per a afegir un esdeveniment que s'estén durant un període, mantingueu "
-"premuda la tecla *Control*, cliqueu i arrossegueu amb el ratolí per sobre de "
-"la barra horitzontal per a marcar un període, i després deixeu anar el "
-"ratolí i la tecla premuda. Això us obrirà altre quadre de diàleg on podeu "
-"inserir un text per a aquest període.  Després, prement  *D'acord* veureu un "
-"nou esdeveniment ocupant tota la zona per on heu arrossegat el ratolí.\n"
-"\n"
-"Els esdeveniments a un punt específic en el temps sempre es mostraran a "
-"sobre de la línia horitzontal. Els esdeveniments que s'estenen durant un "
-"període, però, es mostraran a sota de la línia horitzontal la major part del "
-"temps. Tanmateix, si aquest període és massa petit per a ser mostrat en uns "
-"quants píxels de la pantalla, llavors es mostrarà per sobre de la línia "
-"horitzontal (emprant la vista ampliada s'ajustarà per sobre o per sota de la "
-"línia horitzontal).\n"
-"\n"
-"Per a editar un esdeveniment, feu doble clic a sobre d'ell i si us obrirà un "
-"quadre de diàleg.\n"
-"\n"
-"Per a triar un esdeveniment, feu clic a sobre d'ell. Si voleu seleccionar "
-"diversos, llavors mantingueu premuda la tecla *Control* mentre marqueu els "
-"esdeveniments. Per a esborrar els esdeveniments seleccionats, premeu la "
-"tecla *Suprimeix*.\n"
-"\n"
-"Amb la roda del ratolí veureu que podeu desplaçar-vos per la línia de "
-"temps.\n"
-"\n"
-"També podeu prémer el botó esquerre del ratolí i arrossegar-lo per a "
-"desplaçar-vos per la línia de temps.\n"
-"\n"
-"Podreu emprar la vista ampliada si mantingueu premuda la tecla *Control* "
-"mentre llisqueu la roda del ratolí.\n"
-"\n"
-"La línia vermella vertical indica el temps actual.\n"
-"\n"
-"En analitzar un esdeveniment, es mostrarà la descripció completa a la barra "
-"d'estat.\n"
 
-#: timelinelib/help_pages.py:98
+#: timelinelib/help_pages.py:99
 msgid "Where is the save button?"
 msgstr "On està el botó Desa?"
 
@@ -175,7 +115,7 @@ msgstr "On està el botó Desa?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:104
+#: timelinelib/help_pages.py:105
 msgid ""
 "\n"
 "There is no save button. Timeline will automatically save your data whenever "
@@ -185,7 +125,24 @@ msgstr ""
 "No existeix aquest botó, d'ençà que la línia de temps desa automàticament "
 "qualsevol canvi que efectueu sobre ella.\n"
 
-#: timelinelib/help_pages.py:110
+#: timelinelib/help_pages.py:112
+msgid "Where do the week numbers go if I start my weeks on Sunday?"
+msgstr ""
+
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: timelinelib/help_pages.py:118
+msgid ""
+"\n"
+"The date data object used does not support week numbers for weeks that start "
+"on Sunday at present.  We plan on using a different date object that will "
+"support this in future versions.\n"
+msgstr ""
+
+#: timelinelib/help_pages.py:125
 msgid "Timeline"
 msgstr "Línia de temps"
 
@@ -194,26 +151,18 @@ msgstr "Línia de temps"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:117
+#: timelinelib/help_pages.py:132
 msgid ""
 "\n"
 "The timeline shows dates according to the Gregorian calendar on the x-axis. "
-"Currently the dates are limited to dates between year 10 and year 9999.  \n"
+"Currently the dates are limited to dates between year 10 and year 9989.  \n"
 "\n"
 "Future versions might support various kinds of timelines so that you for "
 "example can specify a time in terms of number of minutes since a start time. "
 "If you are interested in such a feature, please get in touch.\n"
 msgstr ""
-"\n"
-"La línia de temps mostra les dates acord a en l'eix-x del calendari "
-"Gregorià. Actualment les dates estan limitades entre l'any 10 i any 9999.\n"
-"\n"
-"En futures versions es podria donar suport a diferents tipus de línies de "
-"temps per a que, per exemple, podeu especificar el temps en termes amb un "
-"nombre de minuts des de l'hora d'inici. Si n'esteu interessats en aquesta "
-"característica, si us plau contacteu amb nosaltres.\n"
 
-#: timelinelib/help_pages.py:125
+#: timelinelib/help_pages.py:140
 msgid "Events"
 msgstr "Esdeveniments"
 
@@ -222,7 +171,7 @@ msgstr "Esdeveniments"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:132
+#: timelinelib/help_pages.py:147
 msgid ""
 "\n"
 "An event is the basic data type for representing information on the "
@@ -236,7 +185,7 @@ msgstr ""
 "de posar (quan succeeix aquest esdeveniment). Això pot ser un punt de temps "
 "específic o bé un període de temps.\n"
 
-#: timelinelib/help_pages.py:138
+#: timelinelib/help_pages.py:153
 msgid "Categories"
 msgstr "Categories"
 
@@ -245,7 +194,7 @@ msgstr "Categories"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:145
+#: timelinelib/help_pages.py:160
 msgid ""
 "\n"
 "Categories are used to group events. An event can only belong to one "
@@ -257,7 +206,7 @@ msgstr ""
 "només pot pertànyer a una categoria. Tots els esdeveniments que pertanyen a "
 "la mateixa categoria es mostren amb el mateix color de fons.\n"
 
-#: timelinelib/help_pages.py:151
+#: timelinelib/help_pages.py:166
 msgid "Create event"
 msgstr "Crea un esdeveniment"
 
@@ -266,7 +215,7 @@ msgstr "Crea un esdeveniment"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:158
+#: timelinelib/help_pages.py:173
 msgid ""
 "\n"
 "The *Create Event* dialog can be opened in the following ways:\n"
@@ -277,7 +226,7 @@ msgid ""
 "timeline, drag the mouse and release it.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:168
+#: timelinelib/help_pages.py:183
 msgid "Edit event"
 msgstr "Edita l'esdeveniment"
 
@@ -286,7 +235,7 @@ msgstr "Edita l'esdeveniment"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:175
+#: timelinelib/help_pages.py:190
 msgid ""
 "\n"
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
@@ -295,7 +244,7 @@ msgstr ""
 "El diàleg *Edita l'esdeveniment* pot ser obert en clicar a sobre de "
 "qualsevol esdeveniment.\n"
 
-#: timelinelib/help_pages.py:181
+#: timelinelib/help_pages.py:196
 msgid "Selecting events"
 msgstr "Seleccionant esdeveniments"
 
@@ -304,7 +253,7 @@ msgstr "Seleccionant esdeveniments"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:187
+#: timelinelib/help_pages.py:202
 msgid ""
 "\n"
 "To select an event, click on it. To select multiple events, hold down the "
@@ -315,7 +264,7 @@ msgid ""
 "HelpFigure(selected_event)\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:197
+#: timelinelib/help_pages.py:212
 msgid "Delete event"
 msgstr "Esborra un esdeveniment"
 
@@ -324,7 +273,7 @@ msgstr "Esborra un esdeveniment"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:204
+#: timelinelib/help_pages.py:219
 msgid ""
 "\n"
 "To delete an event, select it and press the *Del* key. Multiple events can "
@@ -334,7 +283,7 @@ msgstr ""
 "Podeu emprar la funció *Esborra un esdeveniment* prement la tecla "
 "*Suprimeix*. Es poden esborrar diversos esdeveniments al mateix temps.\n"
 
-#: timelinelib/help_pages.py:210
+#: timelinelib/help_pages.py:225
 msgid "Will associated events be deleted when I delete a category?"
 msgstr ""
 
@@ -343,14 +292,14 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:216
+#: timelinelib/help_pages.py:231
 msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:222 timelinelib/gui/dialogs/mainframe.py:220
-#: timelinelib/gui/dialogs/eventeditor.py:318
+#: timelinelib/help_pages.py:237 timelinelib/gui/dialogs/mainframe.py:220
+#: timelinelib/gui/dialogs/eventeditor.py:322
 msgid "Edit categories"
 msgstr "Edita les categories"
 
@@ -359,7 +308,7 @@ msgstr "Edita les categories"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:229
+#: timelinelib/help_pages.py:244
 msgid ""
 "\n"
 "Categories can be managed in the *Edit Categories* dialog (*Timeline* > "
@@ -369,8 +318,8 @@ msgid ""
 "*Sidebar*).\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:237 timelinelib/gui/dialogs/mainframe.py:279
-#: timelinelib/gui/dialogs/mainframe.py:873
+#: timelinelib/help_pages.py:252 timelinelib/gui/dialogs/mainframe.py:291
+#: timelinelib/gui/dialogs/mainframe.py:947
 msgid "Contact"
 msgstr "Contacteu amb nosaltres"
 
@@ -379,7 +328,7 @@ msgstr "Contacteu amb nosaltres"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:243
+#: timelinelib/help_pages.py:258
 msgid ""
 "\n"
 "If you have more questions about Timeline, or if you want to get in contact "
@@ -392,7 +341,7 @@ msgstr ""
 "nostra llista de correu: <thetimelineproj-user@lists.sourceforge.net>. (En "
 "Anglès, si us plau...)\n"
 
-#: timelinelib/help_pages.py:249
+#: timelinelib/help_pages.py:264
 msgid "Why is Timeline not available in my language?"
 msgstr "Per què Timeline no està disponible al meu idioma?"
 
@@ -401,7 +350,7 @@ msgstr "Per què Timeline no està disponible al meu idioma?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:256
+#: timelinelib/help_pages.py:271
 msgid ""
 "\n"
 "Timeline is developed and translated by volunteers. If you would like to "
@@ -411,20 +360,20 @@ msgstr ""
 "Timeline està desenvolupat i traduït per voluntaris. Si voleu contribuir amb "
 "les traduccions, sigueu benvinguts i contacteu amb nosaltres.\n"
 
-#: timelinelib/drawing/drawers/default.py:135
+#: timelinelib/drawing/drawers/default.py:138
 msgid "Week"
 msgstr "Setmana"
 
-#: timelinelib/gui/utils.py:72
+#: timelinelib/gui/utils.py:115
 #, python-format
 msgid "Field '%s' can't be empty."
 msgstr "El camp '%s' no pot estar buit"
 
-#: timelinelib/gui/utils.py:78
+#: timelinelib/gui/utils.py:121
 msgid "Error"
 msgstr "S'ha produït un error"
 
-#: timelinelib/gui/utils.py:84
+#: timelinelib/gui/utils.py:127
 msgid "Question"
 msgstr "Pregunta"
 
@@ -539,249 +488,276 @@ msgstr "Enrere\tPgUp"
 msgid "Forward\tPgDn"
 msgstr "Endavant\tPgDn"
 
+#: timelinelib/gui/dialogs/mainframe.py:250
+msgid "Forward One Wee&k\tK"
+msgstr ""
+
 #: timelinelib/gui/dialogs/mainframe.py:251
-msgid "Fit Century"
+msgid "Back One &Week\tW"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:252
-msgid "Fit Decade"
+msgid "Forward One Mont&h\tH"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:253
-msgid "Fit Year"
-msgstr "Mostra l'any"
+msgid "Back One &Month\tM"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:254
-msgid "Fit Month"
-msgstr "Mostra el mesMos"
+msgid "Forward One Yea&r\tR"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:255
-msgid "Fit Day"
-msgstr "Mostra el dia"
+msgid "Back One &Year\tY"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:257
-msgid "Find First Event"
+msgid "Fit Century"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:258
-msgid "Find Last Event"
+msgid "Fit Decade"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:259
+msgid "Fit Year"
+msgstr "Mostra l'any"
+
+#: timelinelib/gui/dialogs/mainframe.py:260
+msgid "Fit Month"
+msgstr "Mostra el mesMos"
+
+#: timelinelib/gui/dialogs/mainframe.py:261
+msgid "Fit Day"
+msgstr "Mostra el dia"
+
+#: timelinelib/gui/dialogs/mainframe.py:263
+msgid "Find First Event"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:264
+msgid "Find Last Event"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:265
 msgid "Fit All Events"
 msgstr ""
 
-#: timelinelib/gui/dialogs/mainframe.py:274
+#: timelinelib/gui/dialogs/mainframe.py:286
 msgid "&Contents\tF1"
 msgstr "&Continguts\tF1"
 
-#: timelinelib/gui/dialogs/mainframe.py:286
+#: timelinelib/gui/dialogs/mainframe.py:298
 msgid "&File"
 msgstr "&Arxiu"
 
-#: timelinelib/gui/dialogs/mainframe.py:287
+#: timelinelib/gui/dialogs/mainframe.py:299
 msgid "&Edit"
 msgstr "&Edita"
 
-#: timelinelib/gui/dialogs/mainframe.py:288
+#: timelinelib/gui/dialogs/mainframe.py:300
 msgid "&View"
 msgstr "&Visualitza"
 
-#: timelinelib/gui/dialogs/mainframe.py:289
+#: timelinelib/gui/dialogs/mainframe.py:301
 msgid "&Timeline"
 msgstr "Línia de &temps"
 
-#: timelinelib/gui/dialogs/mainframe.py:290
+#: timelinelib/gui/dialogs/mainframe.py:302
 msgid "&Navigate"
 msgstr "&Navega"
 
-#: timelinelib/gui/dialogs/mainframe.py:291
+#: timelinelib/gui/dialogs/mainframe.py:303
 msgid "&Help"
 msgstr "A&juda"
 
-#: timelinelib/gui/dialogs/mainframe.py:450
+#: timelinelib/gui/dialogs/mainframe.py:480
 msgid ""
 "Could not find markdown Python package.  It is needed by the help system. "
 "See the Timeline website or the INSTALL file for instructions how to install "
 "it."
 msgstr ""
 
-#: timelinelib/gui/dialogs/mainframe.py:499
-#: timelinelib/gui/dialogs/mainframe.py:524
+#: timelinelib/gui/dialogs/mainframe.py:535
+#: timelinelib/gui/dialogs/mainframe.py:559
 msgid "Create Timeline"
 msgstr "Crea una línia de temps"
 
-#: timelinelib/gui/dialogs/mainframe.py:506
+#: timelinelib/gui/dialogs/mainframe.py:541
 msgid "The specified timeline already exists."
 msgstr "La línia de temps especificada ja existeix."
 
-#: timelinelib/gui/dialogs/mainframe.py:507
+#: timelinelib/gui/dialogs/mainframe.py:542
 msgid "Opening timeline instead of creating new."
 msgstr "Obre una línia de temps en comptes de crear una nova."
 
-#: timelinelib/gui/dialogs/mainframe.py:509
+#: timelinelib/gui/dialogs/mainframe.py:544
 msgid "Information"
 msgstr "Informació"
 
-#: timelinelib/gui/dialogs/mainframe.py:539
+#: timelinelib/gui/dialogs/mainframe.py:575
 msgid "Open Timeline"
 msgstr "Obre la línia de temps"
 
-#: timelinelib/gui/dialogs/mainframe.py:608
-msgid "Image files"
-msgstr "Arxius d'imatge"
+#: timelinelib/gui/dialogs/mainframe.py:627
+msgid "Unable to write configuration file."
+msgstr ""
 
-#: timelinelib/gui/dialogs/mainframe.py:609
+#: timelinelib/gui/dialogs/mainframe.py:651
 msgid "Export to Image"
 msgstr "Exporta a una imatge"
 
-#: timelinelib/gui/dialogs/mainframe.py:613
+#: timelinelib/gui/dialogs/mainframe.py:655
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "L'arxiu '%s' ja existeix. Voleu sobreescriure'l?"
 
-#: timelinelib/gui/dialogs/mainframe.py:645
+#: timelinelib/gui/dialogs/mainframe.py:684
 msgid "Timeline files"
 msgstr "Arxius de línia de temps"
 
-#: timelinelib/gui/dialogs/mainframe.py:792
+#: timelinelib/gui/dialogs/mainframe.py:686
+msgid "Image files"
+msgstr "Arxius d'imatge"
+
+#: timelinelib/gui/dialogs/mainframe.py:866
 msgid "No timeline opened."
 msgstr "No hi ha cap línia de temps oberta"
 
-#: timelinelib/gui/dialogs/mainframe.py:797
+#: timelinelib/gui/dialogs/mainframe.py:871
 msgid "First time using Timeline?"
 msgstr "La primera vegada que empreu Timeline?"
 
-#: timelinelib/gui/dialogs/mainframe.py:870
+#: timelinelib/gui/dialogs/mainframe.py:944
 msgid "Relevant help topics:"
 msgstr ""
 
-#: timelinelib/gui/dialogs/categorieseditor.py:42
+#: timelinelib/gui/dialogs/categorieseditor.py:40
 msgid "Edit Categories"
 msgstr ""
 
-#: timelinelib/gui/dialogs/categorieseditor.py:96
+#: timelinelib/gui/dialogs/categorieseditor.py:94
 msgid "Edit Category"
 msgstr "Edita la categoria"
 
-#: timelinelib/gui/dialogs/categorieseditor.py:115
-#: timelinelib/gui/dialogs/eventeditor.py:223
+#: timelinelib/gui/dialogs/categorieseditor.py:113
+#: timelinelib/gui/dialogs/eventeditor.py:227
 msgid "Add Category"
 msgstr "Afegeix una categoria"
 
-#: timelinelib/gui/dialogs/categorieseditor.py:162
-#: timelinelib/gui/components/timelineview.py:808
-msgid "Are you sure to delete?"
-msgstr "Realment ho voleu esborrar?"
+#: timelinelib/gui/dialogs/categorieseditor.py:159
+msgid "Are you sure you want to delete this category?"
+msgstr ""
 
 #: timelinelib/gui/dialogs/categoryeditor.py:62
-msgid "Name:"
-msgstr "Nom:"
-
-#: timelinelib/gui/dialogs/categoryeditor.py:65
-msgid "Color:"
-msgstr "Color:"
-
-#: timelinelib/gui/dialogs/categoryeditor.py:80
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
 msgstr "El nom de la categoria'%s' no és vàlid. No pot estar buit."
 
-#: timelinelib/gui/dialogs/categoryeditor.py:84
+#: timelinelib/gui/dialogs/categoryeditor.py:67
 #, python-format
 msgid "Category name '%s' already in use."
 msgstr "El nom de la categoria'%s'  ja està en ús."
 
-#: timelinelib/gui/dialogs/eventeditor.py:72
+#: timelinelib/gui/dialogs/categoryeditor.py:88
+msgid "Name:"
+msgstr "Nom:"
+
+#: timelinelib/gui/dialogs/categoryeditor.py:91
+msgid "Color:"
+msgstr "Color:"
+
+#: timelinelib/gui/dialogs/eventeditor.py:71
 msgid "Event Properties"
 msgstr "Propietats de l'esdeveniment"
 
-#: timelinelib/gui/dialogs/eventeditor.py:78
+#: timelinelib/gui/dialogs/eventeditor.py:77
 msgid "When:"
 msgstr "Quan:"
 
-#: timelinelib/gui/dialogs/eventeditor.py:81
+#: timelinelib/gui/dialogs/eventeditor.py:80
 msgid "to"
 msgstr "Fins a"
 
-#: timelinelib/gui/dialogs/eventeditor.py:94
+#: timelinelib/gui/dialogs/eventeditor.py:93
 msgid "Period"
 msgstr "Període"
 
-#: timelinelib/gui/dialogs/eventeditor.py:98
-#: timelinelib/gui/dialogs/gotodate.py:34
+#: timelinelib/gui/dialogs/eventeditor.py:97
+#: timelinelib/gui/dialogs/gotodate.py:35
 msgid "Show time"
 msgstr "Mostra l'hora"
 
-#: timelinelib/gui/dialogs/eventeditor.py:105
+#: timelinelib/gui/dialogs/eventeditor.py:104
 msgid "Text:"
 msgstr "Text:"
 
-#: timelinelib/gui/dialogs/eventeditor.py:110
+#: timelinelib/gui/dialogs/eventeditor.py:109
 msgid "Category:"
 msgstr "Categoria:"
 
-#: timelinelib/gui/dialogs/eventeditor.py:121
+#: timelinelib/gui/dialogs/eventeditor.py:120
 msgid "Description"
 msgstr "Descripció"
 
-#: timelinelib/gui/dialogs/eventeditor.py:124
+#: timelinelib/gui/dialogs/eventeditor.py:123
 msgid "Icon"
 msgstr "Icona"
 
-#: timelinelib/gui/dialogs/eventeditor.py:143
+#: timelinelib/gui/dialogs/eventeditor.py:142
 msgid "Add more events after this one"
 msgstr "Afegeix més esdeveniments després de crear aquest"
 
-#: timelinelib/gui/dialogs/eventeditor.py:172
+#: timelinelib/gui/dialogs/eventeditor.py:176
 msgid "End must be > Start"
 msgstr "El final ha de ser posterior a l'inici"
 
-#: timelinelib/gui/dialogs/eventeditor.py:173
+#: timelinelib/gui/dialogs/eventeditor.py:177
 msgid "Text"
 msgstr "Text"
 
-#: timelinelib/gui/dialogs/eventeditor.py:317
+#: timelinelib/gui/dialogs/eventeditor.py:321
 msgid "Add new"
 msgstr "Afegeix nou"
 
-#: timelinelib/gui/dialogs/eventeditor.py:362
+#: timelinelib/gui/dialogs/eventeditor.py:366
 #, python-format
 msgid "Images will be scaled to fit inside a %ix%i box."
 msgstr ""
 "Les imatges s'escapçaran inside a %ix%i per a poder mostrar-se dins el "
 "requadre."
 
-#: timelinelib/gui/dialogs/eventeditor.py:398
+#: timelinelib/gui/dialogs/eventeditor.py:402
 msgid "Select Icon"
 msgstr "Trieu una icona"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:40
+#: timelinelib/gui/dialogs/helpbrowser.py:39
 msgid "Help"
 msgstr "Ajuda"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:90
+#: timelinelib/gui/dialogs/helpbrowser.py:89
 msgid "Go to home page"
 msgstr "Vés a la pàgina d'inici"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:97
+#: timelinelib/gui/dialogs/helpbrowser.py:96
 msgid "Go back one page"
 msgstr "Retrocedeix una pàgina"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:103
+#: timelinelib/gui/dialogs/helpbrowser.py:102
 msgid "Go forward one page"
 msgstr "Avança una pàgina"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:189
+#: timelinelib/gui/dialogs/helpbrowser.py:187
 msgid "Page not found"
 msgstr "No s'ha trobat la pàgina"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:190
+#: timelinelib/gui/dialogs/helpbrowser.py:188
 #, python-format
 msgid "Could not find page '%s'."
 msgstr "No s'ha trobat la pàgina '%s'."
 
-#: timelinelib/gui/dialogs/gotodate.py:28
+#: timelinelib/gui/dialogs/gotodate.py:29
 msgid "Go to Date"
 msgstr "Vés a una data"
 
@@ -789,23 +765,47 @@ msgstr "Vés a una data"
 msgid "Preferences"
 msgstr "Preferències"
 
-#: timelinelib/gui/dialogs/preferences.py:41
+#: timelinelib/gui/dialogs/preferences.py:42
 msgid "General"
 msgstr "General"
 
-#: timelinelib/gui/dialogs/preferences.py:43
+#: timelinelib/gui/dialogs/preferences.py:44
 msgid "Open most recent timeline on startup"
 msgstr "Mostra la línia de temps més recent en obrir l'aplicació."
 
-#: timelinelib/gui/components/search.py:62
+#: timelinelib/gui/dialogs/preferences.py:53
+msgid "Date && Time"
+msgstr ""
+
+#: timelinelib/gui/dialogs/preferences.py:56
+msgid "Week start on:"
+msgstr ""
+
+#: timelinelib/gui/dialogs/preferences.py:57
+msgid "Monday"
+msgstr ""
+
+#: timelinelib/gui/dialogs/preferences.py:57
+msgid "Sunday"
+msgstr ""
+
+#: timelinelib/gui/components/search.py:70
 msgid "No match"
 msgstr ""
 
-#: timelinelib/gui/components/search.py:66
+#: timelinelib/gui/components/search.py:74
 msgid "Only one match"
 msgstr ""
 
-#: timelinelib/gui/components/timelineview.py:292
+#: timelinelib/gui/components/datetimepicker.py:61
+msgid "Invalid date."
+msgstr ""
+
+#: timelinelib/gui/components/datetimepicker.py:63
+msgid "Date not within allowed period."
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:307
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
@@ -813,27 +813,43 @@ msgstr ""
 "Hi ha hagut un problema en imprimir.\n"
 "Potser la teva impressora no està establerta correctament?"
 
-#: timelinelib/gui/components/timelineview.py:292
+#: timelinelib/gui/components/timelineview.py:307
 msgid "Printing"
 msgstr "S'està imprimint"
 
-#: timelinelib/gui/components/timelineview.py:306
+#: timelinelib/gui/components/timelineview.py:320
 msgid "Print preview"
 msgstr "Previsualització de la impressió"
 
-#: timelinelib/gui/components/timelineview.py:352
-#: timelinelib/gui/components/timelineview.py:370
+#: timelinelib/gui/components/timelineview.py:367
+#: timelinelib/gui/components/timelineview.py:385
 msgid "No timeline set"
 msgstr "No s'ha establert cap línia de temps"
 
-#: timelinelib/gui/components/timelineview.py:630
+#: timelinelib/gui/components/timelineview.py:500
+msgid "Edit"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:501
+msgid "Delete"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:504
+msgid "Sticky Balloon"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:682
 msgid "Center"
 msgstr "Centre"
 
-#: timelinelib/gui/components/timelineview.py:805
+#: timelinelib/gui/components/timelineview.py:972
 #, python-format
-msgid "Are you sure to delete %d events?"
-msgstr "Realment voleu esborrar els esdeveniments %d ?"
+msgid "Are you sure you want to delete %d events?"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:975
+msgid "Are you sure you want to delete this event?"
+msgstr ""
 
 #: timelinelib/db/objects.py:190
 msgid "Start time can't be after year 9989"
@@ -913,7 +929,8 @@ msgstr "Format desconegut."
 msgid "Unable to read timeline data from '%s'."
 msgstr "No s'ha pogut llegir la informació de la línia de temps '%s'."
 
-#: timelinelib/db/backends/ics.py:138 timelinelib/db/backends/file.py:209
+#: timelinelib/db/backends/ics.py:138 timelinelib/db/backends/dir.py:166
+#: timelinelib/db/backends/file.py:209
 #, python-format
 msgid "Unable to read from file '%s'."
 msgstr "No s'ha pogut llegir la informació d l'arxiu '%s'."
