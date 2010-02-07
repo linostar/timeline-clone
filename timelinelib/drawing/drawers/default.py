@@ -364,22 +364,23 @@ class DefaultDrawingAlgorithm(Drawer):
                 rx = self.metrics.calc_x(event.mean_time()) - rw / 2
                 ry = self.metrics.half_height - rh - BASELINE_PADDING
                 movedir = -1
+            # Make sure rectangle is not far outside the screen. MARGIN must be
+            # big enough to hide outer padding, borders, and selection markers.
+            MARGIN = 50
+            if rx < -MARGIN:
+                move = -rx - MARGIN
+                rx += move
+                rw -= move
+            right_edge_x = rx + rw
+            if right_edge_x > self.metrics.width + MARGIN:
+                rw -= right_edge_x - self.metrics.width - MARGIN
+            #
             rect = wx.Rect(rx, ry, rw, rh)
             self._prevent_overlap(rect, movedir)
             self.event_data.append((event, rect))
         for (event, rect) in self.event_data:
             # Remove outer padding
             rect.Deflate(OUTER_PADDING, OUTER_PADDING)
-            # Make sure rectangle is not far outside the screen. MARGIN must be
-            # big enough to hide borders end selection markers.
-            MARGIN = 10
-            if rect.X < -MARGIN:
-                move = -rect.X - MARGIN
-                rect.X += move
-                rect.Width -= move
-            right_edge_x = rect.X + rect.Width
-            if right_edge_x > self.metrics.width + MARGIN:
-                rect.Width -= right_edge_x - self.metrics.width - MARGIN
 
     def _prevent_overlap(self, rect, movedir):
         """
