@@ -33,6 +33,7 @@ from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import _set_focus_and_select
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
+from timelinelib.utils import ex_msg
 
 
 class CategoryEditor(wx.Dialog):
@@ -69,7 +70,7 @@ class CategoryEditor(wx.Dialog):
         _set_focus_and_select(self.txt_name)
 
     def handle_db_error(self, e):
-        _display_error_message(e.message, self)
+        _display_error_message(ex_msg(e), self)
         self.error = e
         self.EndModal(ID_ERROR)
 

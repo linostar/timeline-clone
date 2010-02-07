@@ -26,6 +26,7 @@ from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
+from timelinelib.utils import ex_msg
 
 
 class CategoriesEditor(wx.Dialog):
@@ -94,7 +95,7 @@ class CategoriesEditor(wx.Dialog):
             dialog = CategoryEditor(self, _("Edit Category"), self.timeline,
                                     e.GetClientData())
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
         else:
@@ -113,7 +114,7 @@ class CategoriesEditor(wx.Dialog):
             dialog = CategoryEditor(self, _("Add Category"), self.timeline,
                                     None)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
         else:
@@ -126,7 +127,7 @@ class CategoriesEditor(wx.Dialog):
         try:
             self._delete_selected_category()
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
 
@@ -140,7 +141,7 @@ class CategoriesEditor(wx.Dialog):
                 self._delete_selected_category()
             e.Skip()
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
 
@@ -149,7 +150,7 @@ class CategoriesEditor(wx.Dialog):
             if state_change == STATE_CHANGE_CATEGORY:
                 self._update_categories()
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
 

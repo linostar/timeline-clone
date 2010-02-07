@@ -40,7 +40,7 @@ class Metrics(object):
         self.width, self.height = dc.GetSizeTuple()
         self.half_width = self.width / 2
         self.half_height = self.height / 2
-        self.half_height = divider_line_slider * self.height
+        self.half_height = int(round(divider_line_slider * self.height))
         self.time_period = time_period
 
     def calc_exact_x(self, time):

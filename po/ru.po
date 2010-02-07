@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-12-28 12:38+0100\n"
+"POT-Creation-Date: 2010-01-26 13:27+0100\n"
 "PO-Revision-Date: 2010-01-08 17:57+0000\n"
 "Last-Translator: Sergey Sedov <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-01-26 12:16+0000\n"
+"X-Launchpad-Export-Date: 2010-02-07 13:48+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: timelinelib/help.py:64
@@ -30,20 +30,20 @@ msgstr "Связанные страницы"
 msgid "Help contents"
 msgstr "Содержание справки"
 
-#: timelinelib/help_pages.py:55
+#: timelinelib/help_pages.py:56
 msgid "Questions and answers"
 msgstr "Вопросы и ответы"
 
-#: timelinelib/help_pages.py:55
+#: timelinelib/help_pages.py:56
 msgid "Concepts"
 msgstr ""
 
-#: timelinelib/help_pages.py:55
+#: timelinelib/help_pages.py:56
 msgid "Tasks"
 msgstr "Задачи"
 
-#: timelinelib/help_pages.py:59 timelinelib/gui/dialogs/mainframe.py:277
-#: timelinelib/gui/dialogs/mainframe.py:800
+#: timelinelib/help_pages.py:60 timelinelib/gui/dialogs/mainframe.py:289
+#: timelinelib/gui/dialogs/mainframe.py:874
 msgid "Getting started tutorial"
 msgstr "Изучить руководство"
 
@@ -52,7 +52,7 @@ msgstr "Изучить руководство"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:66
+#: timelinelib/help_pages.py:67
 msgid ""
 "\n"
 "The idea is to display events on a timeline and to be able to quickly change "
@@ -103,10 +103,10 @@ msgid ""
 "\n"
 "The vertical red line indicates the current time.\n"
 "\n"
-"Hoovering an event will display the full description in the status bar.\n"
+"Hovering over an event will display the full description in the status bar.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:98
+#: timelinelib/help_pages.py:99
 msgid "Where is the save button?"
 msgstr "Где находится кнопка сохранения?"
 
@@ -115,7 +115,7 @@ msgstr "Где находится кнопка сохранения?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:104
+#: timelinelib/help_pages.py:105
 msgid ""
 "\n"
 "There is no save button. Timeline will automatically save your data whenever "
@@ -124,29 +124,26 @@ msgstr ""
 "\n"
 "Кнопки сохранения просто нет, оно происходит автоматически.\n"
 
-#: timelinelib/help_pages.py:110
-msgid "Timeline"
-msgstr "Хронология"
+#: timelinelib/help_pages.py:112
+msgid "Where do the week numbers go if I start my weeks on Sunday?"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:117
+#: timelinelib/help_pages.py:118
 msgid ""
 "\n"
-"The timeline shows dates according to the Gregorian calendar on the x-axis. "
-"Currently the dates are limited to dates between year 10 and year 9999.  \n"
-"\n"
-"Future versions might support various kinds of timelines so that you for "
-"example can specify a time in terms of number of minutes since a start time. "
-"If you are interested in such a feature, please get in touch.\n"
+"The date data object used does not support week numbers for weeks that start "
+"on Sunday at present.  We plan on using a different date object that will "
+"support this in future versions.\n"
 msgstr ""
 
 #: timelinelib/help_pages.py:125
-msgid "Events"
-msgstr "События"
+msgid "Timeline"
+msgstr "Хронология"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -156,13 +153,33 @@ msgstr "События"
 #: timelinelib/help_pages.py:132
 msgid ""
 "\n"
+"The timeline shows dates according to the Gregorian calendar on the x-axis. "
+"Currently the dates are limited to dates between year 10 and year 9989.  \n"
+"\n"
+"Future versions might support various kinds of timelines so that you for "
+"example can specify a time in terms of number of minutes since a start time. "
+"If you are interested in such a feature, please get in touch.\n"
+msgstr ""
+
+#: timelinelib/help_pages.py:140
+msgid "Events"
+msgstr "События"
+
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: timelinelib/help_pages.py:147
+msgid ""
+"\n"
 "An event is the basic data type for representing information on the "
 "timeline.  It must specify where on the timeline is should be placed (when "
 "that event happened). This can be either a specific point in time or a "
 "period.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:138
+#: timelinelib/help_pages.py:153
 msgid "Categories"
 msgstr "Категории"
 
@@ -171,7 +188,7 @@ msgstr "Категории"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:145
+#: timelinelib/help_pages.py:160
 msgid ""
 "\n"
 "Categories are used to group events. An event can only belong to one "
@@ -179,7 +196,7 @@ msgid ""
 "same background color.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:151
+#: timelinelib/help_pages.py:166
 msgid "Create event"
 msgstr "Создать событие"
 
@@ -188,7 +205,7 @@ msgstr "Создать событие"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:158
+#: timelinelib/help_pages.py:173
 msgid ""
 "\n"
 "The *Create Event* dialog can be opened in the following ways:\n"
@@ -199,7 +216,7 @@ msgid ""
 "timeline, drag the mouse and release it.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:168
+#: timelinelib/help_pages.py:183
 msgid "Edit event"
 msgstr "Редактировать событие"
 
@@ -208,13 +225,13 @@ msgstr "Редактировать событие"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:175
+#: timelinelib/help_pages.py:190
 msgid ""
 "\n"
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:181
+#: timelinelib/help_pages.py:196
 msgid "Selecting events"
 msgstr "Выбор событий"
 
@@ -223,7 +240,7 @@ msgstr "Выбор событий"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:187
+#: timelinelib/help_pages.py:202
 msgid ""
 "\n"
 "To select an event, click on it. To select multiple events, hold down the "
@@ -234,7 +251,7 @@ msgid ""
 "HelpFigure(selected_event)\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:197
+#: timelinelib/help_pages.py:212
 msgid "Delete event"
 msgstr "Удалить событие"
 
@@ -243,14 +260,14 @@ msgstr "Удалить событие"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:204
+#: timelinelib/help_pages.py:219
 msgid ""
 "\n"
 "To delete an event, select it and press the *Del* key. Multiple events can "
 "be deleted at the same time.\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:210
+#: timelinelib/help_pages.py:225
 msgid "Will associated events be deleted when I delete a category?"
 msgstr "Будут ли удалены события при удалении категории?"
 
@@ -259,7 +276,7 @@ msgstr "Будут ли удалены события при удалении к
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:216
+#: timelinelib/help_pages.py:231
 msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
@@ -268,8 +285,8 @@ msgstr ""
 "Нет. События не будут удалены, но они не будут принадлежать какой-либо "
 "категории.\n"
 
-#: timelinelib/help_pages.py:222 timelinelib/gui/dialogs/mainframe.py:220
-#: timelinelib/gui/dialogs/eventeditor.py:318
+#: timelinelib/help_pages.py:237 timelinelib/gui/dialogs/mainframe.py:220
+#: timelinelib/gui/dialogs/eventeditor.py:322
 msgid "Edit categories"
 msgstr "Редактировать категории"
 
@@ -278,7 +295,7 @@ msgstr "Редактировать категории"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:229
+#: timelinelib/help_pages.py:244
 msgid ""
 "\n"
 "Categories can be managed in the *Edit Categories* dialog (*Timeline* > "
@@ -288,8 +305,8 @@ msgid ""
 "*Sidebar*).\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:237 timelinelib/gui/dialogs/mainframe.py:279
-#: timelinelib/gui/dialogs/mainframe.py:873
+#: timelinelib/help_pages.py:252 timelinelib/gui/dialogs/mainframe.py:291
+#: timelinelib/gui/dialogs/mainframe.py:947
 msgid "Contact"
 msgstr "Контакт"
 
@@ -298,7 +315,7 @@ msgstr "Контакт"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:243
+#: timelinelib/help_pages.py:258
 msgid ""
 "\n"
 "If you have more questions about Timeline, or if you want to get in contact "
@@ -306,7 +323,7 @@ msgid ""
 "list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)\n"
 msgstr ""
 
-#: timelinelib/help_pages.py:249
+#: timelinelib/help_pages.py:264
 msgid "Why is Timeline not available in my language?"
 msgstr "Почему Хронология не доступна на моём языке?"
 
@@ -315,7 +332,7 @@ msgstr "Почему Хронология не доступна на моём я
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib/help_pages.py:256
+#: timelinelib/help_pages.py:271
 msgid ""
 "\n"
 "Timeline is developed and translated by volunteers. If you would like to "
@@ -325,20 +342,20 @@ msgstr ""
 "Хронология разрабатывается и переводится добровольцами. Если вы желаете "
 "принять участие в переводах - всегда пожалуйста, пишите нам.\n"
 
-#: timelinelib/drawing/drawers/default.py:135
+#: timelinelib/drawing/drawers/default.py:138
 msgid "Week"
 msgstr "Неделя"
 
-#: timelinelib/gui/utils.py:72
+#: timelinelib/gui/utils.py:115
 #, python-format
 msgid "Field '%s' can't be empty."
 msgstr "Поле '%s' не должно быть пустым."
 
-#: timelinelib/gui/utils.py:78
+#: timelinelib/gui/utils.py:121
 msgid "Error"
 msgstr "Ошибка"
 
-#: timelinelib/gui/utils.py:84
+#: timelinelib/gui/utils.py:127
 msgid "Question"
 msgstr "Вопрос"
 
@@ -453,248 +470,275 @@ msgstr ""
 msgid "Forward\tPgDn"
 msgstr ""
 
+#: timelinelib/gui/dialogs/mainframe.py:250
+msgid "Forward One Wee&k\tK"
+msgstr ""
+
 #: timelinelib/gui/dialogs/mainframe.py:251
-msgid "Fit Century"
+msgid "Back One &Week\tW"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:252
-msgid "Fit Decade"
+msgid "Forward One Mont&h\tH"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:253
-msgid "Fit Year"
+msgid "Back One &Month\tM"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:254
-msgid "Fit Month"
+msgid "Forward One Yea&r\tR"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:255
-msgid "Fit Day"
+msgid "Back One &Year\tY"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:257
-msgid "Find First Event"
+msgid "Fit Century"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:258
-msgid "Find Last Event"
+msgid "Fit Decade"
 msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:259
+msgid "Fit Year"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:260
+msgid "Fit Month"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:261
+msgid "Fit Day"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:263
+msgid "Find First Event"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:264
+msgid "Find Last Event"
+msgstr ""
+
+#: timelinelib/gui/dialogs/mainframe.py:265
 msgid "Fit All Events"
 msgstr ""
 
-#: timelinelib/gui/dialogs/mainframe.py:274
+#: timelinelib/gui/dialogs/mainframe.py:286
 msgid "&Contents\tF1"
 msgstr ""
 
-#: timelinelib/gui/dialogs/mainframe.py:286
+#: timelinelib/gui/dialogs/mainframe.py:298
 msgid "&File"
 msgstr "&Файл"
 
-#: timelinelib/gui/dialogs/mainframe.py:287
+#: timelinelib/gui/dialogs/mainframe.py:299
 msgid "&Edit"
 msgstr "&Редактировать"
 
-#: timelinelib/gui/dialogs/mainframe.py:288
+#: timelinelib/gui/dialogs/mainframe.py:300
 msgid "&View"
 msgstr "&Вид"
 
-#: timelinelib/gui/dialogs/mainframe.py:289
+#: timelinelib/gui/dialogs/mainframe.py:301
 msgid "&Timeline"
 msgstr "&Хронология"
 
-#: timelinelib/gui/dialogs/mainframe.py:290
+#: timelinelib/gui/dialogs/mainframe.py:302
 msgid "&Navigate"
 msgstr "&Навигация"
 
-#: timelinelib/gui/dialogs/mainframe.py:291
+#: timelinelib/gui/dialogs/mainframe.py:303
 msgid "&Help"
 msgstr "&Помощь"
 
-#: timelinelib/gui/dialogs/mainframe.py:450
+#: timelinelib/gui/dialogs/mainframe.py:480
 msgid ""
 "Could not find markdown Python package.  It is needed by the help system. "
 "See the Timeline website or the INSTALL file for instructions how to install "
 "it."
 msgstr ""
 
-#: timelinelib/gui/dialogs/mainframe.py:499
-#: timelinelib/gui/dialogs/mainframe.py:524
+#: timelinelib/gui/dialogs/mainframe.py:535
+#: timelinelib/gui/dialogs/mainframe.py:559
 msgid "Create Timeline"
 msgstr "Создать хронологию"
 
-#: timelinelib/gui/dialogs/mainframe.py:506
+#: timelinelib/gui/dialogs/mainframe.py:541
 msgid "The specified timeline already exists."
 msgstr "Указанная хронология уже существует."
 
-#: timelinelib/gui/dialogs/mainframe.py:507
+#: timelinelib/gui/dialogs/mainframe.py:542
 msgid "Opening timeline instead of creating new."
 msgstr "Открыть хронологию вместо того, чтобы создать новую."
 
-#: timelinelib/gui/dialogs/mainframe.py:509
+#: timelinelib/gui/dialogs/mainframe.py:544
 msgid "Information"
 msgstr "Сведения"
 
-#: timelinelib/gui/dialogs/mainframe.py:539
+#: timelinelib/gui/dialogs/mainframe.py:575
 msgid "Open Timeline"
 msgstr "Открыть хронологию"
 
-#: timelinelib/gui/dialogs/mainframe.py:608
-msgid "Image files"
-msgstr "Файлы изображений"
+#: timelinelib/gui/dialogs/mainframe.py:627
+msgid "Unable to write configuration file."
+msgstr ""
 
-#: timelinelib/gui/dialogs/mainframe.py:609
+#: timelinelib/gui/dialogs/mainframe.py:651
 msgid "Export to Image"
 msgstr "Экспорт в изображения"
 
-#: timelinelib/gui/dialogs/mainframe.py:613
+#: timelinelib/gui/dialogs/mainframe.py:655
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "Файл '%s' существует. Перезаписать?"
 
-#: timelinelib/gui/dialogs/mainframe.py:645
+#: timelinelib/gui/dialogs/mainframe.py:684
 msgid "Timeline files"
 msgstr "Файлы хронологии"
 
-#: timelinelib/gui/dialogs/mainframe.py:792
+#: timelinelib/gui/dialogs/mainframe.py:686
+msgid "Image files"
+msgstr "Файлы изображений"
+
+#: timelinelib/gui/dialogs/mainframe.py:866
 msgid "No timeline opened."
 msgstr "Нет открытой хронологии"
 
-#: timelinelib/gui/dialogs/mainframe.py:797
+#: timelinelib/gui/dialogs/mainframe.py:871
 msgid "First time using Timeline?"
 msgstr "Используете программу в первый раз?"
 
-#: timelinelib/gui/dialogs/mainframe.py:870
+#: timelinelib/gui/dialogs/mainframe.py:944
 msgid "Relevant help topics:"
 msgstr ""
 
-#: timelinelib/gui/dialogs/categorieseditor.py:42
+#: timelinelib/gui/dialogs/categorieseditor.py:40
 msgid "Edit Categories"
 msgstr "Редактировать категории"
 
-#: timelinelib/gui/dialogs/categorieseditor.py:96
+#: timelinelib/gui/dialogs/categorieseditor.py:94
 msgid "Edit Category"
 msgstr "Редактировать категорию"
 
-#: timelinelib/gui/dialogs/categorieseditor.py:115
-#: timelinelib/gui/dialogs/eventeditor.py:223
+#: timelinelib/gui/dialogs/categorieseditor.py:113
+#: timelinelib/gui/dialogs/eventeditor.py:227
 msgid "Add Category"
 msgstr "Добавить категорию"
 
-#: timelinelib/gui/dialogs/categorieseditor.py:162
-#: timelinelib/gui/components/timelineview.py:808
-msgid "Are you sure to delete?"
-msgstr "Вы уверены в том, что хотите удалить?"
+#: timelinelib/gui/dialogs/categorieseditor.py:159
+msgid "Are you sure you want to delete this category?"
+msgstr ""
 
 #: timelinelib/gui/dialogs/categoryeditor.py:62
-msgid "Name:"
-msgstr "Название:"
-
-#: timelinelib/gui/dialogs/categoryeditor.py:65
-msgid "Color:"
-msgstr "Цвет:"
-
-#: timelinelib/gui/dialogs/categoryeditor.py:80
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
 msgstr ""
 "Название категории  '%s' не верное. Не должно содержать пустые символы."
 
-#: timelinelib/gui/dialogs/categoryeditor.py:84
+#: timelinelib/gui/dialogs/categoryeditor.py:67
 #, python-format
 msgid "Category name '%s' already in use."
 msgstr "Название категории '%s' уже используется."
 
-#: timelinelib/gui/dialogs/eventeditor.py:72
+#: timelinelib/gui/dialogs/categoryeditor.py:88
+msgid "Name:"
+msgstr "Название:"
+
+#: timelinelib/gui/dialogs/categoryeditor.py:91
+msgid "Color:"
+msgstr "Цвет:"
+
+#: timelinelib/gui/dialogs/eventeditor.py:71
 msgid "Event Properties"
 msgstr "Свойства события"
 
-#: timelinelib/gui/dialogs/eventeditor.py:78
+#: timelinelib/gui/dialogs/eventeditor.py:77
 msgid "When:"
 msgstr "Когда:"
 
-#: timelinelib/gui/dialogs/eventeditor.py:81
+#: timelinelib/gui/dialogs/eventeditor.py:80
 msgid "to"
 msgstr ""
 
-#: timelinelib/gui/dialogs/eventeditor.py:94
+#: timelinelib/gui/dialogs/eventeditor.py:93
 msgid "Period"
 msgstr "Период"
 
-#: timelinelib/gui/dialogs/eventeditor.py:98
-#: timelinelib/gui/dialogs/gotodate.py:34
+#: timelinelib/gui/dialogs/eventeditor.py:97
+#: timelinelib/gui/dialogs/gotodate.py:35
 msgid "Show time"
 msgstr "Показывать время"
 
-#: timelinelib/gui/dialogs/eventeditor.py:105
+#: timelinelib/gui/dialogs/eventeditor.py:104
 msgid "Text:"
 msgstr "Текст:"
 
-#: timelinelib/gui/dialogs/eventeditor.py:110
+#: timelinelib/gui/dialogs/eventeditor.py:109
 msgid "Category:"
 msgstr "Категория:"
 
-#: timelinelib/gui/dialogs/eventeditor.py:121
+#: timelinelib/gui/dialogs/eventeditor.py:120
 msgid "Description"
 msgstr "Описание"
 
-#: timelinelib/gui/dialogs/eventeditor.py:124
+#: timelinelib/gui/dialogs/eventeditor.py:123
 msgid "Icon"
 msgstr "Значок"
 
-#: timelinelib/gui/dialogs/eventeditor.py:143
+#: timelinelib/gui/dialogs/eventeditor.py:142
 msgid "Add more events after this one"
 msgstr ""
 
-#: timelinelib/gui/dialogs/eventeditor.py:172
+#: timelinelib/gui/dialogs/eventeditor.py:176
 msgid "End must be > Start"
 msgstr ""
 
-#: timelinelib/gui/dialogs/eventeditor.py:173
+#: timelinelib/gui/dialogs/eventeditor.py:177
 msgid "Text"
 msgstr "Текст"
 
-#: timelinelib/gui/dialogs/eventeditor.py:317
+#: timelinelib/gui/dialogs/eventeditor.py:321
 msgid "Add new"
 msgstr "Добавить новую"
 
-#: timelinelib/gui/dialogs/eventeditor.py:362
+#: timelinelib/gui/dialogs/eventeditor.py:366
 #, python-format
 msgid "Images will be scaled to fit inside a %ix%i box."
 msgstr ""
 
-#: timelinelib/gui/dialogs/eventeditor.py:398
+#: timelinelib/gui/dialogs/eventeditor.py:402
 msgid "Select Icon"
 msgstr "Выберите значок"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:40
+#: timelinelib/gui/dialogs/helpbrowser.py:39
 msgid "Help"
 msgstr "Помощь"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:90
+#: timelinelib/gui/dialogs/helpbrowser.py:89
 msgid "Go to home page"
 msgstr "Перейти к домашней странице"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:97
+#: timelinelib/gui/dialogs/helpbrowser.py:96
 msgid "Go back one page"
 msgstr "Назад на одну страницу"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:103
+#: timelinelib/gui/dialogs/helpbrowser.py:102
 msgid "Go forward one page"
 msgstr "Вперёд на одну страницу"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:189
+#: timelinelib/gui/dialogs/helpbrowser.py:187
 msgid "Page not found"
 msgstr "Страница не найдена"
 
-#: timelinelib/gui/dialogs/helpbrowser.py:190
+#: timelinelib/gui/dialogs/helpbrowser.py:188
 #, python-format
 msgid "Could not find page '%s'."
 msgstr "Не могу найти страницу '%s'."
 
-#: timelinelib/gui/dialogs/gotodate.py:28
+#: timelinelib/gui/dialogs/gotodate.py:29
 msgid "Go to Date"
 msgstr "Перейти к дате"
 
@@ -702,23 +746,47 @@ msgstr "Перейти к дате"
 msgid "Preferences"
 msgstr "Параметры"
 
-#: timelinelib/gui/dialogs/preferences.py:41
+#: timelinelib/gui/dialogs/preferences.py:42
 msgid "General"
 msgstr "Общие"
 
-#: timelinelib/gui/dialogs/preferences.py:43
+#: timelinelib/gui/dialogs/preferences.py:44
 msgid "Open most recent timeline on startup"
 msgstr "Открыть последнюю использовавшуюся хронологию при старте"
 
-#: timelinelib/gui/components/search.py:62
+#: timelinelib/gui/dialogs/preferences.py:53
+msgid "Date && Time"
+msgstr ""
+
+#: timelinelib/gui/dialogs/preferences.py:56
+msgid "Week start on:"
+msgstr ""
+
+#: timelinelib/gui/dialogs/preferences.py:57
+msgid "Monday"
+msgstr ""
+
+#: timelinelib/gui/dialogs/preferences.py:57
+msgid "Sunday"
+msgstr ""
+
+#: timelinelib/gui/components/search.py:70
 msgid "No match"
 msgstr ""
 
-#: timelinelib/gui/components/search.py:66
+#: timelinelib/gui/components/search.py:74
 msgid "Only one match"
 msgstr ""
 
-#: timelinelib/gui/components/timelineview.py:292
+#: timelinelib/gui/components/datetimepicker.py:61
+msgid "Invalid date."
+msgstr ""
+
+#: timelinelib/gui/components/datetimepicker.py:63
+msgid "Date not within allowed period."
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:307
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
@@ -726,27 +794,43 @@ msgstr ""
 "Возникла проблема во время печати.\n"
 "Возможно, ваш текущий принтер неправильно настроен?"
 
-#: timelinelib/gui/components/timelineview.py:292
+#: timelinelib/gui/components/timelineview.py:307
 msgid "Printing"
 msgstr "Идёт печать"
 
-#: timelinelib/gui/components/timelineview.py:306
+#: timelinelib/gui/components/timelineview.py:320
 msgid "Print preview"
 msgstr "Просмотр печати"
 
-#: timelinelib/gui/components/timelineview.py:352
-#: timelinelib/gui/components/timelineview.py:370
+#: timelinelib/gui/components/timelineview.py:367
+#: timelinelib/gui/components/timelineview.py:385
 msgid "No timeline set"
 msgstr ""
 
-#: timelinelib/gui/components/timelineview.py:630
+#: timelinelib/gui/components/timelineview.py:500
+msgid "Edit"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:501
+msgid "Delete"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:504
+msgid "Sticky Balloon"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:682
 msgid "Center"
 msgstr "По центру"
 
-#: timelinelib/gui/components/timelineview.py:805
+#: timelinelib/gui/components/timelineview.py:972
 #, python-format
-msgid "Are you sure to delete %d events?"
-msgstr "Удалить события %d ?"
+msgid "Are you sure you want to delete %d events?"
+msgstr ""
+
+#: timelinelib/gui/components/timelineview.py:975
+msgid "Are you sure you want to delete this event?"
+msgstr ""
 
 #: timelinelib/db/objects.py:190
 msgid "Start time can't be after year 9989"
@@ -826,7 +910,8 @@ msgstr "Неизвестный формат."
 msgid "Unable to read timeline data from '%s'."
 msgstr ""
 
-#: timelinelib/db/backends/ics.py:138 timelinelib/db/backends/file.py:209
+#: timelinelib/db/backends/ics.py:138 timelinelib/db/backends/dir.py:166
+#: timelinelib/db/backends/file.py:209
 #, python-format
 msgid "Unable to read from file '%s'."
 msgstr "Невозможно прочесть из файла '%s'."

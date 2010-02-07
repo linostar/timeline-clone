@@ -1,3 +1,26 @@
+Timeline 0.9.0, released on 7 February 2010
+===========================================
+
+This is a new minor feature and bugfix release.
+
+New features, enhancements:
+
+  * Timeline scrolls when creating period events, resizing events, and moving
+    events
+  * Option to start weeks on Sundays
+  * Balloon shown shorter time after mouse out
+  * New navigation functions: year, month, week forward/backward
+  * Middle mouse click centers timeline on that spot
+  * Shift+Scroll moves horizontal line up/down
+
+Bug fixes:
+
+  * Fixed issues with 'Go to Date' dialog
+  * Balloon now visible even if event stretches outside screen
+  * All keys now work in the search bar
+  * Prevent crash if long period events are used
+  * Small corrections to documentation
+
 Timeline 0.8.0, released on 1 January 2010
 ==========================================
 
