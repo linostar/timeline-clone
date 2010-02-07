@@ -38,6 +38,7 @@ from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
 from timelinelib.gui.components.datetimepicker import DateTimePicker
+from timelinelib.utils import ex_msg
 
 
 class EventEditor(wx.Dialog):
@@ -163,13 +164,13 @@ class EventEditor(wx.Dialog):
                 try:
                     start_time = self.dtp_start.get_value()
                 except ValueError, ex:
-                    raise TxtException(ex.message, self.dtp_start)
+                    raise TxtException(ex_msg(ex), self.dtp_start)
                 end_time = start_time
                 if self.chb_period.IsChecked():
                     try:
                         end_time = self.dtp_end.get_value()
                     except ValueError, ex:
-                        raise TxtException(ex.message, self.dtp_end)
+                        raise TxtException(ex_msg(ex), self.dtp_end)
                 selection = self.lst_category.GetSelection()
                 category = self.lst_category.GetClientData(selection)
                 if start_time > end_time:
@@ -200,7 +201,7 @@ class EventEditor(wx.Dialog):
                 _display_error_message("%s" % ex.error_message)
                 _set_focus_and_select(ex.control)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
 
@@ -227,7 +228,7 @@ class EventEditor(wx.Dialog):
             dialog = CategoryEditor(self, _("Add Category"),
                                     self.timeline, None)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
         else:
@@ -239,7 +240,7 @@ class EventEditor(wx.Dialog):
                 try:
                     self._update_categories(dialog.get_edited_category())
                 except TimelineIOError, e:
-                    _display_error_message(e.message, self)
+                    _display_error_message(ex_msg(e), self)
                     self.error = e
                     self.EndModal(ID_ERROR)
             dialog.Destroy()
@@ -248,7 +249,7 @@ class EventEditor(wx.Dialog):
         try:
             dialog = CategoriesEditor(self, self.timeline)
         except TimelineIOError, e:
-            _display_error_message(e.message, self)
+            _display_error_message(ex_msg(e), self)
             self.error = e
             self.EndModal(ID_ERROR)
         else:
@@ -261,7 +262,7 @@ class EventEditor(wx.Dialog):
                     prev_category = self.lst_category.GetClientData(prev_index)
                     self._update_categories(prev_category)
                 except TimelineIOError, e:
-                    _display_error_message(e.message, self)
+                    _display_error_message(ex_msg(e), self)
                     self.error = e
                     self.EndModal(ID_ERROR)
             dialog.Destroy()

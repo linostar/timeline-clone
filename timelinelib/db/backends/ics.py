@@ -44,6 +44,7 @@ from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import generic_event_search
 from timelinelib.db.utils import safe_write
 from timelinelib.version import get_version
+from timelinelib.utils import ex_msg
 
 
 class IcsTimeline(TimelineDB):
@@ -130,7 +131,7 @@ class IcsTimeline(TimelineDB):
                         event["timeline_id"] = self.event_id_counter.get_next()
                 except Exception, pe:
                     msg1 = _("Unable to read timeline data from '%s'.")
-                    msg2 = "\n\n" + pe.message
+                    msg2 = "\n\n" + ex_msg(pe)
                     raise TimelineIOError((msg1 % abspath(self.path)) + msg2)
             finally:
                 file.close()

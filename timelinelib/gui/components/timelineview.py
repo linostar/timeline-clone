@@ -33,6 +33,7 @@ from timelinelib.gui.utils import _step_function
 from timelinelib.gui.utils import _display_error_message
 import timelinelib.config as config
 import timelinelib.printing as printing
+from timelinelib.utils import ex_msg
 
 
 # Used by Sizer and Mover classes to detect when to go into action
@@ -388,7 +389,7 @@ class DrawingArea(wx.Panel):
             self._redraw_timeline()
             wx.GetTopLevelParent(self).SetStatusText("")
         except (ValueError, OverflowError), e:
-            wx.GetTopLevelParent(self).SetStatusText(e.message)
+            wx.GetTopLevelParent(self).SetStatusText(ex_msg(e))
 
     def redraw_timeline(self):
         self._redraw_timeline()
@@ -786,7 +787,7 @@ class DrawingArea(wx.Panel):
             # at least prevents other errors in case we end up here.
             width, height = self.GetSizeTuple()
             self.bgbuf = wx.EmptyBitmap(width, height)
-            _display_error_message("Error in drawing\n\n%s" % ex.message, self)
+            _display_error_message("Error in drawing\n\n%s" % ex_msg(ex), self)
 
     def _scroll(self, xpixelpos):
         if self._current_time:

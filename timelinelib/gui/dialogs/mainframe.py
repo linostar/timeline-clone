@@ -49,6 +49,7 @@ from timelinelib.gui.components.categorieslistbox import CategoriesVisibleCheckL
 from timelinelib.gui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.components.search import SearchBar
+from timelinelib.utils import ex_msg
 
 
 STATUS_READ_ONLY = 1
@@ -138,7 +139,7 @@ class MainFrame(wx.Frame):
             dialog.Destroy()
 
     def handle_timeline_error(self, error):
-        _display_error_message(error.message, self)
+        _display_error_message(ex_msg(error), self)
         self._switch_to_error_view(error)
 
     def _create_gui(self):
@@ -625,7 +626,7 @@ class MainFrame(wx.Frame):
             config.write()
         except IOError, ex:
             friendly = _("Unable to write configuration file.")
-            msg = "%s\n\n%s" % (friendly, ex.message)
+            msg = "%s\n\n%s" % (friendly, ex_msg(ex))
             _display_error_message(msg, self)
 
     def _save_current_timeline_data(self):
@@ -641,7 +642,7 @@ class MainFrame(wx.Frame):
             try:
                 self.timeline.save_view_properties(self.main_panel.drawing_area.view_properties)
             except TimelineIOError, e:
-                _display_error_message(e.message, self)
+                _display_error_message(ex_msg(e), self)
                 # No need to switch to error view since this method is only
                 # called on a timeline that is going to be closed anyway (and
                 # another timeline, or one, will be displayed instead).
@@ -886,7 +887,7 @@ class ErrorPanel(wx.Panel):
         self._create_gui()
 
     def populate(self, error):
-        self.txt_error.SetLabel(error.message)
+        self.txt_error.SetLabel(ex_msg(error))
 
     def _create_gui(self):
         vsizer = wx.BoxSizer(wx.VERTICAL)

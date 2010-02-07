@@ -46,6 +46,7 @@ from timelinelib.db.utils import generic_event_search
 from timelinelib.db.utils import safe_write
 from timelinelib.db.utils import IdCounter
 from timelinelib.version import get_version
+from timelinelib.utils import ex_msg
 
 
 ENCODING = "utf-8"
@@ -201,7 +202,7 @@ class FileTimeline(TimelineDB):
                     # mistake somewhere we still would like to mark the file as
                     # corrupt so we don't overwrite it later.
                     msg1 = _("Unable to read timeline data from '%s'.")
-                    msg2 = "\n\n" + pe.message
+                    msg2 = "\n\n" + ex_msg(pe)
                     raise TimelineIOError((msg1 % abspath(self.path)) + msg2)
             finally:
                 file.close()
@@ -264,7 +265,7 @@ class FileTimeline(TimelineDB):
             if not self.preferred_period.is_period():
                 raise ParseException("Length not > 0.")
         except ParseException, e:
-            raise ParseException("Unable to parse preferred period from '%s': %s" % (period_text, e.message))
+            raise ParseException("Unable to parse preferred period from '%s': %s" % (period_text, ex_msg(e)))
 
     def _load_category(self, category_text):
         """
@@ -286,7 +287,7 @@ class FileTimeline(TimelineDB):
             cat.set_id(self.category_id_counter.get_next())
             self.categories.append(cat)
         except ParseException, e:
-            raise ParseException("Unable to parse category from '%s': %s" % (category_text, e.message))
+            raise ParseException("Unable to parse category from '%s': %s" % (category_text, ex_msg(e)))
 
     def _load_event(self, event_text):
         """
@@ -334,7 +335,7 @@ class FileTimeline(TimelineDB):
                 event.set_id(self.event_id_counter.get_next())
                 self.events.append(event)
         except ParseException, e:
-            raise ParseException("Unable to parse event from '%s': %s" % (event_text, e.message))
+            raise ParseException("Unable to parse event from '%s': %s" % (event_text, ex_msg(e)))
 
     def _load_footer(self, footer_text):
         """Expected format '# END'."""

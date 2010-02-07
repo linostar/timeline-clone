@@ -21,6 +21,7 @@ import wx
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.components.datetimepicker import DateTimePicker
+from timelinelib.utils import ex_msg
 
 
 class GotoDateDialog(wx.Dialog):
@@ -55,6 +56,6 @@ class GotoDateDialog(wx.Dialog):
         try:
             self.time = self.dtpc.get_value()
         except ValueError, ex:
-            _display_error_message(ex.message)
+            _display_error_message(ex_msg(ex))
         else:
             self.EndModal(wx.ID_OK)
