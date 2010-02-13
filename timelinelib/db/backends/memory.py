@@ -27,6 +27,9 @@ from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import STATE_CHANGE_ANY
 from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import Category
+from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import generic_event_search
 
 
@@ -35,7 +38,9 @@ class MemoryDB(TimelineDB):
     def __init__(self):
         TimelineDB.__init__(self, "")
         self.categories = []
+        self.category_id_counter = IdCounter()
         self.events = []
+        self.event_id_counter = IdCounter()
 
     def is_read_only(self):
         return False
@@ -71,11 +76,17 @@ class MemoryDB(TimelineDB):
             raise TimelineIOError("Event's category not in db.")
         if event not in self.events:
             self.events.append(event)
+            event.id = self.event_id_counter.get_next()
         self._notify(STATE_CHANGE_ANY)
 
-    def delete_event(self, event):
+    def delete_event(self, event_or_id):
+        if isinstance(event_or_id, Event):
+            event = event_or_id
+        else:
+            event = self._find_event_with_id(event_or_id)
         if event in self.events:
             self.events.remove(event)
+            event.id = None
             self._notify(STATE_CHANGE_ANY)
         else:
             raise TimelineIOError("Event not in db.")
@@ -86,11 +97,17 @@ class MemoryDB(TimelineDB):
     def save_category(self, category):
         if not category in self.categories:
             self.categories.append(category)
+            category.id = self.event_id_counter.get_next()
         self._notify(STATE_CHANGE_CATEGORY)
 
-    def delete_category(self, category):
+    def delete_category(self, category_or_id):
+        if isinstance(category_or_id, Category):
+            category = category_or_id
+        else:
+            category = self._find_category_with_id(category_or_id)
         if category in self.categories:
             self.categories.remove(category)
+            category.id = None
             self._notify(STATE_CHANGE_CATEGORY)
         else:
             raise TimelineIOError("Category not in db.")
@@ -100,3 +117,15 @@ class MemoryDB(TimelineDB):
 
     def save_view_properties(self, view_properties):
         pass
+
+    def _find_event_with_id(self, id):
+        for e in self.events:
+            if e.id == id:
+                return e
+        return None
+
+    def _find_category_with_id(self, id):
+        for c in self.categories:
+            if c.id == id:
+                return c
+        return None

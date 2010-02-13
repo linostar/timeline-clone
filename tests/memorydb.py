@@ -54,29 +54,41 @@ class TestMemoryDB(unittest.TestCase):
 
     def testSaveNewCategory(self):
         self.db.save_category(self.c1)
+        self.assertTrue(self.c1.has_id())
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 1)
 
     def testSaveExistingCategory(self):
         self.db.save_category(self.c1)
+        id_before = self.c1.id
         self.c1.name = "Work"
         self.c1.color = (1, 2, 3)
         self.db.save_category(self.c1)
+        self.assertEqual(id_before, self.c1.id)
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 2) # 2 save
 
     def testDeleteExistingCategory(self):
         self.db.save_category(self.c1)
         self.db.save_category(self.c2)
+        # Assert both categories in db
         categories = self.db.get_categories()
         self.assertEquals(len(categories), 2)
         self.assertTrue(self.c1 in categories)
         self.assertTrue(self.c2 in categories)
+        # Remove first (by category)
         self.db.delete_category(self.c1)
         categories = self.db.get_categories()
         self.assertEquals(len(categories), 1)
         self.assertTrue(self.c2 in categories)
-        self.assertEqual(self.db_listener.call_count, 3) # 2 save, 1 delete
+        self.assertFalse(self.c1.has_id())
+        # Remove second (by id)
+        self.db.delete_category(self.c2.id)
+        categories = self.db.get_categories()
+        self.assertEquals(len(categories), 0)
+        self.assertFalse(self.c2.has_id())
+        # Check events
+        self.assertEqual(self.db_listener.call_count, 4) # 2 save, 2 delete
 
     def testDeleteNonExistingCategory(self):
         self.assertRaises(TimelineIOError, self.db.delete_category, self.c1)
@@ -88,14 +100,17 @@ class TestMemoryDB(unittest.TestCase):
     def testSaveNewEvent(self):
         self.db.save_event(self.e1)
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 14))
+        self.assertTrue(self.e1.has_id())
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db_listener.call_count, 1) # 1 save
 
     def testSaveExistingEvent(self):
         self.db.save_event(self.e1)
+        id_before = self.e1.id
         self.e1.text = "Holiday!!"
         self.db.save_event(self.e1)
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 14))
+        self.assertEqual(id_before, self.e1.id)
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db_listener.call_count, 2) # 1 save
 
@@ -103,13 +118,21 @@ class TestMemoryDB(unittest.TestCase):
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 15))
         self.db.save_event(self.e1)
         self.db.save_event(self.e2)
+        # Assert both in db
         self.assertEquals(len(self.db.get_events(tp)), 2)
         self.assertTrue(self.e1 in self.db.get_events(tp))
         self.assertTrue(self.e2 in self.db.get_events(tp))
+        # Delete first (by event)
         self.db.delete_event(self.e1)
+        self.assertFalse(self.e1.has_id())
         self.assertEquals(len(self.db.get_events(tp)), 1)
         self.assertTrue(self.e2 in self.db.get_events(tp))
-        self.assertEqual(self.db_listener.call_count, 3) # 2 save, 1 delete
+        # Delete second (by id)
+        self.db.delete_event(self.e2.id)
+        self.assertFalse(self.e2.has_id())
+        self.assertEquals(len(self.db.get_events(tp)), 0)
+        # Check events
+        self.assertEqual(self.db_listener.call_count, 4) # 2 save, 2 delete
 
     def testDeleteNonExistingEvent(self):
         self.assertRaises(TimelineIOError, self.db.delete_event, self.e1)
