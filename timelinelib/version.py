@@ -22,7 +22,7 @@ DEV = True
 
 def get_version():
     if DEV:
-        return ("%s.%s.%sdev" % VERSION) + _get_revision()
+        return ("%s.%s.%sdev" % VERSION) + DEV_REVISION
     return "%s.%s.%s" % VERSION
 
 
@@ -36,3 +36,7 @@ def _get_revision():
         return rev
     except:
         return "0"
+
+
+if DEV:
+    DEV_REVISION = _get_revision()
