@@ -79,7 +79,7 @@ class MemoryDB(TimelineDB):
                 raise TimelineIOError("Event with id %s not found in db." %
                                       event.id)
             self.events.append(event)
-            event.id = self.event_id_counter.get_next()
+            event.set_id(self.event_id_counter.get_next())
         self._notify(STATE_CHANGE_ANY)
 
     def delete_event(self, event_or_id):
@@ -89,7 +89,7 @@ class MemoryDB(TimelineDB):
             event = self._find_event_with_id(event_or_id)
         if event in self.events:
             self.events.remove(event)
-            event.id = None
+            event.set_id(None)
             self._notify(STATE_CHANGE_ANY)
         else:
             raise TimelineIOError("Event not in db.")
@@ -103,7 +103,7 @@ class MemoryDB(TimelineDB):
                 raise TimelineIOError("Category with id %s not found in db." %
                                       category.id)
             self.categories.append(category)
-            category.id = self.event_id_counter.get_next()
+            category.set_id(self.event_id_counter.get_next())
         self._notify(STATE_CHANGE_CATEGORY)
 
     def delete_category(self, category_or_id):
@@ -113,7 +113,7 @@ class MemoryDB(TimelineDB):
             category = self._find_category_with_id(category_or_id)
         if category in self.categories:
             self.categories.remove(category)
-            category.id = None
+            category.set_id(None)
             self._notify(STATE_CHANGE_CATEGORY)
         else:
             raise TimelineIOError("Category not in db.")
