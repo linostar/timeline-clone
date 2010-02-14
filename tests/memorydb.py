@@ -61,12 +61,17 @@ class TestMemoryDB(unittest.TestCase):
     def testSaveExistingCategory(self):
         self.db.save_category(self.c1)
         id_before = self.c1.id
-        self.c1.name = "Work"
-        self.c1.color = (1, 2, 3)
+        self.c1.name = "new name"
         self.db.save_category(self.c1)
         self.assertEqual(id_before, self.c1.id)
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 2) # 2 save
+
+    def testSaveNonExistingCategory(self):
+        other_db = MemoryDB()
+        other_db.save_category(self.c1)
+        # It has id but is not in this db
+        self.assertRaises(TimelineIOError, self.db.save_category, self.c1)
 
     def testDeleteExistingCategory(self):
         self.db.save_category(self.c1)
@@ -92,10 +97,19 @@ class TestMemoryDB(unittest.TestCase):
 
     def testDeleteNonExistingCategory(self):
         self.assertRaises(TimelineIOError, self.db.delete_category, self.c1)
+        self.assertRaises(TimelineIOError, self.db.delete_category, 5)
+        other_db = MemoryDB()
+        other_db.save_category(self.c2)
+        self.assertRaises(TimelineIOError, self.db.delete_category, self.c2)
 
-    def testSaveNewEventUnknownCategory(self):
+    def testSaveEventUnknownCategory(self):
+        # A new
         self.e1.category = self.c1
         self.assertRaises(TimelineIOError, self.db.save_event, self.e1)
+        # An existing
+        self.db.save_event(self.e2)
+        self.e2.category = self.c1
+        self.assertRaises(TimelineIOError, self.db.save_event, self.e2)
 
     def testSaveNewEvent(self):
         self.db.save_event(self.e1)
@@ -107,12 +121,18 @@ class TestMemoryDB(unittest.TestCase):
     def testSaveExistingEvent(self):
         self.db.save_event(self.e1)
         id_before = self.e1.id
-        self.e1.text = "Holiday!!"
+        self.e1.text = "new text"
         self.db.save_event(self.e1)
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 14))
         self.assertEqual(id_before, self.e1.id)
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db_listener.call_count, 2) # 1 save
+
+    def testSaveNonExistingEvent(self):
+        other_db = MemoryDB()
+        other_db.save_event(self.e1)
+        # It has id but is not in this db
+        self.assertRaises(TimelineIOError, self.db.save_event, self.e1)
 
     def testDeleteExistingEvent(self):
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 15))
@@ -136,3 +156,7 @@ class TestMemoryDB(unittest.TestCase):
 
     def testDeleteNonExistingEvent(self):
         self.assertRaises(TimelineIOError, self.db.delete_event, self.e1)
+        self.assertRaises(TimelineIOError, self.db.delete_event, 5)
+        other_db = MemoryDB()
+        other_db.save_event(self.e2)
+        self.assertRaises(TimelineIOError, self.db.delete_event, self.c2)

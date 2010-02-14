@@ -75,6 +75,9 @@ class MemoryDB(TimelineDB):
             event.category not in self.categories):
             raise TimelineIOError("Event's category not in db.")
         if event not in self.events:
+            if event.has_id():
+                raise TimelineIOError("Event with id %s not found in db." %
+                                      event.id)
             self.events.append(event)
             event.id = self.event_id_counter.get_next()
         self._notify(STATE_CHANGE_ANY)
@@ -96,6 +99,9 @@ class MemoryDB(TimelineDB):
 
     def save_category(self, category):
         if not category in self.categories:
+            if category.has_id():
+                raise TimelineIOError("Category with id %s not found in db." %
+                                      category.id)
             self.categories.append(category)
             category.id = self.event_id_counter.get_next()
         self._notify(STATE_CHANGE_CATEGORY)
