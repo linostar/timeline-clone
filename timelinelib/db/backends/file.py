@@ -42,6 +42,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import time_period_center
+from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.utils import generic_event_search
 from timelinelib.db.utils import safe_write
 from timelinelib.db.utils import IdCounter
@@ -88,10 +89,8 @@ class FileTimeline(TimelineDB):
         If the file does not exist a new timeline will be created.
         """
         TimelineDB.__init__(self, path)
-        self.new_events = []
-        self.event_id_counter = IdCounter()
-        self.new_categories = []
-        self.category_id_counter = IdCounter()
+        self.memory_db = MemoryDB()
+        self.memory_db.register(lambda state_change: self._notify(state_change))
         self._load_data()
 
     def is_read_only(self):
@@ -101,78 +100,46 @@ class FileTimeline(TimelineDB):
         return ["description", "icon"]
 
     def search(self, search_string):
-        return generic_event_search(self.events, search_string)
+        return self.memory_db.search(search_string)
 
     def get_events(self, time_period):
-        def include_event(event):
-            if not event.inside_period(time_period):
-                return False
-            return True
-        return [event for event in self.events if include_event(event)]
+        return self.memory_db.get_events(time_period)
 
     def get_first_event(self):
-        if len(self.events) == 0:
-            return None
-        return min(self.events, key=lambda e: e.time_period.start_time)
+        return self.memory_db.get_first_event()
 
     def get_last_event(self):
-        if len(self.events) == 0:
-            return None
-        return max(self.events, key=lambda e: e.time_period.end_time)
+        return self.memory_db.get_last_event()
         
     def save_event(self, event):
-        if not event.has_id():
-            self.new_events.append(event)
+        self.memory_db.save_event(event)
         self._save_data()
 
     def delete_event(self, event_or_id):
-        def find_event():
-            for e in self.events:
-                if e == event_or_id or e.id == event_or_id:
-                    return e
-            return None
-        e = find_event()
-        if e is not None:
-            self.events.remove(e)
-            e.set_id(None)
-            self._save_data()
+        self.memory_db.delete_event(event_or_id)
+        self._save_data()
 
     def get_categories(self):
-        # Make sure the original list can't be modified
-        return self.categories[:]
+        return self.memory_db.get_categories()
 
     def save_category(self, category):
-        if not category.has_id():
-            self.new_categories.append(category)
+        self.memory_db.save_category(category)
         self._save_data()
-        self._notify(STATE_CHANGE_CATEGORY)
 
     def delete_category(self, category_or_id):
-        def find_category():
-            for c in self.categories:
-                if c == category_or_id or c.id == category_or_id:
-                    return c
-            return None
-        category = find_category()
-        if category is not None:
-            self.categories.remove(category)
-            category.set_id(None)
-            for event in self.events:
-                if event.category == category:
-                    event.category = None
-            self._save_data()
-            self._notify(STATE_CHANGE_CATEGORY)
+        self.memory_db.delete_category(category_or_id)
+        self._save_data()
 
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.preferred_period
-        for category in self.categories:
+        for category in self.memory_db.categories:
             view_properties.set_category_visible(category, category.visible)
             
     def save_view_properties(self, view_properties):
         if not view_properties.displayed_period.is_period():
             raise TimelineIOError(_("Preferred period must be > 0."))
         self.preferred_period = view_properties.displayed_period
-        for category in self.categories:
+        for category in self.memory_db.categories:
             category.visible = view_properties.category_visible(category)
         self._save_data()
 
@@ -187,8 +154,6 @@ class FileTimeline(TimelineDB):
         If a read error occurs a TimelineIOError will be raised.
         """
         self.preferred_period = None
-        self.categories = []
-        self.events = []
         if not os.path.exists(self.path): 
             # Nothing to load. Will create a new timeline on save.
             return
@@ -284,8 +249,7 @@ class FileTimeline(TimelineDB):
             if len(category_data) == 3:
                 visible = parse_bool(category_data[2])
             cat = Category(name, color, visible)
-            cat.set_id(self.category_id_counter.get_next())
-            self.categories.append(cat)
+            self.memory_db.save_category(cat)
         except ParseException, e:
             raise ParseException("Unable to parse category from '%s': %s" % (category_text, ex_msg(e)))
 
@@ -315,8 +279,7 @@ class FileTimeline(TimelineDB):
                     cat_name = dequote(event_specification[3])
                 category = self._get_category(cat_name)
                 evt = Event(start_time, end_time, text, category)
-                evt.set_id(self.event_id_counter.get_next())
-                self.events.append(evt)
+                self.memory_db.save_event(evt)
                 return True
             else:
                 if len(event_specification) < 4:
@@ -332,8 +295,7 @@ class FileTimeline(TimelineDB):
                         raise ParseException("Can't parse event data with id '%s'." % id)
                     decode = get_decode_function(id)
                     event.set_data(id, decode(dequote(data)))
-                event.set_id(self.event_id_counter.get_next())
-                self.events.append(event)
+                self.memory_db.save_event(event)
         except ParseException, e:
             raise ParseException("Unable to parse event from '%s': %s" % (event_text, ex_msg(e)))
 
@@ -343,7 +305,7 @@ class FileTimeline(TimelineDB):
             raise ParseException("Unable to load footer from '%s'." % footer_text)
 
     def _get_category(self, name):
-        for category in self.categories:
+        for category in self.memory_db.categories:
             if category.name == name:
                 return category
         return None
@@ -362,7 +324,6 @@ class FileTimeline(TimelineDB):
             self._write_events(file)
             self._write_footer(file)
         safe_write(self.path, ENCODING, write_fn)
-        self._notify(STATE_CHANGE_ANY)
 
     def _write_header(self, file):
         file.write("# Written by Timeline %s on %s\n" % (
@@ -381,13 +342,8 @@ class FileTimeline(TimelineDB):
             file.write("CATEGORY:%s;%s,%s,%s;%s\n" % (quote(cat.name),
                                                       r, g, b,
                                                       cat.visible))
-        for cat in self.categories:
+        for cat in self.memory_db.categories:
             save(cat)
-        while self.new_categories:
-            cat = self.new_categories.pop()
-            save(cat)
-            cat.set_id(self.category_id_counter.get_next())
-            self.categories.append(cat)
 
     def _write_events(self, file):
         def save(event):
@@ -406,13 +362,8 @@ class FileTimeline(TimelineDB):
                     file.write(";%s:%s" % (data_id,
                                            quote(encode(data))))
             file.write("\n")
-        for event in self.events:
+        for event in self.memory_db.events:
             save(event)
-        while self.new_events:
-            event = self.new_events.pop()
-            save(event)
-            event.set_id(self.event_id_counter.get_next())
-            self.events.append(event)
 
     def _write_footer(self, file):
         file.write(u"# END\n")
