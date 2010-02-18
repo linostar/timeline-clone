@@ -36,4 +36,6 @@ def unhandled_exception_hook(type, value, tb):
     """
     lines = traceback.format_exception(type, value, tb)
     title = "Unhandled Exception Report"
-    TextDisplayDialog(title, "\n".join(lines)).ShowModal()
+    dialog = TextDisplayDialog(title, "\n".join(lines))
+    dialog.ShowModal()
+    dialog.Destroy()
