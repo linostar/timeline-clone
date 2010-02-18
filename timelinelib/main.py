@@ -24,6 +24,7 @@ application.
 """
 
 
+import sys
 from sys import argv
 from sys import version as python_version
 import platform
@@ -33,6 +34,7 @@ import gettext
 import wx
 
 from timelinelib.gui.dialogs.mainframe import MainFrame
+from timelinelib.unhandledex import unhandled_exception_hook
 from version import get_version
 import config
 from about import APPLICATION_NAME
@@ -73,5 +75,7 @@ def main():
     """Main entry point."""
     setup_gettext()
     (options, input_files) = parse_options()
+    # Customize the handling of top-level exceptions
+    sys.excepthook = unhandled_exception_hook
     app = create_wx_app(input_files)
     app.MainLoop()
