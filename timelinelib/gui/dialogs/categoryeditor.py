@@ -59,12 +59,12 @@ class CategoryEditor(wx.Dialog):
     def close(self):
         self.EndModal(wx.ID_OK)
 
-    def handle_invalid_name(self):
+    def handle_invalid_name(self, name):
         msg = _("Category name '%s' not valid. Must be non-empty.")
         _display_error_message(msg % name, self)
         _set_focus_and_select(self.txt_name)
 
-    def handle_used_name(self):
+    def handle_used_name(self, name):
         msg = _("Category name '%s' already in use.")
         _display_error_message(msg % name, self)
         _set_focus_and_select(self.txt_name)
@@ -124,10 +124,10 @@ class CategoryEditorController(object):
             new_name = self.view.get_name()
             new_color = self.view.get_color()
             if not self._name_valid(new_name):
-                self.view.handle_invalid_name()
+                self.view.handle_invalid_name(new_name)
                 return
             if self._name_in_use(new_name):
-                self.view.handle_used_name()
+                self.view.handle_used_name(new_name)
                 return
             if self.category is None:
                 self.category = Category(new_name, new_color, True)
