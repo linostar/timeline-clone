@@ -76,6 +76,7 @@ def main():
     setup_gettext()
     (options, input_files) = parse_options()
     # Customize the handling of top-level exceptions
-    sys.excepthook = unhandled_exception_hook
     app = create_wx_app(input_files)
+    sys.excepthook = unhandled_exception_hook
     app.MainLoop()
+
