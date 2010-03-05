@@ -66,7 +66,8 @@ class MainFrame(wx.Frame):
     """
 
     def __init__(self):
-        wx.Frame.__init__(self, None, size=config.get_window_size(),
+        wx.Frame.__init__(self, None, size=config.get_window_size(), 
+                          pos=config.get_window_pos(),
                           style=wx.DEFAULT_FRAME_STYLE)
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
@@ -618,6 +619,7 @@ class MainFrame(wx.Frame):
 
     def _save_application_config(self):
         config.set_window_size(self.GetSize())
+        config.set_window_pos(self.GetPosition())
         config.set_window_maximized(self.IsMaximized())
         config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
         config.set_show_legend(self.mnu_view_legend.IsChecked())

@@ -36,6 +36,8 @@ import wx
 # Name used in ConfigParser
 WINDOW_WIDTH = "window_width"
 WINDOW_HEIGHT = "window_height"
+WINDOW_XPOS = "window xpos"
+WINDOW_YPOS = "window ypos"
 WINDOW_MAXIMIZED = "window_maximized"
 SHOW_SIDEBAR = "show_sidebar"
 SHOW_LEGEND = "show_legend"
@@ -47,6 +49,8 @@ WEEK_START = "week_start"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
+    WINDOW_XPOS: "-1",
+    WINDOW_YPOS: "-1",
     WINDOW_MAXIMIZED: "False",
     SHOW_SIDEBAR: "True",
     SIDEBAR_WIDTH: "200",
@@ -80,6 +84,8 @@ def read(): init()
 def write(): global_config.write()
 def get_window_size(): return global_config.window_size
 def set_window_size(size): global_config.window_size = size
+def get_window_pos(): return global_config.window_pos
+def set_window_pos(pos): global_config.window_pos = pos
 def get_window_maximized(): return global_config.window_maximized
 def set_window_maximized(maximized): global_config.window_maximized = maximized
 def get_show_sidebar(): return global_config.show_sidebar
@@ -132,6 +138,15 @@ class Config(object):
         self.config_parser.set(DEFAULTSECT, WINDOW_WIDTH, str(width))
         self.config_parser.set(DEFAULTSECT, WINDOW_HEIGHT, str(height))
     window_size = property(get_window_size, set_window_size)
+
+    def get_window_pos(self):
+        return (self.config_parser.getint(DEFAULTSECT, WINDOW_XPOS),
+                self.config_parser.getint(DEFAULTSECT, WINDOW_YPOS))
+    def set_window_pos(self, pos):
+        xpos, ypos = pos
+        self.config_parser.set(DEFAULTSECT, WINDOW_XPOS, str(xpos))
+        self.config_parser.set(DEFAULTSECT, WINDOW_YPOS, str(ypos))
+    window_pos = property(get_window_pos, set_window_pos)
 
     def get_window_maximized(self):
         return self.config_parser.getboolean(DEFAULTSECT, WINDOW_MAXIMIZED)
