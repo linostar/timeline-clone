@@ -33,6 +33,7 @@ class TestMemoryDB(unittest.TestCase):
 
     def setUp(self):
         self.db = MemoryDB()
+        self.db._save = Mock()
         self.db_listener = Mock()
         self.c1 = Category("work", (255, 0, 0), True)
         self.c2 = Category("private", (0, 255, 0), True)
@@ -76,12 +77,17 @@ class TestMemoryDB(unittest.TestCase):
         self.assertFalse(new_vp.category_visible(self.c1))
         self.assertTrue(new_vp.category_visible(self.c2))
         self.assertEquals(new_vp.displayed_period, self.db.displayed_period)
+        # Assert virtual _save method called: 2 save categories, 1 save view
+        # properties
+        self.assertEquals(self.db._save.call_count, 3)
 
     def testSaveNewCategory(self):
         self.db.save_category(self.c1)
         self.assertTrue(self.c1.has_id())
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 1)
+        # Assert virtual _save method called: 1 save category
+        self.assertEquals(self.db._save.call_count, 1)
 
     def testSaveExistingCategory(self):
         self.db.save_category(self.c1)
@@ -91,12 +97,16 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEqual(id_before, self.c1.id)
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 2) # 2 save
+        # Assert virtual _save method called: 2 save category
+        self.assertEquals(self.db._save.call_count, 2)
 
     def testSaveNonExistingCategory(self):
         other_db = MemoryDB()
         other_db.save_category(self.c1)
         # It has id but is not in this db
         self.assertRaises(TimelineIOError, self.db.save_category, self.c1)
+        # Assert virtual _save method not called
+        self.assertEquals(self.db._save.call_count, 0)
 
     def testDeleteExistingCategory(self):
         # Add two categories to the db
@@ -125,6 +135,9 @@ class TestMemoryDB(unittest.TestCase):
         self.assertFalse(self.c2.has_id())
         # Check events
         self.assertEqual(self.db_listener.call_count, 4) # 2 save, 2 delete
+        # Assert virtual _save method called: 2 save category, 1 save view
+        # properties, 2 delete categories
+        self.assertEquals(self.db._save.call_count, 5)
 
     def testDeleteNonExistingCategory(self):
         self.assertRaises(TimelineIOError, self.db.delete_category, self.c1)
@@ -132,6 +145,8 @@ class TestMemoryDB(unittest.TestCase):
         other_db = MemoryDB()
         other_db.save_category(self.c2)
         self.assertRaises(TimelineIOError, self.db.delete_category, self.c2)
+        # Assert virtual _save method not called
+        self.assertEquals(self.db._save.call_count, 0)
 
     def testSaveEventUnknownCategory(self):
         # A new
@@ -141,6 +156,8 @@ class TestMemoryDB(unittest.TestCase):
         self.db.save_event(self.e2)
         self.e2.category = self.c1
         self.assertRaises(TimelineIOError, self.db.save_event, self.e2)
+        # Assert virtual _save method not called
+        self.assertEquals(self.db._save.call_count, 1)
 
     def testSaveNewEvent(self):
         self.db.save_event(self.e1)
@@ -148,6 +165,8 @@ class TestMemoryDB(unittest.TestCase):
         self.assertTrue(self.e1.has_id())
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db_listener.call_count, 1) # 1 save
+        # Assert virtual _save method called: 1 save event
+        self.assertEquals(self.db._save.call_count, 1)
 
     def testSaveExistingEvent(self):
         self.db.save_event(self.e1)
@@ -158,12 +177,16 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEqual(id_before, self.e1.id)
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db_listener.call_count, 2) # 1 save
+        # Assert virtual _save method called: 2 save event
+        self.assertEquals(self.db._save.call_count, 2)
 
     def testSaveNonExistingEvent(self):
         other_db = MemoryDB()
         other_db.save_event(self.e1)
         # It has id but is not in this db
         self.assertRaises(TimelineIOError, self.db.save_event, self.e1)
+        # Assert virtual _save method not called
+        self.assertEquals(self.db._save.call_count, 0)
 
     def testDeleteExistingEvent(self):
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 15))
@@ -184,6 +207,8 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEquals(len(self.db.get_events(tp)), 0)
         # Check events
         self.assertEqual(self.db_listener.call_count, 4) # 2 save, 2 delete
+        # Assert virtual _save method called: 2 save event, 2 delete event
+        self.assertEquals(self.db._save.call_count, 4)
 
     def testDeleteNonExistingEvent(self):
         self.assertRaises(TimelineIOError, self.db.delete_event, self.e1)
@@ -191,3 +216,5 @@ class TestMemoryDB(unittest.TestCase):
         other_db = MemoryDB()
         other_db.save_event(self.e2)
         self.assertRaises(TimelineIOError, self.db.delete_event, self.c2)
+        # Assert virtual _save method not called
+        self.assertEquals(self.db._save.call_count, 0)
