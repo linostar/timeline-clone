@@ -41,6 +41,8 @@ class MemoryDB(TimelineDB):
         self.category_id_counter = IdCounter()
         self.events = []
         self.event_id_counter = IdCounter()
+        self.displayed_period = None
+        self.hidden_categories = []
 
     def is_read_only(self):
         return False
@@ -112,6 +114,8 @@ class MemoryDB(TimelineDB):
         else:
             category = self._find_category_with_id(category_or_id)
         if category in self.categories:
+            if category in self.hidden_categories:
+                self.hidden_categories.remove(category)
             self.categories.remove(category)
             category.set_id(None)
             self._notify(STATE_CHANGE_CATEGORY)
@@ -119,10 +123,17 @@ class MemoryDB(TimelineDB):
             raise TimelineIOError("Category not in db.")
     
     def load_view_properties(self, view_properties):
-        pass
+        view_properties.displayed_period = self.displayed_period
+        for cat in self.categories:
+            visible = cat not in self.hidden_categories
+            view_properties.set_category_visible(cat, visible)
 
     def save_view_properties(self, view_properties):
-        pass
+        self.displayed_period = view_properties.displayed_period
+        self.hidden_categories = []
+        for cat in self.categories:
+            if not view_properties.category_visible(cat):
+                self.hidden_categories.append(cat)
 
     def _find_event_with_id(self, id):
         for e in self.events:

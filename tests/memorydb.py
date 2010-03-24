@@ -26,6 +26,7 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.drawing.interface import ViewProperties
 
 
 class TestMemoryDB(unittest.TestCase):
@@ -42,15 +43,39 @@ class TestMemoryDB(unittest.TestCase):
     def testInitialState(self):
         db = MemoryDB()
         self.assertEquals(db.path, "")
+        self.assertEquals(db.displayed_period, None)
+        self.assertEquals(db.hidden_categories, [])
         self.assertEquals(db.is_read_only(), False)
         self.assertEquals(db.supported_event_data(), ["description", "icon"])
         self.assertEquals(db.search(""), [])
         self.assertEquals(db.get_first_event(), None)
         self.assertEquals(db.get_last_event(), None)
         self.assertEquals(db.get_categories(), [])
-        # Ensure these don't raise exceptions (they should not nothing)
-        db.load_view_properties(None)
-        db.save_view_properties(None)
+
+    def testLoadSaveViewProperties(self):
+        # Make sure the database contains categories
+        self.db.save_category(self.c1)
+        self.db.save_category(self.c2)
+        # Set up a view properties object that simulates having selected a
+        # specific period and hidden one category
+        vp = ViewProperties()
+        vp.set_category_visible(self.c1, False)
+        start = datetime(2010, 3, 23)
+        end = datetime(2010, 3, 24)
+        tp = TimePeriod(start, end)
+        vp.displayed_period = tp
+        # Save these properties and assert that the database fields are written
+        # correctly
+        self.db.save_view_properties(vp)
+        self.assertEquals(self.db.displayed_period, tp)
+        self.assertEquals(self.db.hidden_categories, [self.c1])
+        # Load view properties from db simulating that this db was just loaded
+        # into memory and the view is being configured
+        new_vp = ViewProperties()
+        self.db.load_view_properties(new_vp)
+        self.assertFalse(new_vp.category_visible(self.c1))
+        self.assertTrue(new_vp.category_visible(self.c2))
+        self.assertEquals(new_vp.displayed_period, self.db.displayed_period)
 
     def testSaveNewCategory(self):
         self.db.save_category(self.c1)
@@ -74,8 +99,13 @@ class TestMemoryDB(unittest.TestCase):
         self.assertRaises(TimelineIOError, self.db.save_category, self.c1)
 
     def testDeleteExistingCategory(self):
+        # Add two categories to the db
         self.db.save_category(self.c1)
         self.db.save_category(self.c2)
+        # Make category 1 hidden
+        vp = ViewProperties()
+        vp.set_category_visible(self.c1, False)
+        self.db.save_view_properties(vp)
         # Assert both categories in db
         categories = self.db.get_categories()
         self.assertEquals(len(categories), 2)
@@ -87,6 +117,7 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEquals(len(categories), 1)
         self.assertTrue(self.c2 in categories)
         self.assertFalse(self.c1.has_id())
+        self.assertFalse(self.c1 in self.db.hidden_categories)
         # Remove second (by id)
         self.db.delete_category(self.c2.id)
         categories = self.db.get_categories()
