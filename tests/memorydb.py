@@ -218,3 +218,13 @@ class TestMemoryDB(unittest.TestCase):
         self.assertRaises(TimelineIOError, self.db.delete_event, self.c2)
         # Assert virtual _save method not called
         self.assertEquals(self.db._save.call_count, 0)
+
+    def testDisableEnableSave(self):
+        self.db.save_category(self.c1)
+        # Assert virtual _save method called: save enabled by default
+        self.assertEquals(self.db._save.call_count, 1)
+        self.db.disable_save()
+        self.db.save_category(self.c1)
+        self.assertEquals(self.db._save.call_count, 1) # still 1
+        self.db.enable_save()
+        self.assertEquals(self.db._save.call_count, 2)

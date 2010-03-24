@@ -43,6 +43,7 @@ class MemoryDB(TimelineDB):
         self.event_id_counter = IdCounter()
         self.displayed_period = None
         self.hidden_categories = []
+        self.save_disabled = False
 
     def is_read_only(self):
         return False
@@ -82,7 +83,7 @@ class MemoryDB(TimelineDB):
                                       event.id)
             self.events.append(event)
             event.set_id(self.event_id_counter.get_next())
-        self._save()
+        self._save_if_not_disabled()
         self._notify(STATE_CHANGE_ANY)
 
     def delete_event(self, event_or_id):
@@ -93,7 +94,7 @@ class MemoryDB(TimelineDB):
         if event in self.events:
             self.events.remove(event)
             event.set_id(None)
-            self._save()
+            self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
         else:
             raise TimelineIOError("Event not in db.")
@@ -108,7 +109,7 @@ class MemoryDB(TimelineDB):
                                       category.id)
             self.categories.append(category)
             category.set_id(self.event_id_counter.get_next())
-        self._save()
+        self._save_if_not_disabled()
         self._notify(STATE_CHANGE_CATEGORY)
 
     def delete_category(self, category_or_id):
@@ -121,7 +122,7 @@ class MemoryDB(TimelineDB):
                 self.hidden_categories.remove(category)
             self.categories.remove(category)
             category.set_id(None)
-            self._save()
+            self._save_if_not_disabled()
             self._notify(STATE_CHANGE_CATEGORY)
         else:
             raise TimelineIOError("Category not in db.")
@@ -138,7 +139,14 @@ class MemoryDB(TimelineDB):
         for cat in self.categories:
             if not view_properties.category_visible(cat):
                 self.hidden_categories.append(cat)
-        self._save()
+        self._save_if_not_disabled()
+
+    def disable_save(self):
+        self.save_disabled = True
+
+    def enable_save(self):
+        self.save_disabled = False
+        self._save_if_not_disabled()
 
     def _find_event_with_id(self, id):
         for e in self.events:
@@ -151,6 +159,10 @@ class MemoryDB(TimelineDB):
             if c.id == id:
                 return c
         return None
+
+    def _save_if_not_disabled(self):
+        if self.save_disabled == False:
+            self._save()
 
     def _save(self):
         """
