@@ -228,3 +228,11 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEquals(self.db._save.call_count, 1) # still 1
         self.db.enable_save()
         self.assertEquals(self.db._save.call_count, 2)
+        # Now do the same thing but tell enable not to call save
+        self.db.disable_save()
+        self.db.save_category(self.c1)
+        self.db.enable_save(False)
+        self.assertEquals(self.db._save.call_count, 2)
+        # Enabling when enabled should not have any effect
+        self.db.enable_save()
+        self.assertEquals(self.db._save.call_count, 2)

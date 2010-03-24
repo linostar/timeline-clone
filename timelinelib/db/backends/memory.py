@@ -144,9 +144,11 @@ class MemoryDB(TimelineDB):
     def disable_save(self):
         self.save_disabled = True
 
-    def enable_save(self):
-        self.save_disabled = False
-        self._save_if_not_disabled()
+    def enable_save(self, call_save=True):
+        if self.save_disabled == True:
+            self.save_disabled = False
+            if call_save == True:
+                self._save_if_not_disabled()
 
     def _find_event_with_id(self, id):
         for e in self.events:
