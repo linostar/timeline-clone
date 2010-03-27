@@ -87,6 +87,12 @@ class TimelineDB(Observable):
         """
         raise NotImplementedError()
 
+    def get_all_events(self, time_period):
+        """
+        Return a list of all events in the database.
+        """
+        raise NotImplementedError()
+
     def get_first_event(self):
         """Return the event with the earliest start time."""
         raise NotImplementedError()

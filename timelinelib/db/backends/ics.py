@@ -68,6 +68,11 @@ class IcsTimeline(TimelineDB):
             return event.inside_period(time_period)
         return self._get_events(decider)
 
+    def get_all_events(self):
+        def decider(event):
+            return True
+        return self._get_events(decider)
+
     def get_first_event(self):
         events = self._get_events()
         if events:

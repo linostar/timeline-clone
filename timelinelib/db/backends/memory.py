@@ -61,6 +61,9 @@ class MemoryDB(TimelineDB):
             return True
         return [e for e in self.events if include_event(e)]
 
+    def get_all_events(self):
+        return list(self.events)
+
     def get_first_event(self):
         if len(self.events) == 0:
             return None

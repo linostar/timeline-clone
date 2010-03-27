@@ -49,6 +49,7 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEquals(db.is_read_only(), False)
         self.assertEquals(db.supported_event_data(), ["description", "icon"])
         self.assertEquals(db.search(""), [])
+        self.assertEquals(db.get_all_events(), [])
         self.assertEquals(db.get_first_event(), None)
         self.assertEquals(db.get_last_event(), None)
         self.assertEquals(db.get_categories(), [])
@@ -190,6 +191,7 @@ class TestMemoryDB(unittest.TestCase):
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 14))
         self.assertTrue(self.e1.has_id())
         self.assertEqual(self.db.get_events(tp), [self.e1])
+        self.assertEqual(self.db.get_all_events(), [self.e1])
         self.assertEqual(self.db_listener.call_count, 1) # 1 save
         # Assert virtual _save method called: 1 save event
         self.assertEquals(self.db._save.call_count, 1)
@@ -202,6 +204,7 @@ class TestMemoryDB(unittest.TestCase):
         tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 14))
         self.assertEqual(id_before, self.e1.id)
         self.assertEqual(self.db.get_events(tp), [self.e1])
+        self.assertEqual(self.db.get_all_events(), [self.e1])
         self.assertEqual(self.db_listener.call_count, 2) # 1 save
         # Assert virtual _save method called: 2 save event
         self.assertEquals(self.db._save.call_count, 2)

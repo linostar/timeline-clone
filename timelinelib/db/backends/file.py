@@ -105,6 +105,9 @@ class FileTimeline(TimelineDB):
     def get_events(self, time_period):
         return self.memory_db.get_events(time_period)
 
+    def get_all_events(self):
+        return self.memory_db.get_all_events()
+
     def get_first_event(self):
         return self.memory_db.get_first_event()
 
