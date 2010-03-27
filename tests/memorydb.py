@@ -81,6 +81,32 @@ class TestMemoryDB(unittest.TestCase):
         # properties
         self.assertEquals(self.db._save.call_count, 3)
 
+    def testGetSetDisplayedPeriod(self):
+        tp = TimePeriod(datetime(2010, 3, 23), datetime(2010, 3, 24))
+        self.db._set_displayed_period(tp)
+        # Assert that we get back the same period
+        self.assertEquals(self.db._get_displayed_period(), tp)
+        # Assert that the period is correctly loaded into ViewProperties
+        vp = ViewProperties()
+        self.db.load_view_properties(vp)
+        self.assertEquals(vp.displayed_period, tp)
+
+    def testGetSetHiddenCategories(self):
+        # Assert that we cannot include categories not in the db
+        self.assertRaises(ValueError, self.db._set_hidden_categories, [self.c1])
+        self.db._set_hidden_categories([])
+        self.db.save_category(self.c1)
+        self.db.save_category(self.c2)
+        self.db._set_hidden_categories([self.c1])
+        # Assert that the returned list is the same
+        self.assertEquals(self.db._get_hidden_categories(), [self.c1])
+        # Assert that category visibility information is correctly written to
+        # ViewProperties
+        vp = ViewProperties()
+        self.db.load_view_properties(vp)
+        self.assertFalse(vp.category_visible(self.c1))
+        self.assertTrue(vp.category_visible(self.c2))
+
     def testSaveNewCategory(self):
         self.db.save_category(self.c1)
         self.assertTrue(self.c1.has_id())

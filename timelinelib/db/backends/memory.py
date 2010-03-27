@@ -166,6 +166,38 @@ class MemoryDB(TimelineDB):
         if self.save_disabled == False:
             self._save()
 
+    def _get_displayed_period(self):
+        """
+        Inheritors can call this method to get the displayed period used in
+        load_view_properties and save_view_properties.
+        """
+        return self.displayed_period
+
+    def _set_displayed_period(self, period):
+        """
+        Inheritors can call this method to set the displayed period used in
+        load_view_properties and save_view_properties.
+        """
+        self.displayed_period = period
+
+    def _get_hidden_categories(self):
+        """
+        Inheritors can call this method to get the hidden categories used in
+        load_view_properties and save_view_properties.
+        """
+        return self.hidden_categories
+
+    def _set_hidden_categories(self, hidden_categories):
+        """
+        Inheritors can call this method to set the hidden categories used in
+        load_view_properties and save_view_properties.
+        """
+        self.hidden_categories = []
+        for cat in hidden_categories:
+            if cat not in self.categories:
+                raise ValueError("Category '%s' not in db." % cat.name)
+            self.hidden_categories.append(cat)
+
     def _save(self):
         """
         Inheritors can override this method to save this db to persistent
