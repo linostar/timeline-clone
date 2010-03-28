@@ -19,33 +19,27 @@
 """
 Implementation of timeline database with flat file storage using our own custom
 format.
+
+This database was only used for version 0.1.0 - 0.9.0.
 """
 
 
 import re
 import codecs
-import shutil
 import os.path
 from os.path import abspath
 from datetime import datetime
-from datetime import timedelta
 import base64
 import StringIO
 
 import wx
 
 from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.interface import TimelineDB
-from timelinelib.db.interface import STATE_CHANGE_ANY
-from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
-from timelinelib.db.objects import time_period_center
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.utils import generic_event_search
 from timelinelib.db.utils import safe_write
-from timelinelib.db.utils import IdCounter
 from timelinelib.version import get_version
 from timelinelib.utils import ex_msg
 
@@ -58,7 +52,7 @@ class ParseException(Exception):
     pass
 
 
-class FileTimeline(TimelineDB):
+class FileTimeline(MemoryDB):
     """
     Implements the timeline database interface.
 
@@ -88,65 +82,11 @@ class FileTimeline(TimelineDB):
 
         If the file does not exist a new timeline will be created.
         """
-        TimelineDB.__init__(self, path)
-        self.memory_db = MemoryDB()
-        self.memory_db.register(lambda state_change: self._notify(state_change))
-        self._load_data()
+        MemoryDB.__init__(self)
+        self.path = path
+        self._load()
 
-    def is_read_only(self):
-        return False
-
-    def supported_event_data(self):
-        return ["description", "icon"]
-
-    def search(self, search_string):
-        return self.memory_db.search(search_string)
-
-    def get_events(self, time_period):
-        return self.memory_db.get_events(time_period)
-
-    def get_all_events(self):
-        return self.memory_db.get_all_events()
-
-    def get_first_event(self):
-        return self.memory_db.get_first_event()
-
-    def get_last_event(self):
-        return self.memory_db.get_last_event()
-        
-    def save_event(self, event):
-        self.memory_db.save_event(event)
-        self._save_data()
-
-    def delete_event(self, event_or_id):
-        self.memory_db.delete_event(event_or_id)
-        self._save_data()
-
-    def get_categories(self):
-        return self.memory_db.get_categories()
-
-    def save_category(self, category):
-        self.memory_db.save_category(category)
-        self._save_data()
-
-    def delete_category(self, category_or_id):
-        self.memory_db.delete_category(category_or_id)
-        self._save_data()
-
-    def load_view_properties(self, view_properties):
-        view_properties.displayed_period = self.preferred_period
-        for category in self.memory_db.categories:
-            view_properties.set_category_visible(category, category.visible)
-            
-    def save_view_properties(self, view_properties):
-        if not view_properties.displayed_period.is_period():
-            raise TimelineIOError(_("Preferred period must be > 0."))
-        self.preferred_period = view_properties.displayed_period
-        for category in self.memory_db.categories:
-            category.visible = view_properties.category_visible(category)
-        self._save_data()
-
-    def _load_data(self):
+    def _load(self):
         """
         Load timeline data from the file that this timeline points to.
 
@@ -156,13 +96,13 @@ class FileTimeline(TimelineDB):
 
         If a read error occurs a TimelineIOError will be raised.
         """
-        self.preferred_period = None
         if not os.path.exists(self.path): 
             # Nothing to load. Will create a new timeline on save.
             return
         try:
             file = codecs.open(self.path, "r", ENCODING)
             try:
+                self.disable_save()
                 try:
                     self._load_from_lines(file)
                 except Exception, pe:
@@ -173,6 +113,7 @@ class FileTimeline(TimelineDB):
                     msg2 = "\n\n" + ex_msg(pe)
                     raise TimelineIOError((msg1 % abspath(self.path)) + msg2)
             finally:
+                self.enable_save(call_save=False)
                 file.close()
         except IOError, e:
             msg = _("Unable to read from file '%s'.")
@@ -189,9 +130,13 @@ class FileTimeline(TimelineDB):
             self._load_preferred_period(current_line[17:].rstrip("\r\n"))
             current_line = file.readline()
         # Load categories
+        hidden_categories = []
         while current_line.startswith("CATEGORY:"):
-            self._load_category(current_line[9:].rstrip("\r\n"))
+            (cat, hidden) = self._load_category(current_line[9:].rstrip("\r\n"))
+            if hidden == True:
+                hidden_categories.append(cat)
             current_line = file.readline()
+        self._set_hidden_categories(hidden_categories)
         # Load events
         while current_line.startswith("EVENT:"):
             self._load_event(current_line[6:].rstrip("\r\n"))
@@ -228,9 +173,9 @@ class FileTimeline(TimelineDB):
         try:
             if len(times) != 2:
                 raise ParseException("Unexpected number of components.")
-            self.preferred_period = TimePeriod(parse_time(times[0]),
-                                               parse_time(times[1]))
-            if not self.preferred_period.is_period():
+            tp = TimePeriod(parse_time(times[0]), parse_time(times[1]))
+            self._set_displayed_period(tp)
+            if not tp.is_period():
                 raise ParseException("Length not > 0.")
         except ParseException, e:
             raise ParseException("Unable to parse preferred period from '%s': %s" % (period_text, ex_msg(e)))
@@ -252,7 +197,8 @@ class FileTimeline(TimelineDB):
             if len(category_data) == 3:
                 visible = parse_bool(category_data[2])
             cat = Category(name, color, visible)
-            self.memory_db.save_category(cat)
+            self.save_category(cat)
+            return (cat, not visible)
         except ParseException, e:
             raise ParseException("Unable to parse category from '%s': %s" % (category_text, ex_msg(e)))
 
@@ -282,7 +228,7 @@ class FileTimeline(TimelineDB):
                     cat_name = dequote(event_specification[3])
                 category = self._get_category(cat_name)
                 evt = Event(start_time, end_time, text, category)
-                self.memory_db.save_event(evt)
+                self.save_event(evt)
                 return True
             else:
                 if len(event_specification) < 4:
@@ -298,7 +244,7 @@ class FileTimeline(TimelineDB):
                         raise ParseException("Can't parse event data with id '%s'." % id)
                     decode = get_decode_function(id)
                     event.set_data(id, decode(dequote(data)))
-                self.memory_db.save_event(event)
+                self.save_event(event)
         except ParseException, e:
             raise ParseException("Unable to parse event from '%s': %s" % (event_text, ex_msg(e)))
 
@@ -308,12 +254,12 @@ class FileTimeline(TimelineDB):
             raise ParseException("Unable to load footer from '%s'." % footer_text)
 
     def _get_category(self, name):
-        for category in self.memory_db.categories:
+        for category in self.get_categories():
             if category.name == name:
                 return category
         return None
 
-    def _save_data(self):
+    def _save(self):
         """
         Save timeline data to the file that this timeline points to.
 
@@ -334,18 +280,20 @@ class FileTimeline(TimelineDB):
             time_string(datetime.now())))
 
     def _write_preferred_period(self, file):
-        if self.preferred_period:
+        tp = self._get_displayed_period()
+        if tp is not None:
             file.write("PREFERRED-PERIOD:%s;%s\n" % (
-                time_string(self.preferred_period.start_time),
-                time_string(self.preferred_period.end_time)))
+                time_string(tp.start_time),
+                time_string(tp.end_time)))
 
     def _write_categories(self, file):
         def save(category):
             r, g, b = cat.color
+            visible = (category not in self._get_hidden_categories())
             file.write("CATEGORY:%s;%s,%s,%s;%s\n" % (quote(cat.name),
                                                       r, g, b,
-                                                      cat.visible))
-        for cat in self.memory_db.categories:
+                                                      visible))
+        for cat in self.get_categories():
             save(cat)
 
     def _write_events(self, file):
@@ -365,7 +313,7 @@ class FileTimeline(TimelineDB):
                     file.write(";%s:%s" % (data_id,
                                            quote(encode(data))))
             file.write("\n")
-        for event in self.memory_db.events:
+        for event in self.get_all_events():
             save(event)
 
     def _write_footer(self, file):
