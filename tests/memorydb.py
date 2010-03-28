@@ -82,6 +82,16 @@ class TestMemoryDB(unittest.TestCase):
         # properties
         self.assertEquals(self.db._save.call_count, 3)
 
+    def testSaveInvalidDisplayedPeriod(self):
+        # Assign a zero-period as displayed period
+        vp = ViewProperties()
+        start = datetime(2010, 3, 23)
+        end = datetime(2010, 3, 23)
+        tp = TimePeriod(start, end)
+        vp.displayed_period = tp
+        # Assert error when trying to save
+        self.assertRaises(TimelineIOError, self.db.save_view_properties, vp)
+
     def testGetSetDisplayedPeriod(self):
         tp = TimePeriod(datetime(2010, 3, 23), datetime(2010, 3, 24))
         self.db._set_displayed_period(tp)

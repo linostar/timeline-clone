@@ -137,7 +137,10 @@ class MemoryDB(TimelineDB):
             view_properties.set_category_visible(cat, visible)
 
     def save_view_properties(self, view_properties):
-        self.displayed_period = view_properties.displayed_period
+        if view_properties.displayed_period is not None:
+            if not view_properties.displayed_period.is_period():
+                raise TimelineIOError(_("Displayed period must be > 0."))
+            self.displayed_period = view_properties.displayed_period
         self.hidden_categories = []
         for cat in self.categories:
             if not view_properties.category_visible(cat):
