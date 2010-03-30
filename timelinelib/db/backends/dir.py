@@ -17,8 +17,8 @@
 
 
 """
-Implementation of read-only timeline database whose data is files in a
-directory and their modification times.
+Implementation of read-only timeline database where events show modification
+times of files in a directory.
 """
 
 
@@ -32,109 +32,44 @@ import time
 import wx
 
 from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.interface import TimelineDB
-from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
-from timelinelib.db.objects import time_period_center
-from timelinelib.db.utils import IdCounter
-from timelinelib.db.utils import generic_event_search
-from timelinelib.version import get_version
 
 
-class DirTimeline(TimelineDB):
-    """
-    Implements the timeline database interface.
-
-    The comments in the TimelineDB class describe what the public methods do.
-
-    The class is a read-only timeline database, where each event represents a
-    file found in a given directory. The directory is given at construction
-    time. The time for an event is the files 'last modified' time.
-    
-    Every public method (including the constructor) can raise a TimelineIOError
-    if there was a problem reading data from a directory.
-    """
+class DirTimeline(MemoryDB):
 
     def __init__(self, path):
-        TimelineDB.__init__(self, path)
-        self.event_id_counter = IdCounter()
-        self.category_id_counter = IdCounter()
-        self._load_data()
+        MemoryDB.__init__(self)
+        self._load(path)
 
     def is_read_only(self):
+        """Override MemoryDB's read-only attribute."""
         return True
 
-    def supported_event_data(self):
-        pass
-
-    def search(self, search_string):
-        return generic_event_search(self.events, search_string)
-    
-    def get_events(self, time_period):
-        def include_event(event):
-            if not event.inside_period(time_period):
-                return False
-            return True
-        return [event for event in self.events if include_event(event)]
-
-    def get_first_event(self):
-        if len(self.events) == 0:
-            return None
-        return min(self.events, key=lambda e: e.time_period.start_time)
-
-    def get_last_event(self):
-        if len(self.events) == 0:
-            return None
-        return max(self.events, key=lambda e: e.time_period.end_time)
-
-    def save_event(self, event):
-        pass
-    
-    def delete_event(self, event_or_id):
-        pass
-                
-    def get_categories(self):
-        # Make sure the original list can't be modified
-        return self.categories[:]
-        
-    def save_category(self, category):
-        pass
-
-    def delete_category(self, category_or_id):
-        pass
-
-    def load_view_properties(self, view_properties):
-        for cat in self.categories:
-            view_properties.set_category_visible(cat, cat.visible)
-
-    def save_view_properties(self, period):
-        pass
-
-    def _load_data(self):
+    def _load(self, dir_path):
         """
-        Load timeline data from the directory that this timeline points to.
+        Load timeline data from the given directory.
 
-        This should only be done once when this class is created.
+        Each file inside the directory (at any level) becomes an event where
+        the text is the file name and the time is the modification time for
+        the file.
 
-        The data can never be saved.
-
-        If an error occurs, the error_flag will be set to either ERROR_READ if
-        we failed to read from the directory or ERROR_CORRUPT if the data we 
-        read was not valid. A TimelineIOError will also be raised.
+        For each sub-directory a category is created and all events (files)
+        belong the category (directory) in which they are.
         """
-        self.categories = []
-        self.events = []
-        if not os.path.exists(self.path): 
+        if not os.path.exists(dir_path): 
             # Nothing to load
             return
-        if not os.path.isdir(self.path): 
+        if not os.path.isdir(dir_path): 
             # Nothing to load
             return
         try:
-            color_ranges = {}
-            color_ranges[self.path] = (0.0, 1.0, 1.0)
-            for (dirpath, dirnames, filenames) in os.walk(self.path):
+            self.disable_save()
+            color_ranges = {} # Used to color categories
+            color_ranges[dir_path] = (0.0, 1.0, 1.0)
+            all_cats = []
+            for (dirpath, dirnames, filenames) in os.walk(dir_path):
                 # Assign color ranges
                 range = (rstart, rend, b) = color_ranges[dirpath]
                 step = (rend - rstart) / (len(dirnames) + 1)
@@ -149,26 +84,29 @@ class DirTimeline(TimelineDB):
                     next_start = next_end
                 # Create the stuff
                 cat = Category(dirpath, (233, 233, 233), False)
-                cat.set_id(self.category_id_counter.get_next())
-                self.categories.append(cat)
+                all_cats.append(cat)
+                self.save_category(cat)
                 for file in filenames:
-                    path = os.path.join(dirpath, file)
-                    evt = self._event_from_path(path)
-                    evt.set_id(self.event_id_counter.get_next())
-                    self.events.append(evt)
-            self.categories[0].visible = True
+                    path_inner = os.path.join(dirpath, file)
+                    evt = self._event_from_path(path_inner)
+                    self.save_event(evt)
+            # Hide all categories but the first
+            self._set_hidden_categories(all_cats[1:])
             # Set colors and remove prefix
-            prefix_len = len(self.path)
-            for cat in self.categories:
+            prefix_len = len(dir_path)
+            for cat in self.get_categories():
                 cat.color = self._color_from_range(color_ranges[cat.name])
                 cat.name = "." + cat.name[prefix_len:]
+                self.save_category(cat)
         except Exception, e:
-            msg = _("Unable to read from file '%s'.") % self.path
+            msg = _("Unable to read from file '%s'.") % dir_path
             whole_msg = "%s\n\n%s" % (msg, e)
             raise TimelineIOError(whole_msg)
+        finally:
+            self.enable_save(call_save=False)
 
-    def _event_from_path(self, path):
-        stat = os.stat(path)
+    def _event_from_path(self, file_path):
+        stat = os.stat(file_path)
         # st_atime (time of most recent access), 
         # st_mtime (time of most recent content modification), 
         # st_ctime (platform dependent; time of most recent metadata change on
@@ -177,19 +115,19 @@ class DirTimeline(TimelineDB):
         end_time = start_time
         if start_time > end_time:
             start_time, end_time = end_time, start_time
-        text = os.path.basename(path)
-        category = self._category_from_path(path)
+        text = os.path.basename(file_path)
+        category = self._category_from_path(file_path)
         evt = Event(start_time, end_time, text, category)
         return evt
 
-    def _category_from_path(self, path):
-        for cat in self.categories:
-            if cat.name == os.path.dirname(path):
+    def _category_from_path(self, file_path):
+        for cat in self.get_categories():
+            if cat.name == os.path.dirname(file_path):
                 return cat
         return None
 
     def _category_from_name(self, name):
-        for cat in self.categories:
+        for cat in self.get_categories():
             if cat.name == name:
                 return cat
         return None
