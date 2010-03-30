@@ -17,9 +17,15 @@
 
 
 """
-Implementation of in memory timeline database.
+Implementation of timeline database that stores all data in memory.
 
-This implementation is used by other backends.
+MemoryDB can be used as a base class for other timeline databases that wish to
+store all data in memory and also want to save the data to persistent storage
+whenever it changes in memory. Initially data can be read from persistent
+storage into memory.
+
+MemoryDB is not suitable as a base class for timeline databases that need to
+query persistent storage to retrieve data.
 """
 
 
