@@ -27,7 +27,7 @@ import os.path
 from timelinelib.db.interface import TimelineIOError
 
 
-def open(path):
+def db_open(path):
     """
     Create timeline database that can read and write timeline data from and to
     persistent storage identified by path.

@@ -28,7 +28,7 @@ import unittest
 from datetime import datetime
 
 from timelinelib.drawing.interface import ViewProperties
-from timelinelib.db import open
+from timelinelib.db import db_open
 from tests.utils import create_tmp_file
 
 
@@ -51,7 +51,7 @@ class TestRead010File(unittest.TestCase):
         os.remove(self.tmp_path)
 
     def testRead010DB(self):
-        db = open(self.tmp_path)
+        db = db_open(self.tmp_path)
         # Assert event correctly loaded
         events = db.get_all_events()
         self.assertEquals(len(events), 1)

@@ -27,7 +27,7 @@ import datetime
 
 import wx
 
-from timelinelib.db import open as db_open
+from timelinelib.db import db_open
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.gui.utils import WildcardHelper
 from timelinelib.gui.utils import _display_error_message
