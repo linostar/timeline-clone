@@ -44,8 +44,14 @@ def db_open(path):
         from timelinelib.db.backends.dir import DirTimeline
         return DirTimeline(path)
     elif path.endswith(".timeline"):
-        from timelinelib.db.backends.file import FileTimeline
-        return FileTimeline(path)
+        if (os.path.exists(path) and
+            file_starts_with(path, "# Written by Timeline ")):
+            # Here the db should be converted to an xml db
+            from timelinelib.db.backends.file import FileTimeline
+            return FileTimeline(path)
+        else:
+            from timelinelib.db.backends.xmlfile import XmlTimeline
+            return XmlTimeline(path)
     elif path.endswith(".ics"):
         try:
             import icalendar
@@ -58,3 +64,19 @@ def db_open(path):
         msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
                         _("Unknown format."))
         raise TimelineIOError(msg_template % path)
+
+
+def file_starts_with(path, start):
+    return read_first_line(path).startswith(start)
+
+
+def read_first_line(path):
+    try:
+        f = open(path)
+        try:
+            line = f.readline()
+            return line
+        finally:
+            f.close()
+    except IOError:
+        raise TimelineIOError("Unable to read data from '%s'." % path)

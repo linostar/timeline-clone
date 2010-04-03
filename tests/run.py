@@ -66,7 +66,9 @@ def add_unittests(suite):
     add_tests_from_module("tests.config")
     add_tests_from_module("tests.memorydb")
     add_tests_from_module("tests.dbread.v010")
+    add_tests_from_module("tests.dbread.v0100")
     add_tests_from_module("tests.xmlparser")
+    add_tests_from_module("tests.xmldb")
 
 def add_doctests(suite):
     def add_tests_from_module(module_name):
