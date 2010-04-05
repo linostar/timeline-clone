@@ -23,13 +23,16 @@ data is correctly converted.
 """
 
 
+import tempfile
 import os
+import os.path
+import codecs
+import shutil
 import unittest
 from datetime import datetime
 
 from timelinelib.drawing.interface import ViewProperties
 from timelinelib.db import db_open
-from tests.utils import create_tmp_file
 
 
 CONTENT_010 = u"""
@@ -45,10 +48,14 @@ EVENT:2009-11-4 22:52:0;2009-11-11 22:52:0;Event 1;Category 1
 class TestRead010File(unittest.TestCase):
 
     def setUp(self):
-        self.tmp_path = create_tmp_file(CONTENT_010, ".timeline")
+        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
+        self.tmp_path = os.path.join(self.tmp_dir, "test.timeline")
+        f = codecs.open(self.tmp_path, "w", "utf-8")
+        f.write(CONTENT_010)
+        f.close()
 
     def tearDown(self):
-        os.remove(self.tmp_path)
+        shutil.rmtree(self.tmp_dir)
 
     def testRead010DB(self):
         db = db_open(self.tmp_path)
