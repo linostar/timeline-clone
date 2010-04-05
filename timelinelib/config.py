@@ -140,8 +140,15 @@ class Config(object):
     window_size = property(get_window_size, set_window_size)
 
     def get_window_pos(self):
-        return (self.config_parser.getint(DEFAULTSECT, WINDOW_XPOS),
-                self.config_parser.getint(DEFAULTSECT, WINDOW_YPOS))
+        width, height = self.get_window_size()
+        # Make sure that some area of the window is visible on the screen
+        # Some part of the titlebar must be visible
+        xpos = max(-width + 100,
+                   self.config_parser.getint(DEFAULTSECT, WINDOW_XPOS))
+        # Titlebar must not be above the upper screen border
+        ypos = max(0, self.config_parser.getint(DEFAULTSECT, WINDOW_YPOS))
+        return (xpos, ypos)
+
     def set_window_pos(self, pos):
         xpos, ypos = pos
         self.config_parser.set(DEFAULTSECT, WINDOW_XPOS, str(xpos))
