@@ -47,11 +47,11 @@ example):
     ... ''')
 
 Then we define two parser functions that we later associate with Tag objects.
-The first argument to a parse function is the text that the tag contains. It
-will be empty for all tags except leaf tags. The second argument is a
-dictionary that can be used to store temporary variables. This dictionary is
-passed to all parse functions, providing a way to share information between
-parse functions.
+Parse functions are called when the end tag has been read. The first argument
+to a parse function is the text that the tag contains. It will be empty for all
+tags except leaf tags. The second argument is a dictionary that can be used to
+store temporary variables. This dictionary is passed to all parse functions,
+providing a way to share information between parse functions.
 
     >>> def parse_name(text, tmp_dict):
     ...     tmp_dict["tmp_name"] = text
@@ -69,7 +69,7 @@ creating Tag objects. The first argument is the name of the tag, the second
 specifies how many times it can occur inside its parent (should be one of
 SINGLE, OPTIONAL, or ANY), the third argument is the parse function to be used
 for this tag (can be None if no parsing is needed), and the fourth argument is
-a list of child nodes.
+a list of child tags.
 
     >>> root_tag = Tag("db", SINGLE, None, [
     ...     Tag("person", ANY, parse_person, [
@@ -96,7 +96,7 @@ SAXException the if the XML is not well-formed.
 """
 
 
-import xml.sax
+from xml.sax import parse as sax_parse
 import xml.sax.handler
 
 
@@ -117,6 +117,8 @@ class Tag(object):
 
     Used to define structure of an xml document and define parser functions for
     individual parts of an xml document.
+
+    Parser functions are called when the end tag has been read.
 
     See SaxHandler class defined below to see how this class is used.
     """
@@ -217,6 +219,9 @@ class SaxHandler(xml.sax.handler.ContentHandler):
         self.text = ""
 
     def startElement(self, name, attrs):
+        """
+        Called when a start tag has been read.
+        """
         if attrs.getLength() > 0:
             raise ValidationError("Did not expect attributes on <%s>." % name)
         if self.text.strip():
@@ -226,6 +231,10 @@ class SaxHandler(xml.sax.handler.ContentHandler):
         self.text = ""
 
     def endElement(self, name):
+        """
+        Called when an end tag (and everything between the start and end tag)
+        has been read.
+        """
         self.tag_to_parse = self.tag_to_parse.end(name, self.text,
                                                   self.tmp_dict)
         self.text = ""
@@ -234,8 +243,16 @@ class SaxHandler(xml.sax.handler.ContentHandler):
         self.text += content
 
 
-def parse(stream, root_tag, tmp_dict):
-    xml.sax.parse(stream, SaxHandler(root_tag, tmp_dict))
+def parse(xml, schema, tmp_dict):
+    """
+    xml should be a file-like object containing xml data.
+
+    schema should be a Tag object defining the structure of the xml document.
+
+    tmp_dict is used by parser functions in Tag objects to share data. It can
+    be pre-populated with values.
+    """
+    sax_parse(xml, SaxHandler(schema, tmp_dict))
 
 
 def parse_fn_store(store_key):
