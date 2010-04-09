@@ -89,6 +89,23 @@ class WildcardHelper(object):
                 self.ext_names.append(ext)
 
 
+def category_tree(category_list, parent=None):
+    """
+    Transform flat list of categories to a tree based on parent attribute.
+
+    The top-level categories have the given parent and each level in the tree
+    is sorted.
+
+    The tree is represented as a list of tuples, (cat, sub-tree), where cat is
+    the parent category and subtree is the same tree representation of the
+    children.
+    """
+    children = [x for x in category_list if x.parent == parent]
+    sorted_children = sort_categories(children)
+    tree = [(x, category_tree(category_list, x)) for x in sorted_children]
+    return tree
+
+
 def sort_categories(categories):
     sorted_categories = list(categories)
     sorted_categories.sort(cmp, lambda x: x.name.lower())
