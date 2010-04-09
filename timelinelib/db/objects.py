@@ -136,7 +136,7 @@ class Category(object):
     should be removed when we can.
     """
 
-    def __init__(self, name, color, visible):
+    def __init__(self, name, color, visible, parent=None):
         """
         Create a category with the given name and color.
 
@@ -147,6 +147,7 @@ class Category(object):
         self.name = name
         self.color = color
         self.visible = visible
+        self.parent = parent
 
     def has_id(self):
         return self.id is not None
