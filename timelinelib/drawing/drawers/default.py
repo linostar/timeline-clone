@@ -258,11 +258,6 @@ class DefaultDrawingAlgorithm(Drawer):
         and strips are calculated and then they are drawn. Positions can also
         be used later to answer questions like what event is at position (x, y).
         """
-        def include_event(event):
-            if (event.category is not None and not
-                view_properties.category_visible(event.category)):
-                return False
-            return True
         # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = view_properties.displayed_period
@@ -273,9 +268,9 @@ class DefaultDrawingAlgorithm(Drawer):
         self.minor_strip_data = [] # List of time_period
         self.balloon_data = []     # List of (event, rect)
         # Calculate stuff later used for drawing
-        events = [event for event in timeline.get_events(self.time_period)
-                  if include_event(event)]
-        self._calc_rects(events)
+        events_from_db = timeline.get_events(self.time_period)
+        visible_events = view_properties.filter_events(events_from_db)
+        self._calc_rects(visible_events)
         self._calc_strips()
         # Perform the actual drawing
         if view_properties.period_selection:
