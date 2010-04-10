@@ -45,7 +45,7 @@ from timelinelib.gui.dialogs.eventeditor import EventEditor
 from timelinelib.gui.dialogs.gotodate import GotoDateDialog
 from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.gui.dialogs.preferences import PreferencesDialog
-from timelinelib.gui.components.categorieslistbox import CategoriesVisibleCheckListBox
+from timelinelib.gui.components.cattree import CategoriesTree
 from timelinelib.gui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.components.search import SearchBar
@@ -507,14 +507,14 @@ class MainFrame(wx.Frame):
         if timeline == None:
             # Do this before the next line so that we still have a timeline to
             # unregister
-            self.main_panel.catbox.set_view(None)
+            self.main_panel.cattree.set_view(None)
             self.main_panel.searchbar.set_view(None)
         self.main_panel.drawing_area.set_timeline(self.timeline)
         if timeline == None:
             self.main_panel.show_welcome_panel()
             self.SetTitle(APPLICATION_NAME)
         else:
-            self.main_panel.catbox.set_view(self.main_panel.drawing_area)
+            self.main_panel.cattree.set_view(self.main_panel.drawing_area)
             self.main_panel.searchbar.set_view(self.main_panel.drawing_area)
             self.main_panel.show_timeline_panel()
             self.SetTitle("%s (%s) - %s" % (
@@ -758,7 +758,7 @@ class MainPanel(wx.Panel):
         wx.Panel.__init__(self, parent)
         self._create_gui()
         # Install variables for backwards compatibility
-        self.catbox = self.timeline_panel.sidebar.catbox
+        self.cattree = self.timeline_panel.sidebar.cattree
         self.drawing_area = self.timeline_panel.drawing_area
         self.show_sidebar = self.timeline_panel.show_sidebar
         self.hide_sidebar = self.timeline_panel.hide_sidebar
@@ -926,8 +926,8 @@ class Sidebar(wx.Panel):
         self._create_gui()
 
     def _create_gui(self):
-        self.catbox = CategoriesVisibleCheckListBox(self)
+        self.cattree = CategoriesTree(self)
         # Layout
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.catbox, flag=wx.GROW, proportion=1)
+        sizer.Add(self.cattree, flag=wx.GROW, proportion=1)
         self.SetSizer(sizer)
