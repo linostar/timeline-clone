@@ -69,6 +69,7 @@ class DirTimeline(MemoryDB):
             color_ranges = {} # Used to color categories
             color_ranges[dir_path] = (0.0, 1.0, 1.0)
             all_cats = []
+            parents = {}
             for (dirpath, dirnames, filenames) in os.walk(dir_path):
                 # Assign color ranges
                 range = (rstart, rend, b) = color_ranges[dirpath]
@@ -83,7 +84,10 @@ class DirTimeline(MemoryDB):
                                                                 next_end, new_b)
                     next_start = next_end
                 # Create the stuff
-                cat = Category(dirpath, (233, 233, 233), False)
+                p = parents.get(os.path.normpath(os.path.join(dirpath, "..")),
+                                None)
+                cat = Category(dirpath, (233, 233, 233), False, parent=p)
+                parents[os.path.normpath(dirpath)] = cat
                 all_cats.append(cat)
                 self.save_category(cat)
                 for file in filenames:
@@ -92,11 +96,10 @@ class DirTimeline(MemoryDB):
                     self.save_event(evt)
             # Hide all categories but the first
             self._set_hidden_categories(all_cats[1:])
-            # Set colors and remove prefix
-            prefix_len = len(dir_path)
+            # Set colors and change names
             for cat in self.get_categories():
                 cat.color = self._color_from_range(color_ranges[cat.name])
-                cat.name = "." + cat.name[prefix_len:]
+                cat.name = os.path.basename(cat.name)
                 self.save_category(cat)
         except Exception, e:
             msg = _("Unable to read from file '%s'.") % dir_path
