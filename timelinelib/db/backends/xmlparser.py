@@ -165,6 +165,15 @@ class Tag(object):
                                   % (self.name, name))
 
     def end(self, name, text, tmp_dict):
+        self._ensure_end_tag_valid(name, text)
+        if self.parse_fn is not None:
+            self.parse_fn(text, tmp_dict)
+        self._ensure_all_children_read()
+        self._reset_parse_data()
+        self.occurrences += 1
+        return self.parent
+
+    def _ensure_end_tag_valid(self, name, text):
         if name != self.name:
             raise ValidationError("Expected </%s> but got </%s>."
                                   % (self.name, name))
@@ -172,12 +181,6 @@ class Tag(object):
             if text.strip():
                 raise ValidationError("Did not expect text but got '%s'."
                                       % text)
-        if self.parse_fn is not None:
-            self.parse_fn(text, tmp_dict)
-        self._ensure_all_children_read()
-        self._reset_parse_data()
-        self.occurrences += 1
-        return self.parent
 
     def _ensure_all_children_read(self):
         num_child_tags = len(self.child_tags)
