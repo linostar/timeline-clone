@@ -112,12 +112,14 @@ class ViewProperties(object):
         self.displayed_period = None
 
     def filter_events(self, events):
-        def event_visible(event):
-            if (event.category is not None and not
-                self.category_visible(event.category)):
+        def category_visible(cat):
+            if cat is None:
+                return True
+            elif self.category_visible(cat) == True:
+                return category_visible(cat.parent)
+            else:
                 return False
-            return True
-        return [e for e in events if event_visible(e)]
+        return [e for e in events if category_visible(e.category)]
 
     def is_selected(self, event):
         return event.id in self.selected_event_ids
