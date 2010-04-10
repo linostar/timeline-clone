@@ -149,15 +149,6 @@ class Tag(object):
     def can_read_more(self):
         return self.occurrences == 0 or self.occurrence_rule == ANY
 
-    def ensure_all_children_read(self):
-        num_child_tags = len(self.child_tags)
-        while self.next_possible_child_pos < num_child_tags:
-            child = self.child_tags[self.next_possible_child_pos]
-            if not child.read_enough_times():
-                raise ValidationError("<%s> not read enough times."
-                                      % child.name)
-            self.next_possible_child_pos += 1
-
     def start(self, name, tmp_dict):
         if name == self.name:
             if self.start_read == True:
@@ -183,10 +174,19 @@ class Tag(object):
                                       % text)
         if self.parse_fn is not None:
             self.parse_fn(text, tmp_dict)
-        self.ensure_all_children_read()
+        self._ensure_all_children_read()
         self._reset_parse_data()
         self.occurrences += 1
         return self.parent
+
+    def _ensure_all_children_read(self):
+        num_child_tags = len(self.child_tags)
+        while self.next_possible_child_pos < num_child_tags:
+            child = self.child_tags[self.next_possible_child_pos]
+            if not child.read_enough_times():
+                raise ValidationError("<%s> not read enough times."
+                                      % child.name)
+            self.next_possible_child_pos += 1
 
     def _reset_parse_data(self):
         for child_tag in self.child_tags:
