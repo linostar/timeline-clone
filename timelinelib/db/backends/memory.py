@@ -134,6 +134,10 @@ class MemoryDB(TimelineDB):
                 self.hidden_categories.remove(category)
             self.categories.remove(category)
             category.set_id(None)
+            # Loop to update parent attribute on children
+            for cat in self.categories:
+                if cat.parent == category:
+                    cat.parent = category.parent
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_CATEGORY)
         else:

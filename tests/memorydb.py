@@ -193,6 +193,28 @@ class TestMemoryDB(unittest.TestCase):
         # Assert virtual _save method not called
         self.assertEquals(self.db._save.call_count, 0)
 
+    def testDeleteCategoryWithParent(self):
+        # Create hierarchy:
+        # c1
+        #   c11
+        #   c12
+        #     c121
+        c1 = Category("c1", (255, 0, 0), True, parent=None)
+        c11 = Category("c11", (255, 0, 0), True, parent=c1)
+        c12 = Category("c12", (255, 0, 0), True, parent=c1)
+        c121 = Category("c121", (255, 0, 0), True, parent=c12)
+        self.db.save_category(c1)
+        self.db.save_category(c11)
+        self.db.save_category(c12)
+        self.db.save_category(c121)
+        # Delete c12 should cause c121 to get c1 as parent
+        self.db.delete_category(c12)
+        self.assertEquals(c121.parent, c1)
+        # Delete c1 should cause c11, and c121 to be parentless
+        self.db.delete_category(c1)
+        self.assertEquals(c11.parent, None)
+        self.assertEquals(c121.parent, None)
+
     def testSaveEventUnknownCategory(self):
         # A new
         self.e1.category = self.c1
