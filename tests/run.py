@@ -65,6 +65,7 @@ def add_unittests(suite):
     add_tests_from_module("tests.config")
     add_tests_from_module("tests.memorydb")
     add_tests_from_module("tests.dbread.v010")
+    add_tests_from_module("tests.duplicateevent")
 
 def add_doctests(suite):
     pass
