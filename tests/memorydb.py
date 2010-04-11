@@ -145,6 +145,14 @@ class TestMemoryDB(unittest.TestCase):
         # Assert virtual _save method not called
         self.assertEquals(self.db._save.call_count, 0)
 
+    def testSaveCategoryWithUnknownParent(self):
+        self.c1.parent = self.c2
+        # c2 not in db so we should get exception
+        self.assertRaises(TimelineIOError, self.db.save_category, self.c1)
+        # But after c2 is added everything is fine
+        self.db.save_category(self.c2)
+        self.db.save_category(self.c1)
+
     def testDeleteExistingCategory(self):
         # Add two categories to the db
         self.db.save_category(self.c1)

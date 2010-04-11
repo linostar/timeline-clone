@@ -112,6 +112,9 @@ class MemoryDB(TimelineDB):
         return list(self.categories)
 
     def save_category(self, category):
+        if (category.parent is not None and
+            category.parent not in self.categories):
+            raise TimelineIOError("Parent category not in db.")
         if not category in self.categories:
             if category.has_id():
                 raise TimelineIOError("Category with id %s not found in db." %
