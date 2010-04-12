@@ -115,6 +115,7 @@ class MemoryDB(TimelineDB):
         if (category.parent is not None and
             category.parent not in self.categories):
             raise TimelineIOError("Parent category not in db.")
+        self._ensure_no_circular_parent(category)
         if not category in self.categories:
             if category.has_id():
                 raise TimelineIOError("Category with id %s not found in db." %
@@ -142,7 +143,7 @@ class MemoryDB(TimelineDB):
             self._notify(STATE_CHANGE_CATEGORY)
         else:
             raise TimelineIOError("Category not in db.")
-    
+
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.displayed_period
         for cat in self.categories:
@@ -169,6 +170,14 @@ class MemoryDB(TimelineDB):
             if call_save == True:
                 self._save_if_not_disabled()
 
+    def _ensure_no_circular_parent(self, cat):
+        parent = cat.parent
+        while parent is not None:
+            if parent == cat:
+                raise TimelineIOError("Circular category parent.")
+            else:
+                parent = parent.parent
+    
     def _find_event_with_id(self, id):
         for e in self.events:
             if e.id == id:

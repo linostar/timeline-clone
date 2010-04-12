@@ -153,6 +153,36 @@ class TestMemoryDB(unittest.TestCase):
         self.db.save_category(self.c2)
         self.db.save_category(self.c1)
 
+    def testSaveCategoryWithParentChange(self):
+        # Start with this hierarchy:
+        # c1
+        #   c11
+        #     c111
+        #   c12
+        c1 = Category("c1", (255, 0, 0), True, parent=None)
+        c11 = Category("c11", (255, 0, 0), True, parent=c1)
+        c111 = Category("c111", (255, 0, 0), True, parent=c11)
+        c12 = Category("c12", (255, 0, 0), True, parent=c1)
+        self.db.save_category(c1)
+        self.db.save_category(c11)
+        self.db.save_category(c111)
+        self.db.save_category(c12)
+        # Changing c11's parent to c12 should create the following tree:
+        # c1
+        #   c12
+        #     c11
+        #       c111
+        c11.parent = c12
+        self.db.save_category(c11)
+        self.assertEquals(c1.parent, None)
+        self.assertEquals(c12.parent, c1)
+        self.assertEquals(c11.parent, c12)
+        self.assertEquals(c111.parent, c11)
+        # Changing c11's parent to c111 should raise exception since that would
+        # create a circular parent link.
+        c11.parent = c111
+        self.assertRaises(TimelineIOError, self.db.save_category, c11)
+
     def testDeleteExistingCategory(self):
         # Add two categories to the db
         self.db.save_category(self.c1)
