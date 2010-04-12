@@ -149,7 +149,7 @@ class Tag(object):
     def can_read_more(self):
         return self.occurrences == 0 or self.occurrence_rule == ANY
 
-    def start(self, name, tmp_dict):
+    def handle_start_tag(self, name, tmp_dict):
         if name == self.name:
             if self.start_read == True:
                 # Nested tag
@@ -159,12 +159,12 @@ class Tag(object):
                 return self
         elif self.start_read == True:
             next_child = self._find_next_child(name)
-            return next_child.start(name, tmp_dict)
+            return next_child.handle_start_tag(name, tmp_dict)
         else:
             raise ValidationError("Expected <%s> but got <%s>."
                                   % (self.name, name))
 
-    def end(self, name, text, tmp_dict):
+    def handle_end_tag(self, name, text, tmp_dict):
         self._ensure_end_tag_valid(name, text)
         if self.parse_fn is not None:
             self.parse_fn(text, tmp_dict)
@@ -230,7 +230,8 @@ class SaxHandler(xml.sax.handler.ContentHandler):
         if self.text.strip():
             raise ValidationError("Did not expect text but got '%s'."
                                   % self.text)
-        self.tag_to_parse = self.tag_to_parse.start(name, self.tmp_dict)
+        self.tag_to_parse = self.tag_to_parse.handle_start_tag(name,
+                                                               self.tmp_dict)
         self.text = ""
 
     def endElement(self, name):
@@ -238,8 +239,8 @@ class SaxHandler(xml.sax.handler.ContentHandler):
         Called when an end tag (and everything between the start and end tag)
         has been read.
         """
-        self.tag_to_parse = self.tag_to_parse.end(name, self.text,
-                                                  self.tmp_dict)
+        self.tag_to_parse = self.tag_to_parse.handle_end_tag(name, self.text,
+                                                             self.tmp_dict)
         self.text = ""
 
     def characters(self, content):
