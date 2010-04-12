@@ -58,13 +58,13 @@ def add_unittests(suite):
         module = sys.modules[module_name]
         module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
         suite.addTest(module_suite)
-    add_tests_from_module("tests.time_period")
-    add_tests_from_module("tests.file_timeline")
-    add_tests_from_module("tests.wildcard_helper")
-    add_tests_from_module("tests.category_editor")
-    add_tests_from_module("tests.config")
-    add_tests_from_module("tests.memorydb")
-    add_tests_from_module("tests.dbread.v010")
+    add_tests_from_module("tests.unit.db.objects")
+    add_tests_from_module("tests.unit.db.backends.file")
+    add_tests_from_module("tests.unit.gui.utils")
+    add_tests_from_module("tests.unit.gui.dialogs.categoryeditor")
+    add_tests_from_module("tests.unit.config")
+    add_tests_from_module("tests.unit.db.backends.memory")
+    add_tests_from_module("tests.integration.read_010_file")
 
 def add_doctests(suite):
     pass
