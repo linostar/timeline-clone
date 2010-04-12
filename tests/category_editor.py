@@ -28,60 +28,90 @@ from timelinelib.db.objects import Category
 class TestCategoryEditorController(unittest.TestCase):
 
     def setUp(self):
-        # Setup mock for db (we want one existing category in there named foo)
+        # Setup mock for db with this category configuration:
+        # foo
+        #   foofoo
+        # bar
         self.db = Mock()
-        existing_categories = [Category("foo", (0, 0, 0), True)]
-        self.db.get_categories.return_value = existing_categories
+        self.foo = Category("foo", (255, 0, 0), True, parent=None)
+        self.foofoo = Category("foofoo", (255, 0, 0), True, parent=self.foo)
+        self.bar = Category("bar", (255, 0, 0), True, parent=None)
+        self.db.get_categories.return_value = [self.foo, self.foofoo, self.bar]
         # Setup mock for view
         self.view = Mock()
-        # Setup example new category
-        self.ex_cat = Category("bar", (255, 0, 0), True)
 
     def testInitFromCategory(self):
-        controller = CategoryEditorController(self.view, self.db, self.ex_cat)
+        controller = CategoryEditorController(self.view, self.db, self.foofoo)
         controller.initialize()
-        self.view.set_name.assert_called_with("bar")
+        self.view.set_category_tree.assert_called_with([
+            (self.bar, []),
+            (self.foo, [])
+            # foofoo should not be included since it is being edited
+        ])
+        self.view.set_name.assert_called_with("foofoo")
         self.view.set_color.assert_called_with((255, 0, 0))
+        self.view.set_parent.assert_called_with(self.foo)
 
     def testInitFromNone(self):
         controller = CategoryEditorController(self.view, self.db, None)
         controller.initialize()
         # Default values when creating a new category
+        self.view.set_category_tree.assert_called_with([
+            (self.bar, []),
+            (self.foo, [
+                (self.foofoo, [])
+            ])
+        ])
         self.view.set_name.assert_called_with("")
         self.view.set_color.assert_called_with((255, 0, 0))
+        self.view.set_parent.assert_called_with(None)
 
     def testSaveNew(self):
         controller = CategoryEditorController(self.view, self.db, None)
         # Simulate entering this in gui
         self.view.get_name.return_value = "new_cat"
         self.view.get_color.return_value = (255, 44, 0)
+        self.view.get_parent.return_value = self.foo
         controller.save()
         # Assert that controller fetched data from view
         self.assertTrue(self.view.get_name.called)
         self.assertTrue(self.view.get_color.called)
-        # Assert that category was saved to db
-        self.assertTrue(self.db.save_category.called)
+        self.assertTrue(self.view.get_parent.called)
+        # Assert that category was saved to db with correct attributes
+        saved_cats = self.db.save_category.call_args_list
+        self.assertEquals(len(saved_cats), 1)
+        # first arg, ordered args, first ordered arg
+        saved_cat = saved_cats[0][0][0]
+        self.assertEquals(saved_cat.name, "new_cat")
+        self.assertEquals(saved_cat.color, (255, 44, 0))
+        self.assertEquals(saved_cat.parent, self.foo)
         # Assert that controller closed dialog
         self.assertTrue(self.view.close.called)
-        # Assert that the controller has a category (the one created)
-        self.assertEquals(controller.category.name, "new_cat")
 
     def testSaveExisting(self):
-        controller = CategoryEditorController(self.view, self.db, self.ex_cat)
-        # Simulate that gui is populated from ex_cat
-        self.view.get_name.return_value = self.ex_cat.name
-        self.view.get_color.return_value = self.ex_cat.color
+        controller = CategoryEditorController(self.view, self.db, self.foo)
+        # Simulate that gui is populated from foo
+        self.view.get_name.return_value = self.foo.name
+        self.view.get_color.return_value = self.foo.color
+        self.view.get_parent.return_value = self.foo.parent
         controller.save()
         # Assert that controller fetched data from view
         self.assertTrue(self.view.get_name.called)
         self.assertTrue(self.view.get_color.called)
-        # Assert that category was saved to db
-        self.assertTrue(self.db.save_category.called)
+        self.assertTrue(self.view.get_parent.called)
+        # Assert that category was saved to db with correct attributes
+        saved_cats = self.db.save_category.call_args_list
+        self.assertEquals(len(saved_cats), 1)
+        # first arg, ordered args, first ordered arg
+        saved_cat = saved_cats[0][0][0]
+        self.assertEquals(saved_cat.name, self.foo.name)
+        self.assertEquals(saved_cat.color, self.foo.color)
+        self.assertEquals(saved_cat.parent, self.foo.parent)
         # Assert that controller closed dialog
         self.assertTrue(self.view.close.called)
 
     def testInvalidName(self):
-        controller = CategoryEditorController(self.view, self.db, self.ex_cat)
+        controller = CategoryEditorController(self.view, self.db, None)
         # Simulate a blank name which is invalid
         self.view.get_name.return_value = ""
         controller.save()
@@ -93,7 +123,7 @@ class TestCategoryEditorController(unittest.TestCase):
         self.assertFalse(self.view.close.called)
 
     def testUsedName(self):
-        controller = CategoryEditorController(self.view, self.db, self.ex_cat)
+        controller = CategoryEditorController(self.view, self.db, None)
         # Simulate name foo which is already in use
         self.view.get_name.return_value = "foo"
         controller.save()
@@ -104,15 +134,23 @@ class TestCategoryEditorController(unittest.TestCase):
         # Assert that controller did not close view
         self.assertFalse(self.view.close.called)
 
-    def testDbError(self):
-        controller = CategoryEditorController(self.view, self.db, self.ex_cat)
+    def testDbErrorOnInit(self):
+        controller = CategoryEditorController(self.view, self.db, None)
+        # Simulate TimelineIOError when we try to get categories from db
+        self.db.get_categories.side_effect = TimelineIOError
+        controller.initialize()
+        # Assert that controller let view handle error
+        self.assertTrue(self.view.handle_db_error.called)
+        # Assert that controller did not close view
+        self.assertFalse(self.view.close.called)
+
+    def testDbErrorOnSave(self):
+        controller = CategoryEditorController(self.view, self.db, None)
         # Simulate TimelineIOError when we try to save a valid category
         self.db.save_category.side_effect = TimelineIOError
         self.view.get_name.return_value = "foobar"
         controller.save()
         # Assert that controller let view handle error
         self.assertTrue(self.view.handle_db_error.called)
-        # Assert that controller did not close view
-        self.assertFalse(self.view.close.called)
         # Assert that controller did not close view
         self.assertFalse(self.view.close.called)
