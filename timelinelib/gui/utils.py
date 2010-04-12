@@ -164,3 +164,11 @@ def _step_function(x_value):
     elif x_value > 0:
         y_value = 1
     return y_value
+
+
+def set_wait_cursor(parent):
+    parent.SetCursor(wx.StockCursor(wx.CURSOR_WAIT))
+    
+    
+def set_default_cursor(parent):
+    parent.SetCursor(wx.StockCursor(wx.CURSOR_DEFAULT))    
