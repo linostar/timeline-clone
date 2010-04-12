@@ -99,7 +99,7 @@ class MemoryDB(TimelineDB):
         if isinstance(event_or_id, Event):
             event = event_or_id
         else:
-            event = self._find_event_with_id(event_or_id)
+            event = self.find_event_with_id(event_or_id)
         if event in self.events:
             self.events.remove(event)
             event.set_id(None)
@@ -162,7 +162,7 @@ class MemoryDB(TimelineDB):
             if call_save == True:
                 self._save_if_not_disabled()
 
-    def _find_event_with_id(self, id):
+    def find_event_with_id(self, id):
         for e in self.events:
             if e.id == id:
                 return e
