@@ -144,7 +144,7 @@ class Tag(object):
         self.child_tags.append(tag)
 
     def read_enough_times(self):
-        return self.occurrences > 0 or self.occurrence_rule != SINGLE
+        return self.occurrences > 0 or self.occurrence_rule in (OPTIONAL, ANY)
 
     def can_read_more(self):
         return self.occurrences == 0 or self.occurrence_rule == ANY
@@ -202,15 +202,15 @@ class Tag(object):
         while self.next_possible_child_pos < num_child_tags:
             child = self.child_tags[self.next_possible_child_pos]
             if child.name == name:
-                if not child.can_read_more():
-                    break
-                else:
+                if child.can_read_more():
                     return child
-            else:
-                if not child.read_enough_times():
-                    break
                 else:
+                    break
+            else:
+                if child.read_enough_times():
                     self.next_possible_child_pos += 1
+                else:
+                    break
         raise ValidationError("Did not expect <%s>." % name)
 
 
