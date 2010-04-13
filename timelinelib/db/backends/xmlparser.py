@@ -249,7 +249,7 @@ class SaxHandler(xml.sax.handler.ContentHandler):
 
 def parse(xml, schema, tmp_dict):
     """
-    xml should be a file-like object containing xml data.
+    xml should be a filename or a file-like object containing xml data.
 
     schema should be a Tag object defining the structure of the xml document.
 
