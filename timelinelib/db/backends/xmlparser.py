@@ -200,14 +200,14 @@ class Tag(object):
     def _find_next_child(self, name):
         num_child_tags = len(self.child_tags)
         while self.next_possible_child_pos < num_child_tags:
-            this_child = self.child_tags[self.next_possible_child_pos]
-            if this_child.name == name:
-                if not this_child.can_read_more():
+            child = self.child_tags[self.next_possible_child_pos]
+            if child.name == name:
+                if not child.can_read_more():
                     break
                 else:
-                    return this_child
+                    return child
             else:
-                if not this_child.read_enough_times():
+                if not child.read_enough_times():
                     break
                 else:
                     self.next_possible_child_pos += 1
