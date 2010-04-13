@@ -95,16 +95,17 @@ class XmlTimeline(MemoryDB):
             # Nothing to load. Will create a new timeline on save.
             return
         try:
-            tag_timeline = Tag("timeline", SINGLE, None, [
+            # _parse_version will create the rest of the schema dynamically
+            partial_schema = Tag("timeline", SINGLE, None, [
                 Tag("version", SINGLE, self._parse_version)
             ])
             tmp_dict = {
-                "tag_timeline": tag_timeline,
+                "partial_schema": partial_schema,
                 "category_map": {},
                 "hidden_categories": [],
             }
             self.disable_save()
-            parse(self.path, tag_timeline, tmp_dict)
+            parse(self.path, partial_schema, tmp_dict)
             self.enable_save(call_save=False)
         except Exception, e:
             msg = _("Unable to read timeline data from '%s'.")
@@ -122,7 +123,7 @@ class XmlTimeline(MemoryDB):
                                  % text)
         # Create the rest of the parse schema depending on version number
         if v == (0, 10, 0):
-            tmp_dict["tag_timeline"].add_child_tags([
+            tmp_dict["partial_schema"].add_child_tags([
                 Tag("categories", SINGLE, None, [
                     Tag("category", ANY, self._parse_category, [
                         Tag("name", SINGLE, parse_fn_store("tmp_name")),
