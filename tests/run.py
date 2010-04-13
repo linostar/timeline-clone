@@ -68,7 +68,6 @@ def add_unittests(suite):
     add_tests_from_module("tests.integration.read_010_file")
     add_tests_from_module("tests.integration.read_0100_file")
     add_tests_from_module("tests.unit.gui.dialogs.duplicateevent")
-    add_tests_from_module("tests.categorytree")
     add_tests_from_module("tests.unit.db.backends.xmlparser")
     add_tests_from_module("tests.integration.read_write_xml")
 

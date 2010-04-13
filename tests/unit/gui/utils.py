@@ -19,6 +19,8 @@
 import unittest
 
 from timelinelib.gui.utils import WildcardHelper
+from timelinelib.db.objects import Category
+from timelinelib.gui.utils import category_tree
 
 
 class FileDialogMock(object):
@@ -72,3 +74,23 @@ class TestWildcardHelper(unittest.TestCase):
         self.assertEquals(
             self.images_wildcard_helper.get_path(FileDialogMock("bar")),
             "bar.png")
+
+
+class TestCategoryTree(unittest.TestCase):
+
+    def setUp(self):
+        self.c1 = Category("c1", (255, 0, 0), True, parent=None)
+        self.c11 = Category("c11", (255, 0, 0), True, parent=self.c1)
+        self.c2 = Category("c2", (255, 0, 0), True, parent=None)
+
+    def testFlat(self):
+        tree = category_tree([self.c1, self.c2])
+        self.assertEquals(tree, [(self.c1, []), (self.c2, [])])
+
+    def testNested(self):
+        tree = category_tree([self.c11, self.c1, self.c2])
+        self.assertEquals(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
+
+    def testSorted(self):
+        tree = category_tree([self.c11, self.c2, self.c1])
+        self.assertEquals(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
