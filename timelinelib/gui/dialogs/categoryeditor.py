@@ -51,7 +51,9 @@ class CategoryEditor(wx.Dialog):
         self.txt_name.SetValue(new_name)
 
     def get_color(self):
-        return self.colorpicker.GetValue()
+        # Convert wx.Color to (r, g, b) tuple
+        (r, g, b) = self.colorpicker.GetValue()
+        return (r, g, b)
 
     def set_color(self, new_color):
         self.colorpicker.SetValue(new_color)

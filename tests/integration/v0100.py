@@ -18,16 +18,16 @@
 
 
 """
-Tests that files written with v0.1.0 of Timeline can still be read and that the
-data is correctly converted.
+Tests that files written with v0.10.0 of Timeline can be read and that the data
+is correctly converted if needed.
 """
 
 
+import codecs
 import tempfile
+import shutil
 import os
 import os.path
-import codecs
-import shutil
 import unittest
 from datetime import datetime
 
@@ -35,23 +35,53 @@ from timelinelib.drawing.interface import ViewProperties
 from timelinelib.db import db_open
 
 
-CONTENT_010 = u"""
-# Written by Timeline 0.1.0 on 2009-11-15 19:28:7
-PREFERRED-PERIOD:2009-10-17 22:38:32;2009-12-2 16:22:4
-CATEGORY:Category 1;188,129,224;True
-CATEGORY:Category 2;255,165,0;True
-CATEGORY:Category 3;173,216,230;False
-EVENT:2009-11-4 22:52:0;2009-11-11 22:52:0;Event 1;Category 1
+CONTENT_0100 = u"""
+<?xml version="1.0" encoding="utf-8"?>
+<timeline>
+    <version>0.10.0</version>
+    <categories>
+        <category>
+            <name>Category 1</name>
+            <color>188,129,224</color>
+        </category>
+        <category>
+            <name>Category 2</name>
+            <color>255,165,0</color>
+        </category>
+        <category>
+            <name>Category 3</name>
+            <color>173,216,230</color>
+        </category>
+    </categories>
+    <events>
+        <event>
+            <start>2009-11-4 22:52:0</start>
+            <end>2009-11-11 22:52:0</end>
+            <text>Event 1</text>
+            <category>Category 1</category>
+            <description>The first event.</description>
+        </event>
+    </events>
+    <view>
+        <displayed_period>
+            <start>2009-10-17 22:38:32</start>
+            <end>2009-12-2 16:22:4</end>
+        </displayed_period>
+        <hidden_categories>
+            <name>Category 3</name>
+        </hidden_categories>
+    </view>
+</timeline>
 """.strip()
 
 
-class TestRead010File(unittest.TestCase):
+class TestRead0100File(unittest.TestCase):
 
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
         self.tmp_path = os.path.join(self.tmp_dir, "test.timeline")
         f = codecs.open(self.tmp_path, "w", "utf-8")
-        f.write(CONTENT_010)
+        f.write(CONTENT_0100)
         f.close()
 
     def tearDown(self):
@@ -70,7 +100,7 @@ class TestRead010File(unittest.TestCase):
         self.assertEquals(event.time_period.end_time,
                           datetime(2009, 11, 11, 22, 52, 0))
         self.assertEquals(event.category.name, "Category 1")
-        self.assertEquals(event.get_data("description"), None)
+        self.assertEquals(event.get_data("description"), "The first event.")
         self.assertEquals(event.get_data("icon"), None)
         # Assert that correct view properties are loaded (category visibility
         # checked later)

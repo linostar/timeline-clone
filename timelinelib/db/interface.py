@@ -161,6 +161,12 @@ class TimelineDB(Observable):
         """
         raise NotImplementedError()
 
+    def find_event_with_id(self, id):
+        """
+        Return the event associated with the given event id.
+        """
+        raise NotImplementedError()
+
 
 class TimelineIOError(Exception):
     """

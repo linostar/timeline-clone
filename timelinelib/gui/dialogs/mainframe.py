@@ -27,7 +27,7 @@ import datetime
 
 import wx
 
-from timelinelib.db import open as db_open
+from timelinelib.db import db_open
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.gui.utils import WildcardHelper
 from timelinelib.gui.utils import _display_error_message
@@ -41,6 +41,7 @@ import timelinelib.printing as printing
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
+from timelinelib.gui.dialogs.duplicateevent import DuplicateEvent
 from timelinelib.gui.dialogs.eventeditor import EventEditor
 from timelinelib.gui.dialogs.gotodate import GotoDateDialog
 from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
@@ -72,7 +73,9 @@ class MainFrame(wx.Frame):
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
         self._set_initial_values_to_member_variables()
+        self.creating_gui = True
         self._create_gui()
+        self.creating_gui = False
         self.Maximize(config.get_window_maximized())
         self.SetTitle(APPLICATION_NAME)
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
@@ -81,7 +84,7 @@ class MainFrame(wx.Frame):
         self.SetIcons(self._load_icon_bundle())
         self._init_help_system()
         self.main_panel.show_welcome_panel()
-        self._enable_disable_menus()
+        self.enable_disable_menus()
 
     def open_timeline(self, input_file):
         """Read timeline info from the given input file and display it."""
@@ -113,6 +116,32 @@ class MainFrame(wx.Frame):
                                  start, end)
         except TimelineIOError, e:
             self.handle_timeline_error(e)
+        else:
+            if dialog.ShowModal() == ID_ERROR:
+                self._switch_to_error_view(dialog.error)
+            dialog.Destroy()
+
+    def duplicate_event(self, event=None):
+        """
+        Duplicates the given event one or more times.
+        
+        If the given event == None, the selected event is duplicated.
+        This happens when the main menu 'duplicate selected event' is used.
+        This menu item is only enabled when there is only one event selected.
+        The event is given as an argument when the event context menu item
+        'duplicate event' is used.
+        """
+        try:
+            if event is None:
+                drawing_area = self.main_panel.drawing_area 
+                id = drawing_area.view_properties.get_selected_event_ids()[0]
+                event = self.timeline.find_event_with_id(id)
+            dialog = DuplicateEvent(self, self.timeline, event)
+        except TimelineIOError, e:
+            self.handle_timeline_error(e)
+        except IndexError, e:
+            # No event selected so do nothing!
+            pass
         else:
             if dialog.ShowModal() == ID_ERROR:
                 self._switch_to_error_view(dialog.error)
@@ -217,11 +246,16 @@ class MainFrame(wx.Frame):
         self.mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
                                     _("Create &Event..."),
                                     _("Create a new event"))
+        self.mnu_timeline_duplicate_event = self.mnu_timeline.Append(wx.ID_ANY,
+                                    _("&Duplicate Selected Event..."),
+                                    _("Duplicate the Selected Event"))
         self.mnu_timeline_edit_categories = self.mnu_timeline.Append(wx.ID_ANY,
                                        _("Edit &Categories"),
                                        _("Edit categories"))
         self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click,
                   self.mnu_timeline_create_event)
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_duplicate_event_on_click,
+                  self.mnu_timeline_duplicate_event)
         self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
                   self.mnu_timeline_edit_categories)
         # View menu
@@ -380,6 +414,9 @@ class MainFrame(wx.Frame):
     def _mnu_timeline_create_event_on_click(self, evt):
         self.create_new_event()
 
+    def _mnu_timeline_duplicate_event_on_click(self, evt):
+        self.duplicate_event()
+
     def _mnu_timeline_edit_categories_on_click(self, evt):
         self.edit_categories()
 
@@ -500,7 +537,7 @@ class MainFrame(wx.Frame):
         self._display_timeline(None)
         self.main_panel.error_panel.populate(error)
         self.main_panel.show_error_panel()
-        self._enable_disable_menus()
+        self.enable_disable_menus()
 
     def _display_timeline(self, timeline):
         self.timeline = timeline
@@ -521,7 +558,6 @@ class MainFrame(wx.Frame):
                 os.path.basename(self.timeline.path),
                 os.path.dirname(os.path.abspath(self.timeline.path)),
                 APPLICATION_NAME))
-        self._enable_disable_menus()
 
     def _create_new_timeline(self):
         """
@@ -582,10 +618,12 @@ class MainFrame(wx.Frame):
             self.open_timeline(dialog.GetPath())
         dialog.Destroy()
 
-    def _enable_disable_menus(self):
+    def enable_disable_menus(self):
         """
         Enable or disable menu items depending on the state of the application.
         """
+        if self.creating_gui:
+            return
         items_requiring_timeline_view = [
             self.mnu_view_sidebar,
         ]
@@ -616,7 +654,10 @@ class MainFrame(wx.Frame):
             item.Enable(not is_read_only)
         if not have_timeline:
             self.main_panel.show_searchbar(False)
-
+        # One and only one event selected ?
+        one_event_selected = len(self.main_panel.drawing_area.view_properties.selected_event_ids) == 1
+        self.mnu_timeline_duplicate_event.Enable(one_event_selected)
+        
     def _save_application_config(self):
         config.set_window_size(self.GetSize())
         config.set_window_pos(self.GetPosition())

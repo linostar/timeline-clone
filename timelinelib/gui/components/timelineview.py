@@ -500,6 +500,7 @@ class DrawingArea(wx.Panel):
             return
         menu_definitions = [
             (_("Edit"), self._context_menu_on_edit_event),
+            (_("Duplicate..."), self._context_menu_on_duplicate_event),
             (_("Delete"), self._context_menu_on_delete_event),
         ]
         if self.context_menu_event.has_data():
@@ -516,6 +517,10 @@ class DrawingArea(wx.Panel):
     def _context_menu_on_edit_event(self, evt):
         frame = wx.GetTopLevelParent(self)
         frame.edit_event(self.context_menu_event)
+
+    def _context_menu_on_duplicate_event(self, evt):
+        frame = wx.GetTopLevelParent(self)
+        frame.duplicate_event(self.context_menu_event)
         
     def _context_menu_on_delete_event(self, evt):
         self.context_menu_event.selected = True
@@ -786,6 +791,8 @@ class DrawingArea(wx.Panel):
                     wx.GetTopLevelParent(self).handle_timeline_error(e)
             memdc.EndDrawing()
             del memdc
+            frame = wx.GetTopLevelParent(self)
+            frame.enable_disable_menus()
             self.Refresh()
             self.Update()
         except Exception, ex:

@@ -108,6 +108,13 @@ class IcsTimeline(TimelineDB):
     def save_view_properties(self, view_properties):
         pass
 
+    def find_event_with_id(self, id):
+        events = self._get_events()
+        for e in events:
+            if e.id == id:
+                return e
+        return None
+    
     def _get_events(self, decider_fn=None):
         events = []
         for event in self.cal.walk("VEVENT"):

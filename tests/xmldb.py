@@ -18,81 +18,90 @@
 
 
 """
-Tests that files written with v0.1.0 of Timeline can still be read and that the
-data is correctly converted.
+Tests that XmlTimeline correctly writes and reads data.
 """
 
 
 import tempfile
 import os
 import os.path
-import codecs
 import shutil
 import unittest
 from datetime import datetime
 
 from timelinelib.drawing.interface import ViewProperties
-from timelinelib.db import db_open
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.backends.xmlfile import XmlTimeline
 
 
-CONTENT_010 = u"""
-# Written by Timeline 0.1.0 on 2009-11-15 19:28:7
-PREFERRED-PERIOD:2009-10-17 22:38:32;2009-12-2 16:22:4
-CATEGORY:Category 1;188,129,224;True
-CATEGORY:Category 2;255,165,0;True
-CATEGORY:Category 3;173,216,230;False
-EVENT:2009-11-4 22:52:0;2009-11-11 22:52:0;Event 1;Category 1
-""".strip()
-
-
-class TestRead010File(unittest.TestCase):
+class TestXmlTimelineWriteRead(unittest.TestCase):
 
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
         self.tmp_path = os.path.join(self.tmp_dir, "test.timeline")
-        f = codecs.open(self.tmp_path, "w", "utf-8")
-        f.write(CONTENT_010)
-        f.close()
 
     def tearDown(self):
         shutil.rmtree(self.tmp_dir)
 
-    def testRead010DB(self):
-        db = db_open(self.tmp_path)
+    def testWriteReadCycle(self):
+        self._create_db()
+        db_re_read = XmlTimeline(self.tmp_path)
+        self._assert_re_read_db_same(db_re_read)
+
+    def _create_db(self):
+        db = XmlTimeline(self.tmp_path)
+        # Create categories
+        cat1 = Category("Category 1", (255, 0, 0), True)
+        db.save_category(cat1)
+        cat2 = Category("Category 2", (0, 255, 0), True)
+        db.save_category(cat2)
+        cat3 = Category("Category 3", (0, 0, 255), True)
+        db.save_category(cat3)
+        # Create events
+        ev1 = Event(datetime(2010, 3, 3), datetime(2010, 3, 6),
+                    "Event 1", cat1)
+        ev1.set_data("description", u"The <b>first</b> event åäö.")
+        db.save_event(ev1)
+        # Create view properties
+        vp = ViewProperties()
+        start = datetime(2010, 3, 1)
+        end = datetime(2010, 4, 1)
+        vp.displayed_period = TimePeriod(start, end)
+        vp.set_category_visible(cat3, False)
+        db.save_view_properties(vp)
+
+    def _assert_re_read_db_same(self, db):
         # Assert event correctly loaded
         events = db.get_all_events()
         self.assertEquals(len(events), 1)
         event = events[0]
-        self.assertTrue(event.has_id())
         self.assertEquals(event.text, "Event 1")
-        self.assertEquals(event.time_period.start_time,
-                          datetime(2009, 11, 4, 22, 52, 0))
-        self.assertEquals(event.time_period.end_time,
-                          datetime(2009, 11, 11, 22, 52, 0))
+        self.assertEquals(event.time_period.start_time, datetime(2010, 3, 3))
+        self.assertEquals(event.time_period.end_time, datetime(2010, 3, 6))
         self.assertEquals(event.category.name, "Category 1")
-        self.assertEquals(event.get_data("description"), None)
+        self.assertEquals(event.get_data("description"), u"The <b>first</b> event åäö.")
         self.assertEquals(event.get_data("icon"), None)
         # Assert that correct view properties are loaded (category visibility
         # checked later)
         vp = ViewProperties()
         db.load_view_properties(vp)
-        self.assertEquals(vp.displayed_period.start_time,
-                          datetime(2009, 10, 17, 22, 38, 32))
-        self.assertEquals(vp.displayed_period.end_time,
-                          datetime(2009, 12, 2, 16, 22, 4))
+        self.assertEquals(vp.displayed_period.start_time, datetime(2010, 3, 1))
+        self.assertEquals(vp.displayed_period.end_time, datetime(2010, 4, 1))
         # Assert categories correctly loaded
         categories = db.get_categories()
         self.assertEquals(len(categories), 3)
         for cat in categories:
             self.assertTrue(cat.has_id())
             if cat.name == "Category 1":
-                self.assertEquals(cat.color, (188, 129, 224))
+                self.assertEquals(cat.color, (255, 0, 0))
                 self.assertTrue(vp.category_visible(cat))
             elif cat.name == "Category 2":
-                self.assertEquals(cat.color, (255, 165, 0))
+                self.assertEquals(cat.color, (0, 255, 0))
                 self.assertTrue(vp.category_visible(cat))
             elif cat.name == "Category 3":
-                self.assertEquals(cat.color, (173, 216, 230))
+                self.assertEquals(cat.color, (0, 0, 255))
                 self.assertFalse(vp.category_visible(cat))
             else:
                 self.fail("Unknown category.")

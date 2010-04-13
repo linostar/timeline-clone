@@ -123,7 +123,18 @@ class Event(object):
         """Returns a unicode label describing the event."""
         return u"%s (%s)" % (self.text, self.time_period.get_label())
 
+    def clone(self):
+        # Objects of type datetime are immutable.
+        new_event = Event(self.time_period.start_time, 
+                          self.time_period.end_time, self.text, self.category)
+        # Description is immutable
+        new_event.set_data("description", self.get_data("description") )
+        # Icon is immutable in the sense that it is never changed by our 
+        # application.    
+        new_event.set_data("icon", self.get_data("icon"))    
+        return new_event
 
+    
 class Category(object):
     """
     Store persistent data about a category.
