@@ -26,6 +26,7 @@ import sys
 import os.path
 import unittest
 import gettext
+import doctest
 
 def run_all_tests():
     setup_paths()
@@ -65,11 +66,19 @@ def add_unittests(suite):
     add_tests_from_module("tests.config")
     add_tests_from_module("tests.memorydb")
     add_tests_from_module("tests.dbread.v010")
+    add_tests_from_module("tests.dbread.v0100")
     add_tests_from_module("tests.duplicateevent")
     add_tests_from_module("tests.categorytree")
+    add_tests_from_module("tests.xmlparser")
+    add_tests_from_module("tests.xmldb")
 
 def add_doctests(suite):
-    pass
+    def add_tests_from_module(module_name):
+        __import__(module_name)
+        module = sys.modules[module_name]
+        module_suite = doctest.DocTestSuite(module)
+        suite.addTest(module_suite)
+    add_tests_from_module("timelinelib.db.backends.xmlparser")
 
 def get_verbosity_level():
     verbosity = 2
