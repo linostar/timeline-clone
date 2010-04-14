@@ -241,8 +241,10 @@ class DefaultDrawingAlgorithm(Drawer):
         self.black_dashed_pen.SetDashes([2, 2])
         self.black_dashed_pen.SetCap(wx.CAP_BUTT)
         self.grey_solid_pen = wx.Pen(wx.Color(200, 200, 200), 1, wx.SOLID)
+        self.red_solid_pen = wx.Pen(wx.Color(255, 0, 0), 1, wx.SOLID)
         self.white_solid_brush = wx.Brush(wx.Color(255, 255, 255), wx.SOLID)
         self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
+        self.red_solid_brush = wx.Brush(wx.Color(255, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
         self.DATA_ICON_WIDTH = 5
 
@@ -275,7 +277,7 @@ class DefaultDrawingAlgorithm(Drawer):
         # Perform the actual drawing
         if view_properties.period_selection:
             self._draw_period_selection(view_properties.period_selection)
-        self._draw_bg()
+        self._draw_bg(view_properties)
         self._draw_events(view_properties)
         if view_properties.show_legend:
             self._draw_legend(self._extract_categories())
@@ -322,7 +324,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def balloon_at(self, x, y):
         event = None
         for (event_in_list, rect) in self.balloon_data:
-            if rect.Contains(wx.Point(x, y)): 
+            if rect.Contains(wx.Point(x, y)):
                 event = event_in_list
         return event
 
@@ -449,7 +451,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawRectangle(start_x, 0,
                               end_x - start_x + 1, self.metrics.height)
 
-    def _draw_bg(self):
+    def _draw_bg(self, view_properties):
         """
         Draw major and minor strips, lines to all event boxes and baseline.
 
@@ -509,6 +511,12 @@ class DefaultDrawingAlgorithm(Drawer):
             if rect.Y < self.metrics.half_height:
                 x = self.metrics.calc_x(event.mean_time())
                 y = rect.Y + rect.Height / 2
+                if view_properties.is_selected(event):
+                    self.dc.SetPen(self.red_solid_pen)
+                    self.dc.SetBrush(self.red_solid_brush)
+                else:
+                    self.dc.SetBrush(self.black_solid_brush)
+                    self.dc.SetPen(self.black_solid_pen)
                 self.dc.DrawLine(x, y, x, self.metrics.half_height)
                 self.dc.DrawCircle(x, self.metrics.half_height, 2)
         # Now line
@@ -636,7 +644,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawRectangleRect(east_rect)
         self.dc.DrawRectangleRect(west_rect)
         self.dc.DrawRectangleRect(center_rect)
-        
+
     def _draw_contents_indicator(self, event, rect):
         """
         The data contents indicator is a small triangle drawn in the upper
@@ -694,12 +702,12 @@ class DefaultDrawingAlgorithm(Drawer):
         for (event, rect) in self.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
-                sticky = view_properties.event_has_sticky_balloon(event) 
+                sticky = view_properties.event_has_sticky_balloon(event)
                 if (view_properties.event_is_hovered(event) or sticky):
                     if not sticky:
                         top_event, top_rect = event, rect
                     self._draw_ballon(event, rect, sticky)
-        # Make the unsticky balloon appear on top            
+        # Make the unsticky balloon appear on top
         if top_event is not None:
             self._draw_ballon(top_event, top_rect, False)
 
@@ -776,7 +784,7 @@ class DefaultDrawingAlgorithm(Drawer):
               *                       -
            |----|
            ARROW_OFFSET
-    
+
         Calculation of points starts at the tip of the arrow and continues
         clockwise around the ballon.
 
@@ -850,7 +858,7 @@ class DefaultDrawingAlgorithm(Drawer):
         else:
             pin = wx.Bitmap(os.path.join(ICONS_DIR, "unstickypin.png"))
         self.dc.DrawBitmap(pin, p7.x -5, p6.y + 5, True)
-                
+
         # Return
         bx = left_x
         by = top_y
