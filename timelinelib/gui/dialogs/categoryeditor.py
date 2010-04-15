@@ -70,9 +70,9 @@ class CategoryEditor(wx.Dialog):
 
     def get_parent(self):
         selection = self.parentlistbox.GetSelection()
-        if selection != -1:
-            return self.parentlistbox.GetClientData(selection)
-        return None
+        if selection == wx.NOT_FOUND:
+            return None
+        return self.parentlistbox.GetClientData(selection)
 
     def set_parent(self, parent):
         no_items = self.parentlistbox.GetCount()
