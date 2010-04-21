@@ -157,8 +157,17 @@ class CategoriesEditor(wx.Dialog):
     def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
         if selection != wx.NOT_FOUND:
-            if _ask_question(_("Are you sure you want to delete this category?"), self) == wx.YES:
-                cat = self.lst_categories.GetClientData(selection)
+            cat = self.lst_categories.GetClientData(selection)
+            delete_warning = _("Are you sure you want to "
+                               "delete category '%s'?") % cat.name
+            if cat.parent is None:
+                update_warning = _("Events belonging to '%s' will no longer "
+                                   "belong to a category.") % cat.name
+            else:
+                update_warning = _("Events belonging to '%s' will now belong "
+                                   "to '%s'.") % (cat.name, cat.parent.name)
+            question = "%s\n\n%s" % (delete_warning, update_warning)
+            if _ask_question(question, self) == wx.YES:
                 self.timeline.delete_category(cat)
 
     def _update_categories(self):
