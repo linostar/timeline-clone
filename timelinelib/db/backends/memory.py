@@ -139,6 +139,10 @@ class MemoryDB(TimelineDB):
             for cat in self.categories:
                 if cat.parent == category:
                     cat.parent = category.parent
+            # Loop to update category for events
+            for event in self.events:
+                if event.category == category:
+                    event.category = category.parent
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_CATEGORY)
         else:

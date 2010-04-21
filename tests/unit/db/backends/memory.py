@@ -245,6 +245,24 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEquals(c11.parent, None)
         self.assertEquals(c121.parent, None)
 
+    def testDelteCategoryWithEvent(self):
+        # Create hierarchy:
+        # c1
+        #   c11
+        c1 = Category("c1", (255, 0, 0), True, parent=None)
+        c11 = Category("c11", (255, 0, 0), True, parent=c1)
+        self.db.save_category(c1)
+        self.db.save_category(c11)
+        # Create event belonging to c11
+        self.e1.category = c11
+        self.db.save_event(self.e1)
+        # Delete c11 should cause e1 to get c1 as category
+        self.db.delete_category(c11)
+        self.assertEquals(self.e1.category, c1)
+        # Delete c1 should cause e1 to have no category
+        self.db.delete_category(c1)
+        self.assertEquals(self.e1.category, None)
+
     def testSaveEventUnknownCategory(self):
         # A new
         self.e1.category = self.c1
