@@ -32,13 +32,14 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
     Display categories as tree and let user change visibility with check boxes.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, fn_handle_db_error):
         style = (wx.BORDER_SUNKEN |
                  customtreectrl.TR_HIDE_ROOT |
                  customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT |
                  customtreectrl.TR_LINES_AT_ROOT |
                  customtreectrl.TR_HAS_BUTTONS)
         customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style)
+        self.fn_handle_db_error = fn_handle_db_error
         self.view = None
         self.Bind(customtreectrl.EVT_TREE_ITEM_CHECKED,
                   self._on_tree_item_checked, self)
@@ -69,7 +70,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
         try:
             categories = self.view.timeline.get_categories()
         except TimelineIOError, e:
-            wx.GetTopLevelParent(self).handle_timeline_error(e)
+            self.fn_handle_db_error(e)
         else:
             tree = category_tree(categories)
             self.DeleteAllItems()

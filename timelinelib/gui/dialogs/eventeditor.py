@@ -35,6 +35,7 @@ from timelinelib.gui.utils import _parse_text_from_textbox
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
+import timelinelib.gui.utils as gui_utils
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
 from timelinelib.gui.components.datetimepicker import DateTimePicker
@@ -201,9 +202,7 @@ class EventEditor(wx.Dialog):
                 _display_error_message("%s" % ex.error_message)
                 _set_focus_and_select(ex.control)
         except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
+            gui_utils.handle_db_error_in_dialog(self, e)
 
     def _chb_period_on_checkbox(self, e):
         self._show_to_time(e.IsChecked())
@@ -224,48 +223,31 @@ class EventEditor(wx.Dialog):
             self.current_category_selection = new_selection_index
 
     def _add_category(self):
-        try:
-            dialog = CategoryEditor(self, _("Add Category"),
-                                    self.timeline, None)
-        except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
-        else:
-            dialog_result = dialog.ShowModal()
-            if dialog_result == ID_ERROR:
-                self.error = dialog.error
-                self.EndModal(ID_ERROR)
-            elif dialog_result == wx.ID_OK:
+        def create_category_editor():
+            return CategoryEditor(self, _("Add Category"), self.timeline, None)
+        def handle_success(dialog):
+            if dialog.GetReturnCode() == wx.ID_OK:
                 try:
                     self._update_categories(dialog.get_edited_category())
                 except TimelineIOError, e:
-                    _display_error_message(ex_msg(e), self)
-                    self.error = e
-                    self.EndModal(ID_ERROR)
-            dialog.Destroy()
+                    gui_utils.handle_db_error_in_dialog(self, e)
+        gui_utils.show_modal(create_category_editor,
+                             gui_utils.create_dialog_db_error_handler(self),
+                             handle_success)
 
     def _edit_categories(self):
-        try:
-            dialog = CategoriesEditor(self, self.timeline)
-        except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
-        else:
-            if dialog.ShowModal() == ID_ERROR:
-                self.error = dialog.error
-                self.EndModal(ID_ERROR)
-            else:
-                try:
-                    prev_index = self.lst_category.GetSelection()
-                    prev_category = self.lst_category.GetClientData(prev_index)
-                    self._update_categories(prev_category)
-                except TimelineIOError, e:
-                    _display_error_message(ex_msg(e), self)
-                    self.error = e
-                    self.EndModal(ID_ERROR)
-            dialog.Destroy()
+        def create_categories_editor():
+            return CategoriesEditor(self, self.timeline)
+        def handle_success(dialog):
+            try:
+                prev_index = self.lst_category.GetSelection()
+                prev_category = self.lst_category.GetClientData(prev_index)
+                self._update_categories(prev_category)
+            except TimelineIOError, e:
+                gui_utils.handle_db_error_in_dialog(self, e)
+        gui_utils.show_modal(create_categories_editor,
+                             gui_utils.create_dialog_db_error_handler(self),
+                             handle_success)
 
     def _show_to_time(self, show=True):
         self.lbl_to.Show(show)

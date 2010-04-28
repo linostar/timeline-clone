@@ -286,9 +286,10 @@ class DrawingArea(wx.Panel):
     When the mouse button is released the selection ends.
     """
 
-    def __init__(self, parent, divider_line_slider):
+    def __init__(self, parent, divider_line_slider, fn_handle_db_error):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
         self.divider_line_slider = divider_line_slider
+        self.fn_handle_db_error = fn_handle_db_error
         self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
@@ -349,7 +350,7 @@ class DrawingArea(wx.Panel):
                     default_tp = time_period_center(dt.now(), timedelta(days=30))
                     self.view_properties.displayed_period = default_tp
             except TimelineIOError, e:
-                wx.GetTopLevelParent(self).handle_timeline_error(e)
+                self.fn_handle_db_error(e)
                 return
             self._redraw_timeline()
             self.Enable()
@@ -484,7 +485,7 @@ class DrawingArea(wx.Panel):
                         self._set_select_period_cursor()
             evt.Skip()
         except TimelineIOError, e:
-            wx.GetTopLevelParent(self).handle_timeline_error(e)
+            self.fn_handle_db_error(e)
 
     def _window_on_right_down(self, evt):
         """
@@ -788,7 +789,7 @@ class DrawingArea(wx.Panel):
                     self.drawing_algorithm.draw(memdc, self.timeline,
                                                 self.view_properties)
                 except TimelineIOError, e:
-                    wx.GetTopLevelParent(self).handle_timeline_error(e)
+                    self.fn_handle_db_error(e)
             memdc.EndDrawing()
             del memdc
             frame = wx.GetTopLevelParent(self)
@@ -1019,7 +1020,7 @@ class DrawingArea(wx.Panel):
                 for event_id in selected_event_ids:
                     self.timeline.delete_event(event_id)
             except TimelineIOError, e:
-                wx.GetTopLevelParent(self).handle_timeline_error(e)
+                self.fn_handle_db_error(e)
 
     def _get_period_selection(self, current_x):
         """Return a tuple containing the start and end time of a selection."""

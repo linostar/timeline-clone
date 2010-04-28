@@ -38,6 +38,7 @@ from timelinelib.about import APPLICATION_NAME
 from timelinelib.paths import ICONS_DIR
 from timelinelib.paths import HELP_RESOURCES_DIR
 import timelinelib.printing as printing
+import timelinelib.gui.utils as gui_utils
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
@@ -93,7 +94,7 @@ class MainFrame(wx.Frame):
         try:
             timeline = db_open(input_file_abs)
         except TimelineIOError, e:
-            self.handle_timeline_error(e)
+            self.handle_db_error(e)
         else:
             config.append_recently_opened(input_file_abs)
             self._update_open_recent_submenu()
@@ -111,15 +112,10 @@ class MainFrame(wx.Frame):
             _display_error_message(_("File '%s' does not exist.") % path, self)
 
     def create_new_event(self, start=None, end=None):
-        try:
-            dialog = EventEditor(self, _("Create Event"), self.timeline,
-                                 start, end)
-        except TimelineIOError, e:
-            self.handle_timeline_error(e)
-        else:
-            if dialog.ShowModal() == ID_ERROR:
-                self._switch_to_error_view(dialog.error)
-            dialog.Destroy()
+        def create_event_editor():
+            return EventEditor(self, _("Create Event"), self.timeline,
+                               start, end)
+        gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
     def duplicate_event(self, event=None):
         """
@@ -132,43 +128,32 @@ class MainFrame(wx.Frame):
         'duplicate event' is used.
         """
         try:
-            if event is None:
-                drawing_area = self.main_panel.drawing_area 
-                id = drawing_area.view_properties.get_selected_event_ids()[0]
-                event = self.timeline.find_event_with_id(id)
-            dialog = DuplicateEvent(self, self.timeline, event)
-        except TimelineIOError, e:
-            self.handle_timeline_error(e)
+            id = drawing_area.view_properties.get_selected_event_ids()[0]
         except IndexError, e:
             # No event selected so do nothing!
-            pass
-        else:
-            if dialog.ShowModal() == ID_ERROR:
-                self._switch_to_error_view(dialog.error)
-            dialog.Destroy()
+            return
+        def create_dialog():
+            if event is None:
+                drawing_area = self.main_panel.drawing_area 
+                event = self.timeline.find_event_with_id(id)
+            dialog = DuplicateEvent(self, self.timeline, event)
+        gui_utils.show_modal(create_dialog, self.handle_db_error)
 
     def edit_event(self, event):
-        try:
-            dialog = EventEditor(self, _("Edit Event"), self.timeline,
-                                 event=event)
-        except TimelineIOError, e:
-            self.handle_timeline_error(e)
-        else:
-            if dialog.ShowModal() == ID_ERROR:
-                self._switch_to_error_view(dialog.error)
-            dialog.Destroy()
+        def create_event_editor():
+            return EventEditor(self, _("Edit Event"), self.timeline,
+                               event=event)
+        gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
     def edit_categories(self):
-        try:
-            dialog = CategoriesEditor(self, self.timeline)
-        except TimelineIOError, e:
-            self.handle_timeline_error(e)
-        else:
-            if dialog.ShowModal() == ID_ERROR:
-                self._switch_to_error_view(dialog.error)
-            dialog.Destroy()
+        def create_categories_editor():
+            return CategoriesEditor(self, self.timeline)
+        gui_utils.show_modal(create_categories_editor, self.handle_db_error)
 
-    def handle_timeline_error(self, error):
+    def handle_db_error(self, error):
+        """
+        Should be called whenever a TimelineIOError was raised.
+        """
         _display_error_message(ex_msg(error), self)
         self._switch_to_error_view(error)
 
@@ -685,10 +670,7 @@ class MainFrame(wx.Frame):
             try:
                 self.timeline.save_view_properties(self.main_panel.drawing_area.view_properties)
             except TimelineIOError, e:
-                _display_error_message(ex_msg(e), self)
-                # No need to switch to error view since this method is only
-                # called on a timeline that is going to be closed anyway (and
-                # another timeline, or one, will be displayed instead).
+                self.handle_db_error(e)
 
     def _export_to_image(self):
         wildcard = self.images_wildcard_helper.wildcard_string()
@@ -913,7 +895,10 @@ class TimelinePanel(wx.Panel):
         self.sidebar = Sidebar(self.splitter)
         self.divider_line_slider = wx.Slider(self, value = 50, size = (20, -1),
                                              style = wx.SL_LEFT | wx.SL_VERTICAL)
-        self.drawing_area = DrawingArea(self.splitter, self.divider_line_slider)
+        main_frame = wx.GetTopLevelParent(self)
+        self.drawing_area = DrawingArea(self.splitter,
+                                        self.divider_line_slider,
+                                        main_frame.handle_db_error)
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(self.splitter, 1, wx.EXPAND)
         globalSizer.Add(self.divider_line_slider, 0, wx.EXPAND)
@@ -967,7 +952,8 @@ class Sidebar(wx.Panel):
         self._create_gui()
 
     def _create_gui(self):
-        self.cattree = CategoriesTree(self)
+        main_frame = wx.GetTopLevelParent(self)
+        self.cattree = CategoriesTree(self, main_frame.handle_db_error)
         # Layout
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.cattree, flag=wx.GROW, proportion=1)

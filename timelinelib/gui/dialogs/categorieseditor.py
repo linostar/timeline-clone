@@ -20,6 +20,7 @@ import wx
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+import timelinelib.gui.utils as gui_utils
 from timelinelib.gui.utils import sort_categories
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import _ask_question
@@ -90,19 +91,11 @@ class CategoriesEditor(wx.Dialog):
         self.EndModal(wx.ID_CLOSE)
 
     def _lst_categories_on_dclick(self, e):
-        try:
-            selection = e.GetSelection()
-            dialog = CategoryEditor(self, _("Edit Category"), self.timeline,
-                                    e.GetClientData())
-        except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
-        else:
-            if dialog.ShowModal() == ID_ERROR:
-                self.error = dialog.error
-                self.EndModal(ID_ERROR)
-            dialog.Destroy()
+        def create_category_editor():
+            return CategoryEditor(self, _("Edit Category"), self.timeline,
+                                  e.GetClientData())
+        gui_utils.show_modal(create_category_editor,
+                             gui_utils.create_dialog_db_error_handler(self))
 
     def _lst_categories_on_change(self, e):
         cat = self.lst_categories.GetSelection()
@@ -110,26 +103,16 @@ class CategoriesEditor(wx.Dialog):
             self.btn_del.Enable()
 
     def _btn_add_on_click(self, e):
-        try:
-            dialog = CategoryEditor(self, _("Add Category"), self.timeline,
-                                    None)
-        except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
-        else:
-            if dialog.ShowModal() == ID_ERROR:
-                self.error = dialog.error
-                self.EndModal(ID_ERROR)
-            dialog.Destroy()
+        def create_category_editor():
+            return CategoryEditor(self, _("Add Category"), self.timeline, None)
+        gui_utils.show_modal(create_category_editor,
+                             gui_utils.create_dialog_db_error_handler(self))
         
     def _btn_del_on_click(self, e):
         try:
             self._delete_selected_category()
         except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
+            gui_utils.handle_db_error_in_dialog(self, e)
 
     def _btn_close_on_click(self, e):
         self.Close()
@@ -141,18 +124,11 @@ class CategoriesEditor(wx.Dialog):
                 self._delete_selected_category()
             e.Skip()
         except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
+            handle_db_error_in_dialog(self, e)
 
     def _timeline_changed(self, state_change):
-        try:
-            if state_change == STATE_CHANGE_CATEGORY:
-                self._update_categories()
-        except TimelineIOError, e:
-            _display_error_message(ex_msg(e), self)
-            self.error = e
-            self.EndModal(ID_ERROR)
+        if state_change == STATE_CHANGE_CATEGORY:
+            self._update_categories()
 
     def _delete_selected_category(self):
         selection = self.lst_categories.GetSelection()
@@ -171,7 +147,12 @@ class CategoriesEditor(wx.Dialog):
                 self.timeline.delete_category(cat)
 
     def _update_categories(self):
-        self.lst_categories.Clear()
-        for category in sort_categories(self.timeline.get_categories()):
-            self.lst_categories.Append(category.name, category)
-        self.btn_del.Disable()
+        try:
+            categories = self.timeline.get_categories()
+        except TimelineIOError, e:
+            handle_db_error_in_dialog(self, e)
+        else:
+            self.lst_categories.Clear()
+            for category in sort_categories(categories):
+                self.lst_categories.Append(category.name, category)
+            self.btn_del.Disable()

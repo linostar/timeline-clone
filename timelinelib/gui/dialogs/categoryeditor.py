@@ -29,6 +29,7 @@ import wx.lib.colourselect as colourselect
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
+import timelinelib.gui.utils as gui_utils
 from timelinelib.gui.utils import category_tree
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import _set_focus_and_select
@@ -95,9 +96,7 @@ class CategoryEditor(wx.Dialog):
         _set_focus_and_select(self.txt_name)
 
     def handle_db_error(self, e):
-        _display_error_message(ex_msg(e), self)
-        self.error = e
-        self.EndModal(ID_ERROR)
+        gui_utils.handle_db_error_in_dialog(self, e)
 
     def get_edited_category(self):
         return self.controller.category

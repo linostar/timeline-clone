@@ -84,9 +84,7 @@ class DuplicateEvent(wx.Dialog):
         self.EndModal(wx.ID_OK)
 
     def handle_db_error(self, e):
-        _display_error_message(ex_msg(e), self)
-        self.error = e
-        self.EndModal(ID_ERROR)
+        gui_utils.handle_db_error_in_dialog(self, e)
 
     def handle_date_errors(self, error_count):
        _display_error_message(
