@@ -529,14 +529,14 @@ class MainFrame(wx.Frame):
         if timeline == None:
             # Do this before the next line so that we still have a timeline to
             # unregister
-            self.main_panel.cattree.set_view(None)
+            self.main_panel.cattree.initialize_from_timeline_view(None)
             self.main_panel.searchbar.set_view(None)
         self.main_panel.drawing_area.set_timeline(self.timeline)
         if timeline == None:
             self.main_panel.show_welcome_panel()
             self.SetTitle(APPLICATION_NAME)
         else:
-            self.main_panel.cattree.set_view(self.main_panel.drawing_area)
+            self.main_panel.cattree.initialize_from_timeline_view(self.main_panel.drawing_area)
             self.main_panel.searchbar.set_view(self.main_panel.drawing_area)
             self.main_panel.show_timeline_panel()
             self.SetTitle("%s (%s) - %s" % (
