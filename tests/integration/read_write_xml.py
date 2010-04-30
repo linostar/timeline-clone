@@ -55,9 +55,9 @@ class TestXmlTimelineWriteRead(unittest.TestCase):
         # Create categories
         cat1 = Category("Category 1", (255, 0, 0), True)
         db.save_category(cat1)
-        cat2 = Category("Category 2", (0, 255, 0), True)
+        cat2 = Category("Category 2", (0, 255, 0), True, parent=cat1)
         db.save_category(cat2)
-        cat3 = Category("Category 3", (0, 0, 255), True)
+        cat3 = Category("Category 3", (0, 0, 255), True, parent=cat2)
         db.save_category(cat3)
         # Create events
         ev1 = Event(datetime(2010, 3, 3), datetime(2010, 3, 6),
@@ -97,11 +97,14 @@ class TestXmlTimelineWriteRead(unittest.TestCase):
             if cat.name == "Category 1":
                 self.assertEquals(cat.color, (255, 0, 0))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             elif cat.name == "Category 2":
                 self.assertEquals(cat.color, (0, 255, 0))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent.name, "Category 1")
             elif cat.name == "Category 3":
                 self.assertEquals(cat.color, (0, 0, 255))
                 self.assertFalse(vp.category_visible(cat))
+                self.assertEquals(cat.parent.name, "Category 2")
             else:
                 self.fail("Unknown category.")

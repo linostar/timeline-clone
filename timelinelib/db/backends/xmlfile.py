@@ -128,6 +128,7 @@ class XmlTimeline(MemoryDB):
                     Tag("category", ANY, self._parse_category, [
                         Tag("name", SINGLE, parse_fn_store("tmp_name")),
                         Tag("color", SINGLE, parse_fn_store("tmp_color")),
+                        Tag("parent", OPTIONAL, parse_fn_store("tmp_parent")),
                     ])
                 ]),
                 Tag("events", SINGLE, None, [
@@ -161,7 +162,14 @@ class XmlTimeline(MemoryDB):
     def _parse_category(self, text, tmp_dict):
         name = tmp_dict.pop("tmp_name")
         color = parse_color(tmp_dict.pop("tmp_color"))
-        category = Category(name, color, True)
+        parent_name = tmp_dict.pop("tmp_parent", None)
+        if parent_name:
+            parent = tmp_dict["category_map"].get(parent_name, None)
+            if parent is None:
+                raise ParseException("Parent category '%s' not found." % parent_name)
+        else:
+            parent = None
+        category = Category(name, color, True, parent=parent)
         tmp_dict["category_map"][name] = category
         self.save_category(category)
 
@@ -216,13 +224,19 @@ class XmlTimeline(MemoryDB):
     _write_timeline = wrap_in_tag(_write_timeline, "timeline")
 
     def _write_categories(self, file):
-        for cat in self.get_categories():
-            self._write_category(file, cat)
+        def write_with_parent(categories, parent):
+            for cat in categories:
+                if cat.parent == parent:
+                    self._write_category(file, cat)
+                    write_with_parent(categories, cat)
+        write_with_parent(self.get_categories(), None)
     _write_categories = wrap_in_tag(_write_categories, "categories", INDENT1)
 
     def _write_category(self, file, cat):
         write_simple_tag(file, "name", cat.name, INDENT3)
         write_simple_tag(file, "color", color_string(cat.color), INDENT3)
+        if cat.parent:
+            write_simple_tag(file, "parent", cat.parent.name, INDENT3)
     _write_category = wrap_in_tag(_write_category, "category", INDENT2)
 
     def _write_events(self, file):

@@ -47,10 +47,12 @@ CONTENT_0100 = u"""
         <category>
             <name>Category 2</name>
             <color>255,165,0</color>
+            <parent>Category 1</parent>
         </category>
         <category>
             <name>Category 3</name>
             <color>173,216,230</color>
+            <parent>Category 2</parent>
         </category>
     </categories>
     <events>
@@ -118,11 +120,14 @@ class TestRead0100File(unittest.TestCase):
             if cat.name == "Category 1":
                 self.assertEquals(cat.color, (188, 129, 224))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             elif cat.name == "Category 2":
                 self.assertEquals(cat.color, (255, 165, 0))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent.name, "Category 1")
             elif cat.name == "Category 3":
                 self.assertEquals(cat.color, (173, 216, 230))
                 self.assertFalse(vp.category_visible(cat))
+                self.assertEquals(cat.parent.name, "Category 2")
             else:
                 self.fail("Unknown category.")
