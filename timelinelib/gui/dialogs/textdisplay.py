@@ -21,6 +21,8 @@ Dialog for displaying a text that also can be copied.
 """
 
 
+from timelinelib.gui.utils import BORDER
+
 import wx
 
 
@@ -31,26 +33,38 @@ class TextDisplayDialog(wx.Dialog):
     Selecting the text enables copying it to the clipboard.
     """
     
-    def __init__(self, title, text, parent = None):
-        wx.Dialog.__init__(self, parent, wx.ID_ANY, title)
+    def __init__(self, title, text, parent=None):
+        wx.Dialog.__init__(self, parent, title=title)
         self._create_gui()
         self._text.SetValue(text)
 
     def _create_gui(self):
+        self._text = wx.TextCtrl(self, size=(660, 300), style=wx.TE_MULTILINE)
+        btn_copy = wx.Button(self, wx.ID_COPY)
+        self.Bind(wx.EVT_BUTTON, self._btn_copy_on_click, btn_copy)
+        btn_close = wx.Button(self, wx.ID_CLOSE)
+        btn_close.SetDefault()
+        btn_close.SetFocus()
+        self.SetAffirmativeId(wx.ID_CLOSE)
+        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
+        # Layout
         vbox = wx.BoxSizer(wx.VERTICAL)
-        self._text = wx.TextCtrl(self, wx.ID_ANY, "", size = (660, 300), 
-                                 style = wx.TE_MULTILINE)
-        vbox.Add(self._text, 1, wx.ALIGN_LEFT | wx.ALL, 5)
-        btnsizer = wx.StdDialogButtonSizer()
-        btn = wx.Button(self, wx.ID_OK)
-        btn.SetDefault()
-        btn.SetFocus()
-        btnsizer.AddButton(btn)
-        btnsizer.Realize()
-        vbox.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        self.SetSizer(vbox)
-        vbox.Fit(self)
-        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn)
+        vbox.Add(self._text, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        button_box = wx.BoxSizer(wx.HORIZONTAL)
+        button_box.Add(btn_copy, flag=wx.RIGHT, border=BORDER)
+        button_box.AddStretchSpacer()
+        button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
+        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self.SetSizerAndFit(vbox)
         
+    def _btn_copy_on_click(self, evt):
+        if wx.TheClipboard.Open():
+            obj = wx.TextDataObject(self._text.GetValue())
+            wx.TheClipboard.SetData(obj)
+            wx.TheClipboard.Close()
+        else:
+            msg = _("Unable to copy to clipboard.")
+            _display_error_message(msg)
+
     def _btn_close_on_click(self, evt):
         self.Close()
