@@ -22,8 +22,13 @@ Code for reporting exceptions that aren't handled anywhere else.
 
 
 import traceback
+from sys import version as python_version
+import platform
 
+from timelinelib.version import get_version
 from timelinelib.gui.dialogs.textdisplay import TextDisplayDialog
+
+import wx
 
 
 def unhandled_exception_hook(type, value, tb):
@@ -34,8 +39,33 @@ def unhandled_exception_hook(type, value, tb):
     This is the method assigned to sys.excepthook.
     The assignment is made in the main method in the main module.
     """
-    lines = traceback.format_exception(type, value, tb)
-    title = "Unhandled Exception Report"
-    dialog = TextDisplayDialog(title, "\n".join(lines))
+    title = "Unexpected Error"
+    text = create_error_message(type, value, tb)
+    dialog = TextDisplayDialog(title, text)
     dialog.ShowModal()
     dialog.Destroy()
+
+
+def create_error_message(type, value, tb):
+    intro = create_intro_message()
+    exception = ("".join(traceback.format_exception(type, value, tb))).strip()
+    versions = create_versions_message()
+    return "%s\n\n%s\n\n%s" % (intro, exception, versions)
+
+
+def create_intro_message():
+    intro1 = ("An unexpected error has occurred. Please report this by copying "
+              "this error message and sending it to "
+              "thetimelineproj-user@lists.sourceforge.net.")
+    intro2 = ("It would also be useful if you can describe what you did just "
+              "before the error occurred.")
+    return "%s\n\n%s" % (intro1, intro2)
+
+
+def create_versions_message():
+    return "\n".join([
+        "Timeline version: %s" % get_version(),
+        "System version: %s" % ", ".join(platform.uname()),
+        "Python version: %s" % python_version.replace("\n", ""),
+        "wxPython version: %s" % wx.version(),
+    ])
