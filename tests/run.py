@@ -66,6 +66,7 @@ def add_unittests(suite):
     add_tests_from_module("tests.unit.config")
     add_tests_from_module("tests.unit.db.backends.memory")
     add_tests_from_module("tests.integration.read_010_file")
+    add_tests_from_module("tests.integration.read_090_file")
     add_tests_from_module("tests.integration.read_0100_file")
     add_tests_from_module("tests.unit.gui.dialogs.duplicateevent")
     add_tests_from_module("tests.unit.gui.components.cattree")

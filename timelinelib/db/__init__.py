@@ -24,7 +24,12 @@ storage.
 
 import os.path
 
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.interface import TimelineIOError
+from timelinelib.drawing.interface import ViewProperties
 
 
 def db_open(path):
@@ -46,9 +51,13 @@ def db_open(path):
     elif path.endswith(".timeline"):
         if (os.path.exists(path) and
             file_starts_with(path, "# Written by Timeline ")):
-            # Here the db should be converted to an xml db
+            # Convert file db to xml db
             from timelinelib.db.backends.file import FileTimeline
-            return FileTimeline(path)
+            from timelinelib.db.backends.xmlfile import XmlTimeline
+            file_db = FileTimeline(path)
+            xml_db = XmlTimeline(path, skip_load=True)
+            copy_db(file_db, xml_db)
+            return xml_db
         else:
             from timelinelib.db.backends.xmlfile import XmlTimeline
             return XmlTimeline(path)
@@ -80,3 +89,60 @@ def read_first_line(path):
             f.close()
     except IOError:
         raise TimelineIOError("Unable to read data from '%s'." % path)
+
+
+def copy_db(from_db, to_db):
+    """
+    Copy all content from one db to another.
+
+    to_db is assumed to have no categories (conflicting category names are not
+    handled).
+    """
+    if isinstance(to_db, MemoryDB):
+        to_db.disable_save()
+    # Copy categories (parent attribute fixed later)
+    cat_map = {}
+    for cat in from_db.get_categories():
+        # name, color, and visible all immutable so safe to copy
+        new_cat = Category(cat.name, cat.color, cat.visible)
+        cat_map[cat.name] = new_cat
+        to_db.save_category(new_cat)
+    # Fix parent attribute
+    for cat in from_db.get_categories():
+        if cat.parent is not None:
+            cat_map[cat.name].parent = cat_map[cat.parent.name]
+    # Copy events
+    for event in from_db.get_all_events():
+        cat = None
+        if event.category is not None:
+            cat = cat_map[event.category.name]
+        # start_time, end_time, and text all immutable so safe to copy
+        new_event = Event(event.time_period.start_time,
+                          event.time_period.end_time,
+                          event.text,
+                          cat)
+        # description immutable so safe to copy
+        if event.get_data("description") is not None:
+            new_event.set_data("description", event.get_data("description"))
+        # icon immutable in practice (since never modified) so safe to copy
+        if event.get_data("icon") is not None:
+            new_event.set_data("icon", event.get_data("icon"))
+        to_db.save_event(new_event)
+    # Copy view properties (ViewProperties is specific to db so we need to copy
+    # like this instead of just using load/save_view_properties in db).
+    from_vp = ViewProperties()
+    from_db.load_view_properties(from_vp)
+    to_vp = ViewProperties()
+    for from_cat in from_db.get_categories():
+        cat = cat_map[from_cat.name]
+        visible = from_vp.category_visible(from_cat)
+        to_vp.set_category_visible(cat, visible)
+    if from_vp.displayed_period is not None:
+        # start_time and end_time immutable so safe to copy
+        start = from_vp.displayed_period.start_time
+        end = from_vp.displayed_period.end_time
+        to_vp.displayed_period = TimePeriod(start, end)
+    to_db.save_view_properties(to_vp)
+    # Save
+    if isinstance(to_db, MemoryDB):
+        to_db.enable_save()

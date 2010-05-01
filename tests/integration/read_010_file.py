@@ -32,6 +32,7 @@ import unittest
 from datetime import datetime
 
 from timelinelib.drawing.interface import ViewProperties
+from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db import db_open
 
 
@@ -59,6 +60,8 @@ class TestRead010File(unittest.TestCase):
 
     def testRead010DB(self):
         db = db_open(self.tmp_path)
+        # Assert converted to xml db
+        self.assertTrue(isinstance(db, XmlTimeline))
         # Assert event correctly loaded
         events = db.get_all_events()
         self.assertEquals(len(events), 1)
