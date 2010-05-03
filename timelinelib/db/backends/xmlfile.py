@@ -76,10 +76,10 @@ class ParseException(Exception):
 
 class XmlTimeline(MemoryDB):
 
-    def __init__(self, path, skip_load=False):
+    def __init__(self, path, load=True):
         MemoryDB.__init__(self)
         self.path = path
-        if skip_load == False:
+        if load == True:
             self._load()
 
     def _load(self):
