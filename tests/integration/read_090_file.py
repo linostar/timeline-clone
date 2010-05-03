@@ -106,11 +106,14 @@ class TestRead010File(unittest.TestCase):
             if cat.name == "Work":
                 self.assertEquals(cat.color, (255, 0, 0))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             elif cat.name == "Private":
                 self.assertEquals(cat.color, (0, 0, 255))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             elif cat.name == "Hidden":
                 self.assertEquals(cat.color, (0, 0, 0))
                 self.assertFalse(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             else:
                 self.fail("Unknown category.")

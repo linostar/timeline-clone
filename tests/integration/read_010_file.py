@@ -91,11 +91,14 @@ class TestRead010File(unittest.TestCase):
             if cat.name == "Category 1":
                 self.assertEquals(cat.color, (188, 129, 224))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             elif cat.name == "Category 2":
                 self.assertEquals(cat.color, (255, 165, 0))
                 self.assertTrue(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             elif cat.name == "Category 3":
                 self.assertEquals(cat.color, (173, 216, 230))
                 self.assertFalse(vp.category_visible(cat))
+                self.assertEquals(cat.parent, None)
             else:
                 self.fail("Unknown category.")
