@@ -156,7 +156,11 @@ class CategoriesTreeController(object):
         self._update_category_tree()
 
     def initialize_from_timeline_view(self, view):
-        self._change_active_db(view.timeline)
+        if view is None:
+            new_timeline = None
+        else:
+            new_timeline = view.timeline
+        self._change_active_db(new_timeline)
         self.timeline_view = view
         self._update_category_tree()
 

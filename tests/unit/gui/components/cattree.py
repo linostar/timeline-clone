@@ -67,3 +67,9 @@ class TestCategoiresTreeController(unittest.TestCase):
                 (self.foofoo, []),
             ])
         ], self.timeline_view.view_properties)
+    
+    def testInitFromNonTimelineView(self):
+        controller = CategoriesTreeController(self.view,
+                                              self.fn_handle_db_error)
+        # This should not raise exception
+        controller.initialize_from_timeline_view(None)
