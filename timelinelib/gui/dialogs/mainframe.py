@@ -127,17 +127,19 @@ class MainFrame(wx.Frame):
         The event is given as an argument when the event context menu item
         'duplicate event' is used.
         """
-        try:
-            id = drawing_area.view_properties.get_selected_event_ids()[0]
-        except IndexError, e:
-            # No event selected so do nothing!
-            return
-        def create_dialog():
-            if event is None:
+        def show_dialog(event):
+            def create_dialog():
+                return DuplicateEvent(self, self.timeline, event)
+            gui_utils.show_modal(create_dialog, self.handle_db_error)
+        if event is None:
+            try:
                 drawing_area = self.main_panel.drawing_area 
+                id = drawing_area.view_properties.get_selected_event_ids()[0]
                 event = self.timeline.find_event_with_id(id)
-            dialog = DuplicateEvent(self, self.timeline, event)
-        gui_utils.show_modal(create_dialog, self.handle_db_error)
+            except IndexError, e:
+                # No event selected so do nothing!
+                return
+        show_dialog(event)
 
     def edit_event(self, event):
         def create_event_editor():
