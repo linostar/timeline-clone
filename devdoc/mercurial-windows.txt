@@ -1,5 +1,0 @@
-Mercurial on Windows
-====================
-
-Windows users should use the Win32Text extension as described here:
-<http://mercurial.selenic.com/wiki/Win32TextExtension>.

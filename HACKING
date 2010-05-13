@@ -1,15 +1,32 @@
-Guidelines
-==========
+This document contains some information that is useful when working with the
+source code.
 
-Coding
-------
+Commands
+========
 
-We try to follow the [Style Guide for Python Code](http://www.python.org/dev/peps/pep-0008/). Other guidelines and
-exceptions to the standard are listed here.
+Useful commands to know about:
 
-### Multiline docstrings
+  * `scons --help` - Show available targets
+  * `python tests/run.py` - Run all test in test suite
+  * `python tools/*.py` - See comment in tools to learn what they do
 
-We prefer to write **multiline** docstrings like this:
+Mercurial on Windows
+====================
+
+Windows users should use the Win32Text extension as described here:
+<http://mercurial.selenic.com/wiki/Win32TextExtension>.
+
+Coding Guidelines
+=================
+
+We try to follow the
+[Style Guide for Python Code](http://www.python.org/dev/peps/pep-0008/). Other
+guidelines and exceptions to the standard are listed here.
+
+Multiline docstrings
+--------------------
+
+We prefer to write multiline docstrings like this:
 
     """
     One line summary.
@@ -25,11 +42,13 @@ instead of like this:
 
     """
 
-### Strings
+Strings
+-------
 
-We use the `"` character for strings. **Not** the `'` character.
+We use the " character for strings. Not the ' character.
 
-### Order of blocks inside a module (.py file)
+Order of blocks inside a module (.py file)
+------------------------------------------
 
 All top-level blocks should be separated with two blank lines. Methods inside a
 class should be separated with one blank line.
@@ -46,27 +65,29 @@ class should be separated with one blank line.
       * Others
   * Functions
 
-### Naming convention for private attributes
+Naming convention for private attributes
+----------------------------------------
 
 All methods inside a class that are not supposed to be called outside the class
-should be marked private by prefixing it with **one** underscore.
+should be marked private by prefixing it with one underscore.
 
 All member variables should always be considered private but we don't append
 any underscores. The preferred way to access a class' variable is to write a
 get-method. In general member variables should never be directly accessed
 outside a class.
 
-### Naming convention for event handlers
+Naming convention for event handlers
+------------------------------------
 
 `_(object)_on_(name of event)`
 
 Examples:
 
-`_btn_close_on_click`
+  * `_btn_close_on_click`
+  * `_window_on_close`
 
-`_window_on_close`
-
-### GUI components construction
+GUI components construction
+---------------------------
 
 All GUI components should construct the GUI in a method called
 `_create_gui`. Should there be any need to call other methods to simplify
@@ -86,15 +107,8 @@ methods of `_create_gui`. Example:
             create_something_complex()
             ...
 
-### wx sizers
-
-Use them for the layout of components.
-
-Some documentation:
-
-  * [What Do These Sizer Things Do?](http://neume.sourceforge.net/sizerdemo/)
-
-### Handling events
+Handling events
+---------------
 
 All events should be hooked up in `_create_gui` using the `Bind` method
 of the `wx.Window`. ID's should not be used for events. We prefer to pass an
@@ -111,8 +125,8 @@ Documentation supporting this:
   * [wx.EvtHandler API Documentation](http://www.wxpython.org/docs/api/wx.EvtHandler-class.html#Bind)
   * [wxPython Migration Guide](http://www.wxpython.org/migrationguide.php) (the "Binding events" part)
 
-GUI
----
+GUI Guidelines
+==============
 
 Guidelines for how the GUI should look like to conform to as many standards as possible.
 
@@ -129,14 +143,60 @@ From the [GNOME guidelines](http://developer.gnome.org/projects/gup/hig/1.0/menu
 > Delete), or that do not require further input (such as Properties,
 > Preferences or About).
 
-Commit messages
----------------
+Commit messages guidelines
+==========================
 
   * Try to limit the first line to a 79-character summary
   * If a ticket was fixed in this commit, include a message like "Fixed ticket #32" (example in r77)
 
-Ticket messages
----------------
+Release Actions
+===============
 
-  * When closing a ticket, write the reason for closing it
-    * If it was closed because it has been fixed, include the revision number that fixed it (example in #2)
+Describes the actions to make a source release.
+
+Binary releases are created from source releases. Scripts in our other
+repositories (win and deb) are used for those purposes.
+
+Feature freeze
+--------------
+
+When all features for a version has been implemented in main we move the
+development over to stable. Features for the next version can continue to be
+developed in main.
+
+  1. Move main repo to stable repo
+     1. `cd stable`
+     2. `hg pull ../main`
+     3. `hg push`
+  2. Notify developers of repo change
+  3. Change versions numbers in main to denote the next version
+     1. `README`, manpage, `version.py`
+
+Stabilize stable
+----------------
+
+  1. Import translations from Launchpad
+  2. Check that README, CHANGES, and INSTALL are up to date
+  3. Run `python tools/release.py check` to find possible errors
+
+Last changes
+------------
+
+  1. Update version.py so that DEV=False and commit
+  2. Run `python tools/release.py` (look out for warning messages at the end)
+  3. Try running the unzipped release to make a basic check that it works
+  4. Tag with x.y.z
+
+If there will be a bugfix release, the first change after the tag-commit should
+be one were the version number is changed so that z is increased and DEV=True.
+
+After
+-----
+
+  * Create a downloadable release on SF
+  * Create binary packages
+  * Write news on SF and Freshmeat
+  * Close the milestone in Trac
+  * Add the new version in Trac 
+
+<!-- vim: set syntax=mkd: -->

@@ -26,11 +26,11 @@ env = Environment()
 env.Help("""
 Targets:
 
-  mo     - compiled translations
-  pot    - translation template
-  tags   - tags file for Vim
-  devdoc - html versions of developer documentation
-  api    - source code API documentation
+  mo      - compiled translations
+  pot     - translation template
+  tags    - tags file for the Vim text editor
+  hacking - html version of HACKING
+  api     - source code API documentation
 """)
 
 # Find paths to programs and print warning messages if not found
@@ -94,16 +94,11 @@ tags = env.Command("timelinelib/tags", sources,
                    "$CTAGS --tag-relative=yes -f $TARGET $SOURCES")
 env.Alias("tags", tags)
 
-# Target: devdoc
+# Target: hacking
 
-def devdoc_convert(target, source, env):
+def markdown_convert(target, source, env):
     html_body = markdown.markdown(codecs.open(source[0].abspath, "r", "utf-8").read())
-    # replace txt links with html links for local pages
-    html_body = re.sub(r'(<a href="(html){0}.*?\.)txt(".*?</a>)', r"\1html\3", html_body)
     title = str(target[0])
-    title_match = re.search(r"<h1>(.*?)</h1>", html_body)
-    if title_match:
-        title = title_match.group(1)
     html_template = """
     <html>
     <head>
@@ -111,19 +106,14 @@ def devdoc_convert(target, source, env):
     </head>
     <body>
     %s
-    <hr>
-    <center>
-    <a href="index.html">Home</a>
-    </center>
     </body>
     </html>
     """
     html = html_template % (title, html_body)
     codecs.open(target[0].abspath, "w", "utf-8").write(html)
 
-for f in env.Glob("devdoc/*.txt"):
-    html = env.Command(f.abspath[:-3] + "html", f, devdoc_convert)
-    env.Alias("devdoc", html)
+html = env.Command("HACKING.html", "HACKING", markdown_convert)
+env.Alias("hacking", html)
 
 # Target: api
 
