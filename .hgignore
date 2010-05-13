@@ -7,5 +7,5 @@ timelinelib/tags
 *.swp
 *.mo
 HACKING.html
-devdoc/api
+api/
 icalendar/

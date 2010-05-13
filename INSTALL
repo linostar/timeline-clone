@@ -23,10 +23,12 @@ For translations (other than English) you also need the following:
   * gettext version 0.17
       http://www.gnu.org/software/gettext/
 
-For running tests you also need the following:
+Extra development tools:
 
-  * Mock version 0.6.0
+  * Mock version 0.6.0 (for running tests)
       http://www.voidspace.org.uk/python/mock/
+  * Epydoc (for generating API documentation)
+      http://epydoc.sourceforge.net/
 
 Installing prerequisites on a Debian-based system
 -------------------------------------------------

@@ -19,6 +19,8 @@
 SCons configuration file.
 """
 
+import os
+
 env = Environment()
 
 # Help
@@ -32,6 +34,11 @@ Targets:
   hacking - html version of HACKING
   api     - source code API documentation
 """)
+
+# Import environment variables
+
+for env_var in ["PYTHONPATH"]:
+    env["ENV"][env_var] = os.environ[env_var]
 
 # Find paths to programs and print warning messages if not found
 
@@ -118,9 +125,9 @@ env.Alias("hacking", html)
 # Target: api
 
 env["EPYDOCFLAGS"] = "--name Timeline --no-private --no-sourcecode"
-api = env.Command("devdoc/api/index.html", sources,
+api = env.Command("api/index.html", sources,
                   "$EPYDOC $EPYDOCFLAGS -o $TARGET.dir $SOURCES")
-env.Clean(api, "devdoc/api") # remove the whole directory
+env.Clean(api, "api") # remove the whole directory
 env.Alias("api", api)
 
 # vim: syntax=python
