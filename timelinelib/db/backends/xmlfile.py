@@ -118,47 +118,52 @@ class XmlTimeline(MemoryDB):
         if match:
             (x, y, z) = (int(match.group(1)), int(match.group(2)),
                          int(match.group(3)))
-            v = tmp_dict["version"] = (x, y, z)
+            tmp_dict["version"] = (x, y, z)
+            self._create_rest_of_schema(tmp_dict)
         else:
             raise ParseException("Could not parse version number from '%s'."
                                  % text)
-        # Create the rest of the parse schema depending on version number
-        if v == (0, 10, 0):
-            tmp_dict["partial_schema"].add_child_tags([
-                Tag("categories", SINGLE, None, [
-                    Tag("category", ANY, self._parse_category, [
-                        Tag("name", SINGLE, parse_fn_store("tmp_name")),
-                        Tag("color", SINGLE, parse_fn_store("tmp_color")),
-                        Tag("parent", OPTIONAL, parse_fn_store("tmp_parent")),
-                    ])
+
+    def _create_rest_of_schema(self, tmp_dict):
+        """
+        Ensure all versions of the xml format can be parsed with this schema.
+        
+        tmp_dict["version"] can be used to create different schemas depending
+        on the version.
+        """
+        tmp_dict["partial_schema"].add_child_tags([
+            Tag("categories", SINGLE, None, [
+                Tag("category", ANY, self._parse_category, [
+                    Tag("name", SINGLE, parse_fn_store("tmp_name")),
+                    Tag("color", SINGLE, parse_fn_store("tmp_color")),
+                    Tag("parent", OPTIONAL, parse_fn_store("tmp_parent")),
+                ])
+            ]),
+            Tag("events", SINGLE, None, [
+                Tag("event", ANY, self._parse_event, [
+                    Tag("start", SINGLE, parse_fn_store("tmp_start")),
+                    Tag("end", SINGLE, parse_fn_store("tmp_end")),
+                    Tag("text", SINGLE, parse_fn_store("tmp_text")),
+                    Tag("category", OPTIONAL,
+                        parse_fn_store("tmp_category")),
+                    Tag("description", OPTIONAL,
+                        parse_fn_store("tmp_description")),
+                    Tag("icon", OPTIONAL,
+                        parse_fn_store("tmp_icon")),
+                ])
+            ]),
+            Tag("view", SINGLE, None, [
+                Tag("displayed_period", OPTIONAL,
+                    self._parse_displayed_period, [
+                    Tag("start", SINGLE, parse_fn_store("tmp_start")),
+                    Tag("end", SINGLE, parse_fn_store("tmp_end")),
                 ]),
-                Tag("events", SINGLE, None, [
-                    Tag("event", ANY, self._parse_event, [
-                        Tag("start", SINGLE, parse_fn_store("tmp_start")),
-                        Tag("end", SINGLE, parse_fn_store("tmp_end")),
-                        Tag("text", SINGLE, parse_fn_store("tmp_text")),
-                        Tag("category", OPTIONAL,
-                            parse_fn_store("tmp_category")),
-                        Tag("description", OPTIONAL,
-                            parse_fn_store("tmp_description")),
-                        Tag("icon", OPTIONAL,
-                            parse_fn_store("tmp_icon")),
-                    ])
+                Tag("hidden_categories", OPTIONAL,
+                    self._parse_hidden_categories, [
+                    Tag("name", ANY, self._parse_hidden_category),
                 ]),
-                Tag("view", SINGLE, None, [
-                    Tag("displayed_period", OPTIONAL,
-                        self._parse_displayed_period, [
-                        Tag("start", SINGLE, parse_fn_store("tmp_start")),
-                        Tag("end", SINGLE, parse_fn_store("tmp_end")),
-                    ]),
-                    Tag("hidden_categories", OPTIONAL,
-                        self._parse_hidden_categories, [
-                        Tag("name", ANY, self._parse_hidden_category),
-                    ]),
-                ]),
-            ])
-        else:
-            raise ParseException("Unknown version '%s,%s,%s'." % v)
+            ]),
+        ])
 
     def _parse_category(self, text, tmp_dict):
         name = tmp_dict.pop("tmp_name")
