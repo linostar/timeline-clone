@@ -25,9 +25,14 @@ import shutil
 import os.path
 import glob
 import tempfile
+import sys
+
+if len(sys.argv) != 2:
+    print("Usage: python importpo.py path-to-launchpad-export.tar.gz")
+    raise SystemExit()
 
 # extract from
-archive_path = "/home/rick/download/launchpad-export.tar.gz"
+archive_path = sys.argv[1]
 print archive_path
 
 # extract to
