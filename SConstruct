@@ -72,7 +72,7 @@ for root, dirs, files in os.walk("timelinelib"):
 
 # Target: mo
 
-languages = ["sv", "es", "de", "pt_BR", "pt", "ru", "ca", "he"]
+languages = ["sv", "es", "de", "pt_BR", "pt", "ru", "ca", "he", "fr", "pl"]
 for language in languages:
     target = "po/%s/LC_MESSAGES/timeline.mo" % language
     env.Alias("mo", env.Command(target, "po/%s.po" % language,
