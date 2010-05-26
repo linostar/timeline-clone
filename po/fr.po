@@ -1,16 +1,16 @@
-# Portuguese translation for thetimelineproj
-# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# French translation for thetimelineproj
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the thetimelineproj package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-05-16 07:46+0200\n"
-"PO-Revision-Date: 2009-10-05 14:24+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Portuguese <pt@li.org>\n"
+"PO-Revision-Date: 2010-05-06 12:34+0000\n"
+"Last-Translator: François Tissandier <francois.tissandier@gmail.com>\n"
+"Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: timelinelib/help_pages.py:36
 msgid "Help contents"
-msgstr ""
+msgstr "Sommaire de l'aide"
 
 #: timelinelib/help_pages.py:56
 msgid "Questions and answers"
-msgstr ""
+msgstr "Questions et réponses"
 
 #: timelinelib/help_pages.py:56
 msgid "Concepts"
@@ -31,12 +31,12 @@ msgstr ""
 
 #: timelinelib/help_pages.py:56
 msgid "Tasks"
-msgstr ""
+msgstr "Tâches"
 
 #: timelinelib/help_pages.py:60 timelinelib/gui/dialogs/mainframe.py:312
 #: timelinelib/gui/dialogs/mainframe.py:857
 msgid "Getting started tutorial"
-msgstr ""
+msgstr "Guide de démarrage"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -104,7 +104,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:103
 msgid "Where is the save button?"
-msgstr ""
+msgstr "Où est le bouton d'enregistrement"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -117,10 +117,14 @@ msgid ""
 "There is no save button. Timeline will automatically save your data whenever "
 "needed.\n"
 msgstr ""
+"\n"
+"Il n'y a pas de bouton d'enregistrement. Timeline sauvera automatiquement "
+"vos données quand il faudra.\n"
 
 #: timelinelib/help_pages.py:116
 msgid "Where do the week numbers go if I start my weeks on Sunday?"
 msgstr ""
+"Où vont les numéros de semaine si je fais démarrer mes semaines le Dimanche ?"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -137,7 +141,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:129
 msgid "Timeline"
-msgstr ""
+msgstr "Timeline"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -157,7 +161,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:144
 msgid "Events"
-msgstr ""
+msgstr "Événements"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -175,7 +179,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:157
 msgid "Categories"
-msgstr ""
+msgstr "Catégories"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -192,7 +196,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:170
 msgid "Create event"
-msgstr ""
+msgstr "Créer un événement"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -212,7 +216,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:187
 msgid "Edit event"
-msgstr ""
+msgstr "Modifier un événement"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -247,7 +251,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:216
 msgid "Delete event"
-msgstr ""
+msgstr "Supprimer un événement"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -260,10 +264,15 @@ msgid ""
 "To delete an event, select it and press the *Del* key. Multiple events can "
 "be deleted at the same time.\n"
 msgstr ""
+"\n"
+"Pour supprimer un événement, sélectionnez le et appuyez sur la touche "
+"*Suppr*. Vous pouvez supprimer plusieurs événements en même temps.\n"
 
 #: timelinelib/help_pages.py:229
 msgid "Will associated events be deleted when I delete a category?"
 msgstr ""
+"Les événements associés seront-ils supprimés quand je supprime une catégorie "
+"?"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -275,11 +284,14 @@ msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
 msgstr ""
+"\n"
+"Non. Les événements sont conservés mais ils n'appartiendront plus à une "
+"catégorie.\n"
 
 #: timelinelib/help_pages.py:241 timelinelib/gui/dialogs/mainframe.py:241
 #: timelinelib/gui/dialogs/eventeditor.py:305
 msgid "Edit categories"
-msgstr ""
+msgstr "Editer les catégories"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -299,7 +311,7 @@ msgstr ""
 #: timelinelib/help_pages.py:256 timelinelib/gui/dialogs/mainframe.py:314
 #: timelinelib/gui/dialogs/mainframe.py:933
 msgid "Contact"
-msgstr ""
+msgstr "Nous contacter"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -316,7 +328,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:268
 msgid "Why is Timeline not available in my language?"
-msgstr ""
+msgstr "Pourquoi Timeline n'est-il pas disponible dans ma langue ?"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -333,11 +345,11 @@ msgstr ""
 #: timelinelib/help.py:64
 #, python-format
 msgid "Search results for '%s'"
-msgstr ""
+msgstr "Résultats de la recherche sur « %s »"
 
 #: timelinelib/help.py:122
 msgid "Related pages"
-msgstr ""
+msgstr "Pages en relation"
 
 #: timelinelib/db/objects.py:202
 msgid "Start time can't be after year 9989"
@@ -431,7 +443,7 @@ msgstr ""
 #: timelinelib/drawing/drawers/default.py:138
 #: timelinelib/gui/dialogs/duplicateevent.py:95
 msgid "Week"
-msgstr ""
+msgstr "Semaine"
 
 #: timelinelib/gui/utils.py:171
 #, python-format

@@ -36,6 +36,7 @@ import re
 from subprocess import call
 from datetime import datetime
 import time
+import codecs
 
 # The root of the source archive corresponds to the parent directory of the
 # directory in which this file is
@@ -57,13 +58,13 @@ AUTHORS = os.path.join(ROOT_DIR, "AUTHORS")
 
 
 def text_in_file(file, text):
-    f = open(file)
+    f = codecs.open(file, "r", "utf-8")
     contents = f.read()
     f.close()
     return text in contents
 
 def read_first_line(file):
-    f = open(file)
+    f = codecs.open(file, "r", "utf-8")
     first_line = f.readline()
     f.close()
     return first_line
@@ -80,8 +81,8 @@ def get_all_authors():
     def extract_author(text):
         first_left_paren_pos = text.find("(")
         if first_left_paren_pos == -1:
-            return text
-        return text[0:first_left_paren_pos-1]
+            return text.strip()
+        return text[0:first_left_paren_pos-1].strip()
     source = about.DEVELOPERS + about.TRANSLATORS + about.ARTISTS
     return [extract_author(x) for x in source if is_author(x)]
 

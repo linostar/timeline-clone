@@ -35,22 +35,43 @@ APPLICATION_NAME = "Timeline"
 COPYRIGHT_TEXT = "Copyright (C) 2009, 2010 The %s Authors" % APPLICATION_NAME
 APPLICATION_DESCRIPTION = "Timeline is a free, cross-platform application for displaying and navigating events on a timeline."
 WEBSITE = "http://thetimelineproj.sourceforge.net/"
-DEVELOPERS = ["Developers:",
-              "Rickard Lindberg",
-              "Roger Lindberg",
-              "",
-              "Contributors:",
-              "Alan Jackson",
-              "Joe Gilmour"]
-TRANSLATORS = ["Roger Lindberg (Swedish)",
-               "Rickard Lindberg (Swedish)",
-               "Roman Gelbort (Spanish)",
-               "Nils Steinger (German)",
-               "MixCool (German)",
-               "Leo Frigo (Portuguese, Spanish, Brazilian Portuguese)",
-               "Sergey Sedov (Russian)",
-               "Yaron Shahrabani (Hebrew)",
-               "BennyBeat (Catalan)"]
+DEVELOPERS = [
+    u"Developers:",
+    u"    Rickard Lindberg",
+    u"    Roger Lindberg",
+    u"Contributors:",
+    u"    Alan Jackson",
+    u"    Joe Gilmour",
+]
+TRANSLATORS = [
+    u"Brazilian Portuguese:",
+    u"    Leo Frigo",
+    u"    Waldir Leôncio",
+    u"Catalan:",
+    u"    BennyBeat",
+    u"French:",
+    u"    Francois Tissandier",
+    u"German:",
+    u"    MixCool",
+    u"    Nils Steinger",
+    u"Hebrew:",
+    u"    Yaron Shahrabani",
+    u"Polish:",
+    u"    Andrzej Korcala 'Greybrow'",
+    u"Portuguese:",
+    u"    Leo Frigo",
+    u"Russian:",
+    u"    Andrew Yakush",
+    u"    Sergey Sedov",
+    u"Spanish:",
+    u"    Leandro Pavón Serrano",
+    u"    Leo Frigo",
+    u"    Roman Gelbort",
+    u"    Sebastián Ortega",
+    u"Swedish:",
+    u"    Rickard Lindberg",
+    u"    Roger Lindberg",
+]
 ARTISTS = ["Sara Lindberg",
            "Tango Desktop Project (Icons on Windows)"]
 LICENSE = """Timeline is free software: you can redistribute it and/or modify
