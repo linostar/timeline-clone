@@ -195,7 +195,7 @@ class EventEditor(wx.Dialog):
                 if self.chb_add_more.GetValue():
                     self.txt_text.SetValue("")
                     for data_id, editor in self.event_data:
-                        editor.clear_data(editor)
+                        editor.clear_data()
                 else:
                     self._close()
             except TxtException, ex:
