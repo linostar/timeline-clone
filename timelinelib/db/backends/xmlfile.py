@@ -267,17 +267,17 @@ class XmlTimeline(MemoryDB):
     _write_event = wrap_in_tag(_write_event, "event", INDENT2)
 
     def _write_view(self, file):
-        self._write_displayed_period(file)
+        if self._get_displayed_period() is not None:
+            self._write_displayed_period(file)
         self._write_hidden_categories(file)
     _write_view = wrap_in_tag(_write_view, "view", INDENT1)
 
     def _write_displayed_period(self, file):
         period = self._get_displayed_period()
-        if period is not None:
-            write_simple_tag(file, "start",
-                             time_string(period.start_time), INDENT3)
-            write_simple_tag(file, "end",
-                             time_string(period.end_time), INDENT3)
+        write_simple_tag(file, "start",
+                         time_string(period.start_time), INDENT3)
+        write_simple_tag(file, "end",
+                         time_string(period.end_time), INDENT3)
     _write_displayed_period = wrap_in_tag(_write_displayed_period,
                                           "displayed_period", INDENT2)
 
