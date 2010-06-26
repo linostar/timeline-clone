@@ -479,7 +479,7 @@ class MainFrame(wx.Frame):
         self.show_help_page("contents")
 
     def _mnu_help_tutorial_on_click(self, e):
-        self.show_help_page("tutorial")
+        self.open_timeline(":tutorial:")
 
     def _mnu_help_contact_on_click(self, e):
         self.show_help_page("contact")
@@ -871,7 +871,7 @@ class WelcomePanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_tutorial_on_click(self, e):
-        wx.GetTopLevelParent(self).show_help_page("tutorial")
+        wx.GetTopLevelParent(self).open_timeline(":tutorial:")
 
 
 class TimelinePanel(wx.Panel):

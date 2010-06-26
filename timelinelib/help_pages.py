@@ -35,8 +35,6 @@ def install(help_system):
         id="contents",
         header=_("Help contents"),
         body=("""
-- **Help(tutorial)**
-
 - **%s**
     - Help(where_is_save)
     - Help(categories_delete)
@@ -55,48 +53,6 @@ def install(help_system):
 - **Help(contact)**
 """ % (_("Questions and answers"), _("Concepts"), _("Tasks"))))
 
-    help_system.install_page(
-        id="tutorial",
-        header=_("Getting started tutorial"),
-        related_pages=["where_is_save", "timeline", "events", "categories"],
-        # TRANSLATORS: This text uses special markup.
-        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
-        # Just write them as they are.
-        # Stars produce emphasized text. DON'T remove them.
-        # Dashes produce bullet lists. DON'T remove them.
-        body=_("""
-The idea is to display events on a timeline and to be able to quickly change what period in time is shown. An event can be at a specific point in time or span over a period.
-
-HelpFigure(events)
-
-HelpFigure(zoom)
-
-To create a new timeline, select *New* from the *File* menu and enter a name of a file in the dialog box that opens. This is the name of the file in which information about your events will be stored. Next time you start Timeline you can choose to open the same file again. The titlebar always shows which timeline is currently opened.
-
-To add a new event at a specific point in time, double click somewhere on the timeline. This will open a dialog box in which you enter a text for the event. Click the *OK* button to save the event.  Now you will see an event above the horizontal line at the specific point in time that you double clicked on.
-
-To add an event that spans over a period, hold the *Ctrl* key down, click and drag the mouse to mark a period, and release the mouse button. Again the event dialog box will display and you enter a text for the event and click *OK*.  Now you will also see an event displayed under the horizontal line spanning over the period that you selected.
-
-Events at a specific point in time will always be displayed above the horizontal line. Events spanning over a period will be displayed below the horizontal line most of the time.  However, if the period is to small to fit within a few pixels on the screen, it will be displayed above the horizontal line (zooming in will make the event jump from above to below).
-
-To edit an event, double click on it and the event dialog box will appear.
-
-To select an event, just click on it. To select multiple events, hold down the *Ctrl* key while selecting events. To delete the selected events, press the *Delete* key.
-
-Try the mouse wheel and you will see the timeline scroll.
-
-Try pressing the left mouse button and drag and you will see the timeline scroll.
-
-Try the mouse wheel while holding the *Ctrl* key down and you will see the timeline zoom.
-
-Press the middle mouse button to centre the timeline on that spot.
-
-Other navigation options are available in the *Navigate* menu with their shortcut keys shown.
-
-The vertical red line indicates the current time.
-
-Hovering over an event will display the full description in the status bar.
-"""))
 
     help_system.install_page(
         id="where_is_save",
