@@ -41,11 +41,14 @@ def db_open(path):
 
     Valid values for path:
 
+      - special string ":tutorial:"
       - string with suffix .timeline
       - string with suffix .ics
       - string denoting a directory
     """
-    if os.path.isdir(path):
+    if path == ":tutorial:":
+        return create_in_memory_tutorial_db()
+    elif os.path.isdir(path):
         from timelinelib.db.backends.dir import DirTimeline
         return DirTimeline(path)
     elif path.endswith(".timeline"):
@@ -146,3 +149,8 @@ def copy_db(from_db, to_db):
     # Save
     if isinstance(to_db, MemoryDB):
         to_db.enable_save()
+
+
+def create_in_memory_tutorial_db():
+    db = MemoryDB()
+    return db
