@@ -81,6 +81,7 @@ def add_doctests(suite):
         module_suite = doctest.DocTestSuite(module)
         suite.addTest(module_suite)
     add_tests_from_module("timelinelib.db.backends.xmlparser")
+    add_tests_from_module("timelinelib.utils")
 
 def get_verbosity_level():
     verbosity = 2
