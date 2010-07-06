@@ -188,15 +188,19 @@ class Config(object):
     recently_opened = property(get_recently_opened)
 
     def append_recently_opened(self, path):
+        if path in [":tutorial:"]:
+            # Special timelines should not be saved
+            return
         if isinstance(path, str):
             # This path might have come from the command line so we need to convert
             # it to unicode
             path = path.decode(sys.getfilesystemencoding())
+        abs_path = os.path.abspath(path)
         current = self.recently_opened
         # Just keep one entry of the same path in the list
-        if path in current:
-            current.remove(path)
-        current.insert(0, path)
+        if abs_path in current:
+            current.remove(abs_path)
+        current.insert(0, abs_path)
         self.config_parser.set(DEFAULTSECT, RECENT_FILES,
               (",".join(current[:MAX_NBR_OF_RECENT_FILES_SAVED])).encode(ENCODING))
 

@@ -17,6 +17,7 @@
 
 
 import unittest
+from os.path import abspath
 
 from timelinelib.config import Config
 
@@ -52,7 +53,7 @@ class TestConfig(unittest.TestCase):
         config.sidebar_width = 20
         self.assertEquals(config.sidebar_width, 20)
         config.append_recently_opened(u"foo")
-        self.assertEquals(config.recently_opened, [u"foo"])
+        self.assertEquals(config.recently_opened, [abspath(u"foo")])
         config.open_recent_at_startup = False
         self.assertEquals(config.open_recent_at_startup, False)
         config.balloon_on_hover = False
@@ -63,12 +64,12 @@ class TestConfig(unittest.TestCase):
     def testRecentlyOpenedNotSameTwice(self):
         config = Config("")
         config.append_recently_opened(u"foo")
-        self.assertEquals(config.recently_opened, [u"foo"])
+        self.assertEquals(config.recently_opened, [abspath(u"foo")])
         config.append_recently_opened(u"bar")
-        self.assertEquals(config.recently_opened, [u"bar", u"foo"])
+        self.assertEquals(config.recently_opened, [abspath(u"bar"), abspath(u"foo")])
         config.append_recently_opened(u"foo")
         # foo should only exists once, but it should be the first
-        self.assertEquals(config.recently_opened, [u"foo", u"bar"])
+        self.assertEquals(config.recently_opened, [abspath(u"foo"), abspath(u"bar")])
 
     def testRecentlyOpenedLenght(self):
         config = Config("")
@@ -80,13 +81,18 @@ class TestConfig(unittest.TestCase):
         config.append_recently_opened(u"6")
         config.append_recently_opened(u"7")
         # Should contain maximum 5 paths
-        self.assertEquals(config.recently_opened, [u"7", u"6", u"5", u"4",
-                                                   u"3"])
+        res = [abspath(x) for x in [u"7", u"6", u"5", u"4", u"3"]]
+        self.assertEquals(config.recently_opened, res)
 
     def testRecentlyOpenedNonUnicodeConverted(self):
         config = Config("")
         config.append_recently_opened("non-unicode-path")
         self.assertTrue(isinstance(config.recently_opened[0], unicode))
+
+    def testRecentlyOpenedSpecialTimelines(self):
+        config = Config("")
+        config.append_recently_opened(":tutorial:")
+        self.assertEquals([], config.recently_opened)
 
     def testInvalidWeekStart(self):
         config = Config("")

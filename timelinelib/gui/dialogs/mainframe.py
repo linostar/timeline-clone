@@ -86,24 +86,10 @@ class MainFrame(wx.Frame):
         self._init_help_system()
         self.main_panel.show_welcome_panel()
         self.enable_disable_menus()
+        self.controller = MainFrameController(self, db_open, config.global_config)
 
     def open_timeline(self, input_file):
-        """Read timeline info from the given input file and display it."""
-        # Make sure that we have an absolute path
-        input_file_abs = os.path.abspath(input_file)
-        try:
-            timeline = db_open(input_file_abs)
-        except TimelineIOError, e:
-            self.handle_db_error(e)
-        else:
-            config.append_recently_opened(input_file_abs)
-            self._update_open_recent_submenu()
-            self._display_timeline(timeline)
-            if timeline.is_read_only():
-                self.GetStatusBar().SetStatusText(_("read-only"),
-                                                  STATUS_READ_ONLY)
-            else:
-                self.GetStatusBar().SetStatusText("", STATUS_READ_ONLY)
+        self.controller.open_timeline(input_file)
 
     def open_timeline_if_exists(self, path):
         if os.path.exists(path):
@@ -493,7 +479,7 @@ class MainFrame(wx.Frame):
         self.show_help_page("contents")
 
     def _mnu_help_tutorial_on_click(self, e):
-        self.show_help_page("tutorial")
+        self.open_timeline(":tutorial:")
 
     def _mnu_help_contact_on_click(self, e):
         self.show_help_page("contact")
@@ -534,6 +520,7 @@ class MainFrame(wx.Frame):
             self.main_panel.cattree.initialize_from_timeline_view(None)
             self.main_panel.searchbar.set_view(None)
         self.main_panel.drawing_area.set_timeline(self.timeline)
+        self.GetStatusBar().SetStatusText("", STATUS_READ_ONLY)
         if timeline == None:
             self.main_panel.show_welcome_panel()
             self.SetTitle(APPLICATION_NAME)
@@ -545,6 +532,8 @@ class MainFrame(wx.Frame):
                 os.path.basename(self.timeline.path),
                 os.path.dirname(os.path.abspath(self.timeline.path)),
                 APPLICATION_NAME))
+            if timeline.is_read_only():
+                self.GetStatusBar().SetStatusText(_("read-only"), STATUS_READ_ONLY)
 
     def _create_new_timeline(self):
         """
@@ -766,6 +755,25 @@ class MainFrame(wx.Frame):
         return self.main_panel.drawing_area.get_time_period()
 
 
+class MainFrameController(object):
+
+    def __init__(self, main_frame, db_open_fn, config):
+        self.main_frame = main_frame
+        self.db_open_fn = db_open_fn
+        self.config = config
+
+    def open_timeline(self, path):
+        """Read timeline info from the given input file and display it."""
+        try:
+            timeline = self.db_open_fn(path)
+        except TimelineIOError, e:
+            self.main_frame.handle_db_error(e)
+        else:
+            self.config.append_recently_opened(path)
+            self.main_frame._update_open_recent_submenu()
+            self.main_frame._display_timeline(timeline)
+
+
 class MainPanel(wx.Panel):
     """
     Panel that covers the whole client area of MainFrame.
@@ -863,7 +871,7 @@ class WelcomePanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_tutorial_on_click(self, e):
-        wx.GetTopLevelParent(self).show_help_page("tutorial")
+        wx.GetTopLevelParent(self).open_timeline(":tutorial:")
 
 
 class TimelinePanel(wx.Panel):
