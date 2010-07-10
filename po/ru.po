@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-05-16 07:46+0200\n"
-"PO-Revision-Date: 2010-05-22 13:38+0000\n"
+"PO-Revision-Date: 2010-05-29 13:55+0000\n"
 "Last-Translator: DronAn[BY] <andyak77@mail.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-25 18:32+0000\n"
+"X-Launchpad-Export-Date: 2010-07-10 08:28+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: timelinelib/help_pages.py:36
@@ -246,6 +246,13 @@ msgid ""
 "\n"
 "HelpFigure(selected_event)\n"
 msgstr ""
+"\n"
+"Для выбора события, кликните на него. Для выбора нескольких событий, нажмите "
+"и удерживайте нажатой клавишу *Ctrl* и кликайте на события.\n"
+"\n"
+"Выбранные события обозначаются другим фоном:\n"
+"\n"
+"HelpFigure(selected_event)\n"
 
 #: timelinelib/help_pages.py:216
 msgid "Delete event"
@@ -262,6 +269,9 @@ msgid ""
 "To delete an event, select it and press the *Del* key. Multiple events can "
 "be deleted at the same time.\n"
 msgstr ""
+"\n"
+"Для удаления события, выделите его и нажмите клавишу *Del* . Несколько "
+"событий могут быть удалены одновременно.\n"
 
 #: timelinelib/help_pages.py:229
 msgid "Will associated events be deleted when I delete a category?"
@@ -318,6 +328,10 @@ msgid ""
 "with users and developers of Timeline, send an email to the user mailing "
 "list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)\n"
 msgstr ""
+"\n"
+"Если имеются вопросы относительно Timeline, или если вы хотите  связаться с "
+"пользователями и разработчиками Timeline, отправьте письмо в рассылку: "
+"<thetimelineproj-user@lists.sourceforge.net>. (На английском.)\n"
 
 #: timelinelib/help_pages.py:268
 msgid "Why is Timeline not available in my language?"
@@ -459,7 +473,7 @@ msgstr "Вопрос"
 
 #: timelinelib/gui/components/search.py:70
 msgid "No match"
-msgstr ""
+msgstr "Совпадений не найдено"
 
 #: timelinelib/gui/components/search.py:74
 msgid "Only one match"
@@ -751,43 +765,43 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:268
 msgid "Go to &Today\tCtrl+T"
-msgstr ""
+msgstr "Перейти к Сегодняшнему дню\tCtrl+T"
 
 #: timelinelib/gui/dialogs/mainframe.py:269
 msgid "Go to D&ate...\tCtrl+G"
-msgstr ""
+msgstr "Перейти к Дате...\tCtrl+G"
 
 #: timelinelib/gui/dialogs/mainframe.py:271
 msgid "Backward\tPgUp"
-msgstr ""
+msgstr "Назад\tPgUp"
 
 #: timelinelib/gui/dialogs/mainframe.py:272
 msgid "Forward\tPgDn"
-msgstr ""
+msgstr "Вперёд\tPgDn"
 
 #: timelinelib/gui/dialogs/mainframe.py:273
 msgid "Forward One Wee&k\tCtrl+K"
-msgstr ""
+msgstr "Вперёд на одну Неделю\tCtrl+K"
 
 #: timelinelib/gui/dialogs/mainframe.py:274
 msgid "Back One &Week\tCtrl+W"
-msgstr ""
+msgstr "Назад на одну Неделю\tCtrl+W"
 
 #: timelinelib/gui/dialogs/mainframe.py:275
 msgid "Forward One Mont&h\tCtrl+h"
-msgstr ""
+msgstr "Вперёд на один Месяц\tCtrl+h"
 
 #: timelinelib/gui/dialogs/mainframe.py:276
 msgid "Back One &Month\tCtrl+M"
-msgstr ""
+msgstr "Назад на один Месяц\tCtrl+M"
 
 #: timelinelib/gui/dialogs/mainframe.py:277
 msgid "Forward One Yea&r\tCtrl+R"
-msgstr ""
+msgstr "Вперёд на один Год"
 
 #: timelinelib/gui/dialogs/mainframe.py:278
 msgid "Back One &Year\tCtrl+Y"
-msgstr ""
+msgstr "Назад на один Год\tCtrl+Y"
 
 #: timelinelib/gui/dialogs/mainframe.py:280
 msgid "Fit Century"
@@ -823,7 +837,7 @@ msgstr "Все события"
 
 #: timelinelib/gui/dialogs/mainframe.py:309
 msgid "&Contents\tF1"
-msgstr ""
+msgstr "Содержание\tF1"
 
 #: timelinelib/gui/dialogs/mainframe.py:321
 msgid "&File"
@@ -926,7 +940,7 @@ msgstr "Открыть последнюю использовавшуюся хр�
 
 #: timelinelib/gui/dialogs/preferences.py:53
 msgid "Date && Time"
-msgstr ""
+msgstr "Дата и время"
 
 #: timelinelib/gui/dialogs/preferences.py:56
 msgid "Week start on:"
@@ -950,7 +964,7 @@ msgstr "Когда:"
 
 #: timelinelib/gui/dialogs/eventeditor.py:82
 msgid "to"
-msgstr ""
+msgstr "к"
 
 #: timelinelib/gui/dialogs/eventeditor.py:106
 msgid "Text:"
