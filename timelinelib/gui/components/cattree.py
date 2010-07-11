@@ -19,6 +19,7 @@
 import wx
 import wx.lib.agw.customtreectrl as customtreectrl
 
+from timelinelib.utils import version_str_to_tuple
 import timelinelib.gui.utils as gui_utils
 from timelinelib.gui.utils import category_tree
 from timelinelib.gui.utils import ID_ERROR
@@ -43,12 +44,15 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
     """
 
     def __init__(self, parent, fn_handle_db_error):
-        style = (wx.BORDER_SUNKEN |
-                 customtreectrl.TR_HIDE_ROOT |
-                 customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT |
-                 customtreectrl.TR_LINES_AT_ROOT |
-                 customtreectrl.TR_HAS_BUTTONS)
-        customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style)
+        style = wx.BORDER_SUNKEN
+        agwStyle = (customtreectrl.TR_HIDE_ROOT |
+                    customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT |
+                    customtreectrl.TR_LINES_AT_ROOT |
+                    customtreectrl.TR_HAS_BUTTONS)
+        if version_str_to_tuple(wx.__version__) < (2, 8, 11, 0):
+            customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style|agwStyle)
+        else:
+            customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style, agwStyle=agwStyle)
         self._create_gui()
         self.controller = CategoriesTreeController(self, fn_handle_db_error)
 

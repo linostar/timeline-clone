@@ -1,3 +1,15 @@
+Timeline 0.10.2, released on 11 June 2010
+=========================================
+
+This is a translation update and bugfix release.
+
+Bug fixes:
+
+  * "Add more events after this one" does not give error message when ticked
+    in the create event dialog
+  * Do not write empty displayed_period tag to xml file
+  * Prevent application from crashing with wxPython version 2.8.11.0
+
 Timeline 0.10.1, released on 25 May 2010
 ========================================
 
