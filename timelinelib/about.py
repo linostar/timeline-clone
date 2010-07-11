@@ -46,6 +46,7 @@ DEVELOPERS = [
 TRANSLATORS = [
     u"Brazilian Portuguese:",
     u"    Leo Frigo",
+    u"    Marcelo Ribeiro de Almeida",
     u"    Waldir Leôncio",
     u"Catalan:",
     u"    BennyBeat",
