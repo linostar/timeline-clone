@@ -263,6 +263,7 @@ class MainFrame(wx.Frame):
         forward_one_year = self.mnu_navigate.Append(wx.ID_ANY, _("Forward One Yea&r\tCtrl+R"))
         backward_one_year = self.mnu_navigate.Append(wx.ID_ANY, _("Back One &Year\tCtrl+Y"))
         self.mnu_navigate.AppendSeparator()
+        fit_millennium = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Millennium"))
         fit_century = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Century"))
         fit_decade = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Decade"))
         fit_year = self.mnu_navigate.Append(wx.ID_ANY, _("Fit Year"))
@@ -282,6 +283,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_month_on_click, backward_one_month)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_year_on_click, forward_one_year)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_year_on_click, backward_one_year)
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_millennium_on_click, fit_millennium)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_century_on_click, fit_century)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_decade_on_click, fit_decade)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
@@ -425,6 +427,9 @@ class MainFrame(wx.Frame):
 
     def _mnu_navigate_fit_year_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_year())
+
+    def _mnu_navigate_fit_millennium_on_click(self, evt):
+        self._navigate_timeline(lambda tp: tp.fit_millennium())
 
     def _mnu_navigate_fit_century_on_click(self, evt):
         self._navigate_timeline(lambda tp: tp.fit_century())

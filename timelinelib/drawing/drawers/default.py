@@ -80,6 +80,22 @@ class Strip(object):
         strip.
         """
 
+class StripCentury(Strip):
+
+    def label(self, time, major=False):
+        if major:
+             # TODO: This only works for English. Possible to localize?
+            return str(self._century_start_year(time.year)) + " CE"
+        return ""
+
+    def start(self, time):
+        return datetime(max(self._century_start_year(time.year), 10), 1, 1)
+
+    def increment(self, time):
+        return time.replace(year=time.year+1000)
+
+    def _century_start_year(self, year):
+        return (int(year) / 1000) * 1000
 
 class StripDecade(Strip):
 
@@ -102,7 +118,9 @@ class StripDecade(Strip):
 class StripYear(Strip):
 
     def label(self, time, major=False):
-        return str(time.year)
+        if major:
+            return str(time.year)
+        return ""
 
     def start(self, time):
         return datetime(time.year, 1, 1)
@@ -437,10 +455,10 @@ class DefaultDrawingAlgorithm(Drawer):
             return (StripMonth(), StripDay())
         elif one_day_width > 1.5:
             return (StripYear(), StripMonth())
-        elif one_day_width > 0.12:
+        elif one_day_width > 0.01:
             return (StripDecade(), StripYear())
         else:
-            return (StripDecade(), StripDecade())
+            return (StripCentury(), StripDecade())
 
     def _draw_period_selection(self, period_selection):
         start, end = period_selection

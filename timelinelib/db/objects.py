@@ -251,12 +251,12 @@ class TimePeriod(object):
         return self.start_time + self.delta() / 2
 
     def zoom(self, times):
-        MAX_ZOOM_DELTA = timedelta(days=120*365)
+        MAX_ZOOM_DELTA = timedelta(days=1200*365)
         MIN_ZOOM_DELTA = timedelta(hours=1)
         delta = mult_timedelta(self.delta(), times / 10.0)
         new_delta = self.delta() - 2 * delta
         if new_delta > MAX_ZOOM_DELTA:
-            raise ValueError(_("Can't zoom wider than 120 years"))
+            raise ValueError(_("Can't zoom wider than 1000 years"))
         if new_delta < MIN_ZOOM_DELTA:
             raise ValueError(_("Can't zoom deeper than 1 hour"))
         self.update(self.start_time, self.end_time, delta, -delta)
@@ -292,6 +292,12 @@ class TimePeriod(object):
         elif end_overflow == 1:
             delta = TimePeriod.MAX_TIME - self.end_time
         self.move_delta(delta)
+
+    def fit_millennium(self):
+        mean = self.mean_time()
+        start = dt(int(mean.year/1000)*1000, 1, 1)
+        end = dt(int(mean.year/1000)*1000 + 1000, 1, 1)
+        self.update(start, end)
 
     def fit_century(self):
         mean = self.mean_time()
