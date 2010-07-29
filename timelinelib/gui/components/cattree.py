@@ -163,7 +163,7 @@ class CategoriesTreeController(object):
         if view is None:
             new_timeline = None
         else:
-            new_timeline = view.timeline
+            new_timeline = view.get_timeline()
         self._change_active_db(new_timeline)
         self.timeline_view = view
         self._update_category_tree()
@@ -185,7 +185,7 @@ class CategoriesTreeController(object):
         if self.timeline_view is None:
             raise Exception("Checking not allowed when there is no "
                             "timeline view.")
-        self.timeline_view.view_properties.set_category_visible(cat, checked)
+        self.timeline_view.get_view_properties().set_category_visible(cat, checked)
         self.timeline_view.redraw_timeline()
 
     def destroy(self):
@@ -214,7 +214,7 @@ class CategoriesTreeController(object):
         else:
             tree = category_tree(categories)
             if self.timeline_view:
-                vp = self.timeline_view.view_properties
+                vp = self.timeline_view.get_view_properties()
             else:
                 vp = None
             self.view.set_category_tree(tree, vp)

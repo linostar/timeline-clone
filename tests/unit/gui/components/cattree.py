@@ -41,8 +41,8 @@ class TestCategoiresTreeController(unittest.TestCase):
         self.view = Mock()
         # Setup mock for timeline view
         self.timeline_view = Mock()
-        self.timeline_view.timeline = self.db
-        self.timeline_view.view_properties = Mock()
+        self.timeline_view.get_timeline.return_value = self.db
+        self.timeline_view.get_view_properties.return_value = Mock()
         # Setup mock for error fn
         self.fn_handle_db_error = Mock()
 
@@ -66,7 +66,7 @@ class TestCategoiresTreeController(unittest.TestCase):
             (self.foo, [
                 (self.foofoo, []),
             ])
-        ], self.timeline_view.view_properties)
+        ], self.timeline_view.get_view_properties())
     
     def testInitFromNonTimelineView(self):
         controller = CategoriesTreeController(self.view,

@@ -120,7 +120,7 @@ class MainFrame(wx.Frame):
         if event is None:
             try:
                 drawing_area = self.main_panel.drawing_area 
-                id = drawing_area.view_properties.get_selected_event_ids()[0]
+                id = drawing_area.get_view_properties().get_selected_event_ids()[0]
                 event = self.timeline.find_event_with_id(id)
             except IndexError, e:
                 # No event selected so do nothing!
@@ -442,7 +442,7 @@ class MainFrame(wx.Frame):
         event = self.timeline.get_first_event()
         if event:
             start = event.time_period.start_time
-            delta = self.main_panel.drawing_area.view_properties.displayed_period.delta()
+            delta = self.main_panel.drawing_area.get_view_properties().displayed_period.delta()
             end   = start + delta 
             margin_delta = delta / 24
             self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
@@ -451,7 +451,7 @@ class MainFrame(wx.Frame):
         event = self.timeline.get_last_event()
         if event:
             end = event.time_period.end_time
-            delta = self.main_panel.drawing_area.view_properties.displayed_period.delta()
+            delta = self.main_panel.drawing_area.get_view_properties().displayed_period.delta()
             start = end - delta
             margin_delta = delta / 24
             self._navigate_timeline(lambda tp: tp.update(start, end, 
@@ -631,7 +631,7 @@ class MainFrame(wx.Frame):
         if not have_timeline:
             self.main_panel.show_searchbar(False)
         # One and only one event selected ?
-        one_event_selected = len(self.main_panel.drawing_area.view_properties.selected_event_ids) == 1
+        one_event_selected = len(self.main_panel.drawing_area.get_view_properties().selected_event_ids) == 1
         self.mnu_timeline_duplicate_event.Enable(one_event_selected)
         
     def _save_application_config(self):
@@ -659,7 +659,7 @@ class MainFrame(wx.Frame):
         """
         if self.timeline:
             try:
-                self.timeline.save_view_properties(self.main_panel.drawing_area.view_properties)
+                self.timeline.save_view_properties(self.main_panel.drawing_area.get_view_properties())
             except TimelineIOError, e:
                 self.handle_db_error(e)
 
@@ -672,7 +672,7 @@ class MainFrame(wx.Frame):
             overwrite_question = _("File '%s' exists. Overwrite?") % path
             if (not os.path.exists(path) or
                 _ask_question(overwrite_question, self) == wx.YES):
-                bitmap = self.main_panel.drawing_area.bgbuf
+                bitmap = self.main_panel.drawing_area.get_current_image()
                 image = wx.ImageFromBitmap(bitmap)
                 type = self.images_wildcard_helper.get_extension_data(path)
                 image.SaveFile(path, type)

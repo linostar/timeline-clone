@@ -72,11 +72,11 @@ class EventSizer(object):
         if not EventSizer._initialized:
             self.direction = wx.LEFT
             self.drawing_area = drawing_area
-            self.metrics = self.drawing_area.drawing_algorithm.metrics
+            self.metrics = self.drawing_area.get_drawer().metrics
             self.sizing = False
             self.event = None
             EventSizer._initialized = True
-        self.metrics = self.drawing_area.drawing_algorithm.metrics
+        self.metrics = self.drawing_area.get_drawer().metrics
 
     def sizing_starts(self, m_x, m_y):
         """
@@ -84,7 +84,7 @@ class EventSizer(object):
         Otherwise return False.
         """
         self.sizing = (self._hit(m_x, m_y) and 
-                       self.drawing_area.view_properties.is_selected(self.event))
+                       self.drawing_area.get_view_properties().is_selected(self.event))
         if self.sizing:
             self.x = m_x
             self.y = m_y
@@ -102,7 +102,7 @@ class EventSizer(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            is_selected = self.drawing_area.view_properties.is_selected(self.event)
+            is_selected = self.drawing_area.get_view_properties().is_selected(self.event)
             if not is_selected:
                 return False
             self.drawing_area._set_size_cursor()
@@ -117,7 +117,7 @@ class EventSizer(object):
         The 'hit-for-resize' area is the are at the left and right edges of the
         event rectangle with a width of HIT_REGION_PX_WITH.
         """
-        event_info = self.drawing_area.drawing_algorithm.event_with_rect_at(m_x, m_y)
+        event_info = self.drawing_area.get_drawer().event_with_rect_at(m_x, m_y)
         if event_info == None:
             return False
         self.event, rect = event_info
@@ -135,14 +135,14 @@ class EventSizer(object):
         The event edge is snapped to the grid.
         """
         time = self.metrics.get_time(m_x)
-        time = self.drawing_area.drawing_algorithm.snap(time)
+        time = self.drawing_area.get_drawer().snap(time)
         resized = False
         if self.direction == wx.LEFT:
             resized = self.event.update_start(time)
         else:
             resized = self.event.update_end(time)
         if resized:
-            self.drawing_area._redraw_timeline()
+            self.drawing_area.redraw_timeline()
 
 
 class EventMover(object):
@@ -161,7 +161,7 @@ class EventMover(object):
         """Initialize only the first time the class constructor is called."""
         if not EventMover._initialized:
             self.drawing_area = drawing_area
-            self.drawing_algorithm = self.drawing_area.drawing_algorithm
+            self.drawing_algorithm = self.drawing_area.get_drawer()
             self.moving = False
             self.event = None
             EventMover._initialized = True
@@ -172,7 +172,7 @@ class EventMover(object):
         Otherwise return False.
         """
         self.moving = (self._hit(m_x, m_y) and 
-                       self.drawing_area.view_properties.is_selected(self.event))
+                       self.drawing_area.get_view_properties().is_selected(self.event))
         if self.moving:
             self.x = m_x
             self.y = m_y
@@ -190,7 +190,7 @@ class EventMover(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            is_selected = self.drawing_area.view_properties.is_selected(self.event) 
+            is_selected = self.drawing_area.get_view_properties().is_selected(self.event) 
             if not is_selected:
                 return False
             self.drawing_area._set_move_cursor()
@@ -215,8 +215,8 @@ class EventMover(object):
             end = middletime + halfperiod
         else:
             width = start - end
-            startSnapped = self.drawing_area.drawing_algorithm.snap(start)
-            endSnapped = self.drawing_area.drawing_algorithm.snap(end)
+            startSnapped = self.drawing_area.get_drawer().snap(start)
+            endSnapped = self.drawing_area.get_drawer().snap(end)
             if startSnapped != start:
                 # Prefer to snap at left edge (in case end snapped as well)
                 start = startSnapped
@@ -226,7 +226,7 @@ class EventMover(object):
                 start = end + width
         # Update and redraw the event
         self.event.update_period(start, end)
-        self.drawing_area._redraw_timeline()
+        self.drawing_area.redraw_timeline()
         # Adjust the coordinates  to get a smooth movement of cursor and event.
         # We can't use event_with_rect_at() method to get hold of the rect since
         # events can jump over each other when moved.
@@ -243,7 +243,7 @@ class EventMover(object):
         The 'hit-for-move' area is the are at the center of an event
         with a width of 2 * HIT_REGION_PX_WITH.
         """
-        event_info = self.drawing_area.drawing_algorithm.event_with_rect_at(m_x, m_y)
+        event_info = self.drawing_area.get_drawer().event_with_rect_at(m_x, m_y)
         if event_info == None:
             return False
         self.event, rect = event_info
@@ -297,6 +297,18 @@ class DrawingArea(wx.Panel):
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
+
+    def get_drawer(self):
+        return self.drawing_algorithm
+
+    def get_timeline(self):
+        return self.timeline
+
+    def get_view_properties(self):
+        return self.view_properties
+
+    def get_current_image(self):
+        return self.bgbuf
 
     def print_timeline(self, event):
         pdd = wx.PrintDialogData(self.printData)
