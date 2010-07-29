@@ -105,9 +105,9 @@ class EventSizer(object):
             is_selected = self.drawing_area.get_view_properties().is_selected(self.event)
             if not is_selected:
                 return False
-            self.drawing_area._set_size_cursor()
+            self.drawing_area.set_size_cursor()
         else:
-            self.drawing_area._set_default_cursor()
+            self.drawing_area.set_default_cursor()
         return hit
 
     def _hit(self, m_x, m_y):
@@ -193,9 +193,9 @@ class EventMover(object):
             is_selected = self.drawing_area.get_view_properties().is_selected(self.event) 
             if not is_selected:
                 return False
-            self.drawing_area._set_move_cursor()
+            self.drawing_area.set_move_cursor()
         else:
-            self.drawing_area._set_default_cursor()
+            self.drawing_area.set_default_cursor()
         return hit
 
     def move(self, m_x):
@@ -486,10 +486,10 @@ class DrawingArea(wx.Panel):
                     else:
                         # This makes the sticky balloon unsticky
                         if self.view_properties.show_balloons_on_hover:
-                            self.redraw_balloons(eventWithBalloon)
+                            self._redraw_balloons(eventWithBalloon)
                         # This makes the balloon disapear
                         else:
-                            self.redraw_balloons(None)
+                            self._redraw_balloons(None)
                 else:        
                     posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
                                                               evt.m_controlDown)
@@ -592,7 +592,7 @@ class DrawingArea(wx.Panel):
             self._end_selection_and_zoom(evt.m_x)
         self.is_selecting = False
         self.is_scrolling = False
-        self._set_default_cursor()
+        self.set_default_cursor()
 
     def _window_on_enter(self, evt):
         """
@@ -708,7 +708,7 @@ class DrawingArea(wx.Panel):
     def _window_on_key_up(self, evt):
         keycode = evt.GetKeyCode()
         if keycode == wx.WXK_CONTROL:
-            self._set_default_cursor()
+            self.set_default_cursor()
 
     def _slider_on_slider(self, evt):
         """The divider-line slider has been moved."""
@@ -780,7 +780,7 @@ class DrawingArea(wx.Panel):
         """Define the look and feel of the drawing area."""
         self.SetBackgroundColour(wx.WHITE)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self._set_default_cursor()
+        self.set_default_cursor()
         self.Disable()
 
     def _redraw_timeline(self, period_selection=None):
@@ -932,7 +932,7 @@ class DrawingArea(wx.Panel):
         for the current event.
         """
         self.timer1_running = False
-        self.redraw_balloons(self.current_event)
+        self._redraw_balloons(self.current_event)
 
     def _on_balloon_timer2(self, event):
         """
@@ -950,9 +950,9 @@ class DrawingArea(wx.Panel):
         # If the visible balloon doesn't belong to the event pointed to
         # we remove the ballloon.
         if hevt != cevt and hevt != bevt: 
-            self.redraw_balloons(None)
+            self._redraw_balloons(None)
     
-    def redraw_balloons(self, event):
+    def _redraw_balloons(self, event):
         self.view_properties.hovered_event = event
         self._redraw_timeline()
         
@@ -1055,13 +1055,13 @@ class DrawingArea(wx.Panel):
     def _set_drag_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
-    def _set_size_cursor(self):
+    def set_size_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_SIZEWE))
 
-    def _set_move_cursor(self):
+    def set_move_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_SIZING))
 
-    def _set_default_cursor(self):
+    def set_default_cursor(self):
         """
         Set the cursor to it's default shape when it is in the timeline
         drawing area.
