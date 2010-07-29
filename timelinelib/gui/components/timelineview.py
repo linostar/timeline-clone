@@ -252,7 +252,63 @@ class EventMover(object):
             return True
         return False
 
+
 class DrawingArea(wx.Panel):
+
+    def __init__(self, parent, divider_line_slider, fn_handle_db_error):
+        wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
+        self.controller = DrawingAreaController(self, divider_line_slider, fn_handle_db_error)
+
+    def get_drawer(self):
+        return self.controller.get_drawer()
+
+    def get_timeline(self):
+        return self.controller.get_timeline()
+
+    def get_view_properties(self):
+        return self.controller.get_view_properties()
+
+    def get_current_image(self):
+        return self.controller.get_current_image()
+
+    def print_timeline(self, event):
+        self.controller.print_timeline(event)
+
+    def print_preview(self, event):
+        self.controller.print_preview(event)
+
+    def print_setup(self, event):
+        self.controller.print_setup(event)
+
+    def set_timeline(self, timeline):
+        self.controller.set_timeline(timeline)
+
+    def show_hide_legend(self, show):
+        self.controller.show_hide_legend(show)
+
+    def get_time_period(self):
+        return self.controller.get_time_period()
+
+    def navigate_timeline(self, navigation_fn):
+        self.controller.navigate_timeline(navigation_fn)
+
+    def redraw_timeline(self):
+        self.controller.redraw_timeline()
+
+    def set_size_cursor(self):
+        self.controller.set_size_cursor()
+
+    def set_move_cursor(self):
+        self.controller.set_move_cursor()
+
+    def set_default_cursor(self):
+        self.controller.set_default_cursor()
+
+    def balloon_visibility_changed(self, visible):
+        self.controller.balloon_visibility_changed(visible)
+
+
+class DrawingAreaController(object):
     """
     The right part in TimelinePanel: a window on which the timeline is drawn.
 
@@ -286,8 +342,8 @@ class DrawingArea(wx.Panel):
     When the mouse button is released the selection ends.
     """
 
-    def __init__(self, parent, divider_line_slider, fn_handle_db_error):
-        wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
+    def __init__(self, view, divider_line_slider, fn_handle_db_error):
+        self.view = view
         self.divider_line_slider = divider_line_slider
         self.fn_handle_db_error = fn_handle_db_error
         self._create_gui()
@@ -314,7 +370,7 @@ class DrawingArea(wx.Panel):
         pdd = wx.PrintDialogData(self.printData)
         pdd.SetToPage(1)
         printer = wx.Printer(pdd)
-        printout = printing.TimelinePrintout(self, False)
+        printout = printing.TimelinePrintout(self.view, False)
         frame = wx.GetApp().GetTopWindow()
         if not printer.Print(frame, printout, True):
             if printer.GetLastError() == wx.PRINTER_ERROR:
@@ -325,8 +381,8 @@ class DrawingArea(wx.Panel):
 
     def print_preview(self, event):
         data = wx.PrintDialogData(self.printData)
-        printout_preview  = printing.TimelinePrintout(self, True)
-        printout = printing.TimelinePrintout(self, False)
+        printout_preview  = printing.TimelinePrintout(self.view, True)
+        printout = printing.TimelinePrintout(self.view, False)
         self.preview = wx.PrintPreview(printout_preview, printout, data)
         if not self.preview.Ok():
             return
@@ -340,7 +396,7 @@ class DrawingArea(wx.Panel):
     def print_setup(self, event):
         psdd = wx.PageSetupDialogData(self.printData)
         psdd.CalculatePaperSizeFromId()
-        dlg = wx.PageSetupDialog(self, psdd)
+        dlg = wx.PageSetupDialog(self.view, psdd)
         dlg.ShowModal()
         # this makes a copy of the wx.PrintData instead of just saving
         # a reference to the one inside the PrintDialogData that will
@@ -365,10 +421,10 @@ class DrawingArea(wx.Panel):
                 self.fn_handle_db_error(e)
                 return
             self._redraw_timeline()
-            self.Enable()
-            self.SetFocus()
+            self.view.Enable()
+            self.view.SetFocus()
         else:
-            self.Disable()
+            self.view.Disable()
 
     def show_hide_legend(self, show):
         self.view_properties.show_legend = show
@@ -400,27 +456,27 @@ class DrawingArea(wx.Panel):
         try:
             navigation_fn(self.view_properties.displayed_period)
             self._redraw_timeline()
-            wx.GetTopLevelParent(self).SetStatusText("")
+            wx.GetTopLevelParent(self.view).SetStatusText("")
         except (ValueError, OverflowError), e:
-            wx.GetTopLevelParent(self).SetStatusText(ex_msg(e))
+            wx.GetTopLevelParent(self.view).SetStatusText(ex_msg(e))
 
     def redraw_timeline(self):
         self._redraw_timeline()
 
     def _create_gui(self):
-        self.Bind(wx.EVT_SIZE, self._window_on_size)
-        self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
-        self.Bind(wx.EVT_PAINT, self._window_on_paint)
-        self.Bind(wx.EVT_LEFT_DOWN, self._window_on_left_down)
-        self.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
-        self.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
-        self.Bind(wx.EVT_MIDDLE_UP, self._window_on_middle_up)
-        self.Bind(wx.EVT_LEFT_UP, self._window_on_left_up)
-        self.Bind(wx.EVT_ENTER_WINDOW, self._window_on_enter)
-        self.Bind(wx.EVT_MOTION, self._window_on_motion)
-        self.Bind(wx.EVT_MOUSEWHEEL, self._window_on_mousewheel)
-        self.Bind(wx.EVT_KEY_DOWN, self._window_on_key_down)
-        self.Bind(wx.EVT_KEY_UP, self._window_on_key_up)
+        self.view.Bind(wx.EVT_SIZE, self._window_on_size)
+        self.view.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
+        self.view.Bind(wx.EVT_PAINT, self._window_on_paint)
+        self.view.Bind(wx.EVT_LEFT_DOWN, self._window_on_left_down)
+        self.view.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
+        self.view.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
+        self.view.Bind(wx.EVT_MIDDLE_UP, self._window_on_middle_up)
+        self.view.Bind(wx.EVT_LEFT_UP, self._window_on_left_up)
+        self.view.Bind(wx.EVT_ENTER_WINDOW, self._window_on_enter)
+        self.view.Bind(wx.EVT_MOTION, self._window_on_motion)
+        self.view.Bind(wx.EVT_MOUSEWHEEL, self._window_on_mousewheel)
+        self.view.Bind(wx.EVT_KEY_DOWN, self._window_on_key_down)
+        self.view.Bind(wx.EVT_KEY_UP, self._window_on_key_up)
         self.divider_line_slider.Bind(wx.EVT_SLIDER, self._slider_on_slider)
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU,
                                       self._slider_on_context_menu)
@@ -434,7 +490,7 @@ class DrawingArea(wx.Panel):
         Here we create a new background buffer with the new size and draw the
         timeline onto it.
         """
-        width, height = self.GetSizeTuple()
+        width, height = self.view.GetSizeTuple()
         self.bgbuf = wx.EmptyBitmap(width, height)
         self._redraw_timeline()
 
@@ -453,7 +509,7 @@ class DrawingArea(wx.Panel):
 
         Defining a dc is crucial. Even if it is not used.
         """
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = wx.AutoBufferedPaintDC(self.view)
         dc.BeginDrawing()
         dc.DrawBitmap(self.bgbuf, 0, 0, True)
         dc.EndDrawing()
@@ -470,10 +526,10 @@ class DrawingArea(wx.Panel):
         try:
             self._set_new_current_time(evt.m_x)
             # If we hit the event resize area of an event, start resizing
-            if EventSizer(self).sizing_starts(evt.m_x, evt.m_y):
+            if EventSizer(self.view).sizing_starts(evt.m_x, evt.m_y):
                 return
             # If we hit the event move area of an event, start moving
-            if EventMover(self).move_starts(evt.m_x, evt.m_y):
+            if EventMover(self.view).move_starts(evt.m_x, evt.m_y):
                 return
             # No resizing or moving of events...
             if not self.timeline.is_read_only():
@@ -522,17 +578,17 @@ class DrawingArea(wx.Panel):
         for menu_definition in menu_definitions:
             text, method = menu_definition
             menu_item = wx.MenuItem(menu, wx.NewId(), text)
-            self.Bind(wx.EVT_MENU, method, id=menu_item.GetId())
+            self.view.Bind(wx.EVT_MENU, method, id=menu_item.GetId())
             menu.AppendItem(menu_item)
-        self.PopupMenu(menu)
+        self.view.PopupMenu(menu)
         menu.Destroy()
         
     def _context_menu_on_edit_event(self, evt):
-        frame = wx.GetTopLevelParent(self)
+        frame = wx.GetTopLevelParent(self.view)
         frame.edit_event(self.context_menu_event)
 
     def _context_menu_on_duplicate_event(self, evt):
-        frame = wx.GetTopLevelParent(self)
+        frame = wx.GetTopLevelParent(self.view)
         frame.duplicate_event(self.context_menu_event)
         
     def _context_menu_on_delete_event(self, evt):
@@ -562,9 +618,9 @@ class DrawingArea(wx.Panel):
         self._toggle_event_selection(evt.m_x, evt.m_y, evt.m_controlDown)
         event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
         if event:
-            wx.GetTopLevelParent(self).edit_event(event)
+            wx.GetTopLevelParent(self.view).edit_event(event)
         else:
-            wx.GetTopLevelParent(self).create_new_event(self._current_time,
+            wx.GetTopLevelParent(self.view).create_new_event(self._current_time,
                                                         self._current_time)
 
     def _window_on_middle_up(self, evt):
@@ -637,15 +693,15 @@ class DrawingArea(wx.Panel):
         elif self.is_selecting:
             self._mark_selected_minor_strips(x)
         # Resizing is only allowed if timeline is not readonly    
-        elif EventSizer(self).is_sizing() and not self.timeline.is_read_only():
-            EventSizer(self).resize(x)
+        elif EventSizer(self.view).is_sizing() and not self.timeline.is_read_only():
+            EventSizer(self.view).resize(x)
             if self._in_scroll_zone(x):
                 if not self.dragscroll_timer_running:
                     self._start_dragscroll_timer(DRAG_SIZE)
 
         # Moving is only allowed if timeline is not readonly    
-        elif EventMover(self).is_moving() and not self.timeline.is_read_only():
-            EventMover(self).move(x)
+        elif EventMover(self.view).is_moving() and not self.timeline.is_read_only():
+            EventMover(self.view).move(x)
             if self._in_scroll_zone(x):
                 if not self.dragscroll_timer_running:
                     self._start_dragscroll_timer(DRAG_MOVE)
@@ -669,9 +725,9 @@ class DrawingArea(wx.Panel):
         """
         self._display_balloon_on_hover(x, y)
         self._display_eventinfo_in_statusbar(x, y)
-        cursor_set = EventSizer(self).set_cursor(x, y)
+        cursor_set = EventSizer(self.view).set_cursor(x, y)
         if not cursor_set:
-            EventMover(self).set_cursor(x, y)
+            EventMover(self.view).set_cursor(x, y)
                 
     def _window_on_mousewheel(self, evt):
         """
@@ -718,10 +774,10 @@ class DrawingArea(wx.Panel):
         """A right click has occured in the divider-line slider."""
         menu = wx.Menu()
         menu_item = wx.MenuItem(menu, wx.NewId(), _("Center"))
-        self.Bind(wx.EVT_MENU, self._context_menu_on_menu_center,
+        self.view.Bind(wx.EVT_MENU, self._context_menu_on_menu_center,
                   id=menu_item.GetId())
         menu.AppendItem(menu_item)
-        self.PopupMenu(menu)
+        self.view.PopupMenu(menu)
         menu.Destroy()
 
     def _context_menu_on_menu_center(self, evt):
@@ -778,10 +834,10 @@ class DrawingArea(wx.Panel):
         
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
-        self.SetBackgroundColour(wx.WHITE)
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self.view.SetBackgroundColour(wx.WHITE)
+        self.view.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.set_default_cursor()
-        self.Disable()
+        self.view.Disable()
 
     def _redraw_timeline(self, period_selection=None):
         """Draw the timeline onto the background buffer."""
@@ -804,17 +860,18 @@ class DrawingArea(wx.Panel):
                     self.fn_handle_db_error(e)
             memdc.EndDrawing()
             del memdc
-            frame = wx.GetTopLevelParent(self)
+            frame = wx.GetTopLevelParent(self.view)
             frame.enable_disable_menus()
-            self.Refresh()
-            self.Update()
+            self.view.Refresh()
+            self.view.Update()
         except Exception, ex:
             # It is a bug in the application if we end up here. Perhaps we
             # should not handle the exception at all? Setting an empty bitmap
             # at least prevents other errors in case we end up here.
-            width, height = self.GetSizeTuple()
+            width, height = self.view.GetSizeTuple()
             self.bgbuf = wx.EmptyBitmap(width, height)
-            _display_error_message("Error in drawing\n\n%s" % ex_msg(ex), self)
+            _display_error_message("Error in drawing\n\n%s" % ex_msg(ex),
+                    self.view)
 
     def _scroll(self, xpixelpos):
         if self._current_time:
@@ -854,7 +911,7 @@ class DrawingArea(wx.Panel):
     def _end_selection_and_create_event(self, current_x):
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
-        wx.GetTopLevelParent(self).create_new_event(start, end)
+        wx.GetTopLevelParent(self.view).create_new_event(start, end)
         self._redraw_timeline()
 
     def _end_selection_and_zoom(self, current_x):
@@ -908,8 +965,8 @@ class DrawingArea(wx.Panel):
                 # We have no balloon, so we start Timer-1
                 if self.view_properties.hovered_event != self.current_event:
                     #print "Timer-1 Started ", self.current_event
-                    self.timer1 = wx.Timer(self, -1)
-                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer1, 
+                    self.timer1 = wx.Timer(self.view, -1)
+                    self.view.Bind(wx.EVT_TIMER, self._on_balloon_timer1, 
                               self.timer1)
                     self.timer1.Start(milliseconds = 500, oneShot = True)
                     self.timer1_running = True
@@ -921,8 +978,8 @@ class DrawingArea(wx.Panel):
                 # Otherwise Timer-2 is started.
                 if self.balloon_event != self.view_properties.hovered_event:
                     #print "Timer-2 Started"
-                    self.timer2 = wx.Timer(self, -1)
-                    self.Bind(wx.EVT_TIMER, self._on_balloon_timer2, 
+                    self.timer2 = wx.Timer(self.view, -1)
+                    self.view.Bind(wx.EVT_TIMER, self._on_balloon_timer2, 
                               self.timer2)
                     self.timer2.Start(milliseconds = 100, oneShot = True)
                     
@@ -969,7 +1026,7 @@ class DrawingArea(wx.Panel):
         Return True if x is within the left hand or right hand area
         where timed scrolling shall start/continue.
         """
-        width, height = self.GetSizeTuple()
+        width, height = self.view.GetSizeTuple()
         if width - x < SCROLL_ZONE_WIDTH or x < SCROLL_ZONE_WIDTH:
             return True
         return False
@@ -990,17 +1047,17 @@ class DrawingArea(wx.Panel):
                 direction = -1
             self._scroll_timeline_view(direction)
             if (self.drag_object == DRAG_MOVE):
-                EventMover(self).move(self.mouse_x)
+                EventMover(self.view).move(self.mouse_x)
             elif (self.drag_object == DRAG_SIZE):
-                EventSizer(self).resize(self.mouse_x)
+                EventSizer(self.view).resize(self.mouse_x)
             elif (self.drag_object == DRAG_SELECT):
                 self._mark_selected_minor_strips(self.mouse_x)
 
     def _start_dragscroll_timer(self, drag_object):
         self.dragscroll_timer_running = True
         self.drag_object = drag_object
-        self.dragscroll_timer = wx.Timer(self, -1)
-        self.Bind(wx.EVT_TIMER, self._on_dragscroll, self.dragscroll_timer)
+        self.dragscroll_timer = wx.Timer(self.view, -1)
+        self.view.Bind(wx.EVT_TIMER, self._on_dragscroll, self.dragscroll_timer)
         self.dragscroll_timer.Start(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
 
     def _stop_dragscroll_timer(self):
@@ -1027,7 +1084,7 @@ class DrawingArea(wx.Panel):
                      nbr_of_selected_event_ids)
         else:
             text = _("Are you sure you want to delete this event?")
-        if _ask_question(text, self) == wx.YES:
+        if _ask_question(text, self.view) == wx.YES:
             try:
                 for event_id in selected_event_ids:
                     self.timeline.delete_event(event_id)
@@ -1044,29 +1101,29 @@ class DrawingArea(wx.Panel):
         return period_selection
 
     def _display_text_in_statusbar(self, text):
-        wx.GetTopLevelParent(self).SetStatusText(text)
+        wx.GetTopLevelParent(self.view).SetStatusText(text)
 
     def _reset_text_in_statusbar(self):
-        wx.GetTopLevelParent(self).SetStatusText("")
+        wx.GetTopLevelParent(self.view).SetStatusText("")
 
     def _set_select_period_cursor(self):
-        self.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
+        self.view.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
 
     def _set_drag_cursor(self):
-        self.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
+        self.view.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
     def set_size_cursor(self):
-        self.SetCursor(wx.StockCursor(wx.CURSOR_SIZEWE))
+        self.view.SetCursor(wx.StockCursor(wx.CURSOR_SIZEWE))
 
     def set_move_cursor(self):
-        self.SetCursor(wx.StockCursor(wx.CURSOR_SIZING))
+        self.view.SetCursor(wx.StockCursor(wx.CURSOR_SIZING))
 
     def set_default_cursor(self):
         """
         Set the cursor to it's default shape when it is in the timeline
         drawing area.
         """
-        self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
+        self.view.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
     def balloon_visibility_changed(self, visible):
         self.view_properties.show_balloons_on_hover = visible
