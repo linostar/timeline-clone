@@ -257,7 +257,7 @@ class DrawingArea(wx.Panel):
 
     def __init__(self, parent, divider_line_slider, fn_handle_db_error):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
-        self.controller = DrawingAreaController(self, divider_line_slider, fn_handle_db_error)
+        self.controller = DrawingAreaController(self, config.global_config, divider_line_slider, fn_handle_db_error)
         self.surface_bitmap = None
         self._create_gui()
 
@@ -436,7 +436,8 @@ class DrawingAreaController(object):
     When the mouse button is released the selection ends.
     """
 
-    def __init__(self, view, divider_line_slider, fn_handle_db_error):
+    def __init__(self, view, config, divider_line_slider, fn_handle_db_error):
+        self.config = config
         self.view = view
         self.divider_line_slider = divider_line_slider
         self.fn_handle_db_error = fn_handle_db_error
@@ -852,8 +853,8 @@ class DrawingAreaController(object):
         self.is_zooming = False
         self.timeline = None
         self.view_properties = ViewProperties()
-        self.view_properties.show_legend = config.get_show_legend()
-        self.view_properties.show_balloons_on_hover = config.get_balloon_on_hover()
+        self.view_properties.show_legend = self.config.get_show_legend()
+        self.view_properties.show_balloons_on_hover = self.config.get_balloon_on_hover()
         self.timer1_running = False
         self.timer2_running = False
         self.mouse_x = 0
