@@ -329,6 +329,15 @@ class DrawingArea(wx.Panel):
     def display_text_in_statusbar(self, text):
         wx.GetTopLevelParent(self).SetStatusText(text)
 
+    def edit_event(self, event):
+        wx.GetTopLevelParent(self).edit_event(event)
+
+    def duplicate_event(self, event):
+        wx.GetTopLevelParent(self).duplicate_event(event)
+
+    def create_new_event(self, start_time, end_time):
+        wx.GetTopLevelParent(self).create_new_event(start_time, end_time)
+
     def _create_gui(self):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._on_erase_background)
         self.Bind(wx.EVT_PAINT,            self._on_paint)
@@ -611,12 +620,10 @@ class DrawingAreaController(object):
         menu.Destroy()
 
     def _context_menu_on_edit_event(self, evt):
-        frame = wx.GetTopLevelParent(self.view)
-        frame.edit_event(self.context_menu_event)
+        self.view.edit_event(self.context_menu_event)
 
     def _context_menu_on_duplicate_event(self, evt):
-        frame = wx.GetTopLevelParent(self.view)
-        frame.duplicate_event(self.context_menu_event)
+        self.view.duplicate_event(self.context_menu_event)
         
     def _context_menu_on_delete_event(self, evt):
         self.context_menu_event.selected = True
@@ -645,10 +652,9 @@ class DrawingAreaController(object):
         self._toggle_event_selection(x, y, ctrl_down)
         event = self.drawing_algorithm.event_at(x, y)
         if event:
-            wx.GetTopLevelParent(self.view).edit_event(event)
+            self.view.edit_event(event)
         else:
-            wx.GetTopLevelParent(self.view).create_new_event(self._current_time,
-                                                        self._current_time)
+            self.view.create_new_event(self._current_time, self._current_time)
 
     def middle_mouse_clicked(self, x):
         """
@@ -912,7 +918,7 @@ class DrawingAreaController(object):
     def _end_selection_and_create_event(self, current_x):
         period_selection = self._get_period_selection(current_x)
         start, end = period_selection
-        wx.GetTopLevelParent(self.view).create_new_event(start, end)
+        self.view.create_new_event(start, end)
         self._redraw_timeline()
 
     def _end_selection_and_zoom(self, current_x):
