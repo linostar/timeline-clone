@@ -276,15 +276,6 @@ class DrawingArea(wx.Panel):
     def redraw_timeline(self):
         self.controller.redraw_timeline()
 
-    def set_size_cursor(self):
-        self.controller.set_size_cursor()
-
-    def set_move_cursor(self):
-        self.controller.set_move_cursor()
-
-    def set_default_cursor(self):
-        self.controller.set_default_cursor()
-
     def balloon_visibility_changed(self, visible):
         self.controller.balloon_visibility_changed(visible)
 
@@ -331,6 +322,21 @@ class DrawingArea(wx.Panel):
 
     def stop_dragscroll_timer(self):
         self.dragscroll_timer.Stop()
+
+    def set_select_period_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
+
+    def _set_drag_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
+
+    def set_size_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_SIZEWE))
+
+    def set_move_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_SIZING))
+
+    def set_default_cursor(self):
+        self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
     def _create_gui(self):
         self.balloon_timer1 = wx.Timer(self, -1)
@@ -600,7 +606,7 @@ class DrawingAreaController(object):
                     posAtEvent = self._toggle_event_selection(x, y,
                                                               ctrl_down)
                     if ctrl_down:
-                        self._set_select_period_cursor()
+                        self.view.set_select_period_cursor()
         except TimelineIOError, e:
             self.fn_handle_db_error(e)
 
@@ -694,7 +700,7 @@ class DrawingAreaController(object):
             self._end_selection_and_zoom(x)
         self.is_selecting = False
         self.is_scrolling = False
-        self.set_default_cursor()
+        self.view.set_default_cursor()
 
     def mouse_enter(self, x, left_is_down):
         """
@@ -807,7 +813,7 @@ class DrawingAreaController(object):
 
     def key_up(self, keycode):
         if keycode == wx.WXK_CONTROL:
-            self.set_default_cursor()
+            self.view.set_default_cursor()
 
     def _slider_on_slider(self, evt):
         self._redraw_timeline()
@@ -876,7 +882,7 @@ class DrawingAreaController(object):
         """Define the look and feel of the drawing area."""
         self.view.SetBackgroundColour(wx.WHITE)
         self.view.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.set_default_cursor()
+        self.view.set_default_cursor()
         self.view.Disable()
 
     def _redraw_timeline(self, period_selection=None):
@@ -1111,25 +1117,6 @@ class DrawingAreaController(object):
             start, end = end, start
         period_selection = self.drawing_algorithm.snap_selection((start,end))
         return period_selection
-
-    def _set_select_period_cursor(self):
-        self.view.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
-
-    def _set_drag_cursor(self):
-        self.view.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
-
-    def set_size_cursor(self):
-        self.view.SetCursor(wx.StockCursor(wx.CURSOR_SIZEWE))
-
-    def set_move_cursor(self):
-        self.view.SetCursor(wx.StockCursor(wx.CURSOR_SIZING))
-
-    def set_default_cursor(self):
-        """
-        Set the cursor to it's default shape when it is in the timeline
-        drawing area.
-        """
-        self.view.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
     def balloon_visibility_changed(self, visible):
         self.view_properties.show_balloons_on_hover = visible
