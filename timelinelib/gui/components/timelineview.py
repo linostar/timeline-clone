@@ -257,7 +257,7 @@ class DrawingArea(wx.Panel):
 
     def __init__(self, parent, divider_line_slider, fn_handle_db_error):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
-        self.controller = DrawingAreaController(self, config.global_config, divider_line_slider, fn_handle_db_error)
+        self.controller = DrawingAreaController(self, config.global_config, get_drawer(), divider_line_slider, fn_handle_db_error)
         self.surface_bitmap = None
         self._create_gui()
 
@@ -436,9 +436,10 @@ class DrawingAreaController(object):
     When the mouse button is released the selection ends.
     """
 
-    def __init__(self, view, config, divider_line_slider, fn_handle_db_error):
+    def __init__(self, view, config, drawing_algorithm, divider_line_slider, fn_handle_db_error):
         self.config = config
         self.view = view
+        self.drawing_algorithm = drawing_algorithm
         self.divider_line_slider = divider_line_slider
         self.fn_handle_db_error = fn_handle_db_error
         self._set_initial_values_to_member_variables()
@@ -847,7 +848,6 @@ class DrawingAreaController(object):
                             Indicates if the drag-scroll-timer is running.
         """
         self._current_time = None
-        self.drawing_algorithm = get_drawer()
         self.is_scrolling = False
         self.is_selecting = False
         self.is_zooming = False
