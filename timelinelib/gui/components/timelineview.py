@@ -21,6 +21,7 @@ from datetime import timedelta
 
 import wx
 
+from timelinelib.drawing.utils import Metrics
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_ANY
 from timelinelib.db.objects import time_period_center
@@ -72,11 +73,11 @@ class EventSizer(object):
         if not EventSizer._initialized:
             self.direction = wx.LEFT
             self.drawing_area = drawing_area
-            self.metrics = self.drawing_area.get_drawer().metrics
+            self.metrics = self.drawing_area.get_metrics()
             self.sizing = False
             self.event = None
             EventSizer._initialized = True
-        self.metrics = self.drawing_area.get_drawer().metrics
+        self.metrics = self.drawing_area.get_metrics()
 
     def sizing_starts(self, m_x, m_y):
         """
@@ -204,7 +205,7 @@ class EventMover(object):
         mouse has moved since the last move (m_x - self.x).
         Events found above the center line are snapped to the grid.
         """
-        difftime = self.drawing_algorithm.metrics.get_difftime(m_x, self.x)
+        difftime = self.drawing_area.get_metrics().get_difftime(m_x, self.x)
         # Snap events found above the center line
         start = self.event.time_period.start_time + difftime
         end = self.event.time_period.end_time + difftime
@@ -337,6 +338,9 @@ class DrawingArea(wx.Panel):
 
     def create_new_event(self, start_time, end_time):
         wx.GetTopLevelParent(self).create_new_event(start_time, end_time)
+
+    def get_metrics(self):
+        return self.controller.get_metrics()
 
     def _create_gui(self):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._on_erase_background)
@@ -878,17 +882,18 @@ class DrawingAreaController(object):
             self.view_properties.period_selection = period_selection
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
+            self.metrics = Metrics(self.view.GetSizeTuple(), self.view_properties.displayed_period, self.view_properties.divider_position)
             self.view.redraw_surface(fn_draw)
             self.view.enable_disable_menus()
 
     def _scroll(self, xpixelpos):
         if self._current_time:
-            delta = (self.drawing_algorithm.metrics.get_time(xpixelpos) -
+            delta = (self.get_metrics().get_time(xpixelpos) -
                         self._current_time)
             self._scroll_timeline(delta)
 
     def _set_new_current_time(self, current_x):
-        self._current_time = self.drawing_algorithm.metrics.get_time(current_x)
+        self._current_time = self.get_metrics().get_time(current_x)
 
     def _toggle_event_selection(self, xpixelpos, ypixelpos, control_down):
         """
@@ -1102,7 +1107,7 @@ class DrawingAreaController(object):
     def _get_period_selection(self, current_x):
         """Return a tuple containing the start and end time of a selection."""
         start = self._current_time
-        end   = self.drawing_algorithm.metrics.get_time(current_x)
+        end   = self.get_metrics().get_time(current_x)
         if start > end:
             start, end = end, start
         period_selection = self.drawing_algorithm.snap_selection((start,end))
@@ -1134,3 +1139,6 @@ class DrawingAreaController(object):
         # TODO: Do we really need that?
         if not visible:
             self._redraw_timeline()
+
+    def get_metrics(self):
+        return self.metrics

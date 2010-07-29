@@ -36,8 +36,8 @@ class Metrics(object):
     Convert between pixel coordinates and time coordinates.
     """
 
-    def __init__(self, dc, time_period, divider_line_slider):
-        self.width, self.height = dc.GetSizeTuple()
+    def __init__(self, size, time_period, divider_line_slider):
+        self.width, self.height = size
         self.half_width = self.width / 2
         self.half_height = self.height / 2
         self.half_height = int(round(divider_line_slider * self.height))

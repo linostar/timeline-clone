@@ -263,7 +263,7 @@ class DefaultDrawingAlgorithm(Drawer):
         # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = view_properties.displayed_period
-        self.metrics = Metrics(dc, self.time_period, view_properties.divider_position)
+        self.metrics = Metrics(dc.GetSizeTuple(), self.time_period, view_properties.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
