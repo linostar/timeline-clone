@@ -85,7 +85,7 @@ def add_doctests(suite):
     add_tests_from_module("timelinelib.utils")
 
 def get_verbosity_level():
-    verbosity = 2
+    verbosity = 1
     if len(sys.argv) == 2 and sys.argv[1] == "quiet":
         verbosity = 0
     return verbosity
