@@ -186,6 +186,18 @@ class TimePeriod(object):
         """
         self.update(start_time, end_time)
 
+    def __eq__(self, other):
+        if isinstance(other, TimePeriod):
+            return (self.start_time == other.start_time and
+                    self.end_time == other.end_time)
+        return False
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __repr__(self):
+        return "TimePeriod<%s, %s>" % (self.start_time, self.end_time)
+
     def update(self, start_time, end_time,
                start_delta=timedelta(0), end_delta=timedelta(0)):
         """
