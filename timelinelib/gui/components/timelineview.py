@@ -338,6 +338,9 @@ class DrawingArea(wx.Panel):
     def set_default_cursor(self):
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
+    def ask_question(self, question):
+        return _ask_question(question, self)
+
     def _create_gui(self):
         self.balloon_timer1 = wx.Timer(self, -1)
         self.balloon_timer2 = wx.Timer(self, -1)
@@ -1102,7 +1105,7 @@ class DrawingAreaController(object):
                      nbr_of_selected_event_ids)
         else:
             text = _("Are you sure you want to delete this event?")
-        if _ask_question(text, self.view) == wx.YES:
+        if self.view.ask_question(text) == wx.YES:
             try:
                 for event_id in selected_event_ids:
                     self.timeline.delete_event(event_id)
