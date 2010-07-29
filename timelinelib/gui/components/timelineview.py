@@ -330,14 +330,25 @@ class DrawingArea(wx.Panel):
         wx.GetTopLevelParent(self).SetStatusText(text)
 
     def _create_gui(self):
-        self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
-        self.Bind(wx.EVT_PAINT, self._window_on_paint)
+        self.Bind(wx.EVT_ERASE_BACKGROUND, self._on_erase_background)
+        self.Bind(wx.EVT_PAINT,            self._on_paint)
+        self.Bind(wx.EVT_SIZE,             self._on_size)
+        self.Bind(wx.EVT_LEFT_DOWN,        self._on_left_down)
+        self.Bind(wx.EVT_RIGHT_DOWN,       self._on_right_down)
+        self.Bind(wx.EVT_LEFT_DCLICK,      self._on_left_dclick)
+        self.Bind(wx.EVT_MIDDLE_UP,        self._on_middle_up)
+        self.Bind(wx.EVT_LEFT_UP,          self._on_left_up)
+        self.Bind(wx.EVT_ENTER_WINDOW,     self._on_enter)
+        self.Bind(wx.EVT_MOTION,           self._on_motion)
+        self.Bind(wx.EVT_MOUSEWHEEL,       self._on_mousewheel)
+        self.Bind(wx.EVT_KEY_DOWN,         self._on_key_down)
+        self.Bind(wx.EVT_KEY_UP,           self._on_key_up)
 
-    def _window_on_erase_background(self, event):
+    def _on_erase_background(self, event):
         # For double buffering
         pass
 
-    def _window_on_paint(self, event):
+    def _on_paint(self, event):
         dc = wx.AutoBufferedPaintDC(self)
         dc.BeginDrawing()
         if self.surface_bitmap:
@@ -345,6 +356,41 @@ class DrawingArea(wx.Panel):
         else:
             pass # TODO: Fill with white?
         dc.EndDrawing()
+
+    def _on_size(self, evt):
+        self.controller.window_resized()
+
+    def _on_left_down(self, evt):
+        self.controller.left_mouse_down(evt.m_x, evt.m_y, evt.m_controlDown)
+        evt.Skip()
+
+    def _on_right_down(self, evt):
+        self.controller.right_mouse_down(evt.m_x, evt.m_y)
+
+    def _on_left_dclick(self, evt):
+        self.controller.left_mouse_dclick(evt.m_x, evt.m_y, evt.m_controlDown)
+
+    def _on_middle_up(self, evt):
+        self.controller.middle_mouse_clicked(evt.m_x)
+
+    def _on_left_up(self, evt):
+        self.controller.left_mouse_up(evt.m_x)
+
+    def _on_enter(self, evt):
+        self.controller.mouse_enter(evt.m_x, evt.LeftIsDown())
+
+    def _on_motion(self, evt):
+        self.controller.mouse_moved(evt.m_x, evt.m_y, evt.m_leftDown, evt.m_controlDown, evt.m_shiftDown)
+
+    def _on_mousewheel(self, evt):
+        self.controller.mouse_wheel_moved(evt.m_wheelRotation, evt.ControlDown(), evt.ShiftDown())
+
+    def _on_key_down(self, evt):
+        self.controller.key_down(evt.GetKeyCode())
+        evt.Skip()
+
+    def _on_key_up(self, evt):
+        self.controller.key_up(evt.GetKeyCode())
 
 
 class DrawingAreaController(object):
@@ -385,13 +431,14 @@ class DrawingAreaController(object):
         self.view = view
         self.divider_line_slider = divider_line_slider
         self.fn_handle_db_error = fn_handle_db_error
-        self._create_gui()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
         self.printData = wx.PrintData()
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
+        self.divider_line_slider.Bind(wx.EVT_SLIDER,       self._slider_on_slider)
+        self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
 
     def get_drawer(self):
         return self.drawing_algorithm
@@ -499,53 +546,22 @@ class DrawingAreaController(object):
     def redraw_timeline(self):
         self._redraw_timeline()
 
-    def _create_gui(self):
-        self.view.Bind(wx.EVT_SIZE, self._window_on_size)
-        self.view.Bind(wx.EVT_LEFT_DOWN, self._window_on_left_down)
-        self.view.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
-        self.view.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
-        self.view.Bind(wx.EVT_MIDDLE_UP, self._window_on_middle_up)
-        self.view.Bind(wx.EVT_LEFT_UP, self._window_on_left_up)
-        self.view.Bind(wx.EVT_ENTER_WINDOW, self._window_on_enter)
-        self.view.Bind(wx.EVT_MOTION, self._window_on_motion)
-        self.view.Bind(wx.EVT_MOUSEWHEEL, self._window_on_mousewheel)
-        self.view.Bind(wx.EVT_KEY_DOWN, self._window_on_key_down)
-        self.view.Bind(wx.EVT_KEY_UP, self._window_on_key_up)
-        self.divider_line_slider.Bind(wx.EVT_SLIDER, self._slider_on_slider)
-        self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU,
-                                      self._slider_on_context_menu)
-
-    def _window_on_size(self, event):
-        """
-        Event handler used when the window has been resized.
-
-        Called at the application start and when the frame is resized.
-
-        Here we create a new background buffer with the new size and draw the
-        timeline onto it.
-        """
+    def window_resized(self):
         self._redraw_timeline()
 
-    def _window_on_left_down(self, evt):
-        """
-        Event handler used when the left mouse button has been pressed.
-
-        This event establishes a new current time on the timeline.
-
-        If the mouse hits an event that event will be selected.
-        """
-        self.mouse_x = evt.m_x
+    def left_mouse_down(self, x, y, ctrl_down):
+        self.mouse_x = x
         try:
-            self._set_new_current_time(evt.m_x)
+            self._set_new_current_time(x)
             # If we hit the event resize area of an event, start resizing
-            if EventSizer(self.view).sizing_starts(evt.m_x, evt.m_y):
+            if EventSizer(self.view).sizing_starts(x, y):
                 return
             # If we hit the event move area of an event, start moving
-            if EventMover(self.view).move_starts(evt.m_x, evt.m_y):
+            if EventMover(self.view).move_starts(x, y):
                 return
             # No resizing or moving of events...
             if not self.timeline.is_read_only():
-                eventWithBalloon = self.drawing_algorithm.balloon_at(evt.m_x, evt.m_y)
+                eventWithBalloon = self.drawing_algorithm.balloon_at(x, y)
                 if eventWithBalloon: 
                     stick = not self.view_properties.event_has_sticky_balloon(eventWithBalloon)
                     self.view_properties.set_event_has_sticky_balloon(eventWithBalloon, has_sticky=stick)
@@ -559,15 +575,14 @@ class DrawingAreaController(object):
                         else:
                             self._redraw_balloons(None)
                 else:        
-                    posAtEvent = self._toggle_event_selection(evt.m_x, evt.m_y,
-                                                              evt.m_controlDown)
-                    if evt.m_controlDown:
+                    posAtEvent = self._toggle_event_selection(x, y,
+                                                              ctrl_down)
+                    if ctrl_down:
                         self._set_select_period_cursor()
-            evt.Skip()
         except TimelineIOError, e:
             self.fn_handle_db_error(e)
 
-    def _window_on_right_down(self, evt):
+    def right_mouse_down(self, x, y):
         """
         Event handler used when the right mouse button has been pressed.
 
@@ -576,7 +591,7 @@ class DrawingAreaController(object):
         """
         if self.timeline.is_read_only():
             return
-        self.context_menu_event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
+        self.context_menu_event = self.drawing_algorithm.event_at(x, y)
         if self.context_menu_event is None:
             return
         menu_definitions = [
@@ -594,7 +609,7 @@ class DrawingAreaController(object):
             menu.AppendItem(menu_item)
         self.view.PopupMenu(menu)
         menu.Destroy()
-        
+
     def _context_menu_on_edit_event(self, evt):
         frame = wx.GetTopLevelParent(self.view)
         frame.edit_event(self.context_menu_event)
@@ -606,12 +621,12 @@ class DrawingAreaController(object):
     def _context_menu_on_delete_event(self, evt):
         self.context_menu_event.selected = True
         self._delete_selected_events()
-
+        
     def _context_menu_on_sticky_balloon_event(self, evt):
         self.view_properties.set_event_has_sticky_balloon(self.context_menu_event, has_sticky=True)
         self._redraw_timeline()
     
-    def _window_on_left_dclick(self, evt):
+    def left_mouse_dclick(self, x, y, ctrl_down):
         """
         Event handler used when the left mouse button has been double clicked.
 
@@ -619,7 +634,7 @@ class DrawingAreaController(object):
         If the mouse hits an event, a dialog opens for editing this event. 
         Otherwise a dialog for creating a new event is opened.
         """
-        self.mouse_x = evt.m_x
+        self.mouse_x = x
         if self.timeline.is_read_only():
             return
         # Since the event sequence is, 1. EVT_LEFT_DOWN  2. EVT_LEFT_UP
@@ -627,24 +642,24 @@ class DrawingAreaController(object):
         # that occurs in the handling of EVT_LEFT_DOWN, since we still want
         # the event(s) selected or deselected after a left doubleclick
         # It doesn't look too god but I havent found any other way to do it.
-        self._toggle_event_selection(evt.m_x, evt.m_y, evt.m_controlDown)
-        event = self.drawing_algorithm.event_at(evt.m_x, evt.m_y)
+        self._toggle_event_selection(x, y, ctrl_down)
+        event = self.drawing_algorithm.event_at(x, y)
         if event:
             wx.GetTopLevelParent(self.view).edit_event(event)
         else:
             wx.GetTopLevelParent(self.view).create_new_event(self._current_time,
                                                         self._current_time)
 
-    def _window_on_middle_up(self, evt):
+    def middle_mouse_clicked(self, x):
         """
         Event handler used when the middle mouse button has been clicked.
 
         This will recenter the timeline to the area clicked on.
         """
-        self._set_new_current_time(evt.m_x)
+        self._set_new_current_time(x)
         self.navigate_timeline(lambda tp: tp.center(self._current_time))
 
-    def _window_on_left_up(self, evt):
+    def left_mouse_up(self, x):
         """
         Event handler used when the left mouse button has been released.
 
@@ -653,16 +668,16 @@ class DrawingAreaController(object):
         """
         if self.dragscroll_timer_running:
             self._stop_dragscroll_timer()
-        self.mouse_x = evt.m_x
+        self.mouse_x = x
         if self.is_selecting:
-            self._end_selection_and_create_event(evt.m_x)
+            self._end_selection_and_create_event(x)
         if self.is_zooming:
-            self._end_selection_and_zoom(evt.m_x)
+            self._end_selection_and_zoom(x)
         self.is_selecting = False
         self.is_scrolling = False
         self.set_default_cursor()
 
-    def _window_on_enter(self, evt):
+    def mouse_enter(self, x, left_is_down):
         """
         Mouse event handler, when the mouse is entering the window.
         
@@ -672,10 +687,10 @@ class DrawingAreaController(object):
         creating an event will be opened or sizing, moving stops. 
         """
         if self.dragscroll_timer_running:
-            if not evt.LeftIsDown():
-                self._window_on_left_up(evt)
+            if not left_is_down:
+                self.left_mouse_up(x)
 
-    def _window_on_motion(self, evt):
+    def mouse_moved(self, x, y, left_down, ctrl_down, shift_down):
         """
         Event handler used when the mouse has been moved.
 
@@ -687,12 +702,12 @@ class DrawingAreaController(object):
         place and the minor strips passed by the mouse will be selected.  If
         the Control key is up the timeline will scroll.
         """
-        self.mouse_x = evt.m_x
-        if evt.m_leftDown:
-            self._mouse_drag(evt.m_x, evt.m_y, evt.m_controlDown, evt.m_shiftDown)
+        self.mouse_x = x
+        if left_down:
+            self._mouse_drag(x, y, ctrl_down, shift_down)
         else:
-            if not evt.m_controlDown:
-                self._mouse_move(evt.m_x, evt.m_y)                
+            if not ctrl_down:
+                self._mouse_move(x, y)                
                 
     def _mouse_drag(self, x, y, ctrl=False, shift=False):
         """
@@ -741,7 +756,7 @@ class DrawingAreaController(object):
         if not cursor_set:
             EventMover(self.view).set_cursor(x, y)
                 
-    def _window_on_mousewheel(self, evt):
+    def mouse_wheel_moved(self, rotation, ctrl_down, shift_down):
         """
         Event handler used when the mouse wheel is rotated.
 
@@ -749,16 +764,16 @@ class DrawingAreaController(object):
         scrolled the timeline will be zoomed, otherwise it will be scrolled.
         If the Shift key is pressed then the slider will scroll.
         """
-        direction = _step_function(evt.m_wheelRotation)
-        if evt.ControlDown():
+        direction = _step_function(rotation)
+        if ctrl_down:
             self._zoom_timeline(direction)
-        elif evt.ShiftDown():
+        elif shift_down:
             self.divider_line_slider.SetValue(self.divider_line_slider.GetValue() + direction)
             self._redraw_timeline()
         else:
             self._scroll_timeline_view(direction)
 
-    def _window_on_key_down(self, evt):
+    def key_down(self, keycode):
         """
         Event handler used when a keyboard key has been pressed.
 
@@ -768,18 +783,14 @@ class DrawingAreaController(object):
         Delete      Delete any selected event(s)
         Control     Change cursor
         """
-        keycode = evt.GetKeyCode()
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()
-        evt.Skip()
 
-    def _window_on_key_up(self, evt):
-        keycode = evt.GetKeyCode()
+    def key_up(self, keycode):
         if keycode == wx.WXK_CONTROL:
             self.set_default_cursor()
 
     def _slider_on_slider(self, evt):
-        """The divider-line slider has been moved."""
         self._redraw_timeline()
 
     def _slider_on_context_menu(self, evt):
