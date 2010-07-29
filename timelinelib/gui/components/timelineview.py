@@ -258,6 +258,8 @@ class DrawingArea(wx.Panel):
     def __init__(self, parent, divider_line_slider, fn_handle_db_error):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
         self.controller = DrawingAreaController(self, divider_line_slider, fn_handle_db_error)
+        self.surface_bitmap = None
+        self._create_gui()
 
     def get_drawer(self):
         return self.controller.get_drawer()
@@ -269,7 +271,7 @@ class DrawingArea(wx.Panel):
         return self.controller.get_view_properties()
 
     def get_current_image(self):
-        return self.controller.get_current_image()
+        return self.surface_bitmap
 
     def print_timeline(self, event):
         self.controller.print_timeline(event)
@@ -306,6 +308,40 @@ class DrawingArea(wx.Panel):
 
     def balloon_visibility_changed(self, visible):
         self.controller.balloon_visibility_changed(visible)
+
+    def redraw_surface(self, fn_draw):
+        width, height = self.GetSizeTuple()
+        self.surface_bitmap = wx.EmptyBitmap(width, height)
+        memdc = wx.MemoryDC()
+        memdc.SelectObject(self.surface_bitmap)
+        memdc.BeginDrawing()
+        memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
+        memdc.Clear()
+        fn_draw(memdc)
+        memdc.EndDrawing()
+        del memdc
+        self.Refresh()
+        self.Update()
+
+    def enable_disable_menus(self):
+        wx.GetTopLevelParent(self).enable_disable_menus()
+
+    def _create_gui(self):
+        self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
+        self.Bind(wx.EVT_PAINT, self._window_on_paint)
+
+    def _window_on_erase_background(self, event):
+        # For double buffering
+        pass
+
+    def _window_on_paint(self, event):
+        dc = wx.AutoBufferedPaintDC(self)
+        dc.BeginDrawing()
+        if self.surface_bitmap:
+            dc.DrawBitmap(self.surface_bitmap, 0, 0, True)
+        else:
+            pass # TODO: Fill with white?
+        dc.EndDrawing()
 
 
 class DrawingAreaController(object):
@@ -362,9 +398,6 @@ class DrawingAreaController(object):
 
     def get_view_properties(self):
         return self.view_properties
-
-    def get_current_image(self):
-        return self.bgbuf
 
     def print_timeline(self, event):
         pdd = wx.PrintDialogData(self.printData)
@@ -465,8 +498,6 @@ class DrawingAreaController(object):
 
     def _create_gui(self):
         self.view.Bind(wx.EVT_SIZE, self._window_on_size)
-        self.view.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
-        self.view.Bind(wx.EVT_PAINT, self._window_on_paint)
         self.view.Bind(wx.EVT_LEFT_DOWN, self._window_on_left_down)
         self.view.Bind(wx.EVT_RIGHT_DOWN, self._window_on_right_down)
         self.view.Bind(wx.EVT_LEFT_DCLICK, self._window_on_left_dclick)
@@ -490,29 +521,7 @@ class DrawingAreaController(object):
         Here we create a new background buffer with the new size and draw the
         timeline onto it.
         """
-        width, height = self.view.GetSizeTuple()
-        self.bgbuf = wx.EmptyBitmap(width, height)
         self._redraw_timeline()
-
-    def _window_on_erase_background(self, event):
-        # For double buffering
-        pass
-
-    def _window_on_paint(self, event):
-        """
-        Event handler used when the window needs repainting.
-
-        Called at the application start, after resizing, or when the window
-        becomes active.
-
-        Here we just draw the background buffer onto the screen.
-
-        Defining a dc is crucial. Even if it is not used.
-        """
-        dc = wx.AutoBufferedPaintDC(self.view)
-        dc.BeginDrawing()
-        dc.DrawBitmap(self.bgbuf, 0, 0, True)
-        dc.EndDrawing()
 
     def _window_on_left_down(self, evt):
         """
@@ -817,7 +826,6 @@ class DrawingAreaController(object):
                             Indicates if the drag-scroll-timer is running.
         """
         self._current_time = None
-        self.bgbuf = None
         self.drawing_algorithm = get_drawer()
         self.is_scrolling = False
         self.is_selecting = False
@@ -840,38 +848,17 @@ class DrawingAreaController(object):
         self.view.Disable()
 
     def _redraw_timeline(self, period_selection=None):
-        """Draw the timeline onto the background buffer."""
-        memdc = wx.MemoryDC()
-        memdc.SelectObject(self.bgbuf)
-        try:
-            memdc.BeginDrawing()
-            memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
-            memdc.Clear()
-            if self.timeline:
-                try:
-                    self.view_properties.period_selection = period_selection
-                    self.view_properties.divider_position = (
-                        self.divider_line_slider.GetValue())
-                    self.view_properties.divider_position = (
-                        float(self.divider_line_slider.GetValue()) / 100.0)
-                    self.drawing_algorithm.draw(memdc, self.timeline,
-                                                self.view_properties)
-                except TimelineIOError, e:
-                    self.fn_handle_db_error(e)
-            memdc.EndDrawing()
-            del memdc
-            frame = wx.GetTopLevelParent(self.view)
-            frame.enable_disable_menus()
-            self.view.Refresh()
-            self.view.Update()
-        except Exception, ex:
-            # It is a bug in the application if we end up here. Perhaps we
-            # should not handle the exception at all? Setting an empty bitmap
-            # at least prevents other errors in case we end up here.
-            width, height = self.view.GetSizeTuple()
-            self.bgbuf = wx.EmptyBitmap(width, height)
-            _display_error_message("Error in drawing\n\n%s" % ex_msg(ex),
-                    self.view)
+        def fn_draw(dc):
+            try:
+                self.drawing_algorithm.draw(dc, self.timeline, self.view_properties)
+            except TimelineIOError, e:
+                self.fn_handle_db_error(e)
+        if self.timeline:
+            self.view_properties.period_selection = period_selection
+            self.view_properties.divider_position = (self.divider_line_slider.GetValue())
+            self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
+            self.view.redraw_surface(fn_draw)
+            self.view.enable_disable_menus()
 
     def _scroll(self, xpixelpos):
         if self._current_time:
