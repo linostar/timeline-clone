@@ -60,24 +60,12 @@ DRAG_SELECT = 3
 class EventSizer(object):
     """Objects of this class are used to simplify resizing of events."""
 
-    _singletons = {}
-    _initialized = False
-    
-    def __new__(cls, *args, **kwds):
-        """Implement the Singleton pattern for this class."""
-        if cls not in cls._singletons:
-            cls._singletons[cls] = super(EventSizer, cls).__new__(cls)
-        return cls._singletons[cls]    
-    
-    def __init__(self, drawing_area, m_x = 0, m_y = 0):
-        if not EventSizer._initialized:
-            self.direction = wx.LEFT
-            self.drawing_area = drawing_area
-            self.metrics = self.drawing_area.get_metrics()
-            self.sizing = False
-            self.event = None
-            EventSizer._initialized = True
-        self.metrics = self.drawing_area.get_metrics()
+    def __init__(self, drawing_area, drawing_area_controller, m_x = 0, m_y = 0):
+        self.direction = wx.LEFT
+        self.drawing_area = drawing_area
+        self.drawing_area_controller = drawing_area_controller
+        self.sizing = False
+        self.event = None
 
     def sizing_starts(self, m_x, m_y):
         """
@@ -85,7 +73,7 @@ class EventSizer(object):
         Otherwise return False.
         """
         self.sizing = (self._hit(m_x, m_y) and 
-                       self.drawing_area.get_view_properties().is_selected(self.event))
+                       self.drawing_area_controller.get_view_properties().is_selected(self.event))
         if self.sizing:
             self.x = m_x
             self.y = m_y
@@ -103,7 +91,7 @@ class EventSizer(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            is_selected = self.drawing_area.get_view_properties().is_selected(self.event)
+            is_selected = self.drawing_area_controller.get_view_properties().is_selected(self.event)
             if not is_selected:
                 return False
             self.drawing_area.set_size_cursor()
@@ -118,7 +106,7 @@ class EventSizer(object):
         The 'hit-for-resize' area is the are at the left and right edges of the
         event rectangle with a width of HIT_REGION_PX_WITH.
         """
-        event_info = self.drawing_area.get_drawer().event_with_rect_at(m_x, m_y)
+        event_info = self.drawing_area_controller.get_drawer().event_with_rect_at(m_x, m_y)
         if event_info == None:
             return False
         self.event, rect = event_info
@@ -135,37 +123,27 @@ class EventSizer(object):
         Resize the event either on the left or the right side.
         The event edge is snapped to the grid.
         """
-        time = self.metrics.get_time(m_x)
-        time = self.drawing_area.get_drawer().snap(time)
+        time = self.drawing_area_controller.get_metrics().get_time(m_x)
+        time = self.drawing_area_controller.get_drawer().snap(time)
         resized = False
         if self.direction == wx.LEFT:
             resized = self.event.update_start(time)
         else:
             resized = self.event.update_end(time)
         if resized:
-            self.drawing_area.redraw_timeline()
+            self.drawing_area_controller.redraw_timeline()
 
 
 class EventMover(object):
     """Objects of this class are used to simplify moving of events."""
 
-    _singletons = {}
-    _initialized = False
-    
-    def __new__(cls, *args, **kwds):
-        """Implement the Singleton pattern for this class."""
-        if cls not in cls._singletons:
-            cls._singletons[cls] = super(EventMover, cls).__new__(cls)
-        return cls._singletons[cls]    
-    
-    def __init__(self, drawing_area):
+    def __init__(self, drawing_area, drawing_area_controller):
         """Initialize only the first time the class constructor is called."""
-        if not EventMover._initialized:
-            self.drawing_area = drawing_area
-            self.drawing_algorithm = self.drawing_area.get_drawer()
-            self.moving = False
-            self.event = None
-            EventMover._initialized = True
+        self.drawing_area = drawing_area
+        self.drawing_area_controller = drawing_area_controller
+        self.drawing_algorithm = self.drawing_area_controller.get_drawer()
+        self.moving = False
+        self.event = None
 
     def move_starts(self, m_x, m_y):
         """
@@ -173,7 +151,7 @@ class EventMover(object):
         Otherwise return False.
         """
         self.moving = (self._hit(m_x, m_y) and 
-                       self.drawing_area.get_view_properties().is_selected(self.event))
+                       self.drawing_area_controller.get_view_properties().is_selected(self.event))
         if self.moving:
             self.x = m_x
             self.y = m_y
@@ -191,7 +169,7 @@ class EventMover(object):
         """
         hit = self._hit(m_x, m_y)
         if hit:
-            is_selected = self.drawing_area.get_view_properties().is_selected(self.event) 
+            is_selected = self.drawing_area_controller.get_view_properties().is_selected(self.event) 
             if not is_selected:
                 return False
             self.drawing_area.set_move_cursor()
@@ -205,7 +183,7 @@ class EventMover(object):
         mouse has moved since the last move (m_x - self.x).
         Events found above the center line are snapped to the grid.
         """
-        difftime = self.drawing_area.get_metrics().get_difftime(m_x, self.x)
+        difftime = self.drawing_area_controller.get_metrics().get_difftime(m_x, self.x)
         # Snap events found above the center line
         start = self.event.time_period.start_time + difftime
         end = self.event.time_period.end_time + difftime
@@ -216,8 +194,8 @@ class EventMover(object):
             end = middletime + halfperiod
         else:
             width = start - end
-            startSnapped = self.drawing_area.get_drawer().snap(start)
-            endSnapped = self.drawing_area.get_drawer().snap(end)
+            startSnapped = self.drawing_area_controller.get_drawer().snap(start)
+            endSnapped = self.drawing_area_controller.get_drawer().snap(end)
             if startSnapped != start:
                 # Prefer to snap at left edge (in case end snapped as well)
                 start = startSnapped
@@ -227,7 +205,7 @@ class EventMover(object):
                 start = end + width
         # Update and redraw the event
         self.event.update_period(start, end)
-        self.drawing_area.redraw_timeline()
+        self.drawing_area_controller.redraw_timeline()
         # Adjust the coordinates  to get a smooth movement of cursor and event.
         # We can't use event_with_rect_at() method to get hold of the rect since
         # events can jump over each other when moved.
@@ -244,7 +222,7 @@ class EventMover(object):
         The 'hit-for-move' area is the are at the center of an event
         with a width of 2 * HIT_REGION_PX_WITH.
         """
-        event_info = self.drawing_area.get_drawer().event_with_rect_at(m_x, m_y)
+        event_info = self.drawing_area_controller.get_drawer().event_with_rect_at(m_x, m_y)
         if event_info == None:
             return False
         self.event, rect = event_info
@@ -481,6 +459,8 @@ class DrawingAreaController(object):
         self.printData.SetOrientation(wx.LANDSCAPE)
         self.divider_line_slider.Bind(wx.EVT_SLIDER,       self._slider_on_slider)
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
+        self.event_sizer = EventSizer(self.view, self)
+        self.event_mover = EventMover(self.view, self)
 
     def get_drawer(self):
         return self.drawing_algorithm
@@ -596,10 +576,10 @@ class DrawingAreaController(object):
         try:
             self._set_new_current_time(x)
             # If we hit the event resize area of an event, start resizing
-            if EventSizer(self.view).sizing_starts(x, y):
+            if self.event_sizer.sizing_starts(x, y):
                 return
             # If we hit the event move area of an event, start moving
-            if EventMover(self.view).move_starts(x, y):
+            if self.event_mover.move_starts(x, y):
                 return
             # No resizing or moving of events...
             if not self.timeline.is_read_only():
@@ -759,15 +739,15 @@ class DrawingAreaController(object):
         elif self.is_selecting:
             self._mark_selected_minor_strips(x)
         # Resizing is only allowed if timeline is not readonly    
-        elif EventSizer(self.view).is_sizing() and not self.timeline.is_read_only():
-            EventSizer(self.view).resize(x)
+        elif self.event_sizer.is_sizing() and not self.timeline.is_read_only():
+            self.event_sizer.resize(x)
             if self._in_scroll_zone(x):
                 if not self.dragscroll_timer_running:
                     self._start_dragscroll_timer(DRAG_SIZE)
 
         # Moving is only allowed if timeline is not readonly    
-        elif EventMover(self.view).is_moving() and not self.timeline.is_read_only():
-            EventMover(self.view).move(x)
+        elif self.event_mover.is_moving() and not self.timeline.is_read_only():
+            self.event_mover.move(x)
             if self._in_scroll_zone(x):
                 if not self.dragscroll_timer_running:
                     self._start_dragscroll_timer(DRAG_MOVE)
@@ -791,9 +771,9 @@ class DrawingAreaController(object):
         """
         self._display_balloon_on_hover(x, y)
         self._display_eventinfo_in_statusbar(x, y)
-        cursor_set = EventSizer(self.view).set_cursor(x, y)
+        cursor_set = self.event_sizer.set_cursor(x, y)
         if not cursor_set:
-            EventMover(self.view).set_cursor(x, y)
+            self.event_mover.set_cursor(x, y)
                 
     def mouse_wheel_moved(self, rotation, ctrl_down, shift_down):
         """
@@ -1081,9 +1061,9 @@ class DrawingAreaController(object):
                 direction = -1
             self._scroll_timeline_view(direction)
             if (self.drag_object == DRAG_MOVE):
-                EventMover(self.view).move(self.mouse_x)
+                self.event_mover.move(self.mouse_x)
             elif (self.drag_object == DRAG_SIZE):
-                EventSizer(self.view).resize(self.mouse_x)
+                self.event_sizer.resize(self.mouse_x)
             elif (self.drag_object == DRAG_SELECT):
                 self._mark_selected_minor_strips(self.mouse_x)
 
