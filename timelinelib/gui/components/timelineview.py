@@ -326,6 +326,9 @@ class DrawingArea(wx.Panel):
     def enable_disable_menus(self):
         wx.GetTopLevelParent(self).enable_disable_menus()
 
+    def display_text_in_statusbar(self, text):
+        wx.GetTopLevelParent(self).SetStatusText(text)
+
     def _create_gui(self):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._window_on_erase_background)
         self.Bind(wx.EVT_PAINT, self._window_on_paint)
@@ -489,9 +492,9 @@ class DrawingAreaController(object):
         try:
             navigation_fn(self.view_properties.displayed_period)
             self._redraw_timeline()
-            wx.GetTopLevelParent(self.view).SetStatusText("")
+            self.view.display_text_in_statusbar("")
         except (ValueError, OverflowError), e:
-            wx.GetTopLevelParent(self.view).SetStatusText(ex_msg(e))
+            self.view.display_text_in_statusbar(ex_msg(e))
 
     def redraw_timeline(self):
         self._redraw_timeline()
@@ -920,9 +923,9 @@ class DrawingAreaController(object):
         """
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event != None:
-            self._display_text_in_statusbar(event.get_label())
+            self.view.display_text_in_statusbar(event.get_label())
         else:
-            self._reset_text_in_statusbar()
+            self.view.display_text_in_statusbar("")
             
     def _display_balloon_on_hover(self, xpixelpos, ypixelpos):
         """
@@ -1086,12 +1089,6 @@ class DrawingAreaController(object):
             start, end = end, start
         period_selection = self.drawing_algorithm.snap_selection((start,end))
         return period_selection
-
-    def _display_text_in_statusbar(self, text):
-        wx.GetTopLevelParent(self.view).SetStatusText(text)
-
-    def _reset_text_in_statusbar(self):
-        wx.GetTopLevelParent(self.view).SetStatusText("")
 
     def _set_select_period_cursor(self):
         self.view.SetCursor(wx.StockCursor(wx.CURSOR_IBEAM))
