@@ -342,7 +342,25 @@ class DrawingArea(wx.Panel):
     def get_metrics(self):
         return self.controller.get_metrics()
 
+    def start_balloon_timer1(self, milliseconds=-1, oneShot=False):
+        self.balloon_timer1.Start(milliseconds, oneShot)
+
+    def start_balloon_timer2(self, milliseconds=-1, oneShot=False):
+        self.balloon_timer2.Start(milliseconds, oneShot)
+
+    def start_dragscroll_timer(self, milliseconds=-1, oneShot=False):
+        self.dragscroll_timer.Start(milliseconds, oneShot)
+
+    def stop_dragscroll_timer(self):
+        self.dragscroll_timer.Stop()
+
     def _create_gui(self):
+        self.balloon_timer1 = wx.Timer(self, -1)
+        self.balloon_timer2 = wx.Timer(self, -1)
+        self.dragscroll_timer = wx.Timer(self, -1)
+        self.Bind(wx.EVT_TIMER,            self._on_balloon_timer1, self.balloon_timer1)
+        self.Bind(wx.EVT_TIMER,            self._on_balloon_timer2, self.balloon_timer2)
+        self.Bind(wx.EVT_TIMER,            self._on_dragscroll, self.dragscroll_timer)
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._on_erase_background)
         self.Bind(wx.EVT_PAINT,            self._on_paint)
         self.Bind(wx.EVT_SIZE,             self._on_size)
@@ -356,6 +374,15 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_MOUSEWHEEL,       self._on_mousewheel)
         self.Bind(wx.EVT_KEY_DOWN,         self._on_key_down)
         self.Bind(wx.EVT_KEY_UP,           self._on_key_up)
+
+    def _on_balloon_timer1(self, evt):
+        self.controller.balloon_timer1_fired()
+
+    def _on_balloon_timer2(self, evt):
+        self.controller.balloon_timer2_fired()
+
+    def _on_dragscroll(self, evt):
+        self.controller.dragscroll_timer_fired()
 
     def _on_erase_background(self, event):
         # For double buffering
@@ -978,10 +1005,7 @@ class DrawingAreaController(object):
                 # We have no balloon, so we start Timer-1
                 if self.view_properties.hovered_event != self.current_event:
                     #print "Timer-1 Started ", self.current_event
-                    self.timer1 = wx.Timer(self.view, -1)
-                    self.view.Bind(wx.EVT_TIMER, self._on_balloon_timer1, 
-                              self.timer1)
-                    self.timer1.Start(milliseconds = 500, oneShot = True)
+                    self.view.start_balloon_timer1(milliseconds=500, oneShot=True)
                     self.timer1_running = True
         # We are not pointing to any event....        
         else:
@@ -991,12 +1015,9 @@ class DrawingAreaController(object):
                 # Otherwise Timer-2 is started.
                 if self.balloon_event != self.view_properties.hovered_event:
                     #print "Timer-2 Started"
-                    self.timer2 = wx.Timer(self.view, -1)
-                    self.view.Bind(wx.EVT_TIMER, self._on_balloon_timer2, 
-                              self.timer2)
-                    self.timer2.Start(milliseconds = 100, oneShot = True)
+                    self.view.start_balloon_timer2(milliseconds=100, oneShot=True)
                     
-    def _on_balloon_timer1(self, event):
+    def balloon_timer1_fired(self):
         """
         Timer-1 has timed out, which means we are ready to display the balloon
         for the current event.
@@ -1004,7 +1025,7 @@ class DrawingAreaController(object):
         self.timer1_running = False
         self._redraw_balloons(self.current_event)
 
-    def _on_balloon_timer2(self, event):
+    def balloon_timer2_fired(self):
         """
         Timer-2 has timed out, which means we are ready to delete the current
         balloon if we are no longer pointing to the current event or it's
@@ -1044,7 +1065,7 @@ class DrawingAreaController(object):
             return True
         return False
         
-    def _on_dragscroll(self, event):
+    def dragscroll_timer_fired(self):
         """
         Timer event handler that scrolls the timeline.
         
@@ -1069,14 +1090,12 @@ class DrawingAreaController(object):
     def _start_dragscroll_timer(self, drag_object):
         self.dragscroll_timer_running = True
         self.drag_object = drag_object
-        self.dragscroll_timer = wx.Timer(self.view, -1)
-        self.view.Bind(wx.EVT_TIMER, self._on_dragscroll, self.dragscroll_timer)
-        self.dragscroll_timer.Start(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
+        self.view.start_dragscroll_timer(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
 
     def _stop_dragscroll_timer(self):
         self.dragscroll_timer_running = False
         self.drag_object = DRAG_NONE
-        self.dragscroll_timer.Stop()
+        self.view.stop_dragscroll_timer()
         
     def _scroll_timeline_view(self, direction):
             delta = mult_timedelta(self.view_properties.displayed_period.delta(), direction / 10.0)
