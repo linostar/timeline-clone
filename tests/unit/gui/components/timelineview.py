@@ -81,6 +81,13 @@ class DrawingAreaControllerTest(unittest.TestCase):
                                   datetime(2010, 8, 30, 2, 0, 0))
         self.assertTimelineRedrawn()
 
+    def testZoomsTimelineBy10PercentOnEachSideWhenScrollingWhileHoldingDownCtrl(self):
+        # 10% of one day = 2.4h = 2h 24m
+        self.controller.mouse_wheel_moved(1, ctrl_down=True, shift_down=False)
+        self.assertDisplaysPeriod(datetime(2010, 8, 30, 2, 24, 0),
+                                  datetime(2010, 8, 30, 21, 36, 0))
+        self.assertTimelineRedrawn()
+
     def testCreatesEventWhenCtrlDraggingMouse(self):
         self.controller.left_mouse_down(10, 0, ctrl_down=True)
         self.controller.mouse_moved(30, 0, left_down=True, ctrl_down=True, shift_down=False)
@@ -226,6 +233,11 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.controller.left_mouse_down(20, 8, ctrl_down=False)
         self.controller.key_down(wx.WXK_DELETE)
         self.assertEquals([self.event_foo], self.db.get_all_events())
+
+    def testShiftScrollChangesDividerLineValueAndRedraws(self):
+        self.controller.mouse_wheel_moved(1, ctrl_down=False, shift_down=True)
+        self.assertTrue(self.divider_line_slider.SetValue.called)
+        self.assertTimelineRedrawn()
 
     def assertFooEventHasPeriod(self, start, end):
         self.assertEquals(TimePeriod(start, end), self.event_foo.time_period)
