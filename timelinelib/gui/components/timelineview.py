@@ -24,6 +24,7 @@ import wx
 from timelinelib.drawing.utils import Metrics
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_ANY
+from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import ViewProperties
 from timelinelib.drawing.utils import mult_timedelta
@@ -470,6 +471,10 @@ class DrawingAreaController(object):
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
         self.event_sizer = EventSizer(self.view, self)
         self.event_mover = EventMover(self.view, self)
+        self.change_input_handler(NoOpInputHandler())
+
+    def change_input_handler(self, input_handler):
+        self.input_handler = input_handler
 
     def get_drawer(self):
         return self.drawing_algorithm
@@ -581,37 +586,7 @@ class DrawingAreaController(object):
         self._redraw_timeline()
 
     def left_mouse_down(self, x, y, ctrl_down, shift_down):
-        self.mouse_x = x
-        try:
-            self._set_new_current_time(x)
-            # If we hit the event resize area of an event, start resizing
-            if self.event_sizer.sizing_starts(x, y):
-                return
-            # If we hit the event move area of an event, start moving
-            if self.event_mover.move_starts(x, y):
-                return
-            # No resizing or moving of events...
-            if not self.timeline.is_read_only():
-                eventWithBalloon = self.drawing_algorithm.balloon_at(x, y)
-                if eventWithBalloon: 
-                    stick = not self.view_properties.event_has_sticky_balloon(eventWithBalloon)
-                    self.view_properties.set_event_has_sticky_balloon(eventWithBalloon, has_sticky=stick)
-                    if stick:
-                        self._redraw_timeline()
-                    else:
-                        # This makes the sticky balloon unsticky
-                        if self.view_properties.show_balloons_on_hover:
-                            self._redraw_balloons(eventWithBalloon)
-                        # This makes the balloon disapear
-                        else:
-                            self._redraw_balloons(None)
-                else:        
-                    posAtEvent = self._toggle_event_selection(x, y,
-                                                              ctrl_down)
-                    if ctrl_down:
-                        self.view.set_select_period_cursor()
-        except TimelineIOError, e:
-            self.fn_handle_db_error(e)
+        self.input_handler.left_mouse_down(self, x, y, ctrl_down, shift_down)
 
     def right_mouse_down(self, x, y):
         """
@@ -676,7 +651,8 @@ class DrawingAreaController(object):
         if event:
             self.view.edit_event(event)
         else:
-            self.view.create_new_event(self._current_time, self._current_time)
+            current_time = self.metrics.get_time(x)
+            self.view.create_new_event(current_time, current_time)
 
     def middle_mouse_clicked(self, x):
         """
@@ -688,22 +664,7 @@ class DrawingAreaController(object):
         self.navigate_timeline(lambda tp: tp.center(self._current_time))
 
     def left_mouse_up(self, x):
-        """
-        Event handler used when the left mouse button has been released.
-
-        If there is an ongoing selection-marking, the dialog for creating an
-        event will be opened, and the selection-marking will be ended.
-        """
-        if self.dragscroll_timer_running:
-            self._stop_dragscroll_timer()
-        self.mouse_x = x
-        if self.is_selecting:
-            self._end_selection_and_create_event(x)
-        if self.is_zooming:
-            self._end_selection_and_zoom(x)
-        self.is_selecting = False
-        self.is_scrolling = False
-        self.view.set_default_cursor()
+        self.input_handler.left_mouse_up(self, x)
 
     def mouse_enter(self, x, left_is_down):
         """
@@ -719,23 +680,7 @@ class DrawingAreaController(object):
                 self.left_mouse_up(x)
 
     def mouse_moved(self, x, y, left_down, ctrl_down, shift_down):
-        """
-        Event handler used when the mouse has been moved.
-
-        If the mouse is over an event, the name of that event will be printed
-        in the status bar.
-
-        If the left mouse key is down one of two things happens depending on if
-        the Control key is down or not. If it is down a selection-marking takes
-        place and the minor strips passed by the mouse will be selected.  If
-        the Control key is up the timeline will scroll.
-        """
-        self.mouse_x = x
-        if left_down:
-            self._mouse_drag(x, y, ctrl_down, shift_down)
-        else:
-            if not ctrl_down:
-                self._mouse_move(x, y)                
+        self.input_handler.mouse_moved(self, x, y, left_down, ctrl_down, shift_down)
                 
     def _mouse_drag(self, x, y, ctrl=False, shift=False):
         """
@@ -1007,30 +952,10 @@ class DrawingAreaController(object):
                     self.view.start_balloon_timer2(milliseconds=100, oneShot=True)
                     
     def balloon_timer1_fired(self):
-        """
-        Timer-1 has timed out, which means we are ready to display the balloon
-        for the current event.
-        """
-        self.timer1_running = False
-        self._redraw_balloons(self.current_event)
+        self.input_handler.balloon_timer1_fired(self)
 
     def balloon_timer2_fired(self):
-        """
-        Timer-2 has timed out, which means we are ready to delete the current
-        balloon if we are no longer pointing to the current event or it's
-        balloon.
-        """
-        self.timer2_running = False
-        hevt = self.view_properties.hovered_event
-        # If there is no balloon visible we don't have to do anything
-        if hevt is None:
-            return
-        cevt = self.current_event
-        bevt = self.balloon_event
-        # If the visible balloon doesn't belong to the event pointed to
-        # we remove the ballloon.
-        if hevt != cevt and hevt != bevt: 
-            self._redraw_balloons(None)
+        self.input_handler.balloon_timer2_fired(self)
     
     def _redraw_balloons(self, event):
         self.view_properties.hovered_event = event
@@ -1055,26 +980,7 @@ class DrawingAreaController(object):
         return False
         
     def dragscroll_timer_fired(self):
-        """
-        Timer event handler that scrolls the timeline.
-        
-        If the mouse is still in the autoscroll zone continue
-        scrolling, otherwise stop the timer.
-        """
-        if not self._in_scroll_zone(self.mouse_x):
-            self._stop_dragscroll_timer()
-        else:    
-            if self.mouse_x < SCROLL_ZONE_WIDTH:
-                direction = 1
-            else:
-                direction = -1
-            self._scroll_timeline_view(direction)
-            if (self.drag_object == DRAG_MOVE):
-                self.event_mover.move(self.mouse_x)
-            elif (self.drag_object == DRAG_SIZE):
-                self.event_sizer.resize(self.mouse_x)
-            elif (self.drag_object == DRAG_SELECT):
-                self._mark_selected_minor_strips(self.mouse_x)
+        self.input_handler.dragscroll_timer_fired(self)
 
     def _start_dragscroll_timer(self, drag_object):
         self.dragscroll_timer_running = True
@@ -1131,3 +1037,339 @@ class DrawingAreaController(object):
 
     def get_metrics(self):
         return self.metrics
+
+
+class InputHandler(object):
+
+    def left_mouse_down(self, controller, x, y, ctrl_down, shift_down):
+        pass
+
+    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+        pass
+
+    def left_mouse_up(self, controller, x):
+        pass
+
+    def dragscroll_timer_fired(self, controller):
+        pass
+
+    def balloon_timer1_fired(self, controller):
+        pass
+
+    def balloon_timer2_fired(self, controller):
+        pass
+
+
+class NoOpInputHandler(InputHandler):
+
+    def __init__(self):
+        self.timer1_running = False
+        self.timer2_running = False
+
+    def left_mouse_down(self, controller, x, y, ctrl_down, shift_down):
+        eventWithBalloon = controller.drawing_algorithm.balloon_at(x, y)
+        if eventWithBalloon: 
+            stick = not controller.view_properties.event_has_sticky_balloon(eventWithBalloon)
+            controller.view_properties.set_event_has_sticky_balloon(eventWithBalloon, has_sticky=stick)
+            if stick:
+                controller._redraw_timeline()
+            else:
+                if controller.view_properties.show_balloons_on_hover:
+                    controller._redraw_balloons(eventWithBalloon)
+                else:
+                    controller._redraw_balloons(None)
+        event = controller.get_drawer().event_at(x, y)
+        time_at_x = controller.get_metrics().get_time(x)
+        if self._hit_resize_handle(controller, x, y) is not None:
+            direction = self._hit_resize_handle(controller, x, y)
+            controller.change_input_handler(ResizeByDragInputHandler(event, direction))
+            return
+        if self._hit_move_handle(controller, x, y):
+            controller.change_input_handler(MoveByDragInputHandler(event, time_at_x))
+            return
+        if (event is None and ctrl_down == False and shift_down == False):
+            controller._toggle_event_selection(x, y, ctrl_down)
+            controller.change_input_handler(ScrollByDragInputHandler(time_at_x))
+            return
+        if (event is None and ctrl_down == True):
+            controller._toggle_event_selection(x, y, ctrl_down)
+            controller.change_input_handler(CreatePeriodEventByDragInputHandler(time_at_x))
+            return
+        if (event is None and shift_down == True):
+            controller._toggle_event_selection(x, y, ctrl_down)
+            controller.change_input_handler(ZoomByDragInputHandler(time_at_x))
+            return
+        controller._toggle_event_selection(x, y, ctrl_down)
+
+    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+        self._display_balloon_on_hover(controller, x, y)
+        controller._display_eventinfo_in_statusbar(x, y)
+        if self._hit_resize_handle(controller, x, y) is not None:
+            controller.view.set_size_cursor()
+        elif self._hit_move_handle(controller, x, y):
+            controller.view.set_move_cursor()
+        else:
+            controller.view.set_default_cursor()
+        return
+
+    def balloon_timer1_fired(self, controller):
+        self.timer1_running = False
+        controller._redraw_balloons(controller.current_event)
+
+    def balloon_timer2_fired(self, controller):
+        self.timer2_running = False
+        hevt = controller.view_properties.hovered_event
+        # If there is no balloon visible we don't have to do anything
+        if hevt is None:
+            return
+        cevt = controller.current_event
+        bevt = controller.balloon_event
+        # If the visible balloon doesn't belong to the event pointed to
+        # we remove the ballloon.
+        if hevt != cevt and hevt != bevt: 
+            controller._redraw_balloons(None)
+
+    def _display_balloon_on_hover(self, controller, xpixelpos, ypixelpos):
+        """
+        Show or hide balloons depending on current situation.
+           self.current_event: The event pointed to, or None
+           self.balloon_event: The event that belongs to the balloon pointed
+                               to, or None.
+        """
+        # The balloon functionality is not enabled
+        if not controller.view_properties.show_balloons_on_hover:
+            return
+        controller.current_event = controller.drawing_algorithm.event_at(xpixelpos, ypixelpos)
+        controller.balloon_event = controller.drawing_algorithm.balloon_at(xpixelpos, ypixelpos)
+        # No balloon handling for selected events
+        if controller.current_event and controller.view_properties.is_selected(controller.current_event):
+            return
+        # Timer-1 is running. We have to wait for it to finish before doing anything
+        if self.timer1_running:
+            return
+        # Timer-2 is running. We have to wait for it to finish before doing anything
+        if self.timer2_running:
+            return
+        # We are pointing to an event... 
+        if controller.current_event is not None:
+            # We are not pointing on a balloon...
+            if controller.balloon_event is None:
+                # We have no balloon, so we start Timer-1
+                if controller.view_properties.hovered_event != controller.current_event:
+                    #print "Timer-1 Started ", controller.current_event
+                    controller.view.start_balloon_timer1(milliseconds=500, oneShot=True)
+                    self.timer1_running = True
+        # We are not pointing to any event....        
+        else:
+            # We have a balloon...
+            if controller.view_properties.hovered_event is not None:
+                # When we are moving within our 'own' balloon we dont't start Timer-2
+                # Otherwise Timer-2 is started.
+                if controller.balloon_event != controller.view_properties.hovered_event:
+                    #print "Timer-2 Started"
+                    controller.view.start_balloon_timer2(milliseconds=100, oneShot=True)
+
+    def _hit_move_handle(self, controller, x, y):
+        event_and_rect = controller.get_drawer().event_with_rect_at(x, y)
+        if event_and_rect is None:
+            return False
+        event, rect = event_and_rect
+        if not controller.get_view_properties().is_selected(event):
+            return False
+        center = rect.X + rect.Width / 2
+        if abs(x - center) <= HIT_REGION_PX_WITH:
+            return True
+        return False
+
+    def _hit_resize_handle(self, controller, x, y):
+        event_and_rect = controller.get_drawer().event_with_rect_at(x, y)
+        if event_and_rect == None:
+            return None
+        event, rect = event_and_rect
+        if not controller.get_view_properties().is_selected(event):
+            return None
+        if abs(x - rect.X) < HIT_REGION_PX_WITH:
+            return wx.LEFT
+        elif abs(rect.X + rect.Width - x) < HIT_REGION_PX_WITH:
+            return wx.RIGHT
+        return None
+
+
+class ScrollByDragInputHandler(InputHandler):
+
+    def __init__(self, start_time):
+        self.start_time = start_time
+
+    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+        current_time = controller.get_metrics().get_time(x)
+        delta = (current_time - self.start_time)
+        controller._scroll_timeline(delta)
+
+    def left_mouse_up(self, controller, x):
+        controller.change_input_handler(NoOpInputHandler())
+
+
+class ScrollViewInputHandler(InputHandler):
+
+    def __init__(self):
+        self.timer_running = False
+
+    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+        self.last_x = x
+        if controller._in_scroll_zone(x) and not self.timer_running:
+            controller.view.start_dragscroll_timer(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
+            self.timer_running = True
+
+    def left_mouse_up(self, controller, x):
+        controller.view.stop_dragscroll_timer()
+
+    def dragscroll_timer_fired(self, controller):
+        if controller._in_scroll_zone(self.last_x):
+            if self.last_x < SCROLL_ZONE_WIDTH:
+                direction = 1
+            else:
+                direction = -1
+            controller._scroll_timeline_view(direction)
+            self.view_scrolled(controller)
+
+    def view_scrolled(self, controller):
+        raise Exception("view_scrolled not implemented in subclass.")
+
+
+class MoveByDragInputHandler(ScrollViewInputHandler):
+
+    def __init__(self, event, start_drag_time):
+        ScrollViewInputHandler.__init__(self)
+        self.event = event
+        self.event_start_time = event.time_period.start_time
+        self.event_end_time = event.time_period.end_time
+        self.start_drag_time = start_drag_time
+
+    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+        ScrollViewInputHandler.mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down)
+        self._move_event(controller)
+
+    def left_mouse_up(self, controller, x):
+        ScrollViewInputHandler.left_mouse_up(self, controller, x)
+        controller.change_input_handler(NoOpInputHandler())
+
+    def view_scrolled(self, controller):
+        self._move_event(controller)
+
+    def _move_event(self, controller):
+        current_time = controller.get_metrics().get_time(self.last_x)
+        delta = current_time - self.start_drag_time
+        new_start = self.event_start_time + delta
+        new_end = self.event_end_time + delta
+        self.event.time_period.update(new_start, new_end)
+        if controller.get_drawer().event_is_period(self.event.time_period):
+            self._snap(controller)
+        controller.redraw_timeline()
+
+    def _snap(self, controller):
+        start = self.event.time_period.start_time
+        end = self.event.time_period.end_time
+        width = start - end
+        startSnapped = controller.get_drawer().snap(start)
+        endSnapped = controller.get_drawer().snap(end)
+        if startSnapped != start:
+            # Prefer to snap at left edge (in case end snapped as well)
+            start = startSnapped
+            end = start - width
+        elif endSnapped != end:
+            end = endSnapped
+            start = end + width
+        self.event.update_period(start, end)
+
+
+class ResizeByDragInputHandler(ScrollViewInputHandler):
+
+    def __init__(self, event, direction):
+        ScrollViewInputHandler.__init__(self)
+        self.event = event
+        self.direction = direction
+        self.timer_running = False
+
+    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+        ScrollViewInputHandler.mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down)
+        self._resize_event(controller)
+
+    def left_mouse_up(self, controller, x):
+        ScrollViewInputHandler.left_mouse_up(self, controller, x)
+        controller.change_input_handler(NoOpInputHandler())
+
+    def view_scrolled(self, controller):
+        self._resize_event(controller)
+
+    def _resize_event(self, controller):
+        new_time = controller.get_metrics().get_time(self.last_x)
+        new_snapped_time = controller.get_drawer().snap(new_time)
+        if self.direction == wx.LEFT:
+            new_start = new_snapped_time
+            new_end = self.event.time_period.end_time
+            if new_start > new_end:
+                new_start = new_end
+        else:
+            new_start = self.event.time_period.start_time
+            new_end = new_snapped_time
+            if new_end < new_start:
+                new_end = new_start
+        self.event.update_period(new_start, new_end)
+        controller.redraw_timeline()
+
+
+class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
+
+    def __init__(self, start_time):
+        ScrollViewInputHandler.__init__(self)
+        self.start_time = start_time
+        self.end_time = start_time
+
+    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+        ScrollViewInputHandler.mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down)
+        self._move_end_time(controller)
+
+    def left_mouse_up(self, controller, x):
+        ScrollViewInputHandler.left_mouse_up(self, controller, x)
+        self.end_action(controller, self._get_period(controller))
+        controller.redraw_timeline()
+        controller.change_input_handler(NoOpInputHandler())
+
+    def view_scrolled(self, controller):
+        self._move_end_time(controller)
+
+    def _get_period(self, controller):
+        start = self.start_time
+        end = self.end_time
+        if self.start_time > self.end_time:
+            start = self.end_time
+            end = self.start_time
+        return TimePeriod(controller.get_drawer().snap(start),
+                          controller.get_drawer().snap(end))
+
+    def _move_end_time(self, controller):
+        self.end_time = controller.get_metrics().get_time(self.last_x)
+        period = self._get_period(controller)
+        start = period.start_time
+        end = period.end_time
+        controller._redraw_timeline((start, end))
+
+    def end_action(self, controller, period):
+        raise Exception("end_action not implemented in subclass.")
+
+
+class CreatePeriodEventByDragInputHandler(SelectPeriodByDragInputHandler):
+
+    def end_action(self, controller, period):
+        controller.view.create_new_event(period.start_time, period.end_time)
+
+
+class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
+
+    def end_action(self, controller, period):
+        start = period.start_time
+        end = period.end_time
+        td = end - start
+        if (td.seconds > 3600) or (td.days > 0):
+            # Don't zoom in to less than an hour which upsets things.
+            controller.navigate_timeline(lambda tp: tp.update(start, end))
