@@ -91,9 +91,9 @@ class DrawingAreaControllerTest(unittest.TestCase):
     def testCreatesEventWhenCtrlDraggingMouse(self):
         self.controller.left_mouse_down(10, 0, ctrl_down=True)
         self.controller.mouse_moved(30, 0, left_down=True, ctrl_down=True, shift_down=False)
-        self.controller.left_mouse_up(20)
-        self.view.create_new_event.assertCalledWith(datetime(2010, 8, 30, 1, 0, 0),
-                                                    datetime(2010, 8, 30, 3, 0, 0))
+        self.controller.left_mouse_up(30)
+        self.view.create_new_event.assert_called_with(datetime(2010, 8, 30, 1, 0, 0),
+                                                      datetime(2010, 8, 30, 3, 0, 0))
         self.assertTimelineRedrawn()
 
     def testDisplaysEventInfoInStatusBarWhenHoveringEvent(self):
@@ -111,15 +111,17 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.assertEquals("", text)
 
     def testCreatesEventWhenDoubleClickingSurface(self):
+        self.drawer.event_at.return_value = None
+        self.controller.left_mouse_down(20, 8, ctrl_down=False)
         self.controller.left_mouse_dclick(20, 8, ctrl_down=False)
-        self.view.create_new_event.assertCalledWith(datetime(2010, 8, 30, 2, 0, 0),
-                                                    datetime(2010, 8, 30, 2, 0, 0))
+        self.view.create_new_event.assert_called_with(datetime(2010, 8, 30, 2, 0, 0),
+                                                      datetime(2010, 8, 30, 2, 0, 0))
         self.assertTimelineRedrawn()
 
     def testEditsEventWhenDoubleClickingIt(self):
         self.drawer.event_at.return_value = self.event_foo
         self.controller.left_mouse_dclick(20, 8, ctrl_down=False)
-        self.view.edit_event.assertCalledWith(self.event_foo)
+        self.view.edit_event.assert_called_with(self.event_foo)
         self.assertTimelineRedrawn()
 
     def testSelectsAndDeselectsEventWhenClickingOnEvent(self):
