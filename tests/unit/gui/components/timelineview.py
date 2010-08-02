@@ -67,14 +67,14 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.assertDisplaysPeriod(datetime(2010, 8, 30), datetime(2010, 8, 31))
 
     def testScrollsTimelineWhenDraggingMouse(self):
-        self.controller.left_mouse_down(0, 0, ctrl_down=False)
+        self.controller.left_mouse_down(0, 0, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(10, 0, left_down=True, ctrl_down=False, shift_down=False)
         self.assertDisplaysPeriod(datetime(2010, 8, 29, 23, 0, 0),
                                   datetime(2010, 8, 30, 23, 0, 0))
         self.assertTimelineRedrawn()
 
     def testZoomsTimelineWhenShiftDraggingMouse(self):
-        self.controller.left_mouse_down(0, 0, ctrl_down=False)
+        self.controller.left_mouse_down(0, 0, ctrl_down=False, shift_down=True)
         self.controller.mouse_moved(20, 0, left_down=True, ctrl_down=False, shift_down=True)
         self.controller.left_mouse_up(20)
         self.assertDisplaysPeriod(datetime(2010, 8, 30, 0, 0, 0),
@@ -89,7 +89,7 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.assertTimelineRedrawn()
 
     def testCreatesEventWhenCtrlDraggingMouse(self):
-        self.controller.left_mouse_down(10, 0, ctrl_down=True)
+        self.controller.left_mouse_down(10, 0, ctrl_down=True, shift_down=False)
         self.controller.mouse_moved(30, 0, left_down=True, ctrl_down=True, shift_down=False)
         self.controller.left_mouse_up(30)
         self.view.create_new_event.assert_called_with(datetime(2010, 8, 30, 1, 0, 0),
@@ -112,7 +112,7 @@ class DrawingAreaControllerTest(unittest.TestCase):
 
     def testCreatesEventWhenDoubleClickingSurface(self):
         self.drawer.event_at.return_value = None
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(20)
         self.controller.left_mouse_dclick(20, 8, ctrl_down=False)
         self.view.create_new_event.assert_called_with(datetime(2010, 8, 30, 2, 0, 0),
@@ -121,7 +121,7 @@ class DrawingAreaControllerTest(unittest.TestCase):
 
     def testEditsEventWhenDoubleClickingIt(self):
         self.drawer.event_at.return_value = self.event_foo
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(20)
         self.controller.left_mouse_dclick(20, 8, ctrl_down=False)
         self.view.edit_event.assert_called_with(self.event_foo)
@@ -129,22 +129,22 @@ class DrawingAreaControllerTest(unittest.TestCase):
 
     def testSelectsAndDeselectsEventWhenClickingOnEvent(self):
         self.drawer.event_at.return_value = self.event_foo
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(20)
         self.assertTrue(self.controller.get_view_properties().is_selected(self.event_foo))
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(20)
         self.assertFalse(self.controller.get_view_properties().is_selected(self.event_foo))
 
     def testDeselectsEventWhenClickingOutsideEvent(self):
         # First select it
         self.drawer.event_at.return_value = self.event_foo
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(20)
         self.assertTrue(self.controller.get_view_properties().is_selected(self.event_foo))
         # Then click outside
         self.drawer.event_at.return_value = None
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(20)
         self.assertFalse(self.controller.get_view_properties().is_selected(self.event_foo))
 
@@ -153,10 +153,10 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.drawer.event_at.return_value = self.event_foo
         self.drawer.event_with_rect_at.return_value = (self.event_foo, wx.Rect(40, 45, 20, 10))
         # First select the event so that move icon is visible
-        self.controller.left_mouse_down(50, 50, ctrl_down=False)
+        self.controller.left_mouse_down(50, 50, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(50)
         # Then start the dragging the move icon
-        self.controller.left_mouse_down(50, 50, ctrl_down=False)
+        self.controller.left_mouse_down(50, 50, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(60, 50, left_down=True, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(60)
         self.assertFooEventHasPeriod(datetime(2010, 8, 30, 5, 0, 0),
@@ -168,10 +168,10 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.drawer.event_at.return_value = self.event_foo
         self.drawer.event_with_rect_at.return_value = (self.event_foo, wx.Rect(40, 45, 20, 10))
         # First select the event so that move icon is visible
-        self.controller.left_mouse_down(50, 50, ctrl_down=False)
+        self.controller.left_mouse_down(50, 50, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(50)
         # Then start the dragging the move icon
-        self.controller.left_mouse_down(59, 50, ctrl_down=False)
+        self.controller.left_mouse_down(59, 50, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(70, 50, left_down=True, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(70)
         self.assertFooEventHasPeriod(datetime(2010, 8, 30, 4, 0, 0),
@@ -183,10 +183,10 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.drawer.event_at.return_value = self.event_foo
         self.drawer.event_with_rect_at.return_value = (self.event_foo, wx.Rect(40, 45, 20, 10))
         # First select the event so that move icon is visible
-        self.controller.left_mouse_down(50, 50, ctrl_down=False)
+        self.controller.left_mouse_down(50, 50, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(50)
         # Then start the dragging the move icon
-        self.controller.left_mouse_down(41, 50, ctrl_down=False)
+        self.controller.left_mouse_down(41, 50, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(30, 50, left_down=True, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(30)
         self.assertFooEventHasPeriod(datetime(2010, 8, 30, 3, 0, 0),
@@ -198,10 +198,10 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.drawer.event_at.return_value = self.event_foo
         self.drawer.event_with_rect_at.return_value = (self.event_foo, wx.Rect(210, 45, 20, 10))
         # First select the event so that move icon is visible
-        self.controller.left_mouse_down(50, 50, ctrl_down=False)
+        self.controller.left_mouse_down(50, 50, ctrl_down=False, shift_down=False)
         self.controller.left_mouse_up(50)
         # Then start the dragging the move icon
-        self.controller.left_mouse_down(229, 50, ctrl_down=False)
+        self.controller.left_mouse_down(229, 50, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(230, 50, left_down=True, ctrl_down=False, shift_down=False)
         self.assertTrue(self.view.start_dragscroll_timer.called)
         # Simulate timer
@@ -228,14 +228,14 @@ class DrawingAreaControllerTest(unittest.TestCase):
     def testDeletesSelectedEventsWhenPressingDelAndAnsweringYesInDialog(self):
         self.view.ask_question.return_value = wx.YES
         self.drawer.event_at.return_value = self.event_foo
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.key_down(wx.WXK_DELETE)
         self.assertEquals([], self.db.get_all_events())
 
     def testDeletesNoSelectedEventsWhenPressingDelAndAnsweringNoInDialog(self):
         self.view.ask_question.return_value = wx.NO
         self.drawer.event_at.return_value = self.event_foo
-        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_down(20, 8, ctrl_down=False, shift_down=False)
         self.controller.key_down(wx.WXK_DELETE)
         self.assertEquals([self.event_foo], self.db.get_all_events())
 

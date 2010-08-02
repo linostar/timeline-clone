@@ -388,7 +388,7 @@ class DrawingArea(wx.Panel):
         self.controller.window_resized()
 
     def _on_left_down(self, evt):
-        self.controller.left_mouse_down(evt.m_x, evt.m_y, evt.m_controlDown)
+        self.controller.left_mouse_down(evt.m_x, evt.m_y, evt.m_controlDown, evt.m_shiftDown)
         evt.Skip()
 
     def _on_right_down(self, evt):
@@ -580,7 +580,7 @@ class DrawingAreaController(object):
     def window_resized(self):
         self._redraw_timeline()
 
-    def left_mouse_down(self, x, y, ctrl_down):
+    def left_mouse_down(self, x, y, ctrl_down, shift_down):
         self.mouse_x = x
         try:
             self._set_new_current_time(x)
