@@ -113,6 +113,7 @@ class DrawingAreaControllerTest(unittest.TestCase):
     def testCreatesEventWhenDoubleClickingSurface(self):
         self.drawer.event_at.return_value = None
         self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_up(20)
         self.controller.left_mouse_dclick(20, 8, ctrl_down=False)
         self.view.create_new_event.assert_called_with(datetime(2010, 8, 30, 2, 0, 0),
                                                       datetime(2010, 8, 30, 2, 0, 0))
@@ -120,6 +121,8 @@ class DrawingAreaControllerTest(unittest.TestCase):
 
     def testEditsEventWhenDoubleClickingIt(self):
         self.drawer.event_at.return_value = self.event_foo
+        self.controller.left_mouse_down(20, 8, ctrl_down=False)
+        self.controller.left_mouse_up(20)
         self.controller.left_mouse_dclick(20, 8, ctrl_down=False)
         self.view.edit_event.assert_called_with(self.event_foo)
         self.assertTimelineRedrawn()
