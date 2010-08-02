@@ -660,8 +660,7 @@ class DrawingAreaController(object):
 
         This will recenter the timeline to the area clicked on.
         """
-        self._set_new_current_time(x)
-        self.navigate_timeline(lambda tp: tp.center(self._current_time))
+        self.navigate_timeline(lambda tp: tp.center(self.get_metrics().get_time(x)))
 
     def left_mouse_up(self, x):
         self.input_handler.left_mouse_up(self, x)
