@@ -216,13 +216,13 @@ class DrawingArea(wx.Panel):
         self.controller.middle_mouse_clicked(evt.m_x)
 
     def _on_left_up(self, evt):
-        self.controller.left_mouse_up(evt.m_x)
+        self.controller.left_mouse_up()
 
     def _on_enter(self, evt):
         self.controller.mouse_enter(evt.m_x, evt.LeftIsDown())
 
     def _on_motion(self, evt):
-        self.controller.mouse_moved(evt.m_x, evt.m_y, evt.m_leftDown, evt.m_controlDown, evt.m_shiftDown)
+        self.controller.mouse_moved(evt.m_x, evt.m_y)
 
     def _on_mousewheel(self, evt):
         self.controller.mouse_wheel_moved(evt.m_wheelRotation, evt.ControlDown(), evt.ShiftDown())
@@ -436,8 +436,8 @@ class DrawingAreaController(object):
     def middle_mouse_clicked(self, x):
         self.navigate_timeline(lambda tp: tp.center(self.get_metrics().get_time(x)))
 
-    def left_mouse_up(self, x):
-        self.input_handler.left_mouse_up(self, x)
+    def left_mouse_up(self):
+        self.input_handler.left_mouse_up(self)
 
     def mouse_enter(self, x, left_is_down):
         """
@@ -452,8 +452,8 @@ class DrawingAreaController(object):
             if not left_is_down:
                 self.left_mouse_up(x)
 
-    def mouse_moved(self, x, y, left_down, ctrl_down, shift_down):
-        self.input_handler.mouse_moved(self, x, y, left_down, ctrl_down, shift_down)
+    def mouse_moved(self, x, y):
+        self.input_handler.mouse_moved(self, x, y)
                 
     def mouse_wheel_moved(self, rotation, ctrl_down, shift_down):
         direction = _step_function(rotation)
@@ -608,10 +608,10 @@ class InputHandler(object):
     def left_mouse_down(self, controller, x, y, ctrl_down, shift_down):
         pass
 
-    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+    def mouse_moved(self, controller, x, y):
         pass
 
-    def left_mouse_up(self, controller, x):
+    def left_mouse_up(self, controller):
         pass
 
     def dragscroll_timer_fired(self, controller):
@@ -665,7 +665,7 @@ class NoOpInputHandler(InputHandler):
             return
         controller._toggle_event_selection(x, y, ctrl_down)
 
-    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+    def mouse_moved(self, controller, x, y):
         self._display_balloon_on_hover(controller, x, y)
         controller._display_eventinfo_in_statusbar(x, y)
         if self._hit_resize_handle(controller, x, y) is not None:
@@ -764,12 +764,12 @@ class ScrollByDragInputHandler(InputHandler):
     def __init__(self, start_time):
         self.start_time = start_time
 
-    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+    def mouse_moved(self, controller, x, y):
         current_time = controller.get_metrics().get_time(x)
         delta = (current_time - self.start_time)
         controller._scroll_timeline(delta)
 
-    def left_mouse_up(self, controller, x):
+    def left_mouse_up(self, controller):
         controller.change_input_handler(NoOpInputHandler())
 
 
@@ -778,13 +778,13 @@ class ScrollViewInputHandler(InputHandler):
     def __init__(self):
         self.timer_running = False
 
-    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
+    def mouse_moved(self, controller, x, y):
         self.last_x = x
         if controller._in_scroll_zone(x) and not self.timer_running:
             controller.view.start_dragscroll_timer(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
             self.timer_running = True
 
-    def left_mouse_up(self, controller, x):
+    def left_mouse_up(self, controller):
         controller.view.stop_dragscroll_timer()
 
     def dragscroll_timer_fired(self, controller):
@@ -809,12 +809,12 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
         self.event_end_time = event.time_period.end_time
         self.start_drag_time = start_drag_time
 
-    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
-        ScrollViewInputHandler.mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down)
+    def mouse_moved(self, controller, x, y):
+        ScrollViewInputHandler.mouse_moved(self, controller, x, y)
         self._move_event(controller)
 
-    def left_mouse_up(self, controller, x):
-        ScrollViewInputHandler.left_mouse_up(self, controller, x)
+    def left_mouse_up(self, controller):
+        ScrollViewInputHandler.left_mouse_up(self, controller)
         controller.change_input_handler(NoOpInputHandler())
 
     def view_scrolled(self, controller):
@@ -854,12 +854,12 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
         self.direction = direction
         self.timer_running = False
 
-    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
-        ScrollViewInputHandler.mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down)
+    def mouse_moved(self, controller, x, y):
+        ScrollViewInputHandler.mouse_moved(self, controller, x, y)
         self._resize_event(controller)
 
-    def left_mouse_up(self, controller, x):
-        ScrollViewInputHandler.left_mouse_up(self, controller, x)
+    def left_mouse_up(self, controller):
+        ScrollViewInputHandler.left_mouse_up(self, controller)
         controller.change_input_handler(NoOpInputHandler())
 
     def view_scrolled(self, controller):
@@ -889,12 +889,12 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
         self.start_time = start_time
         self.end_time = start_time
 
-    def mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down):
-        ScrollViewInputHandler.mouse_moved(self, controller, x, y, left_down, ctrl_down, shift_down)
+    def mouse_moved(self, controller, x, y):
+        ScrollViewInputHandler.mouse_moved(self, controller, x, y)
         self._move_end_time(controller)
 
-    def left_mouse_up(self, controller, x):
-        ScrollViewInputHandler.left_mouse_up(self, controller, x)
+    def left_mouse_up(self, controller):
+        ScrollViewInputHandler.left_mouse_up(self, controller)
         self.end_action(controller, self._get_period(controller))
         controller.redraw_timeline()
         controller.change_input_handler(NoOpInputHandler())

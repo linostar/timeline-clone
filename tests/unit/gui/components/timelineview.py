@@ -141,17 +141,17 @@ class DrawingAreaControllerTest(unittest.TestCase):
                                             datetime(2010, 8, 30, 21, 36, 0))
 
     def testDisplaysBalloonForEventWithDescription(self):
-        self.controller.mouse_moved(50, 80, left_down=False, ctrl_down=False, shift_down=False)
+        self.controller.mouse_moved(50, 80)
         self.assertTrue(self.view.start_balloon_timer1.called)
         self.controller.balloon_timer1_fired()
         self.assertEquals(self.period_event, self.controller.get_view_properties().hovered_event)
 
     def testHidesBalloonWhenLeavingEvent(self):
-        self.controller.mouse_moved(50, 80, left_down=False, ctrl_down=False, shift_down=False)
+        self.controller.mouse_moved(50, 80)
         self.assertTrue(self.view.start_balloon_timer1.called)
         self.controller.balloon_timer1_fired()
         self.assertEquals(self.period_event, self.controller.get_view_properties().hovered_event)
-        self.controller.mouse_moved(0, 0, left_down=False, ctrl_down=False, shift_down=False)
+        self.controller.mouse_moved(0, 0)
         self.assertTrue(self.view.start_balloon_timer2.called)
         self.controller.balloon_timer2_fired()
         self.assertEquals(None, self.controller.get_view_properties().hovered_event)
@@ -267,10 +267,10 @@ class DrawingAreaControllerTest(unittest.TestCase):
     def testScrollsTimelineBy10PercentWhenMovingEvent(self):
         self.simulateMouseClick(50, 80)
         self.controller.left_mouse_down(55, 80, ctrl_down=False, shift_down=False)
-        self.controller.mouse_moved(230, 80, left_down=True, ctrl_down=False, shift_down=False)
+        self.controller.mouse_moved(230, 80)
         self.assertTrue(self.view.start_dragscroll_timer.called)
         self.controller.dragscroll_timer_fired()
-        self.controller.left_mouse_up(230)
+        self.controller.left_mouse_up()
         self.assertDisplaysPeriod(datetime(2010, 8, 30, 2, 24, 0),
                                   datetime(2010, 8, 31, 2, 24, 0))
         self.assertTimelineRedrawn()
@@ -280,11 +280,11 @@ class DrawingAreaControllerTest(unittest.TestCase):
         self.simulateMouseClick(50, 80)
         # Then start the dragging the move icon
         self.controller.left_mouse_down(69, 80, ctrl_down=False, shift_down=False)
-        self.controller.mouse_moved(230, 80, left_down=True, ctrl_down=False, shift_down=False)
+        self.controller.mouse_moved(230, 80)
         self.assertTrue(self.view.start_dragscroll_timer.called)
         # Simulate timer
         self.controller.dragscroll_timer_fired()
-        self.controller.left_mouse_up(230)
+        self.controller.left_mouse_up()
         self.assertDisplaysPeriod(datetime(2010, 8, 30, 2, 24, 0),
                                   datetime(2010, 8, 31, 2, 24, 0))
         self.assertTimelineRedrawn()
@@ -325,16 +325,15 @@ class DrawingAreaControllerTest(unittest.TestCase):
 
     def simulateMouseClick(self, x, y, ctrl_down=False):
         self.controller.left_mouse_down(x, y, ctrl_down=ctrl_down, shift_down=False)
-        self.controller.left_mouse_up(x)
+        self.controller.left_mouse_up()
 
     def simulateMouseDownMoveUp(self, x1, y1, x2, y2, ctrl_down, shift_down):
         self.controller.left_mouse_down(x1, y1, ctrl_down, shift_down)
-        left_down = True
-        self.controller.mouse_moved(x2, y2, left_down, ctrl_down, shift_down)
-        self.controller.left_mouse_up(x2)
+        self.controller.mouse_moved(x2, y2)
+        self.controller.left_mouse_up()
 
     def simulateMouseMove(self, x, y):
-        self.controller.mouse_moved(x, y, left_down=False, ctrl_down=False, shift_down=False)
+        self.controller.mouse_moved(x, y)
 
     def assertPeriodEventHasPeriod(self, start, end):
         self.assertEquals(TimePeriod(start, end), self.period_event.time_period)
