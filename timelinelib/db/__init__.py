@@ -24,6 +24,7 @@ storage.
 
 import os.path
 
+from timelinelib.db.tutorial import create_in_memory_tutorial_db
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
@@ -149,8 +150,3 @@ def copy_db(from_db, to_db):
     # Save
     if isinstance(to_db, MemoryDB):
         to_db.enable_save()
-
-
-def create_in_memory_tutorial_db():
-    db = MemoryDB()
-    return db
