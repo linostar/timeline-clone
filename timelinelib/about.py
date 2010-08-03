@@ -41,6 +41,7 @@ DEVELOPERS = [
     u"    Roger Lindberg",
     u"Contributors:",
     u"    Alan Jackson",
+    u"    Glenn J. Mason",
     u"    Joe Gilmour",
 ]
 TRANSLATORS = [
