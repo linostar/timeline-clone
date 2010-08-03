@@ -91,7 +91,7 @@ class TimelinePrintout(wx.Printout):
         dc = self.GetDC()
         SetScaleAndDeviceOrigin(dc)
         dc.BeginDrawing()
-        dc.DrawBitmap(self.panel.bgbuf, 0, 0, True)
+        dc.DrawBitmap(self.panel.get_current_image(), 0, 0, True)
         dc.EndDrawing()
         return True
 
