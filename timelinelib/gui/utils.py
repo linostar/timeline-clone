@@ -23,6 +23,8 @@ Utility functions for working with GUI.
 
 import wx
 
+from timelinelib.db.interface import TimelineIOError
+
 
 # Border, in pixels, between controls in a window (should always be used when
 # border is needed)
