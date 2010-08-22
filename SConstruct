@@ -97,7 +97,7 @@ env.Alias("pot", pot)
 
 # Target: tags
 
-tags = env.Command("timelinelib/tags", sources,
+tags = env.Command("tags", sources,
                    "$CTAGS --tag-relative=yes -f $TARGET $SOURCES")
 env.Alias("tags", tags)
 

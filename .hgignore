@@ -3,7 +3,7 @@ syntax: glob
 .sconsign.dblite
 po/timeline.pot
 *.pyc
-timelinelib/tags
+tags
 *.swp
 *.mo
 HACKING.html
