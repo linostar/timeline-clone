@@ -38,7 +38,7 @@ from timelinelib.gui.utils import ID_ERROR
 import timelinelib.gui.utils as gui_utils
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
-from timelinelib.gui.components.datetimepicker import DateTimePicker
+from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
 from timelinelib.utils import ex_msg
 
 
@@ -78,9 +78,9 @@ class EventEditor(wx.Dialog):
         # Grid: When: Label + DateTimePickers
         grid.Add(wx.StaticText(self, label=_("When:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
-        self.dtp_start = DateTimePicker(self)
+        self.dtp_start = PyDateTimePicker(self)
         self.lbl_to = wx.StaticText(self, label=_("to"))
-        self.dtp_end = DateTimePicker(self)
+        self.dtp_end = PyDateTimePicker(self)
         when_box = wx.BoxSizer(wx.HORIZONTAL)
         when_box.Add(self.dtp_start, proportion=1)
         when_box.AddSpacer(BORDER)
