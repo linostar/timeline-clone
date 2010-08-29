@@ -31,7 +31,7 @@ from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.components.timelineview import DrawingAreaController
 
 
-class DrawingAreaControllerTest(unittest.TestCase):
+class TimelineView(unittest.TestCase):
 
     def setUp(self):
         # Simulate a view like this:
