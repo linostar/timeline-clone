@@ -38,7 +38,8 @@ Targets:
 # Import environment variables
 
 for env_var in ["PYTHONPATH"]:
-    env["ENV"][env_var] = os.environ[env_var]
+    if os.environ.has_key(env_var):
+        env["ENV"][env_var] = os.environ[env_var]
 
 # Find paths to programs and print warning messages if not found
 
