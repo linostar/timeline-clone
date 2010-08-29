@@ -72,7 +72,6 @@ def add_unittests(suite):
     add_tests_from_module("tests.unit.gui.dialogs.duplicateevent")
     add_tests_from_module("tests.unit.gui.components.cattree")
     add_tests_from_module("tests.unit.gui.components.timelineview")
-    add_tests_from_module("tests.unit.gui.components.pydatetimepicker")
     add_tests_from_module("tests.unit.db.backends.xmlparser")
     add_tests_from_module("tests.integration.read_write_xml")
     add_tests_from_module("tests.integration.write_xml")

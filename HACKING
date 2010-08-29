@@ -7,6 +7,7 @@ Commands
 Useful commands to know about:
 
   * `scons --help` - Show available targets
+  * `python specs/execute.py` - Execute all specifications
   * `python tests/run.py` - Run all test in test suite
   * `python tools/*.py` - See comment in tools to learn what they do
 
