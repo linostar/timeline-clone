@@ -98,7 +98,7 @@ env.Alias("pot", pot)
 # Target: tags
 
 tags = env.Command("tags", sources,
-                   "$CTAGS --tag-relative=yes -f $TARGET $SOURCES")
+                   "$CTAGS --tag-relative=yes --extra=+f -f $TARGET $SOURCES")
 env.Alias("tags", tags)
 
 # Target: hacking
