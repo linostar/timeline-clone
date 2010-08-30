@@ -20,7 +20,6 @@ import os.path
 import re
 import datetime
 from datetime import time
-from datetime import datetime as dt
 
 import wx
 import wx.calendar
@@ -48,7 +47,7 @@ class PyDateTimePicker(wx.Panel):
 
     def set_value(self, value):
         if value == None:
-            now = dt.now()
+            now = datetime.now()
             value = dt(now.year, now.month, now.day)
         self.date_picker.set_py_date(value.date())
         self.time_picker.set_py_time(value.time())
@@ -185,9 +184,13 @@ class PyDatePickerController(object):
             year = int(year_string)
             month = int(month_string)
             day = int(day_string)
+            dtValue = datetime.datetime(year, month, day)
+            if (dtValue >= TimePeriod.MAX_TIME or 
+                dtValue <  TimePeriod.MIN_TIME):
+                raise ValueError()
             return datetime.date(year, month, day)
         except ValueError:
-            raise ValueError("Invalid time.")
+            raise ValueError("Invalid date.")
 
     def set_py_date(self, py_date):
         year_string = "%04d" % py_date.year

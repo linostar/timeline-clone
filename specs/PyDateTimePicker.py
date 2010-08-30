@@ -28,7 +28,6 @@ from timelinelib.gui.components.pydatetimepicker import PyTimePicker
 from timelinelib.gui.components.pydatetimepicker import PyTimePickerController
 
 
-# TODO: Test only dates in a specific range can be selected
 # TODO: Test up/down should increase/decrease selected component in both date and time
 
 
@@ -69,6 +68,32 @@ class APyDatePicker(PyDatePickerBaseFixture):
         py_date = datetime.date(2009, 11, 5)
         self.controller.set_py_date(py_date)
         self.py_date_picker.set_date_string.assert_called_with("2009-11-05")
+
+    def testPinkBackgroundWhenTooSmallDateIsEntered(self):
+        self.simulate_change_date_string("0-02-13")
+        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
+        self.py_date_picker.Refresh.assert_called_with()
+        self.simulate_change_date_string("9-12-31")
+        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
+        self.py_date_picker.Refresh.assert_called_with()
+
+    def testWhiteBackgroundWhenSmallestValidDateIsEntered(self):
+        self.simulate_change_date_string("10-01-01")
+        self.py_date_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
+        self.py_date_picker.Refresh.assert_called_with()
+
+    def testPinkBackgroundWhenTooLargeDateIsEntered(self):
+        self.simulate_change_date_string("9999-02-13")
+        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
+        self.py_date_picker.Refresh.assert_called_with()
+        self.simulate_change_date_string("9990-01-01")
+        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
+        self.py_date_picker.Refresh.assert_called_with()
+
+    def testWhiteBackgroundWhenLargestValidDateIsEntered(self):
+        self.simulate_change_date_string("9989-12-31")
+        self.py_date_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
+        self.py_date_picker.Refresh.assert_called_with()
 
 
 class PyDatePickerWithYearSelected(PyDatePickerBaseFixture):
