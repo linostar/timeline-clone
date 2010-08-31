@@ -69,30 +69,24 @@ class APyDatePicker(PyDatePickerBaseFixture):
         self.controller.set_py_date(py_date)
         self.py_date_picker.set_date_string.assert_called_with("2009-11-05")
 
-    def testPinkBackgroundWhenTooSmallDateIsEntered(self):
-        self.simulate_change_date_string("0-02-13")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
-        self.py_date_picker.Refresh.assert_called_with()
+    def testChangesBackgroundToPinkWhenTooSmallDateIsEntered(self):
         self.simulate_change_date_string("9-12-31")
         self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
         self.py_date_picker.Refresh.assert_called_with()
 
-    def testWhiteBackgroundWhenSmallestValidDateIsEntered(self):
+    def testHasOriginalBackgroundWhenSmallestValidDateIsEntered(self):
         self.simulate_change_date_string("10-01-01")
-        self.py_date_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
+        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.original_bg)
         self.py_date_picker.Refresh.assert_called_with()
 
-    def testPinkBackgroundWhenTooLargeDateIsEntered(self):
-        self.simulate_change_date_string("9999-02-13")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
-        self.py_date_picker.Refresh.assert_called_with()
+    def testChangesBackgroundToPinkWhenTooLargeDateIsEntered(self):
         self.simulate_change_date_string("9990-01-01")
         self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
         self.py_date_picker.Refresh.assert_called_with()
 
-    def testWhiteBackgroundWhenLargestValidDateIsEntered(self):
+    def testHasOriginalBackgroundWhenLargestValidDateIsEntered(self):
         self.simulate_change_date_string("9989-12-31")
-        self.py_date_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
+        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.original_bg)
         self.py_date_picker.Refresh.assert_called_with()
 
 
