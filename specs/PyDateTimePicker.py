@@ -56,7 +56,7 @@ class APyDatePicker(PyDatePickerBaseFixture):
 
     def testSetsPinkBackgroundWhenIncorrectDateIsEntered(self):
         self.simulate_change_date_string("foo")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
+        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.get_error_bg())
         self.py_date_picker.Refresh.assert_called_with()
 
     def testResetsBackgroundWhenCorrectDateIsEntered(self):
@@ -71,22 +71,22 @@ class APyDatePicker(PyDatePickerBaseFixture):
 
     def testChangesBackgroundToPinkWhenTooSmallDateIsEntered(self):
         self.simulate_change_date_string("9-12-31")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
+        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.get_error_bg())
         self.py_date_picker.Refresh.assert_called_with()
 
     def testHasOriginalBackgroundWhenSmallestValidDateIsEntered(self):
         self.simulate_change_date_string("10-01-01")
-        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.original_bg)
+        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.get_original_bg())
         self.py_date_picker.Refresh.assert_called_with()
 
     def testChangesBackgroundToPinkWhenTooLargeDateIsEntered(self):
         self.simulate_change_date_string("9990-01-01")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
+        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.get_error_bg())
         self.py_date_picker.Refresh.assert_called_with()
 
     def testHasOriginalBackgroundWhenLargestValidDateIsEntered(self):
         self.simulate_change_date_string("9989-12-31")
-        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.original_bg)
+        self.py_date_picker.SetBackgroundColour.assert_called_with(self.controller.get_original_bg())
         self.py_date_picker.Refresh.assert_called_with()
 
 

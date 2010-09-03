@@ -168,6 +168,7 @@ class PyDatePickerController(object):
     def __init__(self, py_date_picker):
         self.py_date_picker = py_date_picker
         self.original_bg = self.py_date_picker.GetBackgroundColour()
+        self.error_bg = "pink"
         self.separator = "-"
         self.region_year = 0
         self.region_month = 1
@@ -233,10 +234,16 @@ class PyDatePickerController(object):
             self.get_py_date()
             self.py_date_picker.SetBackgroundColour(self.original_bg)
         except ValueError:
-            self.py_date_picker.SetBackgroundColour("pink")
+            self.py_date_picker.SetBackgroundColour(self.error_bg)
         self.py_date_picker.SetFocus()
         self.py_date_picker.Refresh()
 
+    def get_error_bg(self):
+        return self.error_bg
+    
+    def get_original_bg(self):
+        return self.original_bg
+    
     def _select_region_if_possible(self, n):
         region = self._get_region(n)
         if region:
