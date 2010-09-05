@@ -115,7 +115,7 @@ class CalendarPopup(wx.PopupTransientWindow):
 class PyDatePicker(wx.TextCtrl):
 
     def __init__(self, parent):
-        wx.TextCtrl.__init__(self, parent)
+        wx.TextCtrl.__init__(self, parent, style=wx.TE_PROCESS_ENTER)
         self.controller = PyDatePickerController(self)
         self._bind_events()
         self._resize_to_fit_text()
@@ -272,7 +272,7 @@ class PyDatePickerController(object):
 class PyTimePicker(wx.TextCtrl):
 
     def __init__(self, parent):
-        wx.TextCtrl.__init__(self, parent)
+        wx.TextCtrl.__init__(self, parent, style=wx.TE_PROCESS_ENTER)
         self.controller = PyTimePickerController(self)
         self._bind_events()
         self._resize_to_fit_text()
