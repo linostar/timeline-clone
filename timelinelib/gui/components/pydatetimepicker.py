@@ -165,10 +165,10 @@ class PyDatePicker(wx.TextCtrl):
 
 class PyDatePickerController(object):
 
-    def __init__(self, py_date_picker):
+    def __init__(self, py_date_picker, error_bg="pink"):
         self.py_date_picker = py_date_picker
         self.original_bg = self.py_date_picker.GetBackgroundColour()
-        self.error_bg = "pink"
+        self.error_bg = error_bg
         self.separator = "-"
         self.region_year = 0
         self.region_month = 1
@@ -186,7 +186,7 @@ class PyDatePickerController(object):
             month = int(month_string)
             day = int(day_string)
             dtValue = datetime.datetime(year, month, day)
-            if (dtValue >= TimePeriod.MAX_TIME or 
+            if (dtValue >= TimePeriod.MAX_TIME or
                 dtValue <  TimePeriod.MIN_TIME):
                 raise ValueError()
             return datetime.date(year, month, day)
@@ -238,12 +238,6 @@ class PyDatePickerController(object):
         self.py_date_picker.SetFocus()
         self.py_date_picker.Refresh()
 
-    def get_error_bg(self):
-        return self.error_bg
-    
-    def get_original_bg(self):
-        return self.original_bg
-    
     def _select_region_if_possible(self, n):
         region = self._get_region(n)
         if region:
@@ -326,7 +320,7 @@ class PyTimePickerController(object):
         self.py_time_picker = py_time_picker
         self.original_bg = self.py_time_picker.GetBackgroundColour()
         self.separator = ":"
-    
+
     def get_py_time(self):
         try:
             split = self.py_time_picker.get_time_string().split(self.separator)
