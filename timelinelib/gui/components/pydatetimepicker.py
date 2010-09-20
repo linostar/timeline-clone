@@ -427,6 +427,15 @@ class PyTimePicker(wx.TextCtrl):
         def on_text(evt):
             self.controller.on_text_changed()
         self.Bind(wx.EVT_TEXT, on_text)
+        def on_key_down(evt):
+            if evt.GetKeyCode() == wx.WXK_UP:
+                self.controller.on_up()
+            elif evt.GetKeyCode() == wx.WXK_DOWN:
+                self.controller.on_down()
+            else:
+                evt.Skip()    
+        self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
+        
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("00:00")
@@ -479,6 +488,71 @@ class PyTimePickerController(object):
         except ValueError:
             self.py_time_picker.SetBackgroundColour("pink")
         self.py_time_picker.Refresh()
+        
+    def on_up(self):
+        def increment_hour(time):
+            new_hour = time.hour + 1
+            if new_hour > 23:
+                new_hour = 0
+            return time.replace(hour=new_hour)
+        def increment_minutes(time):
+            new_hour = time.hour
+            new_minute = time.minute + 1
+            if new_minute > 59: 
+                new_minute = 0
+                new_hour = time.hour + 1
+                if new_hour > 23:
+                    new_hour = 0
+            return time.replace(hour=new_hour, minute=new_minute)
+        if not self._time_is_valid():
+            return
+        selection = self.py_time_picker.GetSelection()
+        current_time = self.get_py_time()
+        if self._in_hour_part():
+            new_time = increment_hour(current_time)
+        else:
+            new_time = increment_minutes(current_time)
+        if current_time != new_time:    
+            self._set_new_time_and_restore_selection(new_time, selection)  
+        
+    def on_down(self):
+        def decrement_hour(time):
+            new_hour = time.hour - 1
+            if new_hour < 0:
+                new_hour = 23
+            return time.replace(hour=new_hour)
+        def decrement_minutes(time):
+            new_hour = time.hour
+            new_minute = time.minute - 1
+            if new_minute < 0: 
+                new_minute = 59
+                new_hour = time.hour - 1
+                if new_hour < 0:
+                    new_hour = 23
+            return time.replace(hour=new_hour, minute=new_minute)
+        if not self._time_is_valid():
+            return
+        selection = self.py_time_picker.GetSelection()
+        current_time = self.get_py_time()
+        if self._in_hour_part():
+            new_time = decrement_hour(current_time)
+        else:
+            new_time = decrement_minutes(current_time)
+        if current_time != new_time:    
+            self._set_new_time_and_restore_selection(new_time, selection)  
+
+    def _set_new_time_and_restore_selection(self, new_time, selection):
+        def restore_selection(selection):
+            self.py_time_picker.SetSelection(selection[0], selection[1])
+        self.set_py_time(new_time)
+        restore_selection(selection)
+
+    def _time_is_valid(self):
+        try:
+            self.get_py_time()
+        except ValueError:
+            return False
+        return True
 
     def _select_hour_part(self):
         if self._separator_pos() == -1:

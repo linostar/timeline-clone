@@ -19,6 +19,7 @@
 import unittest
 import datetime
 
+import wx
 from mock import Mock
 
 from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
@@ -35,6 +36,7 @@ class PyDatePickerBaseFixture(unittest.TestCase):
 
     def setUp(self):
         self.py_date_picker = Mock(PyDatePicker)
+        self.calendar_button = Mock(wx.BitmapButton)
         self.py_date_picker.get_date_string.return_value = "2010-08-31"
         self.py_date_picker.SetSelection.side_effect = self._update_insertion_point_from_selection
         self.py_date_picker.GetBackgroundColour.return_value = (1, 2, 3)
@@ -288,6 +290,7 @@ class PyTimePickerBaseFixture(unittest.TestCase):
 
     def _update_insertion_point_from_mark(self, from_pos, to_pos):
         self.py_time_picker.GetInsertionPoint.return_value = from_pos
+        self.py_time_picker.GetSelection.return_value = (from_pos, to_pos) 
 
 
 class APyTimePicker(PyTimePickerBaseFixture):
@@ -312,7 +315,7 @@ class APyTimePicker(PyTimePickerBaseFixture):
         self.py_time_picker.set_time_string.assert_called_with("06:09")
 
 
-class PyTimePickerWithHourPartSelected(PyTimePickerBaseFixture):
+class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
 
     def setUp(self):
         PyTimePickerBaseFixture.setUp(self)
@@ -328,8 +331,33 @@ class PyTimePickerWithHourPartSelected(PyTimePickerBaseFixture):
         skip_event = self.controller.on_shift_tab()
         self.assertTrue(skip_event)
 
+    def testIncreaseHourOnUp(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_up()
+        self.py_time_picker.set_time_string.assert_called_with("05:04")
 
-class PyTimeCtrlWithMinutePartSelected(PyTimePickerBaseFixture):
+    def testZeroHourOnUpWhenLastHour(self):
+        self.simulate_change_time_string("23:04")
+        self.controller.on_up()
+        self.py_time_picker.set_time_string.assert_called_with("00:04")
+
+    def testNoChangeOnUpWhenInvalidTime(self):
+        self.simulate_change_time_string("aa:bb")
+        self.controller.on_up()
+        self.assertFalse(self.py_time_picker.set_time_string.called)
+
+    def testDecreaseHourOnDown(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_down()
+        self.py_time_picker.set_time_string.assert_called_with("03:04")
+
+    def testSetLastHourOnDownWhenZeroHour(self):
+        self.simulate_change_time_string("00:04")
+        self.controller.on_down()
+        self.py_time_picker.set_time_string.assert_called_with("23:04")
+        
+
+class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
 
     def setUp(self):
         PyTimePickerBaseFixture.setUp(self)
@@ -345,3 +373,23 @@ class PyTimeCtrlWithMinutePartSelected(PyTimePickerBaseFixture):
         skip_event = self.controller.on_shift_tab()
         self.assertFalse(skip_event)
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
+
+    def testIncreaseMinutesOnUp(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_up()
+        self.py_time_picker.set_time_string.assert_called_with("04:05")
+
+    def testZeroMinutesAndIncrementHourOnUpWhenLastMinute(self):
+        self.simulate_change_time_string("04:59")
+        self.controller.on_up()
+        self.py_time_picker.set_time_string.assert_called_with("05:00")
+
+    def testDecreaseMinutesOnDown(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_down()
+        self.py_time_picker.set_time_string.assert_called_with("04:03")
+
+    def testLastTimeOnDownWhenZeroTime(self):
+        self.simulate_change_time_string("00:00")
+        self.controller.on_down()
+        self.py_time_picker.set_time_string.assert_called_with("23:59")
