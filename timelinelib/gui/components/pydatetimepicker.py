@@ -156,6 +156,14 @@ class PyDatePicker(wx.TextCtrl):
         def on_text(evt):
             self.controller.on_text_changed()
         self.Bind(wx.EVT_TEXT, on_text)
+        def on_key_down(evt):
+            if evt.GetKeyCode() == wx.WXK_UP:
+                self.controller.on_up()
+            elif evt.GetKeyCode() == wx.WXK_DOWN:
+                self.controller.on_down()
+            else:
+                evt.Skip()    
+        self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("0000-00-00")
@@ -173,6 +181,8 @@ class PyDatePickerController(object):
         self.region_year = 0
         self.region_month = 1
         self.region_day = 2
+        self.preferred_day = None
+        self.save_preferred_day = True
 
     def get_py_date(self):
         try:
@@ -197,14 +207,7 @@ class PyDatePickerController(object):
         year_string = "%04d" % py_date.year
         month_string = "%02d" % py_date.month
         day_string = "%02d" % py_date.day
-        date_components = []
-        for n in [0, 1, 2]:
-            if self.region_year == n:
-                date_components.append(year_string)
-            elif self.region_month == n:
-                date_components.append(month_string)
-            elif self.region_day == n:
-                date_components.append(day_string)
+        date_components = [year_string, month_string, day_string]
         date_string = self.separator.join(date_components)
         self.py_date_picker.set_date_string(date_string)
 
@@ -231,36 +234,153 @@ class PyDatePickerController(object):
 
     def on_text_changed(self):
         try:
-            self.get_py_date()
+            current_date = self.get_py_date()
             self.py_date_picker.SetBackgroundColour(self.original_bg)
+            # To prevent saving of preferred day when year or month is changed
+            # in on_up() and on_down()...
+            # Save preferred day only when text is entered in the date text
+            # control and not when up or down keys has been used. 
+            # When up and down keys are used, the preferred day is saved in 
+            # on_up() and on_down() only when day is changed.
+            if self.save_preferred_day:
+                self._save_preferred_day(current_date)
         except ValueError:
             self.py_date_picker.SetBackgroundColour(self.error_bg)
         self.py_date_picker.SetFocus()
         self.py_date_picker.Refresh()
 
+    def on_up(self):
+        def increment_year(date):
+            if date.year < TimePeriod.MAX_TIME.year - 1:
+                return self._set_valid_day(date.year + 1, date.month, date.day)
+            return date
+        def increment_month(date):
+            if date.month < 12:
+                return self._set_valid_day(date.year, date.month + 1, 
+                                           date.day)
+            elif date.year < TimePeriod.MAX_TIME.year - 1:    
+                return self._set_valid_day(date.year + 1, 1, date.day)
+            return date
+        def increment_day(date):
+            if date <  TimePeriod.MAX_TIME.date() - datetime.timedelta(days=1):
+                return date + datetime.timedelta(days=1)
+            return date
+        if not self._date_is_valid():
+            return
+        selection = self.py_date_picker.GetSelection()
+        current_date = self.get_py_date()
+        if self._insertion_point_in_region(self.region_year):
+            new_date = increment_year(current_date)
+        elif self._insertion_point_in_region(self.region_month):
+            new_date = increment_month(current_date)
+        else:
+            new_date = increment_day(current_date)
+            self._save_preferred_day(new_date)
+        if current_date != new_date:    
+            self._set_new_date_and_restore_selection(new_date, selection)  
+
+    def on_down(self):
+        def decrement_year(date):
+            if date.year > TimePeriod.MIN_TIME.year:
+                return self._set_valid_day(date.year - 1, date.month, date.day)
+            return date
+        def decrement_month(date):
+            if date.month > 1:
+                return self._set_valid_day(date.year, date.month - 1, date.day)
+            elif date.year > TimePeriod.MIN_TIME.year:    
+                return self._set_valid_day(date.year - 1, 12, date.day)
+            return date
+        def decrement_day(date):
+            if date.day > 1:
+                return date.replace(day=date.day - 1)
+            elif date.month > 1:
+                return self._set_valid_day(date.year, date.month - 1, 31)
+            elif date.year > TimePeriod.MIN_TIME.year:
+                return self._set_valid_day(date.year - 1, 12, 31)
+            return date
+        if not self._date_is_valid():
+            return
+        selection = self.py_date_picker.GetSelection()
+        current_date = self.get_py_date()
+        if self._insertion_point_in_region(self.region_year):
+            new_date = decrement_year(current_date)
+        elif self._insertion_point_in_region(self.region_month):
+            new_date = decrement_month(current_date)
+        else:
+            new_date = decrement_day(current_date)
+            self._save_preferred_day(new_date)
+        if current_date != new_date:  
+            self._set_new_date_and_restore_selection(new_date, selection)  
+
+    def _set_new_date_and_restore_selection(self, new_date, selection):
+        def restore_selection(selection):
+            self.py_date_picker.SetSelection(selection[0], selection[1])
+        self.save_preferred_day = False
+        if self.preferred_day != None:
+            new_date = self._set_valid_day(new_date.year, new_date.month, 
+                                           self.preferred_day)
+        self.set_py_date(new_date)
+        restore_selection(selection)
+        self.save_preferred_day = True
+                    
+    def _set_valid_day(self, new_year, new_month, new_day):
+        done = False
+        while not done:
+            try:
+                date = datetime.date(year=new_year, month=new_month, day=new_day)
+                done = True
+            except Exception, ex:                    
+                new_day -= 1
+        return date
+
+    def _save_preferred_day(self, date):
+        if date.day > 28:
+            self.preferred_day = date.day
+        else:
+            self.preferred_day = None
+        
+    def _date_is_valid(self):
+        try:
+            self.get_py_date()
+        except ValueError:
+            return False
+        return True
+        
     def _select_region_if_possible(self, n):
-        region = self._get_region(n)
-        if region:
-            self.py_date_picker.SetSelection(region[0], region[-1])
+        region_range = self._get_region_range(n)
+        if region_range:
+            self.py_date_picker.SetSelection(region_range[0], region_range[-1])
 
     def _insertion_point_in_region(self, n):
-        region = self._get_region(n)
-        if region:
-            return self.py_date_picker.GetInsertionPoint() in region
+        region_range = self._get_region_range(n)
+        if region_range:
+            return self.py_date_picker.GetInsertionPoint() in region_range
 
-    def _get_region(self, n):
-        if n not in [0, 1, 2]:
+    def _get_region_range(self, n):
+        # Returns a range of valid cursor positions for a valid region year, 
+        # month or day.
+        def region_is_not_valid(region):
+            return region not in (self.region_year, self.region_month, 
+                                  self.region_day)
+        def date_has_exactly_two_seperators(datestring):
+            return len(datestring.split(self.separator)) == 3
+        def calculate_pos_range(region, datestring):
+            pos_of_separator1 = datestring.find(self.separator)
+            pos_of_separator2 = datestring.find(self.separator, 
+                                                pos_of_separator1 + 1)
+            if region == self.region_year:
+                return range(0, pos_of_separator1 + 1)
+            elif region == self.region_month:
+                return range(pos_of_separator1 + 1, pos_of_separator2 + 1)
+            else:
+                return range(pos_of_separator2 + 1, len(datestring) + 1)
+        if region_is_not_valid(n):
             return None
-        split = self.py_date_picker.get_date_string().split(self.separator)
-        if len(split) != 3:
+        date = self.py_date_picker.get_date_string()
+        if not date_has_exactly_two_seperators(date):
             return None
-        pos = 0
-        ranges = []
-        for part in split:
-            ranges.append(range(pos, pos + len(part) + 1))
-            pos += len(part) + len(self.separator)
-        return ranges[n]
-
+        pos_range = calculate_pos_range(n, date)
+        return pos_range
 
 
 class PyTimePicker(wx.TextCtrl):
