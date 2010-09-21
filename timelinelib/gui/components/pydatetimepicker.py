@@ -220,7 +220,7 @@ class PyDatePickerController(object):
         self.py_date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
-        self._select_region_if_possible(self.region_year)
+        self.on_set_cursor()
 
     def on_tab(self):
         if self._insertion_point_in_region(self.region_year):
@@ -488,7 +488,6 @@ class PyTimePickerController(object):
         self.py_time_picker.set_time_string(time_string)
 
     def on_set_focus(self):
-        #self._select_hour_part()
         self.on_set_cursor()
 
     def on_tab(self):

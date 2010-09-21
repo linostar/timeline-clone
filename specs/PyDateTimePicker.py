@@ -59,8 +59,19 @@ class PyDatePickerBaseFixture(unittest.TestCase):
 class APyDatePicker(PyDatePickerBaseFixture):
 
     def testSelectsYearPartWhenGivenFocus(self):
+        self.simulate_change_insertion_point(0)
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
+
+    def testSelectsMonthPartWhenGivenFocus(self):
+        self.simulate_change_insertion_point(6)
+        self.controller.on_set_focus()
+        self.py_date_picker.SetSelection.assert_called_with(5, 7)
+
+    def testSelectsDayPartWhenGivenFocus(self):
+        self.simulate_change_insertion_point(10)
+        self.controller.on_set_focus()
+        self.py_date_picker.SetSelection.assert_called_with(8, 10)
 
     def testChangesToErrorBackgroundWhenIncorrectDateIsEntered(self):
         self.simulate_change_date_string("foo")
@@ -144,11 +155,11 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
 
     def testKeepSelectionOnUp(self):
         self.controller.on_up()
-        self.py_date_picker.SetSelection.assert_called_with(0,4)
+        self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
     def testKeepSelectionOnDown(self):
         self.controller.on_up()
-        self.py_date_picker.SetSelection.assert_called_with(0,4)
+        self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
     def testIncreaseYearOnUp(self):
         self.simulate_change_date_string("2010-01-01")
@@ -178,23 +189,23 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
     def testKeepInsertionPointOnUp(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_up()
-        self.py_date_picker.SetSelection.assert_called_with(0,4)
+        self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
     def testKeepInsertionPointOnDown(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_down()
-        self.py_date_picker.SetSelection.assert_called_with(0,4)
+        self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
     def testSelectRegionWhenInsertionPointChanges(self):
         self.simulate_change_insertion_point(6)
         self.controller.on_set_cursor()
-        self.py_date_picker.SetSelection.assert_called_with(5,7)
+        self.py_date_picker.SetSelection.assert_called_with(5, 7)
         self.simulate_change_insertion_point(10)
         self.controller.on_set_cursor()
-        self.py_date_picker.SetSelection.assert_called_with(8,10)
+        self.py_date_picker.SetSelection.assert_called_with(8, 10)
         self.simulate_change_insertion_point(1)
         self.controller.on_set_cursor()
-        self.py_date_picker.SetSelection.assert_called_with(0,4)
+        self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
 
 class PyDatePickerWithFocusOnMonth(PyDatePickerBaseFixture):
@@ -314,6 +325,11 @@ class APyTimePicker(PyTimePickerBaseFixture):
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
 
+    def testSelectsSecondPartWhenGivenFocus(self):
+        self.simulate_change_insertion_point(4)
+        self.controller.on_set_focus()
+        self.py_time_picker.SetSelection.assert_called_with(3, 5)
+
     def testSetsPinkBackgroundWhenIncorrectTimeIsEntered(self):
         self.simulate_change_time_string("foo")
         self.py_time_picker.SetBackgroundColour.assert_called_with("pink")
@@ -375,10 +391,10 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
     def testSelectRegionWhenInsertionPointChanges(self):
         self.simulate_change_insertion_point(4)
         self.controller.on_set_cursor()
-        self.py_time_picker.SetSelection.assert_called_with(3,5)
+        self.py_time_picker.SetSelection.assert_called_with(3, 5)
         self.simulate_change_insertion_point(1)
         self.controller.on_set_cursor()
-        self.py_time_picker.SetSelection.assert_called_with(0,2)
+        self.py_time_picker.SetSelection.assert_called_with(0, 2)
         
 
 class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
