@@ -126,7 +126,6 @@ class APyDatePicker(PyDatePickerBaseFixture):
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2010-02-28")
 
-
 class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
 
     def setUp(self):
@@ -184,6 +183,17 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
     def testKeepInsertionPointOnDown(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_down()
+        self.py_date_picker.SetSelection.assert_called_with(0,4)
+
+    def testSelectRegionWhenInsertionPointChanges(self):
+        self.simulate_change_insertion_point(6)
+        self.controller.on_set_cursor()
+        self.py_date_picker.SetSelection.assert_called_with(5,7)
+        self.simulate_change_insertion_point(10)
+        self.controller.on_set_cursor()
+        self.py_date_picker.SetSelection.assert_called_with(8,10)
+        self.simulate_change_insertion_point(1)
+        self.controller.on_set_cursor()
         self.py_date_picker.SetSelection.assert_called_with(0,4)
 
 
@@ -288,6 +298,10 @@ class PyTimePickerBaseFixture(unittest.TestCase):
         self.py_time_picker.get_time_string.return_value = new_time_string
         self.controller.on_text_changed()
 
+    def simulate_change_insertion_point(self, new_insertion_point):
+        self.py_time_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point) 
+        self.py_time_picker.GetInsertionPoint.return_value = new_insertion_point
+
     def _update_insertion_point_from_mark(self, from_pos, to_pos):
         self.py_time_picker.GetInsertionPoint.return_value = from_pos
         self.py_time_picker.GetSelection.return_value = (from_pos, to_pos) 
@@ -296,6 +310,7 @@ class PyTimePickerBaseFixture(unittest.TestCase):
 class APyTimePicker(PyTimePickerBaseFixture):
 
     def testSelectsHourPartWhenGivenFocus(self):
+        self.simulate_change_insertion_point(0)
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
 
@@ -319,6 +334,7 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
 
     def setUp(self):
         PyTimePickerBaseFixture.setUp(self)
+        self.simulate_change_insertion_point(0)
         self.controller.on_set_focus()
         self.py_time_picker.reset_mock()
 
@@ -355,12 +371,21 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
         self.simulate_change_time_string("00:04")
         self.controller.on_down()
         self.py_time_picker.set_time_string.assert_called_with("23:04")
+
+    def testSelectRegionWhenInsertionPointChanges(self):
+        self.simulate_change_insertion_point(4)
+        self.controller.on_set_cursor()
+        self.py_time_picker.SetSelection.assert_called_with(3,5)
+        self.simulate_change_insertion_point(1)
+        self.controller.on_set_cursor()
+        self.py_time_picker.SetSelection.assert_called_with(0,2)
         
 
 class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
 
     def setUp(self):
         PyTimePickerBaseFixture.setUp(self)
+        self.simulate_change_insertion_point(3)
         self.controller.on_set_focus()
         self.controller.on_tab()
         self.py_time_picker.reset_mock()

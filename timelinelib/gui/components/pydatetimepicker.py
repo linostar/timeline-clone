@@ -75,6 +75,8 @@ class PyDateTimePicker(wx.Panel):
                             self._calendar_on_date_changed)
         calendar_popup.Bind(wx.calendar.EVT_CALENDAR,
                             self._calendar_on_date_changed_dclick)
+        calendar_popup.Bind(wx.EVT_CLOSE,
+                            self._calendar_on_close)
         btn = evt.GetEventObject()
         pos = btn.ClientToScreen((0,0))
         sz = btn.GetSize()
@@ -82,6 +84,9 @@ class PyDateTimePicker(wx.Panel):
         calendar_popup.Popup()
         self.calendar_popup = calendar_popup
 
+    def _calendar_on_close(self, evt):
+        evt.Veto()
+                
     def _calendar_on_date_changed(self, evt):
         wx_date = evt.GetEventObject().GetDate()
         py_date = datetime.datetime(wx_date.Year, wx_date.Month+1, wx_date.Day)
@@ -164,6 +169,9 @@ class PyDatePicker(wx.TextCtrl):
             else:
                 evt.Skip()    
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
+        def on_set_cursor(evt):
+            self.controller.on_set_cursor()
+        self.Bind(wx.EVT_SET_CURSOR, on_set_cursor)
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("0000-00-00")
@@ -312,6 +320,16 @@ class PyDatePickerController(object):
         if current_date != new_date:  
             self._set_new_date_and_restore_selection(new_date, selection)  
 
+    def on_set_cursor(self):
+        insertion_point = self.py_date_picker.GetInsertionPoint();
+        if self._insertion_point_in_region(self.region_year):
+            self._select_region_if_possible(self.region_year)
+        elif self._insertion_point_in_region(self.region_month):
+            self._select_region_if_possible(self.region_month)
+        elif self._insertion_point_in_region(self.region_day):
+            self._select_region_if_possible(self.region_day)
+        
+
     def _set_new_date_and_restore_selection(self, new_date, selection):
         def restore_selection(selection):
             self.py_date_picker.SetSelection(selection[0], selection[1])
@@ -435,6 +453,9 @@ class PyTimePicker(wx.TextCtrl):
             else:
                 evt.Skip()    
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
+        def on_set_cursor(evt):
+            self.controller.on_set_cursor()
+        self.Bind(wx.EVT_SET_CURSOR, on_set_cursor)
         
 
     def _resize_to_fit_text(self):
@@ -467,7 +488,8 @@ class PyTimePickerController(object):
         self.py_time_picker.set_time_string(time_string)
 
     def on_set_focus(self):
-        self._select_hour_part()
+        #self._select_hour_part()
+        self.on_set_cursor()
 
     def on_tab(self):
         if self._in_minute_part():
@@ -541,6 +563,13 @@ class PyTimePickerController(object):
         if current_time != new_time:    
             self._set_new_time_and_restore_selection(new_time, selection)  
 
+    def on_set_cursor(self):
+        insertion_point = self.py_time_picker.GetInsertionPoint();
+        if self._in_hour_part():
+            self._select_hour_part()
+        elif self._in_minute_part():
+            self._select_minute_part()
+            
     def _set_new_time_and_restore_selection(self, new_time, selection):
         def restore_selection(selection):
             self.py_time_picker.SetSelection(selection[0], selection[1])
