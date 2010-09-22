@@ -75,8 +75,6 @@ class PyDateTimePicker(wx.Panel):
                             self._calendar_on_date_changed)
         calendar_popup.Bind(wx.calendar.EVT_CALENDAR,
                             self._calendar_on_date_changed_dclick)
-        calendar_popup.Bind(wx.EVT_CLOSE,
-                            self._calendar_on_close)
         btn = evt.GetEventObject()
         pos = btn.ClientToScreen((0,0))
         sz = btn.GetSize()
@@ -84,9 +82,6 @@ class PyDateTimePicker(wx.Panel):
         calendar_popup.Popup()
         self.calendar_popup = calendar_popup
 
-    def _calendar_on_close(self, evt):
-        evt.Veto()
-                
     def _calendar_on_date_changed(self, evt):
         wx_date = evt.GetEventObject().GetDate()
         py_date = datetime.datetime(wx_date.Year, wx_date.Month+1, wx_date.Day)
