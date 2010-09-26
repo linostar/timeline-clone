@@ -29,9 +29,6 @@ from timelinelib.gui.components.pydatetimepicker import PyTimePicker
 from timelinelib.gui.components.pydatetimepicker import PyTimePickerController
 
 
-# TODO: Test up/down should increase/decrease selected component in both date and time
-
-
 class PyDatePickerBaseFixture(unittest.TestCase):
 
     def setUp(self):

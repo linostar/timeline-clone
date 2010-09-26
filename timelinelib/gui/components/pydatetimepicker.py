@@ -110,6 +110,24 @@ class CalendarPopup(wx.PopupTransientWindow):
                                             pos=(border,border), style=style)
         sz = self.cal.GetBestSize()
         self.SetSize((sz.width+border*2, sz.height+border*2))
+        self.cal.Bind(wx.calendar.EVT_CALENDAR_MONTH, self.on_month)
+        self.cal.Bind(wx.calendar.EVT_CALENDAR_DAY, self.on_day)
+        self.repop = False
+        self.repoped = False
+
+    def on_month(self, evt):
+        self.repop = True
+
+    def on_day(self, evt):
+        self.repop = True
+
+    def OnDismiss(self):
+        # This funny code makes the calender control stay open when you change
+        # month or day. The control is closed on a double-click on a day or
+        # a single click outside of the control
+        if self.repop and not self.repoped:
+            self.Popup() 
+            self.repoped = True
 
 
 class PyDatePicker(wx.TextCtrl):
