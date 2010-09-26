@@ -62,7 +62,6 @@ def add_unittests(suite):
     add_tests_from_module("tests.unit.db.objects")
     add_tests_from_module("tests.unit.db.backends.file")
     add_tests_from_module("tests.unit.gui.utils")
-    add_tests_from_module("tests.unit.gui.dialogs.categoryeditor")
     add_tests_from_module("tests.unit.gui.dialogs.mainframe")
     add_tests_from_module("tests.unit.config")
     add_tests_from_module("tests.unit.db.backends.memory")

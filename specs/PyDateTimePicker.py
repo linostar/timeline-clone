@@ -19,10 +19,8 @@
 import unittest
 import datetime
 
-import wx
 from mock import Mock
 
-from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
 from timelinelib.gui.components.pydatetimepicker import PyDatePicker
 from timelinelib.gui.components.pydatetimepicker import PyDatePickerController
 from timelinelib.gui.components.pydatetimepicker import PyTimePicker
@@ -33,7 +31,6 @@ class PyDatePickerBaseFixture(unittest.TestCase):
 
     def setUp(self):
         self.py_date_picker = Mock(PyDatePicker)
-        self.calendar_button = Mock(wx.BitmapButton)
         self.py_date_picker.get_date_string.return_value = "2010-08-31"
         self.py_date_picker.SetSelection.side_effect = self._update_insertion_point_from_selection
         self.py_date_picker.GetBackgroundColour.return_value = (1, 2, 3)
@@ -133,6 +130,7 @@ class APyDatePicker(PyDatePickerBaseFixture):
         self.simulate_change_date_string("2010-03-31")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2010-02-28")
+
 
 class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
 
