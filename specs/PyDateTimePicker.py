@@ -25,6 +25,8 @@ from timelinelib.gui.components.pydatetimepicker import PyDatePicker
 from timelinelib.gui.components.pydatetimepicker import PyDatePickerController
 from timelinelib.gui.components.pydatetimepicker import PyTimePicker
 from timelinelib.gui.components.pydatetimepicker import PyTimePickerController
+from timelinelib.gui.components.pydatetimepicker import CalendarPopup
+from timelinelib.gui.components.pydatetimepicker import CalendarPopupController
 
 
 class PyDatePickerBaseFixture(unittest.TestCase):
@@ -429,3 +431,36 @@ class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
         self.simulate_change_time_string("00:00")
         self.controller.on_down()
         self.py_time_picker.set_time_string.assert_called_with("23:59")
+
+
+class CalendarPopupBaseFixture(unittest.TestCase):
+
+    def setUp(self):
+        self.calendar_popup = Mock(CalendarPopup)
+        self.controller = CalendarPopupController(self.calendar_popup)
+        
+    def simulate_month_change(self):
+        self.controller.on_month()
+        self.controller.on_dismiss()
+
+    def simulate_day_change(self):
+        self.controller.on_day()
+        self.controller.on_dismiss()
+
+
+class ACalendarPopup(CalendarPopupBaseFixture):
+
+    def testStaysOpenOnMonthChange(self):
+        self.simulate_month_change()
+        self.assertTrue(self.calendar_popup.Popup.called)
+
+    def testStaysOpenOnDayChange(self):
+        self.simulate_day_change()
+        self.assertTrue(self.calendar_popup.Popup.called)
+
+    def testPopupCallAllowedJustOnce(self):
+        self.simulate_month_change()
+        self.assertTrue(self.calendar_popup.Popup.called)
+        call = self.calendar_popup.reset_mock()
+        self.simulate_month_change()
+        self.assertFalse(self.calendar_popup.Popup.called)

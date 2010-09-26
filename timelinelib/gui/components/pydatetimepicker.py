@@ -99,6 +99,7 @@ class PyDateTimePicker(wx.Panel):
 class CalendarPopup(wx.PopupTransientWindow):
 
     def __init__(self, parent, wx_date):
+        self.controller = CalendarPopupController(self)
         wx.PopupTransientWindow.__init__(self, parent, style=wx.BORDER_NONE)
         border = 2
         style = wx.calendar.CAL_SHOW_HOLIDAYS|wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION
@@ -110,23 +111,39 @@ class CalendarPopup(wx.PopupTransientWindow):
                                             pos=(border,border), style=style)
         sz = self.cal.GetBestSize()
         self.SetSize((sz.width+border*2, sz.height+border*2))
-        self.cal.Bind(wx.calendar.EVT_CALENDAR_MONTH, self.on_month)
-        self.cal.Bind(wx.calendar.EVT_CALENDAR_DAY, self.on_day)
+        self._bind_events()
+
+    def _bind_events(self):
+        def on_month(evt):
+            self.controller.on_month()
+        def on_day(evt):
+            self.controller.on_day()
+        self.cal.Bind(wx.calendar.EVT_CALENDAR_MONTH, on_month)
+        self.cal.Bind(wx.calendar.EVT_CALENDAR_DAY, on_day)
+
+    def OnDismiss(self):
+        self.controller.on_dismiss()
+
+
+class CalendarPopupController(object):
+
+    def __init__(self, calendar_popup):
+        self.calendar_popup = calendar_popup
         self.repop = False
         self.repoped = False
 
-    def on_month(self, evt):
+    def on_month(self):
         self.repop = True
 
-    def on_day(self, evt):
+    def on_day(self):
         self.repop = True
 
-    def OnDismiss(self):
+    def on_dismiss(self):
         # This funny code makes the calender control stay open when you change
         # month or day. The control is closed on a double-click on a day or
         # a single click outside of the control
         if self.repop and not self.repoped:
-            self.Popup() 
+            self.calendar_popup.Popup() 
             self.repoped = True
 
 
