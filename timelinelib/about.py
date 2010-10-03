@@ -26,7 +26,6 @@ copied here to be available from Python code.
 
 
 import wx
-from wx.lib.wordwrap import wordwrap
 
 from version import get_version
 
