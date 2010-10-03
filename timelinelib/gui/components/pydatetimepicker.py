@@ -213,31 +213,23 @@ class PyDatePickerController(object):
 
     def __init__(self, py_date_picker, error_bg="pink"):
         self.py_date_picker = py_date_picker
-        self.original_bg = self.py_date_picker.GetBackgroundColour()
         self.error_bg = error_bg
+        self.original_bg = self.py_date_picker.GetBackgroundColour()
         self.separator = "-"
         self.region_year = 0
         self.region_month = 1
         self.region_day = 2
+        self.region_siblings = ((self.region_year, self.region_month),
+                                (self.region_month, self.region_day))
         self.preferred_day = None
         self.save_preferred_day = True
 
     def get_py_date(self):
         try:
-            split = self.py_date_picker.get_date_string().split(self.separator)
-            if len(split) != 3:
-                raise ValueError()
-            year_string = split[self.region_year]
-            month_string = split[self.region_month]
-            day_string = split[self.region_day]
-            year = int(year_string)
-            month = int(month_string)
-            day = int(day_string)
-            dtValue = datetime.datetime(year, month, day)
-            if (dtValue >= TimePeriod.MAX_TIME or
-                dtValue <  TimePeriod.MIN_TIME):
-                raise ValueError()
-            return datetime.date(year, month, day)
+            (year, month, day) = self._parse_year_month_day()
+            py_date = datetime.date(year, month, day)
+            self._ensure_within_allowed_period(py_date)
+            return py_date
         except ValueError:
             raise ValueError("Invalid date.")
 
@@ -253,27 +245,23 @@ class PyDatePickerController(object):
         self.on_set_cursor()
 
     def on_tab(self):
-        if self._insertion_point_in_region(self.region_year):
-            self._select_region_if_possible(self.region_month)
-            return False
-        elif self._insertion_point_in_region(self.region_month):
-            self._select_region_if_possible(self.region_day)
-            return False
+        for (left_region, right_region) in self.region_siblings:
+            if self._insertion_point_in_region(left_region):
+                self._select_region_if_possible(right_region)
+                return False
         return True
 
     def on_shift_tab(self):
-        if self._insertion_point_in_region(self.region_day):
-            self._select_region_if_possible(self.region_month)
-            return False
-        elif self._insertion_point_in_region(self.region_month):
-            self._select_region_if_possible(self.region_year)
-            return False
+        for (left_region, right_region) in self.region_siblings:
+            if self._insertion_point_in_region(right_region):
+                self._select_region_if_possible(left_region)
+                return False
         return True
 
     def on_text_changed(self):
-        try:
+        self._change_background_depending_on_date_validity()
+        if self._current_date_is_valid():
             current_date = self.get_py_date()
-            self.py_date_picker.SetBackgroundColour(self.original_bg)
             # To prevent saving of preferred day when year or month is changed
             # in on_up() and on_down()...
             # Save preferred day only when text is entered in the date text
@@ -282,10 +270,6 @@ class PyDatePickerController(object):
             # on_up() and on_down() only when day is changed.
             if self.save_preferred_day:
                 self._save_preferred_day(current_date)
-        except ValueError:
-            self.py_date_picker.SetBackgroundColour(self.error_bg)
-        self.py_date_picker.SetFocus()
-        self.py_date_picker.Refresh()
 
     def on_up(self):
         def increment_year(date):
@@ -303,7 +287,7 @@ class PyDatePickerController(object):
             if date <  TimePeriod.MAX_TIME.date() - datetime.timedelta(days=1):
                 return date + datetime.timedelta(days=1)
             return date
-        if not self._date_is_valid():
+        if not self._current_date_is_valid():
             return
         selection = self.py_date_picker.GetSelection()
         current_date = self.get_py_date()
@@ -336,7 +320,7 @@ class PyDatePickerController(object):
             elif date.year > TimePeriod.MIN_TIME.year:
                 return self._set_valid_day(date.year - 1, 12, 31)
             return date
-        if not self._date_is_valid():
+        if not self._current_date_is_valid():
             return
         selection = self.py_date_picker.GetSelection()
         current_date = self.get_py_date()
@@ -358,7 +342,29 @@ class PyDatePickerController(object):
             self._select_region_if_possible(self.region_month)
         elif self._insertion_point_in_region(self.region_day):
             self._select_region_if_possible(self.region_day)
-        
+
+    def _change_background_depending_on_date_validity(self):
+        if self._current_date_is_valid():
+            self.py_date_picker.SetBackgroundColour(self.original_bg)
+        else:
+            self.py_date_picker.SetBackgroundColour(self.error_bg)
+        self.py_date_picker.SetFocus()
+        self.py_date_picker.Refresh()
+
+    def _parse_year_month_day(self):
+        components = self.py_date_picker.get_date_string().split(self.separator)
+        if len(components) != 3:
+            raise ValueError()
+        year  = int(components[self.region_year])
+        month = int(components[self.region_month])
+        day   = int(components[self.region_day])
+        return (year, month, day)
+
+    def _ensure_within_allowed_period(self, py_date):
+        py_date_time = datetime.datetime(py_date.year, py_date.month, py_date.day)
+        if (py_date_time >= TimePeriod.MAX_TIME or
+            py_date_time <  TimePeriod.MIN_TIME):
+            raise ValueError()
 
     def _set_new_date_and_restore_selection(self, new_date, selection):
         def restore_selection(selection):
@@ -387,7 +393,7 @@ class PyDatePickerController(object):
         else:
             self.preferred_day = None
         
-    def _date_is_valid(self):
+    def _current_date_is_valid(self):
         try:
             self.get_py_date()
         except ValueError:
@@ -487,7 +493,6 @@ class PyTimePicker(wx.TextCtrl):
             self.controller.on_set_cursor()
         self.Bind(wx.EVT_SET_CURSOR, on_set_cursor)
         
-
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("00:00")
         width = w + 20

@@ -84,6 +84,19 @@ class APyDatePicker(PyDatePickerBaseFixture):
         self.controller.set_py_date(py_date)
         self.py_date_picker.set_date_string.assert_called_with("2009-11-05")
 
+    def testReturnsTypedDateAsPyDate(self):
+        self.simulate_change_date_string("2008-05-03")
+        self.assertEquals(datetime.date(2008, 5, 3),
+                          self.controller.get_py_date())
+
+    def testThrowsValueErrorWhenGettingInvalidPyDate(self):
+        self.simulate_change_date_string("2008-05-xx")
+        self.assertRaises(ValueError, self.controller.get_py_date)
+
+    def testThrowsValueErrorWhenGettingPyDateOutsideValidRange(self):
+        self.simulate_change_date_string("9-9-9")
+        self.assertRaises(ValueError, self.controller.get_py_date)
+
     def testChangesToErrorBackgroundWhenTooSmallDateIsEntered(self):
         self.simulate_change_date_string("9-12-31")
         self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
