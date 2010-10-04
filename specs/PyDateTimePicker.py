@@ -54,18 +54,14 @@ class PyDatePickerBaseFixture(unittest.TestCase):
 
 class APyDatePicker(PyDatePickerBaseFixture):
 
-    def testSelectsYearPartWhenGivenFocus(self):
-        self.simulate_change_insertion_point(0)
+    def testSelectsPreferredRegionWhenGivenFocus(self):
+        self.controller.preferred_region = self.controller.region_year 
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
-
-    def testSelectsMonthPartWhenGivenFocus(self):
-        self.simulate_change_insertion_point(6)
+        self.controller.preferred_region = self.controller.region_month 
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(5, 7)
-
-    def testSelectsDayPartWhenGivenFocus(self):
-        self.simulate_change_insertion_point(10)
+        self.controller.preferred_region = self.controller.region_day 
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(8, 10)
 
@@ -206,17 +202,6 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
         self.controller.on_down()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
-    def testSelectRegionWhenInsertionPointChanges(self):
-        self.simulate_change_insertion_point(6)
-        self.controller.on_set_cursor()
-        self.py_date_picker.SetSelection.assert_called_with(5, 7)
-        self.simulate_change_insertion_point(10)
-        self.controller.on_set_cursor()
-        self.py_date_picker.SetSelection.assert_called_with(8, 10)
-        self.simulate_change_insertion_point(1)
-        self.controller.on_set_cursor()
-        self.py_date_picker.SetSelection.assert_called_with(0, 4)
-
 
 class PyDatePickerWithFocusOnMonth(PyDatePickerBaseFixture):
 
@@ -330,13 +315,11 @@ class PyTimePickerBaseFixture(unittest.TestCase):
 
 class APyTimePicker(PyTimePickerBaseFixture):
 
-    def testSelectsHourPartWhenGivenFocus(self):
-        self.simulate_change_insertion_point(0)
+    def testSelectsPreferredPartWhenGivenFocus(self):
+        self.controller.preferred_part = self.controller.hour_part
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
-
-    def testSelectsSecondPartWhenGivenFocus(self):
-        self.simulate_change_insertion_point(4)
+        self.controller.preferred_part = self.controller.minute_part
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(3, 5)
 
@@ -398,14 +381,6 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
         self.controller.on_down()
         self.py_time_picker.set_time_string.assert_called_with("23:04")
 
-    def testSelectRegionWhenInsertionPointChanges(self):
-        self.simulate_change_insertion_point(4)
-        self.controller.on_set_cursor()
-        self.py_time_picker.SetSelection.assert_called_with(3, 5)
-        self.simulate_change_insertion_point(1)
-        self.controller.on_set_cursor()
-        self.py_time_picker.SetSelection.assert_called_with(0, 2)
-        
 
 class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
 

@@ -199,9 +199,6 @@ class PyDatePicker(wx.TextCtrl):
             else:
                 evt.Skip()    
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
-        def on_set_cursor(evt):
-            self.controller.on_set_cursor()
-        self.Bind(wx.EVT_SET_CURSOR, on_set_cursor)
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("0000-00-00")
@@ -223,6 +220,7 @@ class PyDatePickerController(object):
                                 (self.region_month, self.region_day))
         self.preferred_day = None
         self.save_preferred_day = True
+        self.preferred_region = self.region_year
 
     def get_py_date(self):
         try:
@@ -242,7 +240,7 @@ class PyDatePickerController(object):
         self.py_date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
-        self.on_set_cursor()
+        self._select_region_if_possible(self.preferred_region)
 
     def on_tab(self):
         for (left_region, right_region) in self.region_siblings:
@@ -334,15 +332,6 @@ class PyDatePickerController(object):
         if current_date != new_date:  
             self._set_new_date_and_restore_selection(new_date, selection)  
 
-    def on_set_cursor(self):
-        insertion_point = self.py_date_picker.GetInsertionPoint();
-        if self._insertion_point_in_region(self.region_year):
-            self._select_region_if_possible(self.region_year)
-        elif self._insertion_point_in_region(self.region_month):
-            self._select_region_if_possible(self.region_month)
-        elif self._insertion_point_in_region(self.region_day):
-            self._select_region_if_possible(self.region_day)
-
     def _change_background_depending_on_date_validity(self):
         if self._current_date_is_valid():
             self.py_date_picker.SetBackgroundColour(self.original_bg)
@@ -400,9 +389,10 @@ class PyDatePickerController(object):
             return False
         return True
         
-    def _select_region_if_possible(self, n):
-        region_range = self._get_region_range(n)
+    def _select_region_if_possible(self, region):
+        region_range = self._get_region_range(region)
         if region_range:
+            self.preferred_region = region
             self.py_date_picker.SetSelection(region_range[0], region_range[-1])
 
     def _insertion_point_in_region(self, n):
@@ -489,9 +479,6 @@ class PyTimePicker(wx.TextCtrl):
             else:
                 evt.Skip()    
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
-        def on_set_cursor(evt):
-            self.controller.on_set_cursor()
-        self.Bind(wx.EVT_SET_CURSOR, on_set_cursor)
         
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("00:00")
@@ -505,6 +492,9 @@ class PyTimePickerController(object):
         self.py_time_picker = py_time_picker
         self.original_bg = self.py_time_picker.GetBackgroundColour()
         self.separator = ":"
+        self.hour_part = 0
+        self.minute_part = 1
+        self.preferred_part = self.hour_part
 
     def get_py_time(self):
         try:
@@ -523,18 +513,18 @@ class PyTimePickerController(object):
         self.py_time_picker.set_time_string(time_string)
 
     def on_set_focus(self):
-        self.on_set_cursor()
+        self._select_part(self.preferred_part)
 
     def on_tab(self):
         if self._in_minute_part():
             return True
-        self._select_minute_part()
+        self._select_part(self.minute_part)
         return False
 
     def on_shift_tab(self):
         if self._in_hour_part():
             return True
-        self._select_hour_part()
+        self._select_part(self.hour_part)
         return False
 
     def on_text_changed(self):
@@ -597,13 +587,6 @@ class PyTimePickerController(object):
         if current_time != new_time:    
             self._set_new_time_and_restore_selection(new_time, selection)  
 
-    def on_set_cursor(self):
-        insertion_point = self.py_time_picker.GetInsertionPoint();
-        if self._in_hour_part():
-            self._select_hour_part()
-        elif self._in_minute_part():
-            self._select_minute_part()
-            
     def _set_new_time_and_restore_selection(self, new_time, selection):
         def restore_selection(selection):
             self.py_time_picker.SetSelection(selection[0], selection[1])
@@ -617,17 +600,16 @@ class PyTimePickerController(object):
             return False
         return True
 
-    def _select_hour_part(self):
+    def _select_part(self, part):
         if self._separator_pos() == -1:
             return
-        self.py_time_picker.SetSelection(0, self._separator_pos())
-
-    def _select_minute_part(self):
-        if self._separator_pos() == -1:
-            return
-        time_string_len = len(self.py_time_picker.get_time_string())
-        self.py_time_picker.SetSelection(self._separator_pos() + 1, time_string_len)
-
+        if part == self.hour_part:
+            self.py_time_picker.SetSelection(0, self._separator_pos())
+        else:    
+            time_string_len = len(self.py_time_picker.get_time_string())
+            self.py_time_picker.SetSelection(self._separator_pos() + 1, time_string_len)
+        self.preferred_part = part
+        
     def _in_hour_part(self):
         if self._separator_pos() == -1:
             return
