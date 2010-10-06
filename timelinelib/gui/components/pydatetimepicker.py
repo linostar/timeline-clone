@@ -176,6 +176,7 @@ class PyDatePicker(wx.TextCtrl):
         def on_kill_focus(evt):
             # Trick to not make selection text disappear when focus is lost (we
             # remove the selection instead)
+            self.controller.on_kill_focus()
             self.SetSelection(0, 0)
         self.Bind(wx.EVT_KILL_FOCUS, on_kill_focus)
         def on_char(evt):
@@ -220,7 +221,7 @@ class PyDatePickerController(object):
                                 (self.region_month, self.region_day))
         self.preferred_day = None
         self.save_preferred_day = True
-        self.preferred_region = self.region_year
+        self.last_selection = None
 
     def get_py_date(self):
         try:
@@ -240,7 +241,15 @@ class PyDatePickerController(object):
         self.py_date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
-        self._select_region_if_possible(self.preferred_region)
+        if self.last_selection:
+            self.py_date_picker.SetSelection(self.last_selection[0],self.last_selection[1])
+        else:
+            self._select_region_if_possible(self.region_year)
+            self.last_selection = self.py_date_picker.GetSelection()    
+
+    def on_kill_focus(self):
+        if self.last_selection:
+            self.last_selection = self.py_date_picker.GetSelection()
 
     def on_tab(self):
         for (left_region, right_region) in self.region_siblings:
@@ -392,7 +401,6 @@ class PyDatePickerController(object):
     def _select_region_if_possible(self, region):
         region_range = self._get_region_range(region)
         if region_range:
-            self.preferred_region = region
             self.py_date_picker.SetSelection(region_range[0], region_range[-1])
 
     def _insertion_point_in_region(self, n):
@@ -456,6 +464,7 @@ class PyTimePicker(wx.TextCtrl):
         def on_kill_focus(evt):
             # Trick to not make selection text disappear when focus is lost (we
             # remove the selection instead)
+            self.controller.on_kill_focus()
             self.SetSelection(0, 0)
         self.Bind(wx.EVT_KILL_FOCUS, on_kill_focus)
         def on_char(evt):
@@ -494,7 +503,7 @@ class PyTimePickerController(object):
         self.separator = ":"
         self.hour_part = 0
         self.minute_part = 1
-        self.preferred_part = self.hour_part
+        self.last_selection = None
 
     def get_py_time(self):
         try:
@@ -513,8 +522,15 @@ class PyTimePickerController(object):
         self.py_time_picker.set_time_string(time_string)
 
     def on_set_focus(self):
-        self._select_part(self.preferred_part)
-
+        if self.last_selection:
+            self.py_time_picker.SetSelection(self.last_selection[0],
+                                             self.last_selection[1])
+        else:
+            self._select_part(self.hour_part)
+            
+    def on_kill_focus(self):
+        self.last_selection = self.py_time_picker.GetSelection()
+            
     def on_tab(self):
         if self._in_minute_part():
             return True

@@ -55,13 +55,13 @@ class PyDatePickerBaseFixture(unittest.TestCase):
 class APyDatePicker(PyDatePickerBaseFixture):
 
     def testSelectsPreferredRegionWhenGivenFocus(self):
-        self.controller.preferred_region = self.controller.region_year 
+        self.controller.last_selection = (0,4) 
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
-        self.controller.preferred_region = self.controller.region_month 
+        self.controller.last_selection = (5,7) 
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(5, 7)
-        self.controller.preferred_region = self.controller.region_day 
+        self.controller.last_selection = (8,10) 
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(8, 10)
 
@@ -316,10 +316,10 @@ class PyTimePickerBaseFixture(unittest.TestCase):
 class APyTimePicker(PyTimePickerBaseFixture):
 
     def testSelectsPreferredPartWhenGivenFocus(self):
-        self.controller.preferred_part = self.controller.hour_part
+        self.controller.last_selection = (0,2)
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
-        self.controller.preferred_part = self.controller.minute_part
+        self.controller.last_selection = (3,5)
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(3, 5)
 
