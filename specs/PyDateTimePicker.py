@@ -34,10 +34,14 @@ class PyDatePickerBaseFixture(unittest.TestCase):
     def setUp(self):
         self.py_date_picker = Mock(PyDatePicker)
         self.py_date_picker.get_date_string.return_value = "2010-08-31"
-        self.py_date_picker.SetSelection.side_effect = self._update_insertion_point_from_selection
         self.py_date_picker.GetBackgroundColour.return_value = (1, 2, 3)
+        self.py_date_picker.SetSelection.side_effect = self._update_insertion_point_and_selection
         self.simulate_change_insertion_point(0)
         self.controller = PyDatePickerController(self.py_date_picker, error_bg="pink")
+
+    def assertBackgroundChangedTo(self, bg):
+        self.py_date_picker.SetBackgroundColour.assert_called_with(bg)
+        self.py_date_picker.Refresh.assert_called_with()
 
     def simulate_change_date_string(self, new_date_string):
         self.py_date_picker.get_date_string.return_value = new_date_string
@@ -47,7 +51,7 @@ class PyDatePickerBaseFixture(unittest.TestCase):
         self.py_date_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point) 
         self.py_date_picker.GetInsertionPoint.return_value = new_insertion_point
 
-    def _update_insertion_point_from_selection(self, from_pos, to_pos):
+    def _update_insertion_point_and_selection(self, from_pos, to_pos):
         self.py_date_picker.GetInsertionPoint.return_value = to_pos
         self.py_date_picker.GetSelection.return_value = (from_pos, to_pos)
 
@@ -55,6 +59,7 @@ class PyDatePickerBaseFixture(unittest.TestCase):
 class APyDatePicker(PyDatePickerBaseFixture):
 
     def testSelectsPreferredRegionWhenGivenFocus(self):
+        # TODO: Break up in multiple test with one assertion per test.
         self.controller.last_selection = (0,4) 
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
@@ -67,53 +72,46 @@ class APyDatePicker(PyDatePickerBaseFixture):
 
     def testChangesToErrorBackgroundWhenIncorrectDateIsEntered(self):
         self.simulate_change_date_string("foo")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
-        self.py_date_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo("pink")
 
     def testResetsBackgroundWhenCorrectDateIsEntered(self):
         self.simulate_change_date_string("2007-02-13")
-        self.py_date_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
-        self.py_date_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo((1, 2, 3))
 
     def testPopulatesDateFromPyDate(self):
-        py_date = datetime.date(2009, 11, 5)
-        self.controller.set_py_date(py_date)
+        self.controller.set_py_date(datetime.date(2009, 11, 5))
         self.py_date_picker.set_date_string.assert_called_with("2009-11-05")
 
-    def testReturnsTypedDateAsPyDate(self):
+    def testParsesEnteredDateAsPyDate(self):
         self.simulate_change_date_string("2008-05-03")
         self.assertEquals(datetime.date(2008, 5, 3),
                           self.controller.get_py_date())
 
-    def testThrowsValueErrorWhenGettingInvalidPyDate(self):
+    def testThrowsValueErrorWhenParsingInvalidDate(self):
         self.simulate_change_date_string("2008-05-xx")
         self.assertRaises(ValueError, self.controller.get_py_date)
 
-    def testThrowsValueErrorWhenGettingPyDateOutsideValidRange(self):
+    def testThrowsValueErrorWhenParsingDateOutsideValidRange(self):
         self.simulate_change_date_string("9-9-9")
         self.assertRaises(ValueError, self.controller.get_py_date)
 
     def testChangesToErrorBackgroundWhenTooSmallDateIsEntered(self):
         self.simulate_change_date_string("9-12-31")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
-        self.py_date_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo("pink")
 
     def testHasOriginalBackgroundWhenSmallestValidDateIsEntered(self):
         self.simulate_change_date_string("10-01-01")
-        self.py_date_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
-        self.py_date_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo((1, 2, 3))
 
     def testChangesToErrorBackgroundWhenTooLargeDateIsEntered(self):
         self.simulate_change_date_string("9990-01-01")
-        self.py_date_picker.SetBackgroundColour.assert_called_with("pink")
-        self.py_date_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo("pink")
 
     def testHasOriginalBackgroundWhenLargestValidDateIsEntered(self):
         self.simulate_change_date_string("9989-12-31")
-        self.py_date_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
-        self.py_date_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo((1, 2, 3))
 
-    def testShowPreferredDayOnUpWhenMonthIsIncremented(self):
+    def testShowsPreferredDayOnUpWhenMonthIsIncremented(self):
         # Make preferred day = 30
         self.simulate_change_date_string("2010-01-29")
         self.simulate_change_insertion_point(10)
@@ -128,7 +126,7 @@ class APyDatePicker(PyDatePickerBaseFixture):
         self.controller.on_up()
         self.py_date_picker.set_date_string.assert_called_with("2010-03-30")
 
-    def testShowPreferredDayOnDownWhenMonthIsDecremented(self):
+    def testShowsPreferredDayOnDownWhenMonthIsDecremented(self):
         # Make preferred day = 30
         self.simulate_change_date_string("2010-04-01")
         self.simulate_change_insertion_point(10)
@@ -159,20 +157,20 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
         skip_event = self.controller.on_shift_tab()
         self.assertTrue(skip_event)
 
-    def testKeepSelectionOnUp(self):
+    def testKeepsSelectionOnUp(self):
         self.controller.on_up()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
-    def testKeepSelectionOnDown(self):
+    def testKeepsSelectionOnDown(self):
         self.controller.on_up()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
-    def testIncreaseYearOnUp(self):
+    def testIncreasesYearOnUp(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_up()
         self.py_date_picker.set_date_string.assert_called_with("2011-01-01")
 
-    def testDecreaseYearOnDown(self):
+    def testDecreasesYearOnDown(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2009-01-01")
@@ -187,17 +185,17 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
         self.controller.on_down()
         self.assertFalse(self.py_date_picker.set_date_string.called)
 
-    def testChangeDayOnDownWhenLeapYeer(self):
+    def testChangesDayOnDownWhenLeapYeer(self):
         self.simulate_change_date_string("2012-02-29")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2011-02-28")
 
-    def testKeepInsertionPointOnUp(self):
+    def testKeepsInsertionPointOnUp(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_up()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
-    def testKeepInsertionPointOnDown(self):
+    def testKeepsInsertionPointOnDown(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_down()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
@@ -221,12 +219,12 @@ class PyDatePickerWithFocusOnMonth(PyDatePickerBaseFixture):
         self.assertFalse(skip_event)
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
-    def testIncreaseMonthOnUp(self):
+    def testIncreasesMonthOnUp(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_up()
         self.py_date_picker.set_date_string.assert_called_with("2010-02-01")
 
-    def testDecreaseMonthOnDown(self):
+    def testDecreasesMonthOnDown(self):
         self.simulate_change_date_string("2009-07-31")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2009-06-30")
@@ -236,7 +234,7 @@ class PyDatePickerWithFocusOnMonth(PyDatePickerBaseFixture):
         self.controller.on_down()
         self.assertFalse(self.py_date_picker.set_date_string.called)
 
-    def testDecreaseYearOnDownWhenJanuary(self):
+    def testDecreasesYearOnDownWhenJanuary(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2009-12-01")
@@ -260,12 +258,12 @@ class PyDatePickerWithFocusOnDay(PyDatePickerBaseFixture):
         self.assertFalse(skip_event)
         self.py_date_picker.SetSelection.assert_called_with(5, 7)
 
-    def testIncreaseDayOnUp(self):
+    def testIncreasesDayOnUp(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_up()
         self.py_date_picker.set_date_string.assert_called_with("2010-01-02")
 
-    def testDecreaseDayOnDown(self):
+    def testDecreasesDayOnDown(self):
         self.simulate_change_date_string("2010-01-10")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2010-01-09")
@@ -275,17 +273,17 @@ class PyDatePickerWithFocusOnDay(PyDatePickerBaseFixture):
         self.controller.on_down()
         self.assertFalse(self.py_date_picker.set_date_string.called)
 
-    def testDecreaseMonthOnDownWhenDayOne(self):
+    def testDecreasesMonthOnDownWhenDayOne(self):
         self.simulate_change_date_string("2010-02-01")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2010-01-31")
 
-    def testDecreaseMonthAndYearOnDownWhenJanuaryTheFirst(self):
+    def testDecreasesMonthAndYearOnDownWhenJanuaryTheFirst(self):
         self.simulate_change_date_string("2010-01-01")
         self.controller.on_down()
         self.py_date_picker.set_date_string.assert_called_with("2009-12-31")
 
-    def testIncreaseMonthWhenLastDayInMonthOnUp(self):
+    def testIncreasesMonthWhenLastDayInMonthOnUp(self):
         self.simulate_change_date_string("2010-01-31")
         self.controller.on_up()
         self.py_date_picker.set_date_string.assert_called_with("2010-02-01")
@@ -296,9 +294,13 @@ class PyTimePickerBaseFixture(unittest.TestCase):
     def setUp(self):
         self.py_time_picker = Mock(PyTimePicker)
         self.py_time_picker.get_time_string.return_value = "13:50"
-        self.py_time_picker.SetSelection.side_effect = self._update_insertion_point_from_mark
         self.py_time_picker.GetBackgroundColour.return_value = (1, 2, 3)
+        self.py_time_picker.SetSelection.side_effect = self._update_insertion_point_and_selection
         self.controller = PyTimePickerController(self.py_time_picker)
+
+    def assertBackgroundChangedTo(self, bg):
+        self.py_time_picker.SetBackgroundColour.assert_called_with(bg)
+        self.py_time_picker.Refresh.assert_called_with()
 
     def simulate_change_time_string(self, new_time_string):
         self.py_time_picker.get_time_string.return_value = new_time_string
@@ -308,7 +310,7 @@ class PyTimePickerBaseFixture(unittest.TestCase):
         self.py_time_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point) 
         self.py_time_picker.GetInsertionPoint.return_value = new_insertion_point
 
-    def _update_insertion_point_from_mark(self, from_pos, to_pos):
+    def _update_insertion_point_and_selection(self, from_pos, to_pos):
         self.py_time_picker.GetInsertionPoint.return_value = from_pos
         self.py_time_picker.GetSelection.return_value = (from_pos, to_pos) 
 
@@ -316,6 +318,7 @@ class PyTimePickerBaseFixture(unittest.TestCase):
 class APyTimePicker(PyTimePickerBaseFixture):
 
     def testSelectsPreferredPartWhenGivenFocus(self):
+        # TODO: Break up in multiple test with one assertion per test.
         self.controller.last_selection = (0,2)
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
@@ -325,13 +328,11 @@ class APyTimePicker(PyTimePickerBaseFixture):
 
     def testSetsPinkBackgroundWhenIncorrectTimeIsEntered(self):
         self.simulate_change_time_string("foo")
-        self.py_time_picker.SetBackgroundColour.assert_called_with("pink")
-        self.py_time_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo("pink")
 
     def testResetsBackgroundWhenCorrectTimeIsEntered(self):
         self.simulate_change_time_string("11:20")
-        self.py_time_picker.SetBackgroundColour.assert_called_with((1, 2, 3))
-        self.py_time_picker.Refresh.assert_called_with()
+        self.assertBackgroundChangedTo((1, 2, 3))
 
     def testPopulatesTimeFromPyTime(self):
         py_time = datetime.time(6, 9)
@@ -356,12 +357,12 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
         skip_event = self.controller.on_shift_tab()
         self.assertTrue(skip_event)
 
-    def testIncreaseHourOnUp(self):
+    def testIncreasesHourOnUp(self):
         self.simulate_change_time_string("04:04")
         self.controller.on_up()
         self.py_time_picker.set_time_string.assert_called_with("05:04")
 
-    def testZeroHourOnUpWhenLastHour(self):
+    def testMakesHourZeroOnUpWhenLastHour(self):
         self.simulate_change_time_string("23:04")
         self.controller.on_up()
         self.py_time_picker.set_time_string.assert_called_with("00:04")
@@ -371,7 +372,7 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
         self.controller.on_up()
         self.assertFalse(self.py_time_picker.set_time_string.called)
 
-    def testDecreaseHourOnDown(self):
+    def testDecreasesHourOnDown(self):
         self.simulate_change_time_string("04:04")
         self.controller.on_down()
         self.py_time_picker.set_time_string.assert_called_with("03:04")
@@ -395,22 +396,22 @@ class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
         skip_event = self.controller.on_tab()
         self.assertTrue(skip_event)
 
-    def testSelectedsMinutesPartOnShiftTab(self):
+    def testSelectsMinutesPartOnShiftTab(self):
         skip_event = self.controller.on_shift_tab()
         self.assertFalse(skip_event)
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
 
-    def testIncreaseMinutesOnUp(self):
+    def testIncreasesMinutesOnUp(self):
         self.simulate_change_time_string("04:04")
         self.controller.on_up()
         self.py_time_picker.set_time_string.assert_called_with("04:05")
 
-    def testZeroMinutesAndIncrementHourOnUpWhenLastMinute(self):
+    def testSetsMinutesToZeroAndIncrementsHourWhenUpOnLastMinute(self):
         self.simulate_change_time_string("04:59")
         self.controller.on_up()
         self.py_time_picker.set_time_string.assert_called_with("05:00")
 
-    def testDecreaseMinutesOnDown(self):
+    def testDecreasesMinutesOnDown(self):
         self.simulate_change_time_string("04:04")
         self.controller.on_down()
         self.py_time_picker.set_time_string.assert_called_with("04:03")
@@ -421,34 +422,31 @@ class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
         self.py_time_picker.set_time_string.assert_called_with("23:59")
 
 
-class CalendarPopupBaseFixture(unittest.TestCase):
+class ACalendarPopup(unittest.TestCase):
 
     def setUp(self):
         self.calendar_popup = Mock(CalendarPopup)
         self.controller = CalendarPopupController(self.calendar_popup)
-        
-    def simulate_month_change(self):
-        self.controller.on_month()
-        self.controller.on_dismiss()
-
-    def simulate_day_change(self):
-        self.controller.on_day()
-        self.controller.on_dismiss()
-
-
-class ACalendarPopup(CalendarPopupBaseFixture):
 
     def testStaysOpenOnMonthChange(self):
-        self.simulate_month_change()
+        self._simulateMonthChange()
         self.assertTrue(self.calendar_popup.Popup.called)
 
     def testStaysOpenOnDayChange(self):
-        self.simulate_day_change()
+        self._simulateDateChange()
         self.assertTrue(self.calendar_popup.Popup.called)
 
     def testPopupCallAllowedJustOnce(self):
-        self.simulate_month_change()
+        self._simulateMonthChange()
         self.assertTrue(self.calendar_popup.Popup.called)
         call = self.calendar_popup.reset_mock()
-        self.simulate_month_change()
+        self._simulateMonthChange()
         self.assertFalse(self.calendar_popup.Popup.called)
+        
+    def _simulateMonthChange(self):
+        self.controller.on_month()
+        self.controller.on_dismiss()
+
+    def _simulateDateChange(self):
+        self.controller.on_day()
+        self.controller.on_dismiss()
