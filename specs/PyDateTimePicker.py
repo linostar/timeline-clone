@@ -58,17 +58,9 @@ class PyDatePickerBaseFixture(unittest.TestCase):
 
 class APyDatePicker(PyDatePickerBaseFixture):
 
-    def testSelectsPreferredRegionWhenGivenFocus(self):
-        # TODO: Break up in multiple test with one assertion per test.
-        self.controller.last_selection = (0,4) 
+    def testSelectsYearPartWhenGivenFocus(self):
         self.controller.on_set_focus()
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
-        self.controller.last_selection = (5,7) 
-        self.controller.on_set_focus()
-        self.py_date_picker.SetSelection.assert_called_with(5, 7)
-        self.controller.last_selection = (8,10) 
-        self.controller.on_set_focus()
-        self.py_date_picker.SetSelection.assert_called_with(8, 10)
 
     def testChangesToErrorBackgroundWhenIncorrectDateIsEntered(self):
         self.simulate_change_date_string("foo")
@@ -148,6 +140,11 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
         self.controller.on_set_focus()
         self.py_date_picker.reset_mock()
 
+    def testReselectsYearWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.py_date_picker.SetSelection.assert_called_with(0, 4)
+
     def testSelectsMonthPartOnTab(self):
         skip_event = self.controller.on_tab()
         self.assertFalse(skip_event)
@@ -209,6 +206,11 @@ class PyDatePickerWithFocusOnMonth(PyDatePickerBaseFixture):
         self.controller.on_tab()
         self.py_date_picker.reset_mock()
 
+    def testReselectsMonthWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.py_date_picker.SetSelection.assert_called_with(5, 7)
+
     def testSelectsDayPartOnTab(self):
         skip_event = self.controller.on_tab()
         self.assertFalse(skip_event)
@@ -248,6 +250,11 @@ class PyDatePickerWithFocusOnDay(PyDatePickerBaseFixture):
         self.controller.on_tab()
         self.controller.on_tab()
         self.py_date_picker.reset_mock()
+
+    def testReselectsDayWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.py_date_picker.SetSelection.assert_called_with(8, 10)
 
     def testSkipsTabEvent(self):
         skip_event = self.controller.on_tab()
@@ -317,14 +324,9 @@ class PyTimePickerBaseFixture(unittest.TestCase):
 
 class APyTimePicker(PyTimePickerBaseFixture):
 
-    def testSelectsPreferredPartWhenGivenFocus(self):
-        # TODO: Break up in multiple test with one assertion per test.
-        self.controller.last_selection = (0,2)
+    def testSelectsHourPartWhenGivenFocus(self):
         self.controller.on_set_focus()
         self.py_time_picker.SetSelection.assert_called_with(0, 2)
-        self.controller.last_selection = (3,5)
-        self.controller.on_set_focus()
-        self.py_time_picker.SetSelection.assert_called_with(3, 5)
 
     def testSetsPinkBackgroundWhenIncorrectTimeIsEntered(self):
         self.simulate_change_time_string("foo")
@@ -347,6 +349,11 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
         self.simulate_change_insertion_point(0)
         self.controller.on_set_focus()
         self.py_time_picker.reset_mock()
+
+    def testReselectsHourWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.py_time_picker.SetSelection.assert_called_with(0, 2)
 
     def testSelectsMinutePartOnTab(self):
         skip_event = self.controller.on_tab()
@@ -391,6 +398,11 @@ class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
         self.controller.on_set_focus()
         self.controller.on_tab()
         self.py_time_picker.reset_mock()
+
+    def testReselectsMinuteWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.py_time_picker.SetSelection.assert_called_with(3, 5)
 
     def testSkipsTabEvent(self):
         skip_event = self.controller.on_tab()

@@ -242,7 +242,8 @@ class PyDatePickerController(object):
 
     def on_set_focus(self):
         if self.last_selection:
-            self.py_date_picker.SetSelection(self.last_selection[0],self.last_selection[1])
+            start, end = self.last_selection
+            self.py_date_picker.SetSelection(start, end)
         else:
             self._select_region_if_possible(self.region_year)
             self.last_selection = self.py_date_picker.GetSelection()    
@@ -523,8 +524,8 @@ class PyTimePickerController(object):
 
     def on_set_focus(self):
         if self.last_selection:
-            self.py_time_picker.SetSelection(self.last_selection[0],
-                                             self.last_selection[1])
+            start, end = self.last_selection
+            self.py_time_picker.SetSelection(start, end)
         else:
             self._select_part(self.hour_part)
             
