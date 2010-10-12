@@ -1,16 +1,16 @@
-# Hebrew translation for thetimelineproj
-# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# Turkish translation for thetimelineproj
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the thetimelineproj package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-05-16 07:46+0200\n"
-"PO-Revision-Date: 2010-03-15 11:46+0000\n"
-"Last-Translator: Yaron <sh.yaron@gmail.com>\n"
-"Language-Team: Hebrew <he@li.org>\n"
+"PO-Revision-Date: 2010-07-30 20:50+0000\n"
+"Last-Translator: linuxseven <linuxseven@mynet.com>\n"
+"Language-Team: Turkish <tr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,24 +19,24 @@ msgstr ""
 
 #: timelinelib/help_pages.py:36
 msgid "Help contents"
-msgstr "תכני העזרה"
+msgstr "Yardım içeriği"
 
 #: timelinelib/help_pages.py:56
 msgid "Questions and answers"
-msgstr "שאלות ותשובות"
+msgstr ""
 
 #: timelinelib/help_pages.py:56
 msgid "Concepts"
-msgstr "רעיונות"
+msgstr ""
 
 #: timelinelib/help_pages.py:56
 msgid "Tasks"
-msgstr "משימות"
+msgstr "Görevler"
 
 #: timelinelib/help_pages.py:60 timelinelib/gui/dialogs/mainframe.py:312
 #: timelinelib/gui/dialogs/mainframe.py:857
 msgid "Getting started tutorial"
-msgstr "המדריך למתחילים"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -104,7 +104,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:103
 msgid "Where is the save button?"
-msgstr "איפה לחצן השמירה?"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -117,13 +117,10 @@ msgid ""
 "There is no save button. Timeline will automatically save your data whenever "
 "needed.\n"
 msgstr ""
-"\n"
-"אין לחצן שמירה. התוכנה תשמור את השינויים שלך אוטומטית בכל פעם שיהיה בכך "
-"צורך.\n"
 
 #: timelinelib/help_pages.py:116
 msgid "Where do the week numbers go if I start my weeks on Sunday?"
-msgstr "היכן מופיעים מספקי הימים אם השבועות שלי מתחילים ביום ראשון?"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -140,7 +137,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:129
 msgid "Timeline"
-msgstr "ציר הזמן"
+msgstr "Zaman Çizelgesi"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -160,7 +157,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:144
 msgid "Events"
-msgstr "אירועים"
+msgstr "Etkinlikler"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -178,7 +175,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:157
 msgid "Categories"
-msgstr "קטגוריות"
+msgstr "Kategoriler"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -195,7 +192,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:170
 msgid "Create event"
-msgstr "יצירת אירוע"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -215,7 +212,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:187
 msgid "Edit event"
-msgstr "עריכת אירוע"
+msgstr "Etkinliği Düzelt"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -230,7 +227,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:200
 msgid "Selecting events"
-msgstr "בחירת אירועים"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -250,7 +247,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:216
 msgid "Delete event"
-msgstr "מחיקת אירוע"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -266,7 +263,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:229
 msgid "Will associated events be deleted when I delete a category?"
-msgstr "האם אירועים הקשורים ימחקו כאשר אמחק קטגוריה?"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -282,7 +279,7 @@ msgstr ""
 #: timelinelib/help_pages.py:241 timelinelib/gui/dialogs/mainframe.py:241
 #: timelinelib/gui/dialogs/eventeditor.py:305
 msgid "Edit categories"
-msgstr "עריכת קטגוריות"
+msgstr "Kategorileri düzenle"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -302,7 +299,7 @@ msgstr ""
 #: timelinelib/help_pages.py:256 timelinelib/gui/dialogs/mainframe.py:314
 #: timelinelib/gui/dialogs/mainframe.py:933
 msgid "Contact"
-msgstr "יצירת קשר"
+msgstr "İletişim"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -319,7 +316,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:268
 msgid "Why is Timeline not available in my language?"
-msgstr "למה ציר הזמן אינו זמין בשפה שלי?"
+msgstr ""
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -336,39 +333,39 @@ msgstr ""
 #: timelinelib/help.py:64
 #, python-format
 msgid "Search results for '%s'"
-msgstr "תוצאות חיפוש עבור %s"
+msgstr ""
 
 #: timelinelib/help.py:122
 msgid "Related pages"
-msgstr "עמודים קשורים"
+msgstr ""
 
 #: timelinelib/db/objects.py:202
 msgid "Start time can't be after year 9989"
-msgstr "זמן ההתחלה לא יכול להיות לאחר השנה 9989"
+msgstr ""
 
 #: timelinelib/db/objects.py:203
 msgid "Start time can't be before year 10"
-msgstr "זמן ההתחלה לא יכול להיות לפני השנה 10"
+msgstr ""
 
 #: timelinelib/db/objects.py:206
 msgid "End time can't be after year 9989"
-msgstr "זמן הסיום לא יכול להיות לאחר השנה 9989"
+msgstr ""
 
 #: timelinelib/db/objects.py:207
 msgid "End time can't be before year 10"
-msgstr "זמן הסיום לא יכול להיות לפני השנה 10"
+msgstr ""
 
 #: timelinelib/db/objects.py:211
 msgid "Start time can't be after end time"
-msgstr "זמן ההתחלה לא יכול להיות לאחר זמן הסיום"
+msgstr ""
 
 #: timelinelib/db/objects.py:247
 msgid "Can't zoom wider than 120 years"
-msgstr "לא ניתן להתרחק על יותר מ־120 שנים"
+msgstr ""
 
 #: timelinelib/db/objects.py:249
 msgid "Can't zoom deeper than 1 hour"
-msgstr "לא ניתן להתקרב על פחות משעה אחת"
+msgstr ""
 
 #: timelinelib/db/__init__.py:68
 msgid ""
@@ -376,58 +373,56 @@ msgid ""
 "files. See the Timeline website or the INSTALL file for instructions how to "
 "install it."
 msgstr ""
-"לא ניתן למצוא את חבילת ה־iCalendar ל־Python. החבילה נדרשת כדי לעבוד עם קובצי "
-"ICS. יש לעיין בקובץ INSTALL שבאתר של Timeline כדי לקבל הנחיות כיצד להתקין."
 
 #: timelinelib/db/__init__.py:73
 #, python-format
 msgid "Unable to open timeline '%s'."
-msgstr "לא ניתן לפתוח את ציר הזמן '%s'."
+msgstr ""
 
 #: timelinelib/db/__init__.py:74
 msgid "Unknown format."
-msgstr "המבנה אינו ידוע."
+msgstr ""
 
 #: timelinelib/db/utils.py:70
 #, python-format
 msgid "Unable to save timeline data to '%s'. File left unmodified."
-msgstr "לא ניתן לשמור את נתוני ציר הזמן אל '%s'. הקובץ נותר ללא שינוי."
+msgstr ""
 
 #: timelinelib/db/utils.py:85
 msgid "Unable to write timeline data."
-msgstr "לא ניתן לכתוב את נתוני ציר הזמן."
+msgstr ""
 
 #: timelinelib/db/utils.py:89
 #, python-format
 msgid "Unable to write to temporary file '%s'."
-msgstr "לא ניתן לכתוב אל הקובץ הזמני '%s'."
+msgstr ""
 
 #: timelinelib/db/utils.py:95
 #, python-format
 msgid "Unable to take backup to '%s'."
-msgstr "לא ניתן לגבות אל '%s'."
+msgstr ""
 
 #: timelinelib/db/utils.py:100
 #, python-format
 msgid "Unable to rename temporary file '%s' to original."
-msgstr "לא ניתן לשנות את שם הקובץ הזמני '%s' לשם המקורי."
+msgstr ""
 
 #: timelinelib/db/utils.py:106
 #, python-format
 msgid "Unable to delete backup file '%s'."
-msgstr "לא ניתן למחוק את קובץ הגיבוי '%s'."
+msgstr ""
 
 #: timelinelib/db/backends/ics.py:145 timelinelib/db/backends/file.py:112
 #: timelinelib/db/backends/xmlfile.py:112
 #, python-format
 msgid "Unable to read timeline data from '%s'."
-msgstr "לא ניתן לקרוא את נתוני ציר הזמן מ־'%s'."
+msgstr ""
 
 #: timelinelib/db/backends/ics.py:151 timelinelib/db/backends/dir.py:105
 #: timelinelib/db/backends/file.py:119
 #, python-format
 msgid "Unable to read from file '%s'."
-msgstr "לא ניתן לקרוא מהקובץ '%s'."
+msgstr ""
 
 #: timelinelib/db/backends/memory.py:160
 msgid "Displayed period must be > 0."
@@ -436,28 +431,28 @@ msgstr ""
 #: timelinelib/drawing/drawers/default.py:138
 #: timelinelib/gui/dialogs/duplicateevent.py:95
 msgid "Week"
-msgstr "שבוע"
+msgstr ""
 
 #: timelinelib/gui/utils.py:171
 #, python-format
 msgid "Field '%s' can't be empty."
-msgstr "השדה '%s' לא יכול להשאר ריק."
+msgstr ""
 
 #: timelinelib/gui/utils.py:177
 msgid "Error"
-msgstr "שגיאה"
+msgstr ""
 
 #: timelinelib/gui/utils.py:183
 msgid "Question"
-msgstr "שאלה"
+msgstr ""
 
 #: timelinelib/gui/components/search.py:70
 msgid "No match"
-msgstr "אין התאמה"
+msgstr ""
 
 #: timelinelib/gui/components/search.py:74
 msgid "Only one match"
-msgstr "התאמה אחת בלבד"
+msgstr ""
 
 #: timelinelib/gui/components/cattree.py:80
 msgid "Edit..."
@@ -470,16 +465,16 @@ msgstr ""
 #: timelinelib/gui/components/cattree.py:86
 #: timelinelib/gui/components/timelineview.py:505
 msgid "Delete"
-msgstr "מחיקה"
+msgstr ""
 
 #: timelinelib/gui/components/cattree.py:222
 msgid "Edit Category"
-msgstr "עריכת קטגוריה"
+msgstr ""
 
 #: timelinelib/gui/components/cattree.py:229
 #: timelinelib/gui/dialogs/eventeditor.py:227
 msgid "Add Category"
-msgstr "הוספת קטגוריה"
+msgstr ""
 
 #: timelinelib/gui/components/cattree.py:235
 #, python-format
@@ -498,36 +493,34 @@ msgstr ""
 
 #: timelinelib/gui/components/datetimepicker.py:61
 msgid "Invalid date."
-msgstr "התאריך שגוי."
+msgstr ""
 
 #: timelinelib/gui/components/datetimepicker.py:63
 msgid "Date not within allowed period."
-msgstr "התאריך אינו בטווח המותר."
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:309
 msgid ""
 "There was a problem printing.\n"
 "Perhaps your current printer is not set correctly?"
 msgstr ""
-"ארעה שגיאה בהדפסה.\n"
-"יתכן שהמדפסת הנוכחית שלך לא מוגדרת כראוי?"
 
 #: timelinelib/gui/components/timelineview.py:309
 msgid "Printing"
-msgstr "בהליכי הדפסה"
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:322
 msgid "Print preview"
-msgstr "תצוגה לפני הדפסה"
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:369
 #: timelinelib/gui/components/timelineview.py:387
 msgid "No timeline set"
-msgstr "לא הוגדר ציר זמן"
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:503
 msgid "Edit"
-msgstr "עריכה"
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:504
 msgid "Duplicate..."
@@ -535,20 +528,20 @@ msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:508
 msgid "Sticky Balloon"
-msgstr "בלון דביק"
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:708
 msgid "Center"
-msgstr "מרכז"
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:1014
 #, python-format
 msgid "Are you sure you want to delete %d events?"
-msgstr "האם ברצונך למחוק %d אירועים?"
+msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:1017
 msgid "Are you sure you want to delete this event?"
-msgstr "האם ברצונך למחוק את האירוע?"
+msgstr ""
 
 #: timelinelib/gui/dialogs/textdisplay.py:66
 msgid "Unable to copy to clipboard."
@@ -557,20 +550,20 @@ msgstr ""
 #: timelinelib/gui/dialogs/categoryeditor.py:89
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
-msgstr "שם הקטגוריה '%s' אינו תקני. עליו לא להשאר ריק."
+msgstr ""
 
 #: timelinelib/gui/dialogs/categoryeditor.py:94
 #, python-format
 msgid "Category name '%s' already in use."
-msgstr "שם הקטגוריה '%s' כבר נמצא בשימוש."
+msgstr ""
 
 #: timelinelib/gui/dialogs/categoryeditor.py:115
 msgid "Name:"
-msgstr "שם:"
+msgstr ""
 
 #: timelinelib/gui/dialogs/categoryeditor.py:118
 msgid "Color:"
-msgstr "צבע:"
+msgstr ""
 
 #: timelinelib/gui/dialogs/categoryeditor.py:121
 msgid "Parent:"
@@ -578,7 +571,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/categorieseditor.py:46
 msgid "Edit Categories"
-msgstr "עריכת קטגוריות"
+msgstr ""
 
 #: timelinelib/gui/dialogs/duplicateevent.py:54
 msgid "Duplicate Event"
@@ -616,7 +609,7 @@ msgstr ""
 #: timelinelib/gui/dialogs/duplicateevent.py:100
 #: timelinelib/gui/dialogs/eventeditor.py:95
 msgid "Period"
-msgstr "תקופה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/duplicateevent.py:104
 msgid "Direction"
@@ -632,91 +625,91 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/gotodate.py:30
 msgid "Go to Date"
-msgstr "מעבר אל התאריך"
+msgstr ""
 
 #: timelinelib/gui/dialogs/gotodate.py:36
 #: timelinelib/gui/dialogs/eventeditor.py:99
 msgid "Show time"
-msgstr "הצגת הזמן"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:103
 msgid "read-only"
-msgstr "קריאה בלבד"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:112
 #, python-format
 msgid "File '%s' does not exist."
-msgstr "הקובץ '%s' אינו קיים."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:116
 msgid "Create Event"
-msgstr "יצירת אירוע"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:146
 msgid "Edit Event"
-msgstr "עריכת אירוע"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:185
 #: timelinelib/gui/dialogs/mainframe.py:186
 msgid "File Timeline..."
-msgstr "קובץ ציר זמן..."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:188
 #: timelinelib/gui/dialogs/mainframe.py:189
 msgid "Directory Timeline..."
-msgstr "תיקיית ציר זמן..."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:190
 msgid "New"
-msgstr "חדש"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:191
 msgid "Create a new timeline"
-msgstr "יצירת ציר זמן חדש"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:193
 msgid "Open an existing timeline"
-msgstr "פתיחת ציר זמן קיים"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:195
 msgid "Open &Recent"
-msgstr "פתיחת ה&אחרונים"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:199
 msgid "Page Set&up..."
-msgstr "הגדרת &עמוד..."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:200
 msgid "Setup page for printing"
-msgstr "הגדרת עמוד להדפסה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:202
 msgid "Print Preview"
-msgstr "תצוגה לפני הדפסה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:205
 msgid "Print"
-msgstr "הדפסה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:208
 msgid "&Export to Image..."
-msgstr "יי&צוא לתמונה..."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:209
 msgid "Export the current view to a PNG image"
-msgstr "יצוא התצוגה הנוכחית לתמונת PNG"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:212
 msgid "Exit the program"
-msgstr "יציאה מהתוכנה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:234
 msgid "Create &Event..."
-msgstr "יצירת &אירוע..."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:235
 msgid "Create a new event"
-msgstr "יצירת אירוע חדש"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:237
 msgid "&Duplicate Selected Event..."
@@ -728,19 +721,19 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:240
 msgid "Edit &Categories"
-msgstr "&עריכת הקטגוריות"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:251
 msgid "&Sidebar\tCtrl+I"
-msgstr "סרגל הצד\tCtrl+I"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:254
 msgid "&Legend"
-msgstr "&מקרא"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:258
 msgid "&Balloons on hover"
-msgstr "&בלוני מידע צפים"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:268
 msgid "Go to &Today\tCtrl+T"
@@ -748,15 +741,15 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:269
 msgid "Go to D&ate...\tCtrl+G"
-msgstr "מעבר ל&תאריך...\tCtrl+G"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:271
 msgid "Backward\tPgUp"
-msgstr "חזרה אחורה\tPgUp"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:272
 msgid "Forward\tPgDn"
-msgstr "מעבר קדימה\tPgDn"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:273
 msgid "Forward One Wee&k\tCtrl+K"
@@ -784,63 +777,63 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:280
 msgid "Fit Century"
-msgstr "התאמה למאה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:281
 msgid "Fit Decade"
-msgstr "התאמה לעשור"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:282
 msgid "Fit Year"
-msgstr "התאמה לשנה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:283
 msgid "Fit Month"
-msgstr "התאמה לחודש"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:284
 msgid "Fit Day"
-msgstr "התאמה ליום"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:286
 msgid "Find First Event"
-msgstr "מציאת האירוע הראשון"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:287
 msgid "Find Last Event"
-msgstr "מציאת האירוע האחרון"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:288
 msgid "Fit All Events"
-msgstr "התאמת כל האירועים"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:309
 msgid "&Contents\tF1"
-msgstr "&תכנים\tF1"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:321
 msgid "&File"
-msgstr "&קובץ"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:322
 msgid "&Edit"
-msgstr "&עריכה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:323
 msgid "&View"
-msgstr "&תצוגה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:324
 msgid "&Timeline"
-msgstr "&ציר הזמן"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:325
 msgid "&Navigate"
-msgstr "&ניווט"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:326
 msgid "&Help"
-msgstr "ע&זרה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:506
 msgid ""
@@ -852,159 +845,159 @@ msgstr ""
 #: timelinelib/gui/dialogs/mainframe.py:560
 #: timelinelib/gui/dialogs/mainframe.py:584
 msgid "Create Timeline"
-msgstr "יצירת ציר זמן"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:566
 msgid "The specified timeline already exists."
-msgstr "ציר הזמן שצוין כבר קיים."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:567
 msgid "Opening timeline instead of creating new."
-msgstr "פתיחת ציר הזמן הקיים במקום יצירת אחד חדש."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:569
 msgid "Information"
-msgstr "מידע"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:600
 msgid "Open Timeline"
-msgstr "פתיחת ציר זמן"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:658
 msgid "Unable to write configuration file."
-msgstr "לא ניתן לכתוב את קובץ התצורה."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:679
 msgid "Export to Image"
-msgstr "ייצוא לתמונה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:683
 #, python-format
 msgid "File '%s' exists. Overwrite?"
-msgstr "הקובץ '%s' קיים. לשכתב?"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:712
 msgid "Timeline files"
-msgstr "קובץ ציר זמן"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:714
 msgid "Image files"
-msgstr "קובצי תמונה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:849
 msgid "No timeline opened."
-msgstr "לא נפתח ציר זמן."
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:854
 msgid "First time using Timeline?"
-msgstr "הפעם הראשונה שלך עם Timeline?"
+msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:930
 msgid "Relevant help topics:"
-msgstr "נושאי עזרה רלוונטיים:"
+msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:34
 msgid "Preferences"
-msgstr "העדפות"
+msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:42
 msgid "General"
-msgstr "כללי"
+msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:44
 msgid "Open most recent timeline on startup"
-msgstr "פתיחת ציר הזמן העדכני ביותר עם ההפעלה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:53
 msgid "Date && Time"
-msgstr "תאריך ושעה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:56
 msgid "Week start on:"
-msgstr "השבוע מתחיל ביום:"
+msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:57
 msgid "Monday"
-msgstr "שני"
+msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:57
 msgid "Sunday"
-msgstr "ראשון"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:73
 msgid "Event Properties"
-msgstr "מאפייני האירוע"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:79
 msgid "When:"
-msgstr "מתי:"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:82
 msgid "to"
-msgstr "אל"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:106
 msgid "Text:"
-msgstr "טקסט:"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:111
 msgid "Category:"
-msgstr "קטגוריה:"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:122
 msgid "Description"
-msgstr "תיאור"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:125
 msgid "Icon"
-msgstr "סמל"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:144
 msgid "Add more events after this one"
-msgstr "הוספת אירועים נוספים לאחר זה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:178
 msgid "End must be > Start"
-msgstr "הסיום חייב להיות גדול מההתחלה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:179
 msgid "Text"
-msgstr "טקסט"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:304
 msgid "Add new"
-msgstr "הוספת חדש"
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:349
 #, python-format
 msgid "Images will be scaled to fit inside a %ix%i box."
-msgstr "גודל התמונות ישתנה כך שיתאימו לתיבה בגודל %ix%i."
+msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:385
 msgid "Select Icon"
-msgstr "בחירת סמל"
+msgstr ""
 
 #: timelinelib/gui/dialogs/helpbrowser.py:39
 msgid "Help"
-msgstr "עזרה"
+msgstr ""
 
 #: timelinelib/gui/dialogs/helpbrowser.py:89
 msgid "Go to home page"
-msgstr "מעבר לדף הבית"
+msgstr ""
 
 #: timelinelib/gui/dialogs/helpbrowser.py:96
 msgid "Go back one page"
-msgstr "חזרה אחורה עמוד אחד"
+msgstr ""
 
 #: timelinelib/gui/dialogs/helpbrowser.py:102
 msgid "Go forward one page"
-msgstr "התקדמות בעמוד אחד"
+msgstr ""
 
 #: timelinelib/gui/dialogs/helpbrowser.py:187
 msgid "Page not found"
-msgstr "העמוד לא נמצא"
+msgstr ""
 
 #: timelinelib/gui/dialogs/helpbrowser.py:188
 #, python-format
 msgid "Could not find page '%s'."
-msgstr "לא ניתן למצוא את העמוד '%s'."
+msgstr ""

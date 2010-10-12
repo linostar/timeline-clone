@@ -114,11 +114,17 @@ if not "check" in sys.argv:
 print("Running unit tests")
 unittest_ret = call(["python", "%s/tests/run.py" % (ROOT_DIR or "."), "quiet"])
 
+print("Running specs")
+spec_ret = call(["python", "%s/specs/execute.py" % (ROOT_DIR or "."), "quiet"])
+
 print
 print("Warnings:")
 
 if unittest_ret != 0:
     print("* Failed unit test")
+
+if spec_ret != 0:
+    print("* Failed spec")
 
 if version.DEV:
     print("* This is a development version")
