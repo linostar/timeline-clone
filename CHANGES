@@ -1,3 +1,22 @@
+Timeline 0.11.0, released on 12 October 2010
+============================================
+
+This is a new feature release.
+
+New features, enhancements:
+
+  * New improved date and time entry control
+  * New navigation function: fit millennium
+
+Bug fixes:
+
+  * Remove import of wx.lib.wordwrap that caused a crash on Ubuntu
+
+New translations:
+
+  * Italian
+  * Turkish
+
 Timeline 0.10.2, released on 11 June 2010
 =========================================
 
