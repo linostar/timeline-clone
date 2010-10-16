@@ -35,6 +35,8 @@ class PyDateTimePicker(wx.Panel):
     def __init__(self, parent, show_time=True):
         wx.Panel.__init__(self, parent)
         self._create_gui()
+        self.controller = PyDateTimePickerController(
+            self.date_picker, self.time_picker, datetime.datetime.now)
         self.show_time(show_time)
 
     def show_time(self, show=True):
@@ -46,11 +48,7 @@ class PyDateTimePicker(wx.Panel):
                                          self.time_picker.get_py_time())
 
     def set_value(self, value):
-        if value == None:
-            now = datetime.now()
-            value = dt(now.year, now.month, now.day)
-        self.date_picker.set_py_date(value.date())
-        self.time_picker.set_py_time(value.time())
+        self.controller.set_value(value)
 
     def _create_gui(self):
         self.date_picker = PyDatePicker(self)
@@ -94,6 +92,20 @@ class PyDateTimePicker(wx.Panel):
     def _py_date_to_wx_date(self, py_date):
         return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
                                   0, 0, 0)
+
+
+class PyDateTimePickerController(object):
+
+    def __init__(self, date_picker, time_picker, now_fn):
+        self.date_picker = date_picker
+        self.time_picker = time_picker
+        self.now_fn = now_fn
+
+    def set_value(self, py_date_time):
+        if py_date_time == None:
+            py_date_time = self.now_fn()
+        self.date_picker.set_py_date(py_date_time.date())
+        self.time_picker.set_py_time(py_date_time.time())
 
 
 class CalendarPopup(wx.PopupTransientWindow):
