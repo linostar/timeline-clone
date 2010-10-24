@@ -1,3 +1,13 @@
+Timeline 0.11.1, released on 24 October 2010
+============================================
+
+This is a translation update and bugfix release.
+
+Bug fixes:
+
+  * Create event through menu does not raise exception
+  * Time removed when saving event and 'Show time' not checked
+
 Timeline 0.11.0, released on 12 October 2010
 ============================================
 
