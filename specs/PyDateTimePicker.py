@@ -59,6 +59,20 @@ class APyDateTimePicker(unittest.TestCase):
         self.controller.set_value(None)
         self.time_picker.set_py_time.assert_called_with(datetime.time(12, 15))
 
+    def testGetValueWhenTimeIsShownShouldReturnDateWithTime(self):
+        self.time_picker.IsShown.return_value = True
+        self.time_picker.get_py_time.return_value = datetime.time(14, 30)
+        self.date_picker.get_py_date.return_value = datetime.date(2010, 8, 31)
+        self.assertEquals(datetime.datetime(2010, 8, 31, 14, 30),
+                          self.controller.get_value())
+
+    def testGetValueWhenTimeIsHiddenShouldReturnDateWithoutTime(self):
+        self.time_picker.IsShown.return_value = False
+        self.time_picker.get_py_time.return_value = datetime.time(14, 30)
+        self.date_picker.get_py_date.return_value = datetime.date(2010, 8, 31)
+        self.assertEquals(datetime.datetime(2010, 8, 31, 0, 0),
+                          self.controller.get_value())
+
 
 class PyDatePickerBaseFixture(unittest.TestCase):
 

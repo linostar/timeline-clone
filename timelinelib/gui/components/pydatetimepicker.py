@@ -44,8 +44,7 @@ class PyDateTimePicker(wx.Panel):
         self.GetSizer().Layout()
 
     def get_value(self):
-        return datetime.datetime.combine(self.date_picker.get_py_date(),
-                                         self.time_picker.get_py_time())
+        return self.controller.get_value()
 
     def set_value(self, value):
         self.controller.set_value(value)
@@ -100,6 +99,12 @@ class PyDateTimePickerController(object):
         self.date_picker = date_picker
         self.time_picker = time_picker
         self.now_fn = now_fn
+
+    def get_value(self):
+        time = datetime.time(0, 0)
+        if self.time_picker.IsShown():
+            time = self.time_picker.get_py_time()
+        return datetime.datetime.combine(self.date_picker.get_py_date(), time)
 
     def set_value(self, py_date_time):
         if py_date_time == None:
