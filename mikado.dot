@@ -1,0 +1,27 @@
+digraph mikado
+{
+    node [shape=box];
+
+    wider_dates [label="Timeline supports wider\ndates (before year 0)"];
+    wider_dates [peripheries=2];
+
+        wider_dates -> switch_to_wx_time;
+
+    switch_to_wx_time [label="Timeline uses\nwxDateTime class"];
+
+        switch_to_wx_time -> different_time;
+
+    different_time [label="Timeline supports\ndifferent times"];
+
+    event_editor [label="Event editor can\nhandle different times"];
+    drawer [label="Drawer can\nhandle different times"];
+    navigation [label="Navigation functions\nare time specific"];
+
+        different_time -> event_editor;
+        different_time -> drawer;
+        different_time -> navigation;
+
+    show_time [label="Show time checkbox\nis part of time type"];
+
+        event_editor -> show_time;
+}
