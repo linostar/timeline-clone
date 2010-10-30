@@ -32,6 +32,7 @@ from datetime import timedelta
 
 from icalendar import Calendar
 
+from timelinelib.db.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import STATE_CHANGE_ANY
@@ -53,6 +54,9 @@ class IcsTimeline(TimelineDB):
         TimelineDB.__init__(self, path)
         self.event_id_counter = IdCounter()
         self._load_data()
+
+    def get_time_type(self):
+        return PyTimeType()
 
     def is_read_only(self):
         return True
