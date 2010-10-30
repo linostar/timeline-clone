@@ -19,8 +19,6 @@
 import re
 import datetime
 
-from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
-
 
 class TimeType(object):
 
@@ -57,4 +55,5 @@ class PyTimeType(TimeType):
             raise ValueError("Time not on correct format = '%s'" % time_string)
 
     def create_time_picker(self, parent):
+        from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
         return PyDateTimePicker(parent)
