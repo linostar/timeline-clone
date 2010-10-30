@@ -21,12 +21,57 @@ import datetime
 
 from mock import Mock
 
+from timelinelib.gui.components.pydatetimepicker import PyDateTimePickerController
 from timelinelib.gui.components.pydatetimepicker import PyDatePicker
 from timelinelib.gui.components.pydatetimepicker import PyDatePickerController
 from timelinelib.gui.components.pydatetimepicker import PyTimePicker
 from timelinelib.gui.components.pydatetimepicker import PyTimePickerController
 from timelinelib.gui.components.pydatetimepicker import CalendarPopup
 from timelinelib.gui.components.pydatetimepicker import CalendarPopupController
+
+
+class APyDateTimePicker(unittest.TestCase):
+
+    def setUp(self):
+        self.date_picker = Mock(PyDatePicker)
+        self.time_picker = Mock(PyTimePicker)
+        self.now_fn = Mock()
+        self.controller = PyDateTimePickerController(
+            self.date_picker, self.time_picker, self.now_fn)
+
+    def testDateControlIsAssignedDatePartFromSetValue(self):
+        self.controller.set_value(datetime.datetime(2010, 11, 20, 15, 33))
+        self.date_picker.set_py_date.assert_called_with(datetime.date(2010, 11, 20))
+
+    # TODO: Is this really PyDateTimePicker's responsibility?
+    def testDateControlIsAssignedCurrentDateIfSetWithValueNone(self):
+        self.now_fn.return_value = datetime.datetime(2010, 8, 31, 0, 0)
+        self.controller.set_value(None)
+        self.date_picker.set_py_date.assert_called_with(datetime.date(2010, 8, 31))
+
+    def testTimeControlIsAssignedTimePartFromSetValue(self):
+        self.controller.set_value(datetime.datetime(2010, 11, 20, 15, 33))
+        self.time_picker.set_py_time.assert_called_with(datetime.time(15, 33))
+
+    # TODO: Is this really PyDateTimePicker's responsibility?
+    def testTimeControlIsAssignedCurrentTimeIfSetWithValueNone(self):
+        self.now_fn.return_value = datetime.datetime(2010, 8, 31, 12, 15)
+        self.controller.set_value(None)
+        self.time_picker.set_py_time.assert_called_with(datetime.time(12, 15))
+
+    def testGetValueWhenTimeIsShownShouldReturnDateWithTime(self):
+        self.time_picker.IsShown.return_value = True
+        self.time_picker.get_py_time.return_value = datetime.time(14, 30)
+        self.date_picker.get_py_date.return_value = datetime.date(2010, 8, 31)
+        self.assertEquals(datetime.datetime(2010, 8, 31, 14, 30),
+                          self.controller.get_value())
+
+    def testGetValueWhenTimeIsHiddenShouldReturnDateWithoutTime(self):
+        self.time_picker.IsShown.return_value = False
+        self.time_picker.get_py_time.return_value = datetime.time(14, 30)
+        self.date_picker.get_py_date.return_value = datetime.date(2010, 8, 31)
+        self.assertEquals(datetime.datetime(2010, 8, 31, 0, 0),
+                          self.controller.get_value())
 
 
 class PyDatePickerBaseFixture(unittest.TestCase):
