@@ -285,75 +285,35 @@ class MainFrame(wx.Frame):
 
     def _create_navigation_menu_items(self):
         self._clear_navigation_menu_items()
+        item_data = [
+            (_("Go to &Today\tCtrl+T"), self._mnu_navigate_goto_today_on_click),
+            (_("Go to D&ate...\tCtrl+G"), self._mnu_navigate_goto_date_on_click),
+            ("SEP", None),
+            (_("Backward\tPgUp"), self._mnu_navigate_backward_on_click),
+            (_("Forward\tPgDn"), self._mnu_navigate_forward_on_click),
+            (_("Forward One Wee&k\tCtrl+K"), self._mnu_navigate_forward_one_week_on_click),
+            (_("Back One &Week\tCtrl+W"), self._mnu_navigate_backward_one_week_on_click),
+            (_("Forward One Mont&h\tCtrl+h"), self._mnu_navigate_forward_one_month_on_click),
+            (_("Back One &Month\tCtrl+M"), self._mnu_navigate_backward_one_month_on_click),
+            (_("Forward One Yea&r\tCtrl+R"), self._mnu_navigate_forward_one_year_on_click),
+            (_("Back One &Year\tCtrl+Y"), self._mnu_navigate_backward_one_year_on_click),
+            ("SEP", None),
+            (_("Fit Millennium"), self._mnu_navigate_fit_millennium_on_click),
+            (_("Fit Century"), self._mnu_navigate_fit_century_on_click),
+            (_("Fit Decade"), self._mnu_navigate_fit_decade_on_click),
+            (_("Fit Year"), self._mnu_navigate_fit_year_on_click),
+            (_("Fit Month"), self._mnu_navigate_fit_month_on_click),
+            (_("Fit Day"), self._mnu_navigate_fit_day_on_click),
+        ]
         pos = 0
-        goto_today = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Go to &Today\tCtrl+T"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_today_on_click, goto_today)
-        self._navigation_menu_items.append(goto_today)
-        pos += 1
-        goto_date = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Go to D&ate...\tCtrl+G"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_goto_date_on_click, goto_date)
-        self._navigation_menu_items.append(goto_date)
-        pos += 1
-        self._navigation_menu_items.append(self.mnu_navigate.InsertSeparator(pos))
-        pos += 1
-        backward = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Backward\tPgUp"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_on_click, backward)
-        self._navigation_menu_items.append(backward)
-        pos += 1
-        forward = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Forward\tPgDn"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_on_click, forward)
-        self._navigation_menu_items.append(forward)
-        pos += 1
-        forward_one_week = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Forward One Wee&k\tCtrl+K"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_week_on_click, forward_one_week)
-        self._navigation_menu_items.append(forward_one_week)
-        pos += 1
-        backward_one_week = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Back One &Week\tCtrl+W"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_week_on_click, backward_one_week)
-        self._navigation_menu_items.append(backward_one_week)
-        pos += 1
-        forward_one_month = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Forward One Mont&h\tCtrl+h"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_month_on_click, forward_one_month)
-        self._navigation_menu_items.append(forward_one_month)
-        pos += 1
-        backward_one_month = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Back One &Month\tCtrl+M"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_month_on_click, backward_one_month)
-        self._navigation_menu_items.append(backward_one_month)
-        pos += 1
-        forward_one_year = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Forward One Yea&r\tCtrl+R"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_forward_one_year_on_click, forward_one_year)
-        self._navigation_menu_items.append(forward_one_year)
-        pos += 1
-        backward_one_year = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Back One &Year\tCtrl+Y"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_backward_one_year_on_click, backward_one_year)
-        self._navigation_menu_items.append(backward_one_year)
-        pos += 1
-        self._navigation_menu_items.append(self.mnu_navigate.InsertSeparator(pos))
-        pos += 1
-        fit_millennium = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Fit Millennium"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_millennium_on_click, fit_millennium)
-        self._navigation_menu_items.append(fit_millennium)
-        pos += 1
-        fit_century = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Fit Century"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_century_on_click, fit_century)
-        self._navigation_menu_items.append(fit_century)
-        pos += 1
-        fit_decade = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Fit Decade"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_decade_on_click, fit_decade)
-        self._navigation_menu_items.append(fit_decade)
-        pos += 1
-        fit_year = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Fit Year"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_year_on_click, fit_year)
-        self._navigation_menu_items.append(fit_year)
-        pos += 1
-        fit_month = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Fit Month"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_month_on_click, fit_month)
-        self._navigation_menu_items.append(fit_month)
-        pos += 1
-        fit_day = self.mnu_navigate.Insert(pos, wx.ID_ANY, _("Fit Day"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_day_on_click, fit_day)
-        self._navigation_menu_items.append(fit_day)
-        pos += 1
+        for (itemstr, fn) in item_data:
+            if itemstr == "SEP":
+                item = self.mnu_navigate.InsertSeparator(pos)
+            else:
+                item = self.mnu_navigate.Insert(pos, wx.ID_ANY, itemstr)
+                self.Bind(wx.EVT_MENU, fn, item)
+            self._navigation_menu_items.append(item)
+            pos += 1
 
     def _clear_navigation_menu_items(self):
         while self._navigation_menu_items:
