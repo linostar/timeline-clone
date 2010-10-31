@@ -285,35 +285,101 @@ class MainFrame(wx.Frame):
 
     def _create_navigation_menu_items(self):
         self._clear_navigation_menu_items()
+        def go_to_today_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.center(dt.now()))
+        def go_to_date_fn(main_frame, current_period, navigation_fn):
+            dialog = GotoDateDialog(main_frame, current_period.mean_time())
+            if dialog.ShowModal() == wx.ID_OK:
+                navigation_fn(lambda tp: tp.center(dialog.time))
+            dialog.Destroy()
+        def backward_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.move_page_smart(-1))
+        def forward_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.move_page_smart(1))
+        def forward_one_week_fn(main_frame, current_period, navigation_fn):
+            wk = datetime.timedelta(days=7)
+            navigation_fn(lambda tp: tp.move_delta(wk))
+        def backward_one_week_fn(main_frame, current_period, navigation_fn):
+            wk = datetime.timedelta(days=7)
+            navigation_fn(lambda tp: tp.move_delta(-1*wk))
+        def navigate_month_step(current_period, navigation_fn, direction):
+            """
+            Currently does notice leap years.
+            """
+            tm = current_period.mean_time()
+            if direction > 0:
+                if tm.month == 2:
+                    d = 28
+                elif tm.month in (4,6,9,11):
+                    d = 30
+                else:
+                    d = 31
+            else:
+                if tm.month == 3:
+                    d = 28
+                elif tm.month in (5,7,10,12):
+                    d = 30
+                else:
+                    d = 31
+            mv = datetime.timedelta(days=d)
+            navigation_fn(lambda tp: tp.move_delta(direction*mv))
+        def forward_one_month_fn(main_frame, current_period, navigation_fn):
+            navigate_month_step(current_period, navigation_fn, 1)
+        def backward_one_month_fn(main_frame, current_period, navigation_fn):
+            navigate_month_step(current_period, navigation_fn, -1)
+        def forward_one_year_fn(main_frame, current_period, navigation_fn):
+            yr = datetime.timedelta(days=365)
+            navigation_fn(lambda tp: tp.move_delta(yr))
+        def backward_one_year_fn(main_frame, current_period, navigation_fn):
+            yr = datetime.timedelta(days=365)
+            navigation_fn(lambda tp: tp.move_delta(-1*yr))
+        def fit_millennium_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.fit_millennium())
+        def fit_century_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.fit_century())
+        def fit_decade_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.fit_decade())
+        def fit_year_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.fit_year())
+        def fit_month_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.fit_month())
+        def fit_day_fn(main_frame, current_period, navigation_fn):
+            navigation_fn(lambda tp: tp.fit_day())
         item_data = [
-            (_("Go to &Today\tCtrl+T"), self._mnu_navigate_goto_today_on_click),
-            (_("Go to D&ate...\tCtrl+G"), self._mnu_navigate_goto_date_on_click),
+            (_("Go to &Today\tCtrl+T"), go_to_today_fn),
+            (_("Go to D&ate...\tCtrl+G"), go_to_date_fn),
             ("SEP", None),
-            (_("Backward\tPgUp"), self._mnu_navigate_backward_on_click),
-            (_("Forward\tPgDn"), self._mnu_navigate_forward_on_click),
-            (_("Forward One Wee&k\tCtrl+K"), self._mnu_navigate_forward_one_week_on_click),
-            (_("Back One &Week\tCtrl+W"), self._mnu_navigate_backward_one_week_on_click),
-            (_("Forward One Mont&h\tCtrl+h"), self._mnu_navigate_forward_one_month_on_click),
-            (_("Back One &Month\tCtrl+M"), self._mnu_navigate_backward_one_month_on_click),
-            (_("Forward One Yea&r\tCtrl+R"), self._mnu_navigate_forward_one_year_on_click),
-            (_("Back One &Year\tCtrl+Y"), self._mnu_navigate_backward_one_year_on_click),
+            (_("Backward\tPgUp"), backward_fn),
+            (_("Forward\tPgDn"), forward_fn),
+            (_("Forward One Wee&k\tCtrl+K"), forward_one_week_fn),
+            (_("Back One &Week\tCtrl+W"), backward_one_week_fn),
+            (_("Forward One Mont&h\tCtrl+h"), forward_one_month_fn),
+            (_("Back One &Month\tCtrl+M"), backward_one_month_fn),
+            (_("Forward One Yea&r\tCtrl+R"), forward_one_year_fn),
+            (_("Back One &Year\tCtrl+Y"), backward_one_year_fn),
             ("SEP", None),
-            (_("Fit Millennium"), self._mnu_navigate_fit_millennium_on_click),
-            (_("Fit Century"), self._mnu_navigate_fit_century_on_click),
-            (_("Fit Decade"), self._mnu_navigate_fit_decade_on_click),
-            (_("Fit Year"), self._mnu_navigate_fit_year_on_click),
-            (_("Fit Month"), self._mnu_navigate_fit_month_on_click),
-            (_("Fit Day"), self._mnu_navigate_fit_day_on_click),
+            (_("Fit Millennium"), fit_millennium_fn),
+            (_("Fit Century"), fit_century_fn),
+            (_("Fit Decade"), fit_decade_fn),
+            (_("Fit Year"), fit_year_fn),
+            (_("Fit Month"), fit_month_fn),
+            (_("Fit Day"), fit_day_fn),
         ]
+        self._navigation_menu_items_map = {}
         pos = 0
         for (itemstr, fn) in item_data:
             if itemstr == "SEP":
                 item = self.mnu_navigate.InsertSeparator(pos)
             else:
                 item = self.mnu_navigate.Insert(pos, wx.ID_ANY, itemstr)
-                self.Bind(wx.EVT_MENU, fn, item)
+                self._navigation_menu_items_map[item.GetId()] = fn
+                self.Bind(wx.EVT_MENU, self._on_nav_menu_item_click, item)
             self._navigation_menu_items.append(item)
             pos += 1
+
+    def _on_nav_menu_item_click(self, evt):
+        fn = self._navigation_menu_items_map[evt.GetId()]
+        fn(self, self._get_time_period(), self._navigate_timeline)
 
     def _clear_navigation_menu_items(self):
         while self._navigation_menu_items:
@@ -399,54 +465,6 @@ class MainFrame(wx.Frame):
 
     def _mnu_timeline_edit_categories_on_click(self, evt):
         self.edit_categories()
-
-    def _mnu_navigate_goto_today_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.center(dt.now()))
-
-    def _mnu_navigate_goto_date_on_click(self, evt):
-        self._goto_date()
-
-    def _mnu_navigate_backward_on_click(self, evt):
-        self._navigate_backward()
-
-    def _mnu_navigate_forward_on_click(self, evt):
-        self._navigate_forward()
-
-    def _mnu_navigate_forward_one_week_on_click(self, evt):
-        self._navigate_week_step(1)
-
-    def _mnu_navigate_backward_one_week_on_click(self, evt):
-        self._navigate_week_step(-1)
-
-    def _mnu_navigate_forward_one_month_on_click(self, evt):
-        self._navigate_month_step(1)
-
-    def _mnu_navigate_backward_one_month_on_click(self, evt):
-        self._navigate_month_step(-1)
-
-    def _mnu_navigate_forward_one_year_on_click(self, evt):
-        self._navigate_year_step(1)
-
-    def _mnu_navigate_backward_one_year_on_click(self, evt):
-        self._navigate_year_step(-1)
-
-    def _mnu_navigate_fit_year_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_year())
-
-    def _mnu_navigate_fit_millennium_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_millennium())
-
-    def _mnu_navigate_fit_century_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_century())
-
-    def _mnu_navigate_fit_decade_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_decade())
-
-    def _mnu_navigate_fit_month_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_month())
-
-    def _mnu_navigate_fit_day_on_click(self, evt):
-        self._navigate_timeline(lambda tp: tp.fit_day())
 
     def _mnu_navigate_find_first_on_click(self, evt):
         event = self.timeline.get_first_event()
@@ -688,18 +706,6 @@ class MainFrame(wx.Frame):
                 image.SaveFile(path, type)
         dialog.Destroy()
 
-    def _goto_date(self):
-        dialog = GotoDateDialog(self, self._get_time_period().mean_time())
-        if dialog.ShowModal() == wx.ID_OK:
-            self._navigate_timeline(lambda tp: tp.center(dialog.time))
-        dialog.Destroy()
-
-    def _navigate_backward(self):
-        self._navigate_smart_step(-1)
-
-    def _navigate_forward(self):
-        self._navigate_smart_step(1)
-
     def _set_initial_values_to_member_variables(self):
         """
         Instance variables usage:
@@ -719,42 +725,6 @@ class MainFrame(wx.Frame):
             icon = wx.IconFromBitmap(wx.BitmapFromImage(wx.Image(iconpath)))
             bundle.AddIcon(icon)
         return bundle
-
-    def _navigate_week_step(self, direction):
-        wk = datetime.timedelta(days=7)
-        self._navigate_timeline(lambda tp: tp.move_delta(direction*wk))
-
-    def _navigate_month_step(self, direction):
-        """
-        Currently does notice leap years.
-        """
-        tm = self._get_time_period().mean_time()
-        if direction > 0:
-            if tm.month == 2:
-                d = 28
-            elif tm.month in (4,6,9,11):
-                d = 30
-            else:
-                d = 31
-        else:
-            if tm.month == 3:
-                d = 28
-            elif tm.month in (5,7,10,12):
-                d = 30
-            else:
-                d = 31
-        mv = datetime.timedelta(days=d)
-        self._navigate_timeline(lambda tp: tp.move_delta(direction*mv))
-
-    def _navigate_year_step(self, direction):
-        """
-        Currently does notice leap years.
-        """
-        yr = datetime.timedelta(days=365)
-        self._navigate_timeline(lambda tp: tp.move_delta(direction*yr))
-
-    def _navigate_smart_step(self, direction):
-        self._navigate_timeline(lambda tp: tp.move_page_smart(direction))
 
     def _navigate_timeline(self, navigation_fn):
         """Shortcut for method in DrawingArea."""
