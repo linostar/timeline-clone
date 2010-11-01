@@ -36,6 +36,9 @@ class TimeType(object):
     def get_navigation_functions(self):
         raise NotImplementedError("get_navigation_functions not implemented.")
 
+    def is_date_time_type(self):
+        raise NotImplementedError("is_date_time_type not implemented.")
+
 
 class PyTimeType(TimeType):
 
@@ -84,6 +87,9 @@ class PyTimeType(TimeType):
             (_("Fit Month"), fit_month_fn),
             (_("Fit Day"), fit_day_fn),
         ]
+
+    def is_date_time_type(self):
+        return True
 
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):

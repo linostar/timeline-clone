@@ -31,7 +31,7 @@ digraph mikado
 
     // Leaves
 
-    show_time [label="Show time checkbox\nis part of time type\n(roger)"];
+    show_time [label="Show time checkbox\ndepends on time type",style=filled,fillcolor="#A2E33F"];
 
     db_has_type_info [label="DB knows the time\ntype used."];
     db_has_type_info [style=filled,fillcolor="#A2E33F"];
