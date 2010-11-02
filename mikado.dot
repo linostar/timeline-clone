@@ -26,17 +26,32 @@ digraph mikado
         navigation -> db_has_type_info;
         navigation -> move_nav_to_time_type;
         navigation -> create_menu_items_dynamically;
+        navigation -> time_period;
 
     status_bar [label="Statusbar shows\ndifferent times"];
+        status_bar -> get_label;
+        get_label -> time_period_knows_type;
+
+    get_label [label="get_label in TimePeriod\nworks for all time types"];
+        get_label -> type_format;
 
     // Leaves
 
-    show_time [label="Show time checkbox\ndepends on time type",style=filled,fillcolor="#A2E33F"];
+    show_time [label="Show time checkbox\ndepends on time type\n(roger)"];
+    show_time [style=filled,fillcolor="#A2E33F"];
 
-    db_has_type_info [label="DB knows the time\ntype used."];
+    db_has_type_info [label="DB knows the time\ntype used"];
     db_has_type_info [style=filled,fillcolor="#A2E33F"];
 
-    move_nav_to_time_type [label="Move information about\nnavigation functions to\ntime type class.\n(rickard)"];
+    move_nav_to_time_type [label="Move information about\nnavigation functions to\ntime type class\n(rickard)"];
+    move_nav_to_time_type [style=filled,fillcolor="#A2E33F"];
 
-    create_menu_items_dynamically [label="Create navigation menu\nitems dynamically.\n(rickard)"];
+    create_menu_items_dynamically [label="Create navigation menu\nitems dynamically\n(rickard)"];
+    create_menu_items_dynamically [style=filled,fillcolor="#A2E33F"];
+
+    time_period [label="Move time specific methods\nin TimePeriod to time type\n(rickard)"];
+
+    time_period_knows_type [label="TimePeriod knows about\ntime type used in it"];
+
+    type_format [label="Time type type can\nformat period"];
 }
