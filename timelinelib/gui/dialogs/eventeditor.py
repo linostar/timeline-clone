@@ -98,10 +98,11 @@ class EventEditor(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
                   self.chb_period)
         when_box_props.Add(self.chb_period)
-        self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
-        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
-                  self.chb_show_time)
-        when_box_props.Add(self.chb_show_time)
+        if self.timeline.get_time_type().is_date_time_type():
+            self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
+            self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
+                      self.chb_show_time)
+            when_box_props.Add(self.chb_show_time)
         grid.Add(when_box_props)
         # Grid: Text
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY)
@@ -259,7 +260,6 @@ class EventEditor(wx.Dialog):
         """Initially fill the controls in the dialog with data."""
         if self.event == None:
             self.chb_period.SetValue(False)
-            self.chb_show_time.SetValue(False)
             text = ""
             category = None
             self.updatemode = False
@@ -274,7 +274,6 @@ class EventEditor(wx.Dialog):
                     editor.set_data(data)
             self.updatemode = True
         if start != None and end != None:
-            self.chb_show_time.SetValue(TimePeriod(start, end).has_nonzero_time())
             self.chb_period.SetValue(start != end)
         self.dtp_start.set_value(start)
         self.dtp_end.set_value(end)
@@ -282,6 +281,14 @@ class EventEditor(wx.Dialog):
         self._update_categories(category)
         self.chb_add_more.SetValue(False)
         self._show_to_time(self.chb_period.IsChecked())
+        if self.timeline.get_time_type().is_date_time_type():            
+            self._fill_chb_show_time_control_with_data(self.event, start, end)
+
+    def _fill_chb_show_time_control_with_data(self, event, start, end):
+        if event == None:
+            self.chb_show_time.SetValue(False)
+        if start != None and end != None:
+            self.chb_show_time.SetValue(TimePeriod(start, end).has_nonzero_time())
         self.dtp_start.show_time(self.chb_show_time.IsChecked())
         self.dtp_end.show_time(self.chb_show_time.IsChecked())
 
