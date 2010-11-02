@@ -82,6 +82,12 @@ class XmlTimeline(MemoryDB):
         if load == True:
             self._load()
 
+    def _parse_time(self, time_string):
+        return self.get_time_type().parse_time(time_string)
+
+    def _time_string(self, time):
+        return self.get_time_type().time_string(time)
+
     def _load(self):
         """
         Load timeline data from the file that this timeline points to.
@@ -180,8 +186,8 @@ class XmlTimeline(MemoryDB):
         self.save_category(category)
 
     def _parse_event(self, text, tmp_dict):
-        start = parse_time(tmp_dict.pop("tmp_start"))
-        end = parse_time(tmp_dict.pop("tmp_end"))
+        start = self._parse_time(tmp_dict.pop("tmp_start"))
+        end = self._parse_time(tmp_dict.pop("tmp_end"))
         text = tmp_dict.pop("tmp_text")
         category_text = tmp_dict.pop("tmp_category", None)
         if category_text is None:
@@ -202,8 +208,8 @@ class XmlTimeline(MemoryDB):
         self.save_event(event)
 
     def _parse_displayed_period(self, text, tmp_dict):
-        start = parse_time(tmp_dict.pop("tmp_start"))
-        end = parse_time(tmp_dict.pop("tmp_end"))
+        start = self._parse_time(tmp_dict.pop("tmp_start"))
+        end = self._parse_time(tmp_dict.pop("tmp_end"))
         self._set_displayed_period(TimePeriod(start, end))
 
     def _parse_hidden_category(self, text, tmp_dict):
@@ -252,9 +258,9 @@ class XmlTimeline(MemoryDB):
 
     def _write_event(self, file, evt):
         write_simple_tag(file, "start",
-                         time_string(evt.time_period.start_time), INDENT3)
+                         self._time_string(evt.time_period.start_time), INDENT3)
         write_simple_tag(file, "end",
-                         time_string(evt.time_period.end_time), INDENT3)
+                         self._time_string(evt.time_period.end_time), INDENT3)
         write_simple_tag(file, "text", evt.text, INDENT3)
         if evt.category is not None:
             write_simple_tag(file, "category", evt.category.name, INDENT3)
@@ -275,9 +281,9 @@ class XmlTimeline(MemoryDB):
     def _write_displayed_period(self, file):
         period = self._get_displayed_period()
         write_simple_tag(file, "start",
-                         time_string(period.start_time), INDENT3)
+                         self._time_string(period.start_time), INDENT3)
         write_simple_tag(file, "end",
-                         time_string(period.end_time), INDENT3)
+                         self._time_string(period.end_time), INDENT3)
     _write_displayed_period = wrap_in_tag(_write_displayed_period,
                                           "displayed_period", INDENT2)
 
@@ -311,36 +317,6 @@ def parse_bool(bool_string):
         return False
     else:
         raise ParseException("Unknown boolean '%s'" % bool_string)
-
-
-def time_string(time):
-    """
-    Return time formatted for writing to file.
-    """
-    return "%s-%s-%s %s:%s:%s" % (time.year, time.month, time.day,
-                                  time.hour, time.minute, time.second)
-
-
-def parse_time(time_string):
-    """
-    Expected format 'year-month-day hour:minute:second'.
-
-    Return a Python datetime.
-    """
-    match = re.search(r"^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$", time_string)
-    if match:
-        year = int(match.group(1))
-        month = int(match.group(2))
-        day = int(match.group(3))
-        hour = int(match.group(4))
-        minute = int(match.group(5))
-        second = int(match.group(6))
-        try:
-            return datetime(year, month, day, hour, minute, second)
-        except ValueError:
-            raise ParseException("Invalid time, time string = '%s'" % time_string)
-    else:
-        raise ParseException("Time not on correct format = '%s'" % time_string)
 
 
 def color_string(color):

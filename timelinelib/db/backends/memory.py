@@ -29,6 +29,7 @@ query persistent storage to retrieve data.
 """
 
 
+from timelinelib.db.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import STATE_CHANGE_ANY
@@ -50,6 +51,9 @@ class MemoryDB(TimelineDB):
         self.displayed_period = None
         self.hidden_categories = []
         self.save_disabled = False
+
+    def get_time_type(self):
+        return PyTimeType()
 
     def is_read_only(self):
         return False

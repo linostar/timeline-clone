@@ -1,0 +1,42 @@
+digraph mikado
+{
+    node [shape=box];
+
+    wider_dates [label="Timeline supports wider\ndates (before year 0)"];
+    wider_dates [peripheries=2];
+        wider_dates -> switch_to_wx_time;
+
+    switch_to_wx_time [label="Timeline uses\nwxDateTime class"];
+        switch_to_wx_time -> different_time;
+
+    different_time [label="Timeline supports\ndifferent times "];
+        different_time -> event_editor;
+        different_time -> drawer;
+        different_time -> navigation;
+        different_time -> status_bar;
+
+    event_editor [label="Event editor can\nhandle different times"];
+        event_editor -> show_time;
+        event_editor -> db_has_type_info;
+
+    drawer [label="Drawer can\nhandle different times"];
+        drawer -> db_has_type_info;
+
+    navigation [label="Navigation functions\nare time specific\n(rickard)"];
+        navigation -> db_has_type_info;
+        navigation -> move_nav_to_time_type;
+        navigation -> create_menu_items_dynamically;
+
+    status_bar [label="Statusbar shows\ndifferent times"];
+
+    // Leaves
+
+    show_time [label="Show time checkbox\nis part of time type\n(roger)"];
+
+    db_has_type_info [label="DB knows the time\ntype used."];
+    db_has_type_info [style=filled,fillcolor="#A2E33F"];
+
+    move_nav_to_time_type [label="Move information about\nnavigation functions to\ntime type class.\n(rickard)"];
+
+    create_menu_items_dynamically [label="Create navigation menu\nitems dynamically.\n(rickard)"];
+}
