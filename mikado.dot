@@ -35,6 +35,9 @@ digraph mikado
     get_label [label="get_label in TimePeriod\nworks for all time types"];
         get_label -> type_format;
 
+    time_period_knows_type [label="TimePeriod knows about\ntime type used in it"];
+	time_period_knows_type -> event_constructor;
+
     // Leaves
 
     show_time [label="Show time checkbox\ndepends on time type\n(roger)"];
@@ -51,7 +54,7 @@ digraph mikado
 
     time_period [label="Move time specific methods\nin TimePeriod to time type\n(rickard)"];
 
-    time_period_knows_type [label="TimePeriod knows about\ntime type used in it"];
-
     type_format [label="Time type type can\nformat period"];
+    
+    event_constructor[label="Event constructor takes DB-argument\n(roger)"];
 }
