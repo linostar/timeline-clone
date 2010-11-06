@@ -35,7 +35,8 @@ digraph mikado
     get_label [label="get_label in TimePeriod\nworks for all time types"];
         get_label -> type_format;
 
-    time_period_knows_type [label="TimePeriod knows about\ntime type used in it"];
+    time_period_knows_type [label="TimePeriod knows about\ntime type used in it\n(roger)"];
+    time_period_knows_type [style=filled,fillcolor="#A2E33F"];
 	time_period_knows_type -> event_constructor;
 
     // Leaves
