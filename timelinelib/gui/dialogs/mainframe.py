@@ -303,11 +303,11 @@ class MainFrame(wx.Frame):
             else:
                 item = self.mnu_navigate.Insert(pos, wx.ID_ANY, itemstr)
                 self._navigation_functions_by_menu_item_id[item.GetId()] = fn
-                self.Bind(wx.EVT_MENU, self._on_nav_menu_item_click, item)
+                self.Bind(wx.EVT_MENU, self._navigation_menu_item_on_click, item)
             self._navigation_menu_items.append(item)
             pos += 1
 
-    def _on_nav_menu_item_click(self, evt):
+    def _navigation_menu_item_on_click(self, evt):
         fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
         fn(self, self._get_time_period(), self._navigate_timeline)
 
