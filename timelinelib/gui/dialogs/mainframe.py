@@ -289,6 +289,11 @@ class MainFrame(wx.Frame):
         if self.timeline:
             self._create_navigation_menu_items()
 
+    def _clear_navigation_menu_items(self):
+        while self._navigation_menu_items:
+            self.mnu_navigate.RemoveItem(self._navigation_menu_items.pop())
+        self._navigation_functions_by_menu_item_id.clear()
+
     def _create_navigation_menu_items(self):
         item_data = self.timeline.get_time_type().get_navigation_functions()
         pos = 0
@@ -305,11 +310,6 @@ class MainFrame(wx.Frame):
     def _on_nav_menu_item_click(self, evt):
         fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
         fn(self, self._get_time_period(), self._navigate_timeline)
-
-    def _clear_navigation_menu_items(self):
-        while self._navigation_menu_items:
-            self.mnu_navigate.RemoveItem(self._navigation_menu_items.pop())
-        self._navigation_functions_by_menu_item_id.clear()
 
     def _update_open_recent_submenu(self):
         # Clear items
