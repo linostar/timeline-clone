@@ -79,11 +79,11 @@ class TimelineView(unittest.TestCase):
         self.db._set_displayed_period(
             TimePeriod(datetime(2010, 8, 30, 0, 0, 0),
                        datetime(2010, 8, 31, 0, 0, 0)))
-        self.point_event = Event(datetime(2010, 8, 30, 15, 0, 0),
+        self.point_event = Event(self.db, datetime(2010, 8, 30, 15, 0, 0),
                                  datetime(2010, 8, 30, 15, 0, 0),
                                  "Point event")
         self.db.save_event(self.point_event)
-        self.period_event = Event(datetime(2010, 8, 30, 4, 0, 0),
+        self.period_event = Event(self.db, datetime(2010, 8, 30, 4, 0, 0),
                                   datetime(2010, 8, 30, 7, 0, 0),
                                   "Period event")
         self.period_event.set_data("description", "I am a period event!")

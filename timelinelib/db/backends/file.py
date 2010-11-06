@@ -233,7 +233,7 @@ class FileTimeline(MemoryDB):
                 if len(event_specification) == 4:
                     cat_name = dequote(event_specification[3])
                 category = self._get_category(cat_name)
-                evt = Event(start_time, end_time, text, category)
+                evt = Event(self, start_time, end_time, text, category)
                 self.save_event(evt)
                 return True
             else:
@@ -243,7 +243,7 @@ class FileTimeline(MemoryDB):
                 end_time = self._parse_time(event_specification[1])
                 text = dequote(event_specification[2])
                 category = self._get_category(dequote(event_specification[3]))
-                event = Event(start_time, end_time, text, category)
+                event = Event(self, start_time, end_time, text, category)
                 for item in event_specification[4:]:
                     id, data = item.split(":", 1)
                     if id not in self.supported_event_data():

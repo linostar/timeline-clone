@@ -118,7 +118,7 @@ class TutorialTimelineCreator(object):
         end   = start
         if end_add is not None:
             end = self.start + end_add
-        evt = Event(start, end, text, self.last_cat)
+        evt = Event(self.db, start, end, text, self.last_cat)
         if description:
             evt.set_data("description", description)
         self.db.save_event(evt)

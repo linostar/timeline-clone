@@ -121,7 +121,7 @@ def copy_db(from_db, to_db):
         if event.category is not None:
             cat = cat_map[event.category.name]
         # start_time, end_time, and text all immutable so safe to copy
-        new_event = Event(event.time_period.start_time,
+        new_event = Event(to_db, event.time_period.start_time,
                           event.time_period.end_time,
                           event.text,
                           cat)

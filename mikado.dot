@@ -56,5 +56,6 @@ digraph mikado
 
     type_format [label="Time type type can\nformat period"];
     
-    event_constructor[label="Event constructor takes DB-argument\n(roger)"];
+    event_constructor [label="Event constructor takes DB-argument\n(roger)"];
+    event_constructor [style=filled,fillcolor="#A2E33F"];
 }

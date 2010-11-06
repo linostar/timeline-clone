@@ -189,7 +189,8 @@ class EventEditor(wx.Dialog):
                     self.timeline.save_event(self.event)
                 # Create new event
                 else:
-                    self.event = Event(start_time, end_time, name, category)
+                    self.event = Event(self.timeline, start_time, end_time, 
+                                       name, category)
                     for data_id, editor in self.event_data:
                         self.event.set_data(data_id,
                                             editor.get_data())

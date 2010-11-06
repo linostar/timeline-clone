@@ -126,7 +126,7 @@ class IcsTimeline(TimelineDB):
             txt = ""
             if event.has_key("summary"):
                 txt = event["summary"]
-            e = Event(start, end, txt)
+            e = Event(self, start, end, txt)
             e.set_id(event["timeline_id"])
             if decider_fn is None or decider_fn(e):
                 events.append(e)

@@ -37,8 +37,10 @@ class TestMemoryDB(unittest.TestCase):
         self.db_listener = Mock()
         self.c1 = Category("work", (255, 0, 0), True)
         self.c2 = Category("private", (0, 255, 0), True)
-        self.e1 = Event(datetime(2010, 2, 13), datetime(2010, 2, 13), "holiday")
-        self.e2 = Event(datetime(2010, 2, 14), datetime(2010, 2, 14), "work starts")
+        self.e1 = Event(self.db, datetime(2010, 2, 13), datetime(2010, 2, 13), 
+                        "holiday")
+        self.e2 = Event(self.db, datetime(2010, 2, 14), datetime(2010, 2, 14), 
+                        "work starts")
         self.db.register(self.db_listener)
 
     def testInitialState(self):

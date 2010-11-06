@@ -42,7 +42,7 @@ class TestDuplicateEventController(unittest.TestCase):
         self.view = Mock()
         start_time = datetime.datetime(2010, 1, 1, 12, 0, 0)
         end_time = datetime.datetime(2010, 1, 1, 13, 0, 0)
-        self.event = Event(start_time, end_time, "foo", category=None)
+        self.event = Event(self.db, start_time, end_time, "foo", category=None)
 
     def testInit(self):
         """Assert the initial settings in the view dialog."""

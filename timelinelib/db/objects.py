@@ -39,7 +39,7 @@ class Event(object):
     it will set the event id to a unique integer.
     """
 
-    def __init__(self, start_time, end_time, text, category=None):
+    def __init__(self, db, start_time, end_time, text, category=None):
         """
         Create an event.
 
@@ -50,6 +50,7 @@ class Event(object):
         self.draw_ballon = False
         self.update(start_time, end_time, text, category)
         self.data = {}
+        self.db = db
 
     def has_id(self):
         return self.id is not None
@@ -125,7 +126,7 @@ class Event(object):
 
     def clone(self):
         # Objects of type datetime are immutable.
-        new_event = Event(self.time_period.start_time, 
+        new_event = Event(self.db, self.time_period.start_time, 
                           self.time_period.end_time, self.text, self.category)
         # Description is immutable
         new_event.set_data("description", self.get_data("description") )
