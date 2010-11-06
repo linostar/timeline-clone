@@ -253,6 +253,7 @@ class MainFrame(wx.Frame):
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         self._navigation_menu_items = []
+        self._navigation_functions_by_menu_item_id = {}
         self._update_navigation_menu_items()
         self.mnu_navigate.AppendSeparator()
         find_first = self.mnu_navigate.Append(wx.ID_ANY, _("Find First Event"))
@@ -290,7 +291,6 @@ class MainFrame(wx.Frame):
 
     def _create_navigation_menu_items(self):
         item_data = self.timeline.get_time_type().get_navigation_functions()
-        self._navigation_functions_by_menu_item_id = {}
         pos = 0
         for (itemstr, fn) in item_data:
             if itemstr == "SEP":
@@ -309,6 +309,7 @@ class MainFrame(wx.Frame):
     def _clear_navigation_menu_items(self):
         while self._navigation_menu_items:
             self.mnu_navigate.RemoveItem(self._navigation_menu_items.pop())
+        self._navigation_functions_by_menu_item_id.clear()
 
     def _update_open_recent_submenu(self):
         # Clear items
