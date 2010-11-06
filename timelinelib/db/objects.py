@@ -327,12 +327,6 @@ class TimePeriod(object):
             end = dt(mean.year, mean.month + 1, 1)
         self.update(start, end)
 
-    def fit_day(self):
-        mean = self.mean_time()
-        start = dt(mean.year, mean.month, mean.day)
-        end = start + timedelta(days=1)
-        self.update(start, end)
-
     def move_page_smart(self, direction):
         """Move the period forward (direction positive) or backward (direction
         negative)."""
