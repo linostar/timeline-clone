@@ -90,7 +90,7 @@ class MainFrame(wx.Frame):
 
     def open_timeline(self, input_file):
         self.controller.open_timeline(input_file)
-        self._create_navigation_menu_items()
+        self._update_navigation_menu_items()
 
     def open_timeline_if_exists(self, path):
         if os.path.exists(path):
@@ -253,7 +253,7 @@ class MainFrame(wx.Frame):
         # Navigate menu
         self.mnu_navigate = wx.Menu()
         self._navigation_menu_items = []
-        self._create_navigation_menu_items()
+        self._update_navigation_menu_items()
         self.mnu_navigate.AppendSeparator()
         find_first = self.mnu_navigate.Append(wx.ID_ANY, _("Find First Event"))
         find_last  = self.mnu_navigate.Append(wx.ID_ANY, _("Find Last Event"))
@@ -283,24 +283,24 @@ class MainFrame(wx.Frame):
         menuBar.Append(self.mnu_help, _("&Help"))
         self.SetMenuBar(menuBar)
 
-    def _create_navigation_menu_items(self):
+    def _update_navigation_menu_items(self):
         self._clear_navigation_menu_items()
         if self.timeline:
             item_data = self.timeline.get_time_type().get_navigation_functions()
-            self._navigation_menu_items_map = {}
+            self._navigation_functions_by_menu_item_id = {}
             pos = 0
             for (itemstr, fn) in item_data:
                 if itemstr == "SEP":
                     item = self.mnu_navigate.InsertSeparator(pos)
                 else:
                     item = self.mnu_navigate.Insert(pos, wx.ID_ANY, itemstr)
-                    self._navigation_menu_items_map[item.GetId()] = fn
+                    self._navigation_functions_by_menu_item_id[item.GetId()] = fn
                     self.Bind(wx.EVT_MENU, self._on_nav_menu_item_click, item)
                 self._navigation_menu_items.append(item)
                 pos += 1
 
     def _on_nav_menu_item_click(self, evt):
-        fn = self._navigation_menu_items_map[evt.GetId()]
+        fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
         fn(self, self._get_time_period(), self._navigate_timeline)
 
     def _clear_navigation_menu_items(self):
