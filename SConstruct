@@ -72,11 +72,17 @@ import os.path
 import codecs
 import re
 
+# Helper functions
+
+def find_py_files_in(path):
+    py_files = []
+    for root, dirs, files in os.walk(path):
+        py_files += [os.path.join(root, f) for f in files if f.endswith(".py")]
+    return py_files
+
 # Gather a list with all source files
 
-sources = []
-for root, dirs, files in os.walk("timelinelib"):
-    sources.extend([os.path.join(root, f) for f in files if f.endswith(".py")])
+sources = find_py_files_in("timelinelib")
 
 # Target: mo
 
@@ -98,7 +104,8 @@ env.Alias("pot", pot)
 
 # Target: tags
 
-tags = env.Command("tags", sources,
+tags = env.Command("tags",
+                   sources + find_py_files_in("specs") + find_py_files_in("tests"),
                    "$CTAGS --python-kinds=-i --tag-relative=yes --extra=+f -f $TARGET $SOURCES")
 env.Alias("tags", tags)
 
