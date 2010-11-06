@@ -168,4 +168,7 @@ def fit_month_fn(main_frame, current_period, navigation_fn):
 
 
 def fit_day_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_day())
+    mean = current_period.mean_time()
+    start = datetime.datetime(mean.year, mean.month, mean.day)
+    end = start + datetime.timedelta(days=1)
+    navigation_fn(lambda tp: tp.update(start, end))
