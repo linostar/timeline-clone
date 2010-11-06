@@ -286,18 +286,21 @@ class MainFrame(wx.Frame):
     def _update_navigation_menu_items(self):
         self._clear_navigation_menu_items()
         if self.timeline:
-            item_data = self.timeline.get_time_type().get_navigation_functions()
-            self._navigation_functions_by_menu_item_id = {}
-            pos = 0
-            for (itemstr, fn) in item_data:
-                if itemstr == "SEP":
-                    item = self.mnu_navigate.InsertSeparator(pos)
-                else:
-                    item = self.mnu_navigate.Insert(pos, wx.ID_ANY, itemstr)
-                    self._navigation_functions_by_menu_item_id[item.GetId()] = fn
-                    self.Bind(wx.EVT_MENU, self._on_nav_menu_item_click, item)
-                self._navigation_menu_items.append(item)
-                pos += 1
+            self._create_navigation_menu_items()
+
+    def _create_navigation_menu_items(self):
+        item_data = self.timeline.get_time_type().get_navigation_functions()
+        self._navigation_functions_by_menu_item_id = {}
+        pos = 0
+        for (itemstr, fn) in item_data:
+            if itemstr == "SEP":
+                item = self.mnu_navigate.InsertSeparator(pos)
+            else:
+                item = self.mnu_navigate.Insert(pos, wx.ID_ANY, itemstr)
+                self._navigation_functions_by_menu_item_id[item.GetId()] = fn
+                self.Bind(wx.EVT_MENU, self._on_nav_menu_item_click, item)
+            self._navigation_menu_items.append(item)
+            pos += 1
 
     def _on_nav_menu_item_click(self, evt):
         fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
