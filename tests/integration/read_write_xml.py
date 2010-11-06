@@ -68,7 +68,7 @@ class TestXmlTimelineWriteRead(unittest.TestCase):
         vp = ViewProperties()
         start = datetime(2010, 3, 1)
         end = datetime(2010, 4, 1)
-        vp.displayed_period = TimePeriod(start, end)
+        vp.displayed_period = TimePeriod(db.get_time_type(), start, end)
         vp.set_category_visible(cat3, False)
         db.save_view_properties(vp)
 

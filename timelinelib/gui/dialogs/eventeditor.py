@@ -289,7 +289,8 @@ class EventEditor(wx.Dialog):
         if event == None:
             self.chb_show_time.SetValue(False)
         if start != None and end != None:
-            self.chb_show_time.SetValue(TimePeriod(start, end).has_nonzero_time())
+            self.chb_show_time.SetValue(TimePeriod(self.timeline.get_time_type(), 
+                                                   start, end).has_nonzero_time())
         self.dtp_start.show_time(self.chb_show_time.IsChecked())
         self.dtp_end.show_time(self.chb_show_time.IsChecked())
 

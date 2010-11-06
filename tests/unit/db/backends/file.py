@@ -24,6 +24,7 @@ import os
 import stat
 import datetime
 
+from timelinelib.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.backends.file import FileTimeline
@@ -115,7 +116,7 @@ class TestFileTimeline(unittest.TestCase):
         """
         timeline = FileTimeline(self.valid_file)
         now = datetime.datetime.now()
-        zero_tp = TimePeriod(now, now)
+        zero_tp = TimePeriod(PyTimeType(), now, now)
         vp = ViewProperties()
         vp.displayed_period = zero_tp
         self.assertRaises(TimelineIOError, timeline.save_view_properties, vp)

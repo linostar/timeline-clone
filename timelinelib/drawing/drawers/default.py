@@ -265,6 +265,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.red_solid_brush = wx.Brush(wx.Color(255, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
         self.DATA_ICON_WIDTH = 5
+        self.db = None
 
     def event_is_period(self, time_period):
         ew = self.metrics.calc_width(time_period)
@@ -282,6 +283,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc = dc
         self.time_period = view_properties.displayed_period
         self.metrics = Metrics(dc.GetSizeTuple(), self.time_period, view_properties.divider_position)
+        self.db = timeline
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
@@ -432,7 +434,7 @@ class DefaultDrawingAlgorithm(Drawer):
             current_start = strip.start(self.time_period.start_time)
             while current_start < self.time_period.end_time:
                 next_start = strip.increment(current_start)
-                list.append(TimePeriod(current_start, next_start))
+                list.append(TimePeriod(self.db.get_time_type(), current_start, next_start))
                 current_start = next_start
         major_strip, minor_strip = self._choose_strip()
         fill(self.major_strip_data, major_strip)
@@ -445,7 +447,7 @@ class DefaultDrawingAlgorithm(Drawer):
         """
         today = datetime.now()
         tomorrow = today + timedelta(days=1)
-        day_period = TimePeriod(today, tomorrow)
+        day_period = TimePeriod(self.db.get_time_type(), today, tomorrow)
         one_day_width = self.metrics.calc_exact_width(day_period)
         if one_day_width > 600:
             return (StripDay(), StripHour())

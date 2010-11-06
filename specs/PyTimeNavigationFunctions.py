@@ -21,6 +21,7 @@ import datetime
 
 from mock import Mock
 
+from timelinelib.time import PyTimeType
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.pytime import fit_day_fn
 
@@ -28,7 +29,7 @@ from timelinelib.time.pytime import fit_day_fn
 class PyTimeNavigationFunctionsSpec(unittest.TestCase):
 
     def _call_fn_with_period(self, fn, start, end):
-        self.time_period = TimePeriod(start, end)
+        self.time_period = TimePeriod(PyTimeType(), start, end)
         fn(None, self.time_period, self._nav_fn)
 
     def _nav_fn(self, fn):

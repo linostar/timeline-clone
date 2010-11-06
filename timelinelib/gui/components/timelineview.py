@@ -314,7 +314,8 @@ class DrawingAreaController(object):
                 self.view_properties.clear_db_specific()
                 timeline.load_view_properties(self.view_properties)
                 if self.view_properties.displayed_period is None:
-                    default_tp = time_period_center(dt.now(), timedelta(days=30))
+                    default_tp = time_period_center(self.timeline.get_time_type(), 
+                                                    dt.now(), timedelta(days=30))
                     self.view_properties.displayed_period = default_tp
             except TimelineIOError, e:
                 self.fn_handle_db_error(e)
@@ -908,7 +909,8 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
         if self.start_time > self.end_time:
             start = self.end_time
             end = self.start_time
-        return TimePeriod(controller.get_drawer().snap(start),
+        return TimePeriod(controller.get_timeline().get_time_type(), 
+                          controller.get_drawer().snap(start),
                           controller.get_drawer().snap(end))
 
     def _move_end_time(self, controller):

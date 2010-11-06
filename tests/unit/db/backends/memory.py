@@ -21,6 +21,7 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
@@ -66,7 +67,7 @@ class TestMemoryDB(unittest.TestCase):
         vp.set_category_visible(self.c1, False)
         start = datetime(2010, 3, 23)
         end = datetime(2010, 3, 24)
-        tp = TimePeriod(start, end)
+        tp = TimePeriod(self.db.get_time_type(), start, end)
         vp.displayed_period = tp
         # Save these properties and assert that the database fields are written
         # correctly
@@ -89,13 +90,14 @@ class TestMemoryDB(unittest.TestCase):
         vp = ViewProperties()
         start = datetime(2010, 3, 23)
         end = datetime(2010, 3, 23)
-        tp = TimePeriod(start, end)
+        tp = TimePeriod(PyTimeType(), start, end)
         vp.displayed_period = tp
         # Assert error when trying to save
         self.assertRaises(TimelineIOError, self.db.save_view_properties, vp)
 
     def testGetSetDisplayedPeriod(self):
-        tp = TimePeriod(datetime(2010, 3, 23), datetime(2010, 3, 24))
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 3, 23), 
+                        datetime(2010, 3, 24))
         self.db._set_displayed_period(tp)
         # Assert that we get back the same period
         self.assertEquals(self.db._get_displayed_period(), tp)
@@ -278,7 +280,8 @@ class TestMemoryDB(unittest.TestCase):
 
     def testSaveNewEvent(self):
         self.db.save_event(self.e1)
-        tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 14))
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12), 
+                        datetime(2010, 2, 14))
         self.assertTrue(self.e1.has_id())
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db.get_all_events(), [self.e1])
@@ -291,7 +294,8 @@ class TestMemoryDB(unittest.TestCase):
         id_before = self.e1.id
         self.e1.text = "new text"
         self.db.save_event(self.e1)
-        tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 14))
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12), 
+                        datetime(2010, 2, 14))
         self.assertEqual(id_before, self.e1.id)
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db.get_all_events(), [self.e1])
@@ -308,7 +312,8 @@ class TestMemoryDB(unittest.TestCase):
         self.assertEquals(self.db._save.call_count, 0)
 
     def testDeleteExistingEvent(self):
-        tp = TimePeriod(datetime(2010, 2, 12), datetime(2010, 2, 15))
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12), 
+                        datetime(2010, 2, 15))
         self.db.save_event(self.e1)
         self.db.save_event(self.e2)
         # Assert both in db

@@ -145,7 +145,7 @@ def copy_db(from_db, to_db):
         # start_time and end_time immutable so safe to copy
         start = from_vp.displayed_period.start_time
         end = from_vp.displayed_period.end_time
-        to_vp.displayed_period = TimePeriod(start, end)
+        to_vp.displayed_period = TimePeriod(to_db.get_time_type(), start, end)
     to_db.save_view_properties(to_vp)
     # Save
     if isinstance(to_db, MemoryDB):

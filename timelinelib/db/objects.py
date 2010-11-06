@@ -45,12 +45,12 @@ class Event(object):
 
         `start_time` and `end_time` should be of the type datetime.
         """
+        self.db = db
         self.id = None
         self.selected = False
         self.draw_ballon = False
         self.update(start_time, end_time, text, category)
         self.data = {}
-        self.db = db
 
     def has_id(self):
         return self.id is not None
@@ -60,25 +60,29 @@ class Event(object):
 
     def update(self, start_time, end_time, text, category=None):
         """Change the event data."""
-        self.time_period = TimePeriod(start_time, end_time)
+        time_type = self.db.get_time_type()
+        self.time_period = TimePeriod(time_type, start_time, end_time)
         self.text = text
         self.category = category
 
     def update_period(self, start_time, end_time):
         """Change the event period."""
-        self.time_period = TimePeriod(start_time, end_time)
+        self.time_period = TimePeriod(self.db.get_time_type(), start_time, 
+                                      end_time)
         
     def update_start(self, start_time):
         """Change the event data."""
         if start_time <= self.time_period.end_time:
-            self.time_period = TimePeriod(start_time, self.time_period.end_time)
+            self.time_period = TimePeriod(self.db.get_time_type(), start_time, 
+                                          self.time_period.end_time)
             return True
         return False            
 
     def update_end(self, end_time):
         """Change the event data."""
         if end_time >= self.time_period.start_time:
-            self.time_period = TimePeriod(self.time_period.start_time, end_time)
+            self.time_period = TimePeriod(self.db.get_time_type(), 
+                                          self.time_period.start_time, end_time)
             return True
         return False            
 
@@ -179,12 +183,14 @@ class TimePeriod(object):
     MIN_TIME = dt(10, 1, 1)
     MAX_TIME = dt(9990, 1, 1)
 
-    def __init__(self, start_time, end_time):
+    def __init__(self, time_type, start_time, end_time):
         """
         Create a time period.
 
-        `start_time` and `end_time` should be of the type datetime.
+        `start_time` and `end_time` should be of a type that can be handled
+        by the time_type object.
         """
+        self.time_type = time_type
         self.update(start_time, end_time)
 
     def __eq__(self, other):
@@ -437,7 +443,7 @@ class TimePeriod(object):
         return nonzero_time
 
 
-def time_period_center(time, length):
+def time_period_center(time_type, time, length):
     """
     TimePeriod factory method.
 
@@ -447,4 +453,4 @@ def time_period_center(time, length):
     half_length = mult_timedelta(length, 0.5)
     start_time = time - half_length
     end_time = time + half_length
-    return TimePeriod(start_time, end_time)
+    return TimePeriod(time_type, start_time, end_time)

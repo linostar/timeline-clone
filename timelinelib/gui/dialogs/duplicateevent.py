@@ -161,7 +161,8 @@ class DuplicateEventController(object):
         period_type = self.view.get_period_type()
         frequency = self.view.get_frequency()
         direction = self.view.get_direction()
-        periods, nbr_of_missing_dates = repeat_period(self.period, period_type, 
+        periods, nbr_of_missing_dates = repeat_period(self.db.get_time_type(), 
+                                                      self.period, period_type, 
                                                       frequency, repetitions, 
                                                       direction)
         try:
@@ -176,7 +177,7 @@ class DuplicateEventController(object):
             self.view.handle_db_error(e)
             
 
-def repeat_period(event_period, period_type, frequency, repetitions, 
+def repeat_period(time_type, event_period, period_type, frequency, repetitions, 
                   direction):
         """
         Returns a list of calculated TimePeriods and the number of missing 
@@ -208,13 +209,13 @@ def repeat_period(event_period, period_type, frequency, repetitions,
         nbr_of_missing_dates = 0
         for inx in inxs:
             if period_type == DAY:
-                new_period = _get_day_period(event_period, inx, frequency)
+                new_period = _get_day_period(time_type, event_period, inx, frequency)
             elif period_type == WEEK:
-                new_period = _get_week_period(event_period, inx, frequency)
+                new_period = _get_week_period(time_type, event_period, inx, frequency)
             elif period_type == MONTH:
-                new_period = _get_month_period(event_period, inx, frequency)
+                new_period = _get_month_period(time_type, event_period, inx, frequency)
             elif period_type == YEAR:
-                new_period = _get_year_period(event_period, inx, frequency)
+                new_period = _get_year_period(time_type, event_period, inx, frequency)
             if new_period == None:
                nbr_of_missing_dates += 1
                continue
@@ -222,21 +223,21 @@ def repeat_period(event_period, period_type, frequency, repetitions,
         return periods, nbr_of_missing_dates
     
     
-def _get_day_period(period, inx, frequency):
+def _get_day_period(time_type, period, inx, frequency):
     delta = timedelta(days=1) * frequency * inx
     start_time = period.start_time + delta  
     end_time = period.end_time + delta  
-    return TimePeriod(start_time, end_time)
+    return TimePeriod(time_type, start_time, end_time)
 
 
-def _get_week_period(period, inx, frequency):
+def _get_week_period(time_type, period, inx, frequency):
     delta = timedelta(weeks=1) * frequency * inx
     start_time = period.start_time + delta
     end_time = period.end_time + delta
-    return TimePeriod(start_time, end_time)
+    return TimePeriod(time_type, start_time, end_time)
 
 
-def _get_month_period(period, inx, frequency):
+def _get_month_period(time_type, period, inx, frequency):
     try:
         delta = inx * frequency
         years = abs(delta) / 12
@@ -262,18 +263,18 @@ def _get_month_period(period, inx, frequency):
         end_year = period.start_time.year + years
         start_time = period.start_time.replace(year=start_year, month=start_month)
         end_time = period.end_time.replace(year=end_year, month=end_month)
-        return TimePeriod(start_time, end_time)
+        return TimePeriod(time_type, start_time, end_time)
     except ValueError:
         return None
 
 
-def _get_year_period(period, inx, frequency):
+def _get_year_period(time_type, period, inx, frequency):
     try:
         delta = inx * frequency
         start_year = period.start_time.year
         end_year = period.end_time.year
         start_time = period.start_time.replace(year=start_year + delta)
         end_time = period.end_time.replace(year=end_year + delta)
-        return TimePeriod(start_time, end_time)
+        return TimePeriod(time_type, start_time, end_time)
     except ValueError:
         return None

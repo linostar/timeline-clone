@@ -179,7 +179,8 @@ class FileTimeline(MemoryDB):
         try:
             if len(times) != 2:
                 raise ParseException("Unexpected number of components.")
-            tp = TimePeriod(self._parse_time(times[0]), self._parse_time(times[1]))
+            tp = TimePeriod(self.get_time_type(), self._parse_time(times[0]), 
+                            self._parse_time(times[1]))
             self._set_displayed_period(tp)
             if not tp.is_period():
                 raise ParseException("Length not > 0.")
