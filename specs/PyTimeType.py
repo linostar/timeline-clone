@@ -21,7 +21,7 @@ import datetime
 
 from mock import Mock
 
-from timelinelib.time.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 
 
 class PyTimeTypeSpec(unittest.TestCase):
