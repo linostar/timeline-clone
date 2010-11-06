@@ -29,7 +29,7 @@ query persistent storage to retrieve data.
 """
 
 
-from timelinelib.db.time import PyTimeType
+from timelinelib.time.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import STATE_CHANGE_ANY
