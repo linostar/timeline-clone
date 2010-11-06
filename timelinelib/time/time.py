@@ -21,23 +21,7 @@ import datetime
 
 import wx
 
-
-class TimeType(object):
-
-    def time_string(self, time):
-        raise NotImplementedError("time_string not implemented.")
-
-    def parse_time(self, time_string):
-        raise NotImplementedError("parse_time not implemented.")
-
-    def create_time_picker(self, parent):
-        raise NotImplementedError("create_time_picker not implemented.")
-
-    def get_navigation_functions(self):
-        raise NotImplementedError("get_navigation_functions not implemented.")
-
-    def is_date_time_type(self):
-        raise NotImplementedError("is_date_time_type not implemented.")
+from timelinelib.time.typeinterface import TimeType
 
 
 class PyTimeType(TimeType):
