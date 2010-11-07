@@ -29,10 +29,12 @@ digraph mikado
         navigation -> time_period;
 
     status_bar [label="Statusbar shows\ndifferent times"];
+    status_bar [style=filled,fillcolor="#A2E33F"];
         status_bar -> get_label;
         get_label -> time_period_knows_type;
 
     get_label [label="get_label in TimePeriod\nworks for all time types\n(roger)"];
+    get_label [style=filled,fillcolor="#A2E33F"];
         get_label -> type_format;
 
     time_period_knows_type [label="TimePeriod knows about\ntime type used in it\n(roger)"];

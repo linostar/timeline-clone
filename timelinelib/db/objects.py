@@ -417,25 +417,7 @@ class TimePeriod(object):
 
     def get_label(self):
         """Returns a unicode string describing the time period."""
-        def label_with_time(time):
-            return u"%s %s" % (label_without_time(time), time_label(time))
-        def label_without_time(time):
-            return u"%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]), time.year)
-        def time_label(time):
-            return time.time().isoformat()[0:5]
-        if self.is_period():
-            if self.has_nonzero_time():
-                label = u"%s to %s" % (label_with_time(self.start_time),
-                                      label_with_time(self.end_time))
-            else:
-                label = u"%s to %s" % (label_without_time(self.start_time),
-                                      label_without_time(self.end_time))
-        else:
-            if self.has_nonzero_time():
-                label = u"%s" % label_with_time(self.start_time)
-            else:
-                label = u"%s" % label_without_time(self.start_time)
-        return label
+        return self.time_type.format_period(self)
 
     def has_nonzero_time(self):
         nonzero_time = (self.start_time.time() != time(0, 0, 0) or
