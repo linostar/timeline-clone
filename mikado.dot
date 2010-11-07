@@ -14,13 +14,26 @@ digraph mikado
         different_time -> drawer;
         different_time -> navigation;
         different_time -> status_bar;
+        different_time -> time_period_independent;
+        different_time -> numeric_time_type;
+
+    numeric_time_type [label="Proof of concept numeric\ntime type exists"];
+        numeric_time_type -> define_numeric_time_type;
+        numeric_time_type -> db_reads_time_type;
+
+    time_period_independent [label="TimePeriod is independent\nof time type"];
+        time_period_independent -> time_period_knows_type;
+        time_period_independent -> time_period;
+        time_period_independent -> time_limits_in_time_type;
 
     event_editor [label="Event editor can\nhandle different times"];
+    event_editor [style=filled,fillcolor="#A2E33F"];
         event_editor -> show_time;
         event_editor -> db_has_type_info;
 
     drawer [label="Drawer can\nhandle different times"];
         drawer -> db_has_type_info;
+        drawer -> strips_in_time_type;
 
     navigation [label="Navigation functions\nare time specific\n(rickard)"];
         navigation -> db_has_type_info;
@@ -43,6 +56,10 @@ digraph mikado
 
     // Leaves
 
+    define_numeric_time_type [label="Define numeric time type"];
+
+    db_reads_time_type [label="Xml db can read time type"];
+
     show_time [label="Show time checkbox\ndepends on time type\n(roger)"];
     show_time [style=filled,fillcolor="#A2E33F"];
 
@@ -62,4 +79,8 @@ digraph mikado
     
     event_constructor [label="Event constructor takes DB-argument\n(roger)"];
     event_constructor [style=filled,fillcolor="#A2E33F"];
+
+    strips_in_time_type [label="Strips are created\nby time type"];
+
+    time_limits_in_time_type [label="Time type knows about\ntime limits (min, max)"];
 }
