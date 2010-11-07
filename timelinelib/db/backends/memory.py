@@ -29,7 +29,6 @@ query persistent storage to retrieve data.
 """
 
 
-from timelinelib.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import STATE_CHANGE_ANY
@@ -38,6 +37,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import generic_event_search
+from timelinelib.time.pytime import PyTimeType
 
 
 class MemoryDB(TimelineDB):

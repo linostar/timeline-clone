@@ -18,10 +18,12 @@
 
 import re
 import datetime
+import calendar
 
 import wx
 
 from timelinelib.time.typeinterface import TimeType
+from timelinelib.utils import local_to_unicode
 
 
 class PyTimeType(TimeType):
@@ -74,6 +76,28 @@ class PyTimeType(TimeType):
 
     def is_date_time_type(self):
         return True
+    
+    def format_period(self, time_period):
+        """Returns a unicode string describing the time period."""
+        def label_with_time(time):
+            return u"%s %s" % (label_without_time(time), time_label(time))
+        def label_without_time(time):
+            return u"%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]), time.year)
+        def time_label(time):
+            return time.time().isoformat()[0:5]
+        if time_period.is_period():
+            if time_period.has_nonzero_time():
+                label = u"%s to %s" % (label_with_time(time_period.start_time),
+                                      label_with_time(time_period.end_time))
+            else:
+                label = u"%s to %s" % (label_without_time(time_period.start_time),
+                                      label_without_time(time_period.end_time))
+        else:
+            if time_period.has_nonzero_time():
+                label = u"%s" % label_with_time(time_period.start_time)
+            else:
+                label = u"%s" % label_without_time(time_period.start_time)
+        return label
 
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):

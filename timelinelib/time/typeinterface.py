@@ -32,3 +32,6 @@ class TimeType(object):
 
     def is_date_time_type(self):
         raise NotImplementedError("is_date_time_type not implemented.")
+
+    def format_period(self, time_period):
+        raise NotImplementedError("format_period not implemented.")

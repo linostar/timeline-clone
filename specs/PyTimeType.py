@@ -22,6 +22,7 @@ import datetime
 from mock import Mock
 
 from timelinelib.time import PyTimeType
+from timelinelib.db.objects import TimePeriod
 
 
 class PyTimeTypeSpec(unittest.TestCase):
@@ -48,3 +49,11 @@ class PyTimeTypeSpec(unittest.TestCase):
         self.assertRaises(
             ValueError,
             self.time_type.parse_time, "2010-31-hello 0:0:0")
+
+    def testFormatsPeriodToString(self):
+        time_period = TimePeriod(self.time_type, 
+                                 datetime.datetime(2010, 8, 01, 13, 44),
+                                 datetime.datetime(2010, 8, 02, 13, 30))
+        self.assertEquals(
+            u"1 aug 2010 13:44 to 2 aug 2010 13:30",
+            self.time_type.format_period(time_period))

@@ -26,7 +26,7 @@ from datetime import datetime as dt
 from datetime import time
 import calendar
 
-from timelinelib.db.utils import local_to_unicode
+from timelinelib.utils import local_to_unicode
 from timelinelib.drawing.utils import mult_timedelta
 
 
