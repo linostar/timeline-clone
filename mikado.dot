@@ -83,4 +83,5 @@ digraph mikado
     strips_in_time_type [label="Strips are created\nby time type"];
 
     time_limits_in_time_type [label="Time type knows about\ntime limits (min, max)"];
+    time_limits_in_time_type [style=filled,fillcolor="#A2E33F"];
 }
