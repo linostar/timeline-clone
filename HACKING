@@ -161,42 +161,58 @@ repositories (win and deb) are used for those purposes.
 Feature freeze
 --------------
 
-When all features for a version has been implemented in main we move the
-development over to stable. Features for the next version can continue to be
-developed in main.
+When all features for a major version (x.y) have been implemented in main we
+move the development for that version over to stable. In stable we prepare for
+the (x.y.0) release and the continue to do bugfix releases (x.y.1, x.y.2, ..)
+there.
+
+Features for the next version (x.y+1) can continue to be developed in main.
 
   1. Move main repo to stable repo
      1. `cd stable`
      2. `hg pull ../main`
      3. `hg push`
   2. Notify developers of repo change
-  3. Change versions numbers in main to denote the next version
-     1. `README`, manpage, `version.py`
+    1. Send email to thetimelineproj-user@lists.sourceforge.net
+  3. Change versions numbers in main to denote the next version (x.y+1.0)
+     1. README
+     2. man/man1/timeline.1
+     3. version.py
 
-Stabilize stable
-----------------
+Work on stable
+--------------
 
-  1. Import translations from Launchpad
-  2. Check that README, CHANGES, and INSTALL are up to date
-  3. Run `python tools/release.py check` to find possible errors
+  1. Fix bugs
+  2. Import translations from Launchpad
+    1. Request download from here
+       http://translations.launchpad.net/thetimelineproj/trunk/+translations
+    2. Run `python tools/importpo.py /path/to/launchpad-export.tar.gz`
+    3. Commit
+  3. Check that information and version numbers are correct in
+     1. CHANGES
+     2. INSTALL
+     3. README
+     4. man/man1/timeline.1
+     5. version.py
+  4. Run `python tools/release.py check` to find possible errors
 
 Last changes
 ------------
 
-  1. Update version.py so that DEV=False and commit
+  1. Update version.py so that DEV=False
+    1. Commit
   2. Run `python tools/release.py` (look out for warning messages at the end)
   3. Try running the unzipped release to make a basic check that it works
-  4. Tag with x.y.z
-
-If there will be a bugfix release, the first change after the tag-commit should
-be one were the version number is changed so that z is increased and DEV=True.
+  4. Run `hg tag x.y.z`
 
 After
 -----
 
-  * Create a downloadable release on SF
+  * Create a downloadable release on SourceForge
   * Create binary packages
-  * Write news on SF and Freshmeat
+  * Write news on SourceForge
+  * Write news on [Freshmeat](http://freshmeat.net/projects/timeline-2)
+  * Update web page
   * Close the milestone in Trac
   * Add the new version in Trac 
 
