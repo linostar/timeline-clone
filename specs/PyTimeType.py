@@ -57,3 +57,11 @@ class PyTimeTypeSpec(unittest.TestCase):
         self.assertEquals(
             u"1 aug 2010 13:44 to 2 aug 2010 13:30",
             self.time_type.format_period(time_period))
+
+    def testReturnsMinTime(self):
+        self.assertEquals(datetime.datetime(10, 1, 1), 
+                          self.time_type.get_min_time())
+
+    def testReturnsMaxTime(self):
+        self.assertEquals(datetime.datetime(9990, 1, 1), 
+                          self.time_type.get_max_time())

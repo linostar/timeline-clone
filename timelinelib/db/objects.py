@@ -180,9 +180,6 @@ class TimePeriod(object):
     currently displayed time period in the GUI.
     """
 
-    MIN_TIME = dt(10, 1, 1)
-    MAX_TIME = dt(9990, 1, 1)
-
     def __init__(self, time_type, start_time, end_time):
         """
         Create a time period.
@@ -215,8 +212,9 @@ class TimePeriod(object):
         If data is invalid, it will not be set, and a ValueError will be raised
         instead.
 
-        Data is invalid if time + delta is not within the range [MIN_TIME,
-        MAX_TIME] or if the start time is larger than the end time.
+        Data is invalid if time + delta is not within the range 
+        [self.time_type.get_min_time(), self.time_type.get_max_time()] or if 
+        the start time is larger than the end time.
         """
         pos_error = _("Start time can't be after year 9989")
         neg_error = _("Start time can't be before year 10")
@@ -295,9 +293,9 @@ class TimePeriod(object):
         start_overflow = self._calculate_overflow(self.start_time, delta)[1]
         end_overflow = self._calculate_overflow(self.end_time, delta)[1]
         if start_overflow == -1:
-            delta = TimePeriod.MIN_TIME - self.start_time
+            delta = self.time_type.get_min_time() - self.start_time
         elif end_overflow == 1:
-            delta = TimePeriod.MAX_TIME - self.end_time
+            delta = self.time_type.get_max_time() - self.end_time
         self.move_delta(delta)
 
     def fit_millennium(self):
@@ -404,9 +402,9 @@ class TimePeriod(object):
         """
         try:
             new_time = time + delta
-            if new_time < TimePeriod.MIN_TIME:
+            if new_time < self.time_type.get_min_time():
                 return (None, -1)
-            if new_time > TimePeriod.MAX_TIME:
+            if new_time > self.time_type.get_max_time():
                 return (None, 1)
             return (new_time, 0)
         except OverflowError:

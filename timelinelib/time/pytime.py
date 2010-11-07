@@ -99,7 +99,13 @@ class PyTimeType(TimeType):
                 label = u"%s" % label_without_time(time_period.start_time)
         return label
 
+    def get_min_time(self):
+        return datetime.datetime(10, 1, 1)
 
+    def get_max_time(self):
+        return datetime.datetime(9990, 1, 1)
+    
+    
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.datetime.now()))
 
