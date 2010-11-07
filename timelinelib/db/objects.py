@@ -381,7 +381,8 @@ class TimePeriod(object):
     def _ensure_within_range(self, time, delta, pos_error, neg_error):
         """
         Return new time (time + delta) or raise ValueError if it is not within
-        the range [MIN_TIME, MAX_TIME].
+        the range [self.time_type.get_min_time(), 
+        self.time_type.get_max_time()].
         """
         new_time, overflow = self._calculate_overflow(time, delta)
         if overflow > 0:
