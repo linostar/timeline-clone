@@ -32,7 +32,7 @@ digraph mikado
         status_bar -> get_label;
         get_label -> time_period_knows_type;
 
-    get_label [label="get_label in TimePeriod\nworks for all time types"];
+    get_label [label="get_label in TimePeriod\nworks for all time types\n(roger)"];
         get_label -> type_format;
 
     time_period_knows_type [label="TimePeriod knows about\ntime type used in it\n(roger)"];
@@ -55,7 +55,8 @@ digraph mikado
 
     time_period [label="Move time specific methods\nin TimePeriod to time type\n(rickard)"];
 
-    type_format [label="Time type can\nformat period"];
+    type_format [label="Time type can\nformat period\n(roger)"];
+    type_format [style=filled,fillcolor="#A2E33F"];
     
     event_constructor [label="Event constructor takes DB-argument\n(roger)"];
     event_constructor [style=filled,fillcolor="#A2E33F"];
