@@ -34,7 +34,8 @@ digraph mikado
     drawer [label="Drawer can\nhandle different times"];
         drawer -> db_has_type_info;
         drawer -> strips_in_time_type;
-
+	drawer -> weekday_in_time_type;
+	
     navigation [label="Navigation functions\nare time specific\n(rickard)"];
         navigation -> db_has_type_info;
         navigation -> move_nav_to_time_type;
@@ -80,8 +81,11 @@ digraph mikado
     event_constructor [label="Event constructor takes DB-argument\n(roger)"];
     event_constructor [style=filled,fillcolor="#A2E33F"];
 
-    strips_in_time_type [label="Strips are created\nby time type"];
+    strips_in_time_type [label="Strips are created\nby time type\n(roger)"];
+    strips_in_time_type [style=filled,fillcolor="#A2E33F"];
 
     time_limits_in_time_type [label="Time type knows about\ntime limits (min, max)"];
     time_limits_in_time_type [style=filled,fillcolor="#A2E33F"];
+    
+    weekday_in_time_type [label="weekday() is implemented\nby time type ?"]
 }
