@@ -21,8 +21,10 @@ import unittest
 from datetime import datetime as dt
 from datetime import timedelta
 
-from timelinelib.time import PyTimeType
 from timelinelib.db.objects import TimePeriod
+# Had to place the following line at the bottom of the file to avoid
+# circular import's. Don't know if there's abetter way to do it?
+# from timelinelib.time import PyTimeType
 
 
 class TestTimePeriod(unittest.TestCase):
@@ -103,3 +105,5 @@ class TestTimePeriod(unittest.TestCase):
         tp.move_page_smart(-1)
         self.assertEquals(tp.start_time, dt(2009, 11, 1))
         self.assertEquals(tp.end_time, dt(2010, 1, 1))
+
+from timelinelib.time import PyTimeType

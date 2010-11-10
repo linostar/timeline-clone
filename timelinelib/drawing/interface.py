@@ -157,3 +157,41 @@ class ViewProperties(object):
             self.hidden_categories.remove(category.id)
         elif is_visible == False and not category.id in self.hidden_categories:
             self.hidden_categories.append(category.id)
+
+
+class Strip(object):
+    """
+    An interface for strips.
+
+    The different strips are implemented in subclasses below.
+
+    The timeline is divided in major and minor strips. The minor strip might
+    for example be days, and the major strip months. Major strips are divided
+    with a solid line and minor strips with dotted lines. Typically maximum
+    three major strips should be shown and the rest will be minor strips.
+    """
+
+    def label(self, time, major=False):
+        """
+        Return the label for this strip at the given time when used as major or
+        minor strip.
+        """
+
+    def start(self, time):
+        """
+        Return the start time for this strip and the given time.
+
+        For example, if the time is 2008-08-31 and the strip is month, the
+        start would be 2008-08-01.
+        """
+
+    def increment(self, time):
+        """
+        Increment the given time so that it points to the start of the next
+        strip.
+        """
+
+    def is_day(self):
+        """
+        Return if this strip represents one day.
+        """

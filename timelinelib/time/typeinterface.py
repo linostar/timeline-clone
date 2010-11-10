@@ -41,3 +41,46 @@ class TimeType(object):
 
     def get_max_time(self):
         raise NotImplementedError("return the max time for this time type.")
+
+    def choose_strip(self, metrics):
+        raise NotImplementedError("choose_strip not implemented.")
+    
+    def get_metrics(self, size, time_period, divider_position):
+        raise NotImplementedError("get_metrics not implemented.")
+
+    def mult_timedelta(self, delta, num):
+        raise NotImplementedError("mult_timedelta not implemented.")
+
+    def get_default_time_period(self):
+        raise NotImplementedError("get_default_time_period not implemented.")
+
+            
+class Metrics(object):
+    """
+    Convert between pixel coordinates and time coordinates.
+    """
+
+    def __init__(self, size, time_period, divider_line_slider_position):
+        self.width, self.height = size
+        self.half_width = self.width / 2
+        self.half_height = self.height / 2
+        self.half_height = int(round(divider_line_slider_position * self.height))
+        self.time_period = time_period
+
+    def calc_exact_x(self, time):
+        raise NotImplementedError("calc_exact_x not implemented.")
+
+    def calc_x(self, time):
+        raise NotImplementedError("calc_x not implemented.")
+
+    def calc_exact_width(self, time_period):
+        raise NotImplementedError("calc_exact_width not implemented.")
+
+    def calc_width(self, time_period):
+        raise NotImplementedError("calc_width not implemented.")
+
+    def get_time(self, x):
+        raise NotImplementedError("get_time not implemented.")
+
+    def get_difftime(self, x1, x2):
+        raise NotImplementedError("get_difftime not implemented.")

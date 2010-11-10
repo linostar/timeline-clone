@@ -30,7 +30,6 @@ import os.path
 import wx
 
 from timelinelib.drawing.interface import Drawer
-from timelinelib.drawing.utils import Metrics
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.drawing.utils import darken_color
 from timelinelib.gui.utils import sort_categories
@@ -46,203 +45,6 @@ BASELINE_PADDING = 15  # Extra space to move events away from baseline (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 BALLOON_RADIUS = 12
 DATA_INDICATOR_SIZE = 10
-
-
-class Strip(object):
-    """
-    An interface for strips.
-
-    The different strips are implemented in subclasses below.
-
-    The timeline is divided in major and minor strips. The minor strip might
-    for example be days, and the major strip months. Major strips are divided
-    with a solid line and minor strips with dotted lines. Typically maximum
-    three major strips should be shown and the rest will be minor strips.
-    """
-
-    def label(self, time, major=False):
-        """
-        Return the label for this strip at the given time when used as major or
-        minor strip.
-        """
-
-    def start(self, time):
-        """
-        Return the start time for this strip and the given time.
-
-        For example, if the time is 2008-08-31 and the strip is month, the
-        start would be 2008-08-01.
-        """
-
-    def increment(self, time):
-        """
-        Increment the given time so that it points to the start of the next
-        strip.
-        """
-
-
-class StripCentury(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            # TODO: This only works for English. Possible to localize?
-            start_year = self._century_start_year(time.year)
-            next_start_year = start_year + 100
-            return str(next_start_year)[0:2] + " century"
-        return ""
-
-    def start(self, time):
-        return datetime(max(self._century_start_year(time.year), 10), 1, 1)
-
-    def increment(self, time):
-        return time.replace(year=time.year+100)
-
-    def _century_start_year(self, year):
-        return (int(year) / 100) * 100
-
-
-class StripDecade(Strip):
-
-    def label(self, time, major=False):
-        # TODO: This only works for English. Possible to localize?
-        return str(self._decade_start_year(time.year)) + "s"
-
-    def start(self, time):
-        return datetime(self._decade_start_year(time.year), 1, 1)
-
-    def increment(self, time):
-        return time.replace(year=time.year+10)
-
-    def _decade_start_year(self, year):
-        return (int(year) / 10) * 10
-
-
-class StripYear(Strip):
-
-    def label(self, time, major=False):
-        return str(time.year)
-
-    def start(self, time):
-        return datetime(time.year, 1, 1)
-
-    def increment(self, time):
-        return time.replace(year=time.year+1)
-
-
-class StripMonth(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s" % (local_to_unicode(calendar.month_abbr[time.month]),                              time.year)
-        return calendar.month_abbr[time.month]
-
-    def start(self, time):
-        return datetime(time.year, time.month, 1)
-
-    def increment(self, time):
-        return time + timedelta(calendar.monthrange(time.year, time.month)[1])
-
-
-class StripWeek(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            # Example: Week 23 (1-7 Jan 2009)
-            first_weekday = self.start(time)
-            next_first_weekday = self.increment(first_weekday)
-            last_weekday = next_first_weekday - timedelta(days=1)
-            range_string = self._time_range_string(first_weekday, last_weekday)
-            if config.global_config.week_start == "monday":
-                return (_("Week") + " %s (%s)") % (time.isocalendar()[1], range_string)
-            else:
-                # It is sunday (don't know what to do about week numbers here)
-                return range_string
-        # This strip should never be used as minor
-        return ""
-
-    def start(self, time):
-        stripped_date = datetime(time.year, time.month, time.day)
-        if config.global_config.week_start == "monday":
-            days_to_subtract = stripped_date.weekday()
-        else:
-            # It is sunday
-            days_to_subtract = (stripped_date.weekday() + 1) % 7
-        return stripped_date - timedelta(days=days_to_subtract)
-
-    def increment(self, time):
-        return time + timedelta(7)
-
-    def _time_range_string(self, time1, time2):
-        """
-        Examples:
-
-        * 1-7 Jun 2009
-        * 28 Jun-3 Jul 2009
-        * 28 Jun 08-3 Jul 2009
-        """
-        if time1.year == time2.year:
-            if time1.month == time2.month:
-                return "%s-%s %s %s" % (time1.day, time2.day,
-                                        local_to_unicode(calendar.month_abbr[time1.month]),
-                                        time1.year)
-            return "%s %s-%s %s %s" % (time1.day,
-                                       local_to_unicode(calendar.month_abbr[time1.month]),
-                                       time2.day,
-                                       local_to_unicode(calendar.month_abbr[time2.month]),
-                                       time1.year)
-        return "%s %s %s-%s %s %s" % (time1.day,
-                                      local_to_unicode(calendar.month_abbr[time1.month]),
-                                      time1.year,
-                                      time2.day,
-                                      local_to_unicode(calendar.month_abbr[time2.month]),
-                                      time2.year)
-
-
-class StripDay(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
-                                 time.year)
-        return str(time.day)
-
-    def start(self, time):
-        return datetime(time.year, time.month, time.day)
-
-    def increment(self, time):
-        return time + timedelta(1)
-
-
-class StripWeekday(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s %s %s" % (local_to_unicode(calendar.day_abbr[time.weekday()]),
-                                    time.day,
-                                    local_to_unicode(calendar.month_abbr[time.month]),
-                                    time.year)
-        return str(calendar.day_abbr[time.weekday()])
-
-    def start(self, time):
-        return datetime(time.year, time.month, time.day)
-
-    def increment(self, time):
-        return time + timedelta(1)
-
-
-class StripHour(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
-                                    time.year, time.hour)
-        return str(time.hour)
-
-    def start(self, time):
-        return datetime(time.year, time.month, time.day, time.hour)
-
-    def increment(self, time):
-        return time + timedelta(hours=1)
 
 
 class DefaultDrawingAlgorithm(Drawer):
@@ -282,8 +84,11 @@ class DefaultDrawingAlgorithm(Drawer):
         # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = view_properties.displayed_period
-        self.metrics = Metrics(dc.GetSizeTuple(), self.time_period, view_properties.divider_position)
         self.db = timeline
+        self.time_type = self.db.get_time_type()
+        self.metrics = self.time_type.get_metrics(dc.GetSizeTuple(), 
+                                                  self.time_period, 
+                                                  view_properties.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period
@@ -436,7 +241,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 next_start = strip.increment(current_start)
                 list.append(TimePeriod(self.db.get_time_type(), current_start, next_start))
                 current_start = next_start
-        major_strip, minor_strip = self._choose_strip()
+        major_strip, minor_strip = self.time_type.choose_strip(self.metrics)
         fill(self.major_strip_data, major_strip)
         fill(self.minor_strip_data, minor_strip)
 
@@ -445,25 +250,8 @@ class DefaultDrawingAlgorithm(Drawer):
         Return a tuple (major_strip, minor_strip) for current time period and
         window size.
         """
-        today = datetime.now()
-        tomorrow = today + timedelta(days=1)
-        day_period = TimePeriod(self.db.get_time_type(), today, tomorrow)
-        one_day_width = self.metrics.calc_exact_width(day_period)
-        if one_day_width > 600:
-            return (StripDay(), StripHour())
-        elif one_day_width > 45:
-            return (StripWeek(), StripWeekday())
-        elif one_day_width > 25:
-            return (StripMonth(), StripDay())
-        elif one_day_width > 1.5:
-            return (StripYear(), StripMonth())
-        elif one_day_width > 0.12:
-            return (StripDecade(), StripYear())
-        elif one_day_width > 0.012:
-            return (StripCentury(), StripDecade())
-        else:
-            return (StripCentury(), StripCentury())
-
+        return self.time_type.choose_strip(self.metrics)
+     
     def _draw_period_selection(self, period_selection):
         start, end = period_selection
         start_x = self.metrics.calc_x(start)
@@ -484,8 +272,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetPen(self.black_dashed_pen)
         for tp in self.minor_strip_data:
             # Chose font
-            if (isinstance(minor_strip, StripDay) and
-                tp.start_time.weekday() in (5, 6)):
+            if (minor_strip.is_day() and tp.start_time.weekday() in (5, 6)):
                 self.dc.SetFont(self.small_text_font_bold)
             else:
                 self.dc.SetFont(self.small_text_font)

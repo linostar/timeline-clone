@@ -41,6 +41,7 @@ class TestDuplicateEventController(unittest.TestCase):
     def setUp(self):
         self.db = Mock()
         self.view = Mock()
+        self.db.get_time_type.return_value = PyTimeType()
         start_time = datetime.datetime(2010, 1, 1, 12, 0, 0)
         end_time = datetime.datetime(2010, 1, 1, 13, 0, 0)
         self.event = Event(self.db, start_time, end_time, "foo", category=None)

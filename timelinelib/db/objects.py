@@ -27,7 +27,6 @@ from datetime import time
 import calendar
 
 from timelinelib.utils import local_to_unicode
-from timelinelib.drawing.utils import mult_timedelta
 
 
 class Event(object):
@@ -258,7 +257,7 @@ class TimePeriod(object):
     def zoom(self, times):
         MAX_ZOOM_DELTA = timedelta(days=1200*365)
         MIN_ZOOM_DELTA = timedelta(hours=1)
-        delta = mult_timedelta(self.delta(), times / 10.0)
+        delta = self.time_type.mult_timedelta(self.delta(), times / 10.0)
         new_delta = self.delta() - 2 * delta
         if new_delta > MAX_ZOOM_DELTA:
             raise ValueError(_("Can't zoom wider than 1200 years"))
@@ -273,7 +272,7 @@ class TimePeriod(object):
         Direction should be -1 for moving to the left or 1 for moving to the
         right.
         """
-        delta = mult_timedelta(self.delta(), direction / 10.0)
+        delta = self.time_type.mult_timedelta(self.delta(), direction / 10.0)
         self.move_delta(delta)
 
     def move_delta(self, delta):
@@ -431,7 +430,7 @@ def time_period_center(time_type, time, length):
     Return a time period with the given length (represented as a timedelta)
     centered around `time`.
     """
-    half_length = mult_timedelta(length, 0.5)
+    half_length = time_type.mult_timedelta(length, 0.5)
     start_time = time - half_length
     end_time = time + half_length
     return TimePeriod(time_type, start_time, end_time)
