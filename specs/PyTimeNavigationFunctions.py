@@ -29,6 +29,8 @@ from timelinelib.time.pytime import fit_year_fn
 from timelinelib.time.pytime import fit_decade_fn
 from timelinelib.time.pytime import fit_century_fn
 from timelinelib.time.pytime import fit_millennium_fn
+from timelinelib.time.pytime import forward_fn
+from timelinelib.time.pytime import backward_fn
 
 
 class PyTimeNavigationFunctionsSpec(unittest.TestCase):
@@ -97,3 +99,66 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self._assertTimePeriodEquals(
             datetime.datetime(2000, 1, 1, 0, 0, 0),
             datetime.datetime(3000, 1, 1, 0, 0, 0))
+
+    def testMovePageSmartNotSmart_forward(self):
+        self._call_fn_with_period(
+            forward_fn,
+            datetime.datetime(2010, 1, 1),
+            datetime.datetime(2010, 1, 5))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2010, 1, 5),
+            datetime.datetime(2010, 1, 9))
+
+    def testMovePageSmartNotSmart_backward(self):
+        self._call_fn_with_period(
+            backward_fn,
+            datetime.datetime(2010, 1, 5),
+            datetime.datetime(2010, 1, 9))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2010, 1, 1),
+            datetime.datetime(2010, 1, 5))
+
+    def testMovePageSmartMonth_forward(self):
+        self._call_fn_with_period(
+            forward_fn,
+            datetime.datetime(2010, 1, 1),
+            datetime.datetime(2010, 2, 1))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2010, 2, 1),
+            datetime.datetime(2010, 3, 1))
+
+    def testMovePageSmartMonth_backward(self):
+        self._call_fn_with_period(
+            backward_fn,
+            datetime.datetime(2010, 2, 1),
+            datetime.datetime(2010, 3, 1))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2010, 1, 1),
+            datetime.datetime(2010, 2, 1))
+
+    def testMovePageSmartYear_forward(self):
+        self._call_fn_with_period(
+            forward_fn,
+            datetime.datetime(2010, 1, 1),
+            datetime.datetime(2011, 1, 1))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2011, 1, 1),
+            datetime.datetime(2012, 1, 1))
+
+    def testMovePageSmartYear_backward(self):
+        self._call_fn_with_period(
+            backward_fn,
+            datetime.datetime(2011, 1, 1),
+            datetime.datetime(2012, 1, 1))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2010, 1, 1),
+            datetime.datetime(2011, 1, 1))
+
+    def testMovePageSmartMonthOverYearBoundry_backward(self):
+        self._call_fn_with_period(
+            backward_fn,
+            datetime.datetime(2010, 1, 1),
+            datetime.datetime(2010, 3, 1))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2009, 11, 1),
+            datetime.datetime(2010, 1, 1))

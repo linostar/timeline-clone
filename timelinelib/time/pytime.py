@@ -168,11 +168,57 @@ def go_to_date_fn(main_frame, current_period, navigation_fn):
 
 
 def backward_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.move_page_smart(-1))
+    move_page_smart(current_period, navigation_fn, -1)
 
 
 def forward_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.move_page_smart(1))
+    move_page_smart(current_period, navigation_fn, 1)
+
+
+def move_page_smart(current_period, navigation_fn, direction):
+    def months_to_year_and_month(months):
+        years = int(months / 12)
+        month = months - years * 12
+        if month == 0:
+            month = 12
+            years -=1
+        return years, month
+    start, end = current_period.start_time, current_period.end_time
+    year_diff = end.year - start.year
+    start_months = start.year * 12 + start.month
+    end_months = end.year * 12 + end.month
+    month_diff = end_months - start_months
+    whole_years = start.replace(year=start.year + year_diff) == end
+    whole_months = start.day == 1 and end.day == 1
+    direction_backward = direction < 0
+    # Whole years
+    if whole_years and year_diff > 0:
+        if direction_backward:
+            new_start = start.replace(year=start.year-year_diff)
+            new_end   = start
+        else:
+            new_start = end
+            new_end   = end.replace(year=new_start.year+year_diff)
+        navigation_fn(lambda tp: tp.update(new_start, new_end))
+    # Whole months
+    elif whole_months and month_diff > 0:
+        if direction_backward:
+            new_end = start
+            new_start_year, new_start_month = months_to_year_and_month(
+                                                    start_months -
+                                                    month_diff)
+            new_start = start.replace(year=new_start_year,
+                                      month=new_start_month)
+        else:
+            new_start = end
+            new_end_year, new_end_month = months_to_year_and_month(
+                                                    end_months +
+                                                    month_diff)
+            new_end = end.replace(year=new_end_year, month=new_end_month)
+        navigation_fn(lambda tp: tp.update(new_start, new_end))
+    # No need for smart delta
+    else:
+        navigation_fn(lambda tp: tp.move_delta(direction*current_period.delta()))
 
 
 def forward_one_week_fn(main_frame, current_period, navigation_fn):
