@@ -231,7 +231,10 @@ def fit_millennium_fn(main_frame, current_period, navigation_fn):
 
 
 def fit_century_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_century())
+    mean = current_period.mean_time()
+    start = datetime(int(mean.year/100)*100, 1, 1)
+    end = datetime(int(mean.year/100)*100 + 100, 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_decade_fn(main_frame, current_period, navigation_fn):
