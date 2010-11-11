@@ -24,6 +24,7 @@ from mock import Mock
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time import PyTimeType
 from timelinelib.time.pytime import fit_day_fn
+from timelinelib.time.pytime import fit_month_fn
 
 
 class PyTimeNavigationFunctionsSpec(unittest.TestCase):
@@ -47,3 +48,12 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self._assertTimePeriodEquals(
             datetime.datetime(2010, 1, 1, 0, 0, 0),
             datetime.datetime(2010, 1, 2, 0, 0, 0))
+
+    def test_fit_month_should_display_the_month_that_is_in_the_center(self):
+        self._call_fn_with_period(
+            fit_month_fn, 
+            datetime.datetime(2010, 1, 1, 0, 0, 0),
+            datetime.datetime(2010, 1, 2, 0, 0, 0))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2010, 1, 1, 0, 0, 0),
+            datetime.datetime(2010, 2, 1, 0, 0, 0))
