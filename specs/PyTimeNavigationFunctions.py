@@ -21,8 +21,8 @@ import datetime
 
 from mock import Mock
 
-from timelinelib.time import PyTimeType
 from timelinelib.db.objects import TimePeriod
+from timelinelib.time import PyTimeType
 from timelinelib.time.pytime import fit_day_fn
 
 
