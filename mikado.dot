@@ -43,6 +43,7 @@ digraph mikado
         navigation -> time_period;
 
     time_period [label="Move time specific methods\nin TimePeriod to time type\n(rickard)"];
+    time_period [style=filled,fillcolor="#A2E33F"];
         time_period -> fit_millennium;
         time_period -> fit_century;
         time_period -> fit_decade;
@@ -94,4 +95,11 @@ digraph mikado
     time_limits_in_time_type [style=filled,fillcolor="#A2E33F"];
     
     weekday_in_time_type [label="weekday() is implemented\nby time type ?"]
+
+    fit_millennium [style=filled,fillcolor="#A2E33F"];
+    fit_century [style=filled,fillcolor="#A2E33F"];
+    fit_decade [style=filled,fillcolor="#A2E33F"];
+    fit_year [style=filled,fillcolor="#A2E33F"];
+    fit_month [style=filled,fillcolor="#A2E33F"];
+    page_smart [style=filled,fillcolor="#A2E33F"];
 }
