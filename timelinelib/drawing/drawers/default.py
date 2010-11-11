@@ -272,10 +272,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetPen(self.black_dashed_pen)
         for tp in self.minor_strip_data:
             # Chose font
-            if (minor_strip.is_day() and tp.start_time.weekday() in (5, 6)):
-                self.dc.SetFont(self.small_text_font_bold)
-            else:
-                self.dc.SetFont(self.small_text_font)
+            self.dc.SetFont(minor_strip.get_font(tp))
             # Divider line
             x = self.metrics.calc_x(tp.end_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)

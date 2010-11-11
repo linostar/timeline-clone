@@ -31,6 +31,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.interface import Strip
 import timelinelib.config as config
 from timelinelib.db.objects import time_period_center
+from timelinelib.drawing.utils import get_default_font
 
 
 # To save computation power (used by `delta_to_microseconds`)
@@ -269,12 +270,12 @@ class StripCentury(Strip):
     def increment(self, time):
         return time.replace(year=time.year+100)
 
-    def is_day(self):
-        return False
-    
+    def get_font(self, time_period):
+        return get_default_font(8)
+
     def _century_start_year(self, year):
         return (int(year) / 100) * 100
-
+   
 
 class StripDecade(Strip):
 
@@ -291,8 +292,8 @@ class StripDecade(Strip):
     def _decade_start_year(self, year):
         return (int(year) / 10) * 10
 
-    def is_day(self):
-        return False
+    def get_font(self, time_period):
+        return get_default_font(8)
 
 
 class StripYear(Strip):
@@ -306,8 +307,8 @@ class StripYear(Strip):
     def increment(self, time):
         return time.replace(year=time.year+1)
 
-    def is_day(self):
-        return False
+    def get_font(self, time_period):
+        return get_default_font(8)
 
 
 class StripMonth(Strip):
@@ -323,8 +324,8 @@ class StripMonth(Strip):
     def increment(self, time):
         return time + timedelta(calendar.monthrange(time.year, time.month)[1])
 
-    def is_day(self):
-        return False
+    def get_font(self, time_period):
+        return get_default_font(8)
 
 
 class StripDay(Strip):
@@ -341,8 +342,11 @@ class StripDay(Strip):
     def increment(self, time):
         return time + timedelta(1)
 
-    def is_day(self):
-        return True
+    def get_font(self, time_period):
+        if (time_period.start_time.weekday() in (5, 6)):
+                return get_default_font(8, True)
+        else:
+            return get_default_font(8)
 
  
 class StripWeek(Strip):
@@ -374,8 +378,8 @@ class StripWeek(Strip):
     def increment(self, time):
         return time + timedelta(7)
 
-    def is_day(self):
-        return False
+    def get_font(self, time_period):
+        return get_default_font(8)
 
     def _time_range_string(self, time1, time2):
         """
@@ -419,8 +423,8 @@ class StripWeekday(Strip):
     def increment(self, time):
         return time + timedelta(1)
 
-    def is_day(self):
-        return False
+    def get_font(self, time_period):
+        return get_default_font(8)
 
 
 class StripHour(Strip):
@@ -437,8 +441,8 @@ class StripHour(Strip):
     def increment(self, time):
         return time + timedelta(hours=1)
     
-    def is_day(self):
-        return False
+    def get_font(self, time_period):
+        return get_default_font(8)
     
     def get_metrics(self, size, time_period, divider_line_slider_position):
         return PyTimeMetrics(size, time_period, divider_line_slider_position)

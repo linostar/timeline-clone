@@ -190,8 +190,8 @@ class Strip(object):
         Increment the given time so that it points to the start of the next
         strip.
         """
-
-    def is_day(self):
+        
+    def get_font(self, time_period):
         """
-        Return if this strip represents one day.
-        """
+        Return the preferred font for this strip
+        """    
