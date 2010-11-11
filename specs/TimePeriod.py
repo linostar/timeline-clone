@@ -18,6 +18,7 @@
 
 import unittest
 import datetime
+import calendar
 
 from timelinelib.time import PyTimeType
 from timelinelib.db.objects import TimePeriod
@@ -29,5 +30,7 @@ class TimePeriodSpec(unittest.TestCase):
         time_period = TimePeriod(PyTimeType(), 
                                  datetime.datetime(2010, 8, 01, 13, 44),
                                  datetime.datetime(2010, 8, 02, 13, 30))
-        self.assertEquals(u"1 aug 2010 13:44 to 2 aug 2010 13:30", 
+        # TODO: Make month name same on all os and tests
+        month = calendar.month_abbr[8]
+        self.assertEquals(u"1 %s 2010 13:44 to 2 %s 2010 13:30" % (month, month), 
                           time_period.get_label())

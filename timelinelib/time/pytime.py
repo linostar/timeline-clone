@@ -169,11 +169,57 @@ def go_to_date_fn(main_frame, current_period, navigation_fn):
 
 
 def backward_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.move_page_smart(-1))
+    move_page_smart(current_period, navigation_fn, -1)
 
 
 def forward_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.move_page_smart(1))
+    move_page_smart(current_period, navigation_fn, 1)
+
+
+def move_page_smart(current_period, navigation_fn, direction):
+    def months_to_year_and_month(months):
+        years = int(months / 12)
+        month = months - years * 12
+        if month == 0:
+            month = 12
+            years -=1
+        return years, month
+    start, end = current_period.start_time, current_period.end_time
+    year_diff = end.year - start.year
+    start_months = start.year * 12 + start.month
+    end_months = end.year * 12 + end.month
+    month_diff = end_months - start_months
+    whole_years = start.replace(year=start.year + year_diff) == end
+    whole_months = start.day == 1 and end.day == 1
+    direction_backward = direction < 0
+    # Whole years
+    if whole_years and year_diff > 0:
+        if direction_backward:
+            new_start = start.replace(year=start.year-year_diff)
+            new_end   = start
+        else:
+            new_start = end
+            new_end   = end.replace(year=new_start.year+year_diff)
+        navigation_fn(lambda tp: tp.update(new_start, new_end))
+    # Whole months
+    elif whole_months and month_diff > 0:
+        if direction_backward:
+            new_end = start
+            new_start_year, new_start_month = months_to_year_and_month(
+                                                    start_months -
+                                                    month_diff)
+            new_start = start.replace(year=new_start_year,
+                                      month=new_start_month)
+        else:
+            new_start = end
+            new_end_year, new_end_month = months_to_year_and_month(
+                                                    end_months +
+                                                    month_diff)
+            new_end = end.replace(year=new_end_year, month=new_end_month)
+        navigation_fn(lambda tp: tp.update(new_start, new_end))
+    # No need for smart delta
+    else:
+        navigation_fn(lambda tp: tp.move_delta(direction*current_period.delta()))
 
 
 def forward_one_week_fn(main_frame, current_period, navigation_fn):
@@ -228,23 +274,41 @@ def backward_one_year_fn(main_frame, current_period, navigation_fn):
 
 
 def fit_millennium_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_millennium())
+    mean = current_period.mean_time()
+    start = datetime(int(mean.year/1000)*1000, 1, 1)
+    end = datetime(int(mean.year/1000)*1000 + 1000, 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_century_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_century())
+    mean = current_period.mean_time()
+    start = datetime(int(mean.year/100)*100, 1, 1)
+    end = datetime(int(mean.year/100)*100 + 100, 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_decade_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_decade())
+    mean = current_period.mean_time()
+    start = datetime(int(mean.year/10)*10, 1, 1)
+    end = datetime(int(mean.year/10)*10+10, 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_year_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_year())
+    mean = current_period.mean_time()
+    start = datetime(mean.year, 1, 1)
+    end = datetime(mean.year + 1, 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_month_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_month())
+    mean = current_period.mean_time()
+    start = datetime(mean.year, mean.month, 1)
+    if mean.month == 12:
+        end = datetime(mean.year + 1, 1, 1)
+    else:
+        end = datetime(mean.year, mean.month + 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_day_fn(main_frame, current_period, navigation_fn):

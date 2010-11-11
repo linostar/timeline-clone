@@ -42,6 +42,15 @@ digraph mikado
         navigation -> create_menu_items_dynamically;
         navigation -> time_period;
 
+    time_period [label="Move time specific methods\nin TimePeriod to time type\n(rickard)"];
+    time_period [style=filled,fillcolor="#A2E33F"];
+        time_period -> fit_millennium;
+        time_period -> fit_century;
+        time_period -> fit_decade;
+        time_period -> fit_year;
+        time_period -> fit_month;
+        time_period -> page_smart;
+
     status_bar [label="Statusbar shows\ndifferent times"];
     status_bar [style=filled,fillcolor="#A2E33F"];
         status_bar -> get_label;
@@ -73,8 +82,6 @@ digraph mikado
     create_menu_items_dynamically [label="Create navigation menu\nitems dynamically\n(rickard)"];
     create_menu_items_dynamically [style=filled,fillcolor="#A2E33F"];
 
-    time_period [label="Move time specific methods\nin TimePeriod to time type\n(rickard)"];
-
     type_format [label="Time type can\nformat period\n(roger)"];
     type_format [style=filled,fillcolor="#A2E33F"];
     
@@ -89,4 +96,10 @@ digraph mikado
     
     weekday_in_time_type [label="weekday() is implemented\nby time type\n(roger)"]
     weekday_in_time_type [style=filled,fillcolor="#A2E33F"];
+    fit_millennium [style=filled,fillcolor="#A2E33F"];
+    fit_century [style=filled,fillcolor="#A2E33F"];
+    fit_decade [style=filled,fillcolor="#A2E33F"];
+    fit_year [style=filled,fillcolor="#A2E33F"];
+    fit_month [style=filled,fillcolor="#A2E33F"];
+    page_smart [style=filled,fillcolor="#A2E33F"];
 }
