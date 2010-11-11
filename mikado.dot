@@ -87,5 +87,6 @@ digraph mikado
     time_limits_in_time_type [label="Time type knows about\ntime limits (min, max)"];
     time_limits_in_time_type [style=filled,fillcolor="#A2E33F"];
     
-    weekday_in_time_type [label="weekday() is implemented\nby time type ?"]
+    weekday_in_time_type [label="weekday() is implemented\nby time type\n(roger)"]
+    weekday_in_time_type [style=filled,fillcolor="#A2E33F"];
 }
