@@ -309,12 +309,6 @@ class TimePeriod(object):
         end = dt(int(mean.year/100)*100 + 100, 1, 1)
         self.update(start, end)
 
-    def fit_decade(self):
-        mean = self.mean_time()
-        start = dt(int(mean.year/10)*10, 1, 1)
-        end = dt(int(mean.year/10)*10+10, 1, 1)
-        self.update(start, end)
-
     def move_page_smart(self, direction):
         """Move the period forward (direction positive) or backward (direction
         negative)."""

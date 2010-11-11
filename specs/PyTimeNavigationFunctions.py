@@ -26,6 +26,7 @@ from timelinelib.time import PyTimeType
 from timelinelib.time.pytime import fit_day_fn
 from timelinelib.time.pytime import fit_month_fn
 from timelinelib.time.pytime import fit_year_fn
+from timelinelib.time.pytime import fit_decade_fn
 
 
 class PyTimeNavigationFunctionsSpec(unittest.TestCase):
@@ -67,3 +68,12 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self._assertTimePeriodEquals(
             datetime.datetime(2010, 1, 1, 0, 0, 0),
             datetime.datetime(2011, 1, 1, 0, 0, 0))
+
+    def test_fit_decade_should_display_the_decade_that_is_in_the_center(self):
+        self._call_fn_with_period(
+            fit_decade_fn, 
+            datetime.datetime(2010, 1, 1, 0, 0, 0),
+            datetime.datetime(2010, 1, 2, 0, 0, 0))
+        self._assertTimePeriodEquals(
+            datetime.datetime(2010, 1, 1, 0, 0, 0),
+            datetime.datetime(2020, 1, 1, 0, 0, 0))
