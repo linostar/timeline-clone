@@ -297,12 +297,6 @@ class TimePeriod(object):
             delta = self.time_type.get_max_time() - self.end_time
         self.move_delta(delta)
 
-    def fit_millennium(self):
-        mean = self.mean_time()
-        start = dt(int(mean.year/1000)*1000, 1, 1)
-        end = dt(int(mean.year/1000)*1000 + 1000, 1, 1)
-        self.update(start, end)
-
     def move_page_smart(self, direction):
         """Move the period forward (direction positive) or backward (direction
         negative)."""

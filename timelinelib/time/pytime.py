@@ -227,7 +227,10 @@ def backward_one_year_fn(main_frame, current_period, navigation_fn):
 
 
 def fit_millennium_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_millennium())
+    mean = current_period.mean_time()
+    start = datetime(int(mean.year/1000)*1000, 1, 1)
+    end = datetime(int(mean.year/1000)*1000 + 1000, 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_century_fn(main_frame, current_period, navigation_fn):
