@@ -25,6 +25,8 @@ digraph mikado
         time_period_independent -> time_period_knows_type;
         time_period_independent -> time_period;
         time_period_independent -> time_limits_in_time_type;
+        time_period_independent -> min_max_zoom_delta_in_time_type;
+        time_period_independent -> zero_delta_created_by_time_type;
 
     event_editor [label="Event editor can\nhandle different times"];
     event_editor [style=filled,fillcolor="#A2E33F"];
@@ -102,4 +104,7 @@ digraph mikado
     fit_year [style=filled,fillcolor="#A2E33F"];
     fit_month [style=filled,fillcolor="#A2E33F"];
     page_smart [style=filled,fillcolor="#A2E33F"];
+
+    min_max_zoom_delta_in_time_type [label="delta MIN/MAX values\nare returned by time type"];
+    zero_delta_created_by_time_type [label="zero delta value is\nreturned by time type?"];
 }
