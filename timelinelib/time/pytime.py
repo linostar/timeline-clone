@@ -239,7 +239,10 @@ def fit_decade_fn(main_frame, current_period, navigation_fn):
 
 
 def fit_year_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.fit_year())
+    mean = current_period.mean_time()
+    start = datetime(mean.year, 1, 1)
+    end = datetime(mean.year + 1, 1, 1)
+    navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_month_fn(main_frame, current_period, navigation_fn):
