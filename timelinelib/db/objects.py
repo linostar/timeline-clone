@@ -255,8 +255,8 @@ class TimePeriod(object):
         return self.start_time + self.delta() / 2
 
     def zoom(self, times):
-        MAX_ZOOM_DELTA = timedelta(days=1200*365)
-        MIN_ZOOM_DELTA = timedelta(hours=1)
+        MAX_ZOOM_DELTA = self.time_type.get_max_zoom_delta()
+        MIN_ZOOM_DELTA = self.time_type.get_min_zoom_delta()
         delta = self.time_type.mult_timedelta(self.delta(), times / 10.0)
         new_delta = self.delta() - 2 * delta
         if new_delta > MAX_ZOOM_DELTA:

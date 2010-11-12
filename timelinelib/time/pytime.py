@@ -167,6 +167,12 @@ class PyTimeType(TimeType):
         # Make sure that the result is a floating point number
         return total_us1 / float(total_us2)        
 
+    def get_max_zoom_delta(self):
+        return timedelta(days=1200*365)
+
+    def get_min_zoom_delta(self):
+        return timedelta(hours=1)
+    
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

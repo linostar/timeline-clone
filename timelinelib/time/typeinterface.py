@@ -57,3 +57,10 @@ class TimeType(object):
 
     def div_timedeltas(self, delta1, delta2):
         raise NotImplementedError("div_timedeltas not implemented.")
+    
+    def get_max_zoom_delta(self):
+        raise NotImplementedError("get_max_zoom_delta not implemented.")
+
+    def get_min_zoom_delta(self):
+        raise NotImplementedError("get_max_zoom_delta not implemented.")
+        
