@@ -23,7 +23,6 @@ Implements a Drawer that draws the default timeline view.
 
 import math
 import calendar
-from datetime import timedelta
 from datetime import datetime
 import os.path
 
