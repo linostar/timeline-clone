@@ -31,6 +31,7 @@ import wx
 
 from timelinelib.drawing.interface import Drawer
 from timelinelib.drawing.utils import get_default_font
+from timelinelib.drawing.utils import Metrics
 from timelinelib.drawing.utils import darken_color
 from timelinelib.gui.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
@@ -86,9 +87,9 @@ class DefaultDrawingAlgorithm(Drawer):
         self.time_period = view_properties.displayed_period
         self.db = timeline
         self.time_type = self.db.get_time_type()
-        self.metrics = self.time_type.get_metrics(dc.GetSizeTuple(), 
-                                                  self.time_period, 
-                                                  view_properties.divider_position)
+        self.metrics = Metrics(dc.GetSizeTuple(), self.time_type, 
+                               self.time_period, 
+                               view_properties.divider_position)
         # Data
         self.event_data = []       # List of tuples (event, rect)
         self.major_strip_data = [] # List of time_period

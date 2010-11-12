@@ -25,7 +25,6 @@ import calendar
 import wx
 
 from timelinelib.time.typeinterface import TimeType
-from timelinelib.time.typeinterface import Metrics
 from timelinelib.utils import local_to_unicode
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.interface import Strip
@@ -142,9 +141,6 @@ class PyTimeType(TimeType):
         else:
             return (StripCentury(), StripCentury())
         
-    def get_metrics(self, size, time_period, divider_position):
-         return PyTimeMetrics(size, time_period, divider_position)
-
     def mult_timedelta(self, delta, num):
         """Return a new timedelta that is `num` times larger than `delta`."""
         days = delta.days * num
@@ -155,7 +151,23 @@ class PyTimeType(TimeType):
     def get_default_time_period(self):
         return time_period_center(self, datetime.now(), timedelta(days=30))
 
-            
+    def get_time_at_x(self, time_period, x_percent_of_width):
+        """Return the time at pixel `x`."""
+        microsecs = delta_to_microseconds(time_period.delta())
+        microsecs = microsecs * x_percent_of_width
+        return time_period.start_time + microseconds_to_delta(microsecs)
+
+    def div_timedeltas(self, delta1, delta2):
+        """Return how many times delta2 fit in delta1."""
+        # Since Python can handle infinitely large numbers, this solution works. It
+        # might however not be optimal. If you are clever, you should be able to
+        # treat the different parts individually. But this is simple.
+        total_us1 = delta_to_microseconds(delta1)
+        total_us2 = delta_to_microseconds(delta2)
+        # Make sure that the result is a floating point number
+        return total_us1 / float(total_us2)        
+
+
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))
 
@@ -512,43 +524,6 @@ class StripHour(Strip):
         return PyTimeMetrics(size, time_period, divider_line_slider_position)
     
 
-class PyTimeMetrics(Metrics):
-    """
-    Convert between pixel coordinates and time coordinates.
-    """
-
-    def calc_exact_x(self, time):
-        """Return the x position in pixels as a float for the given time."""
-        delta1 = div_timedeltas(time - self.time_period.start_time,
-                                self.time_period.delta())
-        float_res = self.width * delta1
-        return float_res
-
-    def calc_x(self, time):
-        """Return the x position in pixels as an integer for the given time."""
-        return int(round(self.calc_exact_x(time)))
-
-    def calc_exact_width(self, time_period):
-        """Return the with in pixels as a float for the given time_period."""
-        return (self.calc_exact_x(time_period.end_time) -
-                self.calc_exact_x(time_period.start_time))
-
-    def calc_width(self, time_period):
-        """Return the with in pixels as an integer for the given time_period."""
-        return (self.calc_x(time_period.end_time) -
-                self.calc_x(time_period.start_time)) + 1
-
-    def get_time(self, x):
-        """Return the time at pixel `x`."""
-        microsecs = delta_to_microseconds(self.time_period.delta())
-        microsecs = microsecs * float(x) / self.width
-        return self.time_period.start_time + microseconds_to_delta(microsecs)
-
-    def get_difftime(self, x1, x2):
-        """Return the time length between two x positions."""
-        return self.get_time(x1) - self.get_time(x2)
-
-
 def microseconds_to_delta(microsecs):
     """Return a timedelta representing the given number of microseconds."""
     return timedelta(microseconds=microsecs)
@@ -559,14 +534,3 @@ def delta_to_microseconds(delta):
     return (delta.days * US_PER_DAY +
             delta.seconds * US_PER_SEC +
             delta.microseconds)
-
-
-def div_timedeltas(delta1, delta2):
-    """Return how many times delta2 fit in delta1."""
-    # Since Python can handle infinitely large numbers, this solution works. It
-    # might however not be optimal. If you are clever, you should be able to
-    # treat the different parts individually. But this is simple.
-    total_us1 = delta_to_microseconds(delta1)
-    total_us2 = delta_to_microseconds(delta2)
-    # Make sure that the result is a floating point number
-    return total_us1 / float(total_us2)        

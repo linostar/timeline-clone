@@ -18,6 +18,7 @@
 
 import wx
 
+from timelinelib.drawing.utils import Metrics
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_ANY
 from timelinelib.db.objects import TimePeriod
@@ -515,9 +516,9 @@ class DrawingAreaController(object):
             self.view_properties.period_selection = period_selection
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
-            self.metrics = self.time_type.get_metrics(self.view.GetSizeTuple(), 
-                                                      self.view_properties.displayed_period, 
-                                                      self.view_properties.divider_position)
+            self.metrics = Metrics(self.view.GetSizeTuple(), self.time_type, 
+                                   self.view_properties.displayed_period, 
+                                   self.view_properties.divider_position)
             self.view.redraw_surface(fn_draw)
             self.view.enable_disable_menus()
 
