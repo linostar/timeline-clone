@@ -22,8 +22,6 @@ The main frame of the application.
 
 
 import os.path
-from datetime import datetime as dt
-import datetime
 
 import wx
 
