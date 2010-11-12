@@ -151,6 +151,9 @@ class PyTimeType(TimeType):
     def get_default_time_period(self):
         return time_period_center(self, datetime.now(), timedelta(days=30))
 
+    def now(self):
+        return datetime.now()
+        
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
         microsecs = delta_to_microseconds(time_period.delta())
@@ -172,7 +175,7 @@ class PyTimeType(TimeType):
 
     def get_min_zoom_delta(self):
         return timedelta(hours=1)
-    
+
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

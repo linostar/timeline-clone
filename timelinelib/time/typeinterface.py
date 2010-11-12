@@ -51,10 +51,13 @@ class TimeType(object):
     def get_default_time_period(self):
         raise NotImplementedError("get_default_time_period not implemented.")
 
+    def now(self):
+        raise NotImplementedError("now not implemented.")
+
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
         raise NotImplementedError("get_time_for_x not implemented.")
-
+        
     def div_timedeltas(self, delta1, delta2):
         raise NotImplementedError("div_timedeltas not implemented.")
     

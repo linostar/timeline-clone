@@ -34,12 +34,14 @@ digraph mikado
         event_editor -> db_has_type_info;
 
     drawer [label="Drawer can\nhandle different times"];
+    drawer [style=filled,fillcolor="#A2E33F"];
         drawer -> db_has_type_info;
         drawer -> strips_in_time_type;
 	drawer -> weekday_in_time_type;
 	drawer -> metrics_knows_about_time_type;
 	
     navigation [label="Navigation functions\nare time specific\n(rickard)"];
+    navigation [style=filled,fillcolor="#A2E33F"];
         navigation -> db_has_type_info;
         navigation -> move_nav_to_time_type;
         navigation -> create_menu_items_dynamically;
