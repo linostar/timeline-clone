@@ -111,4 +111,5 @@ digraph mikado
     zero_delta_created_by_time_type [label="zero delta value is\nreturned by time type?"];
     
     metrics_knows_about_time_type [label="Metrics knows about\n time type"];
+    metrics_knows_about_time_type [style=filled,fillcolor="#A2E33F"];
 }
