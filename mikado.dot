@@ -37,6 +37,7 @@ digraph mikado
         drawer -> db_has_type_info;
         drawer -> strips_in_time_type;
 	drawer -> weekday_in_time_type;
+	drawer -> metrics_knows_about_time_type;
 	
     navigation [label="Navigation functions\nare time specific\n(rickard)"];
         navigation -> db_has_type_info;
@@ -106,5 +107,8 @@ digraph mikado
     page_smart [style=filled,fillcolor="#A2E33F"];
 
     min_max_zoom_delta_in_time_type [label="delta MIN/MAX values\nare returned by time type"];
+    
     zero_delta_created_by_time_type [label="zero delta value is\nreturned by time type?"];
+    
+    metrics_knows_about_time_type [label="Metrics knows about\n time type"];
 }
