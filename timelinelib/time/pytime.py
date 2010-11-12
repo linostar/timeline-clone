@@ -155,6 +155,9 @@ class PyTimeType(TimeType):
     def get_default_time_period(self):
         return time_period_center(self, datetime.now(), timedelta(days=30))
 
+    def now(self):
+        return datetime.now()
+
             
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

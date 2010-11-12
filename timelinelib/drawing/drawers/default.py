@@ -326,7 +326,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 self.dc.DrawLine(x, y, x, self.metrics.half_height)
                 self.dc.DrawCircle(x, self.metrics.half_height, 2)
         # Now line
-        now_time = datetime.now()
+        now_time = self.time_type.now()
         if self.time_period.inside(now_time):
             self.dc.SetPen(self.darkred_solid_pen)
             x = self.metrics.calc_x(now_time)

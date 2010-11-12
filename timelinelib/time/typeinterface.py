@@ -54,6 +54,9 @@ class TimeType(object):
     def get_default_time_period(self):
         raise NotImplementedError("get_default_time_period not implemented.")
 
+    def now(self):
+        raise NotImplementedError("now not implemented.")
+
             
 class Metrics(object):
     """
