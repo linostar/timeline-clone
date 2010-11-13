@@ -57,6 +57,7 @@ class TestWriteXml(unittest.TestCase):
         self.assertEquals(content, """<?xml version="1.0" encoding="utf-8"?>
 <timeline>
   <version>%s</version>
+  <time_type>pytime</time_type>
   <categories>
   </categories>
   <events>
