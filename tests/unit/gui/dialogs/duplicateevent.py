@@ -22,10 +22,6 @@ import unittest
 from mock import Mock
 
 from timelinelib.gui.dialogs.duplicateevent import DuplicateEventController
-from timelinelib.gui.dialogs.duplicateevent import DAY
-from timelinelib.gui.dialogs.duplicateevent import WEEK
-from timelinelib.gui.dialogs.duplicateevent import MONTH
-from timelinelib.gui.dialogs.duplicateevent import YEAR
 from timelinelib.gui.dialogs.duplicateevent import FORWARD
 from timelinelib.gui.dialogs.duplicateevent import BACKWARD
 from timelinelib.gui.dialogs.duplicateevent import BOTH

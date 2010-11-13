@@ -29,10 +29,6 @@ from timelinelib.gui.dialogs.duplicateevent import DuplicateEvent
 from timelinelib.gui.dialogs.duplicateevent import DuplicateEventController
 from timelinelib.time import PyTimeType
 
-from timelinelib.gui.dialogs.duplicateevent import DAY
-from timelinelib.gui.dialogs.duplicateevent import WEEK
-from timelinelib.gui.dialogs.duplicateevent import MONTH
-from timelinelib.gui.dialogs.duplicateevent import YEAR
 from timelinelib.gui.dialogs.duplicateevent import FORWARD
 from timelinelib.gui.dialogs.duplicateevent import BACKWARD
 from timelinelib.gui.dialogs.duplicateevent import BOTH
@@ -67,8 +63,8 @@ class when_the_dialog_is_opened(duplicate_event_dialog_spec_base):
     def test_count_should_be_one(self):
         self.view.set_count.assert_called_with(1)
 
-    def test_period_should_be_day(self):
-        self.view.set_period_type.assert_called_with(DAY)
+    def test_first_period_should_selected(self):
+        self.view.set_period_type.assert_called_with(0)
 
     def test_frequency_should_be_one(self):
         self.view.set_frequency.assert_called_with(1)

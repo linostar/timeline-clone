@@ -29,11 +29,6 @@ from timelinelib.db.objects import TimePeriod
 import timelinelib.gui.utils as gui_utils
 
 
-DAY = 0
-WEEK = 1
-MONTH = 2
-YEAR = 3
-
 FORWARD = 0
 BACKWARD = 1
 BOTH = 2
@@ -154,7 +149,7 @@ class DuplicateEventController(object):
     def initialize(self):
         self.view.set_count(1)
         self.view.set_frequency(1)
-        self.view.set_period_type(DAY)
+        self.view.set_period_type(0)
         self.view.set_direction(FORWARD)
 
     def create_duplicates_and_save(self):
