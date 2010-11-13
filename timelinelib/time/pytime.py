@@ -179,6 +179,11 @@ class PyTimeType(TimeType):
     def get_zero_delta(self):
         return timedelta(0)
     
+    def time_period_has_nonzero_time(self, time_period):
+        nonzero_time = (time_period.start_time.time() != time(0, 0, 0) or
+                        time_period.end_time.time()   != time(0, 0, 0))
+        return nonzero_time
+    
     
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

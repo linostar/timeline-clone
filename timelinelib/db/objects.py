@@ -21,7 +21,6 @@ Objects that can be read from and written to a timeline database.
 """
 
 
-from datetime import time
 import calendar
 
 from timelinelib.utils import local_to_unicode
@@ -338,9 +337,7 @@ class TimePeriod(object):
         return self.time_type.format_period(self)
 
     def has_nonzero_time(self):
-        nonzero_time = (self.start_time.time() != time(0, 0, 0) or
-                        self.end_time.time()   != time(0, 0, 0))
-        return nonzero_time
+        return self.time_type.time_period_has_nonzero_time(self)
 
 
 def time_period_center(time_type, time, length):
