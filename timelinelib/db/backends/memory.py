@@ -51,9 +51,10 @@ class MemoryDB(TimelineDB):
         self.displayed_period = None
         self.hidden_categories = []
         self.save_disabled = False
+        self.time_type = PyTimeType()
 
     def get_time_type(self):
-        return PyTimeType()
+        return self.time_type
 
     def is_read_only(self):
         return False

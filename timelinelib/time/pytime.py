@@ -183,6 +183,9 @@ class PyTimeType(TimeType):
         nonzero_time = (time_period.start_time.time() != time(0, 0, 0) or
                         time_period.end_time.time()   != time(0, 0, 0))
         return nonzero_time
+
+    def get_name(self):
+        return u"pytime"
     
     
 def go_to_today_fn(main_frame, current_period, navigation_fn):

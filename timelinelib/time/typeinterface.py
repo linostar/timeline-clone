@@ -72,3 +72,6 @@ class TimeType(object):
     
     def time_period_has_nonzero_time(self, time_period):
         raise NotImplementedError("time_period_has_nonzero_time not implemented.")
+
+    def get_name(self):
+        raise NotImplementedError("get_name not implemented.")

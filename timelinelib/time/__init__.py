@@ -17,3 +17,4 @@
 
 
 from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.numtime import NumTimeType
