@@ -72,7 +72,7 @@ class DuplicateEvent(wx.Dialog):
         self.rb_period.SetSelection(period)
 
     def get_period_type(self):
-        return PERIOD_TYPE_MAP[self.rb_period.GetSelection()]
+        return self._period_fns[self.rb_period.GetSelection()][1]
 
     def set_direction(self, direction):
         self.rb_direction.SetSelection(direction)                             
@@ -92,7 +92,8 @@ class DuplicateEvent(wx.Dialog):
             % error_count)
         
     def _create_gui(self):
-        PERIOD_LIST = [_("Day"), _("Week"), _("Month"), _("Year")]
+        self._period_fns = _get_period_fns()
+        PERIOD_LIST = [x for (x, y) in self._period_fns]
         DIRECTION_LIST = [_("Forward"), _("Backward"), _("Both")]
         # Create all controls
         sc_count_box = self._creat_count_spin_control()
@@ -213,7 +214,10 @@ class DuplicateEventController(object):
                 periods.append(new_period)     
             return periods, nbr_of_missing_dates
     
-    
+
+# TODO: Move all below to TimeType
+
+
 def _get_day_period(time_type, period, inx, frequency):
     delta = timedelta(days=1) * frequency * inx
     start_time = period.start_time + delta  
@@ -271,9 +275,10 @@ def _get_year_period(time_type, period, inx, frequency):
         return None
 
 
-PERIOD_TYPE_MAP = {
-    DAY: _get_day_period,
-    WEEK: _get_week_period,
-    MONTH: _get_month_period,
-    YEAR: _get_year_period
-}
+def _get_period_fns():
+    return [
+        (_("Day"), _get_day_period),
+        (_("Week"), _get_week_period),
+        (_("Month"), _get_month_period),
+        (_("Year"), _get_year_period),
+    ]
