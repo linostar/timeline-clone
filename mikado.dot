@@ -74,8 +74,10 @@ digraph mikado
     // Leaves
 
     define_numeric_time_type [label="Define numeric time type"];
+    define_numeric_time_type [style=filled,fillcolor="#A2E33F"];
 
     db_reads_time_type [label="Xml db can read time type"];
+    db_reads_time_type [style=filled,fillcolor="#A2E33F"];
 
     show_time [label="Show time checkbox\ndepends on time type\n(roger)"];
     show_time [style=filled,fillcolor="#A2E33F"];
@@ -114,9 +116,12 @@ digraph mikado
     min_max_zoom_delta_in_time_type [style=filled,fillcolor="#A2E33F"];
     
     zero_delta_created_by_time_type [label="zero delta value is\nreturned by time type?"];
+    zero_delta_created_by_time_type [style=filled,fillcolor="#A2E33F"];
+
     duplicate_event [label="Duplicate event works\nfor all time types\n(rickard)"];
     metrics_knows_about_time_type [label="Metrics knows about\n time type"];
     metrics_knows_about_time_type [style=filled,fillcolor="#A2E33F"];
     
     has_nonzero_time_to_time_type [label="move has_nonzero_time()\nto time type"];
+    has_nonzero_time_to_time_type [style=filled,fillcolor="#A2E33F"];
 }
