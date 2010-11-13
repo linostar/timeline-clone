@@ -36,59 +36,6 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 
 
-class TestDuplicateEventController(unittest.TestCase):
-
-    def setUp(self):
-        self.db = Mock()
-        self.view = Mock()
-        self.db.get_time_type.return_value = PyTimeType()
-        start_time = datetime.datetime(2010, 1, 1, 12, 0, 0)
-        end_time = datetime.datetime(2010, 1, 1, 13, 0, 0)
-        self.event = Event(self.db, start_time, end_time, "foo", category=None)
-
-    def testInit(self):
-        """Assert the initial settings in the view dialog."""
-        controller = DuplicateEventController(self.view, self.db, self.event)
-        controller.initialize()
-        self.view.set_count.assert_called_with(1)
-        self.view.set_period_type.assert_called_with(DAY)
-        self.view.set_frequency.assert_called_with(1)
-        self.view.set_direction.assert_called_with(FORWARD)
-
-    def testCreateDuplicate(self):
-        controller = DuplicateEventController(self.view, self.db, self.event)
-        # Simulate entering this in gui
-        self.view.get_count.return_value = 1
-        self.view.get_period_type.return_value = DAY
-        self.view.get_frequency.return_value = 1
-        self.view.get_direction.return_value = FORWARD
-        controller.create_duplicates_and_save()
-        # Assert that controller fetched data from view
-        self.assertTrue(self.view.get_count.called)
-        self.assertTrue(self.view.get_period_type.called)
-        self.assertTrue(self.view.get_direction.called)
-        self.assertTrue(self.view.get_frequency.called)
-        # Assert that the saved event is a clone
-        event = self.db.save_event.call_args[0][0]
-        self.assertTrue(event != self.event)
-
-    def testDbError(self):
-        """Assert correct handling of TimelineIOError."""
-        controller = DuplicateEventController(self.view, self.db, self.event)
-        # Simulate TimelineIOError when we try to save a valid event
-        self.db.save_event.side_effect = TimelineIOError
-        # Simulate return values from view
-        self.view.get_count.return_value = 1
-        self.view.get_period_type.return_value = YEAR
-        self.view.get_frequency.return_value = 1
-        self.view.get_direction.return_value = FORWARD
-        controller.create_duplicates_and_save()
-        # Assert that controller let view handle error
-        self.assertTrue(self.view.handle_db_error.called)
-        # Assert that controller did not close view
-        self.assertFalse(self.view.close.called)
-
-
 class TestRepeatPeriod(unittest.TestCase):
     """
     testRepeatOfDayN:   period_type = DAY
