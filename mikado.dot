@@ -16,6 +16,7 @@ digraph mikado
         different_time -> status_bar;
         different_time -> time_period_independent;
         different_time -> numeric_time_type;
+        different_time -> duplicate_event;
 
     numeric_time_type [label="Proof of concept numeric\ntime type exists"];
         numeric_time_type -> define_numeric_time_type;
@@ -113,8 +114,7 @@ digraph mikado
     min_max_zoom_delta_in_time_type [style=filled,fillcolor="#A2E33F"];
     
     zero_delta_created_by_time_type [label="zero delta value is\nreturned by time type?"];
-    zero_delta_created_by_time_type [style=filled,fillcolor="#A2E33F"];
-    
+    duplicate_event [label="Duplicate event works\nfor all time types\n(rickard)"];
     metrics_knows_about_time_type [label="Metrics knows about\n time type"];
     metrics_knows_about_time_type [style=filled,fillcolor="#A2E33F"];
     

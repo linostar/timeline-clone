@@ -24,7 +24,6 @@ Implementation of timeline database with xml file storage.
 import re
 import os.path
 from os.path import abspath
-from datetime import datetime
 import base64
 import StringIO
 from xml.sax.saxutils import escape as xmlescape
