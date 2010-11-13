@@ -175,7 +175,7 @@ class DuplicateEventController(object):
             self.view.close()
         except TimelineIOError, e:
             self.view.handle_db_error(e)
-            
+
 
 def repeat_period(time_type, event_period, period_type, frequency, repetitions, 
                   direction):
@@ -208,14 +208,7 @@ def repeat_period(time_type, event_period, period_type, frequency, repetitions,
         # Calculate a TimePeriod for each index
         nbr_of_missing_dates = 0
         for inx in inxs:
-            if period_type == DAY:
-                new_period = _get_day_period(time_type, event_period, inx, frequency)
-            elif period_type == WEEK:
-                new_period = _get_week_period(time_type, event_period, inx, frequency)
-            elif period_type == MONTH:
-                new_period = _get_month_period(time_type, event_period, inx, frequency)
-            elif period_type == YEAR:
-                new_period = _get_year_period(time_type, event_period, inx, frequency)
+            new_period = PERIOD_TYPE_MAP[period_type](time_type, event_period, inx, frequency)
             if new_period == None:
                nbr_of_missing_dates += 1
                continue
@@ -278,3 +271,11 @@ def _get_year_period(time_type, period, inx, frequency):
         return TimePeriod(time_type, start_time, end_time)
     except ValueError:
         return None
+
+
+PERIOD_TYPE_MAP = {
+    DAY: _get_day_period,
+    WEEK: _get_week_period,
+    MONTH: _get_month_period,
+    YEAR: _get_year_period
+}
