@@ -161,10 +161,9 @@ class DuplicateEventController(object):
         period_type = self.view.get_period_type()
         frequency = self.view.get_frequency()
         direction = self.view.get_direction()
-        periods, nbr_of_missing_dates = repeat_period(self.db.get_time_type(), 
-                                                      self.period, period_type, 
-                                                      frequency, repetitions, 
-                                                      direction)
+        periods, nbr_of_missing_dates = self._repeat_period(
+            self.db.get_time_type(), self.period, period_type, 
+            frequency, repetitions, direction)
         try:
             for period in periods: 
                 event = self.event.clone()
@@ -176,44 +175,43 @@ class DuplicateEventController(object):
         except TimelineIOError, e:
             self.view.handle_db_error(e)
 
-
-def repeat_period(time_type, event_period, period_fn, frequency, repetitions, 
-                  direction):
-        """
-        Returns a list of calculated TimePeriods and the number of missing 
-        dates as tuple (periods, nbr_of_missing_dates).
-        
-        Missing dates, can occur for example if you try do duplicate a
-        TimePeriod each month and the TimePeriod starts at 2010-01-31.
-        2010-02-31 Doesn't exist, so it's a missing date.
-        
-        Arguments:
-            event_period    The TimePeriod of the event that is duplicated
-            period_type     A member of (DAY, WEEK, MONTH, YEAR)
-            frequency       A number saying how often a period will be created.
-                            1=Every period_type, 2=Every second Period_type, ..
-            repetitions     A number saying how many duplicates to create in
-                            each direction.
-            direction       A member of (FORWARD, BACKWARD, BOTH)
-        """
-        # Calculate indexes relative the event_period for the periods to create
-        if direction == FORWARD:
-            inxs = range(1, repetitions + 1)
-        elif direction == BACKWARD:
-            inxs = range(-repetitions, 0)
-        elif direction == BOTH:
-            inxs = range(-repetitions, repetitions + 1)
-            inxs.remove(0)
-        periods = []     
-        # Calculate a TimePeriod for each index
-        nbr_of_missing_dates = 0
-        for inx in inxs:
-            new_period = period_fn(time_type, event_period, inx, frequency)
-            if new_period == None:
-               nbr_of_missing_dates += 1
-               continue
-            periods.append(new_period)     
-        return periods, nbr_of_missing_dates
+    def _repeat_period(self, time_type, event_period, period_fn, frequency, repetitions, 
+                       direction):
+            """
+            Returns a list of calculated TimePeriods and the number of missing 
+            dates as tuple (periods, nbr_of_missing_dates).
+            
+            Missing dates, can occur for example if you try do duplicate a
+            TimePeriod each month and the TimePeriod starts at 2010-01-31.
+            2010-02-31 Doesn't exist, so it's a missing date.
+            
+            Arguments:
+                event_period    The TimePeriod of the event that is duplicated
+                period_type     A member of (DAY, WEEK, MONTH, YEAR)
+                frequency       A number saying how often a period will be created.
+                                1=Every period_type, 2=Every second Period_type, ..
+                repetitions     A number saying how many duplicates to create in
+                                each direction.
+                direction       A member of (FORWARD, BACKWARD, BOTH)
+            """
+            # Calculate indexes relative the event_period for the periods to create
+            if direction == FORWARD:
+                inxs = range(1, repetitions + 1)
+            elif direction == BACKWARD:
+                inxs = range(-repetitions, 0)
+            elif direction == BOTH:
+                inxs = range(-repetitions, repetitions + 1)
+                inxs.remove(0)
+            periods = []     
+            # Calculate a TimePeriod for each index
+            nbr_of_missing_dates = 0
+            for inx in inxs:
+                new_period = period_fn(time_type, event_period, inx, frequency)
+                if new_period == None:
+                   nbr_of_missing_dates += 1
+                   continue
+                periods.append(new_period)     
+            return periods, nbr_of_missing_dates
     
     
 def _get_day_period(time_type, period, inx, frequency):

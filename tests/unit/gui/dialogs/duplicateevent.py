@@ -29,7 +29,6 @@ from timelinelib.gui.dialogs.duplicateevent import YEAR
 from timelinelib.gui.dialogs.duplicateevent import FORWARD
 from timelinelib.gui.dialogs.duplicateevent import BACKWARD
 from timelinelib.gui.dialogs.duplicateevent import BOTH
-from timelinelib.gui.dialogs.duplicateevent import repeat_period
 from timelinelib.gui.dialogs.duplicateevent import _get_day_period
 from timelinelib.gui.dialogs.duplicateevent import _get_week_period
 from timelinelib.gui.dialogs.duplicateevent import _get_month_period
@@ -38,6 +37,13 @@ from timelinelib.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
+
+
+def repeat_period(time_type, event_period, period_fn, frequency,
+                  repetitions, direction):
+    return DuplicateEventController(Mock(), Mock(), Mock())._repeat_period(
+            time_type, event_period, period_fn, frequency,
+            repetitions, direction)
 
 
 class TestRepeatPeriod(unittest.TestCase):
