@@ -21,8 +21,6 @@ Objects that can be read from and written to a timeline database.
 """
 
 
-from datetime import timedelta
-from datetime import datetime as dt
 from datetime import time
 import calendar
 
@@ -202,7 +200,7 @@ class TimePeriod(object):
         return "TimePeriod<%s, %s>" % (self.start_time, self.end_time)
 
     def update(self, start_time, end_time,
-               start_delta=timedelta(0), end_delta=timedelta(0)):
+               start_delta=None, end_delta=None):
         """
         Change the time period data.
 
@@ -303,6 +301,8 @@ class TimePeriod(object):
         the range [self.time_type.get_min_time(), 
         self.time_type.get_max_time()].
         """
+        if delta == None:
+            delta = self.time_type.get_zero_delta()
         new_time, overflow = self._calculate_overflow(time, delta)
         if overflow > 0:
             raise ValueError(pos_error)
@@ -328,7 +328,7 @@ class TimePeriod(object):
                 return (None, 1)
             return (new_time, 0)
         except OverflowError:
-            if delta > timedelta(0):
+            if delta > self.time_type.get_zero_delta():
                 return (None, 1)
             else:
                 return (None, -1)
