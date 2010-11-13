@@ -27,6 +27,7 @@ digraph mikado
         time_period_independent -> time_limits_in_time_type;
         time_period_independent -> min_max_zoom_delta_in_time_type;
         time_period_independent -> zero_delta_created_by_time_type;
+        time_period_independent -> has_nonzero_time_to_time_type
 
     event_editor [label="Event editor can\nhandle different times"];
     event_editor [style=filled,fillcolor="#A2E33F"];
@@ -112,7 +113,10 @@ digraph mikado
     min_max_zoom_delta_in_time_type [style=filled,fillcolor="#A2E33F"];
     
     zero_delta_created_by_time_type [label="zero delta value is\nreturned by time type?"];
+    zero_delta_created_by_time_type [style=filled,fillcolor="#A2E33F"];
     
     metrics_knows_about_time_type [label="Metrics knows about\n time type"];
     metrics_knows_about_time_type [style=filled,fillcolor="#A2E33F"];
+    
+    has_nonzero_time_to_time_type [label="move has_nonzero_time()\nto time type"];
 }
