@@ -36,6 +36,7 @@ from timelinelib.gui.dialogs.duplicateevent import YEAR
 from timelinelib.gui.dialogs.duplicateevent import FORWARD
 from timelinelib.gui.dialogs.duplicateevent import BACKWARD
 from timelinelib.gui.dialogs.duplicateevent import BOTH
+from timelinelib.gui.dialogs.duplicateevent import _get_day_period
 
 
 class duplicate_event_dialog_spec_base(unittest.TestCase):
@@ -45,7 +46,7 @@ class duplicate_event_dialog_spec_base(unittest.TestCase):
         self.db.get_time_type.return_value = PyTimeType()
         self.view = Mock(DuplicateEvent)
         self.view.get_count.return_value = 1
-        self.view.get_period_type.return_value = DAY
+        self.view.get_period_type.return_value = _get_day_period
         self.view.get_frequency.return_value = 1
         self.view.get_direction.return_value = FORWARD
         self.event = Event(

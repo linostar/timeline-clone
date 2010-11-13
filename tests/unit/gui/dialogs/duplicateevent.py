@@ -30,6 +30,10 @@ from timelinelib.gui.dialogs.duplicateevent import FORWARD
 from timelinelib.gui.dialogs.duplicateevent import BACKWARD
 from timelinelib.gui.dialogs.duplicateevent import BOTH
 from timelinelib.gui.dialogs.duplicateevent import repeat_period
+from timelinelib.gui.dialogs.duplicateevent import _get_day_period
+from timelinelib.gui.dialogs.duplicateevent import _get_week_period
+from timelinelib.gui.dialogs.duplicateevent import _get_month_period
+from timelinelib.gui.dialogs.duplicateevent import _get_year_period
 from timelinelib.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
@@ -64,7 +68,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay1(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 1, 1,
+                                                      self.period,
+                                                      _get_day_period, 1, 1,
                                                       FORWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -75,7 +80,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay2(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 1, 2,
+                                                      self.period,
+                                                      _get_day_period, 1, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -90,7 +96,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay3(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 2, 2,
+                                                      self.period,
+                                                      _get_day_period, 2, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -105,7 +112,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay4(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 1, 1,
+                                                      self.period,
+                                                      _get_day_period, 1, 1,
                                                       BACKWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -116,7 +124,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay5(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 1, 2,
+                                                      self.period,
+                                                      _get_day_period, 1, 2,
                                                       BACKWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -131,7 +140,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay6(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 2, 2,
+                                                      self.period,
+                                                      _get_day_period, 2, 2,
                                                       BACKWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -146,7 +156,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay7(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 1, 1,
+                                                      self.period,
+                                                      _get_day_period, 1, 1,
                                                       BOTH)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -161,7 +172,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay8(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 1, 2,
+                                                      self.period,
+                                                      _get_day_period, 1, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -184,7 +196,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfDay9(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, DAY, 2, 2,
+                                                      self.period,
+                                                      _get_day_period, 2, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -207,7 +220,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek1(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 1, 1,
+                                                      self.period,
+                                                      _get_week_period, 1, 1,
                                                       FORWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -218,7 +232,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek2(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 1, 2,
+                                                      self.period,
+                                                      _get_week_period, 1, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -233,7 +248,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek3(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 2, 2,
+                                                      self.period,
+                                                      _get_week_period, 2, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -248,7 +264,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek4(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 1, 1,
+                                                      self.period,
+                                                      _get_week_period, 1, 1,
                                                       BACKWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -259,7 +276,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek5(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 1, 2,
+                                                      self.period,
+                                                      _get_week_period, 1, 2,
                                                       BACKWARD)
         self.assertEquals(nbr_of_missing_dates, 0)
         self.assertEquals(len(periods), 2)
@@ -274,7 +292,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek6(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 2, 2,
+                                                      self.period,
+                                                      _get_week_period, 2, 2,
                                                       BACKWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -289,7 +308,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek7(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 1, 1,
+                                                      self.period,
+                                                      _get_week_period, 1, 1,
                                                       BOTH)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -304,7 +324,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek8(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 1, 2,
+                                                      self.period,
+                                                      _get_week_period, 1, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -327,7 +348,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfWeek9(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, WEEK, 2, 2,
+                                                      self.period,
+                                                      _get_week_period, 2, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -350,7 +372,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth1(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 1, 1,
+                                                      self.period,
+                                                      _get_month_period, 1, 1,
                                                       FORWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -361,7 +384,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth2(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 1, 2,
+                                                      self.period,
+                                                      _get_month_period, 1, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -376,7 +400,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth3(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 2, 2,
+                                                      self.period,
+                                                      _get_month_period, 2, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -391,7 +416,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth4(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 1, 1,
+                                                      self.period,
+                                                      _get_month_period, 1, 1,
                                                       BACKWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -402,7 +428,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth5(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 1, 2,
+                                                      self.period,
+                                                      _get_month_period, 1, 2,
                                                       BACKWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -417,7 +444,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth6(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 2, 2,
+                                                      self.period,
+                                                      _get_month_period, 2, 2,
                                                       BACKWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -432,7 +460,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth7(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 1, 1,
+                                                      self.period,
+                                                      _get_month_period, 1, 1,
                                                       BOTH)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -447,7 +476,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth8(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 1, 2,
+                                                      self.period,
+                                                      _get_month_period, 1, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -470,7 +500,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfMonth9(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 2, 2,
+                                                      self.period,
+                                                      _get_month_period, 2, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -494,7 +525,8 @@ class TestRepeatPeriod(unittest.TestCase):
     def testRepeatOfMonthLargeTimeSpan(self):
         """More than 12 months time span."""
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, MONTH, 15, 1,
+                                                      self.period,
+                                                      _get_month_period, 15, 1,
                                                       BOTH)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -509,7 +541,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear1(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 1, 1,
+                                                      self.period,
+                                                      _get_year_period, 1, 1,
                                                       FORWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -520,7 +553,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear2(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 1, 2,
+                                                      self.period,
+                                                      _get_year_period, 1, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -535,7 +569,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear3(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 2, 2,
+                                                      self.period,
+                                                      _get_year_period, 2, 2,
                                                       FORWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -550,7 +585,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear4(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 1, 1,
+                                                      self.period,
+                                                      _get_year_period, 1, 1,
                                                       BACKWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -561,7 +597,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear5(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 1, 2,
+                                                      self.period,
+                                                      _get_year_period, 1, 2,
                                                       BACKWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -576,7 +613,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear6(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 2, 2,
+                                                      self.period,
+                                                      _get_year_period, 2, 2,
                                                       BACKWARD)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -591,7 +629,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear7(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 1, 1,
+                                                      self.period,
+                                                      _get_year_period, 1, 1,
                                                       BOTH)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -606,7 +645,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear8(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 1, 2,
+                                                      self.period,
+                                                      _get_year_period, 1, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -629,7 +669,8 @@ class TestRepeatPeriod(unittest.TestCase):
 
     def testRepeatOfYear9(self):
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      self.period, YEAR, 2, 2,
+                                                      self.period,
+                                                      _get_year_period, 2, 2,
                                                       BOTH)
         self.assertEquals(len(periods), 4)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -656,7 +697,7 @@ class TestRepeatPeriod(unittest.TestCase):
         end_time = datetime.datetime(2004, 2, 29, 13, 0, 0)
         period = TimePeriod(PyTimeType(), start_time, end_time)
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      period, YEAR, 1, 4,
+                                                      period, _get_year_period, 1, 4,
                                                       FORWARD)
         self.assertEquals(len(periods), 1)
         self.assertEquals(nbr_of_missing_dates, 3)
@@ -671,7 +712,7 @@ class TestRepeatPeriod(unittest.TestCase):
         end_time = datetime.datetime(2004, 2, 29, 13, 0, 0)
         period = TimePeriod(PyTimeType(), start_time, end_time)
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      period, YEAR, 1, 4,
+                                                      period, _get_year_period, 1, 4,
                                                       BOTH)
         self.assertEquals(len(periods), 2)
         self.assertEquals(nbr_of_missing_dates, 6)
@@ -690,7 +731,7 @@ class TestRepeatPeriod(unittest.TestCase):
         end_time = datetime.datetime(2010, 1, 31, 13, 0, 0)
         period = TimePeriod(PyTimeType(), start_time, end_time)
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      period, MONTH, 1, 12,
+                                                      period, _get_month_period, 1, 12,
                                                       FORWARD)
         self.assertEquals(len(periods), 7)
         self.assertEquals(nbr_of_missing_dates, 5)
@@ -729,7 +770,7 @@ class TestRepeatPeriod(unittest.TestCase):
         end_time = datetime.datetime(2010, 3, 1, 13, 0, 0)
         period = TimePeriod(PyTimeType(), start_time, end_time)
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      period, MONTH, 1, 15,
+                                                      period, _get_month_period, 1, 15,
                                                       BACKWARD)
         self.assertEquals(len(periods), 15)
         self.assertEquals(nbr_of_missing_dates, 0)
@@ -800,7 +841,7 @@ class TestRepeatPeriod(unittest.TestCase):
         end_time = datetime.datetime(2010, 11, 1, 13, 0, 0)
         period = TimePeriod(PyTimeType(), start_time, end_time)
         periods, nbr_of_missing_dates = repeat_period(PyTimeType(),
-                                                      period, MONTH, 1, 15,
+                                                      period, _get_month_period, 1, 15,
                                                       FORWARD)
         self.assertEquals(len(periods), 15)
         self.assertEquals(nbr_of_missing_dates, 0)

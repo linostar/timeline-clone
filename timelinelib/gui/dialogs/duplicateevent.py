@@ -72,7 +72,7 @@ class DuplicateEvent(wx.Dialog):
         self.rb_period.SetSelection(period)
 
     def get_period_type(self):
-        return self.rb_period.GetSelection()                             
+        return PERIOD_TYPE_MAP[self.rb_period.GetSelection()]
 
     def set_direction(self, direction):
         self.rb_direction.SetSelection(direction)                             
@@ -177,7 +177,7 @@ class DuplicateEventController(object):
             self.view.handle_db_error(e)
 
 
-def repeat_period(time_type, event_period, period_type, frequency, repetitions, 
+def repeat_period(time_type, event_period, period_fn, frequency, repetitions, 
                   direction):
         """
         Returns a list of calculated TimePeriods and the number of missing 
@@ -208,7 +208,7 @@ def repeat_period(time_type, event_period, period_type, frequency, repetitions,
         # Calculate a TimePeriod for each index
         nbr_of_missing_dates = 0
         for inx in inxs:
-            new_period = PERIOD_TYPE_MAP[period_type](time_type, event_period, inx, frequency)
+            new_period = period_fn(time_type, event_period, inx, frequency)
             if new_period == None:
                nbr_of_missing_dates += 1
                continue
