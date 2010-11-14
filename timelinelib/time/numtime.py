@@ -25,6 +25,7 @@ from timelinelib.time.typeinterface import TimeType
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
+from timelinelib.db.objects import TimePeriod
 
 
 class NumTimeType(TimeType):
@@ -73,7 +74,14 @@ class NumTimeType(TimeType):
         return sys.maxint
 
     def choose_strip(self, metrics):
-        return (StripSmall(), StripSmall())
+        one_unit_period = TimePeriod(self, 1, 2)
+        one_unit_width = metrics.calc_exact_width(one_unit_period)
+        nbr_of_units = metrics.width / one_unit_width
+        size = 1
+        while nbr_of_units > 30:
+            size *= 10
+            nbr_of_units /= 10
+        return (NumStrip(size * 10), NumStrip(size))
     
     def mult_timedelta(self, delta, num):
         return delta * num
@@ -107,22 +115,28 @@ class NumTimeType(TimeType):
     def get_name(self):
         return u"numtime"
 
-        
-class StripSmall(Strip):
+
+class NumStrip(Strip):
+    
+    def __init__(self, size):
+        self.size = size
 
     def label(self, time, major=False):
         return "%s" % (time)
 
     def start(self, time):
-        return time
-
+        start = int((time / self.size)) * self.size
+        if time < 0:
+            start -= self.size
+        return start
+    
     def increment(self, time):
-        return time + 1
+        return time + self.size
 
     def get_font(self, time_period):
         return get_default_font(8)
-
-
+    
+            
 def go_to_time_fn(main_frame, current_period, navigation_fn):
     #from timelinelib.gui.dialogs.gototime import GotoTimeDialog
     #dialog = GotoTimeDialog(main_frame, current_period.mean_time())
