@@ -256,7 +256,7 @@ class TimePeriod(object):
         MIN_ZOOM_DELTA, min_zoom_error_text = self.time_type.get_min_zoom_delta()
         delta = self.time_type.mult_timedelta(self.delta(), times / 10.0)
         new_delta = self.delta() - 2 * delta
-        if new_delta > MAX_ZOOM_DELTA:
+        if MAX_ZOOM_DELTA and new_delta > MAX_ZOOM_DELTA:
             raise ValueError(max_zoom_error_text)
         if new_delta < MIN_ZOOM_DELTA:
             raise ValueError(min_zoom_error_text)
