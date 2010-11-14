@@ -153,8 +153,7 @@ class a_diloag_with_different_settings(duplicate_event_dialog_spec_base):
 
     def _assert_move_period_called_with(self, num_list):
         self.assertEquals(
-            [((PyTimeType(), self.event.time_period, num), {})
-             for num in num_list],
+            [((self.event.time_period, num), {}) for num in num_list],
             self.move_period_fn.call_args_list)
 
     def test_count_1_freq_1_direction_forward(self):

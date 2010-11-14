@@ -38,7 +38,7 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             datetime.datetime(2010, 1, 1, 13, 0, 0))
 
     def test_move_period_num_days_adds_given_number_of_days(self):
-        new_period = move_period_num_days(PyTimeType(), self.period, 6)
+        new_period = move_period_num_days(self.period, 6)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -47,7 +47,7 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             new_period)
 
     def test_move_period_num_weeks_adds_given_number_of_weeks(self):
-        new_period = move_period_num_weeks(PyTimeType(), self.period, -3)
+        new_period = move_period_num_weeks(self.period, -3)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -56,7 +56,7 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             new_period)
 
     def test_move_period_num_months_adds_given_number_of_months(self):
-        new_period = move_period_num_months(PyTimeType(), self.period, 2)
+        new_period = move_period_num_months(self.period, 2)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -65,7 +65,7 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             new_period)
 
     def test_move_period_num_months_can_handle_year_boundries_up(self):
-        new_period = move_period_num_months(PyTimeType(), self.period, 20)
+        new_period = move_period_num_months(self.period, 20)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -74,7 +74,7 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             new_period)
 
     def test_move_period_num_months_can_handle_year_boundries_down(self):
-        new_period = move_period_num_months(PyTimeType(), self.period, -1)
+        new_period = move_period_num_months(self.period, -1)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -87,11 +87,11 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             PyTimeType(),
             datetime.datetime(2010, 1, 31, 12, 0, 0),
             datetime.datetime(2010, 1, 31, 13, 0, 0))
-        new_period = move_period_num_months(PyTimeType(), self.period, 1)
+        new_period = move_period_num_months(self.period, 1)
         self.assertEquals(None, new_period)
 
     def test_move_period_num_years_adds_given_number_of_years(self):
-        new_period = move_period_num_years(PyTimeType(), self.period, 1)
+        new_period = move_period_num_years(self.period, 1)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -104,5 +104,5 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             PyTimeType(),
             datetime.datetime(2012, 2, 29, 12, 0, 0),
             datetime.datetime(2012, 2, 29, 13, 0, 0))
-        new_period = move_period_num_years(PyTimeType(), self.period, 1)
+        new_period = move_period_num_years(self.period, 1)
         self.assertEquals(None, new_period)

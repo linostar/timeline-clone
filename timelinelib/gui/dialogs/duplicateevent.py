@@ -144,7 +144,6 @@ class DuplicateEventController(object):
 
     def create_duplicates_and_save(self):
         (periods, nbr_of_missing_dates) = self._repeat_period(
-            self.db.get_time_type(), 
             self.event.time_period, 
             self.view.get_move_period_fn(),
             self.view.get_frequency(),
@@ -161,12 +160,12 @@ class DuplicateEventController(object):
         except TimelineIOError, e:
             self.view.handle_db_error(e)
 
-    def _repeat_period(self, time_type, period, move_period_fn, frequency,
+    def _repeat_period(self, period, move_period_fn, frequency,
                        repetitions, direction):
         periods = []     
         nbr_of_missing_dates = 0
         for index in self._calc_indicies(direction, repetitions):
-            new_period = move_period_fn(time_type, period, index*frequency)
+            new_period = move_period_fn(period, index*frequency)
             if new_period == None:
                 nbr_of_missing_dates += 1
             else:

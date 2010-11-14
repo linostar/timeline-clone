@@ -571,21 +571,21 @@ def delta_to_microseconds(delta):
             delta.microseconds)
 
 
-def move_period_num_days(time_type, period, num):
+def move_period_num_days(period, num):
     delta = timedelta(days=1) * num
     start_time = period.start_time + delta  
     end_time = period.end_time + delta  
-    return TimePeriod(time_type, start_time, end_time)
+    return TimePeriod(period.time_type, start_time, end_time)
 
 
-def move_period_num_weeks(time_type, period, num):
+def move_period_num_weeks(period, num):
     delta = timedelta(weeks=1) * num
     start_time = period.start_time + delta
     end_time = period.end_time + delta
-    return TimePeriod(time_type, start_time, end_time)
+    return TimePeriod(period.time_type, start_time, end_time)
 
 
-def move_period_num_months(time_type, period, num):
+def move_period_num_months(period, num):
     try:
         delta = num
         years = abs(delta) / 12
@@ -611,18 +611,18 @@ def move_period_num_months(time_type, period, num):
         end_year = period.start_time.year + years
         start_time = period.start_time.replace(year=start_year, month=start_month)
         end_time = period.end_time.replace(year=end_year, month=end_month)
-        return TimePeriod(time_type, start_time, end_time)
+        return TimePeriod(period.time_type, start_time, end_time)
     except ValueError:
         return None
 
 
-def move_period_num_years(time_type, period, num):
+def move_period_num_years(period, num):
     try:
         delta = num
         start_year = period.start_time.year
         end_year = period.end_time.year
         start_time = period.start_time.replace(year=start_year + delta)
         end_time = period.end_time.replace(year=end_year + delta)
-        return TimePeriod(time_type, start_time, end_time)
+        return TimePeriod(period.time_type, start_time, end_time)
     except ValueError:
         return None
