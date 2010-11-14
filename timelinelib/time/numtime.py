@@ -50,6 +50,7 @@ class NumTimeType(TimeType):
 
     def get_navigation_functions(self):
         return [
+            (_("Go to &Zero\tCtrl+Z"), go_to_zero_fn),
             (_("Go to &Time\tCtrl+T"), go_to_time_fn),
             ("SEP", None),
             (_("Backward\tPgUp"), backward_fn),
@@ -146,7 +147,11 @@ class NumStrip(Strip):
     def get_font(self, time_period):
         return get_default_font(8)
     
-            
+
+def go_to_zero_fn(main_frame, current_period, navigation_fn):
+    navigation_fn(lambda tp: tp.center(0))
+    
+                
 def go_to_time_fn(main_frame, current_period, navigation_fn):
     #from timelinelib.gui.dialogs.gototime import GotoTimeDialog
     #dialog = GotoTimeDialog(main_frame, current_period.mean_time())
