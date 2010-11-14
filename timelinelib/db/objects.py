@@ -257,9 +257,9 @@ class TimePeriod(object):
         delta = self.time_type.mult_timedelta(self.delta(), times / 10.0)
         new_delta = self.delta() - 2 * delta
         if new_delta > MAX_ZOOM_DELTA:
-            raise ValueError(_("Can't zoom wider than 1200 years"))
+            raise ValueError(max_zoom_error_text)
         if new_delta < MIN_ZOOM_DELTA:
-            raise ValueError(_("Can't zoom deeper than 1 hour"))
+            raise ValueError(min_zoom_error_text)
         self.update(self.start_time, self.end_time, delta, -delta)
 
     def move(self, direction):
