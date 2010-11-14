@@ -40,6 +40,12 @@ US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
 
 class PyTimeType(TimeType):
 
+    def __eq__(self, other):
+        return isinstance(other, PyTimeType)
+
+    def __ne__(self, other):
+        return not (self == other)
+
     def time_string(self, time):
         return "%s-%s-%s %s:%s:%s" % (time.year, time.month, time.day,
                                       time.hour, time.minute, time.second)
