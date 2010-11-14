@@ -35,19 +35,10 @@ BOTH = 2
 
 
 class DuplicateEvent(wx.Dialog):
-    """
-    This dialog is used to make copies of one selected event.
-    """
 
     def __init__(self, parent, db, event):
-        """
-        Arguments:
-            parent      The parent window (mainframe)
-            db          The event database object used by the application
-            event       The event object to be duplicated
-        """
         wx.Dialog.__init__(self, parent, title=_("Duplicate Event"))
-        self._create_gui()
+        self._create_gui(_get_period_fns())
         self.controller = DuplicateEventController(self, db, event)
         self.controller.initialize()
 
@@ -86,9 +77,9 @@ class DuplicateEvent(wx.Dialog):
             _("%d Events not duplicated due to missing dates.") 
             % error_count)
         
-    def _create_gui(self):
-        self._move_period_fns = [fn for (label, fn) in _get_period_fns()]
-        period_list = [label for (label, fn) in _get_period_fns()]
+    def _create_gui(self, move_period_config):
+        self._move_period_fns = [fn for (label, fn) in move_period_config]
+        period_list = [label for (label, fn) in move_period_config]
         direction_list = [_("Forward"), _("Backward"), _("Both")]
         # Create all controls
         sc_count_box = self._creat_count_spin_control()
@@ -144,7 +135,6 @@ class DuplicateEventController(object):
         self.view = view
         self.db = db
         self.event = event
-        self.period = self.event.time_period
         
     def initialize(self):
         self.view.set_count(1)
@@ -153,13 +143,13 @@ class DuplicateEventController(object):
         self.view.set_direction(FORWARD)
 
     def create_duplicates_and_save(self):
-        repetitions = self.view.get_count()
-        move_period_fn = self.view.get_move_period_fn()
-        frequency = self.view.get_frequency()
-        direction = self.view.get_direction()
-        periods, nbr_of_missing_dates = self._repeat_period(
-            self.db.get_time_type(), self.period, move_period_fn, 
-            frequency, repetitions, direction)
+        (periods, nbr_of_missing_dates) = self._repeat_period(
+            self.db.get_time_type(), 
+            self.event.time_period, 
+            self.view.get_move_period_fn(),
+            self.view.get_frequency(),
+            self.view.get_count(),
+            self.view.get_direction())
         try:
             for period in periods: 
                 event = self.event.clone()
@@ -171,43 +161,29 @@ class DuplicateEventController(object):
         except TimelineIOError, e:
             self.view.handle_db_error(e)
 
-    def _repeat_period(self, time_type, event_period, period_fn, frequency, repetitions, 
-                       direction):
-            """
-            Returns a list of calculated TimePeriods and the number of missing 
-            dates as tuple (periods, nbr_of_missing_dates).
-            
-            Missing dates, can occur for example if you try do duplicate a
-            TimePeriod each month and the TimePeriod starts at 2010-01-31.
-            2010-02-31 Doesn't exist, so it's a missing date.
-            
-            Arguments:
-                event_period    The TimePeriod of the event that is duplicated
-                period_type     A member of (DAY, WEEK, MONTH, YEAR)
-                frequency       A number saying how often a period will be created.
-                                1=Every period_type, 2=Every second Period_type, ..
-                repetitions     A number saying how many duplicates to create in
-                                each direction.
-                direction       A member of (FORWARD, BACKWARD, BOTH)
-            """
-            # Calculate indexes relative the event_period for the periods to create
-            if direction == FORWARD:
-                inxs = range(1, repetitions + 1)
-            elif direction == BACKWARD:
-                inxs = range(-repetitions, 0)
-            elif direction == BOTH:
-                inxs = range(-repetitions, repetitions + 1)
-                inxs.remove(0)
-            periods = []     
-            # Calculate a TimePeriod for each index
-            nbr_of_missing_dates = 0
-            for inx in inxs:
-                new_period = period_fn(time_type, event_period, inx, frequency)
-                if new_period == None:
-                   nbr_of_missing_dates += 1
-                   continue
+    def _repeat_period(self, time_type, period, move_period_fn, frequency,
+                       repetitions, direction):
+        periods = []     
+        nbr_of_missing_dates = 0
+        for index in self._calc_indicies(direction, repetitions):
+            new_period = move_period_fn(time_type, period, index, frequency)
+            if new_period == None:
+                nbr_of_missing_dates += 1
+            else:
                 periods.append(new_period)     
-            return periods, nbr_of_missing_dates
+        return (periods, nbr_of_missing_dates)
+
+    def _calc_indicies(self, direction, repetitions):
+        if direction == FORWARD:
+            return range(1, repetitions + 1)
+        elif direction == BACKWARD:
+            return range(-repetitions, 0)
+        elif direction == BOTH:
+            indicies = range(-repetitions, repetitions + 1)
+            indicies.remove(0)
+            return indicies
+        else:
+            raise Exception("Invalid direction.")
     
 
 # TODO: Move all below to TimeType
