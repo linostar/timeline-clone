@@ -163,9 +163,9 @@ def go_to_time_fn(main_frame, current_period, navigation_fn):
 
 def backward_fn(main_frame, current_period, navigation_fn):
     delta = current_period.start_time - current_period.end_time
-    navigation_fn(lambda tp, d=delta: tp.move_page(d))
+    navigation_fn(lambda tp: tp.move_delta(delta))
 
 
 def forward_fn(main_frame, current_period, navigation_fn):
     delta = current_period.end_time - current_period.start_time  
-    navigation_fn(lambda tp, d=delta: tp.move_page(d))
+    navigation_fn(lambda tp: tp.move_delta(delta))
