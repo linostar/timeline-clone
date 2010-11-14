@@ -571,25 +571,25 @@ def delta_to_microseconds(delta):
             delta.microseconds)
 
 
-def _get_day_period(time_type, period, inx, frequency):
-    delta = timedelta(days=1) * frequency * inx
+def _get_day_period(time_type, period, num):
+    delta = timedelta(days=1) * num
     start_time = period.start_time + delta  
     end_time = period.end_time + delta  
     return TimePeriod(time_type, start_time, end_time)
 
 
-def _get_week_period(time_type, period, inx, frequency):
-    delta = timedelta(weeks=1) * frequency * inx
+def _get_week_period(time_type, period, num):
+    delta = timedelta(weeks=1) * num
     start_time = period.start_time + delta
     end_time = period.end_time + delta
     return TimePeriod(time_type, start_time, end_time)
 
 
-def _get_month_period(time_type, period, inx, frequency):
+def _get_month_period(time_type, period, num):
     try:
-        delta = inx * frequency
+        delta = num
         years = abs(delta) / 12
-        if inx < 0:
+        if num < 0:
             years = -years
         delta = delta - 12 * years
         if delta < 0:
@@ -616,9 +616,9 @@ def _get_month_period(time_type, period, inx, frequency):
         return None
 
 
-def _get_year_period(time_type, period, inx, frequency):
+def _get_year_period(time_type, period, num):
     try:
-        delta = inx * frequency
+        delta = num
         start_year = period.start_time.year
         end_year = period.end_time.year
         start_time = period.start_time.replace(year=start_year + delta)

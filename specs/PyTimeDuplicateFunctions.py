@@ -37,8 +37,8 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             datetime.datetime(2010, 1, 1, 12, 0, 0),
             datetime.datetime(2010, 1, 1, 13, 0, 0))
 
-    def test_day_period_adds_index_times_frequencey_days(self):
-        new_period = _get_day_period(PyTimeType(), self.period, 2, 3)
+    def test_day_period_adds_given_number_of_days(self):
+        new_period = _get_day_period(PyTimeType(), self.period, 6)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -46,8 +46,8 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
                 datetime.datetime(2010, 1, 7, 13, 0, 0)),
             new_period)
 
-    def test_week_period_adds_index_times_frequencey_weeks(self):
-        new_period = _get_week_period(PyTimeType(), self.period, -1, 3)
+    def test_week_period_adds_given_number_of_weeks(self):
+        new_period = _get_week_period(PyTimeType(), self.period, -3)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -55,8 +55,8 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
                 datetime.datetime(2009, 12, 11, 13, 0, 0)),
             new_period)
 
-    def test_month_period_adds_index_times_frquencey_months(self):
-        new_period = _get_month_period(PyTimeType(), self.period, 2, 1)
+    def test_month_period_adds_given_number_of_months(self):
+        new_period = _get_month_period(PyTimeType(), self.period, 2)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -65,7 +65,7 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             new_period)
 
     def test_month_period_can_handle_year_boundries_up(self):
-        new_period = _get_month_period(PyTimeType(), self.period, 20, 1)
+        new_period = _get_month_period(PyTimeType(), self.period, 20)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -74,7 +74,7 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             new_period)
 
     def test_month_period_can_handle_year_boundries_down(self):
-        new_period = _get_month_period(PyTimeType(), self.period, -1, 1)
+        new_period = _get_month_period(PyTimeType(), self.period, -1)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -87,11 +87,11 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             PyTimeType(),
             datetime.datetime(2010, 1, 31, 12, 0, 0),
             datetime.datetime(2010, 1, 31, 13, 0, 0))
-        new_period = _get_month_period(PyTimeType(), self.period, 1, 1)
+        new_period = _get_month_period(PyTimeType(), self.period, 1)
         self.assertEquals(None, new_period)
 
-    def test_year_period_adds_index_times_frequencey_years(self):
-        new_period = _get_year_period(PyTimeType(), self.period, 1, 1)
+    def test_year_period_adds_given_number_of_years(self):
+        new_period = _get_year_period(PyTimeType(), self.period, 1)
         self.assertEquals(
             TimePeriod(
                 PyTimeType(),
@@ -104,5 +104,5 @@ class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
             PyTimeType(),
             datetime.datetime(2012, 2, 29, 12, 0, 0),
             datetime.datetime(2012, 2, 29, 13, 0, 0))
-        new_period = _get_year_period(PyTimeType(), self.period, 1, 1)
+        new_period = _get_year_period(PyTimeType(), self.period, 1)
         self.assertEquals(None, new_period)

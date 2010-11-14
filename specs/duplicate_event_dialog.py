@@ -151,44 +151,44 @@ class when_event_can_not_be_duplicated(duplicate_event_dialog_spec_base):
 
 class a_diloag_with_different_settings(duplicate_event_dialog_spec_base):
 
-    def _assert_move_period_called_with(self, index_and_freq_list):
+    def _assert_move_period_called_with(self, num_list):
         self.assertEquals(
-            [((PyTimeType(), self.event.time_period, index, freq), {})
-             for (index, freq) in index_and_freq_list],
+            [((PyTimeType(), self.event.time_period, num), {})
+             for num in num_list],
             self.move_period_fn.call_args_list)
 
     def test_count_1_freq_1_direction_forward(self):
         self._duplicate_with(count=1, freq=1, direction=FORWARD)
-        self._assert_move_period_called_with([(1, 1)])
+        self._assert_move_period_called_with([1])
 
     def test_count_1_freq_1_direction_backward(self):
         self._duplicate_with(count=1, freq=1, direction=BACKWARD)
-        self._assert_move_period_called_with([(-1, 1)])
+        self._assert_move_period_called_with([-1])
 
     def test_count_1_freq_1_direction_both(self):
         self._duplicate_with(count=1, freq=1, direction=BOTH)
-        self._assert_move_period_called_with([(-1, 1), (1, 1)])
+        self._assert_move_period_called_with([-1, 1])
 
     def test_count_2_freq_1_direction_forward(self):
         self._duplicate_with(count=2, freq=1, direction=FORWARD)
-        self._assert_move_period_called_with([(1, 1), (2, 1)])
+        self._assert_move_period_called_with([1, 2])
 
     def test_count_2_freq_1_direction_backward(self):
         self._duplicate_with(count=2, freq=1, direction=BACKWARD)
-        self._assert_move_period_called_with([(-2, 1), (-1, 1)])
+        self._assert_move_period_called_with([-2, -1])
 
     def test_count_2_freq_1_direction_both(self):
         self._duplicate_with(count=2, freq=1, direction=BOTH)
-        self._assert_move_period_called_with([(-2, 1), (-1, 1), (1, 1), (2, 1)])
+        self._assert_move_period_called_with([-2, -1, 1, 2])
 
     def test_count_1_freq_2_direction_forward(self):
         self._duplicate_with(count=1, freq=2, direction=FORWARD)
-        self._assert_move_period_called_with([(1, 2)])
+        self._assert_move_period_called_with([2])
 
     def test_count_1_freq_2_direction_backward(self):
         self._duplicate_with(count=1, freq=2, direction=BACKWARD)
-        self._assert_move_period_called_with([(-1, 2)])
+        self._assert_move_period_called_with([-2])
 
     def test_count_1_freq_2_direction_both(self):
         self._duplicate_with(count=1, freq=2, direction=BOTH)
-        self._assert_move_period_called_with([(-1, 2), (1, 2)])
+        self._assert_move_period_called_with([-2, 2])

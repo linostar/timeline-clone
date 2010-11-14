@@ -166,7 +166,7 @@ class DuplicateEventController(object):
         periods = []     
         nbr_of_missing_dates = 0
         for index in self._calc_indicies(direction, repetitions):
-            new_period = move_period_fn(time_type, period, index, frequency)
+            new_period = move_period_fn(time_type, period, index*frequency)
             if new_period == None:
                 nbr_of_missing_dates += 1
             else:
