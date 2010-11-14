@@ -80,6 +80,9 @@ class ATimeType(TimeType):
     def get_zero_delta(self):
         return ADelta(0)
 
+    def format_period(self, period):
+        return "%s to %s" % (period.start_time.num, period.end_time.num)
+
 
 class time_period_spec(unittest.TestCase):
 
@@ -124,14 +127,6 @@ class time_period_spec(unittest.TestCase):
             tp,
             TimePeriod(ATimeType(), ATime(96), ATime(100)))
 
-
-class TimePeriodSpec(unittest.TestCase):
-
-    def testFormatsPeriodUsingTimeType(self):
-        time_period = TimePeriod(PyTimeType(), 
-                                 datetime.datetime(2010, 8, 01, 13, 44),
-                                 datetime.datetime(2010, 8, 02, 13, 30))
-        # TODO: Make month name same on all os and tests
-        month = calendar.month_abbr[8]
-        self.assertEquals(u"1 %s 2010 13:44 to 2 %s 2010 13:30" % (month, month), 
-                          time_period.get_label())
+    def test_formats_period_using_time_type(self):
+        time_period = TimePeriod(ATimeType(), ATime(5), ATime(9))
+        self.assertEquals("5 to 9", time_period.get_label())
