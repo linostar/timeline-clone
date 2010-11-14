@@ -118,10 +118,12 @@ class PyTimeType(TimeType):
         return label
 
     def get_min_time(self):
-        return datetime(10, 1, 1)
+        min_time = datetime(10, 1, 1)
+        return (min_time, _("can't be before year 10"))
 
     def get_max_time(self):
-        return datetime(9990, 1, 1)
+        max_time = datetime(9990, 1, 1)
+        return (max_time, _("can't be after year 9989"))
     
     def choose_strip(self, metrics):
         """

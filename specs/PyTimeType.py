@@ -63,8 +63,8 @@ class PyTimeTypeSpec(unittest.TestCase):
 
     def testReturnsMinTime(self):
         self.assertEquals(datetime.datetime(10, 1, 1), 
-                          self.time_type.get_min_time())
+                          self.time_type.get_min_time()[0]) 
 
     def testReturnsMaxTime(self):
         self.assertEquals(datetime.datetime(9990, 1, 1), 
-                          self.time_type.get_max_time())
+                          self.time_type.get_max_time()[0])

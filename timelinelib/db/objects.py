@@ -212,14 +212,10 @@ class TimePeriod(object):
         [self.time_type.get_min_time(), self.time_type.get_max_time()] or if 
         the start time is larger than the end time.
         """
-        pos_error = _("Start time can't be after year 9989")
-        neg_error = _("Start time can't be before year 10")
-        new_start = self._ensure_within_range(start_time, start_delta,
-                                              pos_error, neg_error)
-        pos_error = _("End time can't be after year 9989")
-        neg_error = _("End time can't be before year 10")
+        new_start = self._ensure_within_range(start_time, start_delta, 
+                                              _("Start time "))
         new_end = self._ensure_within_range(end_time, end_delta,
-                                            pos_error, neg_error)
+                                            _("End time "))
         if new_start > new_end:
             raise ValueError(_("Start time can't be after end time"))
         self.start_time = new_start
@@ -289,12 +285,12 @@ class TimePeriod(object):
         start_overflow = self._calculate_overflow(self.start_time, delta)[1]
         end_overflow = self._calculate_overflow(self.end_time, delta)[1]
         if start_overflow == -1:
-            delta = self.time_type.get_min_time() - self.start_time
+            delta = self.time_type.get_min_time()[0] - self.start_time
         elif end_overflow == 1:
-            delta = self.time_type.get_max_time() - self.end_time
+            delta = self.time_type.get_max_time()[0] - self.end_time
         self.move_delta(delta)
 
-    def _ensure_within_range(self, time, delta, pos_error, neg_error):
+    def _ensure_within_range(self, time, delta, error_prefix):
         """
         Return new time (time + delta) or raise ValueError if it is not within
         the range [self.time_type.get_min_time(), 
@@ -302,11 +298,10 @@ class TimePeriod(object):
         """
         if delta == None:
             delta = self.time_type.get_zero_delta()
-        new_time, overflow = self._calculate_overflow(time, delta)
-        if overflow > 0:
-            raise ValueError(pos_error)
-        elif overflow < 0:
-            raise ValueError(neg_error)
+        new_time, overflow, error_text = self._calculate_overflow(time, delta)
+        if overflow != 0:
+            error_text = "%s %s" % (error_prefix, error_text)
+            raise ValueError(error_text)
         else:
             return new_time
 
@@ -320,17 +315,19 @@ class TimePeriod(object):
         If overflow flag is 0 new time is time + delta, otherwise None.
         """
         try:
+            min_time, min_error_text = self.time_type.get_min_time()
+            max_time, max_error_text = self.time_type.get_max_time()
             new_time = time + delta
-            if new_time < self.time_type.get_min_time():
-                return (None, -1)
-            if new_time > self.time_type.get_max_time():
-                return (None, 1)
-            return (new_time, 0)
+            if new_time < min_time:
+                return (None, -1, min_error_text)
+            if new_time > max_time:
+                return (None, 1, max_error_text)
+            return (new_time, 0, "")
         except OverflowError:
             if delta > self.time_type.get_zero_delta():
-                return (None, 1)
+                return (None, 1, max_error_text)
             else:
-                return (None, -1)
+                return (None, -1, min_error_text)
 
     def get_label(self):
         """Returns a unicode string describing the time period."""

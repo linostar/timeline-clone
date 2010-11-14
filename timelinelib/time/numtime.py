@@ -68,10 +68,11 @@ class NumTimeType(TimeType):
         return label
     
     def get_min_time(self):
-        return -sys.maxint - 1
+        min = -sys.maxint - 1
+        return (min, _("can't be before %d") % min)
 
     def get_max_time(self):
-        return sys.maxint
+        return (sys.maxint, _("can't be after %d") % sys.maxint)
 
     def choose_strip(self, metrics):
         one_unit_period = TimePeriod(self, 1, 2)
