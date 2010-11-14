@@ -105,7 +105,7 @@ class NumTimeType(TimeType):
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
         delta = time_period.end_time - time_period.start_time
-        return delta * x_percent_of_width 
+        return time_period.start_time + delta * x_percent_of_width  
         
     def div_timedeltas(self, delta1, delta2):
        return delta1 / delta2
