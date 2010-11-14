@@ -16,8 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from datetime import timedelta
-
 import wx
 
 from timelinelib.db.interface import TimelineIOError

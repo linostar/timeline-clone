@@ -59,7 +59,6 @@ def add_unittests(suite):
         module = sys.modules[module_name]
         module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
         suite.addTest(module_suite)
-    add_tests_from_module("tests.unit.db.objects")
     add_tests_from_module("tests.unit.db.backends.file")
     add_tests_from_module("tests.unit.gui.utils")
     add_tests_from_module("tests.unit.gui.dialogs.mainframe")
