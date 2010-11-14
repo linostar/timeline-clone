@@ -24,13 +24,13 @@ import os
 import stat
 import datetime
 
-from timelinelib.time import PyTimeType
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.backends.file import FileTimeline
 from timelinelib.db.backends.file import quote
 from timelinelib.db.backends.file import dequote
 from timelinelib.db.backends.file import split_on_semicolon
+from timelinelib.time import PyTimeType
 from timelinelib.drawing.interface import ViewProperties
 
 
