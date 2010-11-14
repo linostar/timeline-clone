@@ -196,10 +196,10 @@ class PyTimeType(TimeType):
 
     def get_duplicate_functions(self):
         return [
-            (_("Day"), _get_day_period),
-            (_("Week"), _get_week_period),
-            (_("Month"), _get_month_period),
-            (_("Year"), _get_year_period),
+            (_("Day"), move_period_num_days),
+            (_("Week"), move_period_num_weeks),
+            (_("Month"), move_period_num_months),
+            (_("Year"), move_period_num_years),
         ]
     
     
@@ -571,21 +571,21 @@ def delta_to_microseconds(delta):
             delta.microseconds)
 
 
-def _get_day_period(time_type, period, num):
+def move_period_num_days(time_type, period, num):
     delta = timedelta(days=1) * num
     start_time = period.start_time + delta  
     end_time = period.end_time + delta  
     return TimePeriod(time_type, start_time, end_time)
 
 
-def _get_week_period(time_type, period, num):
+def move_period_num_weeks(time_type, period, num):
     delta = timedelta(weeks=1) * num
     start_time = period.start_time + delta
     end_time = period.end_time + delta
     return TimePeriod(time_type, start_time, end_time)
 
 
-def _get_month_period(time_type, period, num):
+def move_period_num_months(time_type, period, num):
     try:
         delta = num
         years = abs(delta) / 12
@@ -616,7 +616,7 @@ def _get_month_period(time_type, period, num):
         return None
 
 
-def _get_year_period(time_type, period, num):
+def move_period_num_years(time_type, period, num):
     try:
         delta = num
         start_year = period.start_time.year
