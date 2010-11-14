@@ -44,7 +44,7 @@ class duplicate_event_dialog_spec_base(unittest.TestCase):
 
     def _create_view_mock(self):
         self.view = Mock(DuplicateEvent)
-        self.view.get_period_type.return_value = self._create_move_period_fn_mock()
+        self.view.get_move_period_fn.return_value = self._create_move_period_fn_mock()
         return self.view
 
     def _create_move_period_fn_mock(self):
@@ -86,7 +86,7 @@ class a_newly_initialized_dialog(duplicate_event_dialog_spec_base):
         self.view.set_count.assert_called_with(1)
 
     def test_first_period_should_be_selected(self):
-        self.view.set_period_type.assert_called_with(0)
+        self.view.select_move_period_fn_at_index.assert_called_with(0)
 
     def test_frequency_should_be_one(self):
         self.view.set_frequency.assert_called_with(1)

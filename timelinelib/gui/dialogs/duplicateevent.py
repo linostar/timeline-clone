@@ -63,11 +63,11 @@ class DuplicateEvent(wx.Dialog):
     def get_frequency(self):
         return self.sc_frequency.GetValue() 
         
-    def set_period_type(self, period):
-        self.rb_period.SetSelection(period)
+    def select_move_period_fn_at_index(self, index):
+        self.rb_period.SetSelection(index)
 
-    def get_period_type(self):
-        return self._period_fns[self.rb_period.GetSelection()][1]
+    def get_move_period_fn(self):
+        return self._move_period_fns[self.rb_period.GetSelection()]
 
     def set_direction(self, direction):
         self.rb_direction.SetSelection(direction)                             
@@ -87,18 +87,18 @@ class DuplicateEvent(wx.Dialog):
             % error_count)
         
     def _create_gui(self):
-        self._period_fns = _get_period_fns()
-        PERIOD_LIST = [x for (x, y) in self._period_fns]
-        DIRECTION_LIST = [_("Forward"), _("Backward"), _("Both")]
+        self._move_period_fns = [fn for (label, fn) in _get_period_fns()]
+        period_list = [label for (label, fn) in _get_period_fns()]
+        direction_list = [_("Forward"), _("Backward"), _("Both")]
         # Create all controls
         sc_count_box = self._creat_count_spin_control()
         sc_frequency_box = self._creat_frequency_spin_control()
         self.rb_period = wx.RadioBox(self, wx.ID_ANY, _("Period"), 
                                           wx.DefaultPosition, wx.DefaultSize, 
-                                          PERIOD_LIST)#, 1, 
+                                          period_list)#, 1, 
                                           #wx.RA_SPECIFY_COLS)
         self.rb_direction = wx.RadioBox(self, wx.ID_ANY, _("Direction"), 
-                                        choices=DIRECTION_LIST)
+                                        choices=direction_list)
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         # Place controls in grid
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -149,16 +149,16 @@ class DuplicateEventController(object):
     def initialize(self):
         self.view.set_count(1)
         self.view.set_frequency(1)
-        self.view.set_period_type(0)
+        self.view.select_move_period_fn_at_index(0)
         self.view.set_direction(FORWARD)
 
     def create_duplicates_and_save(self):
         repetitions = self.view.get_count()
-        period_type = self.view.get_period_type()
+        move_period_fn = self.view.get_move_period_fn()
         frequency = self.view.get_frequency()
         direction = self.view.get_direction()
         periods, nbr_of_missing_dates = self._repeat_period(
-            self.db.get_time_type(), self.period, period_type, 
+            self.db.get_time_type(), self.period, move_period_fn, 
             frequency, repetitions, direction)
         try:
             for period in periods: 
