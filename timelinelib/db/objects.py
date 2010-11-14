@@ -318,9 +318,9 @@ class TimePeriod(object):
             min_time, min_error_text = self.time_type.get_min_time()
             max_time, max_error_text = self.time_type.get_max_time()
             new_time = time + delta
-            if new_time < min_time:
+            if min_time and new_time < min_time:
                 return (None, -1, min_error_text)
-            if new_time > max_time:
+            if max_time and new_time > max_time:
                 return (None, 1, max_error_text)
             return (new_time, 0, "")
         except OverflowError:

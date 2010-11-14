@@ -57,8 +57,8 @@ class NumTimePickerController(object):
 
     def __init__(self, time_picker, default_num_time):
         self.time_picker = time_picker
-        self.time_picker.set_range(NumTimeType().get_min_time(), 
-                                   NumTimeType().get_max_time())
+        #self.time_picker.set_range(NumTimeType().get_min_time(), 
+        #                           NumTimeType().get_max_time())
         self.default_num_time = default_num_time
 
     def get_value(self):
