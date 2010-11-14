@@ -93,10 +93,10 @@ class NumTimeType(TimeType):
        return delta1 / delta2
     
     def get_max_zoom_delta(self):
-        return 1000
+        return (50, _("Can't zoom wider than 50"))
 
     def get_min_zoom_delta(self):
-        return 2
+        return (5, _("Can't zoom deeper than 5"))
     
     def get_zero_delta(self):
         return 0

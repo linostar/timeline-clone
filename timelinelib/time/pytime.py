@@ -171,10 +171,11 @@ class PyTimeType(TimeType):
         return total_us1 / float(total_us2)        
 
     def get_max_zoom_delta(self):
-        return timedelta(days=1200*365)
+        return (timedelta(days=1200*365), 
+                _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):
-        return timedelta(hours=1)
+        return (timedelta(hours=1), _("Can't zoom deeper than 1 hour"))
 
     def get_zero_delta(self):
         return timedelta(0)
