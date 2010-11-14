@@ -23,10 +23,10 @@ from mock import Mock
 
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time import PyTimeType
-from timelinelib.gui.dialogs.duplicateevent import _get_day_period
-from timelinelib.gui.dialogs.duplicateevent import _get_week_period
-from timelinelib.gui.dialogs.duplicateevent import _get_month_period
-from timelinelib.gui.dialogs.duplicateevent import _get_year_period
+from timelinelib.time.pytime import _get_day_period
+from timelinelib.time.pytime import _get_week_period
+from timelinelib.time.pytime import _get_month_period
+from timelinelib.time.pytime import _get_year_period
 
 
 class PyTimeDuplicateFunctionsSpec(unittest.TestCase):

@@ -38,7 +38,7 @@ class DuplicateEvent(wx.Dialog):
 
     def __init__(self, parent, db, event):
         wx.Dialog.__init__(self, parent, title=_("Duplicate Event"))
-        self._create_gui(_get_period_fns())
+        self._create_gui(db.get_time_type().get_duplicate_functions())
         self.controller = DuplicateEventController(self, db, event)
         self.controller.initialize()
 
@@ -184,72 +184,3 @@ class DuplicateEventController(object):
             return indicies
         else:
             raise Exception("Invalid direction.")
-    
-
-# TODO: Move all below to TimeType
-
-
-def _get_day_period(time_type, period, inx, frequency):
-    delta = timedelta(days=1) * frequency * inx
-    start_time = period.start_time + delta  
-    end_time = period.end_time + delta  
-    return TimePeriod(time_type, start_time, end_time)
-
-
-def _get_week_period(time_type, period, inx, frequency):
-    delta = timedelta(weeks=1) * frequency * inx
-    start_time = period.start_time + delta
-    end_time = period.end_time + delta
-    return TimePeriod(time_type, start_time, end_time)
-
-
-def _get_month_period(time_type, period, inx, frequency):
-    try:
-        delta = inx * frequency
-        years = abs(delta) / 12
-        if inx < 0:
-            years = -years
-        delta = delta - 12 * years
-        if delta < 0:
-            start_month = period.start_time.month + 12 + delta
-            end_month = period.end_time.month + 12 + delta
-            if start_month > 12:
-                start_month -=12
-                end_month -=12
-            if start_month > period.start_time.month:
-                years -= 1
-        else:
-            start_month = period.start_time.month + delta
-            end_month = period.start_time.month + delta
-            if start_month > 12:
-                start_month -=12
-                end_month -=12
-                years += 1
-        start_year = period.start_time.year + years
-        end_year = period.start_time.year + years
-        start_time = period.start_time.replace(year=start_year, month=start_month)
-        end_time = period.end_time.replace(year=end_year, month=end_month)
-        return TimePeriod(time_type, start_time, end_time)
-    except ValueError:
-        return None
-
-
-def _get_year_period(time_type, period, inx, frequency):
-    try:
-        delta = inx * frequency
-        start_year = period.start_time.year
-        end_year = period.end_time.year
-        start_time = period.start_time.replace(year=start_year + delta)
-        end_time = period.end_time.replace(year=end_year + delta)
-        return TimePeriod(time_type, start_time, end_time)
-    except ValueError:
-        return None
-
-
-def _get_period_fns():
-    return [
-        (_("Day"), _get_day_period),
-        (_("Week"), _get_week_period),
-        (_("Month"), _get_month_period),
-        (_("Year"), _get_year_period),
-    ]

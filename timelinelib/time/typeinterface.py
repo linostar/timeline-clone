@@ -75,3 +75,6 @@ class TimeType(object):
 
     def get_name(self):
         raise NotImplementedError("get_name not implemented.")
+
+    def get_duplicate_functions(self):
+        raise NotImplementedError("get_duplicate_functions not implemented.")
