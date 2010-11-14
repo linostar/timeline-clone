@@ -30,11 +30,17 @@ class ATime(object):
     def __init__(self, num):
         self.num = num
 
+    # Exists only only to simplify testing
     def __eq__(self, other):
         return isinstance(other, ATime) and self.num == other.num
 
+    # Exists only only to simplify testing
     def __ne__(self, ohter):
         return not (self == other)
+
+    # Exists only only to simplify testing
+    def __repr__(self):
+        return "ATime<%s>" % self.num
 
     def __add__(self, other):
         if isinstance(other, ADelta):
@@ -57,11 +63,36 @@ class ADelta(object):
     def __init__(self, num):
         self.num = num
 
+    # Exists only only to simplify testing
     def __eq__(self, other):
         return isinstance(other, ADelta) and self.num == other.num
 
+    # Exists only only to simplify testing
     def __ne__(self, ohter):
         return not (self == other)
+
+    # Exists only only to simplify testing
+    def __repr__(self):
+        return "ADelta<%s>" % self.num
+
+    def __neg__(self):
+        return ADelta(-self.num)
+
+    def __lt__(self, other):
+        return self.num < other.num
+
+    def __gt__(self, other):
+        return other < self
+
+    def __sub__(self, other):
+        if isinstance(other, ADelta):
+            return ADelta(self.num - other.num)
+        raise Exception("Only delta-delta supported")
+
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            return ADelta(self.num*other)
+        raise Exception("Only int*delta supported")
 
     def __div__(self, other):
         if isinstance(other, int):
@@ -82,6 +113,15 @@ class ATimeType(TimeType):
 
     def format_period(self, period):
         return "%s to %s" % (period.start_time.num, period.end_time.num)
+
+    def mult_timedelta(self, delta, times):
+        return ADelta(int(delta.num * times))
+
+    def get_min_zoom_delta(self):
+        return (ADelta(1), "")
+
+    def get_max_zoom_delta(self):
+        return (ADelta(100), "")
 
 
 class time_period_spec(unittest.TestCase):
@@ -130,3 +170,38 @@ class time_period_spec(unittest.TestCase):
     def test_formats_period_using_time_type(self):
         time_period = TimePeriod(ATimeType(), ATime(5), ATime(9))
         self.assertEquals("5 to 9", time_period.get_label())
+
+    def test_move_moves_1_10th_forward(self):
+        time_period = TimePeriod(ATimeType(), ATime(0), ATime(10))
+        time_period.move(1)
+        self.assertEquals(
+            time_period,
+            TimePeriod(ATimeType(), ATime(1), ATime(11)))
+
+    def test_move_moves_1_10th_backward(self):
+        time_period = TimePeriod(ATimeType(), ATime(20), ATime(30))
+        time_period.move(-1)
+        self.assertEquals(
+            time_period,
+            TimePeriod(ATimeType(), ATime(19), ATime(29)))
+
+    def test_zoom_in_removes_1_10th_on_each_side(self):
+        time_period = TimePeriod(ATimeType(), ATime(10), ATime(20))
+        time_period.zoom(1)
+        self.assertEquals(
+            time_period,
+            TimePeriod(ATimeType(), ATime(11), ATime(19)))
+
+    def test_zoom_out_adds_1_10th_on_each_side(self):
+        time_period = TimePeriod(ATimeType(), ATime(10), ATime(20))
+        time_period.zoom(-1)
+        self.assertEquals(
+            time_period,
+            TimePeriod(ATimeType(), ATime(9), ATime(21)))
+
+    def test_move_delta_moves_the_period_that_delta(self):
+        time_period = TimePeriod(ATimeType(), ATime(10), ATime(20))
+        time_period.move_delta(ADelta(-10))
+        self.assertEquals(
+            time_period,
+            TimePeriod(ATimeType(), ATime(0), ATime(10)))
