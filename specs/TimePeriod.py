@@ -103,10 +103,10 @@ class ADelta(object):
 class ATimeType(TimeType):
 
     def get_min_time(self):
-        return ATime(0)
+        return (ATime(0), "can't be before 0")
 
     def get_max_time(self):
-        return ATime(100)
+        return (ATime(100), "can't be after 100")
 
     def get_zero_delta(self):
         return ADelta(0)
