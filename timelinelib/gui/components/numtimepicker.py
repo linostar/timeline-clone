@@ -40,6 +40,9 @@ class NumTimePicker(wx.Panel):
     def set_range(self, min, max):
         self.time_picker.SetRange(min, max)
 
+    def select_all(self):
+        self.time_picker.SetSelection(0, len(str(self.get_value())))
+        
     def _create_gui(self):
         time_picker = wx.SpinCtrl(self, -1, "", (30, 50))
         self.Bind(wx.EVT_SPINCTRL, self.OnSpin, time_picker)

@@ -19,7 +19,7 @@
 import sys
 import re
 
-#import wx
+import wx
 
 from timelinelib.time.typeinterface import TimeType
 from timelinelib.db.objects import time_period_center
@@ -153,12 +153,11 @@ def go_to_zero_fn(main_frame, current_period, navigation_fn):
     
                 
 def go_to_time_fn(main_frame, current_period, navigation_fn):
-    #from timelinelib.gui.dialogs.gototime import GotoTimeDialog
-    #dialog = GotoTimeDialog(main_frame, current_period.mean_time())
-    #if dialog.ShowModal() == wx.ID_OK:
-    #    navigation_fn(lambda tp: tp.center(dialog.time))
-    #dialog.Destroy()
-    raise NotImplementedError("go_to_time_fn not implemented.")
+    from timelinelib.gui.dialogs.gotonumtime import GotoNumTimeDialog
+    dialog = GotoNumTimeDialog(main_frame, current_period.mean_time())
+    if dialog.ShowModal() == wx.ID_OK:
+        navigation_fn(lambda tp: tp.center(dialog.get_time()))
+    dialog.Destroy()
 
 
 def backward_fn(main_frame, current_period, navigation_fn):
