@@ -126,6 +126,13 @@ class NumTimeType(TimeType):
     def get_name(self):
         return u"numtime"
 
+    def get_duplicate_functions(self):
+        return [
+            (_("1-period"), lambda p, d : move_period(p, d)),
+            (_("10-period"), lambda p, d : move_period(p, d * 10)),
+            (_("100-period"), lambda p, d : move_period(p, d * 100)),
+            (_("1000-period"), lambda p, d : move_period(p, d * 1000)),
+        ]
 
 class NumStrip(Strip):
     
@@ -168,3 +175,9 @@ def backward_fn(main_frame, current_period, navigation_fn):
 def forward_fn(main_frame, current_period, navigation_fn):
     delta = current_period.end_time - current_period.start_time  
     navigation_fn(lambda tp: tp.move_delta(delta))
+
+
+def move_period(period, delta):
+    start_time = period.start_time + delta  
+    end_time = period.end_time + delta  
+    return TimePeriod(period.time_type, start_time, end_time)
