@@ -204,6 +204,9 @@ class PyTimeType(TimeType):
             (_("Year"), move_period_num_years),
         ]
     
+    def zoom_is_ok(self, delta):
+        return (delta.seconds > 3600) or (delta.days > 0)
+
     
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

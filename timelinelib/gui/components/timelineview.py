@@ -935,7 +935,7 @@ class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
     def end_action(self, controller, period):
         start = period.start_time
         end = period.end_time
-        td = end - start
-        if (td.seconds > 3600) or (td.days > 0):
+        delta = end - start
+        if period.time_type.zoom_is_ok(delta):
             # Don't zoom in to less than an hour which upsets things.
             controller.navigate_timeline(lambda tp: tp.update(start, end))

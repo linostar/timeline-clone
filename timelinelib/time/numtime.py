@@ -134,6 +134,10 @@ class NumTimeType(TimeType):
             (_("1000-period"), lambda p, d : move_period(p, d * 1000)),
         ]
 
+    def zoom_is_ok(self, delta):
+        return (delta >= 5)
+
+
 class NumStrip(Strip):
     
     def __init__(self, size):
