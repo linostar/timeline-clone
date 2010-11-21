@@ -31,16 +31,14 @@ class ATime(object):
         self.num = num
 
     # Exists only only to simplify testing
+    def __repr__(self):
+        return "ATime<%s>" % self.num
+
     def __eq__(self, other):
         return isinstance(other, ATime) and self.num == other.num
 
-    # Exists only only to simplify testing
     def __ne__(self, ohter):
         return not (self == other)
-
-    # Exists only only to simplify testing
-    def __repr__(self):
-        return "ATime<%s>" % self.num
 
     def __add__(self, other):
         if isinstance(other, ADelta):
@@ -56,6 +54,15 @@ class ATime(object):
 
     def __lt__(self, other):
         return self.num < other.num
+
+    def __le__(self, other):
+        return self.num <= other.num
+
+    def __gt__(self, other):
+        return self.num > other.num
+
+    def __ge__(self, other):
+        return self.num >= other.num
 
 
 class ADelta(object):
@@ -137,6 +144,22 @@ class time_period_spec(unittest.TestCase):
     def test_creating_period_with_end_before_start_should_fail(self):
         self.assertRaises(ValueError, TimePeriod,
                           ATimeType(), ATime(50), ATime(10))
+
+    def test_inside_should_return_true_if_time_is_inside_period(self):
+        tp = TimePeriod(ATimeType(), ATime(0), ATime(4))
+        self.assertTrue(tp.inside(ATime(3)))
+
+    def test_inside_should_return_true_if_time_is_on_lower_edge(self):
+        tp = TimePeriod(ATimeType(), ATime(0), ATime(4))
+        self.assertTrue(tp.inside(ATime(0)))
+
+    def test_inside_should_return_true_if_time_is_on_higher_edge(self):
+        tp = TimePeriod(ATimeType(), ATime(0), ATime(4))
+        self.assertTrue(tp.inside(ATime(4)))
+
+    def test_inside_should_return_false_if_time_is_outside_period(self):
+        tp = TimePeriod(ATimeType(), ATime(0), ATime(4))
+        self.assertFalse(tp.inside(ATime(5)))
 
     def test_delta_should_return_time_specific_delta(self):
         tp = TimePeriod(ATimeType(), ATime(0), ATime(4))
