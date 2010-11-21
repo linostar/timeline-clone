@@ -21,11 +21,6 @@ Objects that can be read from and written to a timeline database.
 """
 
 
-import calendar
-
-from timelinelib.utils import local_to_unicode
-
-
 class Event(object):
     """
     Store persistent data about an event.
@@ -36,11 +31,6 @@ class Event(object):
     """
 
     def __init__(self, db, start_time, end_time, text, category=None):
-        """
-        Create an event.
-
-        `start_time` and `end_time` should be of the type datetime.
-        """
         self.db = db
         self.id = None
         self.selected = False
