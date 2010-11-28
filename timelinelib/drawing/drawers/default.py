@@ -49,10 +49,17 @@ DATA_INDICATOR_SIZE = 10
 class DefaultDrawingAlgorithm(Drawer):
 
     def __init__(self):
-        # Fonts and pens we use when drawing
+        self._create_fonts()
+        self._create_pens()
+        self._create_brushes()
+        self.db = None
+        
+    def _create_fonts(self):
         self.header_font = get_default_font(12, True)
         self.small_text_font = get_default_font(8)
         self.small_text_font_bold = get_default_font(8, True)
+
+    def _create_pens(self):
         self.red_solid_pen = wx.Pen(wx.Color(255,0, 0), 1, wx.SOLID)
         self.black_solid_pen = wx.Pen(wx.Color(0, 0, 0), 1, wx.SOLID)
         self.darkred_solid_pen = wx.Pen(wx.Color(200, 0, 0), 1, wx.SOLID)
@@ -61,26 +68,18 @@ class DefaultDrawingAlgorithm(Drawer):
         self.black_dashed_pen.SetCap(wx.CAP_BUTT)
         self.grey_solid_pen = wx.Pen(wx.Color(200, 200, 200), 1, wx.SOLID)
         self.red_solid_pen = wx.Pen(wx.Color(255, 0, 0), 1, wx.SOLID)
+        
+    def _create_brushes(self):
         self.white_solid_brush = wx.Brush(wx.Color(255, 255, 255), wx.SOLID)
         self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
         self.red_solid_brush = wx.Brush(wx.Color(255, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
-        self.DATA_ICON_WIDTH = 5
-        self.db = None
 
     def event_is_period(self, time_period):
-        ew = self.metrics.calc_width(time_period)
-        return ew > PERIOD_THRESHOLD
+        period_width_in_pixels = self.metrics.calc_width(time_period)
+        return period_width_in_pixels > PERIOD_THRESHOLD
 
     def draw(self, dc, timeline, view_properties):
-        """
-        Implement the drawing interface.
-
-        The drawing is done in a number of steps: First positions of all events
-        and strips are calculated and then they are drawn. Positions can also
-        be used later to answer questions like what event is at position (x, y).
-        """
-        # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = view_properties.displayed_period
         self.db = timeline
@@ -88,27 +87,23 @@ class DefaultDrawingAlgorithm(Drawer):
         self.metrics = Metrics(dc.GetSizeTuple(), self.time_type, 
                                self.time_period, 
                                view_properties.divider_position)
-        # Data
-        self.event_data = []       # List of tuples (event, rect)
-        self.major_strip_data = [] # List of time_period
-        self.minor_strip_data = [] # List of time_period
-        self.balloon_data = []     # List of (event, rect)
-        # Calculate stuff later used for drawing
-        events_from_db = timeline.get_events(self.time_period)
-        visible_events = view_properties.filter_events(events_from_db)
-        self._calc_rects(visible_events)
+        self._calc_event_positions(view_properties)
         self._calc_strips()
-        # Perform the actual drawing
-        if view_properties.period_selection:
-            self._draw_period_selection(view_properties.period_selection)
+        self._perform_drawing(view_properties)
+        del self.dc # Program crashes if we don't delete the dc reference.
+
+    def _perform_drawing(self, view_properties):
+        self._draw_period_selection(view_properties)
         self._draw_bg(view_properties)
         self._draw_events(view_properties)
-        if view_properties.show_legend:
-            self._draw_legend(self._extract_categories())
+        self._draw_legend(view_properties, self._extract_categories())
         self._draw_ballons(view_properties)
-        # Make sure to delete this one
-        del self.dc
-
+        
+    def _calc_event_positions(self, view_properties):
+        events_from_db = self.db.get_events(self.time_period)
+        visible_events = view_properties.filter_events(events_from_db)
+        self._calc_rects(visible_events)
+        
     def snap(self, time, snap_region=10):
         major_strip, minor_strip = self._choose_strip()
         time_x = self.metrics.calc_exact_x(time)
@@ -162,6 +157,7 @@ class DefaultDrawingAlgorithm(Drawer):
         During the calculations, the outer padding is part of the rectangles to
         make the calculations easier. Outer padding is removed in the end.
         """
+        self.event_data = []       # List of tuples (event, rect)
         self.dc.SetFont(self.small_text_font)
         for event in events:
             tw, th = self.dc.GetTextExtent(event.text)
@@ -240,6 +236,8 @@ class DefaultDrawingAlgorithm(Drawer):
                 next_start = strip.increment(current_start)
                 list.append(TimePeriod(self.db.get_time_type(), current_start, next_start))
                 current_start = next_start
+        self.major_strip_data = [] # List of time_period
+        self.minor_strip_data = [] # List of time_period
         major_strip, minor_strip = self.time_type.choose_strip(self.metrics)
         fill(self.major_strip_data, major_strip)
         fill(self.minor_strip_data, minor_strip)
@@ -251,8 +249,10 @@ class DefaultDrawingAlgorithm(Drawer):
         """
         return self.time_type.choose_strip(self.metrics)
      
-    def _draw_period_selection(self, period_selection):
-        start, end = period_selection
+    def _draw_period_selection(self, view_properties):
+        if not view_properties.period_selection:
+            return
+        start, end = view_properties.period_selection
         start_x = self.metrics.calc_x(start)
         end_x = self.metrics.calc_x(end)
         self.dc.SetBrush(self.lightgrey_solid_brush)
@@ -339,7 +339,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 categories.append(cat)
         return sort_categories(categories)
 
-    def _draw_legend(self, categories):
+    def _draw_legend(self, view_properties, categories):
         """
         Draw legend for the given categories.
 
@@ -350,6 +350,8 @@ class DefaultDrawingAlgorithm(Drawer):
           | Name   O |
           +----------+
         """
+        if not view_properties.show_legend:
+            return
         num_categories = len(categories)
         if num_categories == 0:
             return
@@ -502,6 +504,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _draw_ballons(self, view_properties):
         """Draw ballons on selected events that has 'description' data."""
+        self.balloon_data = []     # List of (event, rect)
         top_event = None
         top_rect = None
         for (event, rect) in self.event_data:
