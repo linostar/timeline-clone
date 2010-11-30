@@ -207,6 +207,9 @@ class PyTimeType(TimeType):
     def zoom_is_ok(self, delta):
         return (delta.seconds > 3600) or (delta.days > 0)
 
+    def half_delta(self, delta):
+        return delta / 2
+
     
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

@@ -68,3 +68,8 @@ class PyTimeTypeSpec(unittest.TestCase):
     def testReturnsMaxTime(self):
         self.assertEquals(datetime.datetime(9990, 1, 1), 
                           self.time_type.get_max_time()[0])
+
+    def testReturnsHalfDelta(self):
+        delta = datetime.timedelta(days=4)
+        half_delta = self.time_type.half_delta(delta)
+        self.assertEquals(datetime.timedelta(days=2), half_delta) 

@@ -29,7 +29,7 @@ from timelinelib.db.objects import TimePeriod
 
 
 class NumTimeType(TimeType):
-    
+
     def time_string(self, time):
         return "%s" % (time)
 
@@ -43,7 +43,7 @@ class NumTimeType(TimeType):
                 raise ValueError("Invalid time, time string = '%s'" % time_string)
         else:
             raise ValueError("Time not on correct format = '%s'" % time_string)
-        
+
     def create_time_picker(self, parent):
         from timelinelib.gui.components.numtimepicker import NumTimePicker
         return NumTimePicker(parent)
@@ -67,7 +67,7 @@ class NumTimeType(TimeType):
         else:
             label = u"%s" % time_period.start_time
         return label
-    
+
     def get_min_time(self):
         return(None, None)
 
@@ -93,7 +93,7 @@ class NumTimeType(TimeType):
             size *= 10
             nbr_of_units /= 10
         return (NumStrip(size * 10), NumStrip(size))
-    
+
     def mult_timedelta(self, delta, num):
         return delta * num
 
@@ -106,20 +106,20 @@ class NumTimeType(TimeType):
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
         delta = time_period.end_time - time_period.start_time
-        return time_period.start_time + delta * x_percent_of_width  
-        
+        return time_period.start_time + delta * x_percent_of_width
+
     def div_timedeltas(self, delta1, delta2):
        return delta1 / delta2
-    
+
     def get_max_zoom_delta(self):
         return (None, None)
 
     def get_min_zoom_delta(self):
         return (5, _("Can't zoom deeper than 5"))
-    
+
     def get_zero_delta(self):
         return 0
-    
+
     def time_period_has_nonzero_time(self, time_period):
         return False
 
@@ -137,9 +137,12 @@ class NumTimeType(TimeType):
     def zoom_is_ok(self, delta):
         return (delta >= 5)
 
+    def half_delta(self, delta):
+        return delta / 2
+
 
 class NumStrip(Strip):
-    
+
     def __init__(self, size):
         self.size = size
 
@@ -151,18 +154,18 @@ class NumStrip(Strip):
         if time < 0:
             start -= self.size
         return start
-    
+
     def increment(self, time):
         return time + self.size
 
     def get_font(self, time_period):
         return get_default_font(8)
-    
+
 
 def go_to_zero_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(0))
-    
-                
+
+
 def go_to_time_fn(main_frame, current_period, navigation_fn):
     from timelinelib.gui.dialogs.gotonumtime import GotoNumTimeDialog
     dialog = GotoNumTimeDialog(main_frame, current_period.mean_time())
@@ -177,11 +180,11 @@ def backward_fn(main_frame, current_period, navigation_fn):
 
 
 def forward_fn(main_frame, current_period, navigation_fn):
-    delta = current_period.end_time - current_period.start_time  
+    delta = current_period.end_time - current_period.start_time
     navigation_fn(lambda tp: tp.move_delta(delta))
 
 
 def move_period(period, delta):
-    start_time = period.start_time + delta  
-    end_time = period.end_time + delta  
+    start_time = period.start_time + delta
+    end_time = period.end_time + delta
     return TimePeriod(period.time_type, start_time, end_time)

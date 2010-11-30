@@ -130,6 +130,9 @@ class ATimeType(TimeType):
     def get_max_zoom_delta(self):
         return (ADelta(100), "")
 
+    def half_delta(self, delta):
+        return delta / 2
+
 
 class time_period_spec(unittest.TestCase):
 
