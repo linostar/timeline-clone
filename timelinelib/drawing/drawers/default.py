@@ -105,19 +105,42 @@ class DefaultDrawingAlgorithm(Drawer):
         self._calc_rects(visible_events)
         
     def snap(self, time, snap_region=10):
+        if self._distance_to_left_border(time) < snap_region:
+            return self._get_time_at_left_border(time)
+        elif self._distance_to_right_border(time)  < snap_region:
+            return self._get_time_at_right_border(time)
+        else:
+            return time
+
+    def _distance_to_left_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return self._distance_between_times(time, left_strip_time)
+        
+    def _distance_to_right_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return self._distance_between_times(time, right_strip_time)
+
+    def _get_time_at_left_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return left_strip_time
+        
+    def _get_time_at_right_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return right_strip_time
+        
+    def _distance_between_times(self, time1, time2):
+        time1_x = self.metrics.calc_exact_x(time1)
+        time2_x = self.metrics.calc_exact_x(time2)
+        distance = abs(time1_x - time2_x)
+        return distance
+        
+    def _snap_region(self, time): 
         major_strip, minor_strip = self._choose_strip()
         time_x = self.metrics.calc_exact_x(time)
         left_strip_time = minor_strip.start(time)
         right_strip_time = minor_strip.increment(left_strip_time)
-        left_diff = abs(time_x - self.metrics.calc_exact_x(left_strip_time))
-        right_diff = abs(time_x - self.metrics.calc_exact_x(right_strip_time))
-        if left_diff < snap_region:
-            return left_strip_time
-        elif right_diff < snap_region:
-            return right_strip_time
-        else:
-            return time
-
+        return (left_strip_time, right_strip_time)
+    
     def snap_selection(self, period_selection):
         start, end = period_selection
         return (self.snap(start), self.snap(end))
@@ -148,80 +171,97 @@ class DefaultDrawingAlgorithm(Drawer):
         return event
 
     def _calc_rects(self, events):
-        """
-        Calculate rectangles for all events.
-
-        The rectangles define the areas in which the events can draw
-        themselves.
-
-        During the calculations, the outer padding is part of the rectangles to
-        make the calculations easier. Outer padding is removed in the end.
-        """
-        self.event_data = []       # List of tuples (event, rect)
-        self.dc.SetFont(self.small_text_font)
+        self.event_data = []
         for event in events:
-            tw, th = self.dc.GetTextExtent(event.text)
-            ew = self.metrics.calc_width(event.time_period)
-            if ew > PERIOD_THRESHOLD:
-                # Treat as period (periods are placed below the baseline, with
-                # indicates length of period)
-                rw = ew + 2 * OUTER_PADDING
-                rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
-                rx = (self.metrics.calc_x(event.time_period.start_time) -
-                      OUTER_PADDING)
-                ry = self.metrics.half_height + BASELINE_PADDING
-                movedir = 1
-            else:
-                # Treat as event (events are placed above the baseline, with
-                # indicates length of text)
-                rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
-                rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
-                if event.has_data():
-                    rw += DATA_INDICATOR_SIZE / 3
-                rx = self.metrics.calc_x(event.mean_time()) - rw / 2
-                ry = self.metrics.half_height - rh - BASELINE_PADDING
-                movedir = -1
-            # Make sure rectangle is not far outside the screen. MARGIN must be
-            # big enough to hide outer padding, borders, and selection markers.
-            MARGIN = 50
-            if rx < -MARGIN:
-                move = -rx - MARGIN
-                rx += move
-                rw -= move
-            right_edge_x = rx + rw
-            if right_edge_x > self.metrics.width + MARGIN:
-                rw -= right_edge_x - self.metrics.width - MARGIN
-            #
-            rect = wx.Rect(rx, ry, rw, rh)
-            self._prevent_overlap(rect, movedir)
+            rect = self._create_rectangle_for_event(event)
             self.event_data.append((event, rect))
         for (event, rect) in self.event_data:
-            # Remove outer padding
             rect.Deflate(OUTER_PADDING, OUTER_PADDING)
 
-    def _prevent_overlap(self, rect, movedir):
-        """
-        Prevent rect from overlapping with any rectangle by moving it.
-        """
+    def _create_rectangle_for_event(self, event):
+        rect = self._create_ideal_rect_for_event(event)
+        self._ensure_rect_is_not_far_outisde_screen(rect)
+        self._prevent_overlap(rect, self._get_y_move_direction(event))
+        return rect
+        
+    def _get_y_move_direction(self, event):
+        if self._display_as_period(event):
+            return 1
+        else:
+            return -1
+
+    def _create_ideal_rect_for_event(self, event):
+        if self._display_as_period(event):
+            return self._create_ideal_rect_for_period_event(event)
+        else:
+            return self._create_ideal_rect_for_non_period_event(event)
+
+    def _display_as_period(self, event):
+        event_width = self.metrics.calc_width(event.time_period)
+        return event_width > PERIOD_THRESHOLD
+
+    def _create_ideal_rect_for_period_event(self, event):
+        self.dc.SetFont(self.small_text_font)
+        tw, th = self.dc.GetTextExtent(event.text)
+        ew = self.metrics.calc_width(event.time_period)
+        # Treat as period (periods are placed below the baseline, with
+        # indicates length of period)
+        rw = ew + 2 * OUTER_PADDING
+        rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        rx = (self.metrics.calc_x(event.time_period.start_time) -
+              OUTER_PADDING)
+        ry = self.metrics.half_height + BASELINE_PADDING
+        rect = wx.Rect(rx, ry, rw, rh)
+        return rect
+    
+    def _create_ideal_rect_for_non_period_event(self, event):
+        self.dc.SetFont(self.small_text_font)
+        tw, th = self.dc.GetTextExtent(event.text)
+        # Treat as event (events are placed above the baseline, with
+        # indicates length of text)
+        rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        if event.has_data():
+            rw += DATA_INDICATOR_SIZE / 3
+        rx = self.metrics.calc_x(event.mean_time()) - rw / 2
+        ry = self.metrics.half_height - rh - BASELINE_PADDING
+        rect = wx.Rect(rx, ry, rw, rh)
+        return rect
+
+    def _ensure_rect_is_not_far_outisde_screen(self, rect):
+        # Drawing stuff on huge x-coordinates causes drawing to fail.
+        # MARGIN must be big enough to hide outer padding, borders, and
+        # selection markers.
+        rx = rect.GetX()
+        rw = rect.GetWidth()
+        MARGIN = 50
+        if rx < -MARGIN:
+            distance_beyond_left_margin = -rx - MARGIN
+            rx += distance_beyond_left_margin
+            rw -= distance_beyond_left_margin
+        right_edge_x = rx + rw
+        if right_edge_x > self.metrics.width + MARGIN:
+            rw -= right_edge_x - self.metrics.width - MARGIN
+        rect.SetX(rx)
+        rect.SetWidth(rw)
+
+    def _prevent_overlap(self, rect, y_move_direction):
         while True:
-            h = self._intersection_height(rect)
-            if h > 0:
-                rect.Y += movedir * h
-            else:
+            intersection_height = self._intersection_height(rect)
+            rect.Y += y_move_direction * intersection_height
+            if intersection_height == 0:
                 break
-            # Don't prevent overlap if rect is outside screen
-            if movedir == 1 and rect.Y > self.metrics.height:
-                break
-            if movedir == -1 and (rect.Y + rect.Height) < 0:
+            if self._rect_above_or_below_screen(rect):
+                # Optimization: Don't prevent overlap if rect is pushed
+                # outside screen
                 break
 
+    def _rect_above_or_below_screen(self, rect):
+        return rect.Y > self.metrics.height or (rect.Y + rect.Height) < 0
+
     def _intersection_height(self, rect):
-        """
-        Calculate height of first intersection with rectangle.
-        """
         for (event, r) in self.event_data:
             if rect.Intersects(r):
-                # Calculate height of intersection only if there is any
                 r_copy = wx.Rect(*r) # Because `Intersect` modifies rect
                 intersection = r_copy.Intersect(rect)
                 return intersection.Height
@@ -261,27 +301,33 @@ class DefaultDrawingAlgorithm(Drawer):
                               end_x - start_x + 1, self.metrics.height)
 
     def _draw_bg(self, view_properties):
-        """
-        Draw major and minor strips, lines to all event boxes and baseline.
+        self._draw_minor_strips()
+        self._draw_major_strips()
+        self._draw_divider_line()
+        self._draw_lines_to_non_period_events(view_properties)
+        self._draw_now_line()
 
-        Both major and minor strips have divider lines and labels.
-        """
-        major_strip, minor_strip = self._choose_strip()
-        # Minor strips
+    def _draw_minor_strips(self):
+        for strip_period in self.minor_strip_data:
+            self._draw_minor_strip_divider_line_at(strip_period.end_time)
+            self._draw_minor_strip_label(strip_period)
+
+    def _draw_minor_strip_divider_line_at(self, time):
+        x = self.metrics.calc_x(time)
         self.dc.SetPen(self.black_dashed_pen)
-        for tp in self.minor_strip_data:
-            # Chose font
-            self.dc.SetFont(minor_strip.get_font(tp))
-            # Divider line
-            x = self.metrics.calc_x(tp.end_time)
-            self.dc.DrawLine(x, 0, x, self.metrics.height)
-            # Label
-            label = minor_strip.label(tp.start_time)
-            (tw, th) = self.dc.GetTextExtent(label)
-            middle = self.metrics.calc_x(tp.mean_time())
-            middley = self.metrics.half_height
-            self.dc.DrawText(label, middle - tw / 2, middley - th)
-        # Major strips
+        self.dc.DrawLine(x, 0, x, self.metrics.height)
+
+    def _draw_minor_strip_label(self, strip_period):
+        major_strip, minor_strip = self._choose_strip()
+        label = minor_strip.label(strip_period.start_time)
+        (tw, th) = self.dc.GetTextExtent(label)
+        middle = self.metrics.calc_x(strip_period.mean_time())
+        middley = self.metrics.half_height
+        self.dc.SetFont(minor_strip.get_font(strip_period))
+        self.dc.DrawText(label, middle - tw / 2, middley - th)
+        
+    def _draw_major_strips(self):
+        major_strip, minor_strip = self._choose_strip()
         self.dc.SetFont(self.header_font)
         self.dc.SetPen(self.grey_solid_pen)
         for tp in self.major_strip_data:
@@ -306,11 +352,13 @@ class DefaultDrawingAlgorithm(Drawer):
                 if x < left:
                     x = left + INNER_PADDING
             self.dc.DrawText(label, x, INNER_PADDING)
-        # Main divider line
+        
+    def _draw_divider_line(self):
         self.dc.SetPen(self.black_solid_pen)
         self.dc.DrawLine(0, self.metrics.half_height, self.metrics.width,
                          self.metrics.half_height)
-        # Lines to all events
+        
+    def _draw_lines_to_non_period_events(self, view_properties):
         self.dc.SetBrush(self.black_solid_brush)
         for (event, rect) in self.event_data:
             if rect.Y < self.metrics.half_height:
@@ -324,13 +372,14 @@ class DefaultDrawingAlgorithm(Drawer):
                     self.dc.SetPen(self.black_solid_pen)
                 self.dc.DrawLine(x, y, x, self.metrics.half_height)
                 self.dc.DrawCircle(x, self.metrics.half_height, 2)
-        # Now line
+        
+    def _draw_now_line(self):
         now_time = self.time_type.now()
         if self.time_period.inside(now_time):
             self.dc.SetPen(self.darkred_solid_pen)
             x = self.metrics.calc_x(now_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
-
+                
     def _extract_categories(self):
         categories = []
         for (event, rect) in self.event_data:
