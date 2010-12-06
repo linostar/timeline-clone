@@ -210,6 +210,9 @@ class PyTimeType(TimeType):
     def half_delta(self, delta):
         return delta / 2
 
+    def margin_delta(self, delta):
+        return delta / 24
+
     
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

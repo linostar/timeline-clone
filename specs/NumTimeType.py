@@ -33,3 +33,8 @@ class NumTimeTypeSpec(unittest.TestCase):
         delta = 126
         half_delta = self.time_type.half_delta(delta)
         self.assertEquals(63, half_delta) 
+
+    def testReturnsMarginDelta(self):
+        delta = 24 * 12345
+        margin_delta = self.time_type.margin_delta(delta)
+        self.assertEquals(12345, margin_delta) 

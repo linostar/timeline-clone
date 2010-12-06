@@ -396,7 +396,7 @@ class MainFrame(wx.Frame):
             start = event.time_period.start_time
             delta = self.main_panel.drawing_area.get_view_properties().displayed_period.delta()
             end   = start + delta 
-            margin_delta = delta / 24
+            margin_delta = self.timeline.get_time_type().margin_delta(delta)
             self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
 
     def _mnu_navigate_find_last_on_click(self, evt):
@@ -405,7 +405,7 @@ class MainFrame(wx.Frame):
             end = event.time_period.end_time
             delta = self.main_panel.drawing_area.get_view_properties().displayed_period.delta()
             start = end - delta
-            margin_delta = delta / 24
+            margin_delta = self.timeline.get_time_type().margin_delta(delta)
             self._navigate_timeline(lambda tp: tp.update(start, end, 
                                                        end_delta=margin_delta))
 
@@ -419,7 +419,7 @@ class MainFrame(wx.Frame):
             else:
                 start = firstEvent.time_period.start_time
                 end   = lastEvent.time_period.end_time
-                margin_delta = (end - start) / 24
+                margin_delta = self.timeline.get_time_type().margin_delta(end - start)
                 self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta, margin_delta))
         except AttributeError:
             # None events

@@ -73,3 +73,8 @@ class PyTimeTypeSpec(unittest.TestCase):
         delta = datetime.timedelta(days=4)
         half_delta = self.time_type.half_delta(delta)
         self.assertEquals(datetime.timedelta(days=2), half_delta) 
+
+    def testReturnsMarginDelta(self):
+        delta = datetime.timedelta(days=48)
+        margin_delta = self.time_type.margin_delta(delta)
+        self.assertEquals(datetime.timedelta(days=2), margin_delta) 

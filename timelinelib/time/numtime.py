@@ -140,6 +140,9 @@ class NumTimeType(TimeType):
     def half_delta(self, delta):
         return delta / 2
 
+    def margin_delta(self, delta):
+        return delta / 24
+
 
 class NumStrip(Strip):
 

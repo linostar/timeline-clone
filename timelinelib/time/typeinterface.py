@@ -81,3 +81,6 @@ class TimeType(object):
 
     def half_delta(self, delta):
         raise NotImplementedError("half_delta not implemented.")
+
+    def margin_delta(self, delta):
+        raise NotImplementedError("margin_delta not implemented.")
