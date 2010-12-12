@@ -220,7 +220,7 @@ def go_to_today_fn(main_frame, current_period, navigation_fn):
 
 def go_to_date_fn(main_frame, current_period, navigation_fn):
     from timelinelib.gui.dialogs.gotodate import GotoDateDialog
-    dialog = GotoDateDialog(main_frame, current_period.mean_time())
+    dialog = GotoDateDialog(main_frame, PyTimeType(), current_period.mean_time())
     if dialog.ShowModal() == wx.ID_OK:
         navigation_fn(lambda tp: tp.center(dialog.time))
     dialog.Destroy()
