@@ -60,7 +60,7 @@ class TestXmlTimelineWriteRead(unittest.TestCase):
         cat3 = Category("Category 3", (0, 0, 255), True, parent=cat2)
         db.save_category(cat3)
         # Create events
-        ev1 = Event(datetime(2010, 3, 3), datetime(2010, 3, 6),
+        ev1 = Event(db, datetime(2010, 3, 3), datetime(2010, 3, 6),
                     "Event 1", cat1)
         ev1.set_data("description", u"The <b>first</b> event åäö.")
         db.save_event(ev1)
@@ -68,7 +68,7 @@ class TestXmlTimelineWriteRead(unittest.TestCase):
         vp = ViewProperties()
         start = datetime(2010, 3, 1)
         end = datetime(2010, 4, 1)
-        vp.displayed_period = TimePeriod(start, end)
+        vp.displayed_period = TimePeriod(db.get_time_type(), start, end)
         vp.set_category_visible(cat3, False)
         db.save_view_properties(vp)
 

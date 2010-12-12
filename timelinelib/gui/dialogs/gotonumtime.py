@@ -18,44 +18,63 @@
 
 import wx
 
+from timelinelib.utils import ex_msg
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import _display_error_message
-from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
-from timelinelib.utils import ex_msg
+from timelinelib.gui.components.numtimepicker import NumTimePicker
 
 
-class GotoDateDialog(wx.Dialog):
+class GotoNumTimeDialog(wx.Dialog):
 
-    def __init__(self, parent, time_type, time):
-        wx.Dialog.__init__(self, parent, title=_("Go to Date"))
-        self._create_gui(time_type)
-        self.dtpc.set_value(time)
+    def __init__(self, parent, time):
+        wx.Dialog.__init__(self, parent, title=_("Go to Time"))
+        self._create_gui()
+        self.controller = GotoNumTimeDialogController(self, time)
+        self.controller.initialize()
 
-    def _create_gui(self, time_type):
-        self.dtpc = time_type.create_time_picker(self)
-        checkbox = wx.CheckBox(self, label=_("Show time"))
-        checkbox.SetValue(False)
-        self.dtpc.show_time(checkbox.IsChecked())
-        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox, checkbox)
+    def set_time(self, time):
+        self.time_picker.set_value(time)
+        
+    def select_all(self):
+        self.time_picker.select_all()
+
+    def get_time(self):
+        return self.time_picker.get_value()
+        
+    def close(self):
+        self.EndModal(wx.ID_OK)        
+        
+    def _create_gui(self):
+        self.time_picker = NumTimePicker(self)
         # Layout
         vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(checkbox, flag=wx.LEFT|wx.TOP|wx.RIGHT,
-                 border=BORDER, proportion=1)
-        vbox.Add(self.dtpc, flag=wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT,
+        vbox.Add(self.time_picker, flag=wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT,
                  border=BORDER, proportion=1)
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        self.dtpc.SetFocus()
+        self.time_picker.SetFocus()
         self.SetSizerAndFit(vbox)
 
-    def _chb_show_time_on_checkbox(self, e):
-        self.dtpc.show_time(e.IsChecked())
-
     def _btn_ok_on_click(self, e):
+        self.controller.btn_ok_clicked()
+        
+
+class GotoNumTimeDialogController(object):
+
+    def __init__(self, view,time):
+        self.view = view
+        self.time = time
+        
+    def initialize(self):
+        self.view.set_time(self.time)
+        self.view.select_all()
+        
+    def btn_ok_clicked(self):
         try:
-            self.time = self.dtpc.get_value()
+            self.time = self.view.get_time()
         except ValueError, ex:
             _display_error_message(ex_msg(ex))
         else:
-            self.EndModal(wx.ID_OK)
+            self.view.close()
+        

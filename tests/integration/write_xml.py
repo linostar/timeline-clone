@@ -46,7 +46,7 @@ class TestWriteXml(unittest.TestCase):
     def testDisplayedPeriodTagNotWrittenIfNotSet(self):
         # Create a new db and add one event
         db = db_open(self.tmp_path)
-        db.save_event(Event(datetime(2010, 8, 31, 0, 0, 0),
+        db.save_event(Event(db, datetime(2010, 8, 31, 0, 0, 0),
                             datetime(2010, 8, 31, 0, 0, 0),
                             "test"))
         # Read the file content from disk
@@ -57,6 +57,7 @@ class TestWriteXml(unittest.TestCase):
         self.assertEquals(content, """<?xml version="1.0" encoding="utf-8"?>
 <timeline>
   <version>%s</version>
+  <time_type>pytime</time_type>
   <categories>
   </categories>
   <events>

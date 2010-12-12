@@ -16,7 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import locale
 import codecs
 import os
 import os.path
@@ -42,20 +41,6 @@ def generic_event_search(events, search_string):
     matches = [event for event in events if match(event)]
     matches.sort(key=mean_time)
     return matches
-
-
-def local_to_unicode(local_string):
-    """Try to convert a local string to unicode."""
-    encoding = locale.getlocale()[1]
-    if encoding is None:
-        # TODO: What should we do here?
-        return u"ERROR"
-    else:
-        try:
-            return local_string.decode(encoding)
-        except Exception:
-            # TODO: What should we do here?
-            return u"ERROR"
 
 
 def safe_write(path, encoding, write_fn):

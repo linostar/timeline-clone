@@ -21,15 +21,6 @@ Objects that can be read from and written to a timeline database.
 """
 
 
-from datetime import timedelta
-from datetime import datetime as dt
-from datetime import time
-import calendar
-
-from timelinelib.db.utils import local_to_unicode
-from timelinelib.drawing.utils import mult_timedelta
-
-
 class Event(object):
     """
     Store persistent data about an event.
@@ -39,12 +30,8 @@ class Event(object):
     it will set the event id to a unique integer.
     """
 
-    def __init__(self, start_time, end_time, text, category=None):
-        """
-        Create an event.
-
-        `start_time` and `end_time` should be of the type datetime.
-        """
+    def __init__(self, db, start_time, end_time, text, category=None):
+        self.db = db
         self.id = None
         self.selected = False
         self.draw_ballon = False
@@ -59,25 +46,29 @@ class Event(object):
 
     def update(self, start_time, end_time, text, category=None):
         """Change the event data."""
-        self.time_period = TimePeriod(start_time, end_time)
+        time_type = self.db.get_time_type()
+        self.time_period = TimePeriod(time_type, start_time, end_time)
         self.text = text
         self.category = category
 
     def update_period(self, start_time, end_time):
         """Change the event period."""
-        self.time_period = TimePeriod(start_time, end_time)
+        self.time_period = TimePeriod(self.db.get_time_type(), start_time, 
+                                      end_time)
         
     def update_start(self, start_time):
         """Change the event data."""
         if start_time <= self.time_period.end_time:
-            self.time_period = TimePeriod(start_time, self.time_period.end_time)
+            self.time_period = TimePeriod(self.db.get_time_type(), start_time, 
+                                          self.time_period.end_time)
             return True
         return False            
 
     def update_end(self, end_time):
         """Change the event data."""
         if end_time >= self.time_period.start_time:
-            self.time_period = TimePeriod(self.time_period.start_time, end_time)
+            self.time_period = TimePeriod(self.db.get_time_type(), 
+                                          self.time_period.start_time, end_time)
             return True
         return False            
 
@@ -125,7 +116,7 @@ class Event(object):
 
     def clone(self):
         # Objects of type datetime are immutable.
-        new_event = Event(self.time_period.start_time, 
+        new_event = Event(self.db, self.time_period.start_time, 
                           self.time_period.end_time, self.text, self.category)
         # Description is immutable
         new_event.set_data("description", self.get_data("description") )
@@ -175,15 +166,14 @@ class TimePeriod(object):
     currently displayed time period in the GUI.
     """
 
-    MIN_TIME = dt(10, 1, 1)
-    MAX_TIME = dt(9990, 1, 1)
-
-    def __init__(self, start_time, end_time):
+    def __init__(self, time_type, start_time, end_time):
         """
         Create a time period.
 
-        `start_time` and `end_time` should be of the type datetime.
+        `start_time` and `end_time` should be of a type that can be handled
+        by the time_type object.
         """
+        self.time_type = time_type
         self.update(start_time, end_time)
 
     def __eq__(self, other):
@@ -199,7 +189,7 @@ class TimePeriod(object):
         return "TimePeriod<%s, %s>" % (self.start_time, self.end_time)
 
     def update(self, start_time, end_time,
-               start_delta=timedelta(0), end_delta=timedelta(0)):
+               start_delta=None, end_delta=None):
         """
         Change the time period data.
 
@@ -208,17 +198,14 @@ class TimePeriod(object):
         If data is invalid, it will not be set, and a ValueError will be raised
         instead.
 
-        Data is invalid if time + delta is not within the range [MIN_TIME,
-        MAX_TIME] or if the start time is larger than the end time.
+        Data is invalid if time + delta is not within the range 
+        [self.time_type.get_min_time(), self.time_type.get_max_time()] or if 
+        the start time is larger than the end time.
         """
-        pos_error = _("Start time can't be after year 9989")
-        neg_error = _("Start time can't be before year 10")
-        new_start = self._ensure_within_range(start_time, start_delta,
-                                              pos_error, neg_error)
-        pos_error = _("End time can't be after year 9989")
-        neg_error = _("End time can't be before year 10")
+        new_start = self._ensure_within_range(start_time, start_delta, 
+                                              _("Start time "))
         new_end = self._ensure_within_range(end_time, end_delta,
-                                            pos_error, neg_error)
+                                            _("End time "))
         if new_start > new_end:
             raise ValueError(_("Start time can't be after end time"))
         self.start_time = new_start
@@ -248,18 +235,19 @@ class TimePeriod(object):
         Return the time in the middle if this time period is longer than just a
         point in time, otherwise the point in time for this time period.
         """
-        return self.start_time + self.delta() / 2
+        return self.start_time + self.time_type.half_delta(self.delta())
 
     def zoom(self, times):
-        MAX_ZOOM_DELTA = timedelta(days=1200*365)
-        MIN_ZOOM_DELTA = timedelta(hours=1)
-        delta = mult_timedelta(self.delta(), times / 10.0)
-        new_delta = self.delta() - 2 * delta
-        if new_delta > MAX_ZOOM_DELTA:
-            raise ValueError(_("Can't zoom wider than 1200 years"))
+        MAX_ZOOM_DELTA, max_zoom_error_text = self.time_type.get_max_zoom_delta()
+        MIN_ZOOM_DELTA, min_zoom_error_text = self.time_type.get_min_zoom_delta()
+        start_delta = self.time_type.mult_timedelta(self.delta(), times / 10.0)
+        end_delta = self.time_type.mult_timedelta(self.delta(), -times / 10.0)
+        new_delta = self.delta() - 2 * start_delta
+        if MAX_ZOOM_DELTA and new_delta > MAX_ZOOM_DELTA:
+            raise ValueError(max_zoom_error_text)
         if new_delta < MIN_ZOOM_DELTA:
-            raise ValueError(_("Can't zoom deeper than 1 hour"))
-        self.update(self.start_time, self.end_time, delta, -delta)
+            raise ValueError(min_zoom_error_text)
+        self.update(self.start_time, self.end_time, start_delta, end_delta)
 
     def move(self, direction):
         """
@@ -268,7 +256,7 @@ class TimePeriod(object):
         Direction should be -1 for moving to the left or 1 for moving to the
         right.
         """
-        delta = mult_timedelta(self.delta(), direction / 10.0)
+        delta = self.time_type.mult_timedelta(self.delta(), direction / 10.0)
         self.move_delta(delta)
 
     def move_delta(self, delta):
@@ -288,107 +276,23 @@ class TimePeriod(object):
         start_overflow = self._calculate_overflow(self.start_time, delta)[1]
         end_overflow = self._calculate_overflow(self.end_time, delta)[1]
         if start_overflow == -1:
-            delta = TimePeriod.MIN_TIME - self.start_time
+            delta = self.time_type.get_min_time()[0] - self.start_time
         elif end_overflow == 1:
-            delta = TimePeriod.MAX_TIME - self.end_time
+            delta = self.time_type.get_max_time()[0] - self.end_time
         self.move_delta(delta)
 
-    def fit_millennium(self):
-        mean = self.mean_time()
-        start = dt(int(mean.year/1000)*1000, 1, 1)
-        end = dt(int(mean.year/1000)*1000 + 1000, 1, 1)
-        self.update(start, end)
-
-    def fit_century(self):
-        mean = self.mean_time()
-        start = dt(int(mean.year/100)*100, 1, 1)
-        end = dt(int(mean.year/100)*100 + 100, 1, 1)
-        self.update(start, end)
-
-    def fit_decade(self):
-        mean = self.mean_time()
-        start = dt(int(mean.year/10)*10, 1, 1)
-        end = dt(int(mean.year/10)*10+10, 1, 1)
-        self.update(start, end)
-
-    def fit_year(self):
-        mean = self.mean_time()
-        start = dt(mean.year, 1, 1)
-        end = dt(mean.year + 1, 1, 1)
-        self.update(start, end)
-
-    def fit_month(self):
-        mean = self.mean_time()
-        start = dt(mean.year, mean.month, 1)
-        if mean.month == 12:
-            end = dt(mean.year + 1, 1, 1)
-        else:
-            end = dt(mean.year, mean.month + 1, 1)
-        self.update(start, end)
-
-    def fit_day(self):
-        mean = self.mean_time()
-        start = dt(mean.year, mean.month, mean.day)
-        end = start + timedelta(days=1)
-        self.update(start, end)
-
-    def move_page_smart(self, direction):
-        """Move the period forward (direction positive) or backward (direction
-        negative)."""
-        def months_to_year_and_month(months):
-            years = int(months / 12)
-            month = months - years * 12
-            if month == 0:
-                month = 12
-                years -=1
-            return years, month
-        start, end = self.start_time, self.end_time
-        year_diff = end.year - start.year
-        start_months = start.year * 12 + start.month
-        end_months = end.year * 12 + end.month
-        month_diff = end_months - start_months
-        whole_years = start.replace(year=start.year + year_diff) == end
-        whole_months = start.day == 1 and end.day == 1
-        direction_backward = direction < 0
-        # Whole years
-        if whole_years and year_diff > 0:
-            if direction_backward:
-                new_start = start.replace(year=start.year-year_diff)
-                new_end   = start
-            else:
-                new_start = end
-                new_end   = end.replace(year=new_start.year+year_diff)
-            self.update(new_start, new_end)
-        # Whole months
-        elif whole_months and month_diff > 0:
-            if direction_backward:
-                new_end = start
-                new_start_year, new_start_month = months_to_year_and_month(
-                                                        start_months -
-                                                        month_diff)
-                new_start = start.replace(year=new_start_year,
-                                          month=new_start_month)
-            else:
-                new_start = end
-                new_end_year, new_end_month = months_to_year_and_month(
-                                                        end_months +
-                                                        month_diff)
-                new_end = end.replace(year=new_end_year, month=new_end_month)
-            self.update(new_start, new_end)
-        # No need for smart delta
-        else:
-            self.move_delta(direction*self.delta())
-
-    def _ensure_within_range(self, time, delta, pos_error, neg_error):
+    def _ensure_within_range(self, time, delta, error_prefix):
         """
         Return new time (time + delta) or raise ValueError if it is not within
-        the range [MIN_TIME, MAX_TIME].
+        the range [self.time_type.get_min_time(), 
+        self.time_type.get_max_time()].
         """
-        new_time, overflow = self._calculate_overflow(time, delta)
-        if overflow > 0:
-            raise ValueError(pos_error)
-        elif overflow < 0:
-            raise ValueError(neg_error)
+        if delta == None:
+            delta = self.time_type.get_zero_delta()
+        new_time, overflow, error_text = self._calculate_overflow(time, delta)
+        if overflow != 0:
+            error_text = "%s %s" % (error_prefix, error_text)
+            raise ValueError(error_text)
         else:
             return new_time
 
@@ -402,54 +306,36 @@ class TimePeriod(object):
         If overflow flag is 0 new time is time + delta, otherwise None.
         """
         try:
+            min_time, min_error_text = self.time_type.get_min_time()
+            max_time, max_error_text = self.time_type.get_max_time()
             new_time = time + delta
-            if new_time < TimePeriod.MIN_TIME:
-                return (None, -1)
-            if new_time > TimePeriod.MAX_TIME:
-                return (None, 1)
-            return (new_time, 0)
+            if min_time and new_time < min_time:
+                return (None, -1, min_error_text)
+            if max_time and new_time > max_time:
+                return (None, 1, max_error_text)
+            return (new_time, 0, "")
         except OverflowError:
-            if delta > timedelta(0):
-                return (None, 1)
+            if delta > self.time_type.get_zero_delta():
+                return (None, 1, max_error_text)
             else:
-                return (None, -1)
+                return (None, -1, min_error_text)
 
     def get_label(self):
         """Returns a unicode string describing the time period."""
-        def label_with_time(time):
-            return u"%s %s" % (label_without_time(time), time_label(time))
-        def label_without_time(time):
-            return u"%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]), time.year)
-        def time_label(time):
-            return time.time().isoformat()[0:5]
-        if self.is_period():
-            if self.has_nonzero_time():
-                label = u"%s to %s" % (label_with_time(self.start_time),
-                                      label_with_time(self.end_time))
-            else:
-                label = u"%s to %s" % (label_without_time(self.start_time),
-                                      label_without_time(self.end_time))
-        else:
-            if self.has_nonzero_time():
-                label = u"%s" % label_with_time(self.start_time)
-            else:
-                label = u"%s" % label_without_time(self.start_time)
-        return label
+        return self.time_type.format_period(self)
 
     def has_nonzero_time(self):
-        nonzero_time = (self.start_time.time() != time(0, 0, 0) or
-                        self.end_time.time()   != time(0, 0, 0))
-        return nonzero_time
+        return self.time_type.time_period_has_nonzero_time(self)
 
 
-def time_period_center(time, length):
+def time_period_center(time_type, time, length):
     """
     TimePeriod factory method.
 
     Return a time period with the given length (represented as a timedelta)
     centered around `time`.
     """
-    half_length = mult_timedelta(length, 0.5)
+    half_length = time_type.mult_timedelta(length, 0.5)
     start_time = time - half_length
     end_time = time + half_length
-    return TimePeriod(start_time, end_time)
+    return TimePeriod(time_type, start_time, end_time)

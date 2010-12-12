@@ -24,7 +24,6 @@ Implementation of timeline database with xml file storage.
 import re
 import os.path
 from os.path import abspath
-from datetime import datetime
 import base64
 import StringIO
 from xml.sax.saxutils import escape as xmlescape
@@ -45,6 +44,8 @@ from timelinelib.db.backends.xmlparser import SINGLE
 from timelinelib.db.backends.xmlparser import ANY
 from timelinelib.db.backends.xmlparser import OPTIONAL
 from timelinelib.db.backends.xmlparser import parse_fn_store
+from timelinelib.time import PyTimeType
+from timelinelib.time import NumTimeType
 
 
 ENCODING = "utf-8"
@@ -81,6 +82,12 @@ class XmlTimeline(MemoryDB):
         self.path = path
         if load == True:
             self._load()
+
+    def _parse_time(self, time_string):
+        return self.get_time_type().parse_time(time_string)
+
+    def _time_string(self, time):
+        return self.get_time_type().time_string(time)
 
     def _load(self):
         """
@@ -132,6 +139,7 @@ class XmlTimeline(MemoryDB):
         on the version.
         """
         tmp_dict["partial_schema"].add_child_tags([
+            Tag("time_type", OPTIONAL, self._parse_time_type),
             Tag("categories", SINGLE, None, [
                 Tag("category", ANY, self._parse_category, [
                     Tag("name", SINGLE, parse_fn_store("tmp_name")),
@@ -180,8 +188,8 @@ class XmlTimeline(MemoryDB):
         self.save_category(category)
 
     def _parse_event(self, text, tmp_dict):
-        start = parse_time(tmp_dict.pop("tmp_start"))
-        end = parse_time(tmp_dict.pop("tmp_end"))
+        start = self._parse_time(tmp_dict.pop("tmp_start"))
+        end = self._parse_time(tmp_dict.pop("tmp_end"))
         text = tmp_dict.pop("tmp_text")
         category_text = tmp_dict.pop("tmp_category", None)
         if category_text is None:
@@ -196,15 +204,15 @@ class XmlTimeline(MemoryDB):
             icon = None
         else:
             icon = parse_icon(icon_text)
-        event = Event(start, end, text, category)
+        event = Event(self, start, end, text, category)
         event.set_data("description", description)
         event.set_data("icon", icon)
         self.save_event(event)
 
     def _parse_displayed_period(self, text, tmp_dict):
-        start = parse_time(tmp_dict.pop("tmp_start"))
-        end = parse_time(tmp_dict.pop("tmp_end"))
-        self._set_displayed_period(TimePeriod(start, end))
+        start = self._parse_time(tmp_dict.pop("tmp_start"))
+        end = self._parse_time(tmp_dict.pop("tmp_end"))
+        self._set_displayed_period(TimePeriod(self.get_time_type(), start, end))
 
     def _parse_hidden_category(self, text, tmp_dict):
         category = tmp_dict["category_map"].get(text, None)
@@ -215,6 +223,16 @@ class XmlTimeline(MemoryDB):
     def _parse_hidden_categories(self, text, tmp_dict):
         self._set_hidden_categories(tmp_dict.pop("hidden_categories"))
 
+    def _parse_time_type(self, type_name, tmp_dict):
+        self.time_type = None
+        avilable_time_types = (PyTimeType(), NumTimeType())
+        for time_type in avilable_time_types: 
+            if type_name == time_type.get_name():
+                self.time_type = time_type
+                break
+        if self.time_type == None:
+            raise ParseException("Unknown time type '%s' found." % text)
+
     def _save(self):
         safe_write(self.path, ENCODING, self._write_xml_doc)
 
@@ -224,6 +242,7 @@ class XmlTimeline(MemoryDB):
 
     def _write_timeline(self, file):
         write_simple_tag(file, "version", get_version(), INDENT1)
+        write_simple_tag(file, "time_type", self.time_type.get_name(), INDENT1)
         self._write_categories(file)
         self._write_events(file)
         self._write_view(file)
@@ -252,9 +271,9 @@ class XmlTimeline(MemoryDB):
 
     def _write_event(self, file, evt):
         write_simple_tag(file, "start",
-                         time_string(evt.time_period.start_time), INDENT3)
+                         self._time_string(evt.time_period.start_time), INDENT3)
         write_simple_tag(file, "end",
-                         time_string(evt.time_period.end_time), INDENT3)
+                         self._time_string(evt.time_period.end_time), INDENT3)
         write_simple_tag(file, "text", evt.text, INDENT3)
         if evt.category is not None:
             write_simple_tag(file, "category", evt.category.name, INDENT3)
@@ -275,9 +294,9 @@ class XmlTimeline(MemoryDB):
     def _write_displayed_period(self, file):
         period = self._get_displayed_period()
         write_simple_tag(file, "start",
-                         time_string(period.start_time), INDENT3)
+                         self._time_string(period.start_time), INDENT3)
         write_simple_tag(file, "end",
-                         time_string(period.end_time), INDENT3)
+                         self._time_string(period.end_time), INDENT3)
     _write_displayed_period = wrap_in_tag(_write_displayed_period,
                                           "displayed_period", INDENT2)
 
@@ -311,36 +330,6 @@ def parse_bool(bool_string):
         return False
     else:
         raise ParseException("Unknown boolean '%s'" % bool_string)
-
-
-def time_string(time):
-    """
-    Return time formatted for writing to file.
-    """
-    return "%s-%s-%s %s:%s:%s" % (time.year, time.month, time.day,
-                                  time.hour, time.minute, time.second)
-
-
-def parse_time(time_string):
-    """
-    Expected format 'year-month-day hour:minute:second'.
-
-    Return a Python datetime.
-    """
-    match = re.search(r"^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$", time_string)
-    if match:
-        year = int(match.group(1))
-        month = int(match.group(2))
-        day = int(match.group(3))
-        hour = int(match.group(4))
-        minute = int(match.group(5))
-        second = int(match.group(6))
-        try:
-            return datetime(year, month, day, hour, minute, second)
-        except ValueError:
-            raise ParseException("Invalid time, time string = '%s'" % time_string)
-    else:
-        raise ParseException("Time not on correct format = '%s'" % time_string)
 
 
 def color_string(color):

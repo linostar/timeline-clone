@@ -86,6 +86,12 @@ class FileTimeline(MemoryDB):
         self.path = path
         self._load()
 
+    def _parse_time(self, time_string):
+        return self.get_time_type().parse_time(time_string)
+
+    def _time_string(self, time):
+        return self.get_time_type().time_string(time)
+
     def _load(self):
         """
         Load timeline data from the file that this timeline points to.
@@ -173,7 +179,8 @@ class FileTimeline(MemoryDB):
         try:
             if len(times) != 2:
                 raise ParseException("Unexpected number of components.")
-            tp = TimePeriod(parse_time(times[0]), parse_time(times[1]))
+            tp = TimePeriod(self.get_time_type(), self._parse_time(times[0]), 
+                            self._parse_time(times[1]))
             self._set_displayed_period(tp)
             if not tp.is_period():
                 raise ParseException("Length not > 0.")
@@ -220,24 +227,24 @@ class FileTimeline(MemoryDB):
                 if (len(event_specification) != 3 and
                     len(event_specification) != 4):
                     raise ParseException("Unexpected number of components.")
-                start_time = parse_time(event_specification[0])
-                end_time = parse_time(event_specification[1])
+                start_time = self._parse_time(event_specification[0])
+                end_time = self._parse_time(event_specification[1])
                 text = dequote(event_specification[2])
                 cat_name = None
                 if len(event_specification) == 4:
                     cat_name = dequote(event_specification[3])
                 category = self._get_category(cat_name)
-                evt = Event(start_time, end_time, text, category)
+                evt = Event(self, start_time, end_time, text, category)
                 self.save_event(evt)
                 return True
             else:
                 if len(event_specification) < 4:
                     raise ParseException("Unexpected number of components.")
-                start_time = parse_time(event_specification[0])
-                end_time = parse_time(event_specification[1])
+                start_time = self._parse_time(event_specification[0])
+                end_time = self._parse_time(event_specification[1])
                 text = dequote(event_specification[2])
                 category = self._get_category(dequote(event_specification[3]))
-                event = Event(start_time, end_time, text, category)
+                event = Event(self, start_time, end_time, text, category)
                 for item in event_specification[4:]:
                     id, data = item.split(":", 1)
                     if id not in self.supported_event_data():
@@ -277,14 +284,14 @@ class FileTimeline(MemoryDB):
     def _write_header(self, file):
         file.write("# Written by Timeline %s on %s\n" % (
             get_version(),
-            time_string(datetime.now())))
+            self._time_string(datetime.now())))
 
     def _write_preferred_period(self, file):
         tp = self._get_displayed_period()
         if tp is not None:
             file.write("PREFERRED-PERIOD:%s;%s\n" % (
-                time_string(tp.start_time),
-                time_string(tp.end_time)))
+                self._time_string(tp.start_time),
+                self._time_string(tp.end_time)))
 
     def _write_categories(self, file):
         def save(category):
@@ -299,8 +306,8 @@ class FileTimeline(MemoryDB):
     def _write_events(self, file):
         def save(event):
             file.write("EVENT:%s;%s;%s" % (
-                time_string(event.time_period.start_time),
-                time_string(event.time_period.end_time),
+                self._time_string(event.time_period.start_time),
+                self._time_string(event.time_period.end_time),
                 quote(event.text)))
             if event.category:
                 file.write(";%s" % quote(event.category.name))
@@ -352,36 +359,6 @@ def parse_color(color_string):
         return (r, g, b)
     else:
         raise ParseException("Color not on correct format, color string = '%s'" % color_string)
-
-
-def parse_time(time_string):
-    """
-    Return a DateTime or raise exception.
-
-    Expected format 'year-month-day hour:minute:second'.
-    """
-    match = re.search(r"^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$", time_string)
-    if match:
-        year = int(match.group(1))
-        month = int(match.group(2))
-        day = int(match.group(3))
-        hour = int(match.group(4))
-        minute = int(match.group(5))
-        second = int(match.group(6))
-        try:
-            return datetime(year, month, day, hour, minute, second)
-        except ValueError:
-            raise ParseException("Invalid time, time string = '%s'" % time_string)
-    else:
-        raise ParseException("Time not on correct format = '%s'" % time_string)
-
-
-def time_string(time):
-    """
-    Return time formatted for writing to file.
-    """
-    return "%s-%s-%s %s:%s:%s" % (time.year, time.month, time.day,
-                                  time.hour, time.minute, time.second)
 
 
 def split_on_semicolon(text):

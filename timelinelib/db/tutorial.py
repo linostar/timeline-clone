@@ -102,7 +102,8 @@ class TutorialTimelineCreator(object):
         now = datetime.now()
         self.start = datetime(now.year, now.month, 1, 0, 0, 0)
         self.end = self.start + timedelta(days=30)
-        self.db._set_displayed_period(TimePeriod(self.start, self.end))
+        self.db._set_displayed_period(TimePeriod(self.db.get_time_type(), 
+                                                 self.start, self.end))
         self.last_cat = None
 
     def add_category(self, name, color, make_last_added_parent=False):
@@ -118,7 +119,7 @@ class TutorialTimelineCreator(object):
         end   = start
         if end_add is not None:
             end = self.start + end_add
-        evt = Event(start, end, text, self.last_cat)
+        evt = Event(self.db, start, end, text, self.last_cat)
         if description:
             evt.set_data("description", description)
         self.db.save_event(evt)

@@ -37,6 +37,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import generic_event_search
+from timelinelib.time.pytime import PyTimeType
 
 
 class MemoryDB(TimelineDB):
@@ -50,6 +51,10 @@ class MemoryDB(TimelineDB):
         self.displayed_period = None
         self.hidden_categories = []
         self.save_disabled = False
+        self.time_type = PyTimeType()
+
+    def get_time_type(self):
+        return self.time_type
 
     def is_read_only(self):
         return False

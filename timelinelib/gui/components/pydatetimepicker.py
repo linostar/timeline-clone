@@ -28,6 +28,7 @@ from wx.lib.masked import TimeCtrl
 from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
 import timelinelib.config as config
+from timelinelib.time import PyTimeType
 
 
 class PyDateTimePicker(wx.Panel):
@@ -298,18 +299,18 @@ class PyDatePickerController(object):
 
     def on_up(self):
         def increment_year(date):
-            if date.year < TimePeriod.MAX_TIME.year - 1:
+            if date.year < PyTimeType().get_max_time()[0].year - 1:
                 return self._set_valid_day(date.year + 1, date.month, date.day)
             return date
         def increment_month(date):
             if date.month < 12:
                 return self._set_valid_day(date.year, date.month + 1, 
                                            date.day)
-            elif date.year < TimePeriod.MAX_TIME.year - 1:    
+            elif date.year < PyTimeType().get_max_time()[0].year - 1:    
                 return self._set_valid_day(date.year + 1, 1, date.day)
             return date
         def increment_day(date):
-            if date <  TimePeriod.MAX_TIME.date() - datetime.timedelta(days=1):
+            if date <  PyTimeType().get_max_time()[0].date() - datetime.timedelta(days=1):
                 return date + datetime.timedelta(days=1)
             return date
         if not self._current_date_is_valid():
@@ -328,13 +329,13 @@ class PyDatePickerController(object):
 
     def on_down(self):
         def decrement_year(date):
-            if date.year > TimePeriod.MIN_TIME.year:
+            if date.year > PyTimeType().get_min_time()[0].year:
                 return self._set_valid_day(date.year - 1, date.month, date.day)
             return date
         def decrement_month(date):
             if date.month > 1:
                 return self._set_valid_day(date.year, date.month - 1, date.day)
-            elif date.year > TimePeriod.MIN_TIME.year:    
+            elif date.year > PyTimeType().get_min_time()[0].year:    
                 return self._set_valid_day(date.year - 1, 12, date.day)
             return date
         def decrement_day(date):
@@ -342,7 +343,7 @@ class PyDatePickerController(object):
                 return date.replace(day=date.day - 1)
             elif date.month > 1:
                 return self._set_valid_day(date.year, date.month - 1, 31)
-            elif date.year > TimePeriod.MIN_TIME.year:
+            elif date.year > PyTimeType().get_min_time()[0].year:
                 return self._set_valid_day(date.year - 1, 12, 31)
             return date
         if not self._current_date_is_valid():
@@ -378,8 +379,8 @@ class PyDatePickerController(object):
 
     def _ensure_within_allowed_period(self, py_date):
         py_date_time = datetime.datetime(py_date.year, py_date.month, py_date.day)
-        if (py_date_time >= TimePeriod.MAX_TIME or
-            py_date_time <  TimePeriod.MIN_TIME):
+        if (py_date_time >= PyTimeType().get_max_time()[0] or
+            py_date_time <  PyTimeType().get_min_time()[0]):
             raise ValueError()
 
     def _set_new_date_and_restore_selection(self, new_date, selection):

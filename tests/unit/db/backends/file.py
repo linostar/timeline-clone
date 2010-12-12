@@ -30,6 +30,7 @@ from timelinelib.db.backends.file import FileTimeline
 from timelinelib.db.backends.file import quote
 from timelinelib.db.backends.file import dequote
 from timelinelib.db.backends.file import split_on_semicolon
+from timelinelib.time import PyTimeType
 from timelinelib.drawing.interface import ViewProperties
 
 
@@ -115,7 +116,7 @@ class TestFileTimeline(unittest.TestCase):
         """
         timeline = FileTimeline(self.valid_file)
         now = datetime.datetime.now()
-        zero_tp = TimePeriod(now, now)
+        zero_tp = TimePeriod(PyTimeType(), now, now)
         vp = ViewProperties()
         vp.displayed_period = zero_tp
         self.assertRaises(TimelineIOError, timeline.save_view_properties, vp)

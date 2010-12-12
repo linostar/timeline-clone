@@ -38,7 +38,6 @@ from timelinelib.gui.utils import ID_ERROR
 import timelinelib.gui.utils as gui_utils
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
-from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
 from timelinelib.utils import ex_msg
 
 
@@ -67,6 +66,9 @@ class EventEditor(wx.Dialog):
         self._fill_controls_with_data(start, end)
         self._set_initial_focus()
 
+    def _create_time_picker(self):
+        return self.timeline.get_time_type().create_time_picker(self)
+
     def _create_gui(self):
         """Create the controls of the dialog."""
         # Groupbox
@@ -78,9 +80,9 @@ class EventEditor(wx.Dialog):
         # Grid: When: Label + DateTimePickers
         grid.Add(wx.StaticText(self, label=_("When:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
-        self.dtp_start = PyDateTimePicker(self)
+        self.dtp_start = self._create_time_picker()
         self.lbl_to = wx.StaticText(self, label=_("to"))
-        self.dtp_end = PyDateTimePicker(self)
+        self.dtp_end = self._create_time_picker()
         when_box = wx.BoxSizer(wx.HORIZONTAL)
         when_box.Add(self.dtp_start, proportion=1)
         when_box.AddSpacer(BORDER)
@@ -96,10 +98,11 @@ class EventEditor(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
                   self.chb_period)
         when_box_props.Add(self.chb_period)
-        self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
-        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
-                  self.chb_show_time)
-        when_box_props.Add(self.chb_show_time)
+        if self.timeline.get_time_type().is_date_time_type():
+            self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
+            self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
+                      self.chb_show_time)
+            when_box_props.Add(self.chb_show_time)
         grid.Add(when_box_props)
         # Grid: Text
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY)
@@ -186,7 +189,8 @@ class EventEditor(wx.Dialog):
                     self.timeline.save_event(self.event)
                 # Create new event
                 else:
-                    self.event = Event(start_time, end_time, name, category)
+                    self.event = Event(self.timeline, start_time, end_time, 
+                                       name, category)
                     for data_id, editor in self.event_data:
                         self.event.set_data(data_id,
                                             editor.get_data())
@@ -257,7 +261,6 @@ class EventEditor(wx.Dialog):
         """Initially fill the controls in the dialog with data."""
         if self.event == None:
             self.chb_period.SetValue(False)
-            self.chb_show_time.SetValue(False)
             text = ""
             category = None
             self.updatemode = False
@@ -272,7 +275,6 @@ class EventEditor(wx.Dialog):
                     editor.set_data(data)
             self.updatemode = True
         if start != None and end != None:
-            self.chb_show_time.SetValue(TimePeriod(start, end).has_nonzero_time())
             self.chb_period.SetValue(start != end)
         self.dtp_start.set_value(start)
         self.dtp_end.set_value(end)
@@ -280,6 +282,16 @@ class EventEditor(wx.Dialog):
         self._update_categories(category)
         self.chb_add_more.SetValue(False)
         self._show_to_time(self.chb_period.IsChecked())
+        if self.timeline.get_time_type().is_date_time_type():            
+            self._fill_chb_show_time_control_with_data(self.event, start, end)
+
+    def _fill_chb_show_time_control_with_data(self, event, start, end):
+        if event == None:
+            self.chb_show_time.SetValue(False)
+        if start != None and end != None:
+            time_period = TimePeriod(self.timeline.get_time_type(), start, end)
+            has_nonzero_type =time_period.has_nonzero_time()
+            self.chb_show_time.SetValue(has_nonzero_type)
         self.dtp_start.show_time(self.chb_show_time.IsChecked())
         self.dtp_end.show_time(self.chb_show_time.IsChecked())
 

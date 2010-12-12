@@ -23,6 +23,7 @@ import unittest
 import wx
 from mock import Mock
 
+from timelinelib.time import PyTimeType
 from timelinelib.drawing.interface import Drawer
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import TimePeriod
@@ -77,13 +78,14 @@ class TimelineView(unittest.TestCase):
     def setUpDb(self):
         self.db = MemoryDB()
         self.db._set_displayed_period(
-            TimePeriod(datetime(2010, 8, 30, 0, 0, 0),
+            TimePeriod(self.db.get_time_type(), 
+                       datetime(2010, 8, 30, 0, 0, 0),
                        datetime(2010, 8, 31, 0, 0, 0)))
-        self.point_event = Event(datetime(2010, 8, 30, 15, 0, 0),
+        self.point_event = Event(self.db, datetime(2010, 8, 30, 15, 0, 0),
                                  datetime(2010, 8, 30, 15, 0, 0),
                                  "Point event")
         self.db.save_event(self.point_event)
-        self.period_event = Event(datetime(2010, 8, 30, 4, 0, 0),
+        self.period_event = Event(self.db, datetime(2010, 8, 30, 4, 0, 0),
                                   datetime(2010, 8, 30, 7, 0, 0),
                                   "Period event")
         self.period_event.set_data("description", "I am a period event!")
@@ -340,14 +342,15 @@ class TimelineView(unittest.TestCase):
         self.controller.mouse_moved(x, y)
 
     def assertPeriodEventHasPeriod(self, start, end):
-        self.assertEquals(TimePeriod(start, end), self.period_event.time_period)
+        self.assertEquals(TimePeriod(PyTimeType(), start, end), 
+                          self.period_event.time_period)
     
     def assertChangedDisplayedPeriodTo(self, start, end):
         self.assertDisplaysPeriod(start, end)
         self.assertTimelineRedrawn()
 
     def assertDisplaysPeriod(self, start, end):
-        self.assertEquals(TimePeriod(start, end),
+        self.assertEquals(TimePeriod(PyTimeType(), start, end),
                           self.controller.get_time_period())
 
     def assertTimelineRedrawn(self):

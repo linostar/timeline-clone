@@ -25,6 +25,7 @@ import doctest
 import locale
 
 def execute_all_specs():
+    locale.setlocale(locale.LC_ALL, '')
     setup_paths()
     enable_gettext()
     setup_locale()
@@ -66,7 +67,6 @@ def add_specs(suite):
             load_test_cases_from_module_name(suite, abs_module_name)
 
 def add_unittests(suite):
-    load_test_cases_from_module_name(suite, "tests.unit.db.objects")
     load_test_cases_from_module_name(suite, "tests.unit.db.backends.file")
     load_test_cases_from_module_name(suite, "tests.unit.gui.utils")
     load_test_cases_from_module_name(suite, "tests.unit.gui.dialogs.mainframe")
@@ -75,7 +75,6 @@ def add_unittests(suite):
     load_test_cases_from_module_name(suite, "tests.integration.read_010_file")
     load_test_cases_from_module_name(suite, "tests.integration.read_090_file")
     load_test_cases_from_module_name(suite, "tests.integration.read_0100_file")
-    load_test_cases_from_module_name(suite, "tests.unit.gui.dialogs.duplicateevent")
     load_test_cases_from_module_name(suite, "tests.unit.gui.components.cattree")
     load_test_cases_from_module_name(suite, "tests.unit.db.backends.xmlparser")
     load_test_cases_from_module_name(suite, "tests.integration.read_write_xml")

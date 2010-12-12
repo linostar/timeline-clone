@@ -23,19 +23,17 @@ Implements a Drawer that draws the default timeline view.
 
 import math
 import calendar
-from datetime import timedelta
-from datetime import datetime
 import os.path
 
 import wx
 
 from timelinelib.drawing.interface import Drawer
-from timelinelib.drawing.utils import Metrics
 from timelinelib.drawing.utils import get_default_font
+from timelinelib.drawing.utils import Metrics
 from timelinelib.drawing.utils import darken_color
 from timelinelib.gui.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.utils import local_to_unicode
+from timelinelib.utils import local_to_unicode
 from timelinelib.paths import ICONS_DIR
 import timelinelib.config as config
 
@@ -48,210 +46,20 @@ BALLOON_RADIUS = 12
 DATA_INDICATOR_SIZE = 10
 
 
-class Strip(object):
-    """
-    An interface for strips.
-
-    The different strips are implemented in subclasses below.
-
-    The timeline is divided in major and minor strips. The minor strip might
-    for example be days, and the major strip months. Major strips are divided
-    with a solid line and minor strips with dotted lines. Typically maximum
-    three major strips should be shown and the rest will be minor strips.
-    """
-
-    def label(self, time, major=False):
-        """
-        Return the label for this strip at the given time when used as major or
-        minor strip.
-        """
-
-    def start(self, time):
-        """
-        Return the start time for this strip and the given time.
-
-        For example, if the time is 2008-08-31 and the strip is month, the
-        start would be 2008-08-01.
-        """
-
-    def increment(self, time):
-        """
-        Increment the given time so that it points to the start of the next
-        strip.
-        """
-
-
-class StripCentury(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            # TODO: This only works for English. Possible to localize?
-            start_year = self._century_start_year(time.year)
-            next_start_year = start_year + 100
-            return str(next_start_year)[0:2] + " century"
-        return ""
-
-    def start(self, time):
-        return datetime(max(self._century_start_year(time.year), 10), 1, 1)
-
-    def increment(self, time):
-        return time.replace(year=time.year+100)
-
-    def _century_start_year(self, year):
-        return (int(year) / 100) * 100
-
-
-class StripDecade(Strip):
-
-    def label(self, time, major=False):
-        # TODO: This only works for English. Possible to localize?
-        return str(self._decade_start_year(time.year)) + "s"
-
-    def start(self, time):
-        return datetime(self._decade_start_year(time.year), 1, 1)
-
-    def increment(self, time):
-        return time.replace(year=time.year+10)
-
-    def _decade_start_year(self, year):
-        return (int(year) / 10) * 10
-
-
-class StripYear(Strip):
-
-    def label(self, time, major=False):
-        return str(time.year)
-
-    def start(self, time):
-        return datetime(time.year, 1, 1)
-
-    def increment(self, time):
-        return time.replace(year=time.year+1)
-
-
-class StripMonth(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s" % (local_to_unicode(calendar.month_abbr[time.month]),                              time.year)
-        return calendar.month_abbr[time.month]
-
-    def start(self, time):
-        return datetime(time.year, time.month, 1)
-
-    def increment(self, time):
-        return time + timedelta(calendar.monthrange(time.year, time.month)[1])
-
-
-class StripWeek(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            # Example: Week 23 (1-7 Jan 2009)
-            first_weekday = self.start(time)
-            next_first_weekday = self.increment(first_weekday)
-            last_weekday = next_first_weekday - timedelta(days=1)
-            range_string = self._time_range_string(first_weekday, last_weekday)
-            if config.global_config.week_start == "monday":
-                return (_("Week") + " %s (%s)") % (time.isocalendar()[1], range_string)
-            else:
-                # It is sunday (don't know what to do about week numbers here)
-                return range_string
-        # This strip should never be used as minor
-        return ""
-
-    def start(self, time):
-        stripped_date = datetime(time.year, time.month, time.day)
-        if config.global_config.week_start == "monday":
-            days_to_subtract = stripped_date.weekday()
-        else:
-            # It is sunday
-            days_to_subtract = (stripped_date.weekday() + 1) % 7
-        return stripped_date - timedelta(days=days_to_subtract)
-
-    def increment(self, time):
-        return time + timedelta(7)
-
-    def _time_range_string(self, time1, time2):
-        """
-        Examples:
-
-        * 1-7 Jun 2009
-        * 28 Jun-3 Jul 2009
-        * 28 Jun 08-3 Jul 2009
-        """
-        if time1.year == time2.year:
-            if time1.month == time2.month:
-                return "%s-%s %s %s" % (time1.day, time2.day,
-                                        local_to_unicode(calendar.month_abbr[time1.month]),
-                                        time1.year)
-            return "%s %s-%s %s %s" % (time1.day,
-                                       local_to_unicode(calendar.month_abbr[time1.month]),
-                                       time2.day,
-                                       local_to_unicode(calendar.month_abbr[time2.month]),
-                                       time1.year)
-        return "%s %s %s-%s %s %s" % (time1.day,
-                                      local_to_unicode(calendar.month_abbr[time1.month]),
-                                      time1.year,
-                                      time2.day,
-                                      local_to_unicode(calendar.month_abbr[time2.month]),
-                                      time2.year)
-
-
-class StripDay(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
-                                 time.year)
-        return str(time.day)
-
-    def start(self, time):
-        return datetime(time.year, time.month, time.day)
-
-    def increment(self, time):
-        return time + timedelta(1)
-
-
-class StripWeekday(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s %s %s" % (local_to_unicode(calendar.day_abbr[time.weekday()]),
-                                    time.day,
-                                    local_to_unicode(calendar.month_abbr[time.month]),
-                                    time.year)
-        return str(calendar.day_abbr[time.weekday()])
-
-    def start(self, time):
-        return datetime(time.year, time.month, time.day)
-
-    def increment(self, time):
-        return time + timedelta(1)
-
-
-class StripHour(Strip):
-
-    def label(self, time, major=False):
-        if major:
-            return "%s %s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
-                                    time.year, time.hour)
-        return str(time.hour)
-
-    def start(self, time):
-        return datetime(time.year, time.month, time.day, time.hour)
-
-    def increment(self, time):
-        return time + timedelta(hours=1)
-
-
 class DefaultDrawingAlgorithm(Drawer):
 
     def __init__(self):
-        # Fonts and pens we use when drawing
+        self._create_fonts()
+        self._create_pens()
+        self._create_brushes()
+        self.db = None
+        
+    def _create_fonts(self):
         self.header_font = get_default_font(12, True)
         self.small_text_font = get_default_font(8)
         self.small_text_font_bold = get_default_font(8, True)
+
+    def _create_pens(self):
         self.red_solid_pen = wx.Pen(wx.Color(255,0, 0), 1, wx.SOLID)
         self.black_solid_pen = wx.Pen(wx.Color(0, 0, 0), 1, wx.SOLID)
         self.darkred_solid_pen = wx.Pen(wx.Color(200, 0, 0), 1, wx.SOLID)
@@ -260,63 +68,79 @@ class DefaultDrawingAlgorithm(Drawer):
         self.black_dashed_pen.SetCap(wx.CAP_BUTT)
         self.grey_solid_pen = wx.Pen(wx.Color(200, 200, 200), 1, wx.SOLID)
         self.red_solid_pen = wx.Pen(wx.Color(255, 0, 0), 1, wx.SOLID)
+        
+    def _create_brushes(self):
         self.white_solid_brush = wx.Brush(wx.Color(255, 255, 255), wx.SOLID)
         self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
         self.red_solid_brush = wx.Brush(wx.Color(255, 0, 0), wx.SOLID)
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
-        self.DATA_ICON_WIDTH = 5
 
     def event_is_period(self, time_period):
-        ew = self.metrics.calc_width(time_period)
-        return ew > PERIOD_THRESHOLD
+        period_width_in_pixels = self.metrics.calc_width(time_period)
+        return period_width_in_pixels > PERIOD_THRESHOLD
 
     def draw(self, dc, timeline, view_properties):
-        """
-        Implement the drawing interface.
-
-        The drawing is done in a number of steps: First positions of all events
-        and strips are calculated and then they are drawn. Positions can also
-        be used later to answer questions like what event is at position (x, y).
-        """
-        # Store data so we can use it in other functions
         self.dc = dc
         self.time_period = view_properties.displayed_period
-        self.metrics = Metrics(dc.GetSizeTuple(), self.time_period, view_properties.divider_position)
-        # Data
-        self.event_data = []       # List of tuples (event, rect)
-        self.major_strip_data = [] # List of time_period
-        self.minor_strip_data = [] # List of time_period
-        self.balloon_data = []     # List of (event, rect)
-        # Calculate stuff later used for drawing
-        events_from_db = timeline.get_events(self.time_period)
-        visible_events = view_properties.filter_events(events_from_db)
-        self._calc_rects(visible_events)
+        self.db = timeline
+        self.time_type = self.db.get_time_type()
+        self.metrics = Metrics(dc.GetSizeTuple(), self.time_type, 
+                               self.time_period, 
+                               view_properties.divider_position)
+        self._calc_event_positions(view_properties)
         self._calc_strips()
-        # Perform the actual drawing
-        if view_properties.period_selection:
-            self._draw_period_selection(view_properties.period_selection)
+        self._perform_drawing(view_properties)
+        del self.dc # Program crashes if we don't delete the dc reference.
+
+    def _perform_drawing(self, view_properties):
+        self._draw_period_selection(view_properties)
         self._draw_bg(view_properties)
         self._draw_events(view_properties)
-        if view_properties.show_legend:
-            self._draw_legend(self._extract_categories())
+        self._draw_legend(view_properties, self._extract_categories())
         self._draw_ballons(view_properties)
-        # Make sure to delete this one
-        del self.dc
-
+        
+    def _calc_event_positions(self, view_properties):
+        events_from_db = self.db.get_events(self.time_period)
+        visible_events = view_properties.filter_events(events_from_db)
+        self._calc_rects(visible_events)
+        
     def snap(self, time, snap_region=10):
+        if self._distance_to_left_border(time) < snap_region:
+            return self._get_time_at_left_border(time)
+        elif self._distance_to_right_border(time)  < snap_region:
+            return self._get_time_at_right_border(time)
+        else:
+            return time
+
+    def _distance_to_left_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return self._distance_between_times(time, left_strip_time)
+        
+    def _distance_to_right_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return self._distance_between_times(time, right_strip_time)
+
+    def _get_time_at_left_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return left_strip_time
+        
+    def _get_time_at_right_border(self, time):
+        left_strip_time, right_strip_time = self._snap_region(time)
+        return right_strip_time
+        
+    def _distance_between_times(self, time1, time2):
+        time1_x = self.metrics.calc_exact_x(time1)
+        time2_x = self.metrics.calc_exact_x(time2)
+        distance = abs(time1_x - time2_x)
+        return distance
+        
+    def _snap_region(self, time): 
         major_strip, minor_strip = self._choose_strip()
         time_x = self.metrics.calc_exact_x(time)
         left_strip_time = minor_strip.start(time)
         right_strip_time = minor_strip.increment(left_strip_time)
-        left_diff = abs(time_x - self.metrics.calc_exact_x(left_strip_time))
-        right_diff = abs(time_x - self.metrics.calc_exact_x(right_strip_time))
-        if left_diff < snap_region:
-            return left_strip_time
-        elif right_diff < snap_region:
-            return right_strip_time
-        else:
-            return time
-
+        return (left_strip_time, right_strip_time)
+    
     def snap_selection(self, period_selection):
         start, end = period_selection
         return (self.snap(start), self.snap(end))
@@ -347,79 +171,93 @@ class DefaultDrawingAlgorithm(Drawer):
         return event
 
     def _calc_rects(self, events):
-        """
-        Calculate rectangles for all events.
-
-        The rectangles define the areas in which the events can draw
-        themselves.
-
-        During the calculations, the outer padding is part of the rectangles to
-        make the calculations easier. Outer padding is removed in the end.
-        """
-        self.dc.SetFont(self.small_text_font)
+        self.event_data = []
         for event in events:
-            tw, th = self.dc.GetTextExtent(event.text)
-            ew = self.metrics.calc_width(event.time_period)
-            if ew > PERIOD_THRESHOLD:
-                # Treat as period (periods are placed below the baseline, with
-                # indicates length of period)
-                rw = ew + 2 * OUTER_PADDING
-                rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
-                rx = (self.metrics.calc_x(event.time_period.start_time) -
-                      OUTER_PADDING)
-                ry = self.metrics.half_height + BASELINE_PADDING
-                movedir = 1
-            else:
-                # Treat as event (events are placed above the baseline, with
-                # indicates length of text)
-                rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
-                rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
-                if event.has_data():
-                    rw += DATA_INDICATOR_SIZE / 3
-                rx = self.metrics.calc_x(event.mean_time()) - rw / 2
-                ry = self.metrics.half_height - rh - BASELINE_PADDING
-                movedir = -1
-            # Make sure rectangle is not far outside the screen. MARGIN must be
-            # big enough to hide outer padding, borders, and selection markers.
-            MARGIN = 50
-            if rx < -MARGIN:
-                move = -rx - MARGIN
-                rx += move
-                rw -= move
-            right_edge_x = rx + rw
-            if right_edge_x > self.metrics.width + MARGIN:
-                rw -= right_edge_x - self.metrics.width - MARGIN
-            #
-            rect = wx.Rect(rx, ry, rw, rh)
-            self._prevent_overlap(rect, movedir)
+            rect = self._create_rectangle_for_event(event)
             self.event_data.append((event, rect))
         for (event, rect) in self.event_data:
-            # Remove outer padding
             rect.Deflate(OUTER_PADDING, OUTER_PADDING)
 
-    def _prevent_overlap(self, rect, movedir):
-        """
-        Prevent rect from overlapping with any rectangle by moving it.
-        """
+    def _create_rectangle_for_event(self, event):
+        rect = self._create_ideal_rect_for_event(event)
+        self._ensure_rect_is_not_far_outisde_screen(rect)
+        self._prevent_overlap(rect, self._get_y_move_direction(event))
+        return rect
+        
+    def _get_y_move_direction(self, event):
+        if self._display_as_period(event):
+            return 1
+        else:
+            return -1
+
+    def _create_ideal_rect_for_event(self, event):
+        if self._display_as_period(event):
+            return self._create_ideal_rect_for_period_event(event)
+        else:
+            return self._create_ideal_rect_for_non_period_event(event)
+
+    def _display_as_period(self, event):
+        event_width = self.metrics.calc_width(event.time_period)
+        return event_width > PERIOD_THRESHOLD
+
+    def _create_ideal_rect_for_period_event(self, event):
+        self.dc.SetFont(self.small_text_font)
+        tw, th = self.dc.GetTextExtent(event.text)
+        ew = self.metrics.calc_width(event.time_period)
+        rw = ew + 2 * OUTER_PADDING
+        rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        rx = (self.metrics.calc_x(event.time_period.start_time) -
+              OUTER_PADDING)
+        ry = self.metrics.half_height + BASELINE_PADDING
+        rect = wx.Rect(rx, ry, rw, rh)
+        return rect
+
+    def _create_ideal_rect_for_non_period_event(self, event):
+        self.dc.SetFont(self.small_text_font)
+        tw, th = self.dc.GetTextExtent(event.text)
+        rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        if event.has_data():
+            rw += DATA_INDICATOR_SIZE / 3
+        rx = self.metrics.calc_x(event.mean_time()) - rw / 2
+        ry = self.metrics.half_height - rh - BASELINE_PADDING
+        rect = wx.Rect(rx, ry, rw, rh)
+        return rect
+
+    def _ensure_rect_is_not_far_outisde_screen(self, rect):
+        # Drawing stuff on huge x-coordinates causes drawing to fail.
+        # MARGIN must be big enough to hide outer padding, borders, and
+        # selection markers.
+        rx = rect.GetX()
+        rw = rect.GetWidth()
+        MARGIN = 50
+        if rx < -MARGIN:
+            distance_beyond_left_margin = -rx - MARGIN
+            rx += distance_beyond_left_margin
+            rw -= distance_beyond_left_margin
+        right_edge_x = rx + rw
+        if right_edge_x > self.metrics.width + MARGIN:
+            rw -= right_edge_x - self.metrics.width - MARGIN
+        rect.SetX(rx)
+        rect.SetWidth(rw)
+
+    def _prevent_overlap(self, rect, y_move_direction):
         while True:
-            h = self._intersection_height(rect)
-            if h > 0:
-                rect.Y += movedir * h
-            else:
+            intersection_height = self._intersection_height(rect)
+            rect.Y += y_move_direction * intersection_height
+            if intersection_height == 0:
                 break
-            # Don't prevent overlap if rect is outside screen
-            if movedir == 1 and rect.Y > self.metrics.height:
-                break
-            if movedir == -1 and (rect.Y + rect.Height) < 0:
+            if self._rect_above_or_below_screen(rect):
+                # Optimization: Don't prevent overlap if rect is pushed
+                # outside screen
                 break
 
+    def _rect_above_or_below_screen(self, rect):
+        return rect.Y > self.metrics.height or (rect.Y + rect.Height) < 0
+
     def _intersection_height(self, rect):
-        """
-        Calculate height of first intersection with rectangle.
-        """
         for (event, r) in self.event_data:
             if rect.Intersects(r):
-                # Calculate height of intersection only if there is any
                 r_copy = wx.Rect(*r) # Because `Intersect` modifies rect
                 intersection = r_copy.Intersect(rect)
                 return intersection.Height
@@ -432,9 +270,11 @@ class DefaultDrawingAlgorithm(Drawer):
             current_start = strip.start(self.time_period.start_time)
             while current_start < self.time_period.end_time:
                 next_start = strip.increment(current_start)
-                list.append(TimePeriod(current_start, next_start))
+                list.append(TimePeriod(self.db.get_time_type(), current_start, next_start))
                 current_start = next_start
-        major_strip, minor_strip = self._choose_strip()
+        self.major_strip_data = [] # List of time_period
+        self.minor_strip_data = [] # List of time_period
+        major_strip, minor_strip = self.time_type.choose_strip(self.metrics)
         fill(self.major_strip_data, major_strip)
         fill(self.minor_strip_data, minor_strip)
 
@@ -443,27 +283,12 @@ class DefaultDrawingAlgorithm(Drawer):
         Return a tuple (major_strip, minor_strip) for current time period and
         window size.
         """
-        today = datetime.now()
-        tomorrow = today + timedelta(days=1)
-        day_period = TimePeriod(today, tomorrow)
-        one_day_width = self.metrics.calc_exact_width(day_period)
-        if one_day_width > 600:
-            return (StripDay(), StripHour())
-        elif one_day_width > 45:
-            return (StripWeek(), StripWeekday())
-        elif one_day_width > 25:
-            return (StripMonth(), StripDay())
-        elif one_day_width > 1.5:
-            return (StripYear(), StripMonth())
-        elif one_day_width > 0.12:
-            return (StripDecade(), StripYear())
-        elif one_day_width > 0.012:
-            return (StripCentury(), StripDecade())
-        else:
-            return (StripCentury(), StripCentury())
-
-    def _draw_period_selection(self, period_selection):
-        start, end = period_selection
+        return self.time_type.choose_strip(self.metrics)
+     
+    def _draw_period_selection(self, view_properties):
+        if not view_properties.period_selection:
+            return
+        start, end = view_properties.period_selection
         start_x = self.metrics.calc_x(start)
         end_x = self.metrics.calc_x(end)
         self.dc.SetBrush(self.lightgrey_solid_brush)
@@ -472,31 +297,33 @@ class DefaultDrawingAlgorithm(Drawer):
                               end_x - start_x + 1, self.metrics.height)
 
     def _draw_bg(self, view_properties):
-        """
-        Draw major and minor strips, lines to all event boxes and baseline.
+        self._draw_minor_strips()
+        self._draw_major_strips()
+        self._draw_divider_line()
+        self._draw_lines_to_non_period_events(view_properties)
+        self._draw_now_line()
 
-        Both major and minor strips have divider lines and labels.
-        """
-        major_strip, minor_strip = self._choose_strip()
-        # Minor strips
+    def _draw_minor_strips(self):
+        for strip_period in self.minor_strip_data:
+            self._draw_minor_strip_divider_line_at(strip_period.end_time)
+            self._draw_minor_strip_label(strip_period)
+
+    def _draw_minor_strip_divider_line_at(self, time):
+        x = self.metrics.calc_x(time)
         self.dc.SetPen(self.black_dashed_pen)
-        for tp in self.minor_strip_data:
-            # Chose font
-            if (isinstance(minor_strip, StripDay) and
-                tp.start_time.weekday() in (5, 6)):
-                self.dc.SetFont(self.small_text_font_bold)
-            else:
-                self.dc.SetFont(self.small_text_font)
-            # Divider line
-            x = self.metrics.calc_x(tp.end_time)
-            self.dc.DrawLine(x, 0, x, self.metrics.height)
-            # Label
-            label = minor_strip.label(tp.start_time)
-            (tw, th) = self.dc.GetTextExtent(label)
-            middle = self.metrics.calc_x(tp.mean_time())
-            middley = self.metrics.half_height
-            self.dc.DrawText(label, middle - tw / 2, middley - th)
-        # Major strips
+        self.dc.DrawLine(x, 0, x, self.metrics.height)
+
+    def _draw_minor_strip_label(self, strip_period):
+        major_strip, minor_strip = self._choose_strip()
+        label = minor_strip.label(strip_period.start_time)
+        (tw, th) = self.dc.GetTextExtent(label)
+        middle = self.metrics.calc_x(strip_period.mean_time())
+        middley = self.metrics.half_height
+        self.dc.SetFont(minor_strip.get_font(strip_period))
+        self.dc.DrawText(label, middle - tw / 2, middley - th)
+        
+    def _draw_major_strips(self):
+        major_strip, minor_strip = self._choose_strip()
         self.dc.SetFont(self.header_font)
         self.dc.SetPen(self.grey_solid_pen)
         for tp in self.major_strip_data:
@@ -521,11 +348,13 @@ class DefaultDrawingAlgorithm(Drawer):
                 if x < left:
                     x = left + INNER_PADDING
             self.dc.DrawText(label, x, INNER_PADDING)
-        # Main divider line
+        
+    def _draw_divider_line(self):
         self.dc.SetPen(self.black_solid_pen)
         self.dc.DrawLine(0, self.metrics.half_height, self.metrics.width,
                          self.metrics.half_height)
-        # Lines to all events
+        
+    def _draw_lines_to_non_period_events(self, view_properties):
         self.dc.SetBrush(self.black_solid_brush)
         for (event, rect) in self.event_data:
             if rect.Y < self.metrics.half_height:
@@ -539,13 +368,14 @@ class DefaultDrawingAlgorithm(Drawer):
                     self.dc.SetPen(self.black_solid_pen)
                 self.dc.DrawLine(x, y, x, self.metrics.half_height)
                 self.dc.DrawCircle(x, self.metrics.half_height, 2)
-        # Now line
-        now_time = datetime.now()
+        
+    def _draw_now_line(self):
+        now_time = self.time_type.now()
         if self.time_period.inside(now_time):
             self.dc.SetPen(self.darkred_solid_pen)
             x = self.metrics.calc_x(now_time)
             self.dc.DrawLine(x, 0, x, self.metrics.height)
-
+                
     def _extract_categories(self):
         categories = []
         for (event, rect) in self.event_data:
@@ -554,7 +384,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 categories.append(cat)
         return sort_categories(categories)
 
-    def _draw_legend(self, categories):
+    def _draw_legend(self, view_properties, categories):
         """
         Draw legend for the given categories.
 
@@ -565,44 +395,53 @@ class DefaultDrawingAlgorithm(Drawer):
           | Name   O |
           +----------+
         """
-        num_categories = len(categories)
-        if num_categories == 0:
+        if not view_properties.show_legend:
             return
-        def calc_sizes(dc):
-            """Return (width, height, item_height)."""
-            width = 0
-            height = INNER_PADDING
-            item_heights = 0
-            for cat in categories:
-                tw, th = self.dc.GetTextExtent(cat.name)
-                height = height + th + INNER_PADDING
-                item_heights += th
-                if tw > width:
-                    width = tw
-            item_height = item_heights / num_categories
-            return (width + 4 * INNER_PADDING + item_height, height,
-                    item_height)
+        if len(categories) == 0:
+            return
         self.dc.SetFont(self.small_text_font)
-        self.dc.SetTextForeground((0, 0, 0))
-        width, height, item_height = calc_sizes(self.dc)
-        # Draw big box
+        rect = self._calculate_legend_rect(categories)
+        self._draw_legend_box(rect)
+        self._draw_legend_items(rect, categories)
+
+    def _calculate_legend_rect(self, categories):
+        max_width = 0
+        height = INNER_PADDING
+        for cat in categories:
+            tw, th = self.dc.GetTextExtent(cat.name)
+            height = height + th + INNER_PADDING
+            if tw > max_width:
+                max_width = tw
+        item_height = self._text_height_with_current_font()
+        width = max_width + 4 * INNER_PADDING + item_height
+        return wx.Rect(OUTER_PADDING,
+                       self.metrics.height - height - OUTER_PADDING,
+                       width,
+                       height)
+
+    def _draw_legend_box(self, rect):
         self.dc.SetBrush(self.white_solid_brush)
         self.dc.SetPen(self.black_solid_pen)
-        box_rect = (OUTER_PADDING,
-                    self.metrics.height - height - OUTER_PADDING,
-                    width, height)
-        self.dc.DrawRectangleRect(box_rect)
-        # Draw text and color boxes
-        cur_y = self.metrics.height - height - OUTER_PADDING + INNER_PADDING
+        self.dc.DrawRectangleRect(rect)
+
+    def _text_height_with_current_font(self):
+        STRING_WITH_MIXED_CAPITALIZATION = "jJ"
+        tw, th = self.dc.GetTextExtent(STRING_WITH_MIXED_CAPITALIZATION)
+        return th
+
+    def _draw_legend_items(self, rect, categories):
+        item_height = self._text_height_with_current_font()
+        cur_y = rect.Y + INNER_PADDING
         for cat in categories:
             base_color = cat.color
             border_color = darken_color(base_color)
             self.dc.SetBrush(wx.Brush(base_color, wx.SOLID))
             self.dc.SetPen(wx.Pen(border_color, 1, wx.SOLID))
-            color_box_rect = (OUTER_PADDING + width - item_height -
+            color_box_rect = (OUTER_PADDING + rect.Width - item_height -
                               INNER_PADDING,
                               cur_y, item_height, item_height)
             self.dc.DrawRectangleRect(color_box_rect)
+            self.dc.SetTextForeground((0, 0, 0))
             self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
             cur_y = cur_y + item_height + INNER_PADDING
 
@@ -717,6 +556,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _draw_ballons(self, view_properties):
         """Draw ballons on selected events that has 'description' data."""
+        self.balloon_data = []     # List of (event, rect)
         top_event = None
         top_rect = None
         for (event, rect) in self.event_data:

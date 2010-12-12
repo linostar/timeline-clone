@@ -1,6 +1,9 @@
 syntax: glob
 
 .sconsign.dblite
+mikado.png
+mikado.pdf
+make_mikado.cmd
 po/timeline.pot
 *.pyc
 tags
@@ -9,3 +12,9 @@ tags
 HACKING.html
 api/
 icalendar/
+*.orig
+.project
+.pydevproject
+.settings/org.eclipse*
+Thumbs.db
+

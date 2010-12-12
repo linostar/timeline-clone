@@ -57,6 +57,9 @@ class TimelineDB(Observable):
         Observable.__init__(self)
         self.path = path
 
+    def get_time_type(self):
+        raise NotImplementedError()
+
     def is_read_only(self):
         """
         Return True if you can only read from this database and False if you

@@ -16,9 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from datetime import datetime as dt
-from datetime import timedelta
-
 import wx
 
 from timelinelib.drawing.utils import Metrics
@@ -27,7 +24,6 @@ from timelinelib.db.interface import STATE_CHANGE_ANY
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import ViewProperties
-from timelinelib.drawing.utils import mult_timedelta
 from timelinelib.drawing import get_drawer
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _step_function
@@ -308,13 +304,14 @@ class DrawingAreaController(object):
         if self.timeline != None:
             self.timeline.unregister(self._timeline_changed)
         self.timeline = timeline
+        self.time_type = self.timeline.get_time_type()
         if self.timeline:
             self.timeline.register(self._timeline_changed)
             try:
                 self.view_properties.clear_db_specific()
                 timeline.load_view_properties(self.view_properties)
                 if self.view_properties.displayed_period is None:
-                    default_tp = time_period_center(dt.now(), timedelta(days=30))
+                    default_tp = self.time_type.get_default_time_period()
                     self.view_properties.displayed_period = default_tp
             except TimelineIOError, e:
                 self.fn_handle_db_error(e)
@@ -519,7 +516,9 @@ class DrawingAreaController(object):
             self.view_properties.period_selection = period_selection
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
-            self.metrics = Metrics(self.view.GetSizeTuple(), self.view_properties.displayed_period, self.view_properties.divider_position)
+            self.metrics = Metrics(self.view.GetSizeTuple(), self.time_type, 
+                                   self.view_properties.displayed_period, 
+                                   self.view_properties.divider_position)
             self.view.redraw_surface(fn_draw)
             self.view.enable_disable_menus()
 
@@ -566,8 +565,10 @@ class DrawingAreaController(object):
         self.input_handler.dragscroll_timer_fired(self)
 
     def _scroll_timeline_view(self, direction):
-            delta = mult_timedelta(self.view_properties.displayed_period.delta(), direction / 10.0)
-            self._scroll_timeline(delta)
+        time_period = self.view_properties.displayed_period
+        factor = direction / 10.0
+        delta = self.time_type.mult_timedelta(time_period.delta(), factor) 
+        self._scroll_timeline(delta)
 
     def _scroll_timeline(self, delta):
         self.navigate_timeline(lambda tp: tp.move_delta(-delta))
@@ -908,7 +909,8 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
         if self.start_time > self.end_time:
             start = self.end_time
             end = self.start_time
-        return TimePeriod(controller.get_drawer().snap(start),
+        return TimePeriod(controller.get_timeline().get_time_type(), 
+                          controller.get_drawer().snap(start),
                           controller.get_drawer().snap(end))
 
     def _move_end_time(self, controller):
@@ -933,7 +935,7 @@ class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
     def end_action(self, controller, period):
         start = period.start_time
         end = period.end_time
-        td = end - start
-        if (td.seconds > 3600) or (td.days > 0):
+        delta = end - start
+        if period.time_type.zoom_is_ok(delta):
             # Don't zoom in to less than an hour which upsets things.
             controller.navigate_timeline(lambda tp: tp.update(start, end))
