@@ -40,7 +40,7 @@ import codecs
 
 # The root of the source archive corresponds to the parent directory of the
 # directory in which this file is
-ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
+ROOT_DIR = os.path.join(os.path.dirname(__file__))
 
 # Make sure that we can import timelinelib
 sys.path.insert(0, ROOT_DIR)
@@ -111,17 +111,11 @@ if not "check" in sys.argv:
         print("Error: Could not export from Mercurial")
         sys.exit()
 
-print("Running unit tests")
-unittest_ret = call(["python", "%s/tests/run.py" % (ROOT_DIR or "."), "quiet"])
-
 print("Running specs")
-spec_ret = call(["python", "%s/specs/execute.py" % (ROOT_DIR or "."), "quiet"])
+spec_ret = call(["python", "%s/execute-specs.py" % (ROOT_DIR or "."), "quiet"])
 
 print
 print("Warnings:")
-
-if unittest_ret != 0:
-    print("* Failed unit test")
 
 if spec_ret != 0:
     print("* Failed spec")
