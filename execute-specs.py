@@ -55,13 +55,48 @@ def add_spec_from_module(suite, module_name):
     module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
     suite.addTest(module_suite)
 
-def create_suite():
-    suite = unittest.TestSuite()
+def add_specs(suite):
     for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
         if file.endswith(".py") and file != "__init__.py":
             module_name = os.path.basename(file)[:-3]
             abs_module_name = "specs.%s" % module_name
             add_spec_from_module(suite, abs_module_name)
+
+def add_unittests(suite):
+    def add_tests_from_module(module_name):
+        __import__(module_name)
+        module = sys.modules[module_name]
+        module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+        suite.addTest(module_suite)
+    add_tests_from_module("tests.unit.db.objects")
+    add_tests_from_module("tests.unit.db.backends.file")
+    add_tests_from_module("tests.unit.gui.utils")
+    add_tests_from_module("tests.unit.gui.dialogs.mainframe")
+    add_tests_from_module("tests.unit.config")
+    add_tests_from_module("tests.unit.db.backends.memory")
+    add_tests_from_module("tests.integration.read_010_file")
+    add_tests_from_module("tests.integration.read_090_file")
+    add_tests_from_module("tests.integration.read_0100_file")
+    add_tests_from_module("tests.unit.gui.dialogs.duplicateevent")
+    add_tests_from_module("tests.unit.gui.components.cattree")
+    add_tests_from_module("tests.unit.db.backends.xmlparser")
+    add_tests_from_module("tests.integration.read_write_xml")
+    add_tests_from_module("tests.integration.write_xml")
+
+def add_doctests(suite):
+    def add_tests_from_module(module_name):
+        __import__(module_name)
+        module = sys.modules[module_name]
+        module_suite = doctest.DocTestSuite(module)
+        suite.addTest(module_suite)
+    add_tests_from_module("timelinelib.db.backends.xmlparser")
+    add_tests_from_module("timelinelib.utils")
+
+def create_suite():
+    suite = unittest.TestSuite()
+    add_specs(suite)
+    add_unittests(suite)
+    add_doctests(suite)
     return suite
 
 def execute_suite(suite):
