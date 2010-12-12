@@ -25,7 +25,6 @@ import doctest
 import locale
 
 def execute_all_specs():
-    locale.setlocale(locale.LC_ALL, '')
     setup_paths()
     enable_gettext()
     setup_locale()
