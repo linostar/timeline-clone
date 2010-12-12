@@ -204,8 +204,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetFont(self.small_text_font)
         tw, th = self.dc.GetTextExtent(event.text)
         ew = self.metrics.calc_width(event.time_period)
-        # Treat as period (periods are placed below the baseline, with
-        # indicates length of period)
         rw = ew + 2 * OUTER_PADDING
         rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
         rx = (self.metrics.calc_x(event.time_period.start_time) -
@@ -213,12 +211,10 @@ class DefaultDrawingAlgorithm(Drawer):
         ry = self.metrics.half_height + BASELINE_PADDING
         rect = wx.Rect(rx, ry, rw, rh)
         return rect
-    
+
     def _create_ideal_rect_for_non_period_event(self, event):
         self.dc.SetFont(self.small_text_font)
         tw, th = self.dc.GetTextExtent(event.text)
-        # Treat as event (events are placed above the baseline, with
-        # indicates length of text)
         rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
         rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
         if event.has_data():
@@ -401,44 +397,51 @@ class DefaultDrawingAlgorithm(Drawer):
         """
         if not view_properties.show_legend:
             return
-        num_categories = len(categories)
-        if num_categories == 0:
+        if len(categories) == 0:
             return
-        def calc_sizes(dc):
-            """Return (width, height, item_height)."""
-            width = 0
-            height = INNER_PADDING
-            item_heights = 0
-            for cat in categories:
-                tw, th = self.dc.GetTextExtent(cat.name)
-                height = height + th + INNER_PADDING
-                item_heights += th
-                if tw > width:
-                    width = tw
-            item_height = item_heights / num_categories
-            return (width + 4 * INNER_PADDING + item_height, height,
-                    item_height)
         self.dc.SetFont(self.small_text_font)
-        self.dc.SetTextForeground((0, 0, 0))
-        width, height, item_height = calc_sizes(self.dc)
-        # Draw big box
+        rect = self._calculate_legend_rect(categories)
+        self._draw_legend_box(rect)
+        self._draw_legend_items(rect, categories)
+
+    def _calculate_legend_rect(self, categories):
+        max_width = 0
+        height = INNER_PADDING
+        for cat in categories:
+            tw, th = self.dc.GetTextExtent(cat.name)
+            height = height + th + INNER_PADDING
+            if tw > max_width:
+                max_width = tw
+        item_height = self._text_height_with_current_font()
+        width = max_width + 4 * INNER_PADDING + item_height
+        return wx.Rect(OUTER_PADDING,
+                       self.metrics.height - height - OUTER_PADDING,
+                       width,
+                       height)
+
+    def _draw_legend_box(self, rect):
         self.dc.SetBrush(self.white_solid_brush)
         self.dc.SetPen(self.black_solid_pen)
-        box_rect = (OUTER_PADDING,
-                    self.metrics.height - height - OUTER_PADDING,
-                    width, height)
-        self.dc.DrawRectangleRect(box_rect)
-        # Draw text and color boxes
-        cur_y = self.metrics.height - height - OUTER_PADDING + INNER_PADDING
+        self.dc.DrawRectangleRect(rect)
+
+    def _text_height_with_current_font(self):
+        STRING_WITH_MIXED_CAPITALIZATION = "jJ"
+        tw, th = self.dc.GetTextExtent(STRING_WITH_MIXED_CAPITALIZATION)
+        return th
+
+    def _draw_legend_items(self, rect, categories):
+        item_height = self._text_height_with_current_font()
+        cur_y = rect.Y + INNER_PADDING
         for cat in categories:
             base_color = cat.color
             border_color = darken_color(base_color)
             self.dc.SetBrush(wx.Brush(base_color, wx.SOLID))
             self.dc.SetPen(wx.Pen(border_color, 1, wx.SOLID))
-            color_box_rect = (OUTER_PADDING + width - item_height -
+            color_box_rect = (OUTER_PADDING + rect.Width - item_height -
                               INNER_PADDING,
                               cur_y, item_height, item_height)
             self.dc.DrawRectangleRect(color_box_rect)
+            self.dc.SetTextForeground((0, 0, 0))
             self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
             cur_y = cur_y + item_height + INNER_PADDING
 
