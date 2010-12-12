@@ -419,8 +419,12 @@ class MainFrame(wx.Frame):
             else:
                 start = firstEvent.time_period.start_time
                 end   = lastEvent.time_period.end_time
-                margin_delta = self.timeline.get_time_type().margin_delta(end - start)
-                self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta, margin_delta))
+                time_type = self.timeline.get_time_type()
+                start_margin_delta = time_type.margin_delta(start - end)
+                end_margin_delta = time_type.margin_delta(end - start)
+                self._navigate_timeline(lambda tp: tp.update(start, end, 
+                                                             start_margin_delta, 
+                                                             end_margin_delta))
         except AttributeError:
             # None events
             pass        
