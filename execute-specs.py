@@ -36,7 +36,7 @@ def execute_all_specs():
 
 def setup_paths():
     # So that the we can write 'import timelinelib.xxx' and 'import specs.xxx'
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    root_dir = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, root_dir)
 
 def enable_gettext():
@@ -49,15 +49,16 @@ def setup_locale():
     # Some specs depend on locale being en_us (date parsing for example)
     locale.setlocale(locale.LC_ALL, "en_US")
 
+def add_spec_from_module(suite, module_name):
+    __import__(module_name)
+    module = sys.modules[module_name]
+    module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+    suite.addTest(module_suite)
+
 def create_suite():
-    def add_spec_from_module(suite, module_name):
-        __import__(module_name)
-        module = sys.modules[module_name]
-        module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
-        suite.addTest(module_suite)
     suite = unittest.TestSuite()
-    for file in os.listdir(os.path.dirname(__file__)):
-        if file != os.path.basename(__file__) and file.endswith(".py"):
+    for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
+        if file.endswith(".py") and file != "__init__.py":
             module_name = os.path.basename(file)[:-3]
             abs_module_name = "specs.%s" % module_name
             add_spec_from_module(suite, abs_module_name)
