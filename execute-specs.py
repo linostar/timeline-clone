@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Script that executes all specifications.
-"""
-
 import sys
 import os.path
 import unittest
@@ -46,51 +42,8 @@ def enable_gettext():
     gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
 
 def setup_locale():
-    # Some specs depend on locale being en_us (date parsing for example)
+    # Some specs depend on locale being en_US (date parsing for example)
     locale.setlocale(locale.LC_ALL, "en_US")
-
-def add_spec_from_module(suite, module_name):
-    __import__(module_name)
-    module = sys.modules[module_name]
-    module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
-    suite.addTest(module_suite)
-
-def add_specs(suite):
-    for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
-        if file.endswith(".py") and file != "__init__.py":
-            module_name = os.path.basename(file)[:-3]
-            abs_module_name = "specs.%s" % module_name
-            add_spec_from_module(suite, abs_module_name)
-
-def add_unittests(suite):
-    def add_tests_from_module(module_name):
-        __import__(module_name)
-        module = sys.modules[module_name]
-        module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
-        suite.addTest(module_suite)
-    add_tests_from_module("tests.unit.db.objects")
-    add_tests_from_module("tests.unit.db.backends.file")
-    add_tests_from_module("tests.unit.gui.utils")
-    add_tests_from_module("tests.unit.gui.dialogs.mainframe")
-    add_tests_from_module("tests.unit.config")
-    add_tests_from_module("tests.unit.db.backends.memory")
-    add_tests_from_module("tests.integration.read_010_file")
-    add_tests_from_module("tests.integration.read_090_file")
-    add_tests_from_module("tests.integration.read_0100_file")
-    add_tests_from_module("tests.unit.gui.dialogs.duplicateevent")
-    add_tests_from_module("tests.unit.gui.components.cattree")
-    add_tests_from_module("tests.unit.db.backends.xmlparser")
-    add_tests_from_module("tests.integration.read_write_xml")
-    add_tests_from_module("tests.integration.write_xml")
-
-def add_doctests(suite):
-    def add_tests_from_module(module_name):
-        __import__(module_name)
-        module = sys.modules[module_name]
-        module_suite = doctest.DocTestSuite(module)
-        suite.addTest(module_suite)
-    add_tests_from_module("timelinelib.db.backends.xmlparser")
-    add_tests_from_module("timelinelib.utils")
 
 def create_suite():
     suite = unittest.TestSuite()
@@ -102,6 +55,45 @@ def create_suite():
 def execute_suite(suite):
     res = unittest.TextTestRunner(verbosity=1).run(suite)
     return res.wasSuccessful()
+
+def add_specs(suite):
+    for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
+        if file.endswith(".py") and file != "__init__.py":
+            module_name = os.path.basename(file)[:-3]
+            abs_module_name = "specs.%s" % module_name
+            load_test_cases_from_module_name(suite, abs_module_name)
+
+def add_unittests(suite):
+    load_test_cases_from_module_name(suite, "tests.unit.db.objects")
+    load_test_cases_from_module_name(suite, "tests.unit.db.backends.file")
+    load_test_cases_from_module_name(suite, "tests.unit.gui.utils")
+    load_test_cases_from_module_name(suite, "tests.unit.gui.dialogs.mainframe")
+    load_test_cases_from_module_name(suite, "tests.unit.config")
+    load_test_cases_from_module_name(suite, "tests.unit.db.backends.memory")
+    load_test_cases_from_module_name(suite, "tests.integration.read_010_file")
+    load_test_cases_from_module_name(suite, "tests.integration.read_090_file")
+    load_test_cases_from_module_name(suite, "tests.integration.read_0100_file")
+    load_test_cases_from_module_name(suite, "tests.unit.gui.dialogs.duplicateevent")
+    load_test_cases_from_module_name(suite, "tests.unit.gui.components.cattree")
+    load_test_cases_from_module_name(suite, "tests.unit.db.backends.xmlparser")
+    load_test_cases_from_module_name(suite, "tests.integration.read_write_xml")
+    load_test_cases_from_module_name(suite, "tests.integration.write_xml")
+
+def add_doctests(suite):
+    load_doc_test_from_module_name(suite, "timelinelib.db.backends.xmlparser")
+    load_doc_test_from_module_name(suite, "timelinelib.utils")
+
+def load_test_cases_from_module_name(suite, module_name):
+    __import__(module_name)
+    module = sys.modules[module_name]
+    module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+    suite.addTest(module_suite)
+
+def load_doc_test_from_module_name(suite, module_name):
+    __import__(module_name)
+    module = sys.modules[module_name]
+    module_suite = doctest.DocTestSuite(module)
+    suite.addTest(module_suite)
 
 if __name__ == '__main__':
     all_pass = execute_all_specs()
