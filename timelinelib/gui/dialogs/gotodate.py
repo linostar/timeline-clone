@@ -26,13 +26,13 @@ from timelinelib.utils import ex_msg
 
 class GotoDateDialog(wx.Dialog):
 
-    def __init__(self, parent, time):
+    def __init__(self, parent, time_type, time):
         wx.Dialog.__init__(self, parent, title=_("Go to Date"))
-        self._create_gui()
+        self._create_gui(time_type)
         self.dtpc.set_value(time)
 
-    def _create_gui(self):
-        self.dtpc = PyDateTimePicker(self)
+    def _create_gui(self, time_type):
+        self.dtpc = time_type.create_time_picker(self)
         checkbox = wx.CheckBox(self, label=_("Show time"))
         checkbox.SetValue(False)
         self.dtpc.show_time(checkbox.IsChecked())
