@@ -1,16 +1,6 @@
 This document contains some information that is useful when working with the
 source code.
 
-Commands
-========
-
-Useful commands to know about:
-
-  * `scons --help` - Show available targets
-  * `python specs/execute.py` - Execute all specifications
-  * `python tests/run.py` - Run all test in test suite
-  * `python tools/*.py` - See comment in tools to learn what they do
-
 Mercurial on Windows
 ====================
 
@@ -186,7 +176,7 @@ Work on stable
   2. Import translations from Launchpad
     1. Request download from here
        http://translations.launchpad.net/thetimelineproj/trunk/+translations
-    2. Run `python tools/importpo.py /path/to/launchpad-export.tar.gz`
+    2. Run `python import-po-from-launchpad-export.py /path/to/launchpad-export.tar.gz`
     3. Commit
   3. Check that information and version numbers are correct in
      1. CHANGES
@@ -194,14 +184,14 @@ Work on stable
      3. README
      4. man/man1/timeline.1
      5. version.py
-  4. Run `python tools/release.py check` to find possible errors
+  4. Run `python execute-specs.py` to find possible errors
 
 Last changes
 ------------
 
   1. Update version.py so that DEV=False
     1. Commit
-  2. Run `python tools/release.py` (look out for warning messages at the end)
+  2. Run `python make-source-release.py`
   3. Try running the unzipped release to make a basic check that it works
   4. Run `hg tag x.y.z`
 
