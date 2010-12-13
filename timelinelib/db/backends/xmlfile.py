@@ -46,6 +46,7 @@ from timelinelib.db.backends.xmlparser import OPTIONAL
 from timelinelib.db.backends.xmlparser import parse_fn_store
 from timelinelib.time import PyTimeType
 from timelinelib.time import NumTimeType
+from timelinelib.time import WxTimeType
 
 
 ENCODING = "utf-8"
@@ -225,7 +226,7 @@ class XmlTimeline(MemoryDB):
 
     def _parse_time_type(self, type_name, tmp_dict):
         self.time_type = None
-        avilable_time_types = (PyTimeType(), NumTimeType())
+        avilable_time_types = (PyTimeType(), NumTimeType(), WxTimeType())
         for time_type in avilable_time_types: 
             if type_name == time_type.get_name():
                 self.time_type = time_type

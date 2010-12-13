@@ -18,3 +18,4 @@
 
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.numtime import NumTimeType
+from timelinelib.time.wxtime import WxTimeType
