@@ -28,31 +28,31 @@ import timelinelib.about
 class SourceCodeDistributionSpec(unittest.TestCase):
 
     def test_version_number_in_README_should_match_that_in_version_module(self):
-        self.assertIn(
-            self.get_module_version_string(),
+        self.assertTrue(
+            self.get_module_version_string() in
             self.read_first_line_from(self.README))
 
     def test_version_number_in_CHANGES_should_match_that_in_version_module(self):
-        self.assertIn(
-            self.get_module_version_string(),
+        self.assertTrue(
+            self.get_module_version_string() in
             self.read_first_line_from(self.CHANGES))
 
     def test_version_number_in_manpage_should_match_that_in_version_module(self):
-        self.assertIn(
-            self.get_module_version_string(),
+        self.assertTrue(
+            self.get_module_version_string() in
             self.read_first_line_from(self.MANPAGE))
 
     def test_release_date_in_manpage_should_match_that_in_CHANGES(self):
         release_date = self.get_release_date_from_changes()
         release_date_in_man_format = release_date.strftime("%B %Y")
-        self.assertIn(
-            release_date_in_man_format,
+        self.assertTrue(
+            release_date_in_man_format in
             self.read_first_line_from(self.MANPAGE))
 
     def test_all_authors_mentioned_in_about_module_should_be_mentioned_in_AUTHORS(self):
         authors_content = self.read_utf8_encoded_text_from(self.AUTHORS)
         for author in self.get_authors_from_about_module():
-            self.assertIn(author, authors_content)
+            self.assertTrue(author in authors_content)
 
     def setUp(self):
         self.ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
