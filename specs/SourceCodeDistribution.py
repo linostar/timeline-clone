@@ -44,10 +44,12 @@ class SourceCodeDistributionSpec(unittest.TestCase):
 
     def test_release_date_in_manpage_should_match_that_in_CHANGES(self):
         release_date = self.get_release_date_from_changes()
-        release_date_in_man_format = release_date.strftime("%B %Y")
         self.assertTrue(
-            release_date_in_man_format in
+            self.release_date_in_man_format(release_date) in
             self.read_first_line_from(self.MANPAGE))
+
+    def release_date_in_man_format(self, date):
+        return "%s %s" % (month_name_for_month(date.month), date.year)
 
     def test_all_authors_mentioned_in_about_module_should_be_mentioned_in_AUTHORS(self):
         authors_content = self.read_utf8_encoded_text_from(self.AUTHORS)
@@ -82,8 +84,8 @@ class SourceCodeDistributionSpec(unittest.TestCase):
         rel_line = self.read_first_line_from(self.CHANGES)
         bfr_str = "released on "
         date_str = rel_line[rel_line.find(bfr_str)+len(bfr_str):].strip()
-        release_date = datetime.datetime.strptime(date_str, "%d %B %Y")
-        return release_date
+        date_parts = date_str.split(" ")
+        return datetime.date(int(date_parts[2]), month_from_name(date_parts[1]), int(date_parts[0]))
 
     def get_module_version_string(self):
         return "%s.%s.%s" % timelinelib.version.VERSION
@@ -99,3 +101,17 @@ class SourceCodeDistributionSpec(unittest.TestCase):
         content = f.read()
         f.close()
         return content
+
+
+ENGLISH_MONTH_NAMES = (
+    "January", "February", "March", "April", "May", "June", "July",
+    "August", "September", "October", "November", "December",
+)
+
+
+def month_name_for_month(month):
+    return ENGLISH_MONTH_NAMES[month-1]
+
+
+def month_from_name(month_name):
+    return ENGLISH_MONTH_NAMES.index(month_name) + 1

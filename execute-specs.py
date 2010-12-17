@@ -27,7 +27,6 @@ import locale
 def execute_all_specs():
     setup_paths()
     enable_gettext()
-    setup_locale()
     suite = create_suite()
     all_pass = execute_suite(suite)
     return all_pass
@@ -42,10 +41,6 @@ def enable_gettext():
     from timelinelib.about import APPLICATION_NAME
     from timelinelib.paths import LOCALE_DIR
     gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
-
-def setup_locale():
-    # Some specs depend on locale being en_US (date parsing for example)
-    locale.setlocale(locale.LC_ALL, "en_US")
 
 def create_suite():
     suite = unittest.TestSuite()
