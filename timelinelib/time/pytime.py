@@ -25,12 +25,12 @@ import calendar
 import wx
 
 from timelinelib.time.typeinterface import TimeType
-from timelinelib.utils import local_to_unicode
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.interface import Strip
 import timelinelib.config as config
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.utils import get_default_font
+from timelinelib.monthnames import abbreviated_name_of_month
 
 
 # To save computation power (used by `delta_to_microseconds`)
@@ -100,7 +100,7 @@ class PyTimeType(TimeType):
         def label_with_time(time):
             return u"%s %s" % (label_without_time(time), time_label(time))
         def label_without_time(time):
-            return u"%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]), time.year)
+            return u"%s %s %s" % (time.day, abbreviated_name_of_month(time.month), time.year)
         def time_label(time):
             return time.time().isoformat()[0:5]
         if time_period.is_period():
@@ -437,8 +437,8 @@ class StripMonth(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s" % (local_to_unicode(calendar.month_abbr[time.month]),                              time.year)
-        return calendar.month_abbr[time.month]
+            return "%s %s" % (abbreviated_name_of_month(time.month), time.year)
+        return abbreviated_name_of_month(time.month)
 
     def start(self, time):
         return datetime(time.year, time.month, 1)
@@ -454,8 +454,7 @@ class StripDay(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
-                                 time.year)
+            return "%s %s %s" % (time.day, abbreviated_name_of_month(time.month), time.year)
         return str(time.day)
 
     def start(self, time):
@@ -514,18 +513,18 @@ class StripWeek(Strip):
         if time1.year == time2.year:
             if time1.month == time2.month:
                 return "%s-%s %s %s" % (time1.day, time2.day,
-                                        local_to_unicode(calendar.month_abbr[time1.month]),
+                                        abbreviated_name_of_month(time1.month),
                                         time1.year)
             return "%s %s-%s %s %s" % (time1.day,
-                                       local_to_unicode(calendar.month_abbr[time1.month]),
+                                       abbreviated_name_of_month(time1.month),
                                        time2.day,
-                                       local_to_unicode(calendar.month_abbr[time2.month]),
+                                       abbreviated_name_of_month(time2.month),
                                        time1.year)
         return "%s %s %s-%s %s %s" % (time1.day,
-                                      local_to_unicode(calendar.month_abbr[time1.month]),
+                                      abbreviated_name_of_month(time1.month),
                                       time1.year,
                                       time2.day,
-                                      local_to_unicode(calendar.month_abbr[time2.month]),
+                                      abbreviated_name_of_month(time2.month),
                                       time2.year)
 
 
@@ -535,7 +534,7 @@ class StripWeekday(Strip):
         if major:
             return "%s %s %s %s" % (local_to_unicode(calendar.day_abbr[time.weekday()]),
                                     time.day,
-                                    local_to_unicode(calendar.month_abbr[time.month]),
+                                    abbreviated_name_of_month(time.month),
                                     time.year)
         return str(calendar.day_abbr[time.weekday()])
 
@@ -553,7 +552,7 @@ class StripHour(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s %s %s" % (time.day, local_to_unicode(calendar.month_abbr[time.month]),
+            return "%s %s %s %s" % (time.day, abbreviated_name_of_month(time.month),
                                     time.year, time.hour)
         return str(time.hour)
 

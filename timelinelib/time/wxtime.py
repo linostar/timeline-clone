@@ -26,7 +26,6 @@ import calendar
 import wx
 
 from timelinelib.time.typeinterface import TimeType
-from timelinelib.utils import local_to_unicode
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.interface import Strip
 import timelinelib.config as config
@@ -468,7 +467,7 @@ class StripMonth(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s" % (time.GetMonthName(time.Month), time.Year)
+            return "%s %s" % (time.GetMonthName(time.Month, time.Name_Abbr), time.Year)
         return time.GetMonthName(time.Month, wx.DateTime.Name_Abbr)
 
     def start(self, time):
@@ -488,7 +487,7 @@ class StripDay(Strip):
 
     def label(self, time, major=False):
         if major:
-            month_name = time.GetMonthName(time.Month)
+            month_name = time.GetMonthName(time.Month, time.Name_Abbr)
             return "%s %s %s" % (time.Day, month_name, time.Year)
         return str(time.Day)
 
@@ -548,18 +547,18 @@ class StripWeek(Strip):
         if time1.Year == time2.Year:
             if time1.Month == time2.Month:
                 return "%s-%s %s %s" % (time1.Day, time2.Day,
-                                        local_to_unicode(time1.GetMonthName(time1.Month)),
+                                        time1.GetMonthName(time1.Month, time1.Name_Abbr),
                                         time1.Year)
             return "%s %s-%s %s %s" % (time1.Day,
-                                       local_to_unicode(time1.GetMonthName(time1.Month)),
+                                       time1.GetMonthName(time1.Month, time1.Name_Abbr),
                                        time2.Day,
-                                       local_to_unicode(time2.GetMonthName(time2.Month)),
+                                       time2.GetMonthName(time2.Month, time2.Name_Abbr),
                                        time1.Year)
         return "%s %s %s-%s %s %s" % (time1.Day,
-                                      local_to_unicode(time1.GetMonthName(time1.Month)),
+                                      time1.GetMonthName(time1.Month, time1.Name_Abbr),
                                       time1.Year,
                                       time2.Day,
-                                      local_to_unicode(time2.GetMonthName(time2.Month)),
+                                      time2.GetMonthName(time2.Month, time2.Name_Abbr),
                                       time2.Year)
 
 

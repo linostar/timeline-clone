@@ -55,10 +55,8 @@ class PyTimeTypeSpec(unittest.TestCase):
         time_period = TimePeriod(self.time_type, 
                                  datetime.datetime(2010, 8, 01, 13, 44),
                                  datetime.datetime(2010, 8, 02, 13, 30))
-        # TODO: Make month name same on all os and tests
-        month = calendar.month_abbr[8]
         self.assertEquals(
-            u"1 %s 2010 13:44 to 2 %s 2010 13:30" % (month, month),
+            u"1 %s 2010 13:44 to 2 %s 2010 13:30" % (_("Aug"), _("Aug")),
             self.time_type.format_period(time_period))
 
     def testReturnsMinTime(self):
