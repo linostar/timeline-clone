@@ -16,26 +16,18 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import locale
+def _(message): return message # deferred translation
+ABBREVIATED_WEEKDAY_NAMES = (
+    _("Mon"),
+    _("Tue"),
+    _("Wed"),
+    _("Thu"),
+    _("Fri"),
+    _("Sat"),
+    _("Sun"),
+)
+del _
 
 
-def ex_msg(e):
-    """Return exception error string."""
-    try:
-        return str(e)
-    except UnicodeEncodeError:
-        if len(e.args) == 1:
-            return e.args[0]
-        else:
-            # Exceptions raised by Timeline (the only ones that might be
-            # unicode) should always contain a single unicode message. So we
-            # should never end up here.
-            return ""
-
-
-def version_str_to_tuple(version_str):
-    """
-    >>> version_str_to_tuple("0.4.44.3")
-    (0, 4, 44, 3)
-    """
-    return tuple([int(x) for x in version_str.split(".")])
+def abbreviated_name_of_weekday(weekday):
+    return _(ABBREVIATED_WEEKDAY_NAMES[weekday])

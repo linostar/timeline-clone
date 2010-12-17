@@ -31,6 +31,7 @@ import timelinelib.config as config
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.monthnames import abbreviated_name_of_month
+from timelinelib.weekdaynames import abbreviated_name_of_weekday
 
 
 # To save computation power (used by `delta_to_microseconds`)
@@ -532,11 +533,11 @@ class StripWeekday(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s %s %s" % (local_to_unicode(calendar.day_abbr[time.weekday()]),
+            return "%s %s %s %s" % (abbreviated_name_of_weekday(time.weekday()),
                                     time.day,
                                     abbreviated_name_of_month(time.month),
                                     time.year)
-        return str(calendar.day_abbr[time.weekday()])
+        return abbreviated_name_of_weekday(time.weekday())
 
     def start(self, time):
         return datetime(time.year, time.month, time.day)

@@ -16,26 +16,19 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import locale
+import unittest
+
+import timelinelib.weekdaynames
 
 
-def ex_msg(e):
-    """Return exception error string."""
-    try:
-        return str(e)
-    except UnicodeEncodeError:
-        if len(e.args) == 1:
-            return e.args[0]
-        else:
-            # Exceptions raised by Timeline (the only ones that might be
-            # unicode) should always contain a single unicode message. So we
-            # should never end up here.
-            return ""
+class WeekdayNamesSpec(unittest.TestCase):
 
+    def test_abbreviated_weekday_name_for_0_should_be_mon_translated(self):
+        self.assertEquals(
+            _("Mon"),
+            timelinelib.weekdaynames.abbreviated_name_of_weekday(0))
 
-def version_str_to_tuple(version_str):
-    """
-    >>> version_str_to_tuple("0.4.44.3")
-    (0, 4, 44, 3)
-    """
-    return tuple([int(x) for x in version_str.split(".")])
+    def test_abbreviated_weekday_name_for_6_should_be_sun_translated(self):
+        self.assertEquals(
+            _("Sun"),
+            timelinelib.weekdaynames.abbreviated_name_of_weekday(6))
