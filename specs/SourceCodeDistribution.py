@@ -23,6 +23,8 @@ import datetime
 
 import timelinelib.version
 import timelinelib.about
+from timelinelib.monthnames import english_name_of_month
+from timelinelib.monthnames import month_from_english_name
 
 
 class SourceCodeDistributionSpec(unittest.TestCase):
@@ -47,9 +49,6 @@ class SourceCodeDistributionSpec(unittest.TestCase):
         self.assertTrue(
             self.release_date_in_man_format(release_date) in
             self.read_first_line_from(self.MANPAGE))
-
-    def release_date_in_man_format(self, date):
-        return "%s %s" % (month_name_for_month(date.month), date.year)
 
     def test_all_authors_mentioned_in_about_module_should_be_mentioned_in_AUTHORS(self):
         authors_content = self.read_utf8_encoded_text_from(self.AUTHORS)
@@ -81,11 +80,19 @@ class SourceCodeDistributionSpec(unittest.TestCase):
         return ":" in possible_author
 
     def get_release_date_from_changes(self):
-        rel_line = self.read_first_line_from(self.CHANGES)
-        bfr_str = "released on "
-        date_str = rel_line[rel_line.find(bfr_str)+len(bfr_str):].strip()
-        date_parts = date_str.split(" ")
-        return datetime.date(int(date_parts[2]), month_from_name(date_parts[1]), int(date_parts[0]))
+        first_line = self.read_first_line_from(self.CHANGES)
+        date_str = first_line.split("released on ")[1]
+        return self.parse_release_date_from(date_str)
+
+    def parse_release_date_from(self, date_str):
+        day_str, month_name, year_str = date_str.split(" ")
+        return datetime.date(
+            int(year_str),
+            month_from_english_name(month_name),
+            int(day_str))
+
+    def release_date_in_man_format(self, date):
+        return "%s %s" % (english_name_of_month(date.month), date.year)
 
     def get_module_version_string(self):
         return "%s.%s.%s" % timelinelib.version.VERSION
@@ -101,17 +108,3 @@ class SourceCodeDistributionSpec(unittest.TestCase):
         content = f.read()
         f.close()
         return content
-
-
-ENGLISH_MONTH_NAMES = (
-    "January", "February", "March", "April", "May", "June", "July",
-    "August", "September", "October", "November", "December",
-)
-
-
-def month_name_for_month(month):
-    return ENGLISH_MONTH_NAMES[month-1]
-
-
-def month_from_name(month_name):
-    return ENGLISH_MONTH_NAMES.index(month_name) + 1
