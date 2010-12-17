@@ -43,7 +43,7 @@ def version_str_to_tuple(version_str):
 
 def local_to_unicode(local_string):
     """Try to convert a local string to unicode."""
-    encoding = locale.getlocale()[1]
+    encoding = locale.getdefaultlocale()[1]
     if encoding is None:
         # TODO: What should we do here?
         return u"ERROR"
