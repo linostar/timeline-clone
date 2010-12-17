@@ -315,10 +315,10 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_minor_strip_label(self, strip_period):
         major_strip, minor_strip = self._choose_strip()
         label = minor_strip.label(strip_period.start_time)
+        self.dc.SetFont(minor_strip.get_font(strip_period))
         (tw, th) = self.dc.GetTextExtent(label)
         middle = self.metrics.calc_x(strip_period.mean_time())
         middley = self.metrics.half_height
-        self.dc.SetFont(minor_strip.get_font(strip_period))
         self.dc.DrawText(label, middle - tw / 2, middley - th)
         
     def _draw_major_strips(self):
