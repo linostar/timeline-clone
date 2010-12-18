@@ -22,7 +22,6 @@ import os.path
 import unittest
 import gettext
 import doctest
-import locale
 
 def execute_all_specs():
     setup_paths()
