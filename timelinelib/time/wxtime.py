@@ -31,6 +31,7 @@ from timelinelib.drawing.interface import Strip
 import timelinelib.config as config
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.utils import get_default_font
+from timelinelib.monthnames import abbreviated_name_of_month
 
 
 # To save computation power (used by `delta_to_microseconds`)
@@ -105,7 +106,10 @@ class WxTimeType(TimeType):
         def label_with_time(time):
             return u"%s %s" % (label_without_time(time), time_label(time))
         def label_without_time(time):
-            return time.Format("%d %b %Y")
+            return "%s %s %s" % (
+                time.Format("%d"),
+                abbreviated_name_of_month(int(time.Format("%m"))),
+                time.Format("%Y"))
         def time_label(time):
             return time.Format("%H:%M")
         if time_period.is_period():

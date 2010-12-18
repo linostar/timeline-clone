@@ -20,12 +20,11 @@
 import sys
 import os.path
 import unittest
-import gettext
 import doctest
 
 def execute_all_specs():
     setup_paths()
-    enable_gettext()
+    install_gettext_in_builtin_namespace()
     suite = create_suite()
     all_pass = execute_suite(suite)
     return all_pass
@@ -35,11 +34,11 @@ def setup_paths():
     root_dir = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, root_dir)
 
-def enable_gettext():
-    # So that the _ function is available
-    from timelinelib.about import APPLICATION_NAME
-    from timelinelib.paths import LOCALE_DIR
-    gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
+def install_gettext_in_builtin_namespace():
+    def _(message):
+        return "#%s#" % message
+    import __builtin__
+    __builtin__.__dict__["_"] = _
 
 def create_suite():
     suite = unittest.TestSuite()
