@@ -17,10 +17,8 @@
 
 
 import unittest
-import calendar
 
 import wx
-from mock import Mock
 
 from timelinelib.time import WxTimeType
 from timelinelib.db.objects import TimePeriod
@@ -31,15 +29,15 @@ class WxTimeTypeSpec(unittest.TestCase):
     def setUp(self):
         self.time_type = WxTimeType()
 
-    def testConvertsTimeToString(self):
+    def testConvertsWxDateTimeToString(self):
         self.assertEquals(
-            u"2010-08-31 13:44:00",
+            "2010-08-31 13:44:00",
             self.time_type.time_string(wx.DateTimeFromDMY(31, 7, 2010, 13, 44)))
 
-    def testParsesTimeFromString(self):
-        tm1 = wx.DateTimeFromDMY(31, 7, 2010, 13, 44)
-        tm2 = self.time_type.parse_time("2010-08-31 13:44:00")
-        self.assertEquals(tm1, tm2)
+    def testParsesWxDateTimeFromString(self):
+        self.assertEquals(
+            wx.DateTimeFromDMY(31, 7, 2010, 13, 44),
+            self.time_type.parse_time("2010-08-31 13:44:00"))
 
     def testRaisesValueErrorWhenParsingInvalidTime(self):
         self.assertRaises(
@@ -59,15 +57,15 @@ class WxTimeTypeSpec(unittest.TestCase):
             u"01 %s 2010 13:44 to 02 %s 2010 13:30" % (_("Aug"), _("Aug")),
             self.time_type.format_period(time_period))
 
-    def testReturnsMinTime(self):
-        tm1 = wx.DateTimeFromDMY(1, 0, -4700)
-        tm2 = self.time_type.get_min_time()[0]
-        self.assertEquals(tm1, tm2) 
+    def testReturnsYear4700BcAsMinTime(self):
+        self.assertEquals(
+            wx.DateTimeFromDMY(1, 0, -4700),
+            self.time_type.get_min_time()[0])
 
-    def testReturnsMaxTime(self):
-        tm1 = wx.DateTimeFromDMY(1, 0, 120000)
-        tm2 = self.time_type.get_max_time()[0]
-        self.assertEquals(tm1, tm2) 
+    def testReturnsYear120000AsMaxTime(self):
+        self.assertEquals(
+            wx.DateTimeFromDMY(1, 0, 120000),
+            self.time_type.get_max_time()[0])
 
     def testReturnsMarginDelta(self):
         delta = wx.TimeSpan.Days(days=48)

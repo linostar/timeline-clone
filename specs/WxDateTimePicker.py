@@ -30,7 +30,7 @@ from timelinelib.gui.components.wxdatetimepicker import CalendarPopup
 from timelinelib.gui.components.wxdatetimepicker import CalendarPopupController
 
 
-class APyDateTimePicker(unittest.TestCase):
+class AWxDateTimePicker(unittest.TestCase):
 
     def setUp(self):
         self.date_picker = Mock(WxDatePicker)
@@ -43,7 +43,7 @@ class APyDateTimePicker(unittest.TestCase):
         self.controller.set_value(wx.DateTimeFromDMY(20, 11, 2010, 15, 33))
         self.date_picker.set_date.assert_called_with(wx.DateTimeFromDMY(20,11, 2010, 15, 33))
 
-    # TODO: Is this really PyDateTimePicker's responsibility?
+    # TODO: Is this really WxDateTimePicker's responsibility?
     def testDateControlIsAssignedCurrentDateIfSetWithValueNone(self):
         self.now_fn.return_value = wx.DateTimeFromDMY(31, 7, 2010, 0, 0)
         self.controller.set_value(None)
@@ -53,7 +53,7 @@ class APyDateTimePicker(unittest.TestCase):
         self.controller.set_value(wx.DateTimeFromDMY(20, 11, 2010, 15, 33))
         self.time_picker.set_time.assert_called_with(wx.DateTimeFromDMY(20, 11, 2010, 15, 33))
 
-    # TODO: Is this really PyDateTimePicker's responsibility?
+    # TODO: Is this really WxDateTimePicker's responsibility?
     def testTimeControlIsAssignedCurrentTimeIfSetWithValueNone(self):
         self.now_fn.return_value = wx.DateTimeFromDMY(31, 7, 2010, 12, 15)
         self.controller.set_value(None)
@@ -74,7 +74,7 @@ class APyDateTimePicker(unittest.TestCase):
                           self.controller.get_value())
 
 
-class PyDatePickerBaseFixture(unittest.TestCase):
+class WxDatePickerBaseFixture(unittest.TestCase):
 
     def setUp(self):
         self.py_date_picker = Mock(WxDatePicker)
@@ -101,7 +101,7 @@ class PyDatePickerBaseFixture(unittest.TestCase):
         self.py_date_picker.GetSelection.return_value = (from_pos, to_pos)
 
 
-class APyDatePicker(PyDatePickerBaseFixture):
+class AWxDatePicker(WxDatePickerBaseFixture):
 
     def testSelectsYearPartWhenGivenFocus(self):
         self.controller.on_set_focus()
@@ -115,11 +115,11 @@ class APyDatePicker(PyDatePickerBaseFixture):
         self.simulate_change_date_string("2007-02-13")
         self.assertBackgroundChangedTo((1, 2, 3))
 
-    def testPopulatesDateFromPyDate(self):
+    def testPopulatesDateFromWxDate(self):
         self.controller.set_date(wx.DateTimeFromDMY(5, 10, 2009))
         self.py_date_picker.set_date_string.assert_called_with("2009-11-05")
 
-    def testParsesEnteredDateAsPyDate(self):
+    def testParsesEnteredDateAsWxDate(self):
         self.simulate_change_date_string("2008-05-03")
         self.assertEquals(wx.DateTimeFromDMY(3, 4, 2008),
                           self.controller.get_date())
@@ -178,10 +178,10 @@ class APyDatePicker(PyDatePickerBaseFixture):
         self.py_date_picker.set_date_string.assert_called_with("2010-02-28")
 
 
-class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
+class WxDatePickerWithFocusOnYear(WxDatePickerBaseFixture):
 
     def setUp(self):
-        PyDatePickerBaseFixture.setUp(self)
+        WxDatePickerBaseFixture.setUp(self)
         self.controller.on_set_focus()
         self.py_date_picker.reset_mock()
 
@@ -243,10 +243,10 @@ class PyDatePickerWithFocusOnYear(PyDatePickerBaseFixture):
         self.py_date_picker.SetSelection.assert_called_with(0, 4)
 
 
-class PyDatePickerWithFocusOnMonth(PyDatePickerBaseFixture):
+class WxDatePickerWithFocusOnMonth(WxDatePickerBaseFixture):
 
     def setUp(self):
-        PyDatePickerBaseFixture.setUp(self)
+        WxDatePickerBaseFixture.setUp(self)
         self.controller.on_set_focus()
         self.controller.on_tab()
         self.py_date_picker.reset_mock()
@@ -287,10 +287,10 @@ class PyDatePickerWithFocusOnMonth(PyDatePickerBaseFixture):
         self.py_date_picker.set_date_string.assert_called_with("2009-12-01")
 
 
-class PyDatePickerWithFocusOnDay(PyDatePickerBaseFixture):
+class WxDatePickerWithFocusOnDay(WxDatePickerBaseFixture):
 
     def setUp(self):
-        PyDatePickerBaseFixture.setUp(self)
+        WxDatePickerBaseFixture.setUp(self)
         self.controller.on_set_focus()
         self.controller.on_tab()
         self.controller.on_tab()
@@ -341,7 +341,7 @@ class PyDatePickerWithFocusOnDay(PyDatePickerBaseFixture):
         self.py_date_picker.set_date_string.assert_called_with("2010-02-01")
 
 
-class PyTimePickerBaseFixture(unittest.TestCase):
+class WxTimePickerBaseFixture(unittest.TestCase):
 
     def setUp(self):
         self.py_time_picker = Mock(WxTimePicker)
@@ -367,7 +367,7 @@ class PyTimePickerBaseFixture(unittest.TestCase):
         self.py_time_picker.GetSelection.return_value = (from_pos, to_pos) 
 
 
-class APyTimePicker(PyTimePickerBaseFixture):
+class AWxTimePicker(WxTimePickerBaseFixture):
 
     def testSelectsHourPartWhenGivenFocus(self):
         self.controller.on_set_focus()
@@ -381,16 +381,16 @@ class APyTimePicker(PyTimePickerBaseFixture):
         self.simulate_change_time_string("11:20")
         self.assertBackgroundChangedTo((1, 2, 3))
 
-    def testPopulatesTimeFromPyTime(self):
+    def testPopulatesTimeFromWxTime(self):
         py_time = wx.DateTimeFromHMS(6, 9)
         self.controller.set_time(py_time)
         self.py_time_picker.set_time_string.assert_called_with("06:09")
 
 
-class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
+class WxTimePickerWithFocusOnHour(WxTimePickerBaseFixture):
 
     def setUp(self):
-        PyTimePickerBaseFixture.setUp(self)
+        WxTimePickerBaseFixture.setUp(self)
         self.simulate_change_insertion_point(0)
         self.controller.on_set_focus()
         self.py_time_picker.reset_mock()
@@ -435,10 +435,10 @@ class PyTimePickerWithFocusOnHour(PyTimePickerBaseFixture):
         self.py_time_picker.set_time_string.assert_called_with("23:04")
 
 
-class PyTimeCtrlWithFocusOnMinute(PyTimePickerBaseFixture):
+class WxTimeCtrlWithFocusOnMinute(WxTimePickerBaseFixture):
 
     def setUp(self):
-        PyTimePickerBaseFixture.setUp(self)
+        WxTimePickerBaseFixture.setUp(self)
         self.simulate_change_insertion_point(3)
         self.controller.on_set_focus()
         self.controller.on_tab()
