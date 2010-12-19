@@ -382,24 +382,14 @@ class DefaultDrawingAlgorithm(Drawer):
         return sort_categories(categories)
 
     def _draw_legend(self, view_properties, categories):
-        """
-        Draw legend for the given categories.
+        if self._legend_should_be_drawn(view_properties, categories):
+            self.dc.SetFont(self.small_text_font)
+            rect = self._calculate_legend_rect(categories)
+            self._draw_legend_box(rect)
+            self._draw_legend_items(rect, categories)
 
-        Box in lower left corner:
-
-          +----------+
-          | Name   O |
-          | Name   O |
-          +----------+
-        """
-        if not view_properties.show_legend:
-            return
-        if len(categories) == 0:
-            return
-        self.dc.SetFont(self.small_text_font)
-        rect = self._calculate_legend_rect(categories)
-        self._draw_legend_box(rect)
-        self._draw_legend_items(rect, categories)
+    def _legend_should_be_drawn(self, view_properties, categories):
+        return view_properties.show_legend and len(categories) > 0
 
     def _calculate_legend_rect(self, categories):
         max_width = 0
