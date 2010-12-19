@@ -22,7 +22,6 @@ Implements a Drawer that draws the default timeline view.
 
 
 import math
-import calendar
 import os.path
 
 import wx
@@ -34,7 +33,6 @@ from timelinelib.drawing.utils import darken_color
 from timelinelib.gui.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
-import timelinelib.config as config
 
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
