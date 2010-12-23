@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-ENGLISH_MONTH_NAMES = (
+ENGLISH_MONTH_NAMES = [
     "January",
     "February",
     "March",
@@ -29,11 +29,11 @@ ENGLISH_MONTH_NAMES = (
     "October",
     "November",
     "December",
-)
+]
 
 
 def _(message): return message # deferred translation
-ABBREVIATED_ENGLISH_MONTH_NAMES = (
+ABBREVIATED_ENGLISH_MONTH_NAMES = [
     _("Jan"),
     _("Feb"),
     _("Mar"),
@@ -46,7 +46,7 @@ ABBREVIATED_ENGLISH_MONTH_NAMES = (
     _("Oct"),
     _("Nov"),
     _("Dec"),
-)
+]
 del _
 
 

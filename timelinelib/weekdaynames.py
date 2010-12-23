@@ -17,7 +17,7 @@
 
 
 def _(message): return message # deferred translation
-ABBREVIATED_WEEKDAY_NAMES = (
+ABBREVIATED_WEEKDAY_NAMES = [
     _("Mon"),
     _("Tue"),
     _("Wed"),
@@ -25,7 +25,7 @@ ABBREVIATED_WEEKDAY_NAMES = (
     _("Fri"),
     _("Sat"),
     _("Sun"),
-)
+]
 del _
 
 
