@@ -62,13 +62,7 @@ class WxTimeType(TimeType):
             hour = int(match.group(4))
             minute = int(match.group(5))
             second = int(match.group(6))
-            try:
-                time = wx.DateTimeFromDMY(day, month, year, hour, minute, second)
-                if not time.IsValid():
-                    raise ValueError("Invalid time, time string = '%s'" % time_string)
-                return time
-            except ValueError:
-                raise ValueError("Invalid time, time string = '%s'" % time_string)
+            return try_to_create_wx_date_time_from_dmy(day, month, year, hour, minute, second)
         else:
             raise ValueError("Time not on correct format = '%s'" % time_string)
 
@@ -709,3 +703,10 @@ def move_period_num_years(period, num):
         return TimePeriod(period.time_type, start_time, end_time)
     except ValueError:
         return None
+
+
+def try_to_create_wx_date_time_from_dmy(day, month, year, hour=0, minute=0, second=0):
+    try:
+        return wx.DateTimeFromDMY(day, month, year, hour, minute, second)
+    except AssertionError:
+        raise ValueError("Invalid date")

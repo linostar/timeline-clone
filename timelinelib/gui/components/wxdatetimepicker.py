@@ -24,6 +24,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
 import timelinelib.config as config
 from timelinelib.time import WxTimeType
+from timelinelib.time import try_to_create_wx_date_time_from_dmy
 
 
 class WxDateTimePicker(wx.Panel):
@@ -258,7 +259,7 @@ class WxDatePickerController(object):
     def get_date(self):
         try:
             (year, month, day) = self._parse_year_month_day()
-            wx_date = wx.DateTimeFromDMY(day ,month - 1, year)
+            wx_date = try_to_create_wx_date_time_from_dmy(day, month - 1, year)
             self._ensure_date_within_allowed_period(wx_date)
             return wx_date
         except ValueError:
@@ -422,18 +423,11 @@ class WxDatePickerController(object):
         self.save_preferred_day = True
                     
     def _set_valid_day(self, new_year, new_month, new_day):
-#        done = False
-#        while not done:
-#            try:
-#                date = wx.DateTimeFromDMY(new_day, new_month, new_year)
-#                done = True
-#            except Exception, ex:                    
-#                new_day -= 1
-        date = wx.DateTimeFromDMY(new_day, new_month, new_year)
-        while not date.IsValid():
-            new_day -= 1
-            date = wx.DateTimeFromDMY(new_day, new_month, new_year)
-        return date
+        while True:
+            try:
+                return try_to_create_wx_date_time_from_dmy(new_day, new_month, new_year)
+            except ValueError:                    
+                new_day -= 1
 
     def _save_preferred_day(self, date):
         day = date.Day

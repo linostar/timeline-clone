@@ -21,6 +21,7 @@ import unittest
 import wx
 
 from timelinelib.time import WxTimeType
+from timelinelib.time import try_to_create_wx_date_time_from_dmy
 from timelinelib.db.objects import TimePeriod
 
 
@@ -77,3 +78,21 @@ class WxTimeTypeSpec(unittest.TestCase):
         half_delta = self.time_type.half_delta(delta)
         self.assertEquals(wx.TimeSpan.Days(50 * 365).GetMilliseconds(), 
                           half_delta.GetMilliseconds()) 
+
+
+class WxDateTimeConstructorSpec(unittest.TestCase):
+
+    def testCreatesWxDateTimeIfDateIsValid(self):
+        self.assertEquals(
+            wx.DateTimeFromDMY(20, 7, 2010, 13, 44, 2),
+            try_to_create_wx_date_time_from_dmy(20, 7, 2010, 13, 44, 2))
+
+    def testDefaultsHourMinuteAndSecondToZero(self):
+        self.assertEquals(
+            wx.DateTimeFromDMY(20, 7, 2010, 0, 0, 0),
+            try_to_create_wx_date_time_from_dmy(20, 7, 2010))
+    
+    def testRaisesValueErrorIfDateIsInvalid(self):
+        self.assertRaises(
+            ValueError,
+            try_to_create_wx_date_time_from_dmy, 40, 8, 2010)

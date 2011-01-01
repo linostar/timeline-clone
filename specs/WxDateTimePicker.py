@@ -110,6 +110,10 @@ class AWxDatePicker(WxDatePickerBaseFixture):
     def testChangesToErrorBackgroundWhenIncorrectDateIsEntered(self):
         self.simulate_change_date_string("foo")
         self.assertBackgroundChangedTo("pink")
+        
+    def testChangesToErrorBackgroundWhenIvalidDateIsEntered(self):
+        self.simulate_change_date_string("2010-08-40")
+        self.assertBackgroundChangedTo("pink")
 
     def testResetsBackgroundWhenCorrectDateIsEntered(self):
         self.simulate_change_date_string("2007-02-13")
