@@ -706,7 +706,13 @@ def move_period_num_years(period, num):
 
 
 def try_to_create_wx_date_time_from_dmy(day, month, year, hour=0, minute=0, second=0):
-    try:
-        return wx.DateTimeFromDMY(day, month, year, hour, minute, second)
-    except AssertionError:
+    def fail_with_invalid_date():
         raise ValueError("Invalid date")
+    try:
+        datetime = wx.DateTimeFromDMY(day, month, year, hour, minute, second)
+    except AssertionError:
+        fail_with_invalid_date()
+    else:
+        if not datetime.IsValid():
+            fail_with_invalid_date()
+        return datetime
