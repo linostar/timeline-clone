@@ -304,7 +304,7 @@ class DrawingAreaController(object):
         if self.timeline != None:
             self.timeline.unregister(self._timeline_changed)
         self.timeline = timeline
-        self.time_type = self.timeline.get_time_type()
+        self.time_type = None if timeline is None else self.timeline.get_time_type()
         if self.timeline:
             self.timeline.register(self._timeline_changed)
             try:

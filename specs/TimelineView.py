@@ -325,6 +325,10 @@ class TimelineView(unittest.TestCase):
         self.assertTrue(self.divider_line_slider.SetValue.called)
         self.assertTimelineRedrawn()
 
+    def testDisablesViewIfNoTimelineSet(self):
+        self.controller.set_timeline(None)
+        self.view.Disable.assert_called_with()
+
     def simulateMouseDoubleClick(self, x, y):
         self.simulateMouseClick(x, y)
         self.controller.left_mouse_dclick(x, y, ctrl_down=False)

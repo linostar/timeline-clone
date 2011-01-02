@@ -37,7 +37,7 @@ class AWxDateTimePicker(unittest.TestCase):
         self.time_picker = Mock(WxTimePicker)
         self.now_fn = Mock()
         self.controller = WxDateTimePickerController(
-            self.date_picker, self.time_picker)
+            self.date_picker, self.time_picker, self.now_fn)
 
     def testDateControlIsAssignedDatePartFromSetValue(self):
         self.controller.set_value(wx.DateTimeFromDMY(20, 11, 2010, 15, 33))
@@ -47,7 +47,7 @@ class AWxDateTimePicker(unittest.TestCase):
     def testDateControlIsAssignedCurrentDateIfSetWithValueNone(self):
         self.now_fn.return_value = wx.DateTimeFromDMY(31, 7, 2010, 0, 0)
         self.controller.set_value(None)
-        self.date_picker.set_date.assert_called_with(wx.DateTime().Now())
+        self.date_picker.set_date.assert_called_with(wx.DateTimeFromDMY(31, 7, 2010, 0, 0))
 
     def testTimeControlIsAssignedTimePartFromSetValue(self):
         self.controller.set_value(wx.DateTimeFromDMY(20, 11, 2010, 15, 33))
@@ -57,7 +57,7 @@ class AWxDateTimePicker(unittest.TestCase):
     def testTimeControlIsAssignedCurrentTimeIfSetWithValueNone(self):
         self.now_fn.return_value = wx.DateTimeFromDMY(31, 7, 2010, 12, 15)
         self.controller.set_value(None)
-        self.time_picker.set_time.assert_called_with(wx.DateTime().Now())
+        self.time_picker.set_time.assert_called_with(wx.DateTimeFromDMY(31, 7, 2010, 12, 15))
 
     def testGetValueWhenTimeIsShownShouldReturnDateWithTime(self):
         self.time_picker.IsShown.return_value = True
