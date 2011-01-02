@@ -224,3 +224,9 @@ class Config(object):
             raise ValueError("Invalid week start.")
         self.config_parser.set(DEFAULTSECT, WEEK_START, week_start)
     week_start = property(get_week_start, set_week_start)
+    
+    def get_use_wide_date_range(self):
+        return True
+
+    def set_use_wide_date_range(self, value):
+        pass

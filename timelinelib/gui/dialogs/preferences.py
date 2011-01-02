@@ -34,6 +34,8 @@ class PreferencesDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, title=_("Preferences"))
         self.weeks_map = ((0, "monday"), (1, "sunday"))
         self._create_gui()
+        self._controller = PreferencesDialogController(self, config.global_config)
+        self._controller.initialize_controls()
 
     def _create_gui(self):
         notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
@@ -51,6 +53,7 @@ class PreferencesDialog(wx.Dialog):
         panel = wx.Panel(notebook)
         sizer = wx.BoxSizer(wx.VERTICAL)
         notebook.AddPage(panel, _("Date && Time"))
+        chb_wide_date_range = wx.CheckBox(panel, label=_("Use experimental wide date range"))
         grid = wx.FlexGridSizer(1, 2, BORDER, BORDER)
         flag = wx.ALIGN_CENTER_VERTICAL
         grid.Add(wx.StaticText(panel, label=_("Week start on:")), flag=flag)
@@ -58,7 +61,10 @@ class PreferencesDialog(wx.Dialog):
         index = self._week_index(config.global_config.week_start)
         choice_week.SetSelection(index)
         grid.Add(choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        grid.Add(chb_wide_date_range, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         self.Bind(wx.EVT_CHOICE, self._choice_week_on_choice, choice_week)
+        self.Bind(wx.EVT_CHECKBOX, self._chb_use_wide_date_range_on_checkbox,
+                  chb_wide_date_range)
         sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
         panel.SetSizer(sizer)
         # The close button
@@ -78,6 +84,9 @@ class PreferencesDialog(wx.Dialog):
         # Realize
         self.SetSizerAndFit(main_box)
 
+    def _chb_use_wide_date_range_on_checkbox(self, evt):
+        self._controller.on_use_wide_date_range_changed(evt.IsChecked())
+    
     def _chb_open_recent_startup_on_checkbox(self, evt):
         config.set_open_recent_at_startup(evt.IsChecked())
 
@@ -98,3 +107,21 @@ class PreferencesDialog(wx.Dialog):
             if i == index:
                 return w
         raise ValueError("Unknown week index '%s'." % index)
+
+    def set_checkbox_enable_wide_date_range(self, value):
+        pass
+    
+
+class PreferencesDialogController(object):
+    
+    def __init__(self, dialog, config):
+        self.dialog = dialog
+        self.config = config
+        
+    def initialize_controls(self):
+        self.dialog.set_checkbox_enable_wide_date_range(
+            self.config.get_use_wide_date_range())
+        
+    def on_use_wide_date_range_changed(self, value):
+        self.config.set_use_wide_date_range(value)
+                
