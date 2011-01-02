@@ -32,8 +32,8 @@ class WxDateTimePicker(wx.Panel):
     def __init__(self, parent, show_time=True):
         wx.Panel.__init__(self, parent)
         self._create_gui()
-        self.controller = WxDateTimePickerController(self.date_picker, 
-                                                     self.time_picker)
+        self.controller = WxDateTimePickerController(
+            self.date_picker, self.time_picker, wx.DateTime.Now)
         self.show_time(show_time)
 
     def show_time(self, show=True):
@@ -97,13 +97,14 @@ class WxDateTimePicker(wx.Panel):
 
 class WxDateTimePickerController(object):
 
-    def __init__(self, date_picker, time_picker):
+    def __init__(self, date_picker, time_picker, now_fn):
         self.date_picker = date_picker
         self.time_picker = time_picker
+        self.now_fn = now_fn
 
     def set_value(self, date_time):
         if date_time == None:
-            date_time = wx.DateTime.Now()
+            date_time = self.now_fn()
         self.date_picker.set_date(date_time)
         self.time_picker.set_time(date_time)
             
