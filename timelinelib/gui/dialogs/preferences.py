@@ -38,52 +38,92 @@ class PreferencesDialog(wx.Dialog):
         self._controller.initialize_controls()
 
     def _create_gui(self):
+        main_box = self._create_main_box()
+        self.SetSizerAndFit(main_box)
+
+    def _create_main_box(self):
+        notebook = self._create_nootebook_control()
+        button_box = self._create_button_box()
+        main_box = wx.BoxSizer(wx.VERTICAL)
+        main_box.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND,
+                     proportion=1)
+        main_box.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        return main_box
+
+    def _create_nootebook_control(self):
         notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
-        # General tab
-        panel = wx.Panel(notebook)
-        notebook.AddPage(panel, _("General"))
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        chb_open_recent_startup = wx.CheckBox(panel, label=_("Open most recent timeline on startup"))
-        chb_open_recent_startup.SetValue(config.get_open_recent_at_startup())
+        self._create_general_tab(notebook)
+        self._create_date_time_tab(notebook)
+        return notebook
+        
+    def _create_button_box(self):
+        btn_close = self._create_close_button()
+        button_box = wx.BoxSizer(wx.HORIZONTAL)
+        button_box.AddStretchSpacer()
+        button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
+        return button_box
+        
+    def _create_general_tab(self, notebook):
+        panel = self._creat_tab_panel(notebook, _("General")) 
+        controls = self._create_general_tab_controls(panel)
+        self._size_tab_panel(panel, controls)
+
+    def _create_general_tab_controls(self, panel):
+        chb_open_recent_startup = wx.CheckBox(panel, 
+                                              label=_("Open most recent timeline on startup"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_open_recent_startup_on_checkbox,
                   chb_open_recent_startup)
-        sizer.Add(chb_open_recent_startup, border=BORDER, flag=wx.ALL)
-        panel.SetSizer(sizer)
-        # Date/Time tab
-        panel = wx.Panel(notebook)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        notebook.AddPage(panel, _("Date && Time"))
-        chb_wide_date_range = wx.CheckBox(panel, label=_("Use experimental wide date range"))
+        chb_open_recent_startup.SetValue(config.get_open_recent_at_startup())
+        return (chb_open_recent_startup,)
+
+    def _create_date_time_tab(self, notebook):
+        panel = self._creat_tab_panel(notebook, _("Date && Time")) 
+        controls = self._create_date_time_tab_controls(panel)
+        self._size_tab_panel(panel, controls)
+        
+    def _create_date_time_tab_controls(self, panel):
+        chb_wide_date_range = self._create_chb_wide_date_range(panel)
+        choice_week = self._create_choice_week(panel)
         grid = wx.FlexGridSizer(1, 2, BORDER, BORDER)
-        flag = wx.ALIGN_CENTER_VERTICAL
-        grid.Add(wx.StaticText(panel, label=_("Week start on:")), flag=flag)
-        choice_week = wx.Choice(panel, choices=[_("Monday"), _("Sunday")])
-        index = self._week_index(config.global_config.week_start)
-        choice_week.SetSelection(index)
+        grid.Add(wx.StaticText(panel, label=_("Week start on:")), 
+                 flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        grid.Add(chb_wide_date_range, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        self.Bind(wx.EVT_CHOICE, self._choice_week_on_choice, choice_week)
+        grid.Add(chb_wide_date_range, 
+                 flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        return (grid,)
+
+    def _create_chb_wide_date_range(self, panel):
+        chb_wide_date_range = wx.CheckBox(panel, label=_("Use experimental wide date range"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_use_wide_date_range_on_checkbox,
                   chb_wide_date_range)
-        sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        return chb_wide_date_range 
+
+    def _create_choice_week(self, panel):
+        choice_week = wx.Choice(panel, choices=[_("Monday"), _("Sunday")])
+        self.Bind(wx.EVT_CHOICE, self._choice_week_on_choice, choice_week)
+        index = self._week_index(config.global_config.week_start)
+        choice_week.SetSelection(index)
+        return choice_week
+    
+    def _creat_tab_panel(self, notebook, label):
+        panel = wx.Panel(notebook)
+        notebook.AddPage(panel, label)
+        return panel
+    
+    def _size_tab_panel(self, panel, controls):
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        for control in controls:
+            sizer.Add(control, flag=wx.ALL|wx.EXPAND, border=BORDER)
         panel.SetSizer(sizer)
-        # The close button
+        
+    def _create_close_button(self):
         btn_close = wx.Button(self, wx.ID_CLOSE)
         btn_close.SetDefault()
         btn_close.SetFocus()
         self.SetAffirmativeId(wx.ID_CLOSE)
         self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
-        # Layout
-        main_box = wx.BoxSizer(wx.VERTICAL)
-        main_box.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND,
-                     proportion=1)
-        button_box = wx.BoxSizer(wx.HORIZONTAL)
-        button_box.AddStretchSpacer()
-        button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
-        main_box.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        # Realize
-        self.SetSizerAndFit(main_box)
-
+        return btn_close 
+        
     def _chb_use_wide_date_range_on_checkbox(self, evt):
         self._controller.on_use_wide_date_range_changed(evt.IsChecked())
     
