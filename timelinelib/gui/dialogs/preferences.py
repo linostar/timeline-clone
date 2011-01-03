@@ -64,7 +64,7 @@ class PreferencesDialog(wx.Dialog):
         return button_box
         
     def _create_general_tab(self, notebook):
-        panel = self._creat_tab_panel(notebook, _("General")) 
+        panel = self._create_tab_panel(notebook, _("General")) 
         controls = self._create_general_tab_controls(panel)
         self._size_tab_panel(panel, controls)
 
@@ -77,18 +77,18 @@ class PreferencesDialog(wx.Dialog):
         return (chb_open_recent_startup,)
 
     def _create_date_time_tab(self, notebook):
-        panel = self._creat_tab_panel(notebook, _("Date && Time")) 
+        panel = self._create_tab_panel(notebook, _("Date && Time")) 
         controls = self._create_date_time_tab_controls(panel)
         self._size_tab_panel(panel, controls)
         
     def _create_date_time_tab_controls(self, panel):
-        chb_wide_date_range = self._create_chb_wide_date_range(panel)
+        self.chb_wide_date_range = self._create_chb_wide_date_range(panel)
         choice_week = self._create_choice_week(panel)
         grid = wx.FlexGridSizer(1, 2, BORDER, BORDER)
         grid.Add(wx.StaticText(panel, label=_("Week start on:")), 
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        grid.Add(chb_wide_date_range, 
+        grid.Add(self.chb_wide_date_range, 
                  flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         return (grid,)
 
@@ -96,6 +96,7 @@ class PreferencesDialog(wx.Dialog):
         chb_wide_date_range = wx.CheckBox(panel, label=_("Use experimental wide date range"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_use_wide_date_range_on_checkbox,
                   chb_wide_date_range)
+        chb_wide_date_range.SetValue(config.global_config.get_use_wide_date_range())
         return chb_wide_date_range 
 
     def _create_choice_week(self, panel):
@@ -105,7 +106,7 @@ class PreferencesDialog(wx.Dialog):
         choice_week.SetSelection(index)
         return choice_week
     
-    def _creat_tab_panel(self, notebook, label):
+    def _create_tab_panel(self, notebook, label):
         panel = wx.Panel(notebook)
         notebook.AddPage(panel, label)
         return panel
@@ -149,7 +150,7 @@ class PreferencesDialog(wx.Dialog):
         raise ValueError("Unknown week index '%s'." % index)
 
     def set_checkbox_enable_wide_date_range(self, value):
-        pass
+        self.chb_wide_date_range.SetValue(value)
     
 
 class PreferencesDialogController(object):
