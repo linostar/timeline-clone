@@ -46,6 +46,7 @@ RECENT_FILES = "recent_files"
 OPEN_RECENT_AT_STARTUP = "open_recent_at_startup"
 BALLOON_ON_HOVER = "balloon_on_hover"
 WEEK_START = "week_start"
+USE_WIDE_DATE_RANGE = "use_wide_date_range"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
@@ -59,6 +60,7 @@ DEFAULTS = {
     RECENT_FILES: "",
     BALLOON_ON_HOVER: "True",
     WEEK_START: "monday",
+    USE_WIDE_DATE_RANGE: "False",
 }
 # Some settings
 MAX_NBR_OF_RECENT_FILES_SAVED = 5
@@ -226,7 +228,7 @@ class Config(object):
     week_start = property(get_week_start, set_week_start)
     
     def get_use_wide_date_range(self):
-        return True
-
+        return self.config_parser.getboolean(DEFAULTSECT, USE_WIDE_DATE_RANGE)
     def set_use_wide_date_range(self, value):
-        pass
+        self.config_parser.set(DEFAULTSECT, USE_WIDE_DATE_RANGE, str(value))
+    use_wide_date_range = property(get_use_wide_date_range, set_use_wide_date_range)
