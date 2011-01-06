@@ -61,7 +61,6 @@ def add_specs(suite):
 def add_unittests(suite):
     load_test_cases_from_module_name(suite, "tests.unit.db.backends.file")
     load_test_cases_from_module_name(suite, "tests.unit.gui.utils")
-    load_test_cases_from_module_name(suite, "tests.unit.gui.dialogs.mainframe")
     load_test_cases_from_module_name(suite, "tests.unit.db.backends.memory")
     load_test_cases_from_module_name(suite, "tests.integration.read_010_file")
     load_test_cases_from_module_name(suite, "tests.integration.read_090_file")
