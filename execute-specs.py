@@ -66,7 +66,6 @@ def add_unittests(suite):
     load_test_cases_from_module_name(suite, "tests.integration.read_010_file")
     load_test_cases_from_module_name(suite, "tests.integration.read_090_file")
     load_test_cases_from_module_name(suite, "tests.integration.read_0100_file")
-    load_test_cases_from_module_name(suite, "tests.unit.gui.components.cattree")
     load_test_cases_from_module_name(suite, "tests.unit.db.backends.xmlparser")
     load_test_cases_from_module_name(suite, "tests.integration.read_write_xml")
     load_test_cases_from_module_name(suite, "tests.integration.write_xml")
