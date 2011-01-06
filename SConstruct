@@ -32,7 +32,6 @@ Targets:
   pot     - translation template
   tags    - tags file for the Vim text editor
   hacking - html version of HACKING
-  api     - source code API documentation
 """)
 
 # Import environment variables
@@ -46,7 +45,6 @@ for env_var in ["PYTHONPATH"]:
 env["MSGFMT"] = WhereIs("msgfmt")
 env["XGETTEXT"] = WhereIs("xgettext")
 env["CTAGS"] = WhereIs("ctags")
-env["EPYDOC"] = WhereIs("epydoc")
 
 if not env["MSGFMT"]:
     print "Warning: msgfmt not found, can't generate mo files"
@@ -56,9 +54,6 @@ if not env["XGETTEXT"]:
 
 if not env["CTAGS"]:
     print "Warning: ctags not found, can't generate tags file"
-
-if not env["EPYDOC"]:
-    print "Warning: epydoc not found, can't generate api documentation"
 
 # Import modules that we need
 
@@ -129,13 +124,5 @@ def markdown_convert(target, source, env):
 
 html = env.Command("HACKING.html", "HACKING", markdown_convert)
 env.Alias("hacking", html)
-
-# Target: api
-
-env["EPYDOCFLAGS"] = "--name Timeline --no-private --no-sourcecode"
-api = env.Command("api/index.html", sources,
-                  "$EPYDOC $EPYDOCFLAGS -o $TARGET.dir $SOURCES")
-env.Clean(api, "api") # remove the whole directory
-env.Alias("api", api)
 
 # vim: syntax=python
