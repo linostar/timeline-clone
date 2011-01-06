@@ -34,42 +34,7 @@ from timelinelib.time import PyTimeType
 from timelinelib.drawing.interface import ViewProperties
 
 
-class TestFileTimeline(unittest.TestCase):
-    
-    def setUp(self):
-        # Create temporary dir and names
-        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
-        self.corrupt_file = os.path.join(self.tmp_dir, "corrupt.timeline")
-        self.missingeof_file = os.path.join(self.tmp_dir, "missingeof.timeline")
-        self._021_file = os.path.join(self.tmp_dir, "021.timeline")
-        self.invalid_time_period_file = os.path.join(self.tmp_dir, "invalid_time_period.timeline")
-        self.valid_file = os.path.join(self.tmp_dir, "valid.timeline")
-        # Write content to files
-        HEADER_030 = "# Written by Timeline 0.3.0 on 2009-7-23 9:40:33"
-        HEADER_030_DEV = "# Written by Timeline 0.3.0dev on 2009-7-23 9:40:33"
-        HEADER_021 = "# Written by Timeline 0.2.1 on 2009-7-23 9:40:33"
-        write_timeline(self.corrupt_file, ["corrupt data here"])
-        write_timeline(self.missingeof_file, ["# valid data"])
-        write_timeline(self._021_file, [HEADER_021])
-        invalid_time_period = [
-            "# Written by Timeline 0.5.0dev785606221dc2 on 2009-9-22 19:1:10",
-            "PREFERRED-PERIOD:2008-12-9 11:32:26;2008-12-9 11:32:26",
-            "CATEGORY:Work;173,216,230;True",
-            "CATEGORY:Private;200,200,200;True",
-            "EVENT:2009-7-13 0:0:0;2009-7-18 0:0:0;Programming course;Work",
-            "EVENT:2009-7-10 14:30:0;2009-7-10 14:30:0;Go to dentist;Private",
-            "EVENT:2009-7-20 0:0:0;2009-7-27 0:0:0;Vacation;Private",
-            "# END",
-        ]
-        write_timeline(self.invalid_time_period_file, invalid_time_period)
-        valid = [
-            "# Written by Timeline 0.5.0 on 2009-9-22 19:1:10",
-            "# END",
-        ]
-        write_timeline(self.valid_file, valid)
-
-    def tearDown(self):
-        shutil.rmtree(self.tmp_dir)
+class FileTimelineSpec(unittest.TestCase):
 
     def testCorruptData(self):
         """
@@ -120,9 +85,49 @@ class TestFileTimeline(unittest.TestCase):
         vp = ViewProperties()
         vp.displayed_period = zero_tp
         self.assertRaises(TimelineIOError, timeline.save_view_properties, vp)
+    
+    def setUp(self):
+        # Create temporary dir and names
+        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
+        self.corrupt_file = os.path.join(self.tmp_dir, "corrupt.timeline")
+        self.missingeof_file = os.path.join(self.tmp_dir, "missingeof.timeline")
+        self._021_file = os.path.join(self.tmp_dir, "021.timeline")
+        self.invalid_time_period_file = os.path.join(self.tmp_dir, "invalid_time_period.timeline")
+        self.valid_file = os.path.join(self.tmp_dir, "valid.timeline")
+        # Write content to files
+        HEADER_030 = "# Written by Timeline 0.3.0 on 2009-7-23 9:40:33"
+        HEADER_030_DEV = "# Written by Timeline 0.3.0dev on 2009-7-23 9:40:33"
+        HEADER_021 = "# Written by Timeline 0.2.1 on 2009-7-23 9:40:33"
+        self.write_timeline(self.corrupt_file, ["corrupt data here"])
+        self.write_timeline(self.missingeof_file, ["# valid data"])
+        self.write_timeline(self._021_file, [HEADER_021])
+        invalid_time_period = [
+            "# Written by Timeline 0.5.0dev785606221dc2 on 2009-9-22 19:1:10",
+            "PREFERRED-PERIOD:2008-12-9 11:32:26;2008-12-9 11:32:26",
+            "CATEGORY:Work;173,216,230;True",
+            "CATEGORY:Private;200,200,200;True",
+            "EVENT:2009-7-13 0:0:0;2009-7-18 0:0:0;Programming course;Work",
+            "EVENT:2009-7-10 14:30:0;2009-7-10 14:30:0;Go to dentist;Private",
+            "EVENT:2009-7-20 0:0:0;2009-7-27 0:0:0;Vacation;Private",
+            "# END",
+        ]
+        self.write_timeline(self.invalid_time_period_file, invalid_time_period)
+        valid = [
+            "# Written by Timeline 0.5.0 on 2009-9-22 19:1:10",
+            "# END",
+        ]
+        self.write_timeline(self.valid_file, valid)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_dir)
+
+    def write_timeline(self, path, lines):
+        f = file(path, "w")
+        f.write("\n".join(lines))
+        f.close()
 
 
-class TestHelperFunctions(unittest.TestCase):
+class FileTimelineQuuoteFunctionsSpec(unittest.TestCase):
 
     def testQuote(self):
         # None
@@ -148,9 +153,3 @@ class TestHelperFunctions(unittest.TestCase):
     def testSplit(self):
         self.assertEqual(split_on_semicolon("one;two\\;;three"),
                          ["one", "two\\;", "three"])
-
-
-def write_timeline(path, lines):
-    f = file(path, "w")
-    f.write("\n".join(lines))
-    f.close()
