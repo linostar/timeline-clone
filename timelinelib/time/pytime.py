@@ -384,7 +384,7 @@ class StripCentury(Strip):
             # TODO: This only works for English. Possible to localize?
             start_year = self._century_start_year(time.year)
             next_start_year = start_year + 100
-            return str(next_start_year)[0:2] + " century"
+            return str(next_start_year / 100) + " century"
         return ""
 
     def start(self, time):
