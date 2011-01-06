@@ -33,7 +33,7 @@ from timelinelib.db.interface import TimelineIOError
 from timelinelib.drawing.interface import ViewProperties
 
 
-def db_open(path):
+def db_open(path, use_wide_date_range=False):
     """
     Create timeline database that can read and write timeline data from and to
     persistent storage identified by path.
@@ -59,12 +59,13 @@ def db_open(path):
             from timelinelib.db.backends.file import FileTimeline
             from timelinelib.db.backends.xmlfile import XmlTimeline
             file_db = FileTimeline(path)
-            xml_db = XmlTimeline(path, load=False)
+            xml_db = XmlTimeline(path, load=False, 
+                                 use_wide_date_range=use_wide_date_range)
             copy_db(file_db, xml_db)
             return xml_db
         else:
             from timelinelib.db.backends.xmlfile import XmlTimeline
-            return XmlTimeline(path)
+            return XmlTimeline(path, use_wide_date_range=use_wide_date_range)
     elif path.endswith(".ics"):
         try:
             import icalendar

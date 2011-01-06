@@ -673,7 +673,7 @@ class MainFrameController(object):
     def open_timeline(self, path):
         """Read timeline info from the given input file and display it."""
         try:
-            timeline = self.db_open_fn(path)
+            timeline = self.db_open_fn(path, self.config.get_use_wide_date_range())
         except TimelineIOError, e:
             self.main_frame.handle_db_error(e)
         else:

@@ -44,6 +44,7 @@ from timelinelib.db.backends.xmlparser import SINGLE
 from timelinelib.db.backends.xmlparser import ANY
 from timelinelib.db.backends.xmlparser import OPTIONAL
 from timelinelib.db.backends.xmlparser import parse_fn_store
+from timelinelib.time import WxTimeType
 
 
 ENCODING = "utf-8"
@@ -75,12 +76,17 @@ class ParseException(Exception):
 
 class XmlTimeline(MemoryDB):
 
-    def __init__(self, path, load=True):
+    def __init__(self, path, load=True, use_wide_date_range=False):
         MemoryDB.__init__(self)
         self.path = path
+        self._set_time_type(use_wide_date_range)
         if load == True:
             self._load()
 
+    def _set_time_type(self, use_wide_date_range):
+        if use_wide_date_range == True:
+            self.time_type = WxTimeType()
+             
     def _parse_time(self, time_string):
         return self.get_time_type().parse_time(time_string)
 

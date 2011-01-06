@@ -22,18 +22,22 @@ import unittest
 from mock import Mock
 
 import timelinelib.gui.dialogs.mainframe as mainframe_module
+from timelinelib.gui.dialogs.mainframe import MainFrame
 from timelinelib.gui.dialogs.mainframe import MainFrameController
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
+from timelinelib.config import Config
 
 
 class TestMainFrameController(unittest.TestCase):
 
     def setUp(self):
-        self.main_frame = Mock()
+        self.main_frame = Mock(MainFrame)
         self.db_open_fn = Mock()
-        self.config = Mock()
+        self.config = Mock(Config)
+        self.USE_WIDE_DATE_RANGE = False
+        self.config.get_use_wide_date_range.return_value = self.USE_WIDE_DATE_RANGE 
         self.controller = MainFrameController(self.main_frame, self.db_open_fn,
                                               self.config)
 
@@ -44,7 +48,7 @@ class TestMainFrameController(unittest.TestCase):
         # Call
         self.controller.open_timeline("foo.timeline")
         # Assert
-        self.db_open_fn.assert_called_with("foo.timeline")
+        self.db_open_fn.assert_called_with("foo.timeline", self.USE_WIDE_DATE_RANGE)
         self.config.append_recently_opened.assert_called_with("foo.timeline")
         self.main_frame._update_open_recent_submenu.assert_called_with()
         self.main_frame._display_timeline.assert_called_with(opened_timeline)
@@ -56,5 +60,5 @@ class TestMainFrameController(unittest.TestCase):
         # Call
         self.controller.open_timeline("foo.timeline")
         # Assert
-        self.db_open_fn.assert_called_with("foo.timeline")
+        self.db_open_fn.assert_called_with("foo.timeline", self.USE_WIDE_DATE_RANGE)
         self.main_frame.handle_db_error.assert_called_with(ex)
