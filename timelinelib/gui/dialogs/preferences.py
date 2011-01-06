@@ -88,12 +88,14 @@ class PreferencesDialog(wx.Dialog):
         grid.Add(wx.StaticText(panel, label=_("Week start on:")), 
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        grid.Add(wx.StaticText(panel, label=_("Use experimental wide date range:\nBe aware!\nThere is no return.")), 
+                 flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.chb_wide_date_range, 
-                 flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+                 flag=wx.ALIGN_TOP|wx.ALIGN_RIGHT)
         return (grid,)
 
     def _create_chb_wide_date_range(self, panel):
-        chb_wide_date_range = wx.CheckBox(panel, label=_("Use experimental wide date range"))
+        chb_wide_date_range = wx.CheckBox(panel, label="")
         self.Bind(wx.EVT_CHECKBOX, self._chb_use_wide_date_range_on_checkbox,
                   chb_wide_date_range)
         chb_wide_date_range.SetValue(config.global_config.get_use_wide_date_range())
