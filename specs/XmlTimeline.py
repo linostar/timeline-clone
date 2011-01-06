@@ -16,12 +16,19 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import codecs
+import tempfile
+import os
+import os.path
+import shutil
+from datetime import datetime
 import unittest
-
-from mock import Mock
 
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.time import WxTimeType
+from timelinelib.db.objects import Event
+from timelinelib.db import db_open
+from timelinelib.version import get_version
 
 
 class XmlTimelineSpec(unittest.TestCase):
@@ -29,4 +36,40 @@ class XmlTimelineSpec(unittest.TestCase):
     def testUseWxTimeTypeWhenUseWideDateRangeIsTrue(self):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
         self.assertTrue(isinstance(timeline.time_type, WxTimeType))
-        
+
+    def testDisplayedPeriodTagNotWrittenIfNotSet(self):
+        # Create a new db and add one event
+        db = db_open(self.tmp_path)
+        db.save_event(Event(db, datetime(2010, 8, 31, 0, 0, 0),
+                            datetime(2010, 8, 31, 0, 0, 0),
+                            "test"))
+        # Read the file content from disk
+        f = codecs.open(self.tmp_path, "r", "utf-8")
+        content = f.read()
+        f.close()
+        # Assert that displayed_period tag is not written
+        self.assertEquals(content, """<?xml version="1.0" encoding="utf-8"?>
+<timeline>
+  <version>%s</version>
+  <categories>
+  </categories>
+  <events>
+    <event>
+      <start>2010-8-31 0:0:0</start>
+      <end>2010-8-31 0:0:0</end>
+      <text>test</text>
+    </event>
+  </events>
+  <view>
+    <hidden_categories>
+    </hidden_categories>
+  </view>
+</timeline>
+""" % get_version())
+
+    def setUp(self):
+        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
+        self.tmp_path = os.path.join(self.tmp_dir, "test.timeline")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_dir)
