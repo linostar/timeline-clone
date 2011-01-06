@@ -30,19 +30,7 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.drawing.interface import ViewProperties
 
 
-class TestMemoryDB(unittest.TestCase):
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.db._save = Mock()
-        self.db_listener = Mock()
-        self.c1 = Category("work", (255, 0, 0), True)
-        self.c2 = Category("private", (0, 255, 0), True)
-        self.e1 = Event(self.db, datetime(2010, 2, 13), datetime(2010, 2, 13), 
-                        "holiday")
-        self.e2 = Event(self.db, datetime(2010, 2, 14), datetime(2010, 2, 14), 
-                        "work starts")
-        self.db.register(self.db_listener)
+class MemoryDBSpec(unittest.TestCase):
 
     def testInitialState(self):
         db = MemoryDB()
@@ -360,3 +348,15 @@ class TestMemoryDB(unittest.TestCase):
         # Enabling when enabled should not have any effect
         self.db.enable_save()
         self.assertEquals(self.db._save.call_count, 2)
+
+    def setUp(self):
+        self.db = MemoryDB()
+        self.db._save = Mock()
+        self.db_listener = Mock()
+        self.c1 = Category("work", (255, 0, 0), True)
+        self.c2 = Category("private", (0, 255, 0), True)
+        self.e1 = Event(self.db, datetime(2010, 2, 13), datetime(2010, 2, 13), 
+                        "holiday")
+        self.e2 = Event(self.db, datetime(2010, 2, 14), datetime(2010, 2, 14), 
+                        "work starts")
+        self.db.register(self.db_listener)
