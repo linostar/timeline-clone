@@ -43,7 +43,6 @@ def install_gettext_in_builtin_namespace():
 def create_suite():
     suite = unittest.TestSuite()
     add_specs(suite)
-    add_unittests(suite)
     add_doctests(suite)
     return suite
 
@@ -57,11 +56,6 @@ def add_specs(suite):
             module_name = os.path.basename(file)[:-3]
             abs_module_name = "specs.%s" % module_name
             load_test_cases_from_module_name(suite, abs_module_name)
-
-def add_unittests(suite):
-    load_test_cases_from_module_name(suite, "tests.integration.read_010_file")
-    load_test_cases_from_module_name(suite, "tests.integration.read_090_file")
-    load_test_cases_from_module_name(suite, "tests.integration.read_0100_file")
 
 def add_doctests(suite):
     load_doc_test_from_module_name(suite, "timelinelib.db.backends.xmlparser")
