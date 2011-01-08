@@ -26,24 +26,19 @@ from timelinelib.db.objects import TimePeriod
 class TimelineScene(object):
 
     def __init__(self, size, db, view_properties, get_text_size_fn):
-        self.size = size
-        self.db = db
-        self.view_properties = view_properties
+        self._db = db
+        self._view_properties = view_properties
         self._get_text_size = get_text_size_fn
-
         self._outer_padding = 5
         self._inner_padding = 3
         self._baseline_padding = 15
         self._period_threshold = 20
         self._data_indicator_size = 10
-
-        self.metrics = Metrics(self.size, self.db.get_time_type(), 
-                               self.view_properties.displayed_period, 
-                               self.view_properties.divider_position)
-        
-        self.width, self.height = self.size
-        self.divider_y = self.metrics.half_height
-
+        self._metrics = Metrics(size, self._db.get_time_type(), 
+                                self._view_properties.displayed_period, 
+                                self._view_properties.divider_position)
+        self.width, self.height = size
+        self.divider_y = self._metrics.half_height
         self.event_data = []
         self.major_strip = None
         self.minor_strip = None
@@ -66,24 +61,24 @@ class TimelineScene(object):
         self._data_indicator_size = data_indicator_size
 
     def create(self):
-        self._calc_event_positions(self.view_properties)
+        self._calc_event_positions()
         self._calc_strips()
 
     def x_pos_for_time(self, time):
-        return self.metrics.calc_x(time)
+        return self._metrics.calc_x(time)
 
     def distance_between_times(self, time1, time2):
-        time1_x = self.metrics.calc_exact_x(time1)
-        time2_x = self.metrics.calc_exact_x(time2)
+        time1_x = self._metrics.calc_exact_x(time1)
+        time2_x = self._metrics.calc_exact_x(time2)
         distance = abs(time1_x - time2_x)
         return distance
 
     def width_of_period(self, time_period):
-        return self.metrics.calc_width(time_period)
+        return self._metrics.calc_width(time_period)
 
-    def _calc_event_positions(self, view_properties):
-        events_from_db = self.db.get_events(self.view_properties.displayed_period)
-        visible_events = view_properties.filter_events(events_from_db)
+    def _calc_event_positions(self):
+        events_from_db = self._db.get_events(self._view_properties.displayed_period)
+        visible_events = self._view_properties.filter_events(events_from_db)
         self._calc_rects(visible_events)
         
     def _calc_rects(self, events):
@@ -113,17 +108,17 @@ class TimelineScene(object):
             return self._create_ideal_rect_for_non_period_event(event)
 
     def _display_as_period(self, event):
-        event_width = self.metrics.calc_width(event.time_period)
+        event_width = self._metrics.calc_width(event.time_period)
         return event_width > self._period_threshold
 
     def _create_ideal_rect_for_period_event(self, event):
         tw, th = self._get_text_size(event.text)
-        ew = self.metrics.calc_width(event.time_period)
+        ew = self._metrics.calc_width(event.time_period)
         rw = ew + 2 * self._outer_padding
         rh = th + 2 * self._inner_padding + 2 * self._outer_padding
-        rx = (self.metrics.calc_x(event.time_period.start_time) -
+        rx = (self._metrics.calc_x(event.time_period.start_time) -
               self._outer_padding)
-        ry = self.metrics.half_height + self._baseline_padding
+        ry = self._metrics.half_height + self._baseline_padding
         rect = wx.Rect(rx, ry, rw, rh)
         return rect
 
@@ -133,8 +128,8 @@ class TimelineScene(object):
         rh = th + 2 * self._inner_padding + 2 * self._outer_padding
         if event.has_data():
             rw += self._data_indicator_size / 3
-        rx = self.metrics.calc_x(event.mean_time()) - rw / 2
-        ry = self.metrics.half_height - rh - self._baseline_padding
+        rx = self._metrics.calc_x(event.mean_time()) - rw / 2
+        ry = self._metrics.half_height - rh - self._baseline_padding
         rect = wx.Rect(rx, ry, rw, rh)
         return rect
 
@@ -150,8 +145,8 @@ class TimelineScene(object):
             rx += distance_beyond_left_margin
             rw -= distance_beyond_left_margin
         right_edge_x = rx + rw
-        if right_edge_x > self.metrics.width + MARGIN:
-            rw -= right_edge_x - self.metrics.width - MARGIN
+        if right_edge_x > self._metrics.width + MARGIN:
+            rw -= right_edge_x - self._metrics.width - MARGIN
         rect.SetX(rx)
         rect.SetWidth(rw)
 
@@ -167,7 +162,7 @@ class TimelineScene(object):
                 break
 
     def _rect_above_or_below_screen(self, rect):
-        return rect.Y > self.metrics.height or (rect.Y + rect.Height) < 0
+        return rect.Y > self._metrics.height or (rect.Y + rect.Height) < 0
 
     def _intersection_height(self, rect):
         for (event, r) in self.event_data:
@@ -181,13 +176,13 @@ class TimelineScene(object):
         """Fill the two arrays `minor_strip_data` and `major_strip_data`."""
         def fill(list, strip):
             """Fill the given list with the given strip."""
-            current_start = strip.start(self.view_properties.displayed_period.start_time)
-            while current_start < self.view_properties.displayed_period.end_time:
+            current_start = strip.start(self._view_properties.displayed_period.start_time)
+            while current_start < self._view_properties.displayed_period.end_time:
                 next_start = strip.increment(current_start)
-                list.append(TimePeriod(self.db.get_time_type(), current_start, next_start))
+                list.append(TimePeriod(self._db.get_time_type(), current_start, next_start))
                 current_start = next_start
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
-        self.major_strip, self.minor_strip = self.db.get_time_type().choose_strip(self.metrics)
+        self.major_strip, self.minor_strip = self._db.get_time_type().choose_strip(self._metrics)
         fill(self.major_strip_data, self.major_strip)
         fill(self.minor_strip_data, self.minor_strip)
