@@ -19,7 +19,6 @@
 import wx
 
 from timelinelib.drawing.utils import Metrics
-from timelinelib.drawing.utils import get_default_font
 from timelinelib.db.objects import TimePeriod
 
 
