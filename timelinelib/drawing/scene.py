@@ -42,15 +42,14 @@ class TimelineScene(object):
         self.minor_strip_data = []
 
     def create(self):
-        self.time_period = self.view_properties.displayed_period
         self.metrics = Metrics(self.size, self.db.get_time_type(), 
-                               self.time_period, 
+                               self.view_properties.displayed_period, 
                                self.view_properties.divider_position)
         self._calc_event_positions(self.view_properties)
         self._calc_strips()
 
     def _calc_event_positions(self, view_properties):
-        events_from_db = self.db.get_events(self.time_period)
+        events_from_db = self.db.get_events(self.view_properties.displayed_period)
         visible_events = view_properties.filter_events(events_from_db)
         self._calc_rects(visible_events)
         
@@ -149,8 +148,8 @@ class TimelineScene(object):
         """Fill the two arrays `minor_strip_data` and `major_strip_data`."""
         def fill(list, strip):
             """Fill the given list with the given strip."""
-            current_start = strip.start(self.time_period.start_time)
-            while current_start < self.time_period.end_time:
+            current_start = strip.start(self.view_properties.displayed_period.start_time)
+            while current_start < self.view_properties.displayed_period.end_time:
                 next_start = strip.increment(current_start)
                 list.append(TimePeriod(self.db.get_time_type(), current_start, next_start))
                 current_start = next_start
