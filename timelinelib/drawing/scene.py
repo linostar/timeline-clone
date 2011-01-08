@@ -32,11 +32,12 @@ DATA_INDICATOR_SIZE = 10
 
 class TimelineScene(object):
 
-    def __init__(self, dc, timeline, view_properties):
-        self.dc = dc
+    def __init__(self, size, timeline, view_properties, text_extent_fn):
+        self.size = size
         self.db = timeline
         self.view_properties = view_properties
-        self.small_text_font = get_default_font(8)
+
+        self._get_text_extent = text_extent_fn
 
         self.event_data = []
         self.major_strip_data = []
@@ -45,12 +46,11 @@ class TimelineScene(object):
     def create(self):
         self.time_period = self.view_properties.displayed_period
         self.time_type = self.db.get_time_type()
-        self.metrics = Metrics(self.dc.GetSizeTuple(), self.time_type, 
+        self.metrics = Metrics(self.size, self.time_type, 
                                self.time_period, 
                                self.view_properties.divider_position)
         self._calc_event_positions(self.view_properties)
         self._calc_strips()
-        del self.dc # Program crashes if we don't delete the dc reference.
 
     def _calc_event_positions(self, view_properties):
         events_from_db = self.db.get_events(self.time_period)
@@ -117,8 +117,7 @@ class TimelineScene(object):
         return event_width > PERIOD_THRESHOLD
 
     def _create_ideal_rect_for_period_event(self, event):
-        self.dc.SetFont(self.small_text_font)
-        tw, th = self.dc.GetTextExtent(event.text)
+        tw, th = self._get_text_extent(event.text)
         ew = self.metrics.calc_width(event.time_period)
         rw = ew + 2 * OUTER_PADDING
         rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
@@ -129,8 +128,7 @@ class TimelineScene(object):
         return rect
 
     def _create_ideal_rect_for_non_period_event(self, event):
-        self.dc.SetFont(self.small_text_font)
-        tw, th = self.dc.GetTextExtent(event.text)
+        tw, th = self._get_text_extent(event.text)
         rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
         rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
         if event.has_data():

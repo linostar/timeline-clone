@@ -76,9 +76,12 @@ class DefaultDrawingAlgorithm(Drawer):
         period_width_in_pixels = self.metrics.calc_width(time_period)
         return period_width_in_pixels > PERIOD_THRESHOLD
 
+    def _get_text_extent(self, text):
+        self.dc.SetFont(self.small_text_font)
+        tw, th = self.dc.GetTextExtent(text)
+        return (tw, th)
+
     def draw(self, dc, timeline, view_properties):
-        self.scene = TimelineScene(dc, timeline, view_properties)
-        self.scene.create()
         self.dc = dc
         self.time_period = view_properties.displayed_period
         self.db = timeline
@@ -86,6 +89,9 @@ class DefaultDrawingAlgorithm(Drawer):
         self.metrics = Metrics(dc.GetSizeTuple(), self.time_type, 
                                self.time_period, 
                                view_properties.divider_position)
+        self.scene = TimelineScene(
+            dc.GetSizeTuple(), timeline, view_properties, self._get_text_extent)
+        self.scene.create()
         self._perform_drawing(view_properties)
         del self.dc # Program crashes if we don't delete the dc reference.
 
