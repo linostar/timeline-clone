@@ -37,14 +37,16 @@ class TimelineScene(object):
         self.db = db
         self.view_properties = view_properties
         self._get_text_size = get_text_size_fn
+
+        self.metrics = Metrics(self.size, self.db.get_time_type(), 
+                               self.view_properties.displayed_period, 
+                               self.view_properties.divider_position)
+
         self.event_data = []
         self.major_strip_data = []
         self.minor_strip_data = []
 
     def create(self):
-        self.metrics = Metrics(self.size, self.db.get_time_type(), 
-                               self.view_properties.displayed_period, 
-                               self.view_properties.divider_position)
         self._calc_event_positions(self.view_properties)
         self._calc_strips()
 
