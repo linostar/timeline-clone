@@ -49,7 +49,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self._create_fonts()
         self._create_pens()
         self._create_brushes()
-        self.db = None
         
     def _create_fonts(self):
         self.header_font = get_default_font(12, True)
@@ -83,9 +82,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def draw(self, dc, timeline, view_properties):
         self.dc = dc
-        self.time_period = view_properties.displayed_period
-        self.db = timeline
-        self.time_type = self.db.get_time_type()
+        self.time_type = timeline.get_time_type()
         self.scene = TimelineScene(
             dc.GetSizeTuple(), timeline, view_properties, self._get_text_extent)
         self.scene.create()
@@ -242,9 +239,9 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _draw_now_line(self):
         now_time = self.time_type.now()
-        if self.time_period.inside(now_time):
+        x = self.scene.x_pos_for_time(now_time)
+        if x > 0 and x < self.scene.width:
             self.dc.SetPen(self.darkred_solid_pen)
-            x = self.scene.x_pos_for_time(now_time)
             self.dc.DrawLine(x, 0, x, self.scene.height)
 
     def _extract_categories(self):
