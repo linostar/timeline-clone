@@ -83,11 +83,19 @@ class DefaultDrawingAlgorithm(Drawer):
     def draw(self, dc, timeline, view_properties):
         self.dc = dc
         self.time_type = timeline.get_time_type()
-        self.scene = TimelineScene(
+        self.scene = self._create_scene(
             dc.GetSizeTuple(), timeline, view_properties, self._get_text_extent)
-        self.scene.create()
         self._perform_drawing(view_properties)
         del self.dc # Program crashes if we don't delete the dc reference.
+
+    def _create_scene(self, size, db, view_properties, get_text_extent_fn):
+        scene = TimelineScene(size, db, view_properties, get_text_extent_fn)
+        scene.set_outer_padding(OUTER_PADDING)
+        scene.set_inner_padding(INNER_PADDING)
+        scene.set_period_threshold(PERIOD_THRESHOLD)
+        scene.set_data_indicator_size(DATA_INDICATOR_SIZE)
+        scene.create()
+        return scene
 
     def _perform_drawing(self, view_properties):
         self._draw_period_selection(view_properties)

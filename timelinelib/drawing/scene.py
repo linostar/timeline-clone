@@ -23,13 +23,6 @@ from timelinelib.drawing.utils import get_default_font
 from timelinelib.db.objects import TimePeriod
 
 
-OUTER_PADDING = 5      # Space between event boxes (pixels)
-INNER_PADDING = 3      # Space inside event box to text (pixels)
-BASELINE_PADDING = 15  # Extra space to move events away from baseline (pixels)
-PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
-DATA_INDICATOR_SIZE = 10
-
-
 class TimelineScene(object):
 
     def __init__(self, size, db, view_properties, get_text_size_fn):
@@ -37,6 +30,12 @@ class TimelineScene(object):
         self.db = db
         self.view_properties = view_properties
         self._get_text_size = get_text_size_fn
+
+        self._outer_padding = 5
+        self._inner_padding = 3
+        self._baseline_padding = 15
+        self._period_threshold = 20
+        self._data_indicator_size = 10
 
         self.metrics = Metrics(self.size, self.db.get_time_type(), 
                                self.view_properties.displayed_period, 
@@ -50,6 +49,21 @@ class TimelineScene(object):
         self.minor_strip = None
         self.major_strip_data = []
         self.minor_strip_data = []
+
+    def set_outer_padding(self, outer_padding):
+        self._outer_padding = outer_padding
+
+    def set_inner_padding(self, inner_padding):
+        self._inner_padding = inner_padding
+
+    def set_baseline_padding(self, baseline_padding):
+        self._baseline_padding = baseline_padding
+
+    def set_period_threshold(self, period_threshold):
+        self._period_threshold = period_threshold
+
+    def set_data_indicator_size(self, data_indicator_size):
+        self._data_indicator_size = data_indicator_size
 
     def create(self):
         self._calc_event_positions(self.view_properties)
@@ -78,7 +92,7 @@ class TimelineScene(object):
             rect = self._create_rectangle_for_event(event)
             self.event_data.append((event, rect))
         for (event, rect) in self.event_data:
-            rect.Deflate(OUTER_PADDING, OUTER_PADDING)
+            rect.Deflate(self._outer_padding, self._outer_padding)
 
     def _create_rectangle_for_event(self, event):
         rect = self._create_ideal_rect_for_event(event)
@@ -100,27 +114,27 @@ class TimelineScene(object):
 
     def _display_as_period(self, event):
         event_width = self.metrics.calc_width(event.time_period)
-        return event_width > PERIOD_THRESHOLD
+        return event_width > self._period_threshold
 
     def _create_ideal_rect_for_period_event(self, event):
         tw, th = self._get_text_size(event.text)
         ew = self.metrics.calc_width(event.time_period)
-        rw = ew + 2 * OUTER_PADDING
-        rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        rw = ew + 2 * self._outer_padding
+        rh = th + 2 * self._inner_padding + 2 * self._outer_padding
         rx = (self.metrics.calc_x(event.time_period.start_time) -
-              OUTER_PADDING)
-        ry = self.metrics.half_height + BASELINE_PADDING
+              self._outer_padding)
+        ry = self.metrics.half_height + self._baseline_padding
         rect = wx.Rect(rx, ry, rw, rh)
         return rect
 
     def _create_ideal_rect_for_non_period_event(self, event):
         tw, th = self._get_text_size(event.text)
-        rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
-        rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
+        rw = tw + 2 * self._inner_padding + 2 * self._outer_padding
+        rh = th + 2 * self._inner_padding + 2 * self._outer_padding
         if event.has_data():
-            rw += DATA_INDICATOR_SIZE / 3
+            rw += self._data_indicator_size / 3
         rx = self.metrics.calc_x(event.mean_time()) - rw / 2
-        ry = self.metrics.half_height - rh - BASELINE_PADDING
+        ry = self.metrics.half_height - rh - self._baseline_padding
         rect = wx.Rect(rx, ry, rw, rh)
         return rect
 
