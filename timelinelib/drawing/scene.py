@@ -32,21 +32,18 @@ DATA_INDICATOR_SIZE = 10
 
 class TimelineScene(object):
 
-    def __init__(self, size, timeline, view_properties, text_extent_fn):
+    def __init__(self, size, db, view_properties, get_text_size_fn):
         self.size = size
-        self.db = timeline
+        self.db = db
         self.view_properties = view_properties
-
-        self._get_text_extent = text_extent_fn
-
+        self._get_text_size = get_text_size_fn
         self.event_data = []
         self.major_strip_data = []
         self.minor_strip_data = []
 
     def create(self):
         self.time_period = self.view_properties.displayed_period
-        self.time_type = self.db.get_time_type()
-        self.metrics = Metrics(self.size, self.time_type, 
+        self.metrics = Metrics(self.size, self.db.get_time_type(), 
                                self.time_period, 
                                self.view_properties.divider_position)
         self._calc_event_positions(self.view_properties)
@@ -57,35 +54,6 @@ class TimelineScene(object):
         visible_events = view_properties.filter_events(events_from_db)
         self._calc_rects(visible_events)
         
-    def _distance_to_left_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
-        return self._distance_between_times(time, left_strip_time)
-        
-    def _distance_to_right_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
-        return self._distance_between_times(time, right_strip_time)
-
-    def _get_time_at_left_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
-        return left_strip_time
-        
-    def _get_time_at_right_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
-        return right_strip_time
-        
-    def _distance_between_times(self, time1, time2):
-        time1_x = self.metrics.calc_exact_x(time1)
-        time2_x = self.metrics.calc_exact_x(time2)
-        distance = abs(time1_x - time2_x)
-        return distance
-        
-    def _snap_region(self, time): 
-        major_strip, minor_strip = self._choose_strip()
-        time_x = self.metrics.calc_exact_x(time)
-        left_strip_time = minor_strip.start(time)
-        right_strip_time = minor_strip.increment(left_strip_time)
-        return (left_strip_time, right_strip_time)
-
     def _calc_rects(self, events):
         self.event_data = []
         for event in events:
@@ -117,7 +85,7 @@ class TimelineScene(object):
         return event_width > PERIOD_THRESHOLD
 
     def _create_ideal_rect_for_period_event(self, event):
-        tw, th = self._get_text_extent(event.text)
+        tw, th = self._get_text_size(event.text)
         ew = self.metrics.calc_width(event.time_period)
         rw = ew + 2 * OUTER_PADDING
         rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
@@ -128,7 +96,7 @@ class TimelineScene(object):
         return rect
 
     def _create_ideal_rect_for_non_period_event(self, event):
-        tw, th = self._get_text_extent(event.text)
+        tw, th = self._get_text_size(event.text)
         rw = tw + 2 * INNER_PADDING + 2 * OUTER_PADDING
         rh = th + 2 * INNER_PADDING + 2 * OUTER_PADDING
         if event.has_data():
@@ -188,13 +156,6 @@ class TimelineScene(object):
                 current_start = next_start
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
-        major_strip, minor_strip = self.time_type.choose_strip(self.metrics)
+        major_strip, minor_strip = self.db.get_time_type().choose_strip(self.metrics)
         fill(self.major_strip_data, major_strip)
         fill(self.minor_strip_data, minor_strip)
-
-    def _choose_strip(self):
-        """
-        Return a tuple (major_strip, minor_strip) for current time period and
-        window size.
-        """
-        return self.time_type.choose_strip(self.metrics)
