@@ -88,14 +88,13 @@ class PreferencesDialog(wx.Dialog):
         grid.Add(wx.StaticText(panel, label=_("Week start on:")), 
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        grid.Add(wx.StaticText(panel, label=_("Use experimental wide date range:\nBe aware!\nThere is no return.")), 
-                 flag=wx.ALIGN_CENTER_VERTICAL)
-        grid.Add(self.chb_wide_date_range, 
-                 flag=wx.ALIGN_TOP|wx.ALIGN_RIGHT)
-        return (grid,)
+        warning = _("This feature is experimental. If events are\ncreated in the extended range, you can not\ndisable this option and successfully load\nthe timeline again. A reload of the timeline\nis also needed for this to take effect.")
+        warning_text_control = wx.StaticText(panel, label=warning)
+        warning_text_control.SetForegroundColour((255, 0, 0))
+        return (grid, self.chb_wide_date_range, warning_text_control)
 
     def _create_chb_wide_date_range(self, panel):
-        chb_wide_date_range = wx.CheckBox(panel, label="")
+        chb_wide_date_range = wx.CheckBox(panel, label=_("Use extended date range (before 1 AD)"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_use_wide_date_range_on_checkbox,
                   chb_wide_date_range)
         chb_wide_date_range.SetValue(config.global_config.get_use_wide_date_range())
