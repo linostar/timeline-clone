@@ -46,6 +46,8 @@ class TimelineScene(object):
         self.divider_y = self.metrics.half_height
 
         self.event_data = []
+        self.major_strip = None
+        self.minor_strip = None
         self.major_strip_data = []
         self.minor_strip_data = []
 
@@ -172,6 +174,6 @@ class TimelineScene(object):
                 current_start = next_start
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
-        major_strip, minor_strip = self.db.get_time_type().choose_strip(self.metrics)
-        fill(self.major_strip_data, major_strip)
-        fill(self.minor_strip_data, minor_strip)
+        self.major_strip, self.minor_strip = self.db.get_time_type().choose_strip(self.metrics)
+        fill(self.major_strip_data, self.major_strip)
+        fill(self.minor_strip_data, self.minor_strip)

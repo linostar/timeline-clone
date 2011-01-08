@@ -86,9 +86,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self.time_period = view_properties.displayed_period
         self.db = timeline
         self.time_type = self.db.get_time_type()
-        self.metrics = Metrics(dc.GetSizeTuple(), self.time_type, 
-                               self.time_period, 
-                               view_properties.divider_position)
         self.scene = TimelineScene(
             dc.GetSizeTuple(), timeline, view_properties, self._get_text_extent)
         self.scene.create()
@@ -127,10 +124,9 @@ class DefaultDrawingAlgorithm(Drawer):
         return right_strip_time
 
     def _snap_region(self, time): 
-        major_strip, minor_strip = self._choose_strip()
         time_x = self.scene.x_pos_for_time(time)
-        left_strip_time = minor_strip.start(time)
-        right_strip_time = minor_strip.increment(left_strip_time)
+        left_strip_time = self.scene.minor_strip.start(time)
+        right_strip_time = self.scene.minor_strip.increment(left_strip_time)
         return (left_strip_time, right_strip_time)
 
     def snap_selection(self, period_selection):
@@ -161,13 +157,6 @@ class DefaultDrawingAlgorithm(Drawer):
             if rect.Contains(wx.Point(x, y)):
                 event = event_in_list
         return event
-
-    def _choose_strip(self):
-        """
-        Return a tuple (major_strip, minor_strip) for current time period and
-        window size.
-        """
-        return self.time_type.choose_strip(self.metrics)
      
     def _draw_period_selection(self, view_properties):
         if not view_properties.period_selection:
@@ -198,16 +187,14 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawLine(x, 0, x, self.scene.height)
 
     def _draw_minor_strip_label(self, strip_period):
-        major_strip, minor_strip = self._choose_strip()
-        label = minor_strip.label(strip_period.start_time)
-        self.dc.SetFont(minor_strip.get_font(strip_period))
+        label = self.scene.minor_strip.label(strip_period.start_time)
+        self.dc.SetFont(self.scene.minor_strip.get_font(strip_period))
         (tw, th) = self.dc.GetTextExtent(label)
         middle = self.scene.x_pos_for_time(strip_period.mean_time())
         middley = self.scene.divider_y
         self.dc.DrawText(label, middle - tw / 2, middley - th)
 
     def _draw_major_strips(self):
-        major_strip, minor_strip = self._choose_strip()
         self.dc.SetFont(self.header_font)
         self.dc.SetPen(self.grey_solid_pen)
         for tp in self.scene.major_strip_data:
@@ -215,7 +202,7 @@ class DefaultDrawingAlgorithm(Drawer):
             x = self.scene.x_pos_for_time(tp.end_time)
             self.dc.DrawLine(x, 0, x, self.scene.height)
             # Label
-            label = major_strip.label(tp.start_time, True)
+            label = self.scene.major_strip.label(tp.start_time, True)
             (tw, th) = self.dc.GetTextExtent(label)
             x = self.scene.x_pos_for_time(tp.mean_time()) - tw / 2
             # If the label is not visible when it is positioned in the middle
