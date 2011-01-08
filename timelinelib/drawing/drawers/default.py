@@ -73,7 +73,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
 
     def event_is_period(self, time_period):
-        period_width_in_pixels = self.metrics.calc_width(time_period)
+        period_width_in_pixels = self.scene.with_of_period(time_period)
         return period_width_in_pixels > PERIOD_THRESHOLD
 
     def _get_text_extent(self, text):
@@ -112,11 +112,11 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _distance_to_left_border(self, time):
         left_strip_time, right_strip_time = self._snap_region(time)
-        return self._distance_between_times(time, left_strip_time)
+        return self.scene.distance_between_times(time, left_strip_time)
         
     def _distance_to_right_border(self, time):
         left_strip_time, right_strip_time = self._snap_region(time)
-        return self._distance_between_times(time, right_strip_time)
+        return self.scene.distance_between_times(time, right_strip_time)
 
     def _get_time_at_left_border(self, time):
         left_strip_time, right_strip_time = self._snap_region(time)
@@ -126,15 +126,9 @@ class DefaultDrawingAlgorithm(Drawer):
         left_strip_time, right_strip_time = self._snap_region(time)
         return right_strip_time
 
-    def _distance_between_times(self, time1, time2):
-        time1_x = self.metrics.calc_exact_x(time1)
-        time2_x = self.metrics.calc_exact_x(time2)
-        distance = abs(time1_x - time2_x)
-        return distance
-
     def _snap_region(self, time): 
         major_strip, minor_strip = self._choose_strip()
-        time_x = self.metrics.calc_exact_x(time)
+        time_x = self.scene.x_pos_for_time(time)
         left_strip_time = minor_strip.start(time)
         right_strip_time = minor_strip.increment(left_strip_time)
         return (left_strip_time, right_strip_time)
@@ -179,12 +173,12 @@ class DefaultDrawingAlgorithm(Drawer):
         if not view_properties.period_selection:
             return
         start, end = view_properties.period_selection
-        start_x = self.metrics.calc_x(start)
-        end_x = self.metrics.calc_x(end)
+        start_x = self.scene.x_pos_for_time(start)
+        end_x = self.scene.x_pos_for_time(end)
         self.dc.SetBrush(self.lightgrey_solid_brush)
         self.dc.SetPen(wx.TRANSPARENT_PEN)
         self.dc.DrawRectangle(start_x, 0,
-                              end_x - start_x + 1, self.metrics.height)
+                              end_x - start_x + 1, self.scene.height)
 
     def _draw_bg(self, view_properties):
         self._draw_minor_strips()
@@ -199,17 +193,17 @@ class DefaultDrawingAlgorithm(Drawer):
             self._draw_minor_strip_label(strip_period)
 
     def _draw_minor_strip_divider_line_at(self, time):
-        x = self.metrics.calc_x(time)
+        x = self.scene.x_pos_for_time(time)
         self.dc.SetPen(self.black_dashed_pen)
-        self.dc.DrawLine(x, 0, x, self.metrics.height)
+        self.dc.DrawLine(x, 0, x, self.scene.height)
 
     def _draw_minor_strip_label(self, strip_period):
         major_strip, minor_strip = self._choose_strip()
         label = minor_strip.label(strip_period.start_time)
         self.dc.SetFont(minor_strip.get_font(strip_period))
         (tw, th) = self.dc.GetTextExtent(label)
-        middle = self.metrics.calc_x(strip_period.mean_time())
-        middley = self.metrics.half_height
+        middle = self.scene.x_pos_for_time(strip_period.mean_time())
+        middley = self.scene.divider_y
         self.dc.DrawText(label, middle - tw / 2, middley - th)
 
     def _draw_major_strips(self):
@@ -218,37 +212,37 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetPen(self.grey_solid_pen)
         for tp in self.scene.major_strip_data:
             # Divider line
-            x = self.metrics.calc_x(tp.end_time)
-            self.dc.DrawLine(x, 0, x, self.metrics.height)
+            x = self.scene.x_pos_for_time(tp.end_time)
+            self.dc.DrawLine(x, 0, x, self.scene.height)
             # Label
             label = major_strip.label(tp.start_time, True)
             (tw, th) = self.dc.GetTextExtent(label)
-            x = self.metrics.calc_x(tp.mean_time()) - tw / 2
+            x = self.scene.x_pos_for_time(tp.mean_time()) - tw / 2
             # If the label is not visible when it is positioned in the middle
             # of the period, we move it so that as much of it as possible is
             # visible without crossing strip borders.
             if x - INNER_PADDING < 0:
                 x = INNER_PADDING
-                right = self.metrics.calc_x(tp.end_time)
+                right = self.scene.x_pos_for_time(tp.end_time)
                 if x + tw + INNER_PADDING > right:
                     x = right - tw - INNER_PADDING
-            elif x + tw + INNER_PADDING > self.metrics.width:
-                x = self.metrics.width - tw - INNER_PADDING
-                left = self.metrics.calc_x(tp.start_time)
+            elif x + tw + INNER_PADDING > self.scene.width:
+                x = self.scene.width - tw - INNER_PADDING
+                left = self.scene.x_pos_for_time(tp.start_time)
                 if x < left:
                     x = left + INNER_PADDING
             self.dc.DrawText(label, x, INNER_PADDING)
 
     def _draw_divider_line(self):
         self.dc.SetPen(self.black_solid_pen)
-        self.dc.DrawLine(0, self.metrics.half_height, self.metrics.width,
-                         self.metrics.half_height)
+        self.dc.DrawLine(0, self.scene.divider_y, self.scene.width,
+                         self.scene.divider_y)
 
     def _draw_lines_to_non_period_events(self, view_properties):
         self.dc.SetBrush(self.black_solid_brush)
         for (event, rect) in self.scene.event_data:
-            if rect.Y < self.metrics.half_height:
-                x = self.metrics.calc_x(event.mean_time())
+            if rect.Y < self.scene.divider_y:
+                x = self.scene.x_pos_for_time(event.mean_time())
                 y = rect.Y + rect.Height / 2
                 if view_properties.is_selected(event):
                     self.dc.SetPen(self.red_solid_pen)
@@ -256,15 +250,15 @@ class DefaultDrawingAlgorithm(Drawer):
                 else:
                     self.dc.SetBrush(self.black_solid_brush)
                     self.dc.SetPen(self.black_solid_pen)
-                self.dc.DrawLine(x, y, x, self.metrics.half_height)
-                self.dc.DrawCircle(x, self.metrics.half_height, 2)
+                self.dc.DrawLine(x, y, x, self.scene.divider_y)
+                self.dc.DrawCircle(x, self.scene.divider_y, 2)
 
     def _draw_now_line(self):
         now_time = self.time_type.now()
         if self.time_period.inside(now_time):
             self.dc.SetPen(self.darkred_solid_pen)
-            x = self.metrics.calc_x(now_time)
-            self.dc.DrawLine(x, 0, x, self.metrics.height)
+            x = self.scene.x_pos_for_time(now_time)
+            self.dc.DrawLine(x, 0, x, self.scene.height)
 
     def _extract_categories(self):
         categories = []
@@ -295,7 +289,7 @@ class DefaultDrawingAlgorithm(Drawer):
         item_height = self._text_height_with_current_font()
         width = max_width + 4 * INNER_PADDING + item_height
         return wx.Rect(OUTER_PADDING,
-                       self.metrics.height - height - OUTER_PADDING,
+                       self.scene.height - height - OUTER_PADDING,
                        width,
                        height)
 
@@ -390,8 +384,8 @@ class DefaultDrawingAlgorithm(Drawer):
         right corner of the event rectangle.
         """
         corner_x = rect.X + rect.Width
-        if corner_x > self.metrics.width:
-            corner_x = self.metrics.width
+        if corner_x > self.scene.width:
+            corner_x = self.scene.width
         points = (
             wx.Point(corner_x - DATA_INDICATOR_SIZE, rect.Y),
             wx.Point(corner_x, rect.Y),

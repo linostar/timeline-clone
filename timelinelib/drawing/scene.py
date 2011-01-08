@@ -41,6 +41,9 @@ class TimelineScene(object):
         self.metrics = Metrics(self.size, self.db.get_time_type(), 
                                self.view_properties.displayed_period, 
                                self.view_properties.divider_position)
+        
+        self.width, self.height = self.size
+        self.divider_y = self.metrics.half_height
 
         self.event_data = []
         self.major_strip_data = []
@@ -49,6 +52,18 @@ class TimelineScene(object):
     def create(self):
         self._calc_event_positions(self.view_properties)
         self._calc_strips()
+
+    def x_pos_for_time(self, time):
+        return self.metrics.calc_x(time)
+
+    def distance_between_times(self, time1, time2):
+        time1_x = self.metrics.calc_exact_x(time1)
+        time2_x = self.metrics.calc_exact_x(time2)
+        distance = abs(time1_x - time2_x)
+        return distance
+
+    def with_of_period(self, time_period):
+        return self.metrics.calc_width(time_period)
 
     def _calc_event_positions(self, view_properties):
         events_from_db = self.db.get_events(self.view_properties.displayed_period)
