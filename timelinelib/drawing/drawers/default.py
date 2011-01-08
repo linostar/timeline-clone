@@ -72,7 +72,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
 
     def event_is_period(self, time_period):
-        period_width_in_pixels = self.scene.with_of_period(time_period)
+        period_width_in_pixels = self.scene.width_of_period(time_period)
         return period_width_in_pixels > PERIOD_THRESHOLD
 
     def _get_text_extent(self, text):

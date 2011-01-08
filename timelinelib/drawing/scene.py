@@ -64,7 +64,7 @@ class TimelineScene(object):
         distance = abs(time1_x - time2_x)
         return distance
 
-    def with_of_period(self, time_period):
+    def width_of_period(self, time_period):
         return self.metrics.calc_width(time_period)
 
     def _calc_event_positions(self, view_properties):
