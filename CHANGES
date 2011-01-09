@@ -12,6 +12,11 @@ Bug fixes:
   * Centuries before 10th are displayed correctly (9 instead of 90)
   * Correct translations are used on Windows
 
+New translations:
+
+  * Lithuanian
+  * Vietnamese
+
 Timeline 0.11.1, released on 24 October 2010
 ============================================
 
