@@ -244,7 +244,6 @@ def move_page_smart(current_period, navigation_fn, direction):
     start_months = start.Year * 12 + start.Month
     end_months = end.Year * 12 + end.Month
     month_diff = end_months - start_months
-#    whole_years = start.replace(year=start.Year + year_diff) == end
     whole_years = start.Month == end.Month and start.Day == end.Day
     whole_months = start.Day == 1 and end.Day == 1
     direction_backward = direction < 0
@@ -686,8 +685,8 @@ def move_period_num_months(period, num):
                 years += 1
         start_year = period.start_time.Year + years
         end_year = period.start_time.Year + years
-        start_time = period.start_time.replace(year=start_year, month=start_month)
-        end_time = period.end_time.replace(year=end_year, month=end_month)
+        start_time = wx.DateTimeFromDMY(period.start_time.Day, start_month, start_year)
+        end_time = wx.DateTimeFromDMY(period.end_time.Day, end_month, end_year)
         return TimePeriod(period.time_type, start_time, end_time)
     except ValueError:
         return None
