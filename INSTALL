@@ -27,8 +27,6 @@ Extra development tools:
 
   * Mock version 0.6.0 (for running tests)
       http://www.voidspace.org.uk/python/mock/
-  * Epydoc (for generating API documentation)
-      http://epydoc.sourceforge.net/
 
 Installing prerequisites on a Debian-based system
 -------------------------------------------------
