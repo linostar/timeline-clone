@@ -37,6 +37,7 @@ from timelinelib.paths import ICONS_DIR
 from timelinelib.paths import HELP_RESOURCES_DIR
 import timelinelib.printing as printing
 import timelinelib.gui.utils as gui_utils
+import timelinelib.svgexport as svgexport
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
@@ -192,6 +193,9 @@ class MainFrame(wx.Frame):
         self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
                                                    _("&Export to Image..."),
                                                    _("Export the current view to a PNG image"))
+        self.mnu_file_export_svg = self.mnu_file.Append(wx.ID_ANY,
+                                                   _("&Export to SVG..."),
+                                                   _("Export the current view to a SVG image"))
         self.mnu_file.AppendSeparator()
         self.mnu_file.Append(wx.ID_EXIT, "",
                              _("Exit the program"))
@@ -203,6 +207,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
         self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click,
                   self.mnu_file_export)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click,
+                  self.mnu_file_export_svg)
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
         # Edit menu
         self.mnu_edit = wx.Menu()
@@ -355,6 +361,9 @@ class MainFrame(wx.Frame):
 
     def _mnu_file_export_on_click(self, evt):
         self._export_to_image()
+
+    def _mnu_file_export_svg_on_click(self, evt):
+        self._export_to_svg_image()
 
     def _mnu_file_exit_on_click(self, evt):
         """Event handler for the Exit menu item"""
@@ -633,6 +642,21 @@ class MainFrame(wx.Frame):
                 type = self.images_wildcard_helper.get_extension_data(path)
                 image.SaveFile(path, type)
         dialog.Destroy()
+ 
+    def _export_to_svg_image(self):
+        wildcard = self.images_svg_wildcard_helper.wildcard_string()
+        dialog = wx.FileDialog(self, message=_("Export to SVG"),
+                               wildcard=wildcard, style=wx.FD_SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            path = self.images_svg_wildcard_helper.get_path(dialog)
+            overwrite_question = _("File '%s' exists. Overwrite?") % path
+            if (not os.path.exists(path) or
+                _ask_question(overwrite_question, self) == wx.YES):
+                svgexport.export(
+                    path,
+                    self.main_panel.drawing_area.get_drawer().scene,
+                    self.main_panel.drawing_area.get_view_properties())
+        dialog.Destroy()
 
     def _set_initial_values_to_member_variables(self):
         """
@@ -645,6 +669,8 @@ class MainFrame(wx.Frame):
             _("Timeline files"), ["timeline", "ics"])
         self.images_wildcard_helper = WildcardHelper(
             _("Image files"), [("png", wx.BITMAP_TYPE_PNG)])
+        self.images_svg_wildcard_helper = WildcardHelper(
+            _("SVG files"), ["svg"])
 
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()
