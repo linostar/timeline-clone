@@ -25,7 +25,7 @@ from timelinelib.config import Config
 class ConfigSpec(unittest.TestCase):
     
     def testShouldHaveDefaultValuesBeforeConfigHasBeenRead(self):
-        self.assertEquals(self.config.window_size, (900, 500))
+        self.assertEquals(self.config.window_size, (900, 501))
         self.assertEquals(self.config.window_maximized, False)
         self.assertEquals(self.config.show_sidebar, True)
         self.assertEquals(self.config.show_legend, True)
