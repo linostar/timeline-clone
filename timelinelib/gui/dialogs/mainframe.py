@@ -54,6 +54,10 @@ from timelinelib.utils import ex_msg
 
 STATUS_READ_ONLY = 1
 
+MENU_REQUIRES_TIMELINE       = 1
+MENU_REQUIRES_TIMELINE_VIEW  = 2  
+MENU_REQUIRES_UPDATE         = 3
+
 
 class MainFrame(wx.Frame):
     """
@@ -75,6 +79,8 @@ class MainFrame(wx.Frame):
         self.creating_gui = True
         self._create_gui()
         self.creating_gui = False
+        self.menu_controller = MenuController()
+        self._add_menu_items_to_menu_controller()
         self.Maximize(config.get_window_maximized())
         self.SetTitle(APPLICATION_NAME)
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
@@ -282,6 +288,46 @@ class MainFrame(wx.Frame):
         menuBar.Append(self.mnu_help, _("&Help"))
         self.SetMenuBar(menuBar)
 
+    def _add_menu_items_to_menu_controller(self):
+        self._add_items_requiering_timeline()
+        self._collect_items_requiering_timeline_view()
+        self._collect_items_requiering_update
+
+    def _add_items_requiering_timeline(self):
+        items_requiering_timeline = [
+            self.mnu_file_print,
+            self.mnu_file_print_preview,
+            self.mnu_file_print_setup,
+            self.mnu_file_export,
+            self.mnu_view_legend,
+            self.mnu_edit_find,
+        ]
+        for item in self.mnu_timeline.GetMenuItems():
+            items_requiering_timeline.append(item)
+        n = self.mnu_navigate.GetMenuItemCount()
+        for item in self.mnu_navigate.GetMenuItems():
+            items_requiering_timeline.append(item)
+        for item in self._navigation_menu_items:    
+            items_requiering_timeline.append(item)
+        for menu in items_requiering_timeline:
+            self.menu_controller.add_menu(menu, MENU_REQUIRES_TIMELINE)
+
+    def _collect_items_requiering_timeline_view(self):
+        items_requiering_timeline_view = [
+            self.mnu_view_sidebar,
+        ]
+        for menu in items_requiering_timeline_view:
+            self.menu_controller.add_menu(menu, MENU_REQUIRES_TIMELINE_VIEW)
+
+    def _collect_items_requiering_update(self):
+        items_requiering_update = [
+            self.mnu_timeline_duplicate_event,
+            self.mnu_timeline_edit_categories
+        ]
+        for menu in items_requiering_update:
+            self.menu_controller.add_menu(menu, MENU_REQUIRES_UPDATE)
+        
+        
     def _update_navigation_menu_items(self):
         self._clear_navigation_menu_items()
         if self.timeline:
@@ -470,6 +516,7 @@ class MainFrame(wx.Frame):
 
     def _display_timeline(self, timeline):
         self.timeline = timeline
+        self.menu_controller.on_timeline_change(timeline)
         if timeline == None:
             # Do this before the next line so that we still have a timeline to
             # unregister
@@ -551,44 +598,20 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
 
     def enable_disable_menus(self):
-        """
-        Enable or disable menu items depending on the state of the application.
-        """
         if self.creating_gui:
             return
-        items_requiring_timeline_view = [
-            self.mnu_view_sidebar,
-        ]
-        items_requiring_timeline = [
-            self.mnu_file_print,
-            self.mnu_file_print_preview,
-            self.mnu_file_print_setup,
-            self.mnu_file_export,
-            self.mnu_view_legend,
-            self.mnu_edit_find,
-        ]
-        items_requiring_update = [
-            self.mnu_timeline_create_event, 
-            self.mnu_timeline_edit_categories, 
-        ]
-        for item in self.mnu_timeline.GetMenuItems():
-            items_requiring_timeline.append(item)
-        for item in self.mnu_navigate.GetMenuItems():
-            items_requiring_timeline.append(item)
-        have_timeline_view = self.main_panel.timeline_panel_visible()
-        have_timeline = self.timeline != None
-        is_read_only = have_timeline and self.timeline.is_read_only()     
-        for item in items_requiring_timeline_view:
-            item.Enable(have_timeline_view)
-        for item in items_requiring_timeline:
-            item.Enable(have_timeline)
-        for item in items_requiring_update:
-            item.Enable(not is_read_only)
-        if not have_timeline:
-            self.main_panel.show_searchbar(False)
-        # One and only one event selected ?
-        one_event_selected = len(self.main_panel.drawing_area.get_view_properties().selected_event_ids) == 1
+        self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())                                                        
+        self.enable_disable_duplicate_event_menu()
+        self.enable_disable_searchbar()
+  
+    def enable_disable_duplicate_event_menu(self):
+        view_properties = self.main_panel.drawing_area.get_view_properties()
+        one_event_selected = len(view_properties.selected_event_ids) == 1
         self.mnu_timeline_duplicate_event.Enable(one_event_selected)
+
+    def enable_disable_searchbar(self): 
+        if self.timeline == None:
+            self.main_panel.show_searchbar(False)
         
     def _save_application_config(self):
         config.set_window_size(self.GetSize())
@@ -681,6 +704,42 @@ class MainFrameController(object):
             self.main_frame._update_open_recent_submenu()
             self.main_frame._display_timeline(timeline)
 
+
+class MenuController(object):
+    
+    def __init__(self):
+        self.menues = []
+        self.timeline = None
+        self.timeline_view_visible = False
+
+    def on_timeline_change(self, timeline):
+        self.timeline = timeline
+        
+    def add_menu(self, menu, requirement):
+        self.menues.append((menu, requirement))
+        
+    def enable_disable_menus(self, timeline_view_visible):
+        self.timeline_view_visible = timeline_view_visible
+        for menu, requirement in self.menues:
+            if requirement == MENU_REQUIRES_UPDATE:
+                self._enable_disable_menues_that_requires_update(menu)
+            elif requirement == MENU_REQUIRES_TIMELINE:
+                self._enable_disable_menues_that_requires_timeline(menu)
+            elif requirement == MENU_REQUIRES_TIMELINE_VIEW:
+                self._enable_disable_menues_that_requires_timeline_view(menu)
+        
+    def _enable_disable_menues_that_requires_update(self, menu):
+        is_read_only = self.timeline != None and self.timeline.is_read_only()     
+        menu.Enable(not is_read_only)
+
+    def _enable_disable_menues_that_requires_timeline(self, menu):
+        has_timeline = self.timeline != None
+        menu.Enable(self.timeline != None)
+
+    def _enable_disable_menues_that_requires_timeline_view(self, menu):
+        has_timeline = self.timeline != None
+        menu.Enable(has_timeline and self.timeline_view_visible)
+        
 
 class MainPanel(wx.Panel):
     """
