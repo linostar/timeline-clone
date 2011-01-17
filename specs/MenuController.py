@@ -31,61 +31,55 @@ from timelinelib.gui.dialogs.mainframe import MENU_REQUIRES_UPDATE
 class MenuControllerSpec(unittest.TestCase):
 
     def setUp(self):
+        self.app = wx.App()
         self.menu_controller = MenuController()
         self.menu = wx.Menu()
+        self.menu_item = wx.MenuItem(self.menu)
+        self.menu.AppendItem(self.menu_item)
         self.timeline = Mock(MemoryDB)
         self.menu_controller.on_timeline_change(self.timeline)
         
     def testMenuRequieringUpdateIsDisabledWhenNoTimelineExists(self):
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_UPDATE)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_UPDATE)
         self.menu_controller.on_timeline_change(None)
         self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(menu_item.IsEnabled())
+        self.assertTrue(self.menu_item.IsEnabled())
         
     def testMenuRequieringUpdateIsEnabledWhenTimelineIsUpdateable(self):
         self.timeline.is_read_only.return_value = False
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_UPDATE)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_UPDATE)
         self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(menu_item.IsEnabled())
+        self.assertTrue(self.menu_item.IsEnabled())
         
     def testMenuRequieringUpdateIsDisableddWhenTimelineIsReadOnly(self):
         self.timeline.is_read_only.return_value = True
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_UPDATE)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_UPDATE)
         self.menu_controller.enable_disable_menus(True)
-        self.assertFalse(menu_item.IsEnabled())
+        self.assertFalse(self.menu_item.IsEnabled())
         
     def testMenuRequieringTimelineIsDisabledWhenNoTimelineExists(self):
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_TIMELINE)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE)
         self.menu_controller.on_timeline_change(None)
         self.menu_controller.enable_disable_menus(True)
-        self.assertFalse(menu_item.IsEnabled())
+        self.assertFalse(self.menu_item.IsEnabled())
         
     def testMenuRequieringTimelineIsEnabledWhenTimelineExists(self):
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_TIMELINE)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE)
         self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(menu_item.IsEnabled())
+        self.assertTrue(self.menu_item.IsEnabled())
         
     def testMenuRequieringTimelineViewIsDisabledWhenNoTimelineExists(self):
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_TIMELINE_VIEW)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
         self.menu_controller.on_timeline_change(None)
         self.menu_controller.enable_disable_menus(True)
-        self.assertFalse(menu_item.IsEnabled())
+        self.assertFalse(self.menu_item.IsEnabled())
         
     def testMenuRequieringTimelineViewIsDisabledWhenNoTimelineViewExists(self):
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_TIMELINE_VIEW)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
         self.menu_controller.enable_disable_menus(False)
-        self.assertFalse(menu_item.IsEnabled())
+        self.assertFalse(self.menu_item.IsEnabled())
         
     def testMenuRequieringTimelineViewIsEnabledWhenTimelineViewExists(self):
-        menu_item = wx.MenuItem(self.menu)
-        self.menu_controller.add_menu(menu_item, MENU_REQUIRES_TIMELINE_VIEW)
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
         self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(menu_item.IsEnabled())
-        
+        self.assertTrue(self.menu_item.IsEnabled())
