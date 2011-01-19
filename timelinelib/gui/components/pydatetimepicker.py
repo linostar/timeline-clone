@@ -29,6 +29,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
 import timelinelib.config as config
 from timelinelib.time import PyTimeType
+from timelinelib.gui.utils import _display_error_message
 
 
 class PyDateTimePicker(wx.Panel):
@@ -67,18 +68,22 @@ class PyDateTimePicker(wx.Panel):
         self.SetSizerAndFit(sizer)
 
     def _date_button_on_click(self, evt):
-        wx_date = self._py_date_to_wx_date(self.date_picker.get_py_date())
-        calendar_popup = CalendarPopup(self, wx_date)
-        calendar_popup.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED,
-                            self._calendar_on_date_changed)
-        calendar_popup.Bind(wx.calendar.EVT_CALENDAR,
-                            self._calendar_on_date_changed_dclick)
-        btn = evt.GetEventObject()
-        pos = btn.ClientToScreen((0,0))
-        sz = btn.GetSize()
-        calendar_popup.Position(pos, (0, sz[1]))
-        calendar_popup.Popup()
-        self.calendar_popup = calendar_popup
+        try:
+            wx_date = self._py_date_to_wx_date(self.date_picker.get_py_date())
+            calendar_popup = CalendarPopup(self, wx_date)
+            calendar_popup.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED,
+                                self._calendar_on_date_changed)
+            calendar_popup.Bind(wx.calendar.EVT_CALENDAR,
+                                self._calendar_on_date_changed_dclick)
+            btn = evt.GetEventObject()
+            pos = btn.ClientToScreen((0,0))
+            sz = btn.GetSize()
+            calendar_popup.Position(pos, (0, sz[1]))
+            calendar_popup.Popup()
+            self.calendar_popup = calendar_popup
+        except ValueError:
+             _display_error_message(_("Invalid date"))
+            
 
     def _calendar_on_date_changed(self, evt):
         wx_date = evt.GetEventObject().GetDate()

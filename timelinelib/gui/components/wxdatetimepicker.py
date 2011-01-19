@@ -25,6 +25,7 @@ from timelinelib.paths import ICONS_DIR
 import timelinelib.config as config
 from timelinelib.time import WxTimeType
 from timelinelib.time import try_to_create_wx_date_time_from_dmy
+from timelinelib.gui.utils import _display_error_message
 
 
 class WxDateTimePicker(wx.Panel):
@@ -67,9 +68,12 @@ class WxDateTimePicker(wx.Panel):
         self.SetSizerAndFit(sizer)
         
     def _date_button_on_click(self, evt):
-        self.calendar_popup = self._create_calendar_popup()
-        self._position_calendar_popup(evt)
-        self.calendar_popup.Popup()
+        try:
+            self.calendar_popup = self._create_calendar_popup()
+            self._position_calendar_popup(evt)
+            self.calendar_popup.Popup()
+        except:
+             _display_error_message(_("Invalid date"))
 
     def _create_calendar_popup(self):
         wx_date = self.controller.get_value()
