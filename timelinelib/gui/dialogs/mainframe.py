@@ -76,9 +76,7 @@ class MainFrame(wx.Frame):
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
         self._set_initial_values_to_member_variables()
-        self.creating_gui = True
         self._create_gui()
-        self.creating_gui = False
         self.menu_controller = MenuController()
         self._add_menu_items_to_menu_controller()
         self.Maximize(config.get_window_maximized())
@@ -323,7 +321,7 @@ class MainFrame(wx.Frame):
     def _add_menu_items_to_menu_controller(self):
         self._add_items_requiering_timeline()
         self._collect_items_requiering_timeline_view()
-        self._collect_items_requiering_update
+        self._collect_items_requiering_update()
 
     def _add_items_requiering_timeline(self):
         items_requiering_timeline = [
@@ -336,7 +334,6 @@ class MainFrame(wx.Frame):
         ]
         for item in self.mnu_timeline.GetMenuItems():
             items_requiering_timeline.append(item)
-        n = self.mnu_navigate.GetMenuItemCount()
         for item in self.mnu_navigate.GetMenuItems():
             items_requiering_timeline.append(item)
         for item in self._navigation_menu_items:    
@@ -353,12 +350,12 @@ class MainFrame(wx.Frame):
 
     def _collect_items_requiering_update(self):
         items_requiering_update = [
+            self.mnu_timeline_create_event,
             self.mnu_timeline_duplicate_event,
             self.mnu_timeline_edit_categories
         ]
         for menu in items_requiering_update:
             self.menu_controller.add_menu(menu, MENU_REQUIRES_UPDATE)
-        
         
     def _update_navigation_menu_items(self):
         self._clear_navigation_menu_items()
@@ -630,8 +627,6 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
 
     def enable_disable_menus(self):
-        if self.creating_gui:
-            return
         self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())                                                        
         self.enable_disable_duplicate_event_menu()
         self.enable_disable_searchbar()
@@ -742,7 +737,6 @@ class MenuController(object):
     def __init__(self):
         self.menues = []
         self.timeline = None
-        self.timeline_view_visible = False
 
     def on_timeline_change(self, timeline):
         self.timeline = timeline
@@ -751,26 +745,28 @@ class MenuController(object):
         self.menues.append((menu, requirement))
         
     def enable_disable_menus(self, timeline_view_visible):
-        self.timeline_view_visible = timeline_view_visible
         for menu, requirement in self.menues:
             if requirement == MENU_REQUIRES_UPDATE:
                 self._enable_disable_menues_that_requires_update(menu)
             elif requirement == MENU_REQUIRES_TIMELINE:
                 self._enable_disable_menues_that_requires_timeline(menu)
             elif requirement == MENU_REQUIRES_TIMELINE_VIEW:
-                self._enable_disable_menues_that_requires_timeline_view(menu)
+                self._enable_disable_menues_that_requires_timeline_view(menu, 
+                                                        timeline_view_visible)
         
     def _enable_disable_menues_that_requires_update(self, menu):
-        is_read_only = self.timeline != None and self.timeline.is_read_only()     
+        is_read_only = ((self.timeline == None) or 
+                        (self.timeline != None and self.timeline.is_read_only()))     
         menu.Enable(not is_read_only)
 
     def _enable_disable_menues_that_requires_timeline(self, menu):
         has_timeline = self.timeline != None
         menu.Enable(self.timeline != None)
 
-    def _enable_disable_menues_that_requires_timeline_view(self, menu):
+    def _enable_disable_menues_that_requires_timeline_view(self, menu, 
+                                                    timeline_view_visible):
         has_timeline = self.timeline != None
-        menu.Enable(has_timeline and self.timeline_view_visible)
+        menu.Enable(has_timeline and timeline_view_visible)
         
 
 class MainPanel(wx.Panel):

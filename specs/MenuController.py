@@ -30,56 +30,92 @@ from timelinelib.gui.dialogs.mainframe import MENU_REQUIRES_UPDATE
 
 class MenuControllerSpec(unittest.TestCase):
 
+    def testMenuRequieringUpdateIsDisabledWhenNoTimelineExists(self):
+        self.givenMenuItemRequiresUpdate()
+        self.givenNoTimelineExists()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(False)
+
+    def testMenuRequieringUpdateIsEnabledWhenTimelineIsUpdateable(self):
+        self.givenMenuItemRequiresUpdate()
+        self.givenTimelineIsUpdateable()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(True)
+
+    def testMenuRequieringUpdateIsDisableddWhenTimelineIsReadOnly(self):
+        self.givenMenuItemRequiresUpdate()
+        self.givenTimelineIsReadOnly()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(False)
+
+    def testMenuRequieringTimelineIsDisabledWhenNoTimelineExists(self):
+        self.givenMenuItemRequiresTimeline()
+        self.givenNoTimelineExists()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(False)
+
+    def testMenuRequieringTimelineIsEnabledWhenTimelineExists(self):
+        self.givenMenuItemRequiresTimeline()
+        self.givenTimelineExists()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(True)
+
+    def testMenuRequieringTimelineViewIsDisabledWhenNoTimelineExists(self):
+        self.givenMenuItemRequiresTimelineView()
+        self.givenNoTimelineExists()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(False)
+
+    def testMenuRequieringTimelineViewIsDisabledWhenNoTimelineViewExists(self):
+        self.givenMenuItemRequiresTimelineView()
+        self.givenTimelineExists()
+        self.givenNoTimelineViewExists()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(False)
+
+    def testMenuRequieringTimelineViewIsEnabledWhenTimelineViewExists(self):
+        self.givenMenuItemRequiresTimelineView()
+        self.givenTimelineExists()
+        self.givenTimelineViewExists()
+        self.whenMenuStatePossiblyHasChanged()
+        self.menu_item.Enable.assert_called_with(True)
+
     def setUp(self):
-        self.app = wx.App()
         self.menu_controller = MenuController()
-        self.menu = wx.Menu()
-        self.menu_item = wx.MenuItem(self.menu)
-        self.menu.AppendItem(self.menu_item)
+        self.menu_item = Mock(wx.MenuItem)
         self.timeline = Mock(MemoryDB)
         self.menu_controller.on_timeline_change(self.timeline)
-        
-    def testMenuRequieringUpdateIsDisabledWhenNoTimelineExists(self):
+        self.timeline_panel_visible = False
+
+    def givenMenuItemRequiresUpdate(self):
         self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_UPDATE)
+
+    def givenMenuItemRequiresTimeline(self):
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE)
+
+    def givenMenuItemRequiresTimelineView(self):
+        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
+
+    def givenNoTimelineExists(self):
         self.menu_controller.on_timeline_change(None)
-        self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(self.menu_item.IsEnabled())
         
-    def testMenuRequieringUpdateIsEnabledWhenTimelineIsUpdateable(self):
+    def givenTimelineExists(self):
+        self.menu_controller.on_timeline_change(self.timeline)
+
+    def givenNoTimelineViewExists(self):
+        self.timeline_panel_visible = False
+        
+    def givenTimelineViewExists(self):
+        self.timeline_panel_visible = True
+        
+    def givenTimelineIsUpdateable(self):
         self.timeline.is_read_only.return_value = False
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_UPDATE)
-        self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(self.menu_item.IsEnabled())
-        
-    def testMenuRequieringUpdateIsDisableddWhenTimelineIsReadOnly(self):
+
+    def givenTimelineIsReadOnly(self):
         self.timeline.is_read_only.return_value = True
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_UPDATE)
-        self.menu_controller.enable_disable_menus(True)
-        self.assertFalse(self.menu_item.IsEnabled())
+
+    def givenTimelinePanelIsVisible(self):
+        self.timeline_panel_visible = True
         
-    def testMenuRequieringTimelineIsDisabledWhenNoTimelineExists(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE)
-        self.menu_controller.on_timeline_change(None)
-        self.menu_controller.enable_disable_menus(True)
-        self.assertFalse(self.menu_item.IsEnabled())
-        
-    def testMenuRequieringTimelineIsEnabledWhenTimelineExists(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE)
-        self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(self.menu_item.IsEnabled())
-        
-    def testMenuRequieringTimelineViewIsDisabledWhenNoTimelineExists(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
-        self.menu_controller.on_timeline_change(None)
-        self.menu_controller.enable_disable_menus(True)
-        self.assertFalse(self.menu_item.IsEnabled())
-        
-    def testMenuRequieringTimelineViewIsDisabledWhenNoTimelineViewExists(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
-        self.menu_controller.enable_disable_menus(False)
-        self.assertFalse(self.menu_item.IsEnabled())
-        
-    def testMenuRequieringTimelineViewIsEnabledWhenTimelineViewExists(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
-        self.menu_controller.enable_disable_menus(True)
-        self.assertTrue(self.menu_item.IsEnabled())
+    def whenMenuStatePossiblyHasChanged(self):
+        self.menu_controller.enable_disable_menus(self.timeline_panel_visible)
