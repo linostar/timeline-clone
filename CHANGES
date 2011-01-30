@@ -1,3 +1,17 @@
+Timeline 0.12.1, released on 30 January 2011
+============================================
+
+This is a translation update and bugfix release.
+
+Bug fixes:
+
+  * Menu items are correctly disabled if no timeline is open
+  * Clicking calendar button when an invalid date is entered gives error
+    message instead of exception
+  * LANG environment variable is only set on Windows to prevent locale error at
+    startup on Linux systems
+  * Fit all events ignores hidden events
+
 Timeline 0.12.0, released on 9 January 2011
 ===========================================
 
