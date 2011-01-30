@@ -26,6 +26,7 @@ import os.path
 import wx
 
 from timelinelib.db import db_open
+from timelinelib.db.objects import TimePeriod
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.gui.utils import WildcardHelper
 from timelinelib.gui.utils import _display_error_message
@@ -485,26 +486,41 @@ class MainFrame(wx.Frame):
                                                        end_delta=margin_delta))
 
     def _mnu_navigate_fit_all_events_on_click(self, evt):
-        firstEvent = self.timeline.get_first_event()
-        lastEvent  = self.timeline.get_last_event()
-        try:
-            if firstEvent == lastEvent:
-                mean = firstEvent.time_period.mean_time()
-                self._navigate_timeline(lambda tp: tp.center(mean))
-            else:
-                start = firstEvent.time_period.start_time
-                end   = lastEvent.time_period.end_time
-                time_type = self.timeline.get_time_type()
-                start_margin_delta = time_type.margin_delta(start - end)
-                end_margin_delta = time_type.margin_delta(end - start)
-                self._navigate_timeline(lambda tp: tp.update(start, end, 
-                                                             start_margin_delta, 
-                                                             end_margin_delta))
-        except AttributeError:
-            # None events
-            pass        
-        except:
-            raise
+        self._fit_all_events()
+
+    def _fit_all_events(self):
+        all_period = self._period_for_all_visible_events()
+        if all_period == None:
+            return
+        elif all_period.is_period():
+            all_period.zoom(-1)
+            self._navigate_timeline(lambda tp: tp.update(all_period.start_time, all_period.end_time))
+        else:
+            self._navigate_timeline(lambda tp: tp.center(all_period.mean_time()))
+
+    def _period_for_all_visible_events(self):
+        visible_events = self._all_visible_events()
+        if len(visible_events) > 0:
+            time_type = self.timeline.get_time_type()
+            start = self._first_time(visible_events)
+            end = self._last_time(visible_events)
+            return TimePeriod(time_type, start, end)
+        else:
+            return None
+
+    def _all_visible_events(self):
+        view_properties = self.main_panel.drawing_area.get_view_properties()
+        all_events = self.timeline.get_all_events()
+        visible_events = view_properties.filter_events(all_events)
+        return visible_events
+
+    def _first_time(self, events):
+        start_time = lambda event: event.time_period.start_time
+        return start_time(min(events, key=start_time))
+
+    def _last_time(self, events):
+        end_time = lambda event: event.time_period.end_time
+        return end_time(max(events, key=end_time))
     
     def _mnu_help_contents_on_click(self, e):
         self.show_help_page("contents")

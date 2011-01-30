@@ -414,7 +414,7 @@ class StripCentury(Strip):
         return ""
 
     def start(self, time):
-        return wx.DateTimeFromDMY(1, 1, max(self._century_start_year(time.Year), MIN_YEAR))
+        return wx.DateTimeFromDMY(1, 0, max(self._century_start_year(time.Year), MIN_YEAR))
 
     def increment(self, time):
         return time + wx.DateSpan.Years(100)
