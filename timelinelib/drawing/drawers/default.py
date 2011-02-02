@@ -34,14 +34,16 @@ from timelinelib.drawing.scene import TimelineScene
 from timelinelib.gui.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
-
+from timelinelib.drawing.utils import get_contrast_ratio
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
 INNER_PADDING = 3      # Space inside event box to text (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 BALLOON_RADIUS = 12
 DATA_INDICATOR_SIZE = 10
-
+CONTRAST_RATIO_THREASHOLD = 2250
+WHITE = (255,255,255)
+BLACK = (0,0,0)
 
 class DefaultDrawingAlgorithm(Drawer):
 
@@ -323,20 +325,9 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.SetBrush(self._get_box_brush(event))
             self.dc.SetPen(self._get_box_pen(event))
             self.dc.DrawRectangleRect(rect)
-            # Ensure that we can't draw content outside inner rectangle
             self.dc.DestroyClippingRegion()
-            rect_copy = wx.Rect(*rect)
-            rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
-            self.dc.SetClippingRect(rect_copy)
-            if rect_copy.Width > 0:
-                # Draw the text (if there is room for it)
-                text_x = rect.X + INNER_PADDING
-                text_y = rect.Y + INNER_PADDING
-                if text_x < INNER_PADDING:
-                    text_x = INNER_PADDING
-                self.dc.DrawText(event.text, text_x, text_y)
+            self._draw_text(rect, event)
             # Draw data contents indicator
-            self.dc.DestroyClippingRegion()
             self.dc.SetClippingRect(rect)
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
@@ -354,6 +345,30 @@ class DefaultDrawingAlgorithm(Drawer):
         # Reset this when we are done
         self.dc.DestroyClippingRegion()
 
+    def _draw_text(self, rect, event):
+        # Ensure that we can't draw content outside inner rectangle
+        rect_copy = wx.Rect(*rect)
+        rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
+        if rect_copy.Width > 0:
+            # Draw the text (if there is room for it)
+            self.dc.SetClippingRect(rect_copy)
+            text_x = rect.X + INNER_PADDING
+            text_y = rect.Y + INNER_PADDING
+            if text_x < INNER_PADDING:
+                text_x = INNER_PADDING
+            self._set_text_foreground_color(event)
+            self.dc.DrawText(event.text, text_x, text_y)
+            self.dc.DestroyClippingRegion()
+        
+    def _set_text_foreground_color(self, event):
+        light_color = self._get_box_brush(event).GetColour()
+        dark_color = wx.Color(0,0,0)
+        contrast_ratio = get_contrast_ratio(light_color, dark_color)
+        if contrast_ratio < CONTRAST_RATIO_THREASHOLD:
+            self.dc.SetTextForeground(WHITE)
+        else:
+            self.dc.SetTextForeground(BLACK)
+        
     def _draw_handles(self, rect):
         SIZE = 4
         big_rect = wx.Rect(rect.X - SIZE, rect.Y - SIZE, rect.Width + 2 * SIZE, rect.Height + 2 * SIZE)

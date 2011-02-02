@@ -81,3 +81,16 @@ def darken_color(color, factor=0.7):
     new_g = int(g * factor)
     new_b = int(b * factor)
     return (new_r, new_g, new_b)
+
+
+def get_relative_luminence(wx_color):
+    r_term = wx_color.red * 0.2126
+    g_term = wx_color.green * .7152
+    b_term = wx_color.blue * 0.0722 
+    return  r_term + g_term + b_term 
+
+    
+def get_contrast_ratio(light_wx_color, dark_wx_color):
+    light_luminence = get_relative_luminence(light_wx_color) + 0.05
+    dark_luminence = get_relative_luminence(dark_wx_color) + 0.05
+    return light_luminence / dark_luminence
