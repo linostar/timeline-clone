@@ -492,21 +492,25 @@ class MainFrame(wx.Frame):
         all_period = self._period_for_all_visible_events()
         if all_period == None:
             return
-        elif all_period.is_period():
+        if all_period.is_period():
             all_period.zoom(-1)
             self._navigate_timeline(lambda tp: tp.update(all_period.start_time, all_period.end_time))
         else:
             self._navigate_timeline(lambda tp: tp.center(all_period.mean_time()))
 
     def _period_for_all_visible_events(self):
-        visible_events = self._all_visible_events()
-        if len(visible_events) > 0:
-            time_type = self.timeline.get_time_type()
-            start = self._first_time(visible_events)
-            end = self._last_time(visible_events)
-            return TimePeriod(time_type, start, end)
-        else:
-            return None
+        try:
+            visible_events = self._all_visible_events()
+            if len(visible_events) > 0:
+                time_type = self.timeline.get_time_type()
+                start = self._first_time(visible_events)
+                end = self._last_time(visible_events)
+                return TimePeriod(time_type, start, end)
+            else:
+                return None
+        except ValueError, ex:
+            _display_error_message(ex.message)
+        return None
 
     def _all_visible_events(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
