@@ -442,6 +442,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.balloon_data = []     # List of (event, rect)
         top_event = None
         top_rect = None
+        self.dc.SetTextForeground(BLACK)
         for (event, rect) in self.scene.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):
