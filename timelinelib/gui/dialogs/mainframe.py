@@ -38,7 +38,6 @@ from timelinelib.paths import ICONS_DIR
 from timelinelib.paths import HELP_RESOURCES_DIR
 import timelinelib.printing as printing
 import timelinelib.gui.utils as gui_utils
-import timelinelib.svgexport as svgexport
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
@@ -714,6 +713,10 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
  
     def _export_to_svg_image(self):
+        if not self._has_pysvg_module():
+            _display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
+            return
+        import timelinelib.svgexport as svgexport
         wildcard = self.images_svg_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Export to SVG"),
                                wildcard=wildcard, style=wx.FD_SAVE)
@@ -727,6 +730,13 @@ class MainFrame(wx.Frame):
                     self.main_panel.drawing_area.get_drawer().scene,
                     self.main_panel.drawing_area.get_view_properties())
         dialog.Destroy()
+
+    def _has_pysvg_module(self):
+        try:
+            import pysvg
+            return True
+        except ImportError:
+            return False
 
     def _set_initial_values_to_member_variables(self):
         """
