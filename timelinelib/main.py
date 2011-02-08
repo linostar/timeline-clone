@@ -1,4 +1,4 @@
-# Copyright (C) 2009, 2010  Rickard Lindberg, Roger Lindberg
+# Copyright (C) 2009, 2010, 2011  Rickard Lindberg, Roger Lindberg
 #
 # This file is part of Timeline.
 #
@@ -43,10 +43,12 @@ from paths import LOCALE_DIR
 
 def setup_gettext():
     """Make sure that the _() is available everywhere."""
-    import locale
-    import os
-    language, encoding = locale.getdefaultlocale()
-    os.environ['LANG'] = language
+    if platform.system() == "Windows":
+        # The appropriate environment variables are set on other systems
+        import locale
+        import os
+        language, encoding = locale.getdefaultlocale()
+        os.environ['LANG'] = language
     gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2009, 2010  Rickard Lindberg, Roger Lindberg
+# Copyright (C) 2009, 2010, 2011  Rickard Lindberg, Roger Lindberg
 #
 # This file is part of Timeline.
 #
@@ -244,7 +244,6 @@ def move_page_smart(current_period, navigation_fn, direction):
     start_months = start.Year * 12 + start.Month
     end_months = end.Year * 12 + end.Month
     month_diff = end_months - start_months
-#    whole_years = start.replace(year=start.Year + year_diff) == end
     whole_years = start.Month == end.Month and start.Day == end.Day
     whole_months = start.Day == 1 and end.Day == 1
     direction_backward = direction < 0
@@ -415,7 +414,7 @@ class StripCentury(Strip):
         return ""
 
     def start(self, time):
-        return wx.DateTimeFromDMY(1, 1, max(self._century_start_year(time.Year), MIN_YEAR))
+        return wx.DateTimeFromDMY(1, 0, max(self._century_start_year(time.Year), MIN_YEAR))
 
     def increment(self, time):
         return time + wx.DateSpan.Years(100)
@@ -649,58 +648,33 @@ def delta_to_microseconds(delta):
 
 
 def move_period_num_days(period, num):
-    delta = wx.DateSpan.Day() * num
-    start_time = period.start_time + delta  
-    end_time = period.end_time + delta  
-    return TimePeriod(period.time_type, start_time, end_time)
+    return _move_period_time_span(period, wx.TimeSpan.Days(num))
 
 
 def move_period_num_weeks(period, num):
-    delta = wx.DateSpan.Week() * num
-    start_time = period.start_time + delta
-    end_time = period.end_time + delta
-    return TimePeriod(period.time_type, start_time, end_time)
+    return _move_period_time_span(period, wx.TimeSpan.Days(7*num))
 
 
 def move_period_num_months(period, num):
-    try:
-        delta = num
-        years = abs(delta) / 12
-        if num < 0:
-            years = -years
-        delta = delta - 12 * years
-        if delta < 0:
-            start_month = period.start_time.Month + 12 + delta
-            end_month = period.end_time.Month + 12 + delta
-            if start_month > 12:
-                start_month -=12
-                end_month -=12
-            if start_month > period.start_time.Month:
-                years -= 1
-        else:
-            start_month = period.start_time.Month + delta
-            end_month = period.start_time.Month + delta
-            if start_month > 12:
-                start_month -=12
-                end_month -=12
-                years += 1
-        start_year = period.start_time.Year + years
-        end_year = period.start_time.Year + years
-        start_time = period.start_time.replace(year=start_year, month=start_month)
-        end_time = period.end_time.replace(year=end_year, month=end_month)
-        return TimePeriod(period.time_type, start_time, end_time)
-    except ValueError:
+    new_start_time = period.start_time + wx.DateSpan.Months(num)
+    if new_start_time.Day != period.start_time.Day:
         return None
+    return _move_period_time_span(period, new_start_time-period.start_time)
 
 
 def move_period_num_years(period, num):
+    new_start_time = period.start_time + wx.DateSpan.Years(num)
+    if (new_start_time.Month != period.start_time.Month or
+        new_start_time.Day != period.start_time.Day):
+        return None
+    return _move_period_time_span(period, new_start_time-period.start_time)
+
+
+def _move_period_time_span(period, time_span):
     try:
-        delta = num
-        start_year = period.start_time.Year
-        end_year = period.end_time.Year
-        start_time = period.start_time + wx.DateSpan.Years(delta)
-        end_time = period.end_time + wx.DateSpan.Years(delta)
-        return TimePeriod(period.time_type, start_time, end_time)
+        new_start = period.start_time + time_span
+        new_end = period.end_time + time_span
+        return TimePeriod(period.time_type, new_start, new_end)
     except ValueError:
         return None
 

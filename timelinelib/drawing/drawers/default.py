@@ -1,4 +1,4 @@
-# Copyright (C) 2009, 2010  Rickard Lindberg, Roger Lindberg
+# Copyright (C) 2009, 2010, 2011  Rickard Lindberg, Roger Lindberg
 #
 # This file is part of Timeline.
 #
@@ -34,14 +34,16 @@ from timelinelib.drawing.scene import TimelineScene
 from timelinelib.gui.utils import sort_categories
 from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
-
+from timelinelib.drawing.utils import get_contrast_ratio
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
 INNER_PADDING = 3      # Space inside event box to text (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 BALLOON_RADIUS = 12
 DATA_INDICATOR_SIZE = 10
-
+CONTRAST_RATIO_THREASHOLD = 2250
+WHITE = (255,255,255)
+BLACK = (0,0,0)
 
 class DefaultDrawingAlgorithm(Drawer):
 
@@ -314,44 +316,76 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_events(self, view_properties):
         """Draw all event boxes and the text inside them."""
         self.dc.SetFont(self.small_text_font)
-        self.dc.SetTextForeground((0, 0, 0))
+        self.dc.DestroyClippingRegion()
         for (event, rect) in self.scene.event_data:
-            # Ensure that we can't draw outside rectangle
-            self.dc.DestroyClippingRegion()
-            self.dc.SetClippingRect(rect)
-            # Draw the box
-            self.dc.SetBrush(self._get_box_brush(event))
-            self.dc.SetPen(self._get_box_pen(event))
-            self.dc.DrawRectangleRect(rect)
-            # Ensure that we can't draw content outside inner rectangle
-            self.dc.DestroyClippingRegion()
-            rect_copy = wx.Rect(*rect)
-            rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
-            self.dc.SetClippingRect(rect_copy)
-            if rect_copy.Width > 0:
-                # Draw the text (if there is room for it)
-                text_x = rect.X + INNER_PADDING
-                text_y = rect.Y + INNER_PADDING
-                if text_x < INNER_PADDING:
-                    text_x = INNER_PADDING
-                self.dc.DrawText(event.text, text_x, text_y)
-            # Draw data contents indicator
-            self.dc.DestroyClippingRegion()
-            self.dc.SetClippingRect(rect)
+            self._draw_box(rect, event)
+            self._draw_text(rect, event)
             if event.has_data():
                 self._draw_contents_indicator(event, rect)
-            # Draw selection and handles
             if view_properties.is_selected(event):
-                small_rect = wx.Rect(*rect)
-                small_rect.Deflate(1, 1)
-                border_color = self._get_border_color(event)
-                border_color = darken_color(border_color)
-                pen = wx.Pen(border_color, 1, wx.SOLID)
-                self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
-                self.dc.SetPen(pen)
-                self.dc.DrawRectangleRect(small_rect)
-                self._draw_handles(rect)
-        # Reset this when we are done
+                self._draw_selection_and_handles(rect, event)
+
+    def _draw_box(self, rect, event):
+        self.dc.SetClippingRect(rect)
+        self.dc.SetBrush(self._get_box_brush(event))
+        self.dc.SetPen(self._get_box_pen(event))
+        self.dc.DrawRectangleRect(rect)
+        self.dc.DestroyClippingRegion()
+        
+    def _draw_text(self, rect, event):
+        # Ensure that we can't draw content outside inner rectangle
+        rect_copy = wx.Rect(*rect)
+        rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
+        if rect_copy.Width > 0:
+            # Draw the text (if there is room for it)
+            self.dc.SetClippingRect(rect_copy)
+            text_x = rect.X + INNER_PADDING
+            text_y = rect.Y + INNER_PADDING
+            if text_x < INNER_PADDING:
+                text_x = INNER_PADDING
+            self._set_text_foreground_color(event)
+            self.dc.DrawText(event.text, text_x, text_y)
+            self.dc.DestroyClippingRegion()
+        
+    def _set_text_foreground_color(self, event):
+        light_color = self._get_box_brush(event).GetColour()
+        dark_color = wx.Color(0,0,0)
+        contrast_ratio = get_contrast_ratio(light_color, dark_color)
+        if contrast_ratio < CONTRAST_RATIO_THREASHOLD:
+            self.dc.SetTextForeground(WHITE)
+        else:
+            self.dc.SetTextForeground(BLACK)
+        
+    def _draw_contents_indicator(self, event, rect):
+        """
+        The data contents indicator is a small triangle drawn in the upper
+        right corner of the event rectangle.
+        """
+        self.dc.SetClippingRect(rect)
+        corner_x = rect.X + rect.Width
+        if corner_x > self.scene.width:
+            corner_x = self.scene.width
+        points = (
+            wx.Point(corner_x - DATA_INDICATOR_SIZE, rect.Y),
+            wx.Point(corner_x, rect.Y),
+            wx.Point(corner_x, rect.Y + DATA_INDICATOR_SIZE),
+        )
+        self.dc.SetBrush(self._get_box_indicator_brush(event))
+        self.dc.SetPen(wx.TRANSPARENT_PEN)
+        self.dc.DrawPolygon(points)
+        self.dc.DestroyClippingRegion()
+
+    def _draw_selection_and_handles(self, rect, event):
+        self.dc.SetClippingRect(rect)
+        small_rect = wx.Rect(*rect)
+        small_rect.Deflate(1, 1)
+        border_color = self._get_border_color(event)
+        border_color = darken_color(border_color)
+        pen = wx.Pen(border_color, 1, wx.SOLID)
+        self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
+        self.dc.SetPen(pen)
+        self.dc.DrawRectangleRect(small_rect)
+        self._draw_handles(rect)
         self.dc.DestroyClippingRegion()
 
     def _draw_handles(self, rect):
@@ -369,23 +403,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawRectangleRect(east_rect)
         self.dc.DrawRectangleRect(west_rect)
         self.dc.DrawRectangleRect(center_rect)
-
-    def _draw_contents_indicator(self, event, rect):
-        """
-        The data contents indicator is a small triangle drawn in the upper
-        right corner of the event rectangle.
-        """
-        corner_x = rect.X + rect.Width
-        if corner_x > self.scene.width:
-            corner_x = self.scene.width
-        points = (
-            wx.Point(corner_x - DATA_INDICATOR_SIZE, rect.Y),
-            wx.Point(corner_x, rect.Y),
-            wx.Point(corner_x, rect.Y + DATA_INDICATOR_SIZE),
-        )
-        self.dc.SetBrush(self._get_box_indicator_brush(event))
-        self.dc.SetPen(wx.TRANSPARENT_PEN)
-        self.dc.DrawPolygon(points)
 
     def _get_base_color(self, event):
         if event.category:
@@ -425,6 +442,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.balloon_data = []     # List of (event, rect)
         top_event = None
         top_rect = None
+        self.dc.SetTextForeground(BLACK)
         for (event, rect) in self.scene.event_data:
             if (event.get_data("description") != None or
                 event.get_data("icon") != None):

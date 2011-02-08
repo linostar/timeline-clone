@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009, 2010  Rickard Lindberg, Roger Lindberg
+# Copyright (C) 2009, 2010, 2011  Rickard Lindberg, Roger Lindberg
 #
 # This file is part of Timeline.
 #
@@ -31,7 +31,7 @@ from version import get_version
 
 
 APPLICATION_NAME = "Timeline"
-COPYRIGHT_TEXT = "Copyright (C) 2009, 2010 The %s Authors" % APPLICATION_NAME
+COPYRIGHT_TEXT = "Copyright (C) 2009, 2010, 2011 The %s Authors" % APPLICATION_NAME
 APPLICATION_DESCRIPTION = "Timeline is a free, cross-platform application for displaying and navigating events on a timeline."
 WEBSITE = "http://thetimelineproj.sourceforge.net/"
 DEVELOPERS = [

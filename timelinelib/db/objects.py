@@ -1,4 +1,4 @@
-# Copyright (C) 2009, 2010  Rickard Lindberg, Roger Lindberg
+# Copyright (C) 2009, 2010, 2011  Rickard Lindberg, Roger Lindberg
 #
 # This file is part of Timeline.
 #
@@ -206,11 +206,23 @@ class TimePeriod(object):
                                               _("Start time "))
         new_end = self._ensure_within_range(end_time, end_delta,
                                             _("End time "))
-        if new_start > new_end:
-            raise ValueError(_("Start time can't be after end time"))
+        self._assert_period_is_valid(new_start, new_end)
         self.start_time = new_start
         self.end_time = new_end
 
+    def _assert_period_is_valid(self, new_start, new_end):
+        self._assert_start_gt_end(new_start, new_end)
+        self._assert_period_lt_max(new_start, new_end)
+        
+    def _assert_start_gt_end(self, new_start, new_end):
+        if new_start > new_end:
+            raise ValueError(_("Start time can't be after end time"))
+
+    def _assert_period_lt_max(self, new_start, new_end):
+        MAX_ZOOM_DELTA, max_zoom_error_text = self.time_type.get_max_zoom_delta()
+        if MAX_ZOOM_DELTA and (new_end - new_start > MAX_ZOOM_DELTA):
+            raise ValueError(max_zoom_error_text)
+        
     def inside(self, time):
         """
         Return True if the given time is inside this period or on the border,

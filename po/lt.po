@@ -1,4 +1,4 @@
-# Italian translation for thetimelineproj
+# Lithuanian translation for thetimelineproj
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the thetimelineproj package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2011-01-09 14:55+0100\n"
-"PO-Revision-Date: 2010-08-09 20:15+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Italian <it@li.org>\n"
+"PO-Revision-Date: 2010-11-18 12:04+0000\n"
+"Last-Translator: rpocius <rolandas.taurage@gmail.com>\n"
+"Language-Team: Lithuanian <lt@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #: timelinelib/help_pages.py:36
 msgid "Help contents"
-msgstr ""
+msgstr "Pagalbos turinys"
 
 #: timelinelib/help_pages.py:54
 msgid "Questions and answers"
-msgstr ""
+msgstr "Klausimai ir atsakymai"
 
 #: timelinelib/help_pages.py:54
 msgid "Concepts"
-msgstr ""
+msgstr "Koncepcijos"
 
 #: timelinelib/help_pages.py:54
 msgid "Tasks"
-msgstr ""
+msgstr "Užduotys"
 
 #: timelinelib/help_pages.py:59
 msgid "Where is the save button?"
-msgstr ""
+msgstr "Kur yra išsaugojimo mygtukas"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -88,7 +88,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:100
 msgid "Events"
-msgstr ""
+msgstr "Įvykiai"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -106,7 +106,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:113
 msgid "Categories"
-msgstr ""
+msgstr "Kategorijos"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -123,7 +123,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:126 timelinelib/db/tutorial.py:58
 msgid "Create event"
-msgstr ""
+msgstr "Sukurti įvykį"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -143,7 +143,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:143 timelinelib/db/tutorial.py:65
 msgid "Edit event"
-msgstr ""
+msgstr "Redaguoti įvykį"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -158,7 +158,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:156
 msgid "Selecting events"
-msgstr ""
+msgstr "Įvykių pasirinkimas"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -178,7 +178,7 @@ msgstr ""
 
 #: timelinelib/help_pages.py:172 timelinelib/db/tutorial.py:77
 msgid "Delete event"
-msgstr ""
+msgstr "Ištrinti įvykį"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -210,7 +210,7 @@ msgstr ""
 #: timelinelib/help_pages.py:197 timelinelib/gui/dialogs/mainframe.py:226
 #: timelinelib/gui/dialogs/eventeditor.py:317
 msgid "Edit categories"
-msgstr ""
+msgstr "Redaguoti kategorijas"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -230,7 +230,7 @@ msgstr ""
 #: timelinelib/help_pages.py:212 timelinelib/gui/dialogs/mainframe.py:270
 #: timelinelib/gui/dialogs/mainframe.py:849
 msgid "Contact"
-msgstr ""
+msgstr "Susisiekite"
 
 #. TRANSLATORS: This text uses special markup.
 #. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
@@ -268,7 +268,7 @@ msgstr ""
 
 #: timelinelib/help.py:122
 msgid "Related pages"
-msgstr ""
+msgstr "Susiję puslapiai"
 
 #: timelinelib/weekdaynames.py:21
 msgid "Mon"
@@ -372,7 +372,7 @@ msgstr ""
 
 #: timelinelib/db/__init__.py:79
 msgid "Unknown format."
-msgstr ""
+msgstr "Nežinomas formatas"
 
 #: timelinelib/db/utils.py:55
 #, python-format
@@ -511,7 +511,7 @@ msgstr ""
 
 #: timelinelib/db/backends/memory.py:165
 msgid "Displayed period must be > 0."
-msgstr ""
+msgstr "Rodomas periodas turi būti > 0"
 
 #: timelinelib/time/wxtime.py:75 timelinelib/time/pytime.py:76
 msgid "Go to &Today\tCtrl+T"
@@ -604,7 +604,7 @@ msgstr ""
 #: timelinelib/time/wxtime.py:204 timelinelib/time/wxtime.py:515
 #: timelinelib/time/pytime.py:203 timelinelib/time/pytime.py:484
 msgid "Week"
-msgstr ""
+msgstr "Savaitė"
 
 #: timelinelib/time/wxtime.py:205 timelinelib/time/pytime.py:204
 msgid "Month"
@@ -653,27 +653,27 @@ msgstr ""
 #: timelinelib/gui/utils.py:173
 #, python-format
 msgid "Field '%s' can't be empty."
-msgstr ""
+msgstr "Laukelis '%s' negali būti tuščias."
 
 #: timelinelib/gui/utils.py:179
 msgid "Error"
-msgstr ""
+msgstr "Klaida"
 
 #: timelinelib/gui/utils.py:185
 msgid "Question"
-msgstr ""
+msgstr "Klausimas"
 
 #: timelinelib/gui/components/search.py:70
 msgid "No match"
-msgstr ""
+msgstr "Nėra atitikmens"
 
 #: timelinelib/gui/components/search.py:74
 msgid "Only one match"
-msgstr ""
+msgstr "Tik vienas atitikmuo"
 
 #: timelinelib/gui/components/cattree.py:84
 msgid "Edit..."
-msgstr ""
+msgstr "Redaguoti..."
 
 #: timelinelib/gui/components/cattree.py:87
 msgid "Add..."
@@ -682,21 +682,21 @@ msgstr ""
 #: timelinelib/gui/components/cattree.py:90
 #: timelinelib/gui/components/timelineview.py:383
 msgid "Delete"
-msgstr ""
+msgstr "Šalinti"
 
 #: timelinelib/gui/components/cattree.py:226
 msgid "Edit Category"
-msgstr ""
+msgstr "Redaguoti kategoriją"
 
 #: timelinelib/gui/components/cattree.py:233
 #: timelinelib/gui/dialogs/eventeditor.py:231
 msgid "Add Category"
-msgstr ""
+msgstr "Pridėti kategoriją"
 
 #: timelinelib/gui/components/cattree.py:239
 #, python-format
 msgid "Are you sure you want to delete category '%s'?"
-msgstr ""
+msgstr "Ar jūs tikras, kad norite ištrinti kategoriją '%s'?"
 
 #: timelinelib/gui/components/cattree.py:242
 #, python-format
@@ -716,7 +716,7 @@ msgstr ""
 
 #: timelinelib/gui/components/timelineview.py:272
 msgid "Printing"
-msgstr ""
+msgstr "Spausdinimas"
 
 #: timelinelib/gui/components/timelineview.py:285
 msgid "Print preview"
@@ -772,7 +772,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/categoryeditor.py:118
 msgid "Color:"
-msgstr ""
+msgstr "Spalva:"
 
 #: timelinelib/gui/dialogs/categoryeditor.py:121
 msgid "Parent:"
@@ -793,11 +793,11 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/duplicateevent.py:81
 msgid "Forward"
-msgstr ""
+msgstr "Primyn"
 
 #: timelinelib/gui/dialogs/duplicateevent.py:81
 msgid "Backward"
-msgstr ""
+msgstr "Atgal"
 
 #: timelinelib/gui/dialogs/duplicateevent.py:81
 msgid "Both"
@@ -806,15 +806,15 @@ msgstr ""
 #: timelinelib/gui/dialogs/duplicateevent.py:85
 #: timelinelib/gui/dialogs/eventeditor.py:97
 msgid "Period"
-msgstr ""
+msgstr "Periodas"
 
 #: timelinelib/gui/dialogs/duplicateevent.py:89
 msgid "Direction"
-msgstr ""
+msgstr "Kryptis"
 
 #: timelinelib/gui/dialogs/duplicateevent.py:105
 msgid "Frequency:"
-msgstr ""
+msgstr "Dažnumas:"
 
 #: timelinelib/gui/dialogs/duplicateevent.py:115
 msgid "Number of duplicates:"
@@ -827,7 +827,7 @@ msgstr ""
 #: timelinelib/gui/dialogs/gotodate.py:36
 #: timelinelib/gui/dialogs/eventeditor.py:102
 msgid "Show time"
-msgstr ""
+msgstr "Rodyti laiką"
 
 #: timelinelib/gui/dialogs/mainframe.py:97
 #, python-format
@@ -836,7 +836,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:101
 msgid "Create Event"
-msgstr ""
+msgstr "Sukurti įvykį"
 
 #: timelinelib/gui/dialogs/mainframe.py:131
 msgid "Edit Event"
@@ -866,7 +866,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:180
 msgid "Open &Recent"
-msgstr ""
+msgstr "Atverti iš &paskiausių"
 
 #: timelinelib/gui/dialogs/mainframe.py:184
 msgid "Page Set&up..."
@@ -882,7 +882,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:190
 msgid "Print"
-msgstr ""
+msgstr "Spausdinti"
 
 #: timelinelib/gui/dialogs/mainframe.py:193
 msgid "&Export to Image..."
@@ -894,7 +894,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:197
 msgid "Exit the program"
-msgstr ""
+msgstr "Išeiti iš programos"
 
 #: timelinelib/gui/dialogs/mainframe.py:219
 msgid "Create &Event..."
@@ -934,7 +934,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:258
 msgid "Find Last Event"
-msgstr ""
+msgstr "Rasti paskutinį įvykį"
 
 #: timelinelib/gui/dialogs/mainframe.py:259
 msgid "Fit All Events"
@@ -947,7 +947,7 @@ msgstr ""
 #: timelinelib/gui/dialogs/mainframe.py:268
 #: timelinelib/gui/dialogs/mainframe.py:773
 msgid "Getting started tutorial"
-msgstr ""
+msgstr "Pradžiamokslis"
 
 #: timelinelib/gui/dialogs/mainframe.py:277
 msgid "&File"
@@ -955,11 +955,11 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:278
 msgid "&Edit"
-msgstr ""
+msgstr "&Taisa"
 
 #: timelinelib/gui/dialogs/mainframe.py:279
 msgid "&View"
-msgstr ""
+msgstr "&Rodymas"
 
 #: timelinelib/gui/dialogs/mainframe.py:280
 msgid "&Timeline"
@@ -971,7 +971,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/mainframe.py:282
 msgid "&Help"
-msgstr ""
+msgstr "&Žinynas"
 
 #: timelinelib/gui/dialogs/mainframe.py:448
 msgid ""
@@ -1044,11 +1044,11 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:34
 msgid "Preferences"
-msgstr ""
+msgstr "Pasirinktys"
 
 #: timelinelib/gui/dialogs/preferences.py:67
 msgid "General"
-msgstr ""
+msgstr "Bendra"
 
 #: timelinelib/gui/dialogs/preferences.py:73
 msgid "Open most recent timeline on startup"
@@ -1060,7 +1060,7 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:88
 msgid "Week start on:"
-msgstr ""
+msgstr "Savaitė prasideda:"
 
 #: timelinelib/gui/dialogs/preferences.py:91
 msgid ""
@@ -1077,11 +1077,11 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/preferences.py:104
 msgid "Monday"
-msgstr ""
+msgstr "Pirmadienis"
 
 #: timelinelib/gui/dialogs/preferences.py:104
 msgid "Sunday"
-msgstr ""
+msgstr "Sekmadienis"
 
 #: timelinelib/gui/dialogs/eventeditor.py:75
 msgid "Event Properties"
@@ -1089,27 +1089,27 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:81
 msgid "When:"
-msgstr ""
+msgstr "Kada:"
 
 #: timelinelib/gui/dialogs/eventeditor.py:84
 msgid "to"
-msgstr ""
+msgstr "iki"
 
 #: timelinelib/gui/dialogs/eventeditor.py:109
 msgid "Text:"
-msgstr ""
+msgstr "Tekstas:"
 
 #: timelinelib/gui/dialogs/eventeditor.py:114
 msgid "Category:"
-msgstr ""
+msgstr "Kategorija:"
 
 #: timelinelib/gui/dialogs/eventeditor.py:125
 msgid "Description"
-msgstr ""
+msgstr "Apibūdinimas:"
 
 #: timelinelib/gui/dialogs/eventeditor.py:128
 msgid "Icon"
-msgstr ""
+msgstr "Ikona"
 
 #: timelinelib/gui/dialogs/eventeditor.py:147
 msgid "Add more events after this one"
@@ -1121,11 +1121,11 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:182
 msgid "Text"
-msgstr ""
+msgstr "Tekstas"
 
 #: timelinelib/gui/dialogs/eventeditor.py:316
 msgid "Add new"
-msgstr ""
+msgstr "Pridėti naują"
 
 #: timelinelib/gui/dialogs/eventeditor.py:361
 #, python-format
@@ -1134,11 +1134,11 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/eventeditor.py:397
 msgid "Select Icon"
-msgstr ""
+msgstr "Pasirinkti ikoną"
 
 #: timelinelib/gui/dialogs/helpbrowser.py:39
 msgid "Help"
-msgstr ""
+msgstr "Pagalba"
 
 #: timelinelib/gui/dialogs/helpbrowser.py:89
 msgid "Go to home page"
@@ -1146,15 +1146,15 @@ msgstr ""
 
 #: timelinelib/gui/dialogs/helpbrowser.py:96
 msgid "Go back one page"
-msgstr ""
+msgstr "Eiti atgal vieną puslapį"
 
 #: timelinelib/gui/dialogs/helpbrowser.py:102
 msgid "Go forward one page"
-msgstr ""
+msgstr "Eiti į priekį vieną puslapį"
 
 #: timelinelib/gui/dialogs/helpbrowser.py:187
 msgid "Page not found"
-msgstr ""
+msgstr "Puslapis nerastas"
 
 #: timelinelib/gui/dialogs/helpbrowser.py:188
 #, python-format
