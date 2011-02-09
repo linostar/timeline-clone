@@ -51,9 +51,8 @@ class DrawingArea(wx.Panel):
     def __init__(self, parent, status_bar_adapter, divider_line_slider, fn_handle_db_error):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
         self.controller = DrawingAreaController(
-            self, config.global_config, get_drawer(), divider_line_slider,
-            fn_handle_db_error)
-        self.status_bar_adapter = status_bar_adapter
+            self, status_bar_adapter, config.global_config, get_drawer(),
+            divider_line_slider, fn_handle_db_error)
         self.surface_bitmap = None
         self._create_gui()
 
@@ -112,12 +111,6 @@ class DrawingArea(wx.Panel):
 
     def enable_disable_menus(self):
         wx.GetTopLevelParent(self).enable_disable_menus()
-
-    def set_status_text(self, text):
-        self.status_bar_adapter.set_text(text)
-
-    def set_hidden_event_count_text(self, text):
-        self.status_bar_adapter.set_hidden_event_count_text(text)
 
     def edit_event(self, event):
         wx.GetTopLevelParent(self).edit_event(event)
@@ -239,9 +232,11 @@ class DrawingArea(wx.Panel):
 
 class DrawingAreaController(object):
 
-    def __init__(self, view, config, drawing_algorithm, divider_line_slider, fn_handle_db_error):
+    def __init__(self, view, status_bar_adapter, config, drawing_algorithm,
+                 divider_line_slider, fn_handle_db_error):
         self.config = config
         self.view = view
+        self.status_bar_adapter = status_bar_adapter
         self.drawing_algorithm = drawing_algorithm
         self.divider_line_slider = divider_line_slider
         self.fn_handle_db_error = fn_handle_db_error
@@ -358,9 +353,9 @@ class DrawingAreaController(object):
         try:
             navigation_fn(self.view_properties.displayed_period)
             self._redraw_timeline()
-            self.view.set_status_text("")
+            self.status_bar_adapter.set_text("")
         except (ValueError, OverflowError), e:
-            self.view.set_status_text(ex_msg(e))
+            self.status_bar_adapter.set_text(ex_msg(e))
 
     def redraw_timeline(self):
         self._redraw_timeline()
@@ -531,7 +526,7 @@ class DrawingAreaController(object):
 
     def _display_hidden_event_count(self):
         text = _("%s events hidden") % self.drawing_algorithm.get_hidden_event_count()
-        self.view.set_hidden_event_count_text(text)
+        self.status_bar_adapter.set_hidden_event_count_text(text)
 
     def _toggle_event_selection(self, xpixelpos, ypixelpos, control_down):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
@@ -548,9 +543,9 @@ class DrawingAreaController(object):
     def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event != None:
-            self.view.set_status_text(event.get_label())
+            self.status_bar_adapter.set_text(event.get_label())
         else:
-            self.view.set_status_text("")
+            self.status_bar_adapter.set_text("")
             
     def balloon_timer1_fired(self):
         self.input_handler.balloon_timer1_fired(self)
