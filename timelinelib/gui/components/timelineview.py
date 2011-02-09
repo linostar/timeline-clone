@@ -44,14 +44,16 @@ SCROLL_ZONE_WIDTH = 20
 
 # dragscroll timer interval in milliseconds
 DRAGSCROLL_TIMER_MSINTERVAL = 300
-STATUS_HIDDEN_EVENT = 1
 
 
 class DrawingArea(wx.Panel):
 
-    def __init__(self, parent, divider_line_slider, fn_handle_db_error):
+    def __init__(self, parent, status_bar_adapter, divider_line_slider, fn_handle_db_error):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
-        self.controller = DrawingAreaController(self, config.global_config, get_drawer(), divider_line_slider, fn_handle_db_error)
+        self.controller = DrawingAreaController(
+            self, config.global_config, get_drawer(), divider_line_slider,
+            fn_handle_db_error)
+        self.status_bar_adapter = status_bar_adapter
         self.surface_bitmap = None
         self._create_gui()
 
@@ -112,10 +114,10 @@ class DrawingArea(wx.Panel):
         wx.GetTopLevelParent(self).enable_disable_menus()
 
     def set_status_text(self, text):
-        wx.GetTopLevelParent(self).SetStatusText(text)
+        self.status_bar_adapter.set_text(text)
 
     def set_hidden_event_count_text(self, text):
-        wx.GetTopLevelParent(self).SetStatusText(text, STATUS_HIDDEN_EVENT)
+        self.status_bar_adapter.set_hidden_event_count_text(text)
 
     def edit_event(self, event):
         wx.GetTopLevelParent(self).edit_event(event)

@@ -53,8 +53,6 @@ from timelinelib.gui.components.search import SearchBar
 from timelinelib.utils import ex_msg
 
 
-STATUS_READ_ONLY = 2
-
 MENU_REQUIRES_TIMELINE       = 1
 MENU_REQUIRES_TIMELINE_VIEW  = 2  
 MENU_REQUIRES_UPDATE         = 3
@@ -159,8 +157,8 @@ class MainFrame(wx.Frame):
         return plain + "..."
 
     def _create_gui(self):
-        self.create_main_panel()
         self.create_status_bar()
+        self.create_main_panel()
         self.create_main_menu()
         self.bind_frame_events()
         
@@ -169,8 +167,7 @@ class MainFrame(wx.Frame):
         
     def create_status_bar(self):
         self.CreateStatusBar()
-        self.GetStatusBar().SetFieldsCount(3)
-        self.GetStatusBar().SetStatusWidths([-1, 300, 200])
+        self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
         
     def create_main_menu(self):
         self.create_menues()
@@ -580,7 +577,7 @@ class MainFrame(wx.Frame):
             self.main_panel.cattree.initialize_from_timeline_view(None)
             self.main_panel.searchbar.set_view(None)
         self.main_panel.drawing_area.set_timeline(self.timeline)
-        self.GetStatusBar().SetStatusText("", STATUS_READ_ONLY)
+        self.status_bar_adapter.set_read_only_text("")
         if timeline == None:
             self.main_panel.show_welcome_panel()
             self.SetTitle(APPLICATION_NAME)
@@ -593,7 +590,7 @@ class MainFrame(wx.Frame):
                 os.path.dirname(os.path.abspath(self.timeline.path)),
                 APPLICATION_NAME))
             if timeline.is_read_only():
-                self.GetStatusBar().SetStatusText(_("read-only"), STATUS_READ_ONLY)
+                self.status_bar_adapter.set_read_only_text(_("read-only"))
 
     def _create_new_timeline(self):
         """
@@ -958,6 +955,7 @@ class TimelinePanel(wx.Panel):
                                              style = wx.SL_LEFT | wx.SL_VERTICAL)
         main_frame = wx.GetTopLevelParent(self)
         self.drawing_area = DrawingArea(self.splitter,
+                                        main_frame.status_bar_adapter,
                                         self.divider_line_slider,
                                         main_frame.handle_db_error)
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -1019,3 +1017,23 @@ class Sidebar(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.cattree, flag=wx.GROW, proportion=1)
         self.SetSizer(sizer)
+
+
+class StatusBarAdapter(object):
+
+    HIDDEN_EVENT_COUNT_COLUMN = 1
+    READ_ONLY_COLUMN = 2
+
+    def __init__(self, wx_status_bar):
+        self.wx_status_bar = wx_status_bar
+        self.wx_status_bar.SetFieldsCount(3)
+        self.wx_status_bar.SetStatusWidths([-1, 300, 200])
+
+    def set_text(self, text):
+        self.wx_status_bar.SetStatusText(text)
+
+    def set_hidden_event_count_text(self, text):
+        self.wx_status_bar.SetStatusText(text, self.HIDDEN_EVENT_COUNT_COLUMN)
+
+    def set_read_only_text(self, text):
+        self.wx_status_bar.SetStatusText(text, self.READ_ONLY_COLUMN)
