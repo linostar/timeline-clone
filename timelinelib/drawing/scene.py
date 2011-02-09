@@ -76,8 +76,8 @@ class TimelineScene(object):
         return self._metrics.calc_width(time_period)
 
     def _calc_event_positions(self):
-        events_from_db = self._db.get_events(self._view_properties.displayed_period)
-        visible_events = self._view_properties.filter_events(events_from_db)
+        self.events_from_db = self._db.get_events(self._view_properties.displayed_period)
+        visible_events = self._view_properties.filter_events(self.events_from_db)
         self._calc_rects(visible_events)
         
     def _calc_rects(self, events):
@@ -185,3 +185,13 @@ class TimelineScene(object):
         self.major_strip, self.minor_strip = self._db.get_time_type().choose_strip(self._metrics)
         fill(self.major_strip_data, self.major_strip)
         fill(self.minor_strip_data, self.minor_strip)
+
+    def get_hidden_event_count(self):
+        return len(self.events_from_db) - self._count_visible_events()
+
+    def _count_visible_events(self):
+        num_visible = 0
+        for (event, rect) in self.event_data:
+            if rect.Y < self.height and (rect.Y + rect.Height) > 0:
+                num_visible += 1
+        return num_visible
