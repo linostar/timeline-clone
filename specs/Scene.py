@@ -19,14 +19,13 @@
 import datetime
 import unittest
 
+from specs.utils import human_time_to_py
+from specs.utils import py_period
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
-from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.interface import ViewProperties
 from timelinelib.drawing.scene import TimelineScene
-from timelinelib.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
-from timelinelib.time.pytime import PyTimeType
 
 
 class SceneSpec(unittest.TestCase):
@@ -91,24 +90,3 @@ class SceneSpec(unittest.TestCase):
         self.scene.set_inner_padding(self.inner_padding)
         self.scene.set_baseline_padding(self.baseline_padding)
         self.scene.create()
-
-
-def py_period(start, end):
-    return TimePeriod(PyTimeType(), human_time_to_py(start), human_time_to_py(end))
-
-
-def human_time_to_py(human_time):
-    (year, month, day) = human_time_to_ymd(human_time)
-    return py_time(year, month, day)
-
-
-def human_time_to_ymd(human_time):
-    day_part, month_part, year_part = human_time.split(" ")
-    day = int(day_part)
-    month = ABBREVIATED_ENGLISH_MONTH_NAMES.index(month_part) + 1
-    year = int(year_part)
-    return (year, month, day)
-
-
-def py_time(year, month, day, hour=15, minute=30, second=5):
-    return datetime.datetime(year, month, day, hour, minute, second)
