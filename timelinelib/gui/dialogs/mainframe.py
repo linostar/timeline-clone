@@ -1027,7 +1027,7 @@ class StatusBarAdapter(object):
     def __init__(self, wx_status_bar):
         self.wx_status_bar = wx_status_bar
         self.wx_status_bar.SetFieldsCount(3)
-        self.wx_status_bar.SetStatusWidths([-1, 300, 200])
+        self.wx_status_bar.SetStatusWidths([-1, 200, 150])
 
     def set_text(self, text):
         self.wx_status_bar.SetStatusText(text)
