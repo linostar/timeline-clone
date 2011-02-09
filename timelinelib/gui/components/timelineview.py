@@ -18,18 +18,17 @@
 
 import wx
 
-from timelinelib.drawing.utils import Metrics
-from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_ANY
+from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.objects import time_period_center
-from timelinelib.drawing.interface import ViewProperties
 from timelinelib.drawing import get_drawer
+from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.utils import Metrics
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _step_function
+from timelinelib.utils import ex_msg
 import timelinelib.config as config
 import timelinelib.printing as printing
-from timelinelib.utils import ex_msg
 
 
 # Used by Sizer and Mover classes to detect when to go into action
