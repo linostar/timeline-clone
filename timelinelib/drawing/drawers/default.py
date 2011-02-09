@@ -164,6 +164,9 @@ class DefaultDrawingAlgorithm(Drawer):
             if rect.Contains(wx.Point(x, y)):
                 event = event_in_list
         return event
+
+    def get_hidden_event_count(self):
+        return self.scene.get_hidden_event_count()
      
     def _draw_period_selection(self, view_properties):
         if not view_properties.period_selection:

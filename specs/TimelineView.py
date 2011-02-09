@@ -25,6 +25,7 @@ from mock import Mock
 
 from timelinelib.time import PyTimeType
 from timelinelib.drawing.interface import Drawer
+from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import Event
@@ -115,13 +116,14 @@ class TimelineView(unittest.TestCase):
             return (event, event_rect_mock(event))
         self.point_event_rect = wx.Rect(120, 45, 30, 10)
         self.period_event_rect = wx.Rect(40, 75, 30, 10)
-        self.drawer = Mock()
+        self.drawer = Mock(DefaultDrawingAlgorithm)
         self.drawer.balloon_at.return_value = None
         self.drawer.snap.side_effect               = snap_mock
         self.drawer.snap_selection.side_effect     = snap_selection_mock
         self.drawer.event_at.side_effect           = event_at_mock
         self.drawer.event_with_rect_at.side_effect = event_with_rect_at_mock
         self.drawer.event_rect.side_effect         = event_rect_mock
+        self.drawer.get_hidden_event_count.return_value = 3
 
     def testInitializesDisplayedPeriodFromDb(self):
         self.assertDisplaysPeriod(datetime(2010, 8, 30), datetime(2010, 8, 31))
@@ -170,15 +172,21 @@ class TimelineView(unittest.TestCase):
 
     def testDisplaysEventInfoInStatusBarWhenHoveringEvent(self):
         self.simulateMouseMove(50, 80)
-        self.assertTrue(self.view.display_text_in_statusbar.called)
-        text = self.view.display_text_in_statusbar.call_args[0][0]
+        self.assertTrue(self.view.set_status_text.called)
+        text = self.view.set_status_text.call_args[0][0]
         self.assertTrue("Period event" in text)
 
     def testRemovesEventInfoFromStatusBarWhenUnHoveringEvent(self):
         self.simulateMouseMove(30, 0)
-        self.assertTrue(self.view.display_text_in_statusbar.called)
-        text = self.view.display_text_in_statusbar.call_args[0][0]
+        self.assertTrue(self.view.set_status_text.called)
+        text = self.view.set_status_text.call_args[0][0]
         self.assertEquals("", text)
+
+    def test_displays_hidden_event_count_in_status_bar(self):
+        self.controller.set_timeline(self.db)
+        self.assertTrue(self.view.set_hidden_event_count_text.called)
+        text = self.view.set_hidden_event_count_text.call_args[0][0]
+        self.assertTrue("3" in text)
 
     def testCreatesEventWhenDoubleClickingSurface(self):
         self.simulateMouseDoubleClick(20, 8)

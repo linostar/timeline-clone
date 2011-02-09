@@ -53,7 +53,7 @@ from timelinelib.gui.components.search import SearchBar
 from timelinelib.utils import ex_msg
 
 
-STATUS_READ_ONLY = 1
+STATUS_READ_ONLY = 2
 
 MENU_REQUIRES_TIMELINE       = 1
 MENU_REQUIRES_TIMELINE_VIEW  = 2  
@@ -169,8 +169,8 @@ class MainFrame(wx.Frame):
         
     def create_status_bar(self):
         self.CreateStatusBar()
-        self.GetStatusBar().SetFieldsCount(2)
-        self.GetStatusBar().SetStatusWidths([-1, 200])
+        self.GetStatusBar().SetFieldsCount(3)
+        self.GetStatusBar().SetStatusWidths([-1, 300, 200])
         
     def create_main_menu(self):
         self.create_menues()

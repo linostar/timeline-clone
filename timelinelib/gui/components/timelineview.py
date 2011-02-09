@@ -44,6 +44,7 @@ SCROLL_ZONE_WIDTH = 20
 
 # dragscroll timer interval in milliseconds
 DRAGSCROLL_TIMER_MSINTERVAL = 300
+STATUS_HIDDEN_EVENT = 1
 
 
 class DrawingArea(wx.Panel):
@@ -110,8 +111,11 @@ class DrawingArea(wx.Panel):
     def enable_disable_menus(self):
         wx.GetTopLevelParent(self).enable_disable_menus()
 
-    def display_text_in_statusbar(self, text):
+    def set_status_text(self, text):
         wx.GetTopLevelParent(self).SetStatusText(text)
+
+    def set_hidden_event_count_text(self, text):
+        wx.GetTopLevelParent(self).SetStatusText(text, STATUS_HIDDEN_EVENT)
 
     def edit_event(self, event):
         wx.GetTopLevelParent(self).edit_event(event)
@@ -352,9 +356,9 @@ class DrawingAreaController(object):
         try:
             navigation_fn(self.view_properties.displayed_period)
             self._redraw_timeline()
-            self.view.display_text_in_statusbar("")
+            self.view.set_status_text("")
         except (ValueError, OverflowError), e:
-            self.view.display_text_in_statusbar(ex_msg(e))
+            self.view.set_status_text(ex_msg(e))
 
     def redraw_timeline(self):
         self._redraw_timeline()
@@ -521,6 +525,11 @@ class DrawingAreaController(object):
                                    self.view_properties.divider_position)
             self.view.redraw_surface(fn_draw)
             self.view.enable_disable_menus()
+            self._display_hidden_event_count()
+
+    def _display_hidden_event_count(self):
+        text = _("%s events hidden") % self.drawing_algorithm.get_hidden_event_count()
+        self.view.set_hidden_event_count_text(text)
 
     def _toggle_event_selection(self, xpixelpos, ypixelpos, control_down):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
@@ -537,9 +546,9 @@ class DrawingAreaController(object):
     def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
         if event != None:
-            self.view.display_text_in_statusbar(event.get_label())
+            self.view.set_status_text(event.get_label())
         else:
-            self.view.display_text_in_statusbar("")
+            self.view.set_status_text("")
             
     def balloon_timer1_fired(self):
         self.input_handler.balloon_timer1_fired(self)
