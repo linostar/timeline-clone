@@ -165,6 +165,9 @@ class DefaultDrawingAlgorithm(Drawer):
                 event = event_in_list
         return event
 
+    def get_time(self, x):
+        return self.scene.get_time(x)
+
     def get_hidden_event_count(self):
         return self.scene.get_hidden_event_count()
      

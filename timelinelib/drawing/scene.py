@@ -66,6 +66,9 @@ class TimelineScene(object):
     def x_pos_for_time(self, time):
         return self._metrics.calc_x(time)
 
+    def get_time(self, x):
+        return self._metrics.get_time(x)
+
     def distance_between_times(self, time1, time2):
         time1_x = self._metrics.calc_exact_x(time1)
         time2_x = self._metrics.calc_exact_x(time2)
