@@ -120,9 +120,6 @@ class DrawingArea(wx.Panel):
     def create_new_event(self, start_time, end_time):
         wx.GetTopLevelParent(self).create_new_event(start_time, end_time)
 
-    def get_metrics(self):
-        return self.controller.get_metrics()
-
     def start_balloon_timer1(self, milliseconds=-1, oneShot=False):
         self.balloon_timer1.Start(milliseconds, oneShot)
 
@@ -427,11 +424,15 @@ class DrawingAreaController(object):
         if event:
             self.view.edit_event(event)
         else:
-            current_time = self.metrics.get_time(x)
+            current_time = self.get_time(x)
             self.view.create_new_event(current_time, current_time)
 
+    def get_time(self, x):
+        return self.metrics.get_time(x) # remove when test fixed
+        return self.drawing_algorithm.get_time(x)
+
     def middle_mouse_clicked(self, x):
-        self.navigate_timeline(lambda tp: tp.center(self.get_metrics().get_time(x)))
+        self.navigate_timeline(lambda tp: tp.center(self.get_time(x)))
 
     def left_mouse_up(self):
         self.input_handler.left_mouse_up(self)
@@ -605,9 +606,6 @@ class DrawingAreaController(object):
         if not visible:
             self._redraw_timeline()
 
-    def get_metrics(self):
-        return self.metrics
-
 
 class InputHandler(object):
 
@@ -649,7 +647,7 @@ class NoOpInputHandler(InputHandler):
                 else:
                     controller._redraw_balloons(None)
         event = controller.get_drawer().event_at(x, y)
-        time_at_x = controller.get_metrics().get_time(x)
+        time_at_x = controller.get_time(x)
         if self._hit_resize_handle(controller, x, y) is not None:
             direction = self._hit_resize_handle(controller, x, y)
             controller.change_input_handler(ResizeByDragInputHandler(event, direction))
@@ -771,7 +769,7 @@ class ScrollByDragInputHandler(InputHandler):
         self.start_time = start_time
 
     def mouse_moved(self, controller, x, y):
-        current_time = controller.get_metrics().get_time(x)
+        current_time = controller.get_time(x)
         delta = (current_time - self.start_time)
         controller._scroll_timeline(delta)
 
@@ -827,7 +825,7 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
         self._move_event(controller)
 
     def _move_event(self, controller):
-        current_time = controller.get_metrics().get_time(self.last_x)
+        current_time = controller.get_time(self.last_x)
         delta = current_time - self.start_drag_time
         new_start = self.event_start_time + delta
         new_end = self.event_end_time + delta
@@ -872,7 +870,7 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
         self._resize_event(controller)
 
     def _resize_event(self, controller):
-        new_time = controller.get_metrics().get_time(self.last_x)
+        new_time = controller.get_time(self.last_x)
         new_snapped_time = controller.get_drawer().snap(new_time)
         if self.direction == wx.LEFT:
             new_start = new_snapped_time
@@ -919,7 +917,7 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
                           controller.get_drawer().snap(end))
 
     def _move_end_time(self, controller):
-        self.end_time = controller.get_metrics().get_time(self.last_x)
+        self.end_time = controller.get_time(self.last_x)
         period = self._get_period(controller)
         start = period.start_time
         end = period.end_time
