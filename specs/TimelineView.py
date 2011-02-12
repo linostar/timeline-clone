@@ -110,6 +110,11 @@ class TimelineViewSpec(unittest.TestCase):
             if event is None:
                 return None
             return (event, event_rect_mock(event))
+        def get_time_mock(x):
+            total_minutes = int((x / 240.0) * (24*60))
+            hour = int(total_minutes / 60)
+            minute = int(total_minutes % 60)
+            return datetime(2010, 8, 30, hour, minute, 0)
         self.point_event_rect = wx.Rect(120, 45, 30, 10)
         self.period_event_rect = wx.Rect(40, 75, 30, 10)
         self.drawer = Mock(DefaultDrawingAlgorithm)
@@ -119,6 +124,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.drawer.event_at.side_effect           = event_at_mock
         self.drawer.event_with_rect_at.side_effect = event_with_rect_at_mock
         self.drawer.event_rect.side_effect         = event_rect_mock
+        self.drawer.get_time.side_effect           = get_time_mock
         self.drawer.get_hidden_event_count.return_value = 3
 
     def test_initializes_displayed_period_from_db(self):

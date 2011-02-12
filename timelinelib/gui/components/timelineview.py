@@ -23,7 +23,6 @@ from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing import get_drawer
 from timelinelib.drawing.interface import ViewProperties
-from timelinelib.drawing.utils import Metrics
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _step_function
 from timelinelib.utils import ex_msg
@@ -428,7 +427,6 @@ class DrawingAreaController(object):
             self.view.create_new_event(current_time, current_time)
 
     def get_time(self, x):
-        return self.metrics.get_time(x) # remove when test fixed
         return self.drawing_algorithm.get_time(x)
 
     def middle_mouse_clicked(self, x):
@@ -517,9 +515,6 @@ class DrawingAreaController(object):
             self.view_properties.period_selection = period_selection
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
-            self.metrics = Metrics(self.view.GetSizeTuple(), self.time_type, 
-                                   self.view_properties.displayed_period, 
-                                   self.view_properties.divider_position)
             self.view.redraw_surface(fn_draw)
             self.view.enable_disable_menus()
             self._display_hidden_event_count()
