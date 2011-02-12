@@ -38,7 +38,7 @@ from timelinelib.gui.dialogs.mainframe import StatusBarAdapter
 # TODO: testSavesEventAfterResize
 
 
-class TimelineView(unittest.TestCase):
+class TimelineViewSpec(unittest.TestCase):
 
     def setUp(self):
         # Simulate a view like this:
