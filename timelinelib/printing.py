@@ -16,11 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Printing framework.
-"""
-
-
 import wx
 
 
@@ -32,9 +27,9 @@ class TimelinePrintout(wx.Printout):
     wx.PrintPreview object to initiate printing or previewing.
     """
 
-    def __init__(self, panel, preview=False):
+    def __init__(self, drawing_area, preview=False):
         wx.Printout.__init__(self)
-        self.panel   = panel
+        self.drawing_area = drawing_area
         self.preview = preview
 
     def OnBeginDocument(self, start, end):
@@ -66,9 +61,8 @@ class TimelinePrintout(wx.Printout):
         return (minPage, maxPage, pageFrom, pageTo)
 
     def OnPrintPage(self, page):
-
         def SetScaleAndDeviceOrigin(dc):
-            (panel_width, panel_height) = self.panel.GetSize()
+            (panel_width, panel_height) = self.drawing_area.GetSize()
             # Let's have at least 50 device units margin
             x_margin = 50
             y_margin = 50
@@ -87,11 +81,50 @@ class TimelinePrintout(wx.Printout):
             y_pos = (dc_heighth - (panel_height * scale)) / 2.0
             dc.SetUserScale(scale, scale)
             dc.SetDeviceOrigin(int(x_pos), int(y_pos))
-
         dc = self.GetDC()
         SetScaleAndDeviceOrigin(dc)
         dc.BeginDrawing()
-        dc.DrawBitmap(self.panel.get_current_image(), 0, 0, True)
+        dc.DrawBitmap(self.drawing_area.get_current_image(), 0, 0, True)
         dc.EndDrawing()
         return True
 
+
+def print_timeline(main_frame):
+    pdd = wx.PrintDialogData(main_frame.printData)
+    pdd.SetToPage(1)
+    printer = wx.Printer(pdd)
+    printout = TimelinePrintout(main_frame.main_panel.drawing_area, False)
+    frame = wx.GetApp().GetTopWindow()
+    if not printer.Print(frame, printout, True):
+        if printer.GetLastError() == wx.PRINTER_ERROR:
+            wx.MessageBox(_("There was a problem printing.\nPerhaps your current printer is not set correctly?"), _("Printing"), wx.OK)
+    else:
+        main_frame.printData = wx.PrintData(printer.GetPrintDialogData().GetPrintData())
+    printout.Destroy()
+
+
+def print_preview(main_frame):
+    data = wx.PrintDialogData(main_frame.printData)
+    printout_preview  = TimelinePrintout(main_frame.main_panel.drawing_area, True)
+    printout = TimelinePrintout(main_frame.main_panel.drawing_area, False)
+    preview = wx.PrintPreview(printout_preview, printout, data)
+    if not preview.Ok():
+        return
+    frame = wx.GetApp().GetTopWindow()
+    pfrm = wx.PreviewFrame(preview, frame, _("Print preview"))
+    pfrm.Initialize()
+    pfrm.SetPosition(frame.GetPosition())
+    pfrm.SetSize(frame.GetSize())
+    pfrm.Show(True)
+
+
+def print_setup(main_frame):
+    psdd = wx.PageSetupDialogData(main_frame.printData)
+    psdd.CalculatePaperSizeFromId()
+    dlg = wx.PageSetupDialog(main_frame.main_panel.drawing_area, psdd)
+    dlg.ShowModal()
+    # this makes a copy of the wx.PrintData instead of just saving
+    # a reference to the one inside the PrintDialogData that will
+    # be destroyed when the dialog is destroyed
+    main_frame.printData = wx.PrintData(dlg.GetPageSetupData().GetPrintData())
+    dlg.Destroy()

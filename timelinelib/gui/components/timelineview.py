@@ -27,7 +27,6 @@ from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _step_function
 from timelinelib.utils import ex_msg
 import timelinelib.config as config
-import timelinelib.printing as printing
 
 
 # Used by Sizer and Mover classes to detect when to go into action
@@ -65,15 +64,6 @@ class DrawingArea(wx.Panel):
 
     def get_current_image(self):
         return self.surface_bitmap
-
-    def print_timeline(self, event):
-        self.controller.print_timeline(event)
-
-    def print_preview(self, event):
-        self.controller.print_preview(event)
-
-    def print_setup(self, event):
-        self.controller.print_setup(event)
 
     def set_timeline(self, timeline):
         self.controller.set_timeline(timeline)
@@ -237,10 +227,6 @@ class DrawingAreaController(object):
         self.fn_handle_db_error = fn_handle_db_error
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
-        self.printData = wx.PrintData()
-        self.printData.SetPaperId(wx.PAPER_A4)
-        self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
-        self.printData.SetOrientation(wx.LANDSCAPE)
         self.divider_line_slider.Bind(wx.EVT_SLIDER,       self._slider_on_slider)
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
         self.change_input_handler(NoOpInputHandler())
@@ -256,44 +242,6 @@ class DrawingAreaController(object):
 
     def get_view_properties(self):
         return self.view_properties
-
-    def print_timeline(self, event):
-        pdd = wx.PrintDialogData(self.printData)
-        pdd.SetToPage(1)
-        printer = wx.Printer(pdd)
-        printout = printing.TimelinePrintout(self.view, False)
-        frame = wx.GetApp().GetTopWindow()
-        if not printer.Print(frame, printout, True):
-            if printer.GetLastError() == wx.PRINTER_ERROR:
-                wx.MessageBox(_("There was a problem printing.\nPerhaps your current printer is not set correctly?"), _("Printing"), wx.OK)
-        else:
-            self.printData = wx.PrintData( printer.GetPrintDialogData().GetPrintData() )
-        printout.Destroy()
-
-    def print_preview(self, event):
-        data = wx.PrintDialogData(self.printData)
-        printout_preview  = printing.TimelinePrintout(self.view, True)
-        printout = printing.TimelinePrintout(self.view, False)
-        self.preview = wx.PrintPreview(printout_preview, printout, data)
-        if not self.preview.Ok():
-            return
-        frame = wx.GetApp().GetTopWindow()
-        pfrm = wx.PreviewFrame(self.preview, frame, _("Print preview"))
-        pfrm.Initialize()
-        pfrm.SetPosition(frame.GetPosition())
-        pfrm.SetSize(frame.GetSize())
-        pfrm.Show(True)
-
-    def print_setup(self, event):
-        psdd = wx.PageSetupDialogData(self.printData)
-        psdd.CalculatePaperSizeFromId()
-        dlg = wx.PageSetupDialog(self.view, psdd)
-        dlg.ShowModal()
-        # this makes a copy of the wx.PrintData instead of just saving
-        # a reference to the one inside the PrintDialogData that will
-        # be destroyed when the dialog is destroyed
-        self.printData = wx.PrintData( dlg.GetPageSetupData().GetPrintData() )
-        dlg.Destroy()
 
     def set_timeline(self, timeline):
         """Inform what timeline to draw."""

@@ -87,6 +87,7 @@ class MainFrame(wx.Frame):
         self._init_help_system()
         self.main_panel.show_welcome_panel()
         self.enable_disable_menus()
+        self._create_print_data()
         self.controller = MainFrameController(self, db_open, config.global_config)
 
     def open_timeline(self, input_file):
@@ -423,13 +424,13 @@ class MainFrame(wx.Frame):
         self.open_timeline_if_exists(path)
 
     def _mnu_file_print_on_click(self, event):
-        self.main_panel.drawing_area.print_timeline(event)
+        printing.print_timeline(self)
 
     def _mnu_file_print_preview_on_click(self, event):
-        self.main_panel.drawing_area.print_preview(event)
+        printing.print_preview(self)
 
     def _mnu_file_print_setup_on_click(self, event):
-        self.main_panel.drawing_area.print_setup(event)
+        printing.print_setup(self)
 
     def _mnu_file_export_on_click(self, evt):
         self._export_to_image()
@@ -764,6 +765,12 @@ class MainFrame(wx.Frame):
     def _get_time_period(self):
         """Shortcut for method in DrawingArea."""
         return self.main_panel.drawing_area.get_time_period()
+
+    def _create_print_data(self):
+        self.printData = wx.PrintData()
+        self.printData.SetPaperId(wx.PAPER_A4)
+        self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
+        self.printData.SetOrientation(wx.LANDSCAPE)
 
 
 class MainFrameController(object):
