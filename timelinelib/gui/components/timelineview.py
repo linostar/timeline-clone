@@ -119,11 +119,11 @@ class DrawingArea(wx.Panel):
     def create_new_event(self, start_time, end_time):
         wx.GetTopLevelParent(self).create_new_event(start_time, end_time)
 
-    def start_balloon_timer1(self, milliseconds=-1, oneShot=False):
-        self.balloon_timer1.Start(milliseconds, oneShot)
+    def start_balloon_show_timer(self, milliseconds=-1, oneShot=False):
+        self.balloon_show_timer.Start(milliseconds, oneShot)
 
-    def start_balloon_timer2(self, milliseconds=-1, oneShot=False):
-        self.balloon_timer2.Start(milliseconds, oneShot)
+    def start_balloon_hide_timer(self, milliseconds=-1, oneShot=False):
+        self.balloon_hide_timer.Start(milliseconds, oneShot)
 
     def start_dragscroll_timer(self, milliseconds=-1, oneShot=False):
         self.dragscroll_timer.Start(milliseconds, oneShot)
@@ -147,11 +147,11 @@ class DrawingArea(wx.Panel):
         return _ask_question(question, self)
 
     def _create_gui(self):
-        self.balloon_timer1 = wx.Timer(self, -1)
-        self.balloon_timer2 = wx.Timer(self, -1)
+        self.balloon_show_timer = wx.Timer(self, -1)
+        self.balloon_hide_timer = wx.Timer(self, -1)
         self.dragscroll_timer = wx.Timer(self, -1)
-        self.Bind(wx.EVT_TIMER,            self._on_balloon_timer1, self.balloon_timer1)
-        self.Bind(wx.EVT_TIMER,            self._on_balloon_timer2, self.balloon_timer2)
+        self.Bind(wx.EVT_TIMER,            self._on_balloon_show_timer, self.balloon_show_timer)
+        self.Bind(wx.EVT_TIMER,            self._on_balloon_hide_timer, self.balloon_hide_timer)
         self.Bind(wx.EVT_TIMER,            self._on_dragscroll, self.dragscroll_timer)
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._on_erase_background)
         self.Bind(wx.EVT_PAINT,            self._on_paint)
@@ -167,11 +167,11 @@ class DrawingArea(wx.Panel):
         self.Bind(wx.EVT_KEY_DOWN,         self._on_key_down)
         self.Bind(wx.EVT_KEY_UP,           self._on_key_up)
 
-    def _on_balloon_timer1(self, evt):
-        self.controller.balloon_timer1_fired()
+    def _on_balloon_show_timer(self, evt):
+        self.controller.balloon_show_timer_fired()
 
-    def _on_balloon_timer2(self, evt):
-        self.controller.balloon_timer2_fired()
+    def _on_balloon_hide_timer(self, evt):
+        self.controller.balloon_hide_timer_fired()
 
     def _on_dragscroll(self, evt):
         self.controller.dragscroll_timer_fired()
@@ -542,11 +542,11 @@ class DrawingAreaController(object):
         else:
             self.status_bar_adapter.set_text("")
             
-    def balloon_timer1_fired(self):
-        self.input_handler.balloon_timer1_fired(self)
+    def balloon_show_timer_fired(self):
+        self.input_handler.balloon_show_timer_fired(self)
 
-    def balloon_timer2_fired(self):
-        self.input_handler.balloon_timer2_fired(self)
+    def balloon_hide_timer_fired(self):
+        self.input_handler.balloon_hide_timer_fired(self)
     
     def _redraw_balloons(self, event):
         self.view_properties.hovered_event = event
@@ -616,18 +616,18 @@ class InputHandler(object):
     def dragscroll_timer_fired(self, controller):
         pass
 
-    def balloon_timer1_fired(self, controller):
+    def balloon_show_timer_fired(self, controller):
         pass
 
-    def balloon_timer2_fired(self, controller):
+    def balloon_hide_timer_fired(self, controller):
         pass
 
 
 class NoOpInputHandler(InputHandler):
 
     def __init__(self):
-        self.timer1_running = False
-        self.timer2_running = False
+        self.show_timer_running = False
+        self.hide_timer_running = False
 
     def left_mouse_down(self, controller, x, y, ctrl_down, shift_down):
         eventWithBalloon = controller.drawing_algorithm.balloon_at(x, y)
@@ -675,12 +675,12 @@ class NoOpInputHandler(InputHandler):
             controller.view.set_default_cursor()
         return
 
-    def balloon_timer1_fired(self, controller):
-        self.timer1_running = False
+    def balloon_show_timer_fired(self, controller):
+        self.show_timer_running = False
         controller._redraw_balloons(controller.current_event)
 
-    def balloon_timer2_fired(self, controller):
-        self.timer2_running = False
+    def balloon_hide_timer_fired(self, controller):
+        self.hide_timer_running = False
         hevt = controller.view_properties.hovered_event
         # If there is no balloon visible we don't have to do anything
         if hevt is None:
@@ -708,10 +708,10 @@ class NoOpInputHandler(InputHandler):
         if controller.current_event and controller.view_properties.is_selected(controller.current_event):
             return
         # Timer-1 is running. We have to wait for it to finish before doing anything
-        if self.timer1_running:
+        if self.show_timer_running:
             return
         # Timer-2 is running. We have to wait for it to finish before doing anything
-        if self.timer2_running:
+        if self.hide_timer_running:
             return
         # We are pointing to an event... 
         if controller.current_event is not None:
@@ -720,8 +720,8 @@ class NoOpInputHandler(InputHandler):
                 # We have no balloon, so we start Timer-1
                 if controller.view_properties.hovered_event != controller.current_event:
                     #print "Timer-1 Started ", controller.current_event
-                    controller.view.start_balloon_timer1(milliseconds=500, oneShot=True)
-                    self.timer1_running = True
+                    controller.view.start_balloon_show_timer(milliseconds=500, oneShot=True)
+                    self.show_timer_running = True
         # We are not pointing to any event....        
         else:
             # We have a balloon...
@@ -730,7 +730,7 @@ class NoOpInputHandler(InputHandler):
                 # Otherwise Timer-2 is started.
                 if controller.balloon_event != controller.view_properties.hovered_event:
                     #print "Timer-2 Started"
-                    controller.view.start_balloon_timer2(milliseconds=100, oneShot=True)
+                    controller.view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
 
     def _hit_move_handle(self, controller, x, y):
         event_and_rect = controller.get_drawer().event_with_rect_at(x, y)

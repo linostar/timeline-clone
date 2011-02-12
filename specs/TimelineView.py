@@ -158,19 +158,19 @@ class TimelineViewSpec(unittest.TestCase):
     def test_displays_balloon_for_event_with_description(self):
         self.given_db_set()
         self.controller.mouse_moved(50, 80)
-        self.assertTrue(self.view.start_balloon_timer1.called)
-        self.controller.balloon_timer1_fired()
+        self.assertTrue(self.view.start_balloon_show_timer.called)
+        self.controller.balloon_show_timer_fired()
         self.assertEquals(self.period_event, self.controller.get_view_properties().hovered_event)
 
     def test_hides_balloon_when_leaving_event(self):
         self.given_db_set()
         self.controller.mouse_moved(50, 80)
-        self.assertTrue(self.view.start_balloon_timer1.called)
-        self.controller.balloon_timer1_fired()
+        self.assertTrue(self.view.start_balloon_show_timer.called)
+        self.controller.balloon_show_timer_fired()
         self.assertEquals(self.period_event, self.controller.get_view_properties().hovered_event)
         self.controller.mouse_moved(0, 0)
-        self.assertTrue(self.view.start_balloon_timer2.called)
-        self.controller.balloon_timer2_fired()
+        self.assertTrue(self.view.start_balloon_hide_timer.called)
+        self.controller.balloon_hide_timer_fired()
         self.assertEquals(None, self.controller.get_view_properties().hovered_event)
 
     def test_creates_event_when_ctrl_dragging_mouse(self):
