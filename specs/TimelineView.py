@@ -71,10 +71,6 @@ class TimelineViewSpec(unittest.TestCase):
         self.controller = DrawingAreaController(
             self.view, self.status_bar_adapter, self.config, self.drawer,
             self.divider_line_slider, self.fn_handle_db_error)
-        # Additional set up code
-        self.controller.set_timeline(self.db)
-        # Reset mocks that got called in additional set up
-        self.view.reset_mock()
 
     def setUpDb(self):
         self.db = MemoryDB()
@@ -126,35 +122,42 @@ class TimelineViewSpec(unittest.TestCase):
         self.drawer.get_hidden_event_count.return_value = 3
 
     def test_initializes_displayed_period_from_db(self):
+        self.given_db_set()
         self.assert_displays_period(datetime(2010, 8, 30), datetime(2010, 8, 31))
 
     def test_scrolls_timeline_when_dragging_mouse(self):
+        self.given_db_set()
         self.simulate_mouse_down_move_up(0, 0, 10, 0, ctrl_down=False, shift_down=False)
         self.assert_changed_displayed_period_to(datetime(2010, 8, 29, 23, 0, 0),
                                                 datetime(2010, 8, 30, 23, 0, 0))
 
     def test_zooms_timeline_when_shift_dragging_mouse(self):
+        self.given_db_set()
         self.simulate_mouse_down_move_up(0, 0, 20, 0, ctrl_down=False, shift_down=True)
         self.assert_changed_displayed_period_to(datetime(2010, 8, 30, 0, 0, 0),
                                                 datetime(2010, 8, 30, 2, 0, 0))
 
     def test_centers_displayed_period_around_middle_click_position(self):
+        self.given_db_set()
         self.controller.middle_mouse_clicked(130)
         self.assert_changed_displayed_period_to(datetime(2010, 8, 30, 1, 0, 0),
                                                 datetime(2010, 8, 31, 1, 0, 0))
 
     def test_zooms_timeline_by_10_percent_on_each_side_when_scrolling_while_holding_down_ctrl(self):
+        self.given_db_set()
         self.controller.mouse_wheel_moved(1, ctrl_down=True, shift_down=False)
         self.assert_changed_displayed_period_to(datetime(2010, 8, 30, 2, 24, 0),
                                                 datetime(2010, 8, 30, 21, 36, 0))
 
     def test_displays_balloon_for_event_with_description(self):
+        self.given_db_set()
         self.controller.mouse_moved(50, 80)
         self.assertTrue(self.view.start_balloon_timer1.called)
         self.controller.balloon_timer1_fired()
         self.assertEquals(self.period_event, self.controller.get_view_properties().hovered_event)
 
     def test_hides_balloon_when_leaving_event(self):
+        self.given_db_set()
         self.controller.mouse_moved(50, 80)
         self.assertTrue(self.view.start_balloon_timer1.called)
         self.controller.balloon_timer1_fired()
@@ -165,59 +168,68 @@ class TimelineViewSpec(unittest.TestCase):
         self.assertEquals(None, self.controller.get_view_properties().hovered_event)
 
     def test_creates_event_when_ctrl_dragging_mouse(self):
+        self.given_db_set()
         self.simulate_mouse_down_move_up(10, 0, 30, 0, ctrl_down=True, shift_down=False)
         self.view.create_new_event.assert_called_with(datetime(2010, 8, 30, 1, 0, 0),
                                                       datetime(2010, 8, 30, 3, 0, 0))
         self.assert_timeline_redrawn()
 
     def test_displays_event_info_in_status_bar_when_hovering_event(self):
+        self.given_db_set()
         self.simulate_mouse_move(50, 80)
         self.assertTrue(self.status_bar_adapter.set_text.called)
         text = self.status_bar_adapter.set_text.call_args[0][0]
         self.assertTrue("Period event" in text)
 
     def test_removes_event_info_from_status_bar_when_un_hovering_event(self):
+        self.given_db_set()
         self.simulate_mouse_move(30, 0)
         self.assertTrue(self.status_bar_adapter.set_text.called)
         text = self.status_bar_adapter.set_text.call_args[0][0]
         self.assertEquals("", text)
 
     def test_displays_hidden_event_count_in_status_bar(self):
-        self.controller.set_timeline(self.db)
+        self.given_db_set()
         self.assertTrue(self.status_bar_adapter.set_hidden_event_count_text.called)
         text = self.status_bar_adapter.set_hidden_event_count_text.call_args[0][0]
         self.assertTrue("3" in text)
 
     def test_creates_event_when_double_clicking_surface(self):
+        self.given_db_set()
         self.simulate_mouse_double_click(20, 8)
         self.view.create_new_event.assert_called_with(datetime(2010, 8, 30, 2, 0, 0),
                                                       datetime(2010, 8, 30, 2, 0, 0))
         self.assert_timeline_redrawn()
 
     def test_edits_event_when_double_clicking_it(self):
+        self.given_db_set()
         self.simulate_mouse_double_click(50, 80)
         self.view.edit_event.assert_called_with(self.period_event)
         self.assert_timeline_redrawn()
 
     def test_selects_and_deselects_event_when_clicking_on_it(self):
+        self.given_db_set()
         self.simulate_mouse_click(47, 80)
         self.assertTrue(self.controller.get_view_properties().is_selected(self.period_event))
         self.simulate_mouse_click(47, 80)
         self.assertFalse(self.controller.get_view_properties().is_selected(self.period_event))
 
     def test_deselects_event_when_clicking_outside_of_it(self):
+        self.given_db_set()
         self.simulate_mouse_click(50, 80)
         self.assertTrue(self.controller.get_view_properties().is_selected(self.period_event))
         self.simulate_mouse_click(0, 0)
         self.assertFalse(self.controller.get_view_properties().is_selected(self.period_event))
 
     def test_selects_multiple_events_when_clicked_if_ctrl_is_pressed(self):
+        self.given_db_set()
         self.simulate_mouse_click(50, 80)
         self.simulate_mouse_click(130, 50, ctrl_down=True)
         self.assertTrue(self.controller.get_view_properties().is_selected(self.period_event))
         self.assertTrue(self.controller.get_view_properties().is_selected(self.point_event))
 
     def test_moves_event_when_dragging_move_icon_on_event(self):
+        self.given_db_set()
         self.simulate_mouse_click(50, 80)
         self.simulate_mouse_down_move_up(55, 80, 65, 50, ctrl_down=False, shift_down=False)
         self.assert_period_event_has_period(datetime(2010, 8, 30, 5, 0, 0),
@@ -225,11 +237,13 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_timeline_redrawn()
 
     def test_displays_move_cursor_when_hovering_move_icon_on_event(self):
+        self.given_db_set()
         self.simulate_mouse_click(50, 80)
         self.simulate_mouse_move(50, 80)
         self.assertTrue(self.view.set_move_cursor.called)
 
     def test_displays_resize_cursor_when_hovering_resize_icons_on_event(self):
+        self.given_db_set()
         self.simulate_mouse_click(50, 80)
         self.simulate_mouse_move(41, 80)
         self.simulate_mouse_move(69, 80)
@@ -237,6 +251,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assertEquals(2, self.view.set_size_cursor.call_count)
 
     def test_resizes_event_when_dragging_right_drag_icon_on_event(self):
+        self.given_db_set()
         # First select the event so that move icon is visible
         self.simulate_mouse_click(50, 80)
         # Then start the dragging the right drag icon
@@ -246,6 +261,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_timeline_redrawn()
 
     def test_resizes_event_when_dragging_left_drag_icon_on_event(self):
+        self.given_db_set()
         # First select the event so that move icon is visible
         self.simulate_mouse_click(50, 80)
         # Then start the dragging the left drag icon
@@ -259,6 +275,7 @@ class TimelineViewSpec(unittest.TestCase):
             if time == datetime(2010, 8, 30, 8, 0, 0):
                 return datetime(2010, 8, 30, 9, 0, 0)
             return time
+        self.given_db_set()
         self.drawer.snap.side_effect = snap_mock
         self.simulate_mouse_click(50, 80)
         self.simulate_mouse_down_move_up(69, 80, 80, 80, ctrl_down=False, shift_down=False)
@@ -271,6 +288,7 @@ class TimelineViewSpec(unittest.TestCase):
             if time == datetime(2010, 8, 30, 5, 0, 0):
                 return datetime(2010, 8, 30, 6, 0, 0)
             return time
+        self.given_db_set()
         self.drawer.snap.side_effect = snap_mock
         self.simulate_mouse_click(55, 80)
         self.simulate_mouse_down_move_up(55, 80, 65, 80, ctrl_down=False, shift_down=False)
@@ -279,6 +297,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_timeline_redrawn()
 
     def test_scrolls_timeline_by_10_percent_when_moving_event(self):
+        self.given_db_set()
         self.simulate_mouse_click(50, 80)
         self.controller.left_mouse_down(55, 80, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(230, 80)
@@ -290,6 +309,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_timeline_redrawn()
 
     def test_scrolls_timeline_by_10_percent_when_resizing_event(self):
+        self.given_db_set()
         # First select the event so that move icon is visible
         self.simulate_mouse_click(50, 80)
         # Then start the dragging the move icon
@@ -304,6 +324,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_timeline_redrawn()
 
     def test_scrolls_with_10_percent_when_using_mouse_wheel(self):
+        self.given_db_set()
         # Scroll forward
         self.controller.mouse_wheel_moved(-1, ctrl_down=False, shift_down=False)
         self.assert_displays_period(datetime(2010, 8, 30, 2, 24, 0),
@@ -316,12 +337,14 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_timeline_redrawn()
 
     def test_deletes_selected_events_when_pressing_del_and_answering_yes_in_dialog(self):
+        self.given_db_set()
         self.view.ask_question.return_value = wx.YES
         self.simulate_mouse_click(50, 80)
         self.controller.key_down(wx.WXK_DELETE)
         self.assertEquals([self.point_event], self.db.get_all_events())
 
     def test_deletes_no_selected_events_when_pressing_del_and_answering_no_in_dialog(self):
+        self.given_db_set()
         self.view.ask_question.return_value = wx.NO
         self.simulate_mouse_click(50, 80)
         self.controller.key_down(wx.WXK_DELETE)
@@ -329,6 +352,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assertTrue(self.point_event in self.db.get_all_events())
 
     def test_shift_scroll_changes_divider_line_value_and_redraws(self):
+        self.given_db_set()
         self.controller.mouse_wheel_moved(1, ctrl_down=False, shift_down=True)
         self.assertTrue(self.divider_line_slider.SetValue.called)
         self.assert_timeline_redrawn()
@@ -336,6 +360,10 @@ class TimelineViewSpec(unittest.TestCase):
     def test_disables_view_if_no_timeline_set(self):
         self.controller.set_timeline(None)
         self.view.Disable.assert_called_with()
+
+    def given_db_set(self):
+        self.controller.set_timeline(self.db)
+        self.view.reset_mock()
 
     def simulate_mouse_double_click(self, x, y):
         self.simulate_mouse_click(x, y)
