@@ -16,34 +16,29 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Implements a Drawer that draws the default timeline view.
-"""
-
-
 import math
 import os.path
 
 import wx
 
 from timelinelib.drawing.interface import Drawer
-from timelinelib.drawing.utils import get_default_font
-from timelinelib.drawing.utils import Metrics
-from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.scene import TimelineScene
-from timelinelib.gui.utils import sort_categories
-from timelinelib.db.objects import TimePeriod
-from timelinelib.paths import ICONS_DIR
+from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_contrast_ratio
+from timelinelib.drawing.utils import get_default_font
+from timelinelib.gui.utils import sort_categories
+from timelinelib.paths import ICONS_DIR
 
-OUTER_PADDING = 5      # Space between event boxes (pixels)
-INNER_PADDING = 3      # Space inside event box to text (pixels)
+
+OUTER_PADDING = 5 # Space between event boxes (pixels)
+INNER_PADDING = 3 # Space inside event box to text (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 BALLOON_RADIUS = 12
 DATA_INDICATOR_SIZE = 10
 CONTRAST_RATIO_THREASHOLD = 2250
-WHITE = (255,255,255)
-BLACK = (0,0,0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
 
 class DefaultDrawingAlgorithm(Drawer):
 
