@@ -17,21 +17,19 @@
 
 
 from datetime import datetime
-from datetime import timedelta
 import unittest
 
-import wx
 from mock import Mock
+import wx
 
-from timelinelib.time import PyTimeType
-from timelinelib.drawing.interface import Drawer
-from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import Event
+from timelinelib.db.objects import TimePeriod
+from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.components.timelineview import DrawingAreaController
 from timelinelib.gui.dialogs.mainframe import StatusBarAdapter
+from timelinelib.time import PyTimeType
 
 
 # TODO: testSavesEventAfterMove
