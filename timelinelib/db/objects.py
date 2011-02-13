@@ -176,6 +176,9 @@ class TimePeriod(object):
         self.time_type = time_type
         self.update(start_time, end_time)
 
+    def clone(self):
+        return TimePeriod(self.time_type, self.start_time, self.end_time)
+
     def __eq__(self, other):
         if isinstance(other, TimePeriod):
             return (self.start_time == other.start_time and

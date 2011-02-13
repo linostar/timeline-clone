@@ -52,9 +52,9 @@ def human_time_to_ymd(human_time):
     return (year, month, day)
 
 
-def py_time(year, month, day, hour=15, minute=30, second=5):
+def py_time(year, month, day, hour=0, minute=0, second=0):
     return datetime.datetime(year, month, day, hour, minute, second)
 
 
-def wx_time(year, month, day, hour=15, minute=30, second=5):
+def wx_time(year, month, day, hour=0, minute=0, second=0):
     return wx.DateTimeFromDMY(day, month-1, year, hour, minute, second)
