@@ -94,15 +94,9 @@ class TimelineScene(object):
     def _create_rectangle_for_event(self, event):
         rect = self._create_ideal_rect_for_event(event)
         self._ensure_rect_is_not_far_outisde_screen(rect)
-        self._prevent_overlap(rect, self._get_y_move_direction(event))
+        self._prevent_overlapping_by_adjusting_rect_y(event, rect)
         return rect
         
-    def _get_y_move_direction(self, event):
-        if self._display_as_period(event):
-            return 1
-        else:
-            return -1
-
     def _create_ideal_rect_for_event(self, event):
         if self._display_as_period(event):
             return self._create_ideal_rect_for_period_event(event)
@@ -152,28 +146,6 @@ class TimelineScene(object):
         rect.SetX(rx)
         rect.SetWidth(rw)
 
-    def _prevent_overlap(self, rect, y_move_direction):
-        while True:
-            intersection_height = self._intersection_height(rect)
-            rect.Y += y_move_direction * intersection_height
-            if intersection_height == 0:
-                break
-            if self._rect_above_or_below_screen(rect):
-                # Optimization: Don't prevent overlap if rect is pushed
-                # outside screen
-                break
-
-    def _rect_above_or_below_screen(self, rect):
-        return rect.Y > self._metrics.height or (rect.Y + rect.Height) < 0
-
-    def _intersection_height(self, rect):
-        for (event, r) in self.event_data:
-            if rect.Intersects(r):
-                r_copy = wx.Rect(*r) # Because `Intersect` modifies rect
-                intersection = r_copy.Intersect(rect)
-                return intersection.Height
-        return 0
-
     def _calc_strips(self):
         """Fill the two arrays `minor_strip_data` and `major_strip_data`."""
         def fill(list, strip):
@@ -198,3 +170,49 @@ class TimelineScene(object):
             if rect.Y < self.height and (rect.Y + rect.Height) > 0:
                 num_visible += 1
         return num_visible
+    
+    def _prevent_overlapping_by_adjusting_rect_y(self, event, event_rect):
+        if self._display_as_period(event):
+            self._adjust_period_rect(event_rect)
+        else:
+            self._adjust_point_rect(event_rect)
+
+    def _adjust_period_rect(self, event_rect):
+        rect = self._get_overlapping_period_rect_with_largest_y(event_rect)
+        if rect is not None:
+            event_rect.Y = rect.Y + event_rect.height
+    
+    def _get_overlapping_period_rect_with_largest_y(self, event_rect):
+        list = self._get_list_with_overlapping_period_events(event_rect)
+        rect_with_largest_y = None
+        for (event, rect) in list:
+            if rect_with_largest_y is None or rect.Y > rect_with_largest_y.Y:
+                rect_with_largest_y = rect
+        return rect_with_largest_y
+
+    def _get_list_with_overlapping_period_events(self, event_rect):
+        return [(event, rect) for (event, rect) in self.event_data 
+                if (self._rects_overlap(event_rect, rect) and
+                    rect.Y >= self.divider_y )]
+ 
+    def _adjust_point_rect(self, event_rect):
+        rect = self._get_overlapping_point_rect_with_smallest_y(event_rect)
+        if rect is not None:
+            event_rect.Y =  rect.Y - event_rect.height
+
+    def _get_overlapping_point_rect_with_smallest_y(self, event_rect):
+        list = self._get_list_with_overlapping_point_events(event_rect)
+        rect_with_smallest_y = None
+        for (event, rect) in list:
+            if rect_with_smallest_y is None or rect.Y < rect_with_smallest_y.Y:
+                rect_with_smallest_y = rect
+        return rect_with_smallest_y
+    
+    def _get_list_with_overlapping_point_events(self, event_rect):
+        return [(event, rect) for (event, rect) in self.event_data 
+                if (self._rects_overlap(event_rect, rect) and
+                    rect.Y < self.divider_y  )]
+        
+    def _rects_overlap(self, rect1, rect2):
+        return (rect1.X + 2 * self._outer_padding <= rect2.X + rect2.width and 
+                rect2.X + 2 * self._outer_padding <= rect1.X + rect1.width)        

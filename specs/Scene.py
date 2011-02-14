@@ -51,6 +51,34 @@ class SceneSpec(unittest.TestCase):
         self.when_scene_is_created()
         self.assertEquals(1, self.scene.get_hidden_event_count())
 
+    def test_point_events_on_same_date_has_different_y_positions(self):
+        self.given_displayed_period("1 Jan 2010", "10 Jan 2010")
+        self.given_visible_event_at("5 Jan 2010")
+        self.given_visible_event_at("5 Jan 2010")
+        self.when_scene_is_created()
+        self.assertTrue(self.scene.event_data[0][1].Y > self.scene.event_data[1][1].Y)
+
+    def test_point_events_on_different_dates_has_same_y_positions(self):
+        self.given_displayed_period("1 Jan 2010", "10 Jan 2010")
+        self.given_visible_event_at("2 Jan 2010")
+        self.given_visible_event_at("9 Jan 2010")
+        self.when_scene_is_created()
+        self.assertEqual(self.scene.event_data[0][1].Y, self.scene.event_data[1][1].Y)
+
+    def test_period_events_with_same_period_has_different_y_positions(self):
+        self.given_displayed_period("1 Jan 2010", "12 Jan 2010")
+        self.given_visible_event_at("2 Jan 2010", "10 Jan 2010")
+        self.given_visible_event_at("2 Jan 2010", "10 Jan 2010")
+        self.when_scene_is_created()
+        self.assertTrue(self.scene.event_data[0][1].Y < self.scene.event_data[1][1].Y)
+
+    def test_period_events_with_different_periods_has_same_y_positions(self):
+        self.given_displayed_period("1 Jan 2010", "12 Jan 2010")
+        self.given_visible_event_at("2 Jan 2010", "3 Jan 2010")
+        self.given_visible_event_at("8 Jan 2010", "10 Jan 2010")
+        self.when_scene_is_created()
+        self.assertEqual(self.scene.event_data[0][1].Y, self.scene.event_data[1][1].Y)
+        
     def setUp(self):
         self.db = MemoryDB()
         self.view_properties = ViewProperties()
@@ -70,15 +98,17 @@ class SceneSpec(unittest.TestCase):
     def given_displayed_period(self, start, end):
         self.view_properties.displayed_period = py_period(start, end)
 
-    def given_visible_event_at(self, time):
-        self.given_event_at(time, visible=True)
+    def given_visible_event_at(self, start_time, end_time=None):
+        self.given_event_at(start_time, end_time, visible=True)
 
     def given_hidden_event_at(self, time):
         self.given_event_at(time, visible=False)
 
-    def given_event_at(self, time, visible):
+    def given_event_at(self, start_time, end_time=None, visible=True):
         category = Category("category", (0, 0, 0), visible)
-        event = Event(self.db, human_time_to_py(time), human_time_to_py(time), "event", category)
+        if end_time is None:
+            end_time = start_time
+        event = Event(self.db, human_time_to_py(start_time), human_time_to_py(end_time), "event", category)
         self.db.save_category(category)
         self.db.save_event(event)
         self.view_properties.set_category_visible(category, visible)
