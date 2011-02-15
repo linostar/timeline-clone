@@ -245,7 +245,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.given_db_set()
         self.view.ask_question.return_value = wx.YES
         self.simulate_mouse_click(50, PERIOD_Y)
-        self.controller.key_down(wx.WXK_DELETE)
+        self.controller.key_down(wx.WXK_DELETE, False)
         self.assertEquals([point_event], self.db.get_all_events())
 
     def test_deletes_no_selected_events_when_pressing_del_and_answering_no_in_dialog(self):
@@ -254,7 +254,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.given_db_set()
         self.view.ask_question.return_value = wx.NO
         self.simulate_mouse_click(50, PERIOD_Y)
-        self.controller.key_down(wx.WXK_DELETE)
+        self.controller.key_down(wx.WXK_DELETE, False)
         self.assertTrue(period_event in self.db.get_all_events())
         self.assertTrue(point_event in self.db.get_all_events())
 

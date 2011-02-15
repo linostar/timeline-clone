@@ -49,6 +49,7 @@ class SceneSpec(unittest.TestCase):
         for i in range(6):
             self.given_visible_event_at("5 Jan 2010")
         self.when_scene_is_created()
+        hec = self.scene.get_hidden_event_count()
         self.assertEquals(1, self.scene.get_hidden_event_count())
 
     def test_point_events_on_same_date_has_different_y_positions(self):
@@ -56,7 +57,9 @@ class SceneSpec(unittest.TestCase):
         self.given_visible_event_at("5 Jan 2010")
         self.given_visible_event_at("5 Jan 2010")
         self.when_scene_is_created()
-        self.assertTrue(self.scene.event_data[0][1].Y > self.scene.event_data[1][1].Y)
+        y1 = self.scene.event_data[0][1].Y
+        y2 = self.scene.event_data[1][1].Y
+        self.assertTrue(y1 > y2)
 
     def test_point_events_on_different_dates_has_same_y_positions(self):
         self.given_displayed_period("1 Jan 2010", "10 Jan 2010")
@@ -108,7 +111,7 @@ class SceneSpec(unittest.TestCase):
         category = Category("category", (0, 0, 0), visible)
         if end_time is None:
             end_time = start_time
-        event = Event(self.db, human_time_to_py(start_time), human_time_to_py(end_time), "event", category)
+        event = Event(self.db, human_time_to_py(start_time), human_time_to_py(end_time), "event-text", category)
         self.db.save_category(category)
         self.db.save_event(event)
         self.view_properties.set_category_visible(category, visible)
