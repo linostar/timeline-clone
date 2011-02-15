@@ -170,6 +170,12 @@ class TimelineDB(Observable):
         """
         raise NotImplementedError()
 
+    def place_event_after_event(self, event_to_place, target_event):
+        raise NotImplementedError()
+    
+    def place_event_before_event(self, event_to_place, target_event):
+        raise NotImplementedError()
+
 
 class TimelineIOError(Exception):
     """

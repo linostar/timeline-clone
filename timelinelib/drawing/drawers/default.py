@@ -77,6 +77,9 @@ class DefaultDrawingAlgorithm(Drawer):
         tw, th = self.dc.GetTextExtent(text)
         return (tw, th)
 
+    def get_closest_overlapping_event(self, event_to_move, up=True):
+        return self.scene.get_closest_overlapping_event(event_to_move, up=up)
+
     def draw(self, dc, timeline, view_properties):
         self.dc = dc
         self.time_type = timeline.get_time_type()

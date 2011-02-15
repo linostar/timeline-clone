@@ -349,6 +349,51 @@ class MemoryDBSpec(unittest.TestCase):
         self.db.enable_save()
         self.assertEquals(self.db._save.call_count, 2)
 
+    def testMoveEventForward(self):
+        self.db.save_event(self.e1)
+        self.db.save_event(self.e2)
+        self.db.save_event(self.e3)
+        self.db.place_event_after_event(self.e1, self.e2)
+        self.assertTrue(self.db.events[0] == self.e2 )
+        self.assertTrue(self.db.events[1] == self.e1 )
+        self.assertTrue(self.db.events[2] == self.e3 )
+
+    def testMoveEventToEnd(self):
+        self.db.save_event(self.e1)
+        self.db.save_event(self.e2)
+        self.db.save_event(self.e3)
+        self.db.place_event_after_event(self.e1, self.e3)
+        self.assertTrue(self.db.events[0] == self.e2 )
+        self.assertTrue(self.db.events[1] == self.e3 )
+        self.assertTrue(self.db.events[2] == self.e1 )
+
+    def testMoveEventBackward(self):
+        self.db.save_event(self.e1)
+        self.db.save_event(self.e2)
+        self.db.save_event(self.e3)
+        self.db.place_event_before_event(self.e2, self.e1)
+        self.assertTrue(self.db.events[0] == self.e2 )
+        self.assertTrue(self.db.events[1] == self.e1 )
+        self.assertTrue(self.db.events[2] == self.e3 )
+
+    def testMoveEventToBeginning(self):
+        self.db.save_event(self.e1)
+        self.db.save_event(self.e2)
+        self.db.save_event(self.e3)
+        self.db.place_event_before_event(self.e3, self.e1)
+        self.assertTrue(self.db.events[0] == self.e3 )
+        self.assertTrue(self.db.events[1] == self.e1 )
+        self.assertTrue(self.db.events[2] == self.e2 )
+
+    def testMoveEventTooriginalPlace(self):
+        self.db.save_event(self.e1)
+        self.db.save_event(self.e2)
+        self.db.save_event(self.e3)
+        self.db.place_event_before_event(self.e2, self.e2)
+        self.assertTrue(self.db.events[0] == self.e1 )
+        self.assertTrue(self.db.events[1] == self.e2 )
+        self.assertTrue(self.db.events[2] == self.e3 )
+        
     def setUp(self):
         self.db = MemoryDB()
         self.db._save = Mock()
@@ -359,4 +404,6 @@ class MemoryDBSpec(unittest.TestCase):
                         "holiday")
         self.e2 = Event(self.db, datetime(2010, 2, 14), datetime(2010, 2, 14), 
                         "work starts")
+        self.e3 = Event(self.db, datetime(2010, 2, 15), datetime(2010, 2, 16), 
+                        "period")
         self.db.register(self.db_listener)

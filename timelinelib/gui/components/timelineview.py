@@ -208,7 +208,7 @@ class DrawingArea(wx.Panel):
         self.controller.mouse_wheel_moved(evt.m_wheelRotation, evt.ControlDown(), evt.ShiftDown())
 
     def _on_key_down(self, evt):
-        self.controller.key_down(evt.GetKeyCode())
+        self.controller.key_down(evt.GetKeyCode(), evt.AltDown())
         evt.Skip()
 
     def _on_key_up(self, evt):
@@ -337,6 +337,18 @@ class DrawingAreaController(object):
         self.view.PopupMenu(menu)
         menu.Destroy()
 
+    def _one_and_only_one_event_selected(self):
+        selected_event_ids = self.view_properties.get_selected_event_ids()
+        nbr_of_selected_event_ids = len(selected_event_ids)
+        return nbr_of_selected_event_ids == 1
+
+    def _get_first_selected_event(self):
+        selected_event_ids = self.view_properties.get_selected_event_ids()
+        if len(selected_event_ids) > 0:
+            id = selected_event_ids[0]
+            return self.timeline.find_event_with_id(id)
+        return None 
+        
     def _context_menu_on_edit_event(self, evt):
         self.view.edit_event(self.context_menu_event)
 
@@ -409,10 +421,30 @@ class DrawingAreaController(object):
         else:
             self._scroll_timeline_view(direction)
 
-    def key_down(self, keycode):
+    def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()
+        elif alt_down:
+            if keycode == wx.WXK_UP:
+                self._move_event_vertically(up=True)
+            elif keycode == wx.WXK_DOWN:
+                self._move_event_vertically(up=False)
 
+    def _move_event_vertically(self, up=True):
+        if self._one_and_only_one_event_selected():
+            selected_event = self._get_first_selected_event()
+            (overlapping_event, direction) = self.drawing_algorithm.get_closest_overlapping_event(selected_event, 
+                                                                                                  up=up) 
+            if overlapping_event is None:
+                return
+            if direction > 0:
+                self.timeline.place_event_after_event(selected_event, 
+                                                      overlapping_event)
+            else:
+                self.timeline.place_event_before_event(selected_event, 
+                                                       overlapping_event)
+            self._redraw_timeline()
+                
     def key_up(self, keycode):
         if keycode == wx.WXK_CONTROL:
             self.view.set_default_cursor()
