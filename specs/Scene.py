@@ -49,7 +49,6 @@ class SceneSpec(unittest.TestCase):
         for i in range(6):
             self.given_visible_event_at("5 Jan 2010")
         self.when_scene_is_created()
-        hec = self.scene.get_hidden_event_count()
         self.assertEquals(1, self.scene.get_hidden_event_count())
 
     def test_point_events_on_same_date_has_different_y_positions(self):
@@ -57,30 +56,32 @@ class SceneSpec(unittest.TestCase):
         self.given_visible_event_at("5 Jan 2010")
         self.given_visible_event_at("5 Jan 2010")
         self.when_scene_is_created()
-        y1 = self.scene.event_data[0][1].Y
-        y2 = self.scene.event_data[1][1].Y
-        self.assertTrue(y1 > y2)
+        self.assertTrue(self.scene.event_data[0][1].Y > 
+                        self.scene.event_data[1][1].Y)
 
     def test_point_events_on_different_dates_has_same_y_positions(self):
         self.given_displayed_period("1 Jan 2010", "10 Jan 2010")
         self.given_visible_event_at("2 Jan 2010")
         self.given_visible_event_at("9 Jan 2010")
         self.when_scene_is_created()
-        self.assertEqual(self.scene.event_data[0][1].Y, self.scene.event_data[1][1].Y)
+        self.assertEqual(self.scene.event_data[0][1].Y, 
+                         self.scene.event_data[1][1].Y)
 
     def test_period_events_with_same_period_has_different_y_positions(self):
         self.given_displayed_period("1 Jan 2010", "12 Jan 2010")
         self.given_visible_event_at("2 Jan 2010", "10 Jan 2010")
         self.given_visible_event_at("2 Jan 2010", "10 Jan 2010")
         self.when_scene_is_created()
-        self.assertTrue(self.scene.event_data[0][1].Y < self.scene.event_data[1][1].Y)
+        self.assertTrue(self.scene.event_data[0][1].Y < 
+                        self.scene.event_data[1][1].Y)
 
     def test_period_events_with_different_periods_has_same_y_positions(self):
         self.given_displayed_period("1 Jan 2010", "12 Jan 2010")
         self.given_visible_event_at("2 Jan 2010", "3 Jan 2010")
         self.given_visible_event_at("8 Jan 2010", "10 Jan 2010")
         self.when_scene_is_created()
-        self.assertEqual(self.scene.event_data[0][1].Y, self.scene.event_data[1][1].Y)
+        self.assertEqual(self.scene.event_data[0][1].Y, 
+                         self.scene.event_data[1][1].Y)
         
     def setUp(self):
         self.db = MemoryDB()
@@ -92,7 +93,7 @@ class SceneSpec(unittest.TestCase):
 
     def given_number_of_events_stackable_is(self, number):
         self.event_height = 10
-        self.size = (100, 2*self.event_height*number)
+        self.size = (100, 2 * self.event_height * number)
         self.view_properties.divider_position = 0.5
         self.outer_padding = 0
         self.inner_padding = 0
@@ -111,7 +112,8 @@ class SceneSpec(unittest.TestCase):
         category = Category("category", (0, 0, 0), visible)
         if end_time is None:
             end_time = start_time
-        event = Event(self.db, human_time_to_py(start_time), human_time_to_py(end_time), "event-text", category)
+        event = Event(self.db, human_time_to_py(start_time), 
+                      human_time_to_py(end_time), "event-text", category)
         self.db.save_category(category)
         self.db.save_event(event)
         self.view_properties.set_category_visible(category, visible)
