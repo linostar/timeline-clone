@@ -42,6 +42,9 @@ SCROLL_ZONE_WIDTH = 20
 # dragscroll timer interval in milliseconds
 DRAGSCROLL_TIMER_MSINTERVAL = 300
 
+LEFT_RIGHT_SCROLL_FACTOR = 1 / 200.0
+MOUSE_SCROLL_FACTOR = 1 / 10.0
+
 
 class DrawingArea(wx.Panel):
 
@@ -446,6 +449,10 @@ class DrawingAreaController(object):
                 self._move_event_vertically(up=True)
             elif keycode == wx.WXK_DOWN:
                 self._move_event_vertically(up=False)
+            elif keycode == wx.WXK_RIGHT:
+                self._scroll_timeline_view_by_factor(LEFT_RIGHT_SCROLL_FACTOR)
+            elif keycode == wx.WXK_LEFT:
+                self._scroll_timeline_view_by_factor(-LEFT_RIGHT_SCROLL_FACTOR)
 
     def _move_event_vertically(self, up=True):
         if self._one_and_only_one_event_selected():
@@ -563,8 +570,11 @@ class DrawingAreaController(object):
         self.input_handler.dragscroll_timer_fired(self)
 
     def _scroll_timeline_view(self, direction):
+        factor = direction * MOUSE_SCROLL_FACTOR
+        self._scroll_timeline_view_by_factor(factor)
+
+    def _scroll_timeline_view_by_factor(self, factor):
         time_period = self.view_properties.displayed_period
-        factor = direction / 10.0
         delta = self.time_type.mult_timedelta(time_period.delta(), factor) 
         self._scroll_timeline(delta)
 
