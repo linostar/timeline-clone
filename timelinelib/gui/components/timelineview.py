@@ -245,26 +245,43 @@ class DrawingAreaController(object):
 
     def set_timeline(self, timeline):
         """Inform what timeline to draw."""
-        if self.timeline != None:
-            self.timeline.unregister(self._timeline_changed)
+        self._unregister_timeline(self.timeline)
+        if timeline is None:
+            self._set_null_timeline()
+        else:
+            self._set_non_null_timeline(timeline)
+
+    def _set_null_timeline(self):
+        self.timeline = None
+        self.time_type = None
+        self.view.Disable()
+        
+    def _set_non_null_timeline(self, timeline):
         self.timeline = timeline
-        self.time_type = None if timeline is None else self.timeline.get_time_type()
-        if self.timeline:
-            self.timeline.register(self._timeline_changed)
-            try:
-                self.view_properties.clear_db_specific()
-                timeline.load_view_properties(self.view_properties)
-                if self.view_properties.displayed_period is None:
-                    default_tp = self.time_type.get_default_time_period()
-                    self.view_properties.displayed_period = default_tp
-            except TimelineIOError, e:
-                self.fn_handle_db_error(e)
-                return
+        self.time_type = timeline.get_time_type()
+        self.timeline.register(self._timeline_changed)
+        properties_loaded = self._load_view_properties()
+        if properties_loaded:
             self._redraw_timeline()
             self.view.Enable()
             self.view.SetFocus()
-        else:
-            self.view.Disable()
+
+    def _load_view_properties(self):
+        properties_loaded = True
+        try:
+            self.view_properties.clear_db_specific()
+            self.timeline.load_view_properties(self.view_properties)
+            if self.view_properties.displayed_period is None:
+                default_tp = self.time_type.get_default_time_period()
+                self.view_properties.displayed_period = default_tp
+        except TimelineIOError, e:
+            self.fn_handle_db_error(e)
+            properties_loaded = False
+        return properties_loaded
+        
+    def _unregister_timeline(self, timeline):
+        if timeline != None:
+            timeline.unregister(self._timeline_changed)
 
     def show_hide_legend(self, show):
         self.view_properties.show_legend = show
