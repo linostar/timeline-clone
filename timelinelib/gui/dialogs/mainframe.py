@@ -16,41 +16,33 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-The main frame of the application.
-"""
-
-
 import os.path
 
 import wx
 
-from timelinelib.db import db_open
-from timelinelib.db.objects import TimePeriod
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.gui.utils import WildcardHelper
-from timelinelib.gui.utils import _display_error_message
-from timelinelib.gui.utils import _ask_question
-from timelinelib import config
-from timelinelib.about import display_about_dialog
 from timelinelib.about import APPLICATION_NAME
-from timelinelib.paths import ICONS_DIR
-from timelinelib.paths import HELP_RESOURCES_DIR
-import timelinelib.printing as printing
-import timelinelib.gui.utils as gui_utils
-from timelinelib.gui.utils import BORDER
-from timelinelib.gui.utils import ID_ERROR
+from timelinelib.about import display_about_dialog
+from timelinelib.db import db_open
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.objects import TimePeriod
+from timelinelib.gui.components.cattree import CategoriesTree
+from timelinelib.gui.components.hyperlinkbutton import HyperlinkButton
+from timelinelib.gui.components.search import SearchBar
+from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.duplicateevent import DuplicateEvent
 from timelinelib.gui.dialogs.eventeditor import EventEditor
-from timelinelib.gui.dialogs.gotodate import GotoDateDialog
 from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.gui.dialogs.preferences import PreferencesDialog
-from timelinelib.gui.components.cattree import CategoriesTree
-from timelinelib.gui.components.hyperlinkbutton import HyperlinkButton
-from timelinelib.gui.components.timelineview import DrawingArea
-from timelinelib.gui.components.search import SearchBar
+from timelinelib.gui.utils import _ask_question
+from timelinelib.gui.utils import _display_error_message
+from timelinelib.gui.utils import WildcardHelper
+from timelinelib import config
+from timelinelib.paths import HELP_RESOURCES_DIR
+from timelinelib.paths import ICONS_DIR
 from timelinelib.utils import ex_msg
+import timelinelib.gui.utils as gui_utils
+import timelinelib.printing as printing
 
 
 MENU_REQUIRES_TIMELINE       = 1
@@ -59,14 +51,6 @@ MENU_REQUIRES_UPDATE         = 3
 
 
 class MainFrame(wx.Frame):
-    """
-    The main frame of the application.
-
-    Can be resized, maximized and minimized. Contains one panel: MainPanel.
-
-    Owns an instance of a timeline that is currently being displayed. When the
-    timeline changes, this control will notify sub controls about it.
-    """
 
     def __init__(self):
         wx.Frame.__init__(self, None, size=config.get_window_size(), 
@@ -107,15 +91,6 @@ class MainFrame(wx.Frame):
         gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
     def duplicate_event(self, event=None):
-        """
-        Duplicates the given event one or more times.
-        
-        If the given event == None, the selected event is duplicated.
-        This happens when the main menu 'duplicate selected event' is used.
-        This menu item is only enabled when there is only one event selected.
-        The event is given as an argument when the event context menu item
-        'duplicate event' is used.
-        """
         def show_dialog(event):
             def create_dialog():
                 return DuplicateEvent(self, self.timeline, event)
@@ -142,9 +117,6 @@ class MainFrame(wx.Frame):
         gui_utils.show_modal(create_categories_editor, self.handle_db_error)
 
     def handle_db_error(self, error):
-        """
-        Should be called whenever a TimelineIOError was raised.
-        """
         _display_error_message(ex_msg(error), self)
         self._switch_to_error_view(error)
 
@@ -409,14 +381,12 @@ class MainFrame(wx.Frame):
         self.Destroy()
 
     def _mnu_file_new_on_click(self, event):
-        """Event handler used when the user wants to create a new timeline."""
         self._create_new_timeline()
 
     def _mnu_file_new_dir_on_click(self, event):
         self._create_new_dir_timeline()
 
     def _mnu_file_open_on_click(self, event):
-        """Event handler used when the user wants to open a new timeline."""
         self._open_existing_timeline()
 
     def _mnu_file_open_recent_item_on_click(self, event):
@@ -439,7 +409,6 @@ class MainFrame(wx.Frame):
         self._export_to_svg_image()
 
     def _mnu_file_exit_on_click(self, evt):
-        """Event handler for the Exit menu item"""
         self.Close()
 
     def _mnu_edit_find_on_click(self, evt):
@@ -594,15 +563,6 @@ class MainFrame(wx.Frame):
                 self.status_bar_adapter.set_read_only_text(_("read-only"))
 
     def _create_new_timeline(self):
-        """
-        Create a new empty timeline.
-
-        The user is asked to enter the filename of the new timeline to be
-        created.
-
-        If the new filename entered, should already exist, the existing
-        timeline is opened. The user will be informed about this situation.
-        """
         wildcard = self.timeline_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Create Timeline"),
                                wildcard=wildcard, style=wx.FD_SAVE)
@@ -619,15 +579,6 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
 
     def _create_new_dir_timeline(self):
-        """
-        Create a new empty timeline.
-
-        The user is asked to enter the path to a dircetory from which files are
-        to be read.
-
-        If the new path entered, should already exist, the existing
-        timeline is opened. The user will be informed about this situation.
-        """
         dialog = wx.DirDialog(self, message=_("Create Timeline"))
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
@@ -635,11 +586,6 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
 
     def _open_existing_timeline(self):
-        """
-        Open a new timeline.
-
-        The user is asked to enter the filename of the timeline to be opened.
-        """
         dir = ""
         if self.timeline is not None:
             dir = os.path.dirname(self.timeline.path)
@@ -681,14 +627,6 @@ class MainFrame(wx.Frame):
             _display_error_message(msg, self)
 
     def _save_current_timeline_data(self):
-        """
-        Saves settings for the timeline that is currently displayed to
-        the timeline file. Date saved is:
-            - currently displayed time period
-        If there is no current timeline, nothing happens.
-        This method should be called before a new timeline is opened
-        or created or when the application is closed.
-        """
         if self.timeline:
             try:
                 self.timeline.save_view_properties(self.main_panel.drawing_area.get_view_properties())
@@ -737,11 +675,6 @@ class MainFrame(wx.Frame):
             return False
 
     def _set_initial_values_to_member_variables(self):
-        """
-        Instance variables usage:
-
-        timeline            The timeline currently handled by the application
-        """
         self.timeline = None
         self.timeline_wildcard_helper = WildcardHelper(
             _("Timeline files"), ["timeline", "ics"])
@@ -759,11 +692,9 @@ class MainFrame(wx.Frame):
         return bundle
 
     def _navigate_timeline(self, navigation_fn):
-        """Shortcut for method in DrawingArea."""
         return self.main_panel.drawing_area.navigate_timeline(navigation_fn)
 
     def _get_time_period(self):
-        """Shortcut for method in DrawingArea."""
         return self.main_panel.drawing_area.get_time_period()
 
     def _create_print_data(self):
@@ -781,7 +712,6 @@ class MainFrameController(object):
         self.config = config
 
     def open_timeline(self, path):
-        """Read timeline info from the given input file and display it."""
         try:
             timeline = self.db_open_fn(path, self.config.get_use_wide_date_range())
         except TimelineIOError, e:
