@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 
 from timelinelib.gui.dialogs.mainframe import MainFrame
-from timelinelib.gui.dialogs.mainframe import MainFrameController
+from timelinelib.application import TimelineApplication
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.config import Config
 
@@ -55,7 +55,7 @@ class MainFrameSpec(unittest.TestCase):
         self.db_open = Mock()
         self.config = Mock(Config)
         self.config.get_use_wide_date_range.return_value = self.USE_WIDE_DATE_RANGE 
-        self.controller = MainFrameController(
+        self.controller = TimelineApplication(
             self.main_frame, self.db_open, self.config)
 
     def given_opening_fails_with_error(self, error):

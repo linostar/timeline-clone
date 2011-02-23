@@ -22,6 +22,7 @@ import wx
 
 from timelinelib.about import APPLICATION_NAME
 from timelinelib.about import display_about_dialog
+from timelinelib.application import TimelineApplication
 from timelinelib.db import db_open
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
@@ -66,7 +67,7 @@ class MainFrame(wx.Frame):
         self.main_panel.show_welcome_panel()
         self.enable_disable_menus()
         self._create_print_data()
-        self.controller = MainFrameController(self, db_open, config.global_config)
+        self.controller = TimelineApplication(self, db_open, config.global_config)
 
     def open_timeline(self, input_file):
         self.controller.open_timeline(input_file)
@@ -678,24 +679,6 @@ class MainFrame(wx.Frame):
         self.printData.SetPaperId(wx.PAPER_A4)
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
-
-
-class MainFrameController(object):
-
-    def __init__(self, main_frame, db_open_fn, config):
-        self.main_frame = main_frame
-        self.db_open_fn = db_open_fn
-        self.config = config
-
-    def open_timeline(self, path):
-        try:
-            timeline = self.db_open_fn(path, self.config.get_use_wide_date_range())
-        except TimelineIOError, e:
-            self.main_frame.handle_db_error(e)
-        else:
-            self.config.append_recently_opened(path)
-            self.main_frame._update_open_recent_submenu()
-            self.main_frame._display_timeline(timeline)
 
 
 class MenuController(object):
