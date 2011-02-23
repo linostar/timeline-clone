@@ -125,6 +125,8 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
         self.PopupMenu(self.mnu)
 
     def _on_key_down(self, e):
+        if self.GetFirstVisibleItem() is None:
+            return
         keycode = e.GetKeyCode()
         if keycode == wx.WXK_DELETE:
             self.controller.delete_selected_category()
