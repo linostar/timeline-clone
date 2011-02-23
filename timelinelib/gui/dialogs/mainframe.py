@@ -45,11 +45,6 @@ import timelinelib.gui.utils as gui_utils
 import timelinelib.printing as printing
 
 
-MENU_REQUIRES_TIMELINE       = 1
-MENU_REQUIRES_TIMELINE_VIEW  = 2  
-MENU_REQUIRES_UPDATE         = 3
-
-
 class MainFrame(wx.Frame):
 
     def __init__(self):
@@ -315,14 +310,14 @@ class MainFrame(wx.Frame):
         for item in self._navigation_menu_items:    
             items_requiering_timeline.append(item)
         for menu in items_requiering_timeline:
-            self.menu_controller.add_menu(menu, MENU_REQUIRES_TIMELINE)
+            self.menu_controller.add_menu_requiring_timeline(menu)
 
     def _collect_items_requiering_timeline_view(self):
         items_requiering_timeline_view = [
             self.mnu_view_sidebar,
         ]
         for menu in items_requiering_timeline_view:
-            self.menu_controller.add_menu(menu, MENU_REQUIRES_TIMELINE_VIEW)
+            self.menu_controller.add_menu_requiring_visible_timeline_view(menu)
 
     def _collect_items_requiering_update(self):
         items_requiering_update = [
@@ -331,7 +326,7 @@ class MainFrame(wx.Frame):
             self.mnu_timeline_edit_categories
         ]
         for menu in items_requiering_update:
-            self.menu_controller.add_menu(menu, MENU_REQUIRES_UPDATE)
+            self.menu_controller.add_menu_requiring_writable_timeline(menu)
         
     def _update_navigation_menu_items(self):
         self._clear_navigation_menu_items()
@@ -725,37 +720,44 @@ class MainFrameController(object):
 class MenuController(object):
     
     def __init__(self):
-        self.menues = []
-        self.timeline = None
+        self.current_timeline = None
+        self.menus_requiring_timeline = []
+        self.menus_requiring_writable_timeline = []
+        self.menus_requiring_visible_timeline_view = []
 
     def on_timeline_change(self, timeline):
-        self.timeline = timeline
+        self.current_timeline = timeline
         
-    def add_menu(self, menu, requirement):
-        self.menues.append((menu, requirement))
+    def add_menu_requiring_writable_timeline(self, menu):
+        self.menus_requiring_writable_timeline.append(menu)
+
+    def add_menu_requiring_timeline(self, menu):
+        self.menus_requiring_timeline.append(menu)
+
+    def add_menu_requiring_visible_timeline_view(self, menu):
+        self.menus_requiring_visible_timeline_view.append(menu)
         
     def enable_disable_menus(self, timeline_view_visible):
-        for menu, requirement in self.menues:
-            if requirement == MENU_REQUIRES_UPDATE:
-                self._enable_disable_menues_that_requires_update(menu)
-            elif requirement == MENU_REQUIRES_TIMELINE:
-                self._enable_disable_menues_that_requires_timeline(menu)
-            elif requirement == MENU_REQUIRES_TIMELINE_VIEW:
-                self._enable_disable_menues_that_requires_timeline_view(menu, 
-                                                        timeline_view_visible)
+        for menu in self.menus_requiring_writable_timeline:
+            self._enable_disable_menu_requiring_writable_timeline(menu)
+        for menu in self.menus_requiring_timeline:
+            self._enable_disable_menu_requiring_timeline(menu)
+        for menu in self.menus_requiring_visible_timeline_view:
+            self._enable_disable_menu_requiring_visible_timeline_view(menu, timeline_view_visible)
         
-    def _enable_disable_menues_that_requires_update(self, menu):
-        is_read_only = ((self.timeline == None) or 
-                        (self.timeline != None and self.timeline.is_read_only()))     
-        menu.Enable(not is_read_only)
+    def _enable_disable_menu_requiring_writable_timeline(self, menu):
+        if self.current_timeline == None:
+            menu.Enable(False)
+        elif self.current_timeline.is_read_only():
+            menu.Enable(False)
+        else:
+            menu.Enable(True)
 
-    def _enable_disable_menues_that_requires_timeline(self, menu):
-        has_timeline = self.timeline != None
-        menu.Enable(self.timeline != None)
+    def _enable_disable_menu_requiring_timeline(self, menu):
+        menu.Enable(self.current_timeline != None)
 
-    def _enable_disable_menues_that_requires_timeline_view(self, menu, 
-                                                    timeline_view_visible):
-        has_timeline = self.timeline != None
+    def _enable_disable_menu_requiring_visible_timeline_view(self, menu, timeline_view_visible):
+        has_timeline = self.current_timeline != None
         menu.Enable(has_timeline and timeline_view_visible)
         
 

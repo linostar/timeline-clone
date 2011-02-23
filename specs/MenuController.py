@@ -23,9 +23,6 @@ import wx
 
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.gui.dialogs.mainframe import MenuController
-from timelinelib.gui.dialogs.mainframe import MENU_REQUIRES_TIMELINE      
-from timelinelib.gui.dialogs.mainframe import MENU_REQUIRES_TIMELINE_VIEW   
-from timelinelib.gui.dialogs.mainframe import MENU_REQUIRES_UPDATE       
 
 
 class MenuControllerSpec(unittest.TestCase):
@@ -88,13 +85,13 @@ class MenuControllerSpec(unittest.TestCase):
         self.timeline_panel_visible = False
 
     def given_menu_item_requires_update(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_UPDATE)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.menu_item)
 
     def given_menu_item_requires_timeline(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE)
+        self.menu_controller.add_menu_requiring_timeline(self.menu_item)
 
     def given_menu_item_requires_timeline_view(self):
-        self.menu_controller.add_menu(self.menu_item, MENU_REQUIRES_TIMELINE_VIEW)
+        self.menu_controller.add_menu_requiring_visible_timeline_view(self.menu_item)
 
     def given_no_timeline_exists(self):
         self.menu_controller.on_timeline_change(None)
