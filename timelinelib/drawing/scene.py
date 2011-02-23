@@ -82,7 +82,6 @@ class TimelineScene(object):
         return self._metrics.calc_width(time_period)
 
     def get_closest_overlapping_event(self, selected_event, up=True):
-        self._overlap_padding = 0
         rect = self._get_event_rect(selected_event)
         period = self._event_rect_drawn_as_period(rect)
         direction = self._get_direction(period, up)
@@ -241,7 +240,6 @@ class TimelineScene(object):
         return num_visible
     
     def _prevent_overlapping_by_adjusting_rect_y(self, event, event_rect):
-        self._overlap_padding = self._outer_padding
         if self._display_as_period(event):
             self._adjust_period_rect(event_rect)
         else:
@@ -284,5 +282,5 @@ class TimelineScene(object):
                     rect.Y < self.divider_y  )]
         
     def _rects_overlap(self, rect1, rect2):
-        return (rect1.X + 2 * self._overlap_padding <= rect2.X + rect2.width and 
-                rect2.X + 2 * self._overlap_padding <= rect1.X + rect1.width)        
+        return (rect2.x <= rect1.x + rect1.width and
+                rect1.x <= rect2.x + rect2.width)   
