@@ -299,6 +299,7 @@ class MainFrame(wx.Frame):
             self.mnu_file_print_preview,
             self.mnu_file_print_setup,
             self.mnu_file_export,
+            self.mnu_file_export_svg,
             self.mnu_view_legend,
             self.mnu_edit_find,
         ]
