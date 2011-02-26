@@ -92,7 +92,7 @@ class MainFrame(wx.Frame):
     def _create_gui(self):
         self.create_status_bar()
         self.create_main_panel()
-        self.create_main_menu()
+        self.create_main_menu_bar()
         self.bind_frame_events()
         
     def create_status_bar(self):
@@ -102,99 +102,96 @@ class MainFrame(wx.Frame):
     def create_main_panel(self):
         self.main_panel = MainPanel(self)
         
-    def create_main_menu(self):
-        self.create_menues()
-        menu_bar = self.create_menu_bar()
-        self.append_menues_to_menu_bar(menu_bar)
+    def create_main_menu_bar(self):
+        main_menu_bar = wx.MenuBar()
+        self.create_file_menu(main_menu_bar)
+        self.create_edit_menu(main_menu_bar)
+        self.create_view_menu(main_menu_bar)
+        self.create_timeline_menu(main_menu_bar)
+        self.create_navigate_menu(main_menu_bar)
+        self.create_help_menu(main_menu_bar)
+        self.SetMenuBar(main_menu_bar)
         
-    def create_menues(self):
-        self.create_file_menu()
-        self.create_edit_menu()
-        self.create_view_menu()
-        self.create_timeline_menu()
-        self.create_navigate_menu()
-        self.create_help_menu()
-        
-    def create_file_menu(self):
-        self.mnu_file = wx.Menu()
-        self.create_file_new_menu()
-        self.create_file_open_menu_item()
-        self.create_file_open_recent_menu()
-        self.mnu_file.AppendSeparator()
-        self.create_file_page_setup_menu_item()
-        self.create_file_print_preview_menu_item()
-        self.create_file_print_menu_item()
-        self.mnu_file.AppendSeparator()
-        self.create_file_export_to_image_menu_item()
-        self.create_file_export_to_svg_menu_item()
-        self.mnu_file.AppendSeparator()
-        self.create_file_exit_menu_item()
+    def create_file_menu(self, main_menu_bar):
+        file_menu = wx.Menu()
+        self.create_file_new_menu(file_menu)
+        self.create_file_open_menu_item(file_menu)
+        self.create_file_open_recent_menu(file_menu)
+        file_menu.AppendSeparator()
+        self.create_file_page_setup_menu_item(file_menu)
+        self.create_file_print_preview_menu_item(file_menu)
+        self.create_file_print_menu_item(file_menu)
+        file_menu.AppendSeparator()
+        self.create_file_export_to_image_menu_item(file_menu)
+        self.create_file_export_to_svg_menu_item(file_menu)
+        file_menu.AppendSeparator()
+        self.create_file_exit_menu_item(file_menu)
+        main_menu_bar.Append(file_menu, _("&File"))
 
-    def create_file_new_menu(self):
-        self.mnu_file_new = wx.Menu()
-        self.mnu_file.AppendMenu(
-            wx.ID_ANY, _("New"), self.mnu_file_new, _("Create a new timeline"))
-        self.create_file_new_timeline_menu_item()
-        self.create_file_new_dir_timeline_menu_item()
+    def create_file_new_menu(self, file_menu):
+        file_new_menu = wx.Menu()
+        self.create_file_new_timeline_menu_item(file_new_menu)
+        self.create_file_new_dir_timeline_menu_item(file_new_menu)
+        file_menu.AppendMenu(wx.ID_ANY, _("New"), file_new_menu, _("Create a new timeline"))
 
-    def create_file_new_timeline_menu_item(self):
+    def create_file_new_timeline_menu_item(self, file_new_menu):
         accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
         accel = accel.split("\t", 1)[1]
-        self.mnu_file_new.Append(
+        file_new_menu.Append(
             wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
 
-    def create_file_new_dir_timeline_menu_item(self):
-        mnu_file_new_dir = self.mnu_file_new.Append(
+    def create_file_new_dir_timeline_menu_item(self, file_new_menu):
+        mnu_file_new_dir = file_new_menu.Append(
             wx.ID_ANY, _("Directory Timeline..."), _("Directory Timeline..."))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, mnu_file_new_dir)
 
-    def create_file_open_menu_item(self):
-        self.mnu_file.Append(
+    def create_file_open_menu_item(self, file_menu):
+        file_menu.Append(
             wx.ID_OPEN, self.add_ellipses_to_menuitem(wx.ID_OPEN),
             _("Open an existing timeline"))
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
 
-    def create_file_open_recent_menu(self):
+    def create_file_open_recent_menu(self, file_menu):
         self.mnu_file_open_recent_submenu = wx.Menu()
-        self.mnu_file.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
+        file_menu.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
         self._update_open_recent_submenu()
 
-    def create_file_page_setup_menu_item(self):
-        mnu_file_print_setup = self.mnu_file.Append(
+    def create_file_page_setup_menu_item(self, file_menu):
+        mnu_file_print_setup = file_menu.Append(
             wx.ID_PRINT_SETUP, _("Page Set&up..."), _("Setup page for printing"))
         self.menu_controller.add_menu_requiring_timeline(mnu_file_print_setup)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
 
-    def create_file_print_preview_menu_item(self):
-        mnu_file_print_preview = self.mnu_file.Append(
+    def create_file_print_preview_menu_item(self, file_menu):
+        mnu_file_print_preview = file_menu.Append(
             wx.ID_PREVIEW, "", _("Print Preview"))
         self.menu_controller.add_menu_requiring_timeline(mnu_file_print_preview)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
 
-    def create_file_print_menu_item(self):
-        mnu_file_print = self.mnu_file.Append(
+    def create_file_print_menu_item(self, file_menu):
+        mnu_file_print = file_menu.Append(
             wx.ID_PRINT, self.add_ellipses_to_menuitem(wx.ID_PRINT), _("Print"))
         self.menu_controller.add_menu_requiring_timeline(mnu_file_print)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
 
-    def create_file_export_to_image_menu_item(self):
-        mnu_file_export = self.mnu_file.Append(
+    def create_file_export_to_image_menu_item(self, file_menu):
+        mnu_file_export = file_menu.Append(
             wx.ID_ANY, _("&Export to Image..."), _("Export the current view to a PNG image"))
         self.menu_controller.add_menu_requiring_timeline(mnu_file_export)
         self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click, mnu_file_export)
 
-    def create_file_export_to_svg_menu_item(self):
-        mnu_file_export_svg = self.mnu_file.Append(
+    def create_file_export_to_svg_menu_item(self, file_menu):
+        mnu_file_export_svg = file_menu.Append(
             wx.ID_ANY, _("&Export to SVG..."), _("Export the current view to a SVG image"))
         self.menu_controller.add_menu_requiring_timeline(mnu_file_export_svg)
         self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, mnu_file_export_svg)
 
-    def create_file_exit_menu_item(self):
-        self.mnu_file.Append(wx.ID_EXIT, "", _("Exit the program"))
+    def create_file_exit_menu_item(self, file_menu):
+        file_menu.Append(wx.ID_EXIT, "", _("Exit the program"))
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
 
-    def create_edit_menu(self):
+    def create_edit_menu(self, main_menu_bar):
         self.mnu_edit = wx.Menu()
         self.mnu_edit_find = self.mnu_edit.Append(wx.ID_FIND)
         self.mnu_edit.AppendSeparator()
@@ -203,8 +200,9 @@ class MainFrame(wx.Frame):
                   self.mnu_edit_find)
         self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click,
                   mnu_edit_preferences)
+        main_menu_bar.Append(self.mnu_edit, _("&Edit"))
 
-    def create_view_menu(self):
+    def create_view_menu(self, main_menu_bar):
         self.mnu_view = wx.Menu()
         self.mnu_view_sidebar = self.mnu_view.Append(wx.ID_ANY,
                                                      _("&Sidebar\tCtrl+I"),
@@ -222,8 +220,9 @@ class MainFrame(wx.Frame):
                   self.mnu_view_legend)
         self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click,
                   self.mnu_view_balloons)
+        main_menu_bar.Append(self.mnu_view, _("&View"))
         
-    def create_timeline_menu(self):
+    def create_timeline_menu(self, main_menu_bar):
         self.mnu_timeline = wx.Menu()
         self.mnu_timeline_create_event = self.mnu_timeline.Append(wx.ID_ANY,
                                     _("Create &Event..."),
@@ -240,8 +239,9 @@ class MainFrame(wx.Frame):
                   self.mnu_timeline_duplicate_event)
         self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
                   self.mnu_timeline_edit_categories)
+        main_menu_bar.Append(self.mnu_timeline, _("&Timeline"))
 
-    def create_navigate_menu(self):
+    def create_navigate_menu(self, main_menu_bar):
         self.mnu_navigate = wx.Menu()
         self._navigation_menu_items = []
         self._navigation_functions_by_menu_item_id = {}
@@ -253,8 +253,9 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_navigate_find_first_on_click, find_first)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_find_last_on_click, find_last)
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_all_events_on_click, fit_all_events)
+        main_menu_bar.Append(self.mnu_navigate, _("&Navigate"))
 
-    def create_help_menu(self):
+    def create_help_menu(self, main_menu_bar):
         self.mnu_help = wx.Menu()
         help_contents = self.mnu_help.Append(wx.ID_HELP, _("&Contents\tF1"))
         self.mnu_help.AppendSeparator()
@@ -266,20 +267,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, help_tutorial)
         self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, help_contact)
         self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
-
-    def create_menu_bar(self):
-        menu_bar = wx.MenuBar()
-        self.SetMenuBar(menu_bar)
-        return menu_bar
+        main_menu_bar.Append(self.mnu_help, _("&Help"))
         
-    def append_menues_to_menu_bar(self, menuBar):
-        menuBar.Append(self.mnu_file, _("&File"))
-        menuBar.Append(self.mnu_edit, _("&Edit"))
-        menuBar.Append(self.mnu_view, _("&View"))
-        menuBar.Append(self.mnu_timeline, _("&Timeline"))
-        menuBar.Append(self.mnu_navigate, _("&Navigate"))
-        menuBar.Append(self.mnu_help, _("&Help"))
-
     def bind_frame_events(self):
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
 
