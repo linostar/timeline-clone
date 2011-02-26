@@ -53,76 +53,41 @@ class MainFrame(wx.Frame):
                           style=wx.DEFAULT_FRAME_STYLE)
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-        self._set_initial_values_to_member_variables()
-        self._create_gui()
+
+        self.help_browser = HelpBrowserController(self)
+        self.controller = TimelineApplication(self, db_open, config.global_config)
         self.menu_controller = MenuController()
+
+        self._set_initial_values_to_member_variables()
+        self._create_print_data()
+        self._create_gui()
+
         self._add_menu_items_to_menu_controller()
+
         self.Maximize(config.get_window_maximized())
         self.SetTitle(APPLICATION_NAME)
+        self.SetIcons(self._load_icon_bundle())
+
         self.mnu_view_sidebar.Check(config.get_show_sidebar())
         self.mnu_view_legend.Check(config.get_show_legend())
         self.mnu_view_balloons.Check(config.get_balloon_on_hover())
-        self.SetIcons(self._load_icon_bundle())
-        self.help_browser = HelpBrowserController(self)
         self.main_panel.show_welcome_panel()
         self.enable_disable_menus()
-        self._create_print_data()
-        self.controller = TimelineApplication(self, db_open, config.global_config)
 
-    def open_timeline(self, input_file):
-        self.controller.open_timeline(input_file)
-        self._update_navigation_menu_items()
+    def _set_initial_values_to_member_variables(self):
+        self.timeline = None
+        self.timeline_wildcard_helper = WildcardHelper(
+            _("Timeline files"), ["timeline", "ics"])
+        self.images_wildcard_helper = WildcardHelper(
+            _("Image files"), [("png", wx.BITMAP_TYPE_PNG)])
+        self.images_svg_wildcard_helper = WildcardHelper(
+            _("SVG files"), ["svg"])
 
-    def open_timeline_if_exists(self, path):
-        if os.path.exists(path):
-            self.open_timeline(path)
-        else:
-            _display_error_message(_("File '%s' does not exist.") % path, self)
-
-    def create_new_event(self, start=None, end=None):
-        def create_event_editor():
-            return EventEditor(self, _("Create Event"), self.timeline,
-                               start, end)
-        gui_utils.show_modal(create_event_editor, self.handle_db_error)
-
-    def duplicate_event(self, event=None):
-        def show_dialog(event):
-            def create_dialog():
-                return DuplicateEvent(self, self.timeline, event)
-            gui_utils.show_modal(create_dialog, self.handle_db_error)
-        if event is None:
-            try:
-                drawing_area = self.main_panel.drawing_area 
-                id = drawing_area.get_view_properties().get_selected_event_ids()[0]
-                event = self.timeline.find_event_with_id(id)
-            except IndexError, e:
-                # No event selected so do nothing!
-                return
-        show_dialog(event)
-
-    def edit_event(self, event):
-        def create_event_editor():
-            return EventEditor(self, _("Edit Event"), self.timeline,
-                               event=event)
-        gui_utils.show_modal(create_event_editor, self.handle_db_error)
-
-    def edit_categories(self):
-        def create_categories_editor():
-            return CategoriesEditor(self, self.timeline)
-        gui_utils.show_modal(create_categories_editor, self.handle_db_error)
-
-    def handle_db_error(self, error):
-        _display_error_message(ex_msg(error), self)
-        self._switch_to_error_view(error)
-
-    def add_ellipses_to_menuitem(self, id):
-        plain = wx.GetStockLabel(id,
-                wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
-        # format of plain 'xxx[\tyyy]', example '&New\tCtrl+N'
-        tab_index = plain.find("\t")
-        if tab_index != -1:
-            return plain[:tab_index] + "..." + plain[tab_index:]
-        return plain + "..."
+    def _create_print_data(self):
+        self.printData = wx.PrintData()
+        self.printData.SetPaperId(wx.PAPER_A4)
+        self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
+        self.printData.SetOrientation(wx.LANDSCAPE)
 
     def _create_gui(self):
         self.create_status_bar()
@@ -130,25 +95,17 @@ class MainFrame(wx.Frame):
         self.create_main_menu()
         self.bind_frame_events()
         
-    def create_main_panel(self):
-        self.main_panel = MainPanel(self)
-        
     def create_status_bar(self):
         self.CreateStatusBar()
         self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
+        
+    def create_main_panel(self):
+        self.main_panel = MainPanel(self)
         
     def create_main_menu(self):
         self.create_menues()
         menu_bar = self.create_menu_bar()
         self.append_menues_to_menu_bar(menu_bar)
-
-    def bind_frame_events(self):
-        self.Bind(wx.EVT_CLOSE, self._window_on_close)
-
-    def create_menu_bar(self):
-        menu_bar = wx.MenuBar()
-        self.SetMenuBar(menu_bar)
-        return menu_bar
         
     def create_menues(self):
         self.create_file_menu()
@@ -157,14 +114,6 @@ class MainFrame(wx.Frame):
         self.create_timeline_menu()
         self.create_navigate_menu()
         self.create_help_menu()
-        
-    def append_menues_to_menu_bar(self, menuBar):
-        menuBar.Append(self.mnu_file, _("&File"))
-        menuBar.Append(self.mnu_edit, _("&Edit"))
-        menuBar.Append(self.mnu_view, _("&View"))
-        menuBar.Append(self.mnu_timeline, _("&Timeline"))
-        menuBar.Append(self.mnu_navigate, _("&Navigate"))
-        menuBar.Append(self.mnu_help, _("&Help"))
         
     def create_file_menu(self):
         self.mnu_file = wx.Menu()
@@ -287,7 +236,77 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, help_tutorial)
         self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, help_contact)
         self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, help_about)
-       
+
+    def create_menu_bar(self):
+        menu_bar = wx.MenuBar()
+        self.SetMenuBar(menu_bar)
+        return menu_bar
+        
+    def append_menues_to_menu_bar(self, menuBar):
+        menuBar.Append(self.mnu_file, _("&File"))
+        menuBar.Append(self.mnu_edit, _("&Edit"))
+        menuBar.Append(self.mnu_view, _("&View"))
+        menuBar.Append(self.mnu_timeline, _("&Timeline"))
+        menuBar.Append(self.mnu_navigate, _("&Navigate"))
+        menuBar.Append(self.mnu_help, _("&Help"))
+
+    def bind_frame_events(self):
+        self.Bind(wx.EVT_CLOSE, self._window_on_close)
+
+    def open_timeline(self, input_file):
+        self.controller.open_timeline(input_file)
+        self._update_navigation_menu_items()
+
+    def open_timeline_if_exists(self, path):
+        if os.path.exists(path):
+            self.open_timeline(path)
+        else:
+            _display_error_message(_("File '%s' does not exist.") % path, self)
+
+    def create_new_event(self, start=None, end=None):
+        def create_event_editor():
+            return EventEditor(self, _("Create Event"), self.timeline,
+                               start, end)
+        gui_utils.show_modal(create_event_editor, self.handle_db_error)
+
+    def duplicate_event(self, event=None):
+        def show_dialog(event):
+            def create_dialog():
+                return DuplicateEvent(self, self.timeline, event)
+            gui_utils.show_modal(create_dialog, self.handle_db_error)
+        if event is None:
+            try:
+                drawing_area = self.main_panel.drawing_area 
+                id = drawing_area.get_view_properties().get_selected_event_ids()[0]
+                event = self.timeline.find_event_with_id(id)
+            except IndexError, e:
+                # No event selected so do nothing!
+                return
+        show_dialog(event)
+
+    def edit_event(self, event):
+        def create_event_editor():
+            return EventEditor(self, _("Edit Event"), self.timeline,
+                               event=event)
+        gui_utils.show_modal(create_event_editor, self.handle_db_error)
+
+    def edit_categories(self):
+        def create_categories_editor():
+            return CategoriesEditor(self, self.timeline)
+        gui_utils.show_modal(create_categories_editor, self.handle_db_error)
+
+    def handle_db_error(self, error):
+        _display_error_message(ex_msg(error), self)
+        self._switch_to_error_view(error)
+
+    def add_ellipses_to_menuitem(self, id):
+        plain = wx.GetStockLabel(id,
+                wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
+        # format of plain 'xxx[\tyyy]', example '&New\tCtrl+N'
+        tab_index = plain.find("\t")
+        if tab_index != -1:
+            return plain[:tab_index] + "..." + plain[tab_index:]
+        return plain + "..."
 
     def _add_menu_items_to_menu_controller(self):
         self._add_items_requiering_timeline()
@@ -651,15 +670,6 @@ class MainFrame(wx.Frame):
         except ImportError:
             return False
 
-    def _set_initial_values_to_member_variables(self):
-        self.timeline = None
-        self.timeline_wildcard_helper = WildcardHelper(
-            _("Timeline files"), ["timeline", "ics"])
-        self.images_wildcard_helper = WildcardHelper(
-            _("Image files"), [("png", wx.BITMAP_TYPE_PNG)])
-        self.images_svg_wildcard_helper = WildcardHelper(
-            _("SVG files"), ["svg"])
-
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()
         for size in ["16", "32", "48"]:
@@ -673,12 +683,6 @@ class MainFrame(wx.Frame):
 
     def _get_time_period(self):
         return self.main_panel.drawing_area.get_time_period()
-
-    def _create_print_data(self):
-        self.printData = wx.PrintData()
-        self.printData.SetPaperId(wx.PAPER_A4)
-        self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
-        self.printData.SetOrientation(wx.LANDSCAPE)
 
 
 class MenuController(object):
