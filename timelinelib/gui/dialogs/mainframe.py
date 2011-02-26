@@ -66,9 +66,6 @@ class MainFrame(wx.Frame):
         self.SetTitle(APPLICATION_NAME)
         self.SetIcons(self._load_icon_bundle())
 
-        self.mnu_view_sidebar.Check(config.get_show_sidebar())
-        self.mnu_view_legend.Check(config.get_show_legend())
-        self.mnu_view_balloons.Check(config.get_balloon_on_hover())
         self.main_panel.show_welcome_panel()
         self.enable_disable_menus()
 
@@ -326,30 +323,35 @@ class MainFrame(wx.Frame):
         main_menu_bar.Append(view_menu, _("&View"))
 
     def create_view_sidebar_menu_item(self, view_menu):
-        self.mnu_view_sidebar = view_menu.Append(
+        view_sidebar_item = view_menu.Append(
             wx.ID_ANY, _("&Sidebar\tCtrl+I"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click, self.mnu_view_sidebar)
-        self.menu_controller.add_menu_requiring_visible_timeline_view(self.mnu_view_sidebar)
+        self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click, view_sidebar_item)
+        self.menu_controller.add_menu_requiring_visible_timeline_view(view_sidebar_item)
+        view_sidebar_item.Check(config.get_show_sidebar())
 
     def _mnu_view_sidebar_on_click(self, evt):
+        config.set_show_sidebar(evt.IsChecked())
         if evt.IsChecked():
             self.main_panel.show_sidebar()
         else:
             self.main_panel.hide_sidebar()
 
     def create_view_legend_menu_item(self, view_menu):
-        self.mnu_view_legend = view_menu.Append(
+        view_legend_item = view_menu.Append(
             wx.ID_ANY, _("&Legend"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click, self.mnu_view_legend)
-        self.menu_controller.add_menu_requiring_timeline(self.mnu_view_legend)
+        self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click, view_legend_item)
+        self.menu_controller.add_menu_requiring_timeline(view_legend_item)
+        view_legend_item.Check(config.get_show_legend())
 
     def _mnu_view_legend_on_click(self, evt):
+        config.set_show_legend(evt.IsChecked())
         self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
 
     def create_view_balloons_menu_item(self, view_menu):
-        self.mnu_view_balloons = view_menu.Append(
+        view_balloons_item = view_menu.Append(
             wx.ID_ANY, _("&Balloons on hover"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click, self.mnu_view_balloons)
+        self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click, view_balloons_item)
+        view_balloons_item.Check(config.get_balloon_on_hover())
 
     def _mnu_view_balloons_on_click(self, evt):
         config.set_balloon_on_hover(evt.IsChecked())
@@ -553,8 +555,6 @@ class MainFrame(wx.Frame):
         config.set_window_size(self.GetSize())
         config.set_window_pos(self.GetPosition())
         config.set_window_maximized(self.IsMaximized())
-        config.set_show_sidebar(self.mnu_view_sidebar.IsChecked())
-        config.set_show_legend(self.mnu_view_legend.IsChecked())
         config.set_sidebar_width(self.main_panel.get_sidebar_width())
         try:
             config.write()
