@@ -21,32 +21,32 @@ import unittest
 from mock import Mock
 
 from timelinelib.gui.dialogs.mainframe import MainFrame
-from timelinelib.gui.dialogs.mainframe import MainFrameController
+from timelinelib.application import TimelineApplication
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.config import Config
 
 
 class MainFrameSpec(unittest.TestCase):
 
-    def testUsedDbOpenFactoryMethodToCreateTimeline(self):
-        self.whenTimelineIsOpened("foo.timeline")
+    def test_used_db_open_factory_method_to_create_timeline(self):
+        self.when_timeline_is_opened("foo.timeline")
         self.db_open.assert_called_with("foo.timeline", self.USE_WIDE_DATE_RANGE)
 
-    def testAddsOpenedTimelineToRecentlyOpenedList(self):
-        self.whenTimelineIsOpened("foo.timeline")
+    def test_adds_opened_timeline_to_recently_opened_list(self):
+        self.when_timeline_is_opened("foo.timeline")
         self.config.append_recently_opened.assert_called_with("foo.timeline")
         self.main_frame._update_open_recent_submenu.assert_called_with()
 
-    def testDisplaysOpenedTimeline(self):
+    def test_displays_opened_timeline(self):
         opened_timeline = Mock()
-        self.givenOpeningReturns(opened_timeline)
-        self.whenTimelineIsOpened()
+        self.given_opening_returns(opened_timeline)
+        self.when_timeline_is_opened()
         self.main_frame._display_timeline.assert_called_with(opened_timeline)
 
-    def testHandlesOpenTimelineFailure(self):
+    def test_handles_open_timeline_failure(self):
         error = TimelineIOError("")
-        self.givenOpeningFailsWithError(error)
-        self.whenTimelineIsOpened()
+        self.given_opening_fails_with_error(error)
+        self.when_timeline_is_opened()
         self.main_frame.handle_db_error.assert_called_with(error)
 
     def setUp(self):
@@ -55,14 +55,14 @@ class MainFrameSpec(unittest.TestCase):
         self.db_open = Mock()
         self.config = Mock(Config)
         self.config.get_use_wide_date_range.return_value = self.USE_WIDE_DATE_RANGE 
-        self.controller = MainFrameController(
+        self.controller = TimelineApplication(
             self.main_frame, self.db_open, self.config)
 
-    def givenOpeningFailsWithError(self, error):
+    def given_opening_fails_with_error(self, error):
         self.db_open.side_effect = error
 
-    def givenOpeningReturns(self, timeline):
+    def given_opening_returns(self, timeline):
         self.db_open.return_value = timeline
 
-    def whenTimelineIsOpened(self, name=""):
+    def when_timeline_is_opened(self, name=""):
         self.controller.open_timeline(name)
