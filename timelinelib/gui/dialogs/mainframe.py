@@ -117,51 +117,76 @@ class MainFrame(wx.Frame):
         
     def create_file_menu(self):
         self.mnu_file = wx.Menu()
-        mnu_file_new = wx.Menu()
+        self.create_file_new_menu()
+        self.create_file_open_menu_item()
+        self.create_file_open_recent_menu()
+        self.mnu_file.AppendSeparator()
+        self.create_file_page_setup_menu_item()
+        self.create_file_print_preview_menu_item()
+        self.create_file_print_menu_item()
+        self.mnu_file.AppendSeparator()
+        self.create_file_export_to_image_menu_item()
+        self.create_file_export_to_svg_menu_item()
+        self.mnu_file.AppendSeparator()
+        self.create_file_exit_menu_item()
+
+    def create_file_new_menu(self):
+        self.mnu_file_new = wx.Menu()
+        self.mnu_file.AppendMenu(
+            wx.ID_ANY, _("New"), self.mnu_file_new, _("Create a new timeline"))
+        self.create_file_new_timeline_menu_item()
+        self.create_file_new_dir_timeline_menu_item()
+
+    def create_file_new_timeline_menu_item(self):
         accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
         accel = accel.split("\t", 1)[1]
-        self.mnu_file_new_file = mnu_file_new.Append(wx.ID_NEW, 
-                                                     _("File Timeline...") + "\t" + accel, 
-                                                     _("File Timeline..."))
-        self.mnu_file_new_dir = mnu_file_new.Append(wx.ID_ANY, 
-                                                    _("Directory Timeline..."), 
-                                                    _("Directory Timeline..."))
-        self.mnu_file.AppendMenu(wx.ID_ANY, _("New"), mnu_file_new,
-                                 _("Create a new timeline"))
-        self.mnu_file.Append(wx.ID_OPEN, self.add_ellipses_to_menuitem(wx.ID_OPEN),
-                             _("Open an existing timeline"))
+        self.mnu_file_new_file = self.mnu_file_new.Append(
+            wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
+
+    def create_file_new_dir_timeline_menu_item(self):
+        self.mnu_file_new_dir = self.mnu_file_new.Append(
+            wx.ID_ANY, _("Directory Timeline..."), _("Directory Timeline..."))
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, self.mnu_file_new_dir)
+
+    def create_file_open_menu_item(self):
+        self.mnu_file.Append(
+            wx.ID_OPEN, self.add_ellipses_to_menuitem(wx.ID_OPEN),
+            _("Open an existing timeline"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
+
+    def create_file_open_recent_menu(self):
         self.mnu_file_open_recent_submenu = wx.Menu()
         self.mnu_file.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
         self._update_open_recent_submenu()
-        self.mnu_file.AppendSeparator()
-        self.mnu_file_print_setup = self.mnu_file.Append(wx.ID_PRINT_SETUP,
-                                       _("Page Set&up..."),
-                                       _("Setup page for printing"))
-        self.mnu_file_print_preview = self.mnu_file.Append(wx.ID_PREVIEW, "",
-                                       _("Print Preview"))
-        self.mnu_file_print = self.mnu_file.Append(wx.ID_PRINT,
-                                       self.add_ellipses_to_menuitem(wx.ID_PRINT),
-                                       _("Print"))
-        self.mnu_file.AppendSeparator()
-        self.mnu_file_export = self.mnu_file.Append(wx.ID_ANY,
-                                                   _("&Export to Image..."),
-                                                   _("Export the current view to a PNG image"))
-        self.mnu_file_export_svg = self.mnu_file.Append(wx.ID_ANY,
-                                                   _("&Export to SVG..."),
-                                                   _("Export the current view to a SVG image"))
-        self.mnu_file.AppendSeparator()
-        self.mnu_file.Append(wx.ID_EXIT, "",
-                             _("Exit the program"))
-        self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
-        self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, self.mnu_file_new_dir)
-        self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
+
+    def create_file_page_setup_menu_item(self):
+        self.mnu_file_print_setup = self.mnu_file.Append(
+            wx.ID_PRINT_SETUP, _("Page Set&up..."), _("Setup page for printing"))
         self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click,
-                  self.mnu_file_export)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click,
-                  self.mnu_file_export_svg)
+
+    def create_file_print_preview_menu_item(self):
+        self.mnu_file_print_preview = self.mnu_file.Append(
+            wx.ID_PREVIEW, "", _("Print Preview"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
+
+    def create_file_print_menu_item(self):
+        self.mnu_file_print = self.mnu_file.Append(
+            wx.ID_PRINT, self.add_ellipses_to_menuitem(wx.ID_PRINT), _("Print"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
+
+    def create_file_export_to_image_menu_item(self):
+        self.mnu_file_export = self.mnu_file.Append(
+            wx.ID_ANY, _("&Export to Image..."), _("Export the current view to a PNG image"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click, self.mnu_file_export)
+
+    def create_file_export_to_svg_menu_item(self):
+        self.mnu_file_export_svg = self.mnu_file.Append(
+            wx.ID_ANY, _("&Export to SVG..."), _("Export the current view to a SVG image"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, self.mnu_file_export_svg)
+
+    def create_file_exit_menu_item(self):
+        self.mnu_file.Append(wx.ID_EXIT, "", _("Exit the program"))
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
 
     def create_edit_menu(self):
