@@ -62,8 +62,6 @@ class MainFrame(wx.Frame):
         self._create_print_data()
         self._create_gui()
 
-        self._add_menu_items_to_menu_controller()
-
         self.Maximize(config.get_window_maximized())
         self.SetTitle(APPLICATION_NAME)
         self.SetIcons(self._load_icon_bundle())
@@ -363,7 +361,6 @@ class MainFrame(wx.Frame):
         self.create_timeline_duplicate_event_menu_item(timeline_menu)
         self.create_timeline_edit_categories(timeline_menu)
         main_menu_bar.Append(timeline_menu, _("&Timeline"))
-        self.mnu_timeline = timeline_menu
 
     def create_timeline_create_event_menu_item(self, timeline_menu):
         create_event_item = timeline_menu.Append(
@@ -435,6 +432,7 @@ class MainFrame(wx.Frame):
     def create_navigate_find_first_event_menu_item(self, navigate_menu):
         find_first = navigate_menu.Append(wx.ID_ANY, _("Find First Event"))
         self.Bind(wx.EVT_MENU, self._mnu_navigate_find_first_on_click, find_first)
+        self.menu_controller.add_menu_requiring_timeline(find_first)
 
     def _mnu_navigate_find_first_on_click(self, evt):
         event = self.timeline.get_first_event()
@@ -448,6 +446,7 @@ class MainFrame(wx.Frame):
     def create_navigate_find_last_event_menu_item(self, navigate_menu):
         find_last = navigate_menu.Append(wx.ID_ANY, _("Find Last Event"))
         self.Bind(wx.EVT_MENU, self._mnu_navigate_find_last_on_click, find_last)
+        self.menu_controller.add_menu_requiring_timeline(find_last)
 
     def _mnu_navigate_find_last_on_click(self, evt):
         event = self.timeline.get_last_event()
@@ -461,6 +460,7 @@ class MainFrame(wx.Frame):
     def create_navigate_fit_all_events_menu_item(self, navigate_menu):
         fit_all_events = navigate_menu.Append(wx.ID_ANY, _("Fit All Events"))
         self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_all_events_on_click, fit_all_events)
+        self.menu_controller.add_menu_requiring_timeline(fit_all_events)
 
     def _mnu_navigate_fit_all_events_on_click(self, evt):
         self._fit_all_events()
@@ -615,28 +615,6 @@ class MainFrame(wx.Frame):
         if tab_index != -1:
             return plain[:tab_index] + "..." + plain[tab_index:]
         return plain + "..."
-
-    def _add_menu_items_to_menu_controller(self):
-        self._add_items_requiering_timeline()
-        self._collect_items_requiering_timeline_view()
-
-    def _add_items_requiering_timeline(self):
-        items_requiering_timeline = [
-        ]
-        for item in self.mnu_timeline.GetMenuItems():
-            items_requiering_timeline.append(item)
-        for item in self.mnu_navigate.GetMenuItems():
-            items_requiering_timeline.append(item)
-        for item in self._navigation_menu_items:    
-            items_requiering_timeline.append(item)
-        for menu in items_requiering_timeline:
-            self.menu_controller.add_menu_requiring_timeline(menu)
-
-    def _collect_items_requiering_timeline_view(self):
-        items_requiering_timeline_view = [
-        ]
-        for menu in items_requiering_timeline_view:
-            self.menu_controller.add_menu_requiring_visible_timeline_view(menu)
 
     def _update_navigation_menu_items(self):
         self._clear_navigation_menu_items()
