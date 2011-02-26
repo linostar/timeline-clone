@@ -140,14 +140,14 @@ class MainFrame(wx.Frame):
     def create_file_new_timeline_menu_item(self):
         accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
         accel = accel.split("\t", 1)[1]
-        self.mnu_file_new_file = self.mnu_file_new.Append(
+        self.mnu_file_new.Append(
             wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
 
     def create_file_new_dir_timeline_menu_item(self):
-        self.mnu_file_new_dir = self.mnu_file_new.Append(
+        mnu_file_new_dir = self.mnu_file_new.Append(
             wx.ID_ANY, _("Directory Timeline..."), _("Directory Timeline..."))
-        self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, self.mnu_file_new_dir)
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, mnu_file_new_dir)
 
     def create_file_open_menu_item(self):
         self.mnu_file.Append(
@@ -161,29 +161,34 @@ class MainFrame(wx.Frame):
         self._update_open_recent_submenu()
 
     def create_file_page_setup_menu_item(self):
-        self.mnu_file_print_setup = self.mnu_file.Append(
+        mnu_file_print_setup = self.mnu_file.Append(
             wx.ID_PRINT_SETUP, _("Page Set&up..."), _("Setup page for printing"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_setup)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
 
     def create_file_print_preview_menu_item(self):
-        self.mnu_file_print_preview = self.mnu_file.Append(
+        mnu_file_print_preview = self.mnu_file.Append(
             wx.ID_PREVIEW, "", _("Print Preview"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_preview)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
 
     def create_file_print_menu_item(self):
-        self.mnu_file_print = self.mnu_file.Append(
+        mnu_file_print = self.mnu_file.Append(
             wx.ID_PRINT, self.add_ellipses_to_menuitem(wx.ID_PRINT), _("Print"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_print)
         self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
 
     def create_file_export_to_image_menu_item(self):
-        self.mnu_file_export = self.mnu_file.Append(
+        mnu_file_export = self.mnu_file.Append(
             wx.ID_ANY, _("&Export to Image..."), _("Export the current view to a PNG image"))
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click, self.mnu_file_export)
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_export)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click, mnu_file_export)
 
     def create_file_export_to_svg_menu_item(self):
-        self.mnu_file_export_svg = self.mnu_file.Append(
+        mnu_file_export_svg = self.mnu_file.Append(
             wx.ID_ANY, _("&Export to SVG..."), _("Export the current view to a SVG image"))
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, self.mnu_file_export_svg)
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_svg)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, mnu_file_export_svg)
 
     def create_file_exit_menu_item(self):
         self.mnu_file.Append(wx.ID_EXIT, "", _("Exit the program"))
@@ -340,11 +345,6 @@ class MainFrame(wx.Frame):
 
     def _add_items_requiering_timeline(self):
         items_requiering_timeline = [
-            self.mnu_file_print,
-            self.mnu_file_print_preview,
-            self.mnu_file_print_setup,
-            self.mnu_file_export,
-            self.mnu_file_export_svg,
             self.mnu_view_legend,
             self.mnu_edit_find,
         ]
