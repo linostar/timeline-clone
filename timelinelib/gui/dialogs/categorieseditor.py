@@ -18,20 +18,12 @@
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 import timelinelib.gui.utils as gui_utils
-from timelinelib.gui.utils import sort_categories
-from timelinelib.gui.utils import _display_error_message
-from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import BORDER
-from timelinelib.gui.utils import ID_ERROR
-from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
 from timelinelib.gui.components.cattree import CategoriesTree
 from timelinelib.gui.components.cattree import add_category
 from timelinelib.gui.components.cattree import edit_category
 from timelinelib.gui.components.cattree import delete_category
-from timelinelib.utils import ex_msg
 
 
 class CategoriesEditor(wx.Dialog):
@@ -44,62 +36,120 @@ class CategoriesEditor(wx.Dialog):
 
     def __init__(self, parent, timeline):
         wx.Dialog.__init__(self, parent, title=_("Edit Categories"))
-        self._create_gui()
-        self.db = timeline
-        self.cat_tree.initialize_from_db(self.db)
+        self.cat_tree = self._create_gui()
+        self.controller = CategoriesEditorController(self, timeline)
+        self.controller.initialize(self.cat_tree)
 
+    def get_selected_category(self):
+        return self.cat_tree.get_selected_category()
+            
+    def initialize(self, db):
+        self.cat_tree.initialize_from_db(db)
+        
     def _create_gui(self):
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        cat_tree = self._create_cat_tree(vbox)
+        self._create_buttons(vbox)
+        self.SetSizerAndFit(vbox)
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
-        # The tree
-        self.cat_tree = CategoriesTree(self, self.handle_db_error)
-        self.cat_tree.SetMinSize((-1, 200))
+        return cat_tree
+
+    def _create_cat_tree(self, vbox):
+        cat_tree = CategoriesTree(self, self.handle_db_error)
+        cat_tree.SetMinSize((-1, 200))
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self._cat_tree_on_sel_changed,
-                  self.cat_tree)
-        # The Add button
+                  cat_tree)
+        vbox.Add(cat_tree, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        return cat_tree
+
+    def _create_buttons(self, vbox):
+        button_box = wx.BoxSizer(wx.HORIZONTAL)
+        self.btn_edit = self._create_edit_button(button_box)
+        self._create_add_button(button_box)
+        self.btn_del = self._create_delete_button(button_box)
+        self._create_close_button(button_box)
+        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+
+    def _create_edit_button(self, button_box):
+        btn_edit = wx.Button(self, wx.ID_EDIT)
+        btn_edit.Disable()
+        self.Bind(wx.EVT_BUTTON, self._btn_edit_on_click, btn_edit)
+        button_box.Add(btn_edit, flag=wx.RIGHT, border=BORDER)
+        return btn_edit
+        
+    def _create_add_button(self, button_box):
         btn_add = wx.Button(self, wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn_add)
-        # The Delete button
-        self.btn_del = wx.Button(self, wx.ID_DELETE)
-        self.btn_del.Disable()
-        self.Bind(wx.EVT_BUTTON, self._btn_del_on_click, self.btn_del)
-        # The close button
+        button_box.Add(btn_add, flag=wx.RIGHT, border=BORDER)
+
+    def _create_delete_button(self, button_box):
+        btn_del = wx.Button(self, wx.ID_DELETE)
+        btn_del.Disable()
+        self.Bind(wx.EVT_BUTTON, self._btn_del_on_click, btn_del)
+        button_box.Add(btn_del, flag=wx.RIGHT, border=BORDER)
+        button_box.AddStretchSpacer()
+        return btn_del
+
+    def _create_close_button(self, button_box):
         btn_close = wx.Button(self, wx.ID_CLOSE)
         btn_close.SetDefault()
         btn_close.SetFocus()
         self.SetAffirmativeId(wx.ID_CLOSE)
         self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
-        # Setup layout
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(self.cat_tree, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        button_box = wx.BoxSizer(wx.HORIZONTAL)
-        button_box.Add(btn_add, flag=wx.RIGHT, border=BORDER)
-        button_box.Add(self.btn_del, flag=wx.RIGHT, border=BORDER)
-        button_box.AddStretchSpacer()
         button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
-        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        self.SetSizerAndFit(vbox)
-
+        
     def handle_db_error(self, e):
         gui_utils.handle_db_error_in_dialog(self, e)
 
     def _cat_tree_on_sel_changed(self, e):
-        self._update_del_button()
+        self._updateButtons()
 
+    def _updateButtons(self):
+        cat_selected = self.cat_tree.get_selected_category() is not None
+        self.btn_edit.Enable(cat_selected)
+        self.btn_del.Enable(cat_selected)
+        
     def _window_on_close(self, e):
         self.cat_tree.destroy()
         self.EndModal(wx.ID_CLOSE)
 
+    def _btn_edit_on_click(self, e):
+        self.controller.edit()
+        self._updateButtons()
+        
     def _btn_add_on_click(self, e):
-        add_category(self, self.db, self.handle_db_error)
+        self.controller.add()
+        self._updateButtons()
         
     def _btn_del_on_click(self, e):
-        cat = self.cat_tree.get_selected_category()
-        if cat:
-            delete_category(self, self.db, cat, self.handle_db_error)
-        self._update_del_button()
-
-    def _update_del_button(self):
-        self.btn_del.Enable(self.cat_tree.get_selected_category() is not None)
+        self.controller.delete()
+        self._updateButtons()
 
     def _btn_close_on_click(self, e):
         self.Close()
+                
+
+class CategoriesEditorController(object):
+
+    def __init__(self, view, db):
+        self.view = view
+        self.db = db
+
+    def initialize(self, cat_tree):
+        self.view.initialize(self.db)
+    
+    def edit(self):
+        cat = self.view.get_selected_category()
+        if cat:
+            edit_category(self.view, self.db, cat, self.handle_db_error)
+
+    def add(self):
+        add_category(self.view, self.db, self.handle_db_error)
+
+    def delete(self):
+        cat = self.view.get_selected_category()
+        if cat:
+            delete_category(self.view, self.db, cat, self.handle_db_error)
+            
+    def handle_db_error(self, e):
+        gui_utils.handle_db_error_in_dialog(self, e)
