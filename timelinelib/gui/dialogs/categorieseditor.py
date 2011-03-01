@@ -36,15 +36,12 @@ class CategoriesEditor(wx.Dialog):
 
     def __init__(self, parent, timeline):
         wx.Dialog.__init__(self, parent, title=_("Edit Categories"))
+        self.db = timeline
         self.cat_tree = self._create_gui()
-        self.controller = CategoriesEditorController(self, timeline)
-        self.controller.initialize(self.cat_tree)
+        self._fill_controls_with_data()
 
-    def get_selected_category(self):
-        return self.cat_tree.get_selected_category()
-            
-    def initialize(self, db):
-        self.cat_tree.initialize_from_db(db)
+    def _fill_controls_with_data(self):
+        self.cat_tree.initialize_from_db(self.db)
         
     def _create_gui(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -54,13 +51,20 @@ class CategoriesEditor(wx.Dialog):
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
         return cat_tree
 
+    def _window_on_close(self, e):
+        self.cat_tree.destroy()
+        self.EndModal(wx.ID_CLOSE)
+
     def _create_cat_tree(self, vbox):
-        cat_tree = CategoriesTree(self, self.handle_db_error)
+        cat_tree = CategoriesTree(self, self.db_error_handler)
         cat_tree.SetMinSize((-1, 200))
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self._cat_tree_on_sel_changed,
                   cat_tree)
         vbox.Add(cat_tree, flag=wx.ALL|wx.EXPAND, border=BORDER)
         return cat_tree
+
+    def _cat_tree_on_sel_changed(self, e):
+        self._updateButtons()
 
     def _create_buttons(self, vbox):
         button_box = wx.BoxSizer(wx.HORIZONTAL)
@@ -71,85 +75,57 @@ class CategoriesEditor(wx.Dialog):
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
 
     def _create_edit_button(self, button_box):
-        btn_edit = wx.Button(self, wx.ID_EDIT)
-        btn_edit.Disable()
-        self.Bind(wx.EVT_BUTTON, self._btn_edit_on_click, btn_edit)
-        button_box.Add(btn_edit, flag=wx.RIGHT, border=BORDER)
-        return btn_edit
-        
-    def _create_add_button(self, button_box):
-        btn_add = wx.Button(self, wx.ID_ADD)
-        self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn_add)
-        button_box.Add(btn_add, flag=wx.RIGHT, border=BORDER)
-
-    def _create_delete_button(self, button_box):
-        btn_del = wx.Button(self, wx.ID_DELETE)
-        btn_del.Disable()
-        self.Bind(wx.EVT_BUTTON, self._btn_del_on_click, btn_del)
-        button_box.Add(btn_del, flag=wx.RIGHT, border=BORDER)
-        button_box.AddStretchSpacer()
-        return btn_del
-
-    def _create_close_button(self, button_box):
-        btn_close = wx.Button(self, wx.ID_CLOSE)
-        btn_close.SetDefault()
-        btn_close.SetFocus()
-        self.SetAffirmativeId(wx.ID_CLOSE)
-        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
-        button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
-        
-    def handle_db_error(self, e):
-        gui_utils.handle_db_error_in_dialog(self, e)
-
-    def _cat_tree_on_sel_changed(self, e):
-        self._updateButtons()
-
-    def _updateButtons(self):
-        cat_selected = self.cat_tree.get_selected_category() is not None
-        self.btn_edit.Enable(cat_selected)
-        self.btn_del.Enable(cat_selected)
-        
-    def _window_on_close(self, e):
-        self.cat_tree.destroy()
-        self.EndModal(wx.ID_CLOSE)
+        btn = wx.Button(self, wx.ID_EDIT)
+        btn.Disable()
+        self.Bind(wx.EVT_BUTTON, self._btn_edit_on_click, btn)
+        button_box.Add(btn, flag=wx.RIGHT, border=BORDER)
+        return btn
 
     def _btn_edit_on_click(self, e):
-        self.controller.edit()
-        self._updateButtons()
+        selected_category = self.cat_tree.get_selected_category()
+        if selected_category is not None:
+            edit_category(self, self.db, selected_category, 
+                          self.db_error_handler)
+            self._updateButtons()
         
+    def _create_add_button(self, button_box):
+        btn = wx.Button(self, wx.ID_ADD)
+        self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn)
+        button_box.Add(btn, flag=wx.RIGHT, border=BORDER)
+        return btn
+
     def _btn_add_on_click(self, e):
-        self.controller.add()
+        add_category(self, self.db, self.db_error_handler)
         self._updateButtons()
         
+    def _create_delete_button(self, button_box):
+        btn = wx.Button(self, wx.ID_DELETE)
+        btn.Disable()
+        self.Bind(wx.EVT_BUTTON, self._btn_del_on_click, btn)
+        button_box.Add(btn, flag=wx.RIGHT, border=BORDER)
+        return btn
+
     def _btn_del_on_click(self, e):
-        self.controller.delete()
-        self._updateButtons()
+        selected_category = self.cat_tree.get_selected_category()
+        if selected_category is not None:
+            delete_category(self, self.db, selected_category, 
+                            self.db_error_handler)
+            self._updateButtons()
+
+    def _create_close_button(self, button_box):
+        btn = wx.Button(self, wx.ID_CLOSE)
+        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn)
+        button_box.Add(btn, flag=wx.LEFT, border=BORDER)
+        return btn
 
     def _btn_close_on_click(self, e):
         self.Close()
-                
-
-class CategoriesEditorController(object):
-
-    def __init__(self, view, db):
-        self.view = view
-        self.db = db
-
-    def initialize(self, cat_tree):
-        self.view.initialize(self.db)
-    
-    def edit(self):
-        cat = self.view.get_selected_category()
-        if cat:
-            edit_category(self.view, self.db, cat, self.handle_db_error)
-
-    def add(self):
-        add_category(self.view, self.db, self.handle_db_error)
-
-    def delete(self):
-        cat = self.view.get_selected_category()
-        if cat:
-            delete_category(self.view, self.db, cat, self.handle_db_error)
-            
-    def handle_db_error(self, e):
+        
+    def db_error_handler(self, e):
         gui_utils.handle_db_error_in_dialog(self, e)
+
+    def _updateButtons(self):
+        selected_category = self.cat_tree.get_selected_category() is not None
+        self.btn_edit.Enable(selected_category)
+        self.btn_del.Enable(selected_category)
+        
