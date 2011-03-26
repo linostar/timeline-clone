@@ -26,7 +26,8 @@ class TimelineApplication(object):
         self.db_open_fn = db_open_fn
         self.config = config
 
-    def on_started(self, input_files):
+    def on_started(self, application_arguments):
+        input_files = application_arguments.get_files()
         if len(input_files) == 0:
             ro = self.config.get_recently_opened()
             if self.config.get_open_recent_at_startup() and len(ro) > 0:

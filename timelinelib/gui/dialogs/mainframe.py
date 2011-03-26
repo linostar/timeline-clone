@@ -47,7 +47,7 @@ import timelinelib.printing as printing
 
 class MainFrame(wx.Frame):
 
-    def __init__(self, input_files):
+    def __init__(self, application_arguments):
         wx.Frame.__init__(self, None, size=config.get_window_size(), 
                           pos=config.get_window_pos(),
                           style=wx.DEFAULT_FRAME_STYLE)
@@ -69,7 +69,7 @@ class MainFrame(wx.Frame):
         self.main_panel.show_welcome_panel()
         self.enable_disable_menus()
 
-        self.controller.on_started(input_files)
+        self.controller.on_started(application_arguments)
 
     def _set_initial_values_to_member_variables(self):
         self.timeline = None

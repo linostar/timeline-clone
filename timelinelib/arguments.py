@@ -16,25 +16,19 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import platform
-import gettext
+from optparse import OptionParser
 
-from timelinelib.about import APPLICATION_NAME
-from timelinelib.arguments import ApplicationArguments
-from timelinelib.gui.setup import start_wx_application
-from timelinelib.paths import LOCALE_DIR
+from timelinelib.version import get_version
 
 
-def setup_gettext():
-    if platform.system() == "Windows":
-        # The appropriate environment variables are set on other systems
-        import locale
-        import os
-        language, encoding = locale.getdefaultlocale()
-        os.environ['LANG'] = language
-    gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
+class ApplicationArguments(object):
 
+    def __init__(self):
+        version_string = "%prog " + get_version()
+        option_parser = OptionParser(
+            usage="%prog [options] [filename]",
+            version=version_string)
+        (self.options, self.arguments) = option_parser.parse_args()
 
-def main():
-    setup_gettext()
-    start_wx_application(ApplicationArguments())
+    def get_files(self):
+        return self.arguments
