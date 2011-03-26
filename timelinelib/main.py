@@ -21,14 +21,10 @@ import platform
 from optparse import OptionParser
 import gettext
 
-import wx
-
-from timelinelib.gui.dialogs.mainframe import MainFrame
-from timelinelib.unhandledex import unhandled_exception_hook
 from version import get_version
-import config
 from about import APPLICATION_NAME
 from paths import LOCALE_DIR
+from timelinelib.gui.setup import start_wx_application
 
 
 def setup_gettext():
@@ -47,15 +43,6 @@ def parse_options():
                                  version=version_string)
     # Skip first command line argument since it is the name of the program
     return option_parser.parse_args(sys.argv[1:])
-
-
-def start_wx_application(input_files):
-    app = wx.PySimpleApp()
-    config.read() # Must be called after we have created the wx.App
-    main_frame = MainFrame(input_files)
-    main_frame.Show()
-    sys.excepthook = unhandled_exception_hook
-    app.MainLoop()
 
 
 def main():
