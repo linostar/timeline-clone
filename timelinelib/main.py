@@ -17,8 +17,6 @@
 
 
 import sys
-from sys import argv
-from sys import version as python_version
 import platform
 from optparse import OptionParser
 import gettext
@@ -48,7 +46,7 @@ def parse_options():
     option_parser = OptionParser(usage="%prog [options] [filename]",
                                  version=version_string)
     # Skip first command line argument since it is the name of the program
-    return option_parser.parse_args(argv[1:])
+    return option_parser.parse_args(sys.argv[1:])
 
 
 def create_wx_app(input_files):
