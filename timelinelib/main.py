@@ -16,14 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Program main entry point.
-
-Responsible for processing command line options and initializing the
-application.
-"""
-
-
 import sys
 from sys import argv
 from sys import version as python_version
@@ -42,7 +34,6 @@ from paths import LOCALE_DIR
 
 
 def setup_gettext():
-    """Make sure that the _() is available everywhere."""
     if platform.system() == "Windows":
         # The appropriate environment variables are set on other systems
         import locale
@@ -53,7 +44,6 @@ def setup_gettext():
 
 
 def parse_options():
-    """Parse command line options using the optparse module."""
     version_string = "%prog " + get_version()
     option_parser = OptionParser(usage="%prog [options] [filename]",
                                  version=version_string)
@@ -62,7 +52,6 @@ def parse_options():
 
 
 def create_wx_app(input_files):
-    """Initialize wx and create the main frame."""
     app = wx.PySimpleApp()
     config.read() # Must be called after we have created the wx.App
     main_frame = MainFrame()
@@ -79,7 +68,6 @@ def create_wx_app(input_files):
 
 
 def main():
-    """Main entry point."""
     setup_gettext()
     (options, input_files) = parse_options()
     app = create_wx_app(input_files)
