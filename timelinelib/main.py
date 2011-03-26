@@ -21,9 +21,9 @@ import platform
 from optparse import OptionParser
 import gettext
 
-from version import get_version
-from about import APPLICATION_NAME
-from paths import LOCALE_DIR
+from timelinelib.version import get_version
+from timelinelib.about import APPLICATION_NAME
+from timelinelib.paths import LOCALE_DIR
 from timelinelib.gui.setup import start_wx_application
 
 
