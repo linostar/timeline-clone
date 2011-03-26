@@ -26,24 +26,8 @@ from sys import version as python_version
 import platform
 
 from timelinelib.version import get_version
-from timelinelib.gui.dialogs.textdisplay import TextDisplayDialog
 
 import wx
-
-
-def unhandled_exception_hook(type, value, tb):
-    """
-    The handling of top-level exceptions can be customized by assigning a
-    three-argument function to sys.excepthook.
-    
-    This is the method assigned to sys.excepthook.
-    The assignment is made in the main method in the main module.
-    """
-    title = "Unexpected Error"
-    text = create_error_message(type, value, tb)
-    dialog = TextDisplayDialog(title, text)
-    dialog.ShowModal()
-    dialog.Destroy()
 
 
 def create_error_message(type, value, tb):

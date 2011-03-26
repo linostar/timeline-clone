@@ -20,9 +20,10 @@ import sys
 
 import wx
 
-import timelinelib.config as config
 from timelinelib.gui.dialogs.mainframe import MainFrame
-from timelinelib.unhandledex import unhandled_exception_hook
+from timelinelib.gui.dialogs.textdisplay import TextDisplayDialog
+from timelinelib.unhandledex import create_error_message
+import timelinelib.config as config
 
 
 def start_wx_application(input_files):
@@ -32,3 +33,11 @@ def start_wx_application(input_files):
     main_frame.Show()
     sys.excepthook = unhandled_exception_hook
     app.MainLoop()
+
+
+def unhandled_exception_hook(type, value, tb):
+    title = "Unexpected Error"
+    text = create_error_message(type, value, tb)
+    dialog = TextDisplayDialog(title, text)
+    dialog.ShowModal()
+    dialog.Destroy()
