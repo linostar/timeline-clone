@@ -74,6 +74,7 @@ def create_wx_app(input_files):
     else:
         for input_file in input_files:
             main_frame.open_timeline(input_file)
+    sys.excepthook = unhandled_exception_hook
     return app
 
 
@@ -81,8 +82,6 @@ def main():
     """Main entry point."""
     setup_gettext()
     (options, input_files) = parse_options()
-    # Customize the handling of top-level exceptions
     app = create_wx_app(input_files)
-    sys.excepthook = unhandled_exception_hook
     app.MainLoop()
 
