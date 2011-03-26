@@ -52,15 +52,8 @@ def parse_options():
 def create_wx_app(input_files):
     app = wx.PySimpleApp()
     config.read() # Must be called after we have created the wx.App
-    main_frame = MainFrame()
+    main_frame = MainFrame(input_files)
     main_frame.Show()
-    if len(input_files) == 0:
-        ro = config.get_recently_opened()
-        if config.get_open_recent_at_startup() and len(ro) > 0:
-            main_frame.open_timeline_if_exists(ro[0])
-    else:
-        for input_file in input_files:
-            main_frame.open_timeline(input_file)
     sys.excepthook = unhandled_exception_hook
     return app
 

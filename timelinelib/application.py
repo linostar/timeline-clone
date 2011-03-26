@@ -26,6 +26,15 @@ class TimelineApplication(object):
         self.db_open_fn = db_open_fn
         self.config = config
 
+    def on_started(self, input_files):
+        if len(input_files) == 0:
+            ro = self.config.get_recently_opened()
+            if self.config.get_open_recent_at_startup() and len(ro) > 0:
+                self.main_frame.open_timeline_if_exists(ro[0])
+        else:
+            for input_file in input_files:
+                self.main_frame.open_timeline(input_file)
+
     def open_timeline(self, path):
         try:
             timeline = self.db_open_fn(path, self.config.get_use_wide_date_range())
