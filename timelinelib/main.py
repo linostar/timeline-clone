@@ -49,18 +49,16 @@ def parse_options():
     return option_parser.parse_args(sys.argv[1:])
 
 
-def create_wx_app(input_files):
+def start_wx_application(input_files):
     app = wx.PySimpleApp()
     config.read() # Must be called after we have created the wx.App
     main_frame = MainFrame(input_files)
     main_frame.Show()
     sys.excepthook = unhandled_exception_hook
-    return app
+    app.MainLoop()
 
 
 def main():
     setup_gettext()
     (options, input_files) = parse_options()
-    app = create_wx_app(input_files)
-    app.MainLoop()
-
+    start_wx_application(input_files)
