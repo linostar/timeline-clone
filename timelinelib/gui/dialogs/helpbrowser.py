@@ -26,6 +26,8 @@ import os.path
 import wx
 import wx.html
 
+from timelinelib.gui.utils import _display_error_message
+from timelinelib.paths import HELP_RESOURCES_DIR
 from timelinelib.paths import ICONS_DIR
 
 
@@ -35,14 +37,26 @@ class HelpBrowser(wx.Frame):
     BACKWARD_ID = 20
     FORWARD_ID = 30
 
-    def __init__(self, parent, help_system):
+    def __init__(self, parent):
         wx.Frame.__init__(self, parent, title=_("Help"),
                           size=(600, 550), style=wx.DEFAULT_FRAME_STYLE)
-        self.help_system = help_system
         self.history = []
         self.current_pos = -1
+        self._create_help_system()
         self._create_gui()
         self._update_buttons()
+
+    def _create_help_system(self):
+        try:
+            import markdown
+        except ImportError:
+            self.help_system = None
+        else:
+            import timelinelib.help.system as help
+            import timelinelib.help.pages as help_pages
+            self.help_system = help.HelpSystem(
+                "contents", HELP_RESOURCES_DIR + "/", "page:")
+            help_pages.install(self.help_system)
 
     def show_page(self, id, type="page", change_history=True):
         """
@@ -51,6 +65,11 @@ class HelpBrowser(wx.Frame):
           * (page, page_id)
           * (search, search_string)
         """
+        if self.help_system is None:
+            _display_error_message(
+                _("Could not find markdown Python package.  It is needed by the help system. See the Timeline website or the INSTALL file for instructions how to install it."),
+                self.GetParent())
+            return
         if change_history:
             same_page_as_last = False
             if self.current_pos != -1:

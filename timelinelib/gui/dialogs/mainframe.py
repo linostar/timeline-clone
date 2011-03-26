@@ -33,11 +33,11 @@ from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.duplicateevent import DuplicateEvent
 from timelinelib.gui.dialogs.eventeditor import EventEditor
+from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.gui.dialogs.preferences import PreferencesDialog
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import WildcardHelper
-from timelinelib.help.browser import HelpBrowserController
 from timelinelib import config
 from timelinelib.paths import ICONS_DIR
 from timelinelib.utils import ex_msg
@@ -54,7 +54,7 @@ class MainFrame(wx.Frame):
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
 
-        self.help_browser = HelpBrowserController(self)
+        self.help_browser = HelpBrowser(self)
         self.controller = TimelineApplication(self, db_open, config.global_config)
         self.menu_controller = MenuController()
 
@@ -520,7 +520,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, contents_item)
 
     def _mnu_help_contents_on_click(self, e):
-        self.help_browser.show_help_page("contents")
+        self.help_browser.show_page("contents")
 
     def _create_help_tutorial_menu_item(self, help_menu):
         tutorial_item = help_menu.Append(wx.ID_ANY, _("Getting started tutorial"))
@@ -534,7 +534,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, contact_item)
 
     def _mnu_help_contact_on_click(self, e):
-        self.help_browser.show_help_page("contact")
+        self.help_browser.show_page("contact")
 
     def _create_help_about_menu_item(self, help_menu):
         about_item = help_menu.Append(wx.ID_ABOUT)
@@ -922,7 +922,7 @@ class ErrorPanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_contact_on_click(self, e):
-        wx.GetTopLevelParent(self).help_browser.show_help_page("contact")
+        wx.GetTopLevelParent(self).help_browser.show_page("contact")
 
 
 class Sidebar(wx.Panel):
