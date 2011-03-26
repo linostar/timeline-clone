@@ -17,16 +17,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Script that starts the Timeline application.
-"""
-
-import sys
+import gettext
+import locale
 import os
+import platform
+import sys
 
 # Make sure that we can import timelinelib
 sys.path.insert(0, os.path.dirname(__file__))
 
-from timelinelib.main import main
+from timelinelib.about import APPLICATION_NAME
+from timelinelib.arguments import ApplicationArguments
+from timelinelib.gui.setup import start_wx_application
+from timelinelib.paths import LOCALE_DIR
 
-main()
+if platform.system() == "Windows":
+    # The appropriate environment variables are set on other systems
+    language, encoding = locale.getdefaultlocale()
+    os.environ['LANG'] = language
+
+gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
+
+application_arguments = ApplicationArguments()
+
+start_wx_application(application_arguments)
