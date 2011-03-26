@@ -24,6 +24,7 @@ Utility functions for working with GUI.
 import wx
 
 from timelinelib.db.interface import TimelineIOError
+from timelinelib.domain.category import sort_categories
 
 
 # Border, in pixels, between controls in a window (should always be used when
@@ -111,12 +112,6 @@ def category_tree(category_list, parent=None, remove=None):
     tree = [(x, category_tree(category_list, x, remove))
             for x in sorted_children]
     return tree
-
-
-def sort_categories(categories):
-    sorted_categories = list(categories)
-    sorted_categories.sort(cmp, lambda x: x.name.lower())
-    return sorted_categories
 
 
 def show_modal(fn_create_dialog, fn_handle_db_error, fn_success=None):
