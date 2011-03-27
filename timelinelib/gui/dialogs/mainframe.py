@@ -706,8 +706,8 @@ class MainFrame(wx.Frame):
     def _get_time_period(self):
         return self.main_panel.drawing_area.get_time_period()
 
-    def display_time_entry_dialog(self, time_type, initial_time,
-                                  handle_new_time_fn, title):
+    def display_time_editor_dialog(self, time_type, initial_time,
+                                   handle_new_time_fn, title):
         dialog = TimeEditorDialog(self, time_type, initial_time, title)
         if dialog.ShowModal() == wx.ID_OK:
             handle_new_time_fn(dialog.time)

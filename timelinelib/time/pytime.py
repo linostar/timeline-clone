@@ -218,7 +218,7 @@ def go_to_today_fn(main_frame, current_period, navigation_fn):
 def go_to_date_fn(main_frame, current_period, navigation_fn):
     def navigate_to(time):
         navigation_fn(lambda tp: tp.center(time))
-    main_frame.display_time_entry_dialog(
+    main_frame.display_time_editor_dialog(
         PyTimeType(), current_period.mean_time(), navigate_to, _("Go to Date"))
 
 
