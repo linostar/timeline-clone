@@ -18,7 +18,6 @@
 
 import wx
 
-import timelinelib.config as config
 from timelinelib.gui.utils import BORDER
 
 
@@ -30,11 +29,12 @@ class PreferencesDialog(wx.Dialog):
     module.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, config):
         wx.Dialog.__init__(self, parent, title=_("Preferences"))
         self.weeks_map = ((0, "monday"), (1, "sunday"))
+        self.config = config
         self._create_gui()
-        self._controller = PreferencesDialogController(self, config.global_config)
+        self._controller = PreferencesDialogController(self, self.config)
         self._controller.initialize_controls()
 
     def _create_gui(self):
@@ -73,7 +73,7 @@ class PreferencesDialog(wx.Dialog):
                                               label=_("Open most recent timeline on startup"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_open_recent_startup_on_checkbox,
                   chb_open_recent_startup)
-        chb_open_recent_startup.SetValue(config.get_open_recent_at_startup())
+        chb_open_recent_startup.SetValue(self.config.get_open_recent_at_startup())
         return (chb_open_recent_startup,)
 
     def _create_date_time_tab(self, notebook):
@@ -97,13 +97,13 @@ class PreferencesDialog(wx.Dialog):
         chb_wide_date_range = wx.CheckBox(panel, label=_("Use extended date range (before 1 AD)"))
         self.Bind(wx.EVT_CHECKBOX, self._chb_use_wide_date_range_on_checkbox,
                   chb_wide_date_range)
-        chb_wide_date_range.SetValue(config.global_config.get_use_wide_date_range())
+        chb_wide_date_range.SetValue(self.config.get_use_wide_date_range())
         return chb_wide_date_range 
 
     def _create_choice_week(self, panel):
         choice_week = wx.Choice(panel, choices=[_("Monday"), _("Sunday")])
         self.Bind(wx.EVT_CHOICE, self._choice_week_on_choice, choice_week)
-        index = self._week_index(config.global_config.week_start)
+        index = self._week_index(self.config.week_start)
         choice_week.SetSelection(index)
         return choice_week
     
@@ -130,10 +130,10 @@ class PreferencesDialog(wx.Dialog):
         self._controller.on_use_wide_date_range_changed(evt.IsChecked())
     
     def _chb_open_recent_startup_on_checkbox(self, evt):
-        config.set_open_recent_at_startup(evt.IsChecked())
+        self.config.set_open_recent_at_startup(evt.IsChecked())
 
     def _choice_week_on_choice(self, evt):
-        config.global_config.week_start = self._index_week(evt.GetSelection())
+        self.config.week_start = self._index_week(evt.GetSelection())
 
     def _btn_close_on_click(self, e):
         self.Close()
@@ -166,4 +166,3 @@ class PreferencesDialogController(object):
         
     def on_use_wide_date_range_changed(self, value):
         self.config.set_use_wide_date_range(value)
-                

@@ -313,7 +313,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click, preferences_item)
 
     def _mnu_edit_preferences_on_click(self, evt):
-        dialog = PreferencesDialog(self)
+        dialog = PreferencesDialog(self, config.global_config)
         dialog.ShowModal()
         dialog.Destroy()
 
