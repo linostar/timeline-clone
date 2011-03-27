@@ -709,7 +709,7 @@ class MainFrame(wx.Frame):
 
     def display_time_entry_dialog(self, time_type, initial_time,
                                   handle_new_time_fn):
-        dialog = TimeEditorDialog(self, time_type, initial_time)
+        dialog = TimeEditorDialog(self, time_type, initial_time, _("Go to Date"))
         if dialog.ShowModal() == wx.ID_OK:
             handle_new_time_fn(dialog.time)
         dialog.Destroy()

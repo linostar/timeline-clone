@@ -26,8 +26,8 @@ from timelinelib.utils import ex_msg
 
 class TimeEditorDialog(wx.Dialog):
 
-    def __init__(self, parent, time_type, time):
-        wx.Dialog.__init__(self, parent, title=_("Go to Date"))
+    def __init__(self, parent, time_type, time, title):
+        wx.Dialog.__init__(self, parent, title=title)
         self._create_gui(time_type)
         self.dtpc.set_value(time)
 
