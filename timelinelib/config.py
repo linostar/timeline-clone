@@ -79,6 +79,11 @@ def init():
     global_config.read()
 
 
+def read_config():
+    init()
+    return global_config
+
+
 # These functions are just wrappers to preserve the old interface to the config
 # module. In the future they should be removed. In the future you should either
 # get passed a Config object or use the global global_config.

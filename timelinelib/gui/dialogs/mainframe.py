@@ -23,6 +23,7 @@ import wx
 from timelinelib.about import APPLICATION_NAME
 from timelinelib.about import display_about_dialog
 from timelinelib.application import TimelineApplication
+from timelinelib.config import read_config
 from timelinelib.db import db_open
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
@@ -39,7 +40,6 @@ from timelinelib.gui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import WildcardHelper
-from timelinelib import config as config_module
 from timelinelib.paths import ICONS_DIR
 from timelinelib.utils import ex_msg
 import timelinelib.gui.utils as gui_utils
@@ -49,8 +49,7 @@ import timelinelib.printing as printing
 class MainFrame(wx.Frame):
 
     def __init__(self, application_arguments):
-        config_module.read()
-        self.config = config_module.global_config
+        self.config = read_config()
 
         wx.Frame.__init__(self, None, size=self.config.get_window_size(), 
                           pos=self.config.get_window_pos(),
