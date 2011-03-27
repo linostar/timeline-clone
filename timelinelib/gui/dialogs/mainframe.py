@@ -36,7 +36,7 @@ from timelinelib.gui.dialogs.eventeditor import EventEditor
 from timelinelib.gui.dialogs.gotonumtime import GotoNumTimeDialog
 from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.gui.dialogs.preferences import PreferencesDialog
-from timelinelib.gui.dialogs.timeeditor import GotoDateDialog
+from timelinelib.gui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import WildcardHelper
@@ -709,7 +709,7 @@ class MainFrame(wx.Frame):
 
     def display_time_entry_dialog(self, time_type, initial_time,
                                   handle_new_time_fn):
-        dialog = GotoDateDialog(self, time_type, initial_time)
+        dialog = TimeEditorDialog(self, time_type, initial_time)
         if dialog.ShowModal() == wx.ID_OK:
             handle_new_time_fn(dialog.time)
         dialog.Destroy()

@@ -24,7 +24,7 @@ from timelinelib.gui.utils import time_picker_for
 from timelinelib.utils import ex_msg
 
 
-class GotoDateDialog(wx.Dialog):
+class TimeEditorDialog(wx.Dialog):
 
     def __init__(self, parent, time_type, time):
         wx.Dialog.__init__(self, parent, title=_("Go to Date"))
