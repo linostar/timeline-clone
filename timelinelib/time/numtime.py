@@ -168,8 +168,8 @@ def go_to_zero_fn(main_frame, current_period, navigation_fn):
 def go_to_time_fn(main_frame, current_period, navigation_fn):
     def navigate_to(time):
         navigation_fn(lambda tp: tp.center(time))
-    main_frame.display_num_time_entry_dialog(
-        current_period.mean_time(), navigate_to)
+    main_frame.display_time_entry_dialog(
+        NumTimeType(), current_period.mean_time(), navigate_to, _("Go to Time"))
 
 
 def backward_fn(main_frame, current_period, navigation_fn):

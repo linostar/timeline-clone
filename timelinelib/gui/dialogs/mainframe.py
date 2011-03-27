@@ -33,7 +33,6 @@ from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.duplicateevent import DuplicateEvent
 from timelinelib.gui.dialogs.eventeditor import EventEditor
-from timelinelib.gui.dialogs.gotonumtime import GotoNumTimeDialog
 from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.gui.dialogs.preferences import PreferencesDialog
 from timelinelib.gui.dialogs.timeeditor import TimeEditorDialog
@@ -710,12 +709,6 @@ class MainFrame(wx.Frame):
     def display_time_entry_dialog(self, time_type, initial_time,
                                   handle_new_time_fn, title):
         dialog = TimeEditorDialog(self, time_type, initial_time, title)
-        if dialog.ShowModal() == wx.ID_OK:
-            handle_new_time_fn(dialog.time)
-        dialog.Destroy()
-
-    def display_num_time_entry_dialog(self, initial_time, handle_new_time_fn):
-        dialog = GotoNumTimeDialog(self, initial_time)
         if dialog.ShowModal() == wx.ID_OK:
             handle_new_time_fn(dialog.time)
         dialog.Destroy()
