@@ -67,10 +67,6 @@ class PyTimeType(TimeType):
         else:
             raise ValueError("Time not on correct format = '%s'" % time_string)
 
-    def create_time_picker(self, parent):
-        from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
-        return PyDateTimePicker(parent)
-
     def get_navigation_functions(self):
         return [
             (_("Go to &Today\tCtrl+T"), go_to_today_fn),

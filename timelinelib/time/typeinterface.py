@@ -24,9 +24,6 @@ class TimeType(object):
     def parse_time(self, time_string):
         raise NotImplementedError("parse_time not implemented.")
 
-    def create_time_picker(self, parent):
-        raise NotImplementedError("create_time_picker not implemented.")
-
     def get_navigation_functions(self):
         raise NotImplementedError("get_navigation_functions not implemented.")
 

@@ -44,10 +44,6 @@ class NumTimeType(TimeType):
         else:
             raise ValueError("Time not on correct format = '%s'" % time_string)
 
-    def create_time_picker(self, parent):
-        from timelinelib.gui.components.numtimepicker import NumTimePicker
-        return NumTimePicker(parent)
-
     def get_navigation_functions(self):
         return [
             (_("Go to &Zero\tCtrl+Z"), go_to_zero_fn),

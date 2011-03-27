@@ -20,7 +20,7 @@ import wx
 
 from timelinelib.gui.utils import BORDER
 from timelinelib.gui.utils import _display_error_message
-from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
+from timelinelib.gui.utils import time_picker_for
 from timelinelib.utils import ex_msg
 
 
@@ -32,7 +32,7 @@ class GotoDateDialog(wx.Dialog):
         self.dtpc.set_value(time)
 
     def _create_gui(self, time_type):
-        self.dtpc = time_type.create_time_picker(self)
+        self.dtpc = time_picker_for(time_type)(self)
         checkbox = wx.CheckBox(self, label=_("Show time"))
         checkbox.SetValue(False)
         self.dtpc.show_time(checkbox.IsChecked())

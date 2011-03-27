@@ -36,6 +36,7 @@ from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import ID_ERROR
 from timelinelib.gui.utils import _parse_text_from_textbox
 from timelinelib.gui.utils import _set_focus_and_select
+from timelinelib.gui.utils import time_picker_for
 from timelinelib.gui.utils import TxtException
 from timelinelib.utils import ex_msg
 import timelinelib.gui.utils as gui_utils
@@ -67,7 +68,7 @@ class EventEditor(wx.Dialog):
         self._set_initial_focus()
 
     def _create_time_picker(self):
-        return self.timeline.get_time_type().create_time_picker(self)
+        return time_picker_for(self.timeline.get_time_type())(self)
 
     def _create_gui(self):
         """Create the controls of the dialog."""

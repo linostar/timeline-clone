@@ -203,3 +203,20 @@ def set_wait_cursor(parent):
     
 def set_default_cursor(parent):
     parent.SetCursor(wx.StockCursor(wx.CURSOR_DEFAULT))    
+
+
+def time_picker_for(time_type):
+    from timelinelib.gui.components.numtimepicker import NumTimePicker
+    from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
+    from timelinelib.gui.components.wxdatetimepicker import WxDateTimePicker
+    from timelinelib.time import NumTimeType
+    from timelinelib.time import PyTimeType
+    from timelinelib.time import WxTimeType
+    if isinstance(time_type, PyTimeType):
+        return PyDateTimePicker
+    elif isinstance(time_type, WxTimeType):
+        return WxDateTimePicker
+    elif isinstance(time_type, NumTimeType):
+        return NumTimePicker
+    else:
+        raise ValueError("Unsupported time type: %s" % time_type)
