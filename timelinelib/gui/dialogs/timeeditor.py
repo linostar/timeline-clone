@@ -28,34 +28,46 @@ class TimeEditorDialog(wx.Dialog):
 
     def __init__(self, parent, time_type, time, title):
         wx.Dialog.__init__(self, parent, title=title)
-        self._create_gui(time_type)
-        self.dtpc.set_value(time)
+        self.time_type = time_type
+        self._create_gui()
+        self.time_picker.set_value(time)
+        self.time_picker.show_time(self.checkbox.IsChecked())
+        self.time_picker.SetFocus()
 
-    def _create_gui(self, time_type):
-        self.dtpc = time_picker_for(time_type)(self)
-        checkbox = wx.CheckBox(self, label=_("Show time"))
-        checkbox.SetValue(False)
-        self.dtpc.show_time(checkbox.IsChecked())
-        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox, checkbox)
-        # Layout
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(checkbox, flag=wx.LEFT|wx.TOP|wx.RIGHT,
-                 border=BORDER, proportion=1)
-        vbox.Add(self.dtpc, flag=wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT,
-                 border=BORDER, proportion=1)
-        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
-        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        self.dtpc.SetFocus()
-        self.SetSizerAndFit(vbox)
+    def _create_gui(self):
+        self._create_show_time_checkbox()
+        self._create_time_picker()
+        self._create_buttons()
+        self._layout_components()
 
-    def _chb_show_time_on_checkbox(self, e):
-        self.dtpc.show_time(e.IsChecked())
+    def _create_show_time_checkbox(self):
+        self.checkbox = wx.CheckBox(self, label=_("Show time"))
+        self.checkbox.SetValue(False)
+        self.Bind(wx.EVT_CHECKBOX, self._show_time_checkbox_on_checked, self.checkbox)
 
-    def _btn_ok_on_click(self, e):
+    def _show_time_checkbox_on_checked(self, e):
+        self.time_picker.show_time(e.IsChecked())
+
+    def _create_time_picker(self):
+        self.time_picker = time_picker_for(self.time_type)(self)
+
+    def _create_buttons(self):
+        self.button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        self.Bind(wx.EVT_BUTTON, self._ok_button_on_click, id=wx.ID_OK)
+
+    def _ok_button_on_click(self, e):
         try:
-            self.time = self.dtpc.get_value()
+            self.time = self.time_picker.get_value()
         except ValueError, ex:
             _display_error_message(ex_msg(ex))
         else:
             self.EndModal(wx.ID_OK)
+
+    def _layout_components(self):
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(self.checkbox, flag=wx.LEFT|wx.TOP|wx.RIGHT,
+                 border=BORDER, proportion=1)
+        vbox.Add(self.time_picker, flag=wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT,
+                 border=BORDER, proportion=1)
+        vbox.Add(self.button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self.SetSizerAndFit(vbox)
