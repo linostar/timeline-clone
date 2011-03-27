@@ -23,12 +23,10 @@ import wx
 from timelinelib.gui.dialogs.mainframe import MainFrame
 from timelinelib.gui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.unhandledex import create_error_message
-import timelinelib.config as config
 
 
 def start_wx_application(application_arguments):
     app = wx.PySimpleApp()
-    config.read() # Must be called after we have created the wx.App
     main_frame = MainFrame(application_arguments)
     main_frame.Show()
     sys.excepthook = unhandled_exception_hook
