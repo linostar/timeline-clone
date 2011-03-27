@@ -33,10 +33,10 @@ from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.gui.dialogs.duplicateevent import DuplicateEvent
 from timelinelib.gui.dialogs.eventeditor import EventEditor
-from timelinelib.gui.dialogs.gotodate import GotoDateDialog
 from timelinelib.gui.dialogs.gotonumtime import GotoNumTimeDialog
 from timelinelib.gui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.gui.dialogs.preferences import PreferencesDialog
+from timelinelib.gui.dialogs.timeeditor import GotoDateDialog
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import WildcardHelper
