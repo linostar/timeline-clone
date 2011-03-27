@@ -223,11 +223,10 @@ def go_to_today_fn(main_frame, current_period, navigation_fn):
 
 
 def go_to_date_fn(main_frame, current_period, navigation_fn):
-    from timelinelib.gui.dialogs.gotodate import GotoDateDialog
-    dialog = GotoDateDialog(main_frame, WxTimeType(), current_period.mean_time())
-    if dialog.ShowModal() == wx.ID_OK:
-        navigation_fn(lambda tp: tp.center(dialog.time))
-    dialog.Destroy()
+    def navigate_to(time):
+        navigation_fn(lambda tp: tp.center(time))
+    main_frame.display_time_entry_dialog(
+        WxTimeType(), current_period.mean_time(), navigate_to)
 
 
 def backward_fn(main_frame, current_period, navigation_fn):

@@ -170,11 +170,10 @@ def go_to_zero_fn(main_frame, current_period, navigation_fn):
 
 
 def go_to_time_fn(main_frame, current_period, navigation_fn):
-    from timelinelib.gui.dialogs.gotonumtime import GotoNumTimeDialog
-    dialog = GotoNumTimeDialog(main_frame, current_period.mean_time())
-    if dialog.ShowModal() == wx.ID_OK:
-        navigation_fn(lambda tp: tp.center(dialog.get_time()))
-    dialog.Destroy()
+    def navigate_to(time):
+        navigation_fn(lambda tp: tp.center(time))
+    main_frame.display_num_time_entry_dialog(
+        current_period.mean_time(), navigate_to)
 
 
 def backward_fn(main_frame, current_period, navigation_fn):
