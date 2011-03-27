@@ -39,7 +39,7 @@ from timelinelib.gui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _display_error_message
 from timelinelib.gui.utils import WildcardHelper
-from timelinelib import config
+from timelinelib import config as config_module
 from timelinelib.paths import ICONS_DIR
 from timelinelib.utils import ex_msg
 import timelinelib.gui.utils as gui_utils
@@ -49,22 +49,25 @@ import timelinelib.printing as printing
 class MainFrame(wx.Frame):
 
     def __init__(self, application_arguments):
-        config.read()
-        wx.Frame.__init__(self, None, size=config.get_window_size(), 
-                          pos=config.get_window_pos(),
+        config_module.read()
+        self.config = config_module.global_config
+
+        wx.Frame.__init__(self, None, size=self.config.get_window_size(), 
+                          pos=self.config.get_window_pos(),
                           style=wx.DEFAULT_FRAME_STYLE)
+
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
 
         self.help_browser = HelpBrowser(self)
-        self.controller = TimelineApplication(self, db_open, config.global_config)
+        self.controller = TimelineApplication(self, db_open, self.config)
         self.menu_controller = MenuController()
 
         self._set_initial_values_to_member_variables()
         self._create_print_data()
         self._create_gui()
 
-        self.Maximize(config.get_window_maximized())
+        self.Maximize(self.config.get_window_maximized())
         self.SetTitle(APPLICATION_NAME)
         self.SetIcons(self._load_icon_bundle())
 
@@ -99,7 +102,7 @@ class MainFrame(wx.Frame):
         self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
         
     def _create_main_panel(self):
-        self.main_panel = MainPanel(self)
+        self.main_panel = MainPanel(self, self.config)
         
     def _create_main_menu_bar(self):
         main_menu_bar = wx.MenuBar()
@@ -314,7 +317,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click, preferences_item)
 
     def _mnu_edit_preferences_on_click(self, evt):
-        dialog = PreferencesDialog(self, config.global_config)
+        dialog = PreferencesDialog(self, self.config)
         dialog.ShowModal()
         dialog.Destroy()
 
@@ -331,10 +334,10 @@ class MainFrame(wx.Frame):
             wx.ID_ANY, _("&Sidebar\tCtrl+I"), kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click, view_sidebar_item)
         self.menu_controller.add_menu_requiring_visible_timeline_view(view_sidebar_item)
-        view_sidebar_item.Check(config.get_show_sidebar())
+        view_sidebar_item.Check(self.config.get_show_sidebar())
 
     def _mnu_view_sidebar_on_click(self, evt):
-        config.set_show_sidebar(evt.IsChecked())
+        self.config.set_show_sidebar(evt.IsChecked())
         if evt.IsChecked():
             self.main_panel.show_sidebar()
         else:
@@ -345,20 +348,20 @@ class MainFrame(wx.Frame):
             wx.ID_ANY, _("&Legend"), kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click, view_legend_item)
         self.menu_controller.add_menu_requiring_timeline(view_legend_item)
-        view_legend_item.Check(config.get_show_legend())
+        view_legend_item.Check(self.config.get_show_legend())
 
     def _mnu_view_legend_on_click(self, evt):
-        config.set_show_legend(evt.IsChecked())
+        self.config.set_show_legend(evt.IsChecked())
         self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
 
     def _create_view_balloons_menu_item(self, view_menu):
         view_balloons_item = view_menu.Append(
             wx.ID_ANY, _("&Balloons on hover"), kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click, view_balloons_item)
-        view_balloons_item.Check(config.get_balloon_on_hover())
+        view_balloons_item.Check(self.config.get_balloon_on_hover())
 
     def _mnu_view_balloons_on_click(self, evt):
-        config.set_balloon_on_hover(evt.IsChecked())
+        self.config.set_balloon_on_hover(evt.IsChecked())
         self.main_panel.drawing_area.balloon_visibility_changed(evt.IsChecked())
 
     def _create_timeline_menu(self, main_menu_bar):
@@ -556,12 +559,12 @@ class MainFrame(wx.Frame):
         self.Destroy()
 
     def _save_application_config(self):
-        config.set_window_size(self.GetSize())
-        config.set_window_pos(self.GetPosition())
-        config.set_window_maximized(self.IsMaximized())
-        config.set_sidebar_width(self.main_panel.get_sidebar_width())
+        self.config.set_window_size(self.GetSize())
+        self.config.set_window_pos(self.GetPosition())
+        self.config.set_window_maximized(self.IsMaximized())
+        self.config.set_sidebar_width(self.main_panel.get_sidebar_width())
         try:
-            config.write()
+            self.config.write()
         except IOError, ex:
             friendly = _("Unable to write configuration file.")
             msg = "%s\n\n%s" % (friendly, ex_msg(ex))
@@ -653,7 +656,7 @@ class MainFrame(wx.Frame):
             self.mnu_file_open_recent_submenu.DeleteItem(item)
         # Create new items and map (item id > path)
         self.open_recent_map = {}
-        for path in config.get_recently_opened():
+        for path in self.config.get_recently_opened():
             name = "%s (%s)" % (
                 os.path.basename(path),
                 os.path.dirname(os.path.abspath(path)))
@@ -772,8 +775,9 @@ class MainPanel(wx.Panel):
     Also displays the search bar.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, config):
         wx.Panel.__init__(self, parent)
+        self.config = config
         self._create_gui()
         # Install variables for backwards compatibility
         self.cattree = self.timeline_panel.sidebar.cattree
@@ -808,7 +812,7 @@ class MainPanel(wx.Panel):
         self.searchbar.Show(False)
         # Panels
         self.welcome_panel = WelcomePanel(self)
-        self.timeline_panel = TimelinePanel(self)
+        self.timeline_panel = TimelinePanel(self, self.config)
         self.error_panel = ErrorPanel(self)
         # Layout
         self.sizerOuter = wx.BoxSizer(wx.VERTICAL)
@@ -864,12 +868,13 @@ class TimelinePanel(wx.Panel):
     Showing the drawn timeline, the vertical sizer, and the optional sidebar.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, config):
         wx.Panel.__init__(self, parent)
-        self.sidebar_width = config.get_sidebar_width()
+        self.config = config
+        self.sidebar_width = self.config.get_sidebar_width()
         self._create_gui()
         self.show_sidebar()
-        if not config.get_show_sidebar():
+        if not self.config.get_show_sidebar():
             self.hide_sidebar()
 
     def get_sidebar_width(self):
@@ -895,7 +900,7 @@ class TimelinePanel(wx.Panel):
                                         main_frame.status_bar_adapter,
                                         self.divider_line_slider,
                                         main_frame.handle_db_error,
-                                        config.global_config)
+                                        self.config)
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(self.splitter, 1, wx.EXPAND)
         globalSizer.Add(self.divider_line_slider, 0, wx.EXPAND)
