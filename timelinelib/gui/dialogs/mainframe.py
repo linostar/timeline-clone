@@ -893,7 +893,8 @@ class TimelinePanel(wx.Panel):
         self.drawing_area = DrawingArea(self.splitter,
                                         main_frame.status_bar_adapter,
                                         self.divider_line_slider,
-                                        main_frame.handle_db_error)
+                                        main_frame.handle_db_error,
+                                        config.global_config)
         globalSizer = wx.BoxSizer(wx.HORIZONTAL)
         globalSizer.Add(self.splitter, 1, wx.EXPAND)
         globalSizer.Add(self.divider_line_slider, 0, wx.EXPAND)

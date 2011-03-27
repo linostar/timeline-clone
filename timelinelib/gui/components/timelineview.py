@@ -26,7 +26,6 @@ from timelinelib.drawing.interface import ViewProperties
 from timelinelib.gui.utils import _ask_question
 from timelinelib.gui.utils import _step_function
 from timelinelib.utils import ex_msg
-import timelinelib.config as config
 
 
 # Used by Sizer and Mover classes to detect when to go into action
@@ -48,10 +47,11 @@ MOUSE_SCROLL_FACTOR = 1 / 10.0
 
 class DrawingArea(wx.Panel):
 
-    def __init__(self, parent, status_bar_adapter, divider_line_slider, fn_handle_db_error):
+    def __init__(self, parent, status_bar_adapter, divider_line_slider,
+                 fn_handle_db_error, config):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
         self.controller = DrawingAreaController(
-            self, status_bar_adapter, config.global_config, get_drawer(),
+            self, status_bar_adapter, config, get_drawer(),
             divider_line_slider, fn_handle_db_error)
         self.surface_bitmap = None
         self._create_gui()
