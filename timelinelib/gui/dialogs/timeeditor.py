@@ -29,6 +29,8 @@ class TimeEditorDialog(wx.Dialog):
     def __init__(self, parent, time_type, time, title):
         wx.Dialog.__init__(self, parent, title=title)
         self.time_type = time_type
+        from timelinelib.config import global_config
+        self.config = global_config
         self._create_gui()
         self.time_picker.set_value(time)
         if self._should_display_show_time_checkbox():
@@ -51,7 +53,7 @@ class TimeEditorDialog(wx.Dialog):
         self.time_picker.show_time(e.IsChecked())
 
     def _create_time_picker(self):
-        self.time_picker = time_picker_for(self.time_type)(self)
+        self.time_picker = time_picker_for(self.time_type)(self, config=self.config)
 
     def _create_buttons(self):
         self.button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)

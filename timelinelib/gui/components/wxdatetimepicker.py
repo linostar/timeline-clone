@@ -22,7 +22,6 @@ import wx
 
 from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
-import timelinelib.config as config
 from timelinelib.time import WxTimeType
 from timelinelib.time import try_to_create_wx_date_time_from_dmy
 from timelinelib.gui.utils import _display_error_message
@@ -30,8 +29,9 @@ from timelinelib.gui.utils import _display_error_message
 
 class WxDateTimePicker(wx.Panel):
 
-    def __init__(self, parent, show_time=True):
+    def __init__(self, parent, show_time=True, config=None):
         wx.Panel.__init__(self, parent)
+        self.config = config
         self._create_gui()
         self.controller = WxDateTimePickerController(
             self.date_picker, self.time_picker, wx.DateTime.Now)
@@ -77,7 +77,7 @@ class WxDateTimePicker(wx.Panel):
 
     def _create_calendar_popup(self):
         wx_date = self.controller.get_value()
-        calendar_popup = CalendarPopup(self, wx_date)
+        calendar_popup = CalendarPopup(self, wx_date, self.config)
         calendar_popup.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED,
                             self._calendar_on_date_changed)
         calendar_popup.Bind(wx.calendar.EVT_CALENDAR,
@@ -123,7 +123,8 @@ class WxDateTimePickerController(object):
 
 class CalendarPopup(wx.PopupTransientWindow):
 
-    def __init__(self, parent, wx_date):
+    def __init__(self, parent, wx_date, config):
+        self.config = config
         self.controller = CalendarPopupController(self)
         wx.PopupTransientWindow.__init__(self, parent, style=wx.BORDER_NONE)
         border = 2
@@ -136,7 +137,7 @@ class CalendarPopup(wx.PopupTransientWindow):
     def _style(self):
         style = (wx.calendar.CAL_SHOW_HOLIDAYS | 
                  wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION)
-        if config.global_config.week_start == "monday":
+        if self.config.week_start == "monday":
             style |= wx.calendar.CAL_MONDAY_FIRST
         else:
             style |= wx.calendar.CAL_SUNDAY_FIRST

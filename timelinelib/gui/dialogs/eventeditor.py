@@ -63,12 +63,14 @@ class EventEditor(wx.Dialog):
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self.event = event
+        from timelinelib.config import global_config
+        self.config = global_config
         self._create_gui()
         self._fill_controls_with_data(start, end)
         self._set_initial_focus()
 
     def _create_time_picker(self):
-        return time_picker_for(self.timeline.get_time_type())(self)
+        return time_picker_for(self.timeline.get_time_type())(self, config=self.config)
 
     def _create_gui(self):
         """Create the controls of the dialog."""
