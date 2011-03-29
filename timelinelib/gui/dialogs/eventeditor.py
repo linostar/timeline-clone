@@ -45,7 +45,7 @@ import timelinelib.gui.utils as gui_utils
 class EventEditor(wx.Dialog):
     """Dialog used for creating and editing events."""
 
-    def __init__(self, parent, title, timeline,
+    def __init__(self, parent, config, title, timeline,
                  start=None, end=None, event=None):
         """
         Create a event editor dialog.
@@ -63,8 +63,7 @@ class EventEditor(wx.Dialog):
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self.event = event
-        from timelinelib.config import global_config
-        self.config = global_config
+        self.config = config
         self._create_gui()
         self._fill_controls_with_data(start, end)
         self._set_initial_focus()

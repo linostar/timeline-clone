@@ -381,7 +381,7 @@ class MainFrame(wx.Frame):
 
     def create_new_event(self, start=None, end=None):
         def create_event_editor():
-            return EventEditor(self, _("Create Event"), self.timeline,
+            return EventEditor(self, self.config, _("Create Event"), self.timeline,
                                start, end)
         gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
@@ -575,7 +575,7 @@ class MainFrame(wx.Frame):
 
     def edit_event(self, event):
         def create_event_editor():
-            return EventEditor(self, _("Edit Event"), self.timeline,
+            return EventEditor(self, self.config, _("Edit Event"), self.timeline,
                                event=event)
         gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
@@ -711,7 +711,7 @@ class MainFrame(wx.Frame):
 
     def display_time_editor_dialog(self, time_type, initial_time,
                                    handle_new_time_fn, title):
-        dialog = TimeEditorDialog(self, time_type, initial_time, title)
+        dialog = TimeEditorDialog(self, self.config, time_type, initial_time, title)
         if dialog.ShowModal() == wx.ID_OK:
             handle_new_time_fn(dialog.time)
         dialog.Destroy()

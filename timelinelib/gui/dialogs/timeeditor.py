@@ -26,11 +26,10 @@ from timelinelib.utils import ex_msg
 
 class TimeEditorDialog(wx.Dialog):
 
-    def __init__(self, parent, time_type, time, title):
+    def __init__(self, parent, config, time_type, time, title):
         wx.Dialog.__init__(self, parent, title=title)
         self.time_type = time_type
-        from timelinelib.config import global_config
-        self.config = global_config
+        self.config = config
         self._create_gui()
         self.time_picker.set_value(time)
         if self._should_display_show_time_checkbox():
