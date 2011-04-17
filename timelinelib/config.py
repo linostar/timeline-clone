@@ -67,46 +67,13 @@ MAX_NBR_OF_RECENT_FILES_SAVED = 5
 ENCODING = "utf-8"
 
 
-global_config = None
-
-
-def init():
-    # Note: wx.App object must have been created before calling this method.
-    global global_config
-    path = os.path.join(wx.StandardPaths.Get().GetUserConfigDir(),
-                        ".thetimelineproj.cfg")
-    global_config = Config(path)
-    global_config.read()
-
-
 def read_config():
-    init()
-    return global_config
-
-
-# These functions are just wrappers to preserve the old interface to the config
-# module. In the future they should be removed. In the future you should either
-# get passed a Config object or use the global global_config.
-def read(): init()
-def write(): global_config.write()
-def get_window_size(): return global_config.window_size
-def set_window_size(size): global_config.window_size = size
-def get_window_pos(): return global_config.window_pos
-def set_window_pos(pos): global_config.window_pos = pos
-def get_window_maximized(): return global_config.window_maximized
-def set_window_maximized(maximized): global_config.window_maximized = maximized
-def get_show_sidebar(): return global_config.show_sidebar
-def set_show_sidebar(show): global_config.show_sidebar = show
-def get_show_legend(): return global_config.show_legend
-def set_show_legend(show): global_config.show_legend = show
-def get_sidebar_width(): return global_config.sidebar_width
-def set_sidebar_width(width): global_config.sidebar_width = width
-def get_recently_opened(): return global_config.recently_opened
-def append_recently_opened(path): global_config.append_recently_opened(path)
-def get_open_recent_at_startup(): return global_config.open_recent_at_startup
-def set_open_recent_at_startup(open): global_config.open_recent_at_startup = open
-def get_balloon_on_hover(): return global_config.balloon_on_hover
-def set_balloon_on_hover(balloon_on_hover): global_config.balloon_on_hover = balloon_on_hover
+    # Note: wx.App object must have been created before calling this method.
+    path = os.path.join(
+        wx.StandardPaths.Get().GetUserConfigDir(), ".thetimelineproj.cfg")
+    config = Config(path)
+    config.read()
+    return config
 
 
 class Config(object):
