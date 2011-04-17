@@ -27,7 +27,6 @@ import wx
 from timelinelib.time.typeinterface import TimeType
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.interface import Strip
-import timelinelib.config as config
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.monthnames import abbreviated_name_of_month
@@ -134,7 +133,7 @@ class PyTimeType(TimeType):
         if one_day_width > 600:
             return (StripDay(), StripHour())
         elif one_day_width > 45:
-            return (StripWeek(), StripWeekday())
+            return (StripWeek(config), StripWeekday())
         elif one_day_width > 25:
             return (StripMonth(), StripDay())
         elif one_day_width > 1.5:
@@ -468,6 +467,10 @@ class StripDay(Strip):
  
 class StripWeek(Strip):
 
+    def __init__(self, config):
+        Strip.__init__(self)
+        self.config = config
+
     def label(self, time, major=False):
         if major:
             # Example: Week 23 (1-7 Jan 2009)
@@ -475,7 +478,7 @@ class StripWeek(Strip):
             next_first_weekday = self.increment(first_weekday)
             last_weekday = next_first_weekday - timedelta(days=1)
             range_string = self._time_range_string(first_weekday, last_weekday)
-            if config.global_config.week_start == "monday":
+            if self.config.week_start == "monday":
                 return (_("Week") + " %s (%s)") % (time.isocalendar()[1], range_string)
             else:
                 # It is sunday (don't know what to do about week numbers here)
@@ -485,7 +488,7 @@ class StripWeek(Strip):
 
     def start(self, time):
         stripped_date = datetime(time.year, time.month, time.day)
-        if config.global_config.week_start == "monday":
+        if self.config.week_start == "monday":
             days_to_subtract = stripped_date.weekday()
         else:
             # It is sunday
