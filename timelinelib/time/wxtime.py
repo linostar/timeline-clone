@@ -124,7 +124,7 @@ class WxTimeType(TimeType):
         max_time = wx.DateTimeFromDMY(1, 0, MAX_YEAR)
         return (max_time, _("can't be after year %d") % (MAX_YEAR))
     
-    def choose_strip(self, metrics):
+    def choose_strip(self, metrics, config):
         """
         Return a tuple (major_strip, minor_strip) for current time period and
         window size.

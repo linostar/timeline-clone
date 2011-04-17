@@ -70,7 +70,7 @@ class NumTimeType(TimeType):
     def get_max_time(self):
         return(None, None)
 
-    def choose_strip(self, metrics):
+    def choose_strip(self, metrics, config):
         start_time = 1
         end_time = 2
         period_width = 0

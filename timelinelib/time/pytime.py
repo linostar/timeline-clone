@@ -122,7 +122,7 @@ class PyTimeType(TimeType):
         max_time = datetime(9990, 1, 1)
         return (max_time, _("can't be after year 9989"))
     
-    def choose_strip(self, metrics):
+    def choose_strip(self, metrics, config):
         """
         Return a tuple (major_strip, minor_strip) for current time period and
         window size.

@@ -226,7 +226,7 @@ class TimelineScene(object):
                 current_start = next_start
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
-        self.major_strip, self.minor_strip = self._db.get_time_type().choose_strip(self._metrics)
+        self.major_strip, self.minor_strip = self._db.get_time_type().choose_strip(self._metrics, self._config)
         fill(self.major_strip_data, self.major_strip)
         fill(self.minor_strip_data, self.minor_strip)
 
