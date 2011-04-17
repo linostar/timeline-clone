@@ -80,7 +80,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def get_closest_overlapping_event(self, event_to_move, up=True):
         return self.scene.get_closest_overlapping_event(event_to_move, up=up)
 
-    def draw(self, dc, timeline, view_properties):
+    def draw(self, dc, timeline, view_properties, config):
         self.dc = dc
         self.time_type = timeline.get_time_type()
         self.scene = self._create_scene(

@@ -26,7 +26,7 @@ class Drawer(object):
     Draw timeline onto a device context and provide information about drawing.
     """
 
-    def draw(self, dc, timeline, view_properties):
+    def draw(self, dc, timeline, view_properties, config):
         """
         Draw a representation of a timeline.
 

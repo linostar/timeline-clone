@@ -56,7 +56,7 @@ class DrawerSpec(unittest.TestCase):
         self.timeline.save_event(event)
         
     def when_timeline_is_drawn(self):
-        self.drawer.draw(self.dc, self.timeline, self.view_properties)
+        self.drawer.draw(self.dc, self.timeline, self.view_properties, None)
 
     def assert_text_drawn_above(self, text, y_limit):
         x, y = self.position_of_drawn_text(text)

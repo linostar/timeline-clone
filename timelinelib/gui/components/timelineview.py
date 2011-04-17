@@ -512,7 +512,7 @@ class DrawingAreaController(object):
     def _redraw_timeline(self, period_selection=None):
         def fn_draw(dc):
             try:
-                self.drawing_algorithm.draw(dc, self.timeline, self.view_properties)
+                self.drawing_algorithm.draw(dc, self.timeline, self.view_properties, self.config)
             except TimelineIOError, e:
                 self.fn_handle_db_error(e)
         if self.timeline:
