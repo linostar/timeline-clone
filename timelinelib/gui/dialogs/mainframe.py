@@ -831,6 +831,7 @@ class MainPanel(wx.Panel):
         # Show this one
         panel.Show(True)
         self.sizerOuter.Layout()
+        panel.activated()
 
 
 class WelcomePanel(wx.Panel):
@@ -861,52 +862,73 @@ class WelcomePanel(wx.Panel):
     def _btn_tutorial_on_click(self, e):
         wx.GetTopLevelParent(self).open_timeline(":tutorial:")
 
+    def activated(self):
+        pass
+
 
 class TimelinePanel(wx.Panel):
-    """
-    Showing the drawn timeline, the vertical sizer, and the optional sidebar.
-    """
 
     def __init__(self, parent, config):
         wx.Panel.__init__(self, parent)
         self.config = config
         self.sidebar_width = self.config.get_sidebar_width()
         self._create_gui()
-        self.show_sidebar()
-        if not self.config.get_show_sidebar():
-            self.hide_sidebar()
+
+    def _create_gui(self):
+        self._create_divider_line_slider()
+        self._create_splitter()
+        self._layout_components()
+
+    def _create_divider_line_slider(self):
+        self.divider_line_slider = wx.Slider(
+            self, value=50, size=(20, -1), style=wx.SL_LEFT|wx.SL_VERTICAL)
+
+    def _create_splitter(self):
+        self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        self.splitter.SetMinimumPaneSize(50)
+        self.Bind(
+            wx.EVT_SPLITTER_SASH_POS_CHANGED,
+            self._splitter_on_splitter_sash_pos_changed, self.splitter)
+        self._create_sidebar()
+        self._create_drawing_area()
+        self.splitter.Initialize(self.drawing_area)
+
+    def _splitter_on_splitter_sash_pos_changed(self, event):
+        if self.IsShown():
+            self.sidebar_width = self.splitter.GetSashPosition()
+
+    def _create_sidebar(self):
+        self.sidebar = Sidebar(self.splitter)
+
+    def _create_drawing_area(self):
+        main_frame = wx.GetTopLevelParent(self)
+        self.drawing_area = DrawingArea(
+            self.splitter,
+            main_frame.status_bar_adapter,
+            self.divider_line_slider,
+            main_frame.handle_db_error,
+            self.config)
+
+    def _layout_components(self):
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self.splitter, proportion=1, flag=wx.EXPAND)
+        sizer.Add(self.divider_line_slider, proportion=0, flag=wx.EXPAND)
+        self.SetSizer(sizer)
 
     def get_sidebar_width(self):
         return self.sidebar_width
 
     def show_sidebar(self):
-        self.splitter.SplitVertically(self.sidebar, self.drawing_area,
-                                      self.sidebar_width)
+        self.splitter.SplitVertically(
+            self.sidebar, self.drawing_area, self.sidebar_width)
+        self.splitter.SetSashPosition(self.sidebar_width)
 
     def hide_sidebar(self):
         self.splitter.Unsplit(self.sidebar)
 
-    def _create_gui(self):
-        self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
-        self.splitter.SetMinimumPaneSize(50)
-        self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED,
-                  self._splitter_on_splitter_sash_pos_changed, self.splitter)
-        self.sidebar = Sidebar(self.splitter)
-        self.divider_line_slider = wx.Slider(self, value = 50, size = (20, -1),
-                                             style = wx.SL_LEFT | wx.SL_VERTICAL)
-        main_frame = wx.GetTopLevelParent(self)
-        self.drawing_area = DrawingArea(self.splitter,
-                                        main_frame.status_bar_adapter,
-                                        self.divider_line_slider,
-                                        main_frame.handle_db_error,
-                                        self.config)
-        globalSizer = wx.BoxSizer(wx.HORIZONTAL)
-        globalSizer.Add(self.splitter, 1, wx.EXPAND)
-        globalSizer.Add(self.divider_line_slider, 0, wx.EXPAND)
-        self.SetSizer(globalSizer)
-
-    def _splitter_on_splitter_sash_pos_changed(self, e):
-        self.sidebar_width = self.splitter.GetSashPosition()
+    def activated(self):
+        if self.config.get_show_sidebar():
+            self.show_sidebar()
 
 
 class ErrorPanel(wx.Panel):
@@ -939,6 +961,9 @@ class ErrorPanel(wx.Panel):
 
     def _btn_contact_on_click(self, e):
         wx.GetTopLevelParent(self).help_browser.show_page("contact")
+
+    def activated(self):
+        pass
 
 
 class Sidebar(wx.Panel):
