@@ -228,7 +228,7 @@ class DefaultDrawingAlgorithm(Drawer):
             elif x + tw + INNER_PADDING > self.scene.width:
                 x = self.scene.width - tw - INNER_PADDING
                 left = self.scene.x_pos_for_time(tp.start_time)
-                if x < left:
+                if x < left + INNER_PADDING:
                     x = left + INNER_PADDING
             self.dc.DrawText(label, x, INNER_PADDING)
 
