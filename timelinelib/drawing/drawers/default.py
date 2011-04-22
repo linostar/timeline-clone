@@ -209,28 +209,33 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_major_strips(self):
         self.dc.SetFont(self.header_font)
         self.dc.SetPen(self.grey_solid_pen)
-        for tp in self.scene.major_strip_data:
-            # Divider line
-            x = self.scene.x_pos_for_time(tp.end_time)
-            self.dc.DrawLine(x, 0, x, self.scene.height)
-            # Label
-            label = self.scene.major_strip.label(tp.start_time, True)
-            (tw, th) = self.dc.GetTextExtent(label)
-            x = self.scene.x_pos_for_time(tp.mean_time()) - tw / 2
-            # If the label is not visible when it is positioned in the middle
-            # of the period, we move it so that as much of it as possible is
-            # visible without crossing strip borders.
-            if x - INNER_PADDING < 0:
-                x = INNER_PADDING
-                right = self.scene.x_pos_for_time(tp.end_time)
-                if x + tw + INNER_PADDING > right:
-                    x = right - tw - INNER_PADDING
-            elif x + tw + INNER_PADDING > self.scene.width:
-                x = self.scene.width - tw - INNER_PADDING
-                left = self.scene.x_pos_for_time(tp.start_time)
-                if x < left + INNER_PADDING:
-                    x = left + INNER_PADDING
-            self.dc.DrawText(label, x, INNER_PADDING)
+        for time_period in self.scene.major_strip_data:
+            self._draw_major_strip_end_line(time_period)
+            self._draw_major_strip_label(time_period)
+
+    def _draw_major_strip_end_line(self, time_period):
+        x = self.scene.x_pos_for_time(time_period.end_time)
+        self.dc.DrawLine(x, 0, x, self.scene.height)
+
+    def _draw_major_strip_label(self, time_period):
+        label = self.scene.major_strip.label(time_period.start_time, True)
+        x = self._calculate_major_strip_label_x(time_period, label)
+        self.dc.DrawText(label, x, INNER_PADDING)
+
+    def _calculate_major_strip_label_x(self, time_period, label):
+        (tw, th) = self.dc.GetTextExtent(label)
+        x = self.scene.x_pos_for_time(time_period.mean_time()) - tw / 2
+        if x - INNER_PADDING < 0:
+            x = INNER_PADDING
+            right = self.scene.x_pos_for_time(time_period.end_time)
+            if x + tw + INNER_PADDING > right:
+                x = right - tw - INNER_PADDING
+        elif x + tw + INNER_PADDING > self.scene.width:
+            x = self.scene.width - tw - INNER_PADDING
+            left = self.scene.x_pos_for_time(time_period.start_time)
+            if x < left + INNER_PADDING:
+                x = left + INNER_PADDING
+        return x
 
     def _draw_divider_line(self):
         self.dc.SetPen(self.black_solid_pen)
