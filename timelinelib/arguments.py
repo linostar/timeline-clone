@@ -17,8 +17,11 @@
 
 
 from optparse import OptionParser
+import os.path
 
 from timelinelib.version import get_version
+
+import wx
 
 
 class ApplicationArguments(object):
@@ -28,7 +31,18 @@ class ApplicationArguments(object):
         option_parser = OptionParser(
             usage="%prog [options] [filename]",
             version=version_string)
+        option_parser.add_option(
+            "-c", "--config-file", dest="config_file_path", default=None,
+            help="Path to config file")
         (self.options, self.arguments) = option_parser.parse_args()
 
     def get_files(self):
         return self.arguments
+
+    def get_config_file_path(self):
+        if self.options.config_file_path:
+            return self.options.config_file_path
+        else:
+            return os.path.join(
+                wx.StandardPaths.Get().GetUserConfigDir(),
+                ".thetimelineproj.cfg")

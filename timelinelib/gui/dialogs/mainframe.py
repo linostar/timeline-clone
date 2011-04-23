@@ -49,7 +49,7 @@ import timelinelib.printing as printing
 class MainFrame(wx.Frame):
 
     def __init__(self, application_arguments):
-        self.config = read_config()
+        self.config = read_config(application_arguments.get_config_file_path())
 
         wx.Frame.__init__(self, None, size=self.config.get_window_size(), 
                           pos=self.config.get_window_pos(),

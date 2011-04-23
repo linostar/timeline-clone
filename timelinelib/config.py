@@ -30,8 +30,6 @@ from ConfigParser import ConfigParser
 from ConfigParser import DEFAULTSECT
 import os.path
 
-import wx
-
 
 # Name used in ConfigParser
 WINDOW_WIDTH = "window_width"
@@ -67,10 +65,7 @@ MAX_NBR_OF_RECENT_FILES_SAVED = 5
 ENCODING = "utf-8"
 
 
-def read_config():
-    # Note: wx.App object must have been created before calling this method.
-    path = os.path.join(
-        wx.StandardPaths.Get().GetUserConfigDir(), ".thetimelineproj.cfg")
+def read_config(path):
     config = Config(path)
     config.read()
     return config
