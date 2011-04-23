@@ -16,28 +16,21 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
-
-import wx
-
-from timelinelib.gui.dialogs.mainframe import MainFrame
-from timelinelib.gui.dialogs.textdisplay import TextDisplayDialog
-from timelinelib.unhandledex import create_error_message
+from specs.EndToEnd import EndToEndTestCase
 
 
-def start_wx_application(application_arguments, before_main_loop_hook=None):
-    app = wx.PySimpleApp()
-    main_frame = MainFrame(application_arguments)
-    main_frame.Show()
-    sys.excepthook = unhandled_exception_hook
-    if before_main_loop_hook:
-        before_main_loop_hook()
-    app.MainLoop()
+class EndToEndSidebarSpec(EndToEndTestCase):
+    
+    def test_sidebar_gets_same_width_as_in_config(self):
+        self.config.set_show_sidebar(True)
+        self.config.set_sidebar_width(234)
+        self.start_timeline_and([
+            self.check_that_sidebar_width_equals(234),
+        ])
 
-
-def unhandled_exception_hook(type, value, tb):
-    title = "Unexpected Error"
-    text = create_error_message(type, value, tb)
-    dialog = TextDisplayDialog(title, text)
-    dialog.ShowModal()
-    dialog.Destroy()
+    def check_that_sidebar_width_equals(self, expected_width):
+        def check():
+            self.assertEqual(
+                expected_width,
+                self.find_component("main_frame.splitter").GetSashPosition())
+        return check

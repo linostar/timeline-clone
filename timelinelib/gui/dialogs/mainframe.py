@@ -53,7 +53,7 @@ class MainFrame(wx.Frame):
 
         wx.Frame.__init__(self, None, size=self.config.get_window_size(), 
                           pos=self.config.get_window_pos(),
-                          style=wx.DEFAULT_FRAME_STYLE)
+                          style=wx.DEFAULT_FRAME_STYLE, name="main_frame")
 
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
