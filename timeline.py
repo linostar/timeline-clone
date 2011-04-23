@@ -39,5 +39,6 @@ if platform.system() == "Windows":
 gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
 
 application_arguments = ApplicationArguments()
+application_arguments.parse_from(sys.argv[1:])
 
 start_wx_application(application_arguments)

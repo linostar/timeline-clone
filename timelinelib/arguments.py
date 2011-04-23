@@ -28,13 +28,15 @@ class ApplicationArguments(object):
 
     def __init__(self):
         version_string = "%prog " + get_version()
-        option_parser = OptionParser(
+        self.option_parser = OptionParser(
             usage="%prog [options] [filename]",
             version=version_string)
-        option_parser.add_option(
+        self.option_parser.add_option(
             "-c", "--config-file", dest="config_file_path", default=None,
             help="Path to config file")
-        (self.options, self.arguments) = option_parser.parse_args()
+
+    def parse_from(self, arguments):
+        (self.options, self.arguments) = self.option_parser.parse_args(arguments)
 
     def get_files(self):
         return self.arguments
