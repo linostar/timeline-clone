@@ -25,6 +25,7 @@ import unittest
 
 from timelinelib.arguments import ApplicationArguments
 from timelinelib.config import read_config
+from timelinelib.db import db_open
 from timelinelib.gui.setup import start_wx_application
 
 import wx
@@ -35,6 +36,7 @@ class EndToEndTestCase(unittest.TestCase):
 
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
+        self.timeline_path = os.path.join(self.tmp_dir, "test.timeline")
         self.config_file_path = os.path.join(self.tmp_dir, "thetimelineproj.cfg")
         self.config = read_config(self.config_file_path)
         self.standard_excepthook = sys.excepthook
@@ -49,12 +51,15 @@ class EndToEndTestCase(unittest.TestCase):
         self.steps_to_perform_in_gui = steps_to_perform_in_gui
         application_arguments = ApplicationArguments()
         application_arguments.parse_from(
-            ["--config-file", self.config_file_path, ":tutorial:"])
+            ["--config-file", self.config_file_path, self.timeline_path])
         start_wx_application(application_arguments, self._before_main_loop_hook)
         if self.error_in_gui_thread:
             exc_type, exc_value, exc_traceback = self.error_in_gui_thread
             a = traceback.format_exception(exc_type, exc_value, exc_traceback)
             self.fail("Exception in GUI thread: %s" % "".join(a))
+
+    def read_written_timeline(self):
+        return db_open(self.timeline_path)
 
     def _before_main_loop_hook(self):
         sys.excepthook = self.standard_excepthook
@@ -83,10 +88,33 @@ class EndToEndTestCase(unittest.TestCase):
     def show_widget_inspector(self):
         wx.lib.inspection.InspectionTool().Show()
 
+    def click_menu_item(self, item_path):
+        def click():
+            item_names = [_(x) for x in item_path.split(" -> ")]
+            menu_bar = wx.GetApp().GetTopWindow().GetMenuBar()
+            menu = menu_bar.GetMenu(menu_bar.FindMenu(item_names[0]))
+            for sub in item_names[1:]:
+                menu = menu_bar.FindItemById(menu.FindItem(sub))
+            wx.GetApp().GetTopWindow().ProcessEvent(
+                wx.CommandEvent(wx.EVT_MENU.typeId, menu.GetId()))
+        return click
+
+    def click_button(self, component_path):
+        def click():
+            component = self.find_component(component_path)
+            component.ProcessEvent(wx.CommandEvent(wx.EVT_BUTTON.typeId, component.GetId()))
+        return click
+
+    def enter_text(self, component_path, text):
+        def enter():
+            self.find_component(component_path).SetValue(text)
+        return enter
+
     def find_component(self, component_path):
         components_to_search_in = wx.GetTopLevelWindows()
-        for part in component_path.split("."):
-            component = self._find_component_with_name_in(components_to_search_in, part)
+        for component_name in component_path.split(" -> "):
+            component = self._find_component_with_name_in(
+                components_to_search_in, component_name)
             if component == None:
                 self.fail("Could not find component with path '%s'." % component_path)
             else:
@@ -95,10 +123,26 @@ class EndToEndTestCase(unittest.TestCase):
 
     def _find_component_with_name_in(self, components, seeked_name):
         for component in components:
-            if component.GetName() == seeked_name:
+            if self._matches_seeked_name(component, seeked_name):
                 return component
         for component in components:
             sub = self._find_component_with_name_in(component.GetChildren(), seeked_name)
             if sub:
                 return sub
+        return None
+
+    def _matches_seeked_name(self, component, seeked_name):
+        if component.GetName() == seeked_name:
+            return True
+        elif component.GetId() == self._wx_id_from_name(seeked_name):
+            return True
+        elif hasattr(component, "GetLabelText") and component.GetLabelText() == _(seeked_name):
+            return True
+        elif component.GetLabel() == _(seeked_name):
+            return True
+        return False
+
+    def _wx_id_from_name(self, name):
+        if name.startswith("wxID_"):
+            return getattr(wx, name[2:])
         return None

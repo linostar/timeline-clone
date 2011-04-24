@@ -59,7 +59,7 @@ class EventEditor(wx.Dialog):
         filled with data from the arguments 'start' and 'end' if they are
         given. Otherwise they will default to today.
         """
-        wx.Dialog.__init__(self, parent, title=title,
+        wx.Dialog.__init__(self, parent, title=title, name="event_editor",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self.event = event
@@ -107,7 +107,7 @@ class EventEditor(wx.Dialog):
             when_box_props.Add(self.chb_show_time)
         grid.Add(when_box_props)
         # Grid: Text
-        self.txt_text = wx.TextCtrl(self, wx.ID_ANY)
+        self.txt_text = wx.TextCtrl(self, wx.ID_ANY, name="text")
         grid.Add(wx.StaticText(self, label=_("Text:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.txt_text, flag=wx.EXPAND)
