@@ -95,6 +95,8 @@ CONTENT_0100 = u"""
 
 class DbOpenSpec(unittest.TestCase):
 
+    IO = True
+
     def testRead010File(self):
         self.writeContentToTmpFile(CONTENT_010)
         db = db_open(self.tmp_path)

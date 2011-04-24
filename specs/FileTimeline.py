@@ -36,6 +36,8 @@ from timelinelib.drawing.interface import ViewProperties
 
 class FileTimelineSpec(unittest.TestCase):
 
+    IO = True
+
     def testCorruptData(self):
         """
         Scenario: You open a timeline that contains corrupt data.

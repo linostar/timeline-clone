@@ -65,7 +65,25 @@ def load_test_cases_from_module_name(suite, module_name):
     __import__(module_name)
     module = sys.modules[module_name]
     module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
-    suite.addTest(module_suite)
+    filtered = filter_suite(module_suite)
+    suite.addTest(filtered)
+
+def filter_suite(test):
+    new_suite = unittest.TestSuite()
+    if isinstance(test, unittest.TestCase):
+        if include_test(test):
+            new_suite.addTest(test)
+    else:
+        for subtest in test:
+            new_suite.addTest(filter_suite(subtest))
+    return new_suite
+
+def include_test(test):
+    if hasattr(test, "GUI") and "--skip-gui" in sys.argv:
+        return False
+    if hasattr(test, "IO") and "--skip-io" in sys.argv:
+        return False
+    return True
 
 def load_doc_test_from_module_name(suite, module_name):
     __import__(module_name)

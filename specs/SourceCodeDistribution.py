@@ -29,6 +29,8 @@ from timelinelib.monthnames import month_from_english_name
 
 class SourceCodeDistributionSpec(unittest.TestCase):
 
+    IO = True
+
     def test_version_number_in_README_should_match_that_in_version_module(self):
         self.assertTrue(
             self.get_module_version_string() in

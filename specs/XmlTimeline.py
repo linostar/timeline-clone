@@ -37,6 +37,8 @@ from timelinelib.version import get_version
 
 class XmlTimelineSpec(unittest.TestCase):
 
+    IO = True
+
     def testUseWxTimeTypeWhenUseWideDateRangeIsTrue(self):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
         self.assertTrue(isinstance(timeline.time_type, WxTimeType))

@@ -20,6 +20,9 @@ from specs.utils import WxEndToEndTestCase
 
 
 class EndToEndSidebarSpec(WxEndToEndTestCase):
+
+    GUI = True
+    IO = True
     
     def test_sidebar_gets_same_width_as_in_config(self):
         self.config.set_show_sidebar(True)
