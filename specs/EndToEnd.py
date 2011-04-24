@@ -70,7 +70,7 @@ class EndToEndTestCase(unittest.TestCase):
             try:
                 steps[0]()
             except Exception:
-                wx.GetApp().ExitMainLoop()
+                wx.GetApp().GetTopWindow().Close()
                 self.error_in_gui_thread = sys.exc_info()
             else:
                 if steps[0] != self.show_widget_inspector:
@@ -78,7 +78,7 @@ class EndToEndTestCase(unittest.TestCase):
         if len(steps) > 0:
             wx.CallAfter(perform_current_step_and_queue_next)
         elif not in_sub_step_mode:
-            wx.CallAfter(wx.GetApp().ExitMainLoop)
+            wx.CallAfter(wx.GetApp().GetTopWindow().Close)
 
     def show_widget_inspector(self):
         wx.lib.inspection.InspectionTool().Show()
