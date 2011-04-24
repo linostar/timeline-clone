@@ -78,7 +78,7 @@ class EndToEndTestCase(unittest.TestCase):
         if len(steps) > 0:
             wx.CallAfter(perform_current_step_and_queue_next)
         elif not in_sub_step_mode:
-            wx.GetApp().ExitMainLoop()
+            wx.CallAfter(wx.GetApp().ExitMainLoop)
 
     def show_widget_inspector(self):
         wx.lib.inspection.InspectionTool().Show()
