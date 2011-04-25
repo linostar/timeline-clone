@@ -48,12 +48,6 @@ class should be separated with one blank line.
   * Imports
   * Global variables
   * Classes
-    * `__init__`
-    * Public methods
-    * Private methods
-      * `_create_gui` (if it exists)
-      * Event handlers (if they exist)
-      * Others
   * Functions
 
 Naming convention for private attributes
@@ -77,33 +71,11 @@ Examples:
   * `_btn_close_on_click`
   * `_window_on_close`
 
-GUI components construction
----------------------------
-
-All GUI components should construct the GUI in a method called
-`_create_gui`. Should there be any need to call other methods to simplify
-the creation of the GUI the preferred way is to make those methods inner
-methods of `_create_gui`. Example:
-
-    class MainPanel(wx.Panel):
-
-        def __init__(self, parent):
-            wx.Panel.__init__(self, parent)
-            self._create_gui()
-
-        def _create_gui(self):
-            def create_something_complex():
-                ...
-            ...
-            create_something_complex()
-            ...
-
 Handling events
 ---------------
 
-All events should be hooked up in `_create_gui` using the `Bind` method
-of the `wx.Window`. ID's should not be used for events. We prefer to pass an
-object instead. Example:
+ID's should not be used for events. We prefer to pass an object instead.
+Example:
 
     FileMenu = wx.Menu()
     item = FileMenu.append(wx.ID_ANY, "&Quit")
