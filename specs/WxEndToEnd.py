@@ -19,7 +19,7 @@
 from specs.utils import WxEndToEndTestCase
 
 
-class EndToEndSidebarSpec(WxEndToEndTestCase):
+class WxEndToEndSpec(WxEndToEndTestCase):
 
     GUI = True
     IO = True
@@ -31,15 +31,6 @@ class EndToEndSidebarSpec(WxEndToEndTestCase):
             self.check_that_sidebar_width_equals(234),
         ])
 
-    def test_can_create_new_event(self):
-        self.start_timeline_and([
-            self.click_menu_item("Timeline -> Create Event..."), [
-                self.enter_text("event_editor -> text", "event text"),
-                self.click_button("event_editor -> wxID_OK"),
-            ],
-        ])
-        self.assert_timeline_has_one_event_with_text("event text")
-
     def check_that_sidebar_width_equals(self, expected_width):
         def check():
             self.assertEqual(
@@ -47,7 +38,16 @@ class EndToEndSidebarSpec(WxEndToEndTestCase):
                 self.find_component("main_frame -> splitter").GetSashPosition())
         return check
 
-    def assert_timeline_has_one_event_with_text(self, text):
+    def test_can_create_new_event(self):
+        self.start_timeline_and([
+            self.click_menu_item("Timeline -> Create Event..."), [
+                self.enter_text("event_editor -> text", "event text"),
+                self.click_button("event_editor -> wxID_OK"),
+            ],
+        ])
+        self.assert_written_timeline_has_one_event_with_text("event text")
+
+    def assert_written_timeline_has_one_event_with_text(self, text):
         timeline = self.read_written_timeline()
         self.assertEqual(1, len(timeline.get_all_events()))
         self.assertEqual(text, timeline.get_all_events()[0].text)
