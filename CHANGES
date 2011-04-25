@@ -1,6 +1,22 @@
 Timeline 0.13.0, released on 10 April 2011
 ==========================================
 
+This is a new feature release.
+
+New features, enhancements:
+
+  * Events can be moved up and down with Alt+Up/Down
+  * Hidden event count is shown in status bar
+  * Event text changes color to white if background is dark
+  * Timeline can be scrolled with Alt+Left/Right
+  * Edit category button added in categories editor
+  * Export to SVG
+
+Bug fixes:
+
+  * No exception if "Fit all events" results in a period too large to display
+  * No error if pressing left or right in category tree control
+
 Timeline 0.12.1, released on 30 January 2011
 ============================================
 
