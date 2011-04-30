@@ -15,7 +15,7 @@ New features, enhancements:
 Bug fixes:
 
   * No exception if "Fit all events" results in a period too large to display
-  * No error if pressing left or right in category tree control
+  * No error if pressing left or right in empty categories tree control
 
 Timeline 0.12.1, released on 30 January 2011
 ============================================
