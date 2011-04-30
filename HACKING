@@ -169,12 +169,12 @@ Last changes
 After
 -----
 
-  * Create a downloadable release on SourceForge
-  * Create binary packages
+  * Upload source release to SourceForge
+  * Create binary packages and upload to SourceForge
+  * Add version in Trac for the current version
+  * Close the milestone in Trac for the current version
+  * Add a new milestone in Trac for the next version
   * Write news on SourceForge
-  * Write news on [Freshmeat](http://freshmeat.net/projects/timeline-2)
-  * Update web page
-  * Close the milestone in Trac
-  * Add the new version in Trac 
+  * Write news on Freshmeat
 
 <!-- vim: set syntax=mkd: -->
