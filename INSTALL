@@ -32,6 +32,8 @@ Extra development tools:
 
   * Mock version 0.6.0 (for running tests)
       http://www.voidspace.org.uk/python/mock/
+  * Mechanize (for release announcer)
+      http://wwwsearch.sourceforge.net/mechanize/
 
 Installing prerequisites on a Debian-based system
 -------------------------------------------------
