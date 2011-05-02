@@ -237,8 +237,7 @@ class SVGDrawingAlgorithm(object):
                 # self.dc.DrawCircle(x, self.scene.divider_y, 2)
 
     def _draw_now_line(self, group):
-        now_time = datetime.now()                   # ATTENTION: changed to use directly datetime.now()
-        x = self.scene.x_pos_for_time(now_time)
+        x = self.scene.x_pos_for_now()
         if x > 0 and x < self.scene.width:
             oh = ShapeBuilder()
             line = oh.createLine(x, 0, x, self.scene.height, stroke="darkred")
