@@ -70,6 +70,10 @@ class TimelineScene(object):
     def x_pos_for_time(self, time):
         return self._metrics.calc_x(time)
 
+    def x_pos_for_now(self):
+        now = self._db.get_time_type().now()
+        return self._metrics.calc_x(now)
+
     def get_time(self, x):
         return self._metrics.get_time(x)
 

@@ -171,10 +171,6 @@ After
 
   * Upload source release to SourceForge
   * Create binary packages and upload to SourceForge
-  * Add version in Trac for the current version
-  * Close the milestone in Trac for the current version
-  * Add a new milestone in Trac for the next version
-  * Write news on SourceForge
-  * Write news on Freshmeat
+  * Make release announcement with `python release-announcer.py`
 
 <!-- vim: set syntax=mkd: -->
