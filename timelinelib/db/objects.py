@@ -30,8 +30,11 @@ class Event(object):
     it will set the event id to a unique integer.
     """
 
-    def __init__(self, db, start_time, end_time, text, category=None):
+    def __init__(self, db, start_time, end_time, text, category=None, 
+                 fuzzy=False, locked=False):
         self.db = db
+        self.fuzzy = fuzzy
+        self.locked = locked
         self.id = None
         self.selected = False
         self.draw_ballon = False

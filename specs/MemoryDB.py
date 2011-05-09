@@ -385,7 +385,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertTrue(self.db.events[1] == self.e1 )
         self.assertTrue(self.db.events[2] == self.e2 )
 
-    def testMoveEventTooriginalPlace(self):
+    def testMoveEventToOriginalPlace(self):
         self.db.save_event(self.e1)
         self.db.save_event(self.e2)
         self.db.save_event(self.e3)
@@ -393,7 +393,13 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertTrue(self.db.events[0] == self.e1 )
         self.assertTrue(self.db.events[1] == self.e2 )
         self.assertTrue(self.db.events[2] == self.e3 )
-        
+    
+    def testEventShouldNotBeFuzzyByDefault(self):
+        self.assertFalse(self.e1.fuzzy)
+            
+    def testEventShouldNotBeLockedByDefault(self):
+        self.assertFalse(self.e1.locked)
+
     def setUp(self):
         self.db = MemoryDB()
         self.db._save = Mock()
