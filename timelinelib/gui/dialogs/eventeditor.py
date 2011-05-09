@@ -68,18 +68,55 @@ class EventEditor(wx.Dialog):
         self._fill_controls_with_data(start, end)
         self._set_initial_focus()
 
-    def _create_time_picker(self):
-        return time_picker_for(self.timeline.get_time_type())(self, config=self.config)
-
     def _create_gui(self):
-        """Create the controls of the dialog."""
-        # Groupbox
+        main_box = self._create_main_box()
+        self._create_add_more_checkbox(main_box)
+        self._create_buttons(main_box)
+        self.SetSizerAndFit(main_box)
+
+    def _create_main_box(self):
+        main_box = wx.BoxSizer(wx.VERTICAL)
+        self._create_main_box_content(main_box)
+        return main_box
+
+    def _create_add_more_checkbox(self, main_box):
+        self.chb_add_more = wx.CheckBox(self, label=_("Add more events after this one"))
+        main_box.Add(self.chb_add_more, flag=wx.ALL, border=BORDER)
+        if self.event != None:
+            self.chb_add_more.Show(False)
+
+    def _create_buttons(self, main_box):
+        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
+        main_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
+    
+    def _create_main_box_content(self, main_box):
         groupbox = wx.StaticBox(self, wx.ID_ANY, _("Event Properties"))
-        groupbox_sizer = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
-        # Grid
+        main_box_content = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
+        self._create_detail_content(main_box_content)
+        self._create_notebook_content(main_box_content)
+        main_box.Add(main_box_content, flag=wx.EXPAND|wx.ALL, border=BORDER,
+                     proportion=1)
+         
+    def _create_detail_content(self, main_box_content):
+        details = self._create_details()
+        main_box_content.Add(details, flag=wx.ALL|wx.EXPAND, border=BORDER)
+    
+    def _create_notebook_content(self, main_box_content):
+        notebook = self._create_notebook()
+        main_box_content.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND,
+                           proportion=1)
+    
+    def _create_details(self):
         grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
         grid.AddGrowableCol(1)
-        # Grid: When: Label + DateTimePickers
+        self._create_time_details(grid)
+        self._create_checkboxes(grid)
+        self._create_text_field(grid)
+        self._create_categories_listbox(grid)
+        return grid    
+    
+    def _create_time_details(self, grid):
         grid.Add(wx.StaticText(self, label=_("When:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         self.dtp_start = self._create_time_picker()
@@ -93,7 +130,11 @@ class EventEditor(wx.Dialog):
         when_box.Add(self.dtp_end, proportion=1,
                      flag=wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
         grid.Add(when_box)
-        # Grid: When: Checkboxes
+
+    def _create_time_picker(self):
+        return time_picker_for(self.timeline.get_time_type())(self, config=self.config)
+
+    def _create_checkboxes(self, grid):
         grid.AddStretchSpacer()
         when_box_props = wx.BoxSizer(wx.HORIZONTAL)
         self.chb_period = wx.CheckBox(self, label=_("Period"))
@@ -106,20 +147,22 @@ class EventEditor(wx.Dialog):
                       self.chb_show_time)
             when_box_props.Add(self.chb_show_time)
         grid.Add(when_box_props)
-        # Grid: Text
+
+    def _create_text_field(self, grid):
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY, name="text")
         grid.Add(wx.StaticText(self, label=_("Text:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.txt_text, flag=wx.EXPAND)
-        # Grid: Category
+
+    def _create_categories_listbox(self, grid):
         self.lst_category = wx.Choice(self, wx.ID_ANY)
         grid.Add(wx.StaticText(self, label=_("Category:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.lst_category)
-        groupbox_sizer.Add(grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.Bind(wx.EVT_CHOICE, self._lst_category_on_choice,
                   self.lst_category)
-        # Event data
+        
+    def _create_notebook(self):
         self.event_data = []
         notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
         for data_id in self.timeline.supported_event_data():
@@ -138,26 +181,8 @@ class EventEditor(wx.Dialog):
             sizer.Add(editor, flag=wx.EXPAND, proportion=1)
             panel.SetSizer(sizer)
             self.event_data.append((data_id, editor))
-        groupbox_sizer.Add(notebook, border=BORDER, flag=wx.ALL|wx.EXPAND,
-                           proportion=1)
-        # Main (vertical layout)
-        main_box = wx.BoxSizer(wx.VERTICAL)
-        # Main: Groupbox
-        main_box.Add(groupbox_sizer, flag=wx.EXPAND|wx.ALL, border=BORDER,
-                     proportion=1)
-        # Main: Checkbox
-        self.chb_add_more = wx.CheckBox(self, label=_("Add more events after this one"))
-        main_box.Add(self.chb_add_more, flag=wx.ALL, border=BORDER)
-        # Main: Buttons
-        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
-        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        main_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
-        # Hide if not creating new
-        if self.event != None:
-            self.chb_add_more.Show(False)
-        # Realize
-        self.SetSizerAndFit(main_box)
-
+        return notebook
+     
     def _btn_ok_on_click(self, evt):
         """
         Add new or update existing event.
