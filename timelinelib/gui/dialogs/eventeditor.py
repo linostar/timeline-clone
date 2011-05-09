@@ -422,3 +422,9 @@ class IconEditor(wx.Panel):
 
     def _btn_clear_on_click(self, evt):
         self.set_icon(None)
+
+
+class EventEditorController(object):
+
+    def __init__(self, view):
+        self.view = view
