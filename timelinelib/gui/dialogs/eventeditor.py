@@ -153,7 +153,8 @@ class EventEditor(wx.Dialog):
         for data_id, editor in self.event_data:
             if event_data.has_key(data_id):
                 data = event_data[data_id]
-                editor.set_data(data)
+                if data is not None:
+                    editor.set_data(data)
                 
     def get_event_data(self):
         event_data = {}

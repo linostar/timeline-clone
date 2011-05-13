@@ -155,6 +155,8 @@ class XmlTimeline(MemoryDB):
                     Tag("start", SINGLE, parse_fn_store("tmp_start")),
                     Tag("end", SINGLE, parse_fn_store("tmp_end")),
                     Tag("text", SINGLE, parse_fn_store("tmp_text")),
+                    Tag("fuzzy", OPTIONAL, parse_fn_store("tmp_fuzzy")),
+                    Tag("locked", OPTIONAL, parse_fn_store("tmp_locked")),
                     Tag("category", OPTIONAL,
                         parse_fn_store("tmp_category")),
                     Tag("description", OPTIONAL,
@@ -194,6 +196,8 @@ class XmlTimeline(MemoryDB):
         start = self._parse_time(tmp_dict.pop("tmp_start"))
         end = self._parse_time(tmp_dict.pop("tmp_end"))
         text = tmp_dict.pop("tmp_text")
+        fuzzy = self._parse_optional_bool(tmp_dict, "tmp_fuzzy")
+        locked = self._parse_optional_bool(tmp_dict, "tmp_locked")
         category_text = tmp_dict.pop("tmp_category", None)
         if category_text is None:
             category = None
@@ -207,11 +211,17 @@ class XmlTimeline(MemoryDB):
             icon = None
         else:
             icon = parse_icon(icon_text)
-        event = Event(self, start, end, text, category)
+        event = Event(self, start, end, text, category, fuzzy, locked)
         event.set_data("description", description)
         event.set_data("icon", icon)
         self.save_event(event)
 
+    def _parse_optional_bool(self, tmp_dict, id):
+        if tmp_dict.has_key(id):
+            return tmp_dict.pop(id) == "True"
+        else:
+            return False
+    
     def _parse_displayed_period(self, text, tmp_dict):
         start = self._parse_time(tmp_dict.pop("tmp_start"))
         end = self._parse_time(tmp_dict.pop("tmp_end"))
@@ -267,6 +277,8 @@ class XmlTimeline(MemoryDB):
         write_simple_tag(file, "end",
                          self._time_string(evt.time_period.end_time), INDENT3)
         write_simple_tag(file, "text", evt.text, INDENT3)
+        write_simple_tag(file, "fuzzy", "%s" % evt.fuzzy, INDENT3)
+        write_simple_tag(file, "locked", "%s" % evt.locked, INDENT3)
         if evt.category is not None:
             write_simple_tag(file, "category", evt.category.name, INDENT3)
         if evt.get_data("description") is not None:

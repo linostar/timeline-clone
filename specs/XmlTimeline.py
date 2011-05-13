@@ -64,6 +64,8 @@ class XmlTimelineSpec(unittest.TestCase):
       <start>2010-8-31 0:0:0</start>
       <end>2010-8-31 0:0:0</end>
       <text>test</text>
+      <fuzzy>False</fuzzy>
+      <locked>False</locked>
     </event>
   </events>
   <view>
