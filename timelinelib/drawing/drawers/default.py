@@ -460,10 +460,10 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
         self.dc.SetPen(pen)
         self.dc.DrawRectangleRect(small_rect)
-        self._draw_handles(rect)
+        self._draw_handles(rect, event)
         self.dc.DestroyClippingRegion()
 
-    def _draw_handles(self, rect):
+    def _draw_handles(self, rect, event):
         SIZE = 4
         big_rect = wx.Rect(rect.X - SIZE, rect.Y - SIZE, rect.Width + 2 * SIZE, rect.Height + 2 * SIZE)
         self.dc.DestroyClippingRegion()
@@ -475,9 +475,11 @@ class DefaultDrawingAlgorithm(Drawer):
         east_rect   = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
         self.dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
         self.dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
-        self.dc.DrawRectangleRect(east_rect)
-        self.dc.DrawRectangleRect(west_rect)
-        self.dc.DrawRectangleRect(center_rect)
+        if not event.fuzzy and not event.locked:
+            self.dc.DrawRectangleRect(east_rect)
+            self.dc.DrawRectangleRect(west_rect)
+        if not event.locked:
+            self.dc.DrawRectangleRect(center_rect)
 
     def _get_base_color(self, event):
         if event.category:
