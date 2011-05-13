@@ -744,6 +744,8 @@ class NoOpInputHandler(InputHandler):
         if event_and_rect is None:
             return False
         event, rect = event_and_rect
+        if event.locked:
+            return None
         if not controller.get_view_properties().is_selected(event):
             return False
         center = rect.X + rect.Width / 2
@@ -756,6 +758,8 @@ class NoOpInputHandler(InputHandler):
         if event_and_rect == None:
             return None
         event, rect = event_and_rect
+        if event.locked:
+            return None
         if not controller.get_view_properties().is_selected(event):
             return None
         if abs(x - rect.X) < HIT_REGION_PX_WITH:
