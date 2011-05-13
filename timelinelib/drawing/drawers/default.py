@@ -342,6 +342,8 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawRectangleRect(rect)
         if event.fuzzy:
             self._draw_fuzzy_edges(rect)
+        if event.locked:
+            self._draw_locked_edges(rect)
         self.dc.DestroyClippingRegion()
 
     def _draw_fuzzy_edges(self, rect):
@@ -382,6 +384,26 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetBrush(wx.WHITE_BRUSH)
         self.dc.SetPen(wx.WHITE_PEN)
         self.dc.DrawPolygon((p1, p2, p3))
+
+    def _draw_locked_edges(self, rect):
+        self._draw_locked_start(rect)
+        self._draw_locked_end(rect)
+       
+    def _draw_locked_start(self, rect):
+        x = rect.x
+        y = rect.y + rect.height / 2
+        r = rect.height / 2.5
+        self.dc.SetBrush(wx.WHITE_BRUSH)
+        self.dc.SetPen(wx.WHITE_PEN)
+        self.dc.DrawCircle(x, y, r)
+
+    def _draw_locked_end(self, rect):
+        x = rect.x + rect.width
+        y = rect.y + rect.height / 2
+        r = rect.height / 2.5
+        self.dc.SetBrush(wx.WHITE_BRUSH)
+        self.dc.SetPen(wx.WHITE_PEN)
+        self.dc.DrawCircle(x, y, r)
         
     def _draw_text(self, rect, event):
         # Ensure that we can't draw content outside inner rectangle
@@ -391,6 +413,8 @@ class DefaultDrawingAlgorithm(Drawer):
             # Draw the text (if there is room for it)
             self.dc.SetClippingRect(rect_copy)
             text_x = rect.X + INNER_PADDING
+            if event.fuzzy or event.locked:
+                text_x += rect.Height / 2    
             text_y = rect.Y + INNER_PADDING
             if text_x < INNER_PADDING:
                 text_x = INNER_PADDING
