@@ -65,9 +65,114 @@ class EventEditor(wx.Dialog):
         self.event = event
         self.config = config
         self._create_gui()
-        self._fill_controls_with_data(start, end)
+        self.controller = EventEditorController(self, timeline, start, end, event)
+        self.controller.initialize()
         self._set_initial_focus()
 
+    def set_start(self, start):
+        self.dtp_start.set_value(start)
+
+    def get_start(self):
+        try:
+            try:
+                return self.dtp_start.get_value()
+            except ValueError, ex:
+                raise TxtException(ex_msg(ex), self.dtp_start)
+        except TxtException, ex:
+            _display_error_message("%s" % ex.error_message)
+            _set_focus_and_select(ex.control)
+
+
+    def set_end(self, start):
+        self.dtp_end.set_value(start)
+
+    def get_end(self):
+        try:
+            if self.chb_period.IsChecked():
+                try:
+                    end_time = self.dtp_end.get_value()
+                    return end_time
+                except ValueError, ex:
+                    raise TxtException(ex_msg(ex), self.dtp_end)
+            else:
+                return self.get_start()
+        except TxtException, ex:
+            _display_error_message("%s" % ex.error_message)
+            _set_focus_and_select(ex.control)
+
+    def set_show_period(self, show):
+        self.chb_period.SetValue(show)
+        self._show_to_time(show)
+
+    def set_show_time(self, checked):
+        self.chb_show_time.SetValue(checked)
+        self.dtp_start.show_time(checked)
+        self.dtp_end.show_time(checked)
+
+    def set_show_add_more(self, visible):
+        self.chb_add_more.Show(visible)
+        self.chb_add_more.SetValue(False)
+
+    def set_fuzzy(self, fuzzy):
+        self.chb_fuzzy.SetValue(fuzzy)
+
+    def get_fuzzy(self):
+        return self.chb_fuzzy.GetValue()
+
+    def set_locked(self, locked):
+        self.chb_locked.SetValue(locked)
+
+    def get_locked(self):
+        return self.chb_locked.GetValue()
+
+    def set_name(self, name):
+        self.txt_text.SetValue(name)
+        
+    def get_name(self):
+        return self.txt_text.GetValue().strip()
+    
+    def display_invalid_end(self, message):
+        self._display_invalid_input(message, self.dtp_start)
+
+    def display_invalid_name(self, message):
+        self._display_invalid_input(message, self.txt_text)
+
+    def _display_invalid_input(self, message, control):
+        _display_error_message(message)
+        _set_focus_and_select(control)  
+            
+    def set_category(self, category):
+        self._update_categories(category)
+        
+    def get_category(self):
+        selection = self.lst_category.GetSelection()
+        category = self.lst_category.GetClientData(selection)
+        return category
+
+    def set_event_data(self, event_data):
+        for data_id, editor in self.event_data:
+            if event_data.has_key(data_id):
+                data = event_data[data_id]
+                editor.set_data(data)
+                
+    def get_event_data(self):
+        event_data = {}
+        for data_id, editor in self.event_data:
+            data = editor.get_data()
+            if data != None:
+                event_data[data_id] = editor.get_data()
+        return event_data
+
+    def display_exception(self, e):
+        gui_utils.handle_db_error_in_dialog(self, e)
+
+    def close_or_clear_dialog(self):
+        if self.chb_add_more.GetValue():
+            self._clear_dialog()
+            self.controller.clear()
+        else:
+            self._close()
+                
     def _create_gui(self):
         main_box = self._create_main_box()
         self._create_add_more_checkbox(main_box)
@@ -82,8 +187,6 @@ class EventEditor(wx.Dialog):
     def _create_add_more_checkbox(self, main_box):
         self.chb_add_more = wx.CheckBox(self, label=_("Add more events after this one"))
         main_box.Add(self.chb_add_more, flag=wx.ALL, border=BORDER)
-        if self.event != None:
-            self.chb_add_more.Show(False)
 
     def _create_buttons(self, main_box):
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
@@ -137,17 +240,37 @@ class EventEditor(wx.Dialog):
     def _create_checkboxes(self, grid):
         grid.AddStretchSpacer()
         when_box_props = wx.BoxSizer(wx.HORIZONTAL)
-        self.chb_period = wx.CheckBox(self, label=_("Period"))
-        self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox,
-                  self.chb_period)
-        when_box_props.Add(self.chb_period)
+        self._create_period_checkbox(when_box_props)
         if self.timeline.get_time_type().is_date_time_type():
-            self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
-            self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
-                      self.chb_show_time)
-            when_box_props.Add(self.chb_show_time)
+            self._create_show_time_checkbox(when_box_props)
+        self._create_fuzzy_checkbox(when_box_props)
+        self._create_locked_checkbox(when_box_props)
         grid.Add(when_box_props)
 
+    def _create_period_checkbox(self, box):
+        self.chb_period = wx.CheckBox(self, label=_("Period"))
+        self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox, 
+                  self.chb_period)
+        box.Add(self.chb_period)
+
+    def _create_show_time_checkbox(self, box):
+        self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
+        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
+                  self.chb_show_time)
+        box.Add(self.chb_show_time)
+
+    def _create_fuzzy_checkbox(self, box):
+        self.chb_fuzzy = wx.CheckBox(self, label=_("Fuzzy"))
+        self.Bind(wx.EVT_CHECKBOX, self._chb_fuzzy_on_checkbox, 
+                  self.chb_fuzzy)
+        box.Add(self.chb_fuzzy)
+    
+    def _create_locked_checkbox(self, box):
+        self.chb_locked = wx.CheckBox(self, label=_("Locked"))
+        self.Bind(wx.EVT_CHECKBOX, self._chb_locked_on_checkbox, 
+                  self.chb_locked)
+        box.Add(self.chb_locked)
+            
     def _create_text_field(self, grid):
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY, name="text")
         grid.Add(wx.StaticText(self, label=_("Text:")),
@@ -184,63 +307,24 @@ class EventEditor(wx.Dialog):
         return notebook
      
     def _btn_ok_on_click(self, evt):
-        """
-        Add new or update existing event.
+        self.controller.create_or_update_event()
 
-        If the Close-on-ok checkbox is checked the dialog is also closed.
-        """
-        try:
-            try:
-                # Input value retrieval and validation
-                try:
-                    start_time = self.dtp_start.get_value()
-                except ValueError, ex:
-                    raise TxtException(ex_msg(ex), self.dtp_start)
-                end_time = start_time
-                if self.chb_period.IsChecked():
-                    try:
-                        end_time = self.dtp_end.get_value()
-                    except ValueError, ex:
-                        raise TxtException(ex_msg(ex), self.dtp_end)
-                selection = self.lst_category.GetSelection()
-                category = self.lst_category.GetClientData(selection)
-                if start_time > end_time:
-                    raise TxtException(_("End must be > Start"), self.dtp_start)
-                name = _parse_text_from_textbox(self.txt_text, _("Text"))
-                # Update existing event
-                if self.updatemode:
-                    self.event.update(start_time, end_time, name, category)
-                    for data_id, editor in self.event_data:
-                        self.event.set_data(data_id,
-                                            editor.get_data())
-                    self.timeline.save_event(self.event)
-                # Create new event
-                else:
-                    self.event = Event(self.timeline, start_time, end_time, 
-                                       name, category)
-                    for data_id, editor in self.event_data:
-                        self.event.set_data(data_id,
-                                            editor.get_data())
-                    self.timeline.save_event(self.event)
-                # Close the dialog ?
-                if self.chb_add_more.GetValue():
-                    self.txt_text.SetValue("")
-                    for data_id, editor in self.event_data:
-                        editor.clear_data()
-                else:
-                    self._close()
-            except TxtException, ex:
-                _display_error_message("%s" % ex.error_message)
-                _set_focus_and_select(ex.control)
-        except TimelineIOError, e:
-            gui_utils.handle_db_error_in_dialog(self, e)
-
+    def _clear_dialog(self):
+        for data_id, editor in self.event_data:
+            editor.clear_data()
+        
     def _chb_period_on_checkbox(self, e):
         self._show_to_time(e.IsChecked())
 
     def _chb_show_time_on_checkbox(self, e):
         self.dtp_start.show_time(e.IsChecked())
         self.dtp_end.show_time(e.IsChecked())
+
+    def _chb_fuzzy_on_checkbox(self, e):
+        pass
+
+    def _chb_locked_on_checkbox(self, e):
+        pass
 
     def _lst_category_on_choice(self, e):
         new_selection_index = e.GetSelection()
@@ -283,41 +367,13 @@ class EventEditor(wx.Dialog):
     def _show_to_time(self, show=True):
         self.lbl_to.Show(show)
         self.dtp_end.Show(show)
-
-    def _fill_controls_with_data(self, start=None, end=None):
-        """Initially fill the controls in the dialog with data."""
-        if self.event == None:
-            self.chb_period.SetValue(False)
-            text = ""
-            category = None
-            self.updatemode = False
-        else:
-            start = self.event.time_period.start_time
-            end = self.event.time_period.end_time
-            text = self.event.text
-            category = self.event.category
-            for data_id, editor in self.event_data:
-                data = self.event.get_data(data_id)
-                if data != None:
-                    editor.set_data(data)
-            self.updatemode = True
-        if start != None and end != None:
-            self.chb_period.SetValue(start != end)
-        self.dtp_start.set_value(start)
-        self.dtp_end.set_value(end)
-        self.txt_text.SetValue(text)
-        self._update_categories(category)
-        self.chb_add_more.SetValue(False)
-        self._show_to_time(self.chb_period.IsChecked())
-        if self.timeline.get_time_type().is_date_time_type():            
-            self._fill_chb_show_time_control_with_data(self.event, start, end)
-
+        
     def _fill_chb_show_time_control_with_data(self, event, start, end):
         if event == None:
             self.chb_show_time.SetValue(False)
         if start != None and end != None:
             time_period = TimePeriod(self.timeline.get_time_type(), start, end)
-            has_nonzero_type =time_period.has_nonzero_time()
+            has_nonzero_type = time_period.has_nonzero_time()
             self.chb_show_time.SetValue(has_nonzero_type)
         self.dtp_start.show_time(self.chb_show_time.IsChecked())
         self.dtp_end.show_time(self.chb_show_time.IsChecked())
@@ -366,8 +422,8 @@ class DescriptionEditor(wx.TextCtrl):
         wx.TextCtrl.__init__(self, parent, style=wx.TE_MULTILINE)
 
     def get_data(self):
-        description = self.GetValue()
-        if description.strip() != "":
+        description = self.GetValue().strip()
+        if description != "":
             return description
         return None
 
@@ -451,5 +507,86 @@ class IconEditor(wx.Panel):
 
 class EventEditorController(object):
 
-    def __init__(self, view):
+    def __init__(self, view, db, start, end, event):
         self.view = view
+        self.db = db
+        self.start = start
+        self.end = end
+        self.name = ""
+        self.category = None
+        self.event = event
+        self.fuzzy = False
+        self.locked = False
+        
+    def initialize(self):
+        if self.event != None:
+            self.start = self.event.time_period.start_time
+            self.end = self.event.time_period.end_time
+            self.name = self.event.text
+            self.category = self.event.category
+            self.view.set_event_data(self.event.data)
+        self.view.set_start(self.start)
+        self.view.set_end(self.end)
+        self.view.set_name(self.name)
+        self.view.set_category(self.category)
+        self.view.set_show_period(self.end > self.start)
+        self.view.set_show_time(self._event_has_nonzero_time())
+        self.view.set_show_add_more(self.event == None)
+        self.view.set_fuzzy(self.fuzzy)
+        self.view.set_locked(self.locked)
+
+    def create_or_update_event(self):
+        try:
+            self.start = self._validate_and_save_start(self.view.get_start())
+            self.end = self._validate_and_save_end(self.view.get_end())
+            self.name = self._validate_and_save_name(self.view.get_name())
+            self.fuzzy = self.view.get_fuzzy()
+            self.locked = self.view.get_locked()
+            self.category = self.view.get_category()
+            if self.event == None:
+                self.event = Event(self.db, self.start, self.end, self.name, 
+                                   self.category)
+            else:
+                self.event.update(self.start, self.end, self.name, self.category)
+            self.event.data = self.view.get_event_data()
+            self._save_event_to_db()
+            self.view.close_or_clear_dialog()
+        except ValueError, ex:
+            return
+        
+    def clear(self):
+        self.name = ""
+        self.event = None
+        self.view.set_name(self.name)
+
+    def _validate_and_save_start(self, start):
+        if start == None:
+            raise ValueError()
+        return start
+
+    def _validate_and_save_end(self, end):
+        if end == None:
+            raise ValueError()
+        if end < self.start:
+            self.view.display_invalid_end(_("End must be > Start"))
+            raise ValueError()
+        return end
+
+    def _validate_and_save_name(self, name):
+        if name == "":
+            self.view.display_invalid_name(_("Field '%s' can't be empty.") % _("Text"))
+            raise ValueError()
+        return name
+        
+    def _save_event_to_db(self):
+        try:
+            self.db.save_event(self.event)
+        except Exception, e:
+            self.view.display_exception(e)
+        
+    def _event_has_nonzero_time(self):
+        try:
+            time_period = TimePeriod(self.db.get_time_type(), self.start, self.end)
+            return time_period.has_nonzero_time()
+        except Exception:
+            return False
