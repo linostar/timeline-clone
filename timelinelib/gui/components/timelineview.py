@@ -827,6 +827,8 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
         self._move_event(controller)
 
     def _move_event(self, controller):
+        if self.event.locked:
+            return
         current_time = controller.get_time(self.last_x)
         delta = current_time - self.start_drag_time
         new_start = self.event_start_time + delta
@@ -872,6 +874,8 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
         self._resize_event(controller)
 
     def _resize_event(self, controller):
+        if self.event.locked:
+            return
         new_time = controller.get_time(self.last_x)
         new_snapped_time = controller.get_drawer().snap(new_time)
         if self.direction == wx.LEFT:

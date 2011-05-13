@@ -475,7 +475,7 @@ class DefaultDrawingAlgorithm(Drawer):
         east_rect   = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
         self.dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
         self.dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
-        if not event.fuzzy and not event.locked:
+        if not event.locked:
             self.dc.DrawRectangleRect(east_rect)
             self.dc.DrawRectangleRect(west_rect)
         if not event.locked:
