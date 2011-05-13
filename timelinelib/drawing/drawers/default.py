@@ -340,7 +340,48 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetBrush(self._get_box_brush(event))
         self.dc.SetPen(self._get_box_pen(event))
         self.dc.DrawRectangleRect(rect)
+        if event.fuzzy:
+            self._draw_fuzzy_edges(rect)
         self.dc.DestroyClippingRegion()
+
+    def _draw_fuzzy_edges(self, rect):
+        self._draw_fuzzy_start(rect)
+        self._draw_fuzzy_end(rect)
+       
+    def _draw_fuzzy_start(self, rect):
+        x1 = rect.x
+        x2 = rect.x + rect.height / 2
+        y1 = rect.y
+        y2 = rect.y + rect.height / 2
+        y3 = rect.y + rect.height
+        p1 = wx.Point(x1, y1)
+        p2 = wx.Point(x1, y2)
+        p3 = wx.Point(x2, y1)
+        self._draw_fuzzy_polygon(p1, p2 ,p3)
+        p1 = wx.Point(x1, y3)
+        p2 = wx.Point(x1, y2)
+        p3 = wx.Point(x2, y3)
+        self._draw_fuzzy_polygon(p1, p2 ,p3)
+
+    def _draw_fuzzy_end(self, rect):
+        x1 = rect.x + rect.width - rect.height / 2
+        x2 = rect.x + rect.width
+        y1 = rect.y
+        y2 = rect.y + rect.height / 2
+        y3 = rect.y + rect.height
+        p1 = wx.Point(x1, y1)
+        p2 = wx.Point(x2, y1)
+        p3 = wx.Point(x2, y2)
+        self._draw_fuzzy_polygon(p1, p2 ,p3)
+        p1 = wx.Point(x1, y3)
+        p2 = wx.Point(x2, y2)
+        p3 = wx.Point(x2, y3)
+        self._draw_fuzzy_polygon(p1, p2 ,p3)
+
+    def _draw_fuzzy_polygon(self, p1, p2 ,p3):
+        self.dc.SetBrush(wx.WHITE_BRUSH)
+        self.dc.SetPen(wx.WHITE_PEN)
+        self.dc.DrawPolygon((p1, p2, p3))
         
     def _draw_text(self, rect, event):
         # Ensure that we can't draw content outside inner rectangle
