@@ -525,6 +525,8 @@ class EventEditorController(object):
             self.name = self.event.text
             self.category = self.event.category
             self.view.set_event_data(self.event.data)
+            self.fuzzy = self.event.fuzzy
+            self.locked = self.event.locked
         self.view.set_start(self.start)
         self.view.set_end(self.end)
         self.view.set_name(self.name)
@@ -545,9 +547,10 @@ class EventEditorController(object):
             self.category = self.view.get_category()
             if self.event == None:
                 self.event = Event(self.db, self.start, self.end, self.name, 
-                                   self.category)
+                                   self.category, self.fuzzy, self.locked)
             else:
-                self.event.update(self.start, self.end, self.name, self.category)
+                self.event.update(self.start, self.end, self.name, 
+                                  self.category, self.fuzzy, self.locked)
             self.event.data = self.view.get_event_data()
             self._save_event_to_db()
             self.view.close_or_clear_dialog()

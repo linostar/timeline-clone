@@ -36,11 +36,13 @@ POINT_EVENT_NONZEROTIME = 5
 POINT_EVENT_ZEROTIME = 6
 PERIOD_EVENT_NONZEROTIME = 7
 PERIOD_EVENT_ZEROTIME = 8
+PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED = 9
 
 START = 1
 END = 2
 NAME = 3
-
+FUZZY = 4
+LOCKED = 5
 
 class EventEditorControllerSpec(unittest.TestCase):
     
@@ -143,6 +145,24 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
 
+    def testOnInitDialogDisplaysFuzzyAndLocked(self):
+        self._create_controller(PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED)
+        self.view.set_fuzzy.assert_called_with(True)
+        self.view.set_locked.assert_called_with(True)
+
+    def testOnOkFuzzyAndLockedAreUpdated(self):
+        self._create_controller(PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED)
+        self.view.set_fuzzy.assert_called_with(True)
+        self.view.set_locked.assert_called_with(True)
+        self._simulate_user_input(NAME, "new_event")
+        self._simulate_user_input(START, create_nonzero_time1())
+        self._simulate_user_input(END, create_nonzero_time2())
+        self._simulate_user_input(FUZZY, False)
+        self._simulate_user_input(LOCKED, False)
+        self._simulate_ok_click()
+        self.assertFalse(self.controller.event.fuzzy)
+        self.assertFalse(self.controller.event.locked)
+
     def testOnOkNewEventIsSavedToDb(self):
         self._create_controller(POINT_EVENT_ZEROTIME)
         self._simulate_user_input(NAME, "new_event")
@@ -192,6 +212,8 @@ class EventEditorControllerSpec(unittest.TestCase):
             self.controller = given_event_period_at_zero_time()
         elif type == PERIOD_EVENT_NONZEROTIME:
             self.controller = given_period_event_at_nonzero_time()
+        elif type == PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED:
+            self.controller = given_period_event_at_nonzero_time_fuzzy_and_locked()
         self.view = self.controller.view
         self.controller.initialize()
 
@@ -202,6 +224,10 @@ class EventEditorControllerSpec(unittest.TestCase):
             self.view.get_end.return_value = value
         elif control == NAME:
             self.view.get_name.return_value = value
+        elif control == FUZZY:
+            self.view.get_fuzzy.return_value = value
+        elif control == LOCKED:
+            self.view.get_locked.return_value = value
 
     def _simulate_ok_click(self):
         self.controller.create_or_update_event()
@@ -253,6 +279,7 @@ def given_event_point_at_nonzero_time():
     controller = EventEditorController(view, db, None, None, event)
     return controller
 
+
 def given_event_period_at_zero_time():
     view, db = create_view_and_db()
     tm1 = create_zero_time1()
@@ -262,12 +289,23 @@ def given_event_period_at_zero_time():
     controller = EventEditorController(view, db, None, None, event)
     return controller
 
+
 def given_period_event_at_nonzero_time():
     view, db = create_view_and_db()
     tm1 = create_nonzero_time1()
     tm2 = create_nonzero_time2()
     cat = Category("bar", None, True)
     event = Event(db, tm1, tm2, "foo", cat, fuzzy=False, locked=False)
+    controller = EventEditorController(view, db, None, None, event)
+    return controller
+    
+    
+def given_period_event_at_nonzero_time_fuzzy_and_locked():
+    view, db = create_view_and_db()
+    tm1 = create_nonzero_time1()
+    tm2 = create_nonzero_time2()
+    cat = Category("bar", None, True)
+    event = Event(db, tm1, tm2, "foo", cat, fuzzy=True, locked=True)
     controller = EventEditorController(view, db, None, None, event)
     return controller
     

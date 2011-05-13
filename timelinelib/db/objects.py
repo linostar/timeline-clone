@@ -47,12 +47,17 @@ class Event(object):
     def set_id(self, id):
         self.id = id
 
-    def update(self, start_time, end_time, text, category=None):
+    def update(self, start_time, end_time, text, category=None, fuzzy=None, 
+               locked=None):
         """Change the event data."""
         time_type = self.db.get_time_type()
         self.time_period = TimePeriod(time_type, start_time, end_time)
         self.text = text
         self.category = category
+        if fuzzy is not None:
+            self.fuzzy = fuzzy
+        if locked is not None:
+            self.locked = locked
 
     def update_period(self, start_time, end_time):
         """Change the event period."""
