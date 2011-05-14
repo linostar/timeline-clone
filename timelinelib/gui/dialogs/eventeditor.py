@@ -138,7 +138,7 @@ class EventEditor(wx.Dialog):
     def get_name(self):
         return self.txt_text.GetValue().strip()
     
-    def display_invalid_end(self, message):
+    def display_invalid_start(self, message):
         self._display_invalid_input(message, self.dtp_start)
 
     def display_invalid_name(self, message):
@@ -307,8 +307,9 @@ class EventEditor(wx.Dialog):
         return notebook
      
     def _btn_ok_on_click(self, evt):
-        self.controller.create_or_update_event()
-        self._close_or_clear_dialog()
+        event_saved_or_updated = self.controller.create_or_update_event()
+        if event_saved_or_updated:
+            self._close_or_clear_dialog()
 
     def _close_or_clear_dialog(self):
         if self.chb_add_more.GetValue():
@@ -550,22 +551,11 @@ class EventEditorController(object):
 
     def create_or_update_event(self):
         try:
-            self.start = self._validate_and_save_start(self.view.get_start())
-            self.end = self._validate_and_save_end(self.view.get_end())
-            self.name = self._validate_and_save_name(self.view.get_name())
-            self.fuzzy = self.view.get_fuzzy()
-            self.locked = self.view.get_locked()
-            self.category = self.view.get_category()
-            if self.event == None:
-                self.event = Event(self.db, self.start, self.end, self.name, 
-                                   self.category, self.fuzzy, self.locked)
-            else:
-                self.event.update(self.start, self.end, self.name, 
-                                  self.category, self.fuzzy, self.locked)
-            self.event.data = self.view.get_event_data()
-            self._save_event_to_db()
+            self._get_and_verify_input()
+            self._save_event()
+            return True
         except ValueError, ex:
-            return
+            return False
         
     def clear(self):
         self.name = ""
@@ -573,6 +563,35 @@ class EventEditorController(object):
         self.view.set_name(self.name)
         self.view.set_focus("start")
 
+    def _get_and_verify_input(self):
+        self.name = self._validate_and_save_name(self.view.get_name())
+        self.fuzzy = self.view.get_fuzzy()
+        self.locked = self.view.get_locked()
+        self.category = self.view.get_category()
+        start = self.view.get_start()
+        end = self.view.get_end()
+        if start == None or end == None:
+            raise ValueError()
+        if self.locked:
+            if self.start != start or self.end != end:
+                self.view.set_start(self.start)
+                self.view.set_end(self.end)
+                error_message = _("You can't change time when the Event is locked")
+                self.view.display_invalid_start(error_message)
+                raise ValueError()
+        self.start = self._validate_and_save_start(self.view.get_start())
+        self.end = self._validate_and_save_end(self.view.get_end())
+        
+    def _save_event(self):
+        if self.event == None:
+            self.event = Event(self.db, self.start, self.end, self.name, 
+                               self.category, self.fuzzy, self.locked)
+        else:
+            self.event.update(self.start, self.end, self.name, 
+                              self.category, self.fuzzy, self.locked)
+        self.event.data = self.view.get_event_data()
+        self._save_event_to_db()
+        
     def _validate_and_save_start(self, start):
         if start == None:
             raise ValueError()
@@ -582,7 +601,7 @@ class EventEditorController(object):
         if end == None:
             raise ValueError()
         if end < self.start:
-            self.view.display_invalid_end(_("End must be > Start"))
+            self.view.display_invalid_start(_("End must be > Start"))
             raise ValueError()
         return end
 

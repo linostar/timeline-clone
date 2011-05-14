@@ -176,6 +176,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self._simulate_user_input(NAME, "new_event")
         self._simulate_user_input(START, create_nonzero_time1())
         self._simulate_user_input(END, create_nonzero_time2())
+        self._simulate_user_input(LOCKED, False)
         self._simulate_ok_click()
         self.assertTrue(self.controller.db.save_event.called)
         self.assertEquals("new_event", self.controller.event.text)
@@ -185,6 +186,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self._simulate_user_input(NAME, "updated_event")
         self._simulate_user_input(START, create_nonzero_time1())
         self._simulate_user_input(END, create_nonzero_time2())
+        self._simulate_user_input(LOCKED, False)
         self._simulate_ok_click()
         self.assertTrue(self.controller.db.save_event.called)
         self.assertEquals("updated_event", self.controller.event.text)
@@ -201,7 +203,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self._simulate_user_input(START, create_nonzero_time2())
         self._simulate_user_input(END, create_nonzero_time1())
         self._simulate_ok_click()
-        self.assertTrue(self.view.display_invalid_end.called)
+        self.assertTrue(self.view.display_invalid_start.called)
 
     def _create_controller(self, type):
         if type == POINT_NOEVENT_ZEROTIME:
