@@ -65,9 +65,17 @@ class EventEditor(wx.Dialog):
         self.event = event
         self.config = config
         self._create_gui()
-        self.controller = EventEditorController(self, timeline, start, end, event)
+        self.controller = EventEditorController(self, timeline, start, end, 
+                                                event)
         self.controller.initialize()
-        self._set_initial_focus()
+
+    def set_focus(self, control_name):
+        if control_name == "start":
+            self.dtp_start.SetFocus()
+        elif control_name == "text":
+            self.txt_text.SetFocus()
+        else:
+            self.dtp_start.SetFocus()
 
     def set_start(self, start):
         self.dtp_start.set_value(start)
@@ -81,7 +89,6 @@ class EventEditor(wx.Dialog):
         except TxtException, ex:
             _display_error_message("%s" % ex.error_message)
             _set_focus_and_select(ex.control)
-
 
     def set_end(self, start):
         self.dtp_end.set_value(start)
@@ -137,10 +144,6 @@ class EventEditor(wx.Dialog):
     def display_invalid_name(self, message):
         self._display_invalid_input(message, self.txt_text)
 
-    def _display_invalid_input(self, message, control):
-        _display_error_message(message)
-        _set_focus_and_select(control)  
-            
     def set_category(self, category):
         self._update_categories(category)
         
@@ -167,13 +170,10 @@ class EventEditor(wx.Dialog):
     def display_exception(self, e):
         gui_utils.handle_db_error_in_dialog(self, e)
 
-    def close_or_clear_dialog(self):
-        if self.chb_add_more.GetValue():
-            self._clear_dialog()
-            self.controller.clear()
-        else:
-            self._close()
-                
+    def _display_invalid_input(self, message, control):
+        _display_error_message(message)
+        _set_focus_and_select(control)  
+            
     def _create_gui(self):
         main_box = self._create_main_box()
         self._create_add_more_checkbox(main_box)
@@ -236,7 +236,8 @@ class EventEditor(wx.Dialog):
         grid.Add(when_box)
 
     def _create_time_picker(self):
-        return time_picker_for(self.timeline.get_time_type())(self, config=self.config)
+        time_type = self.timeline.get_time_type()
+        return time_picker_for(time_type)(self, config=self.config)
 
     def _create_checkboxes(self, grid):
         grid.AddStretchSpacer()
@@ -249,28 +250,26 @@ class EventEditor(wx.Dialog):
         grid.Add(when_box_props)
 
     def _create_period_checkbox(self, box):
-        self.chb_period = wx.CheckBox(self, label=_("Period"))
-        self.Bind(wx.EVT_CHECKBOX, self._chb_period_on_checkbox, 
-                  self.chb_period)
-        box.Add(self.chb_period)
+        self.chb_period = self._create_chb(box, _("Period"), 
+                                           self._chb_period_on_checkbox)
 
     def _create_show_time_checkbox(self, box):
-        self.chb_show_time = wx.CheckBox(self, label=_("Show time"))
-        self.Bind(wx.EVT_CHECKBOX, self._chb_show_time_on_checkbox,
-                  self.chb_show_time)
-        box.Add(self.chb_show_time)
+        self.chb_show_time = self._create_chb(box, _("Show time"), 
+                                              self._chb_show_time_on_checkbox)
 
     def _create_fuzzy_checkbox(self, box):
-        self.chb_fuzzy = wx.CheckBox(self, label=_("Fuzzy"))
-        self.Bind(wx.EVT_CHECKBOX, self._chb_fuzzy_on_checkbox, 
-                  self.chb_fuzzy)
-        box.Add(self.chb_fuzzy)
+        self.chb_fuzzy = self._create_chb(box, _("Fuzzy"), 
+                                          self._chb_fuzzy_on_checkbox)
     
     def _create_locked_checkbox(self, box):
-        self.chb_locked = wx.CheckBox(self, label=_("Locked"))
-        self.Bind(wx.EVT_CHECKBOX, self._chb_locked_on_checkbox, 
-                  self.chb_locked)
-        box.Add(self.chb_locked)
+        self.chb_locked = self._create_chb(box, _("Locked"), 
+                                           self._chb_locked_on_checkbox)
+        
+    def _create_chb(self, box, label, handler):
+        chb = wx.CheckBox(self, label=label)
+        self.Bind(wx.EVT_CHECKBOX, handler, chb)
+        box.Add(chb)
+        return chb
             
     def _create_text_field(self, grid):
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY, name="text")
@@ -309,6 +308,14 @@ class EventEditor(wx.Dialog):
      
     def _btn_ok_on_click(self, evt):
         self.controller.create_or_update_event()
+        self._close_or_clear_dialog()
+
+    def _close_or_clear_dialog(self):
+        if self.chb_add_more.GetValue():
+            self._clear_dialog()
+            self.controller.clear()
+        else:
+            self._close()
 
     def _clear_dialog(self):
         for data_id, editor in self.event_data:
@@ -402,9 +409,6 @@ class EventEditor(wx.Dialog):
         if not selection_set:
             self.lst_category.SetSelection(0)
         self.current_category_selection = self.lst_category.GetSelection()
-
-    def _set_initial_focus(self):
-        self.dtp_start.SetFocus()
 
     def _close(self):
         """
@@ -511,23 +515,25 @@ class EventEditorController(object):
     def __init__(self, view, db, start, end, event):
         self.view = view
         self.db = db
-        self.start = start
-        self.end = end
-        self.name = ""
-        self.category = None
         self.event = event
-        self.fuzzy = False
-        self.locked = False
-        
-    def initialize(self):
         if self.event != None:
             self.start = self.event.time_period.start_time
             self.end = self.event.time_period.end_time
             self.name = self.event.text
             self.category = self.event.category
-            self.view.set_event_data(self.event.data)
             self.fuzzy = self.event.fuzzy
             self.locked = self.event.locked
+        else:
+            self.start = start
+            self.end = end
+            self.name = ""
+            self.category = None
+            self.fuzzy = False
+            self.locked = False
+        
+    def initialize(self):
+        if self.event != None:
+            self.view.set_event_data(self.event.data)
         self.view.set_start(self.start)
         self.view.set_end(self.end)
         self.view.set_name(self.name)
@@ -537,6 +543,10 @@ class EventEditorController(object):
         self.view.set_show_add_more(self.event == None)
         self.view.set_fuzzy(self.fuzzy)
         self.view.set_locked(self.locked)
+        if self.start != self.end:
+            self.view.set_focus("text")
+        else:
+            self.view.set_focus("start")
 
     def create_or_update_event(self):
         try:
@@ -554,7 +564,6 @@ class EventEditorController(object):
                                   self.category, self.fuzzy, self.locked)
             self.event.data = self.view.get_event_data()
             self._save_event_to_db()
-            self.view.close_or_clear_dialog()
         except ValueError, ex:
             return
         
@@ -562,6 +571,7 @@ class EventEditorController(object):
         self.name = ""
         self.event = None
         self.view.set_name(self.name)
+        self.view.set_focus("start")
 
     def _validate_and_save_start(self, start):
         if start == None:

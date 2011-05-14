@@ -60,6 +60,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("start")
 
     def testDialogInitialisezWithNewPointEventAtNonzeroTime(self):
         self._create_controller(POINT_NOEVENT_NONZEROTIME)
@@ -72,6 +73,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("start")
 
     def testDialogInitialisezWithNewPeriodEventAtZeroTime(self):
         self._create_controller(PERIOD_NOEVENT_ZEROTIME)
@@ -84,6 +86,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("text")
 
     def testDialogInitialisezWithNewPeriodEventAtNonzeroTime(self):
         self._create_controller(PERIOD_NOEVENT_NONZEROTIME)
@@ -96,6 +99,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("text")
 
     def testDialogInitialisezWithPointEventAtZeroTime(self):
         self._create_controller(POINT_EVENT_ZEROTIME)
@@ -108,6 +112,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("start")
         
     def testDialogInitialisezWithPointEventAtNonzeroTime(self):
         self._create_controller(POINT_EVENT_NONZEROTIME)
@@ -120,6 +125,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("start")
 
     def testDialogInitialisezWithPeriodEventAtZeroTime(self):
         self._create_controller(PERIOD_EVENT_ZEROTIME)
@@ -132,6 +138,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("text")
 
     def testDialogInitialisezWithPeriodEventAtNonzeroTime(self):
         self._create_controller(PERIOD_EVENT_NONZEROTIME)
@@ -144,6 +151,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_focus.assert_called_with("text")
 
     def testOnInitDialogDisplaysFuzzyAndLocked(self):
         self._create_controller(PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED)
