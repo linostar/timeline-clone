@@ -927,8 +927,13 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
                           controller.get_drawer().snap(end))
 
     def _move_end_time(self, controller):
-        self.end_time = controller.get_time(self.last_x)
-        period = self._get_period(controller)
+        try:
+            old_end_time = self.end_time
+            self.end_time = controller.get_time(self.last_x)
+            period = self._get_period(controller)
+        except ValueError:
+            self.end_time = old_end_time
+            period = self._get_period(controller)
         start = period.start_time
         end = period.end_time
         controller._redraw_timeline((start, end))
