@@ -58,6 +58,42 @@ class TimelineViewSpec(unittest.TestCase):
         self.simulate_mouse_down_move_up((0, ANY_Y), (20, ANY_Y), shift_down=True)
         self.assert_displays_period("1 Aug 2010", "3 Aug 2010")
 
+    def test_hightlights_selected_region_while_zooming(self):
+        self.given_time_at_x_is(0, "1 Jan 2010")
+        self.given_time_at_x_is(1, "1 Jan 2011")
+        self.init_view_with_db()
+        self.start_shift_drag_at_x(0)
+        self.move_mouse_to_x(1)
+        self.assert_highlights_region(("1 Jan 2010", "1 Jan 2011"))
+
+    def test_highlights_last_valid_region_while_zooming(self):
+        self.given_time_at_x_is(0, "1 Jan 2010")
+        self.given_time_at_x_is(1, "1 Jan 2011")
+        self.given_time_at_x_is(2000, "1 Jan 4010")
+        self.init_view_with_db()
+        self.start_shift_drag_at_x(0)
+        self.move_mouse_to_x(1)
+        self.move_mouse_to_x(2000)
+        self.assert_highlights_region(("1 Jan 2010", "1 Jan 2011"))
+
+    def test_highlights_no_region_when_zooming_is_completed(self):
+        self.given_time_at_x_is(0, "1 Aug 2010")
+        self.given_time_at_x_is(20, "3 Aug 2010")
+        self.init_view_with_db()
+        self.simulate_mouse_down_move_up((0, ANY_Y), (20, ANY_Y), shift_down=True)
+        self.assert_highlights_region(None)
+
+    def test_zooms_to_last_valid_selection(self):
+        self.given_time_at_x_is(0, "1 Jan 2010")
+        self.given_time_at_x_is(1, "1 Jan 2011")
+        self.given_time_at_x_is(2000, "1 Jan 4010")
+        self.init_view_with_db()
+        self.start_shift_drag_at_x(0)
+        self.move_mouse_to_x(1)
+        self.move_mouse_to_x(2000)
+        self.release_mouse()
+        self.assert_displays_period("1 Jan 2010", "1 Jan 2011")
+
     def test_centers_displayed_period_around_middle_click_position(self):
         self.given_time_at_x_is(150, "15 Aug 2010")
         self.init_view_with_db_with_period("1 Aug 2010", "11 Aug 2010")
@@ -324,6 +360,11 @@ class TimelineViewSpec(unittest.TestCase):
         self.assertTrue(self.view.start_balloon_hide_timer.called)
         self.controller.balloon_hide_timer_fired()
 
+    def start_shift_drag_at_x(self, x):
+        ctrl_down = False
+        shift_down = True
+        self.controller.left_mouse_down(x, ANY_Y, ctrl_down, shift_down)
+
     def simulate_mouse_double_click(self, x, y):
         self.simulate_mouse_click(x, y)
         self.controller.left_mouse_dclick(x, y, ctrl_down=False)
@@ -342,6 +383,12 @@ class TimelineViewSpec(unittest.TestCase):
     def simulate_mouse_move(self, x, y):
         self.controller.mouse_moved(x, y)
 
+    def move_mouse_to_x(self, x):
+        self.controller.mouse_moved(x, ANY_Y)
+
+    def release_mouse(self):
+        self.controller.left_mouse_up()
+
     def get_status_text(self):
         self.assertTrue(self.status_bar_adapter.set_text.called)
         text = self.status_bar_adapter.set_text.call_args[0][0]
@@ -358,6 +405,12 @@ class TimelineViewSpec(unittest.TestCase):
     def assert_event_hovered(self, event):
         view_properties = self.get_view_properties_used_when_drawing()
         self.assertEquals(event, view_properties.hovered_event)
+
+    def assert_highlights_region(self, start_end):
+        if start_end is not None:
+            start_end = (human_time_to_py(start_end[0]), human_time_to_py(start_end[1]))
+        view_properties = self.get_view_properties_used_when_drawing()
+        self.assertEquals(start_end, view_properties.period_selection)
 
     def assert_displays_period(self, start, end):
         view_properties = self.get_view_properties_used_when_drawing()
