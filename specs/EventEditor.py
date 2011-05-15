@@ -205,6 +205,15 @@ class EventEditorControllerSpec(unittest.TestCase):
         self._simulate_ok_click()
         self.assertTrue(self.view.display_invalid_start.called)
 
+    def testTimeCantChangeWhenEventIsLocked(self):
+        self._create_controller(POINT_NOEVENT_NONZEROTIME)
+        self._simulate_user_input(START, create_nonzero_time2())
+        self._simulate_user_input(END, create_nonzero_time1())
+        self._simulate_user_input(LOCKED, True)
+        self._simulate_ok_click()
+        msg = _("You can't change time when the Event is locked")
+        self.view.display_invalid_start.assert_called_with(msg)
+        
     def _create_controller(self, type):
         if type == POINT_NOEVENT_ZEROTIME:
             self.controller = given_no_event_point_at_zero_time()
