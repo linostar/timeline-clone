@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import platform
+
 import unittest
 
 import wx
@@ -41,9 +43,11 @@ class WxTimeTypeSpec(unittest.TestCase):
             self.time_type.parse_time("2010-08-31 13:44:00"))
 
     def testRaisesValueErrorWhenParsingInvalidTime(self):
-        self.assertRaises(
-            ValueError,
-            self.time_type.parse_time, "2010-31-31 0:0:0")
+        # This test don't run in windows
+        if platform.system() != "Windows":
+            self.assertRaises(
+                ValueError,
+                self.time_type.parse_time, "2010-31-31 0:0:0")
 
     def testRaisesValueErrorWhenParsingBadlyFormattedTime(self):
         self.assertRaises(
@@ -93,6 +97,8 @@ class WxDateTimeConstructorSpec(unittest.TestCase):
             try_to_create_wx_date_time_from_dmy(20, 7, 2010))
     
     def testRaisesValueErrorIfDateIsInvalid(self):
-        self.assertRaises(
-            ValueError,
-            try_to_create_wx_date_time_from_dmy, 40, 8, 2010)
+        # This test don't run in windows
+        if platform.system() != "Windows":
+            self.assertRaises(
+                ValueError,
+                try_to_create_wx_date_time_from_dmy, 40, 8, 2010)
