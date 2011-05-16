@@ -31,10 +31,11 @@ class Event(object):
     """
 
     def __init__(self, db, start_time, end_time, text, category=None, 
-                 fuzzy=False, locked=False):
+                 fuzzy=False, locked=False, ends_today=False):
         self.db = db
         self.fuzzy = fuzzy
         self.locked = locked
+        self.ends_today = ends_today
         self.id = None
         self.selected = False
         self.draw_ballon = False
@@ -48,12 +49,15 @@ class Event(object):
         self.id = id
 
     def update(self, start_time, end_time, text, category=None, fuzzy=None, 
-               locked=None):
+               locked=None, ends_today=None):
         """Change the event data."""
         time_type = self.db.get_time_type()
         self.time_period = TimePeriod(time_type, start_time, end_time)
         self.text = text
         self.category = category
+        if ends_today is not None:
+            if not self.locked: 
+                self.ends_today = ends_today
         if fuzzy is not None:
             self.fuzzy = fuzzy
         if locked is not None:
