@@ -133,7 +133,7 @@ class EventEditor(wx.Dialog):
         self.chb_ends_today.SetValue(value)
 
     def get_ends_today(self):
-        self.chb_ends_today.GetValue()
+        return self.chb_ends_today.GetValue()
 
     def set_name(self, name):
         self.txt_text.SetValue(name)
