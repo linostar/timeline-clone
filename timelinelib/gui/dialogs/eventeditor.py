@@ -605,12 +605,24 @@ class EventEditorController(object):
         return time == None 
    
     def _verify_that_time_has_not_been_changed(self, start, end):
-        if self.start != start or self.end != end:
+        self._exception_if_start_has_changed(start)
+        if not self.ends_today:
+            self._exception_if_end_has_changed(end)
+    
+    def _exception_if_start_has_changed(self, start):
+        if self.start != start:
             self.view.set_start(self.start)
+            self._exception_when_start_or_end_has_changed()
+
+    def _exception_if_end_has_changed(self, end):
+        if self.end != end:
             self.view.set_end(self.end)
-            error_message = _("You can't change time when the Event is locked")
-            self.view.display_invalid_start(error_message)
-            raise ValueError()
+            self._exception_when_start_or_end_has_changed()
+
+    def _exception_when_start_or_end_has_changed(self):
+        error_message = _("You can't change time when the Event is locked")
+        self.view.display_invalid_start(error_message)
+        raise ValueError()
         
     def _save_event(self):
         if self.event == None:
