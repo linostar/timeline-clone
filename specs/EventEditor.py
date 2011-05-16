@@ -37,12 +37,15 @@ POINT_EVENT_ZEROTIME = 6
 PERIOD_EVENT_NONZEROTIME = 7
 PERIOD_EVENT_ZEROTIME = 8
 PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED = 9
+POINTEVENT_ZEROTIME_ENDS_TODAY= 10
 
 START = 1
 END = 2
 NAME = 3
 FUZZY = 4
 LOCKED = 5
+ENDS_TODAY = 6
+
 
 class EventEditorControllerSpec(unittest.TestCase):
     
@@ -60,6 +63,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
 
     def testDialogInitialisezWithNewPointEventAtNonzeroTime(self):
@@ -73,6 +77,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
 
     def testDialogInitialisezWithNewPeriodEventAtZeroTime(self):
@@ -86,6 +91,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("text")
 
     def testDialogInitialisezWithNewPeriodEventAtNonzeroTime(self):
@@ -99,6 +105,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(True)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("text")
 
     def testDialogInitialisezWithPointEventAtZeroTime(self):
@@ -112,6 +119,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
         
     def testDialogInitialisezWithPointEventAtNonzeroTime(self):
@@ -125,6 +133,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
 
     def testDialogInitialisezWithPeriodEventAtZeroTime(self):
@@ -138,6 +147,7 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("text")
 
     def testDialogInitialisezWithPeriodEventAtNonzeroTime(self):
@@ -151,12 +161,17 @@ class EventEditorControllerSpec(unittest.TestCase):
         self.view.set_show_add_more.assert_called_with(False)
         self.view.set_fuzzy.assert_called_with(False)
         self.view.set_locked.assert_called_with(False)
+        self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("text")
 
     def testOnInitDialogDisplaysFuzzyAndLocked(self):
         self._create_controller(PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED)
         self.view.set_fuzzy.assert_called_with(True)
         self.view.set_locked.assert_called_with(True)
+
+    def testOnInitDialogDisplaysEndsToday(self):
+        self._create_controller(POINTEVENT_ZEROTIME_ENDS_TODAY)
+        self.view.set_ends_today.assert_called_with(True)
 
     def testOnOkFuzzyAndLockedAreUpdated(self):
         self._create_controller(PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED)
@@ -190,6 +205,16 @@ class EventEditorControllerSpec(unittest.TestCase):
         self._simulate_ok_click()
         self.assertTrue(self.controller.db.save_event.called)
         self.assertEquals("updated_event", self.controller.event.text)
+
+    def testOnOkEventPrortyEndsTodayIsUpdated(self):
+        self._create_controller(POINT_EVENT_ZEROTIME)
+        self._simulate_user_input(NAME, "evt")
+        self._simulate_user_input(START, create_zero_time1())
+        self._simulate_user_input(END, create_zero_time1())
+        self._simulate_user_input(ENDS_TODAY, True)
+        self._simulate_ok_click()
+        self.assertTrue(self.view.get_ends_today.called)
+        self.assertEquals(True, self.controller.event.ends_today)
 
     def testNameFieldMustNotBeEmptyWhenClickingOk(self):
         self._create_controller(POINT_NOEVENT_NONZEROTIME)
@@ -233,6 +258,9 @@ class EventEditorControllerSpec(unittest.TestCase):
             self.controller = given_period_event_at_nonzero_time()
         elif type == PERIOD_EVENT_NONZEROTIME_FUZZY_LOCKED:
             self.controller = given_period_event_at_nonzero_time_fuzzy_and_locked()
+        elif type == POINTEVENT_ZEROTIME_ENDS_TODAY:
+            self.controller = given_point_event_at_zero_time_ends_today()
+            
         self.view = self.controller.view
         self.controller.initialize()
 
@@ -247,6 +275,8 @@ class EventEditorControllerSpec(unittest.TestCase):
             self.view.get_fuzzy.return_value = value
         elif control == LOCKED:
             self.view.get_locked.return_value = value
+        elif control == ENDS_TODAY:
+            self.view.get_ends_today.return_value = value
 
     def _simulate_ok_click(self):
         self.controller.create_or_update_event()
@@ -287,6 +317,14 @@ def given_event_point_at_zero_time():
     tm = create_zero_time1()
     cat = Category("bar", None, True)
     event = Event(db, tm, tm, "foo", cat, fuzzy=False, locked=False)
+    controller = EventEditorController(view, db, None, None, event)
+    return controller
+
+def given_point_event_at_zero_time_ends_today():
+    view, db = create_view_and_db()
+    tm = create_zero_time1()
+    cat = Category("bar", None, True)
+    event = Event(db, tm, tm, "foo", cat, ends_today=True)
     controller = EventEditorController(view, db, None, None, event)
     return controller
 
