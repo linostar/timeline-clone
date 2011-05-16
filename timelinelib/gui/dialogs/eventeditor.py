@@ -124,9 +124,16 @@ class EventEditor(wx.Dialog):
 
     def set_locked(self, locked):
         self.chb_locked.SetValue(locked)
+        self.chb_ends_today.Enable(not self.chb_locked.GetValue())
 
     def get_locked(self):
         return self.chb_locked.GetValue()
+
+    def set_ends_today(self, value):
+        self.chb_ends_today.SetValue(value)
+
+    def get_ends_today(self):
+        return self.chb_ends_today.GetValue()
 
     def set_name(self, name):
         self.txt_text.SetValue(name)
@@ -246,6 +253,7 @@ class EventEditor(wx.Dialog):
             self.chb_show_time = self._create_show_time_checkbox(when_box)
         self.chb_fuzzy = self._create_fuzzy_checkbox(when_box)
         self.chb_locked = self._create_locked_checkbox(when_box)
+        self.chb_ends_today = self._create_ends_today_checkbox(when_box)
         grid.Add(when_box)
 
     def _create_period_checkbox(self, box):
@@ -261,8 +269,12 @@ class EventEditor(wx.Dialog):
         return self._create_chb(box, _("Fuzzy"), handler)
     
     def _create_locked_checkbox(self, box):
-        handler = None
+        handler = self._chb_show_time_on_locked
         return self._create_chb(box, _("Locked"), handler)
+
+    def _create_ends_today_checkbox(self, box):
+        handler = None
+        return self._create_chb(box, _("Ends today"), handler)
         
     def _create_chb(self, box, label, handler):
         chb = wx.CheckBox(self, label=label)
@@ -338,6 +350,9 @@ class EventEditor(wx.Dialog):
     def _chb_show_time_on_checkbox(self, e):
         self.dtp_start.show_time(e.IsChecked())
         self.dtp_end.show_time(e.IsChecked())
+
+    def _chb_show_time_on_locked(self, e):
+        self.chb_ends_today.Enable(not self.chb_locked.GetValue())
 
     def _lst_category_on_choice(self, e):
         new_selection_index = e.GetSelection()
@@ -523,6 +538,7 @@ class EventEditorController(object):
             self.category = self.event.category
             self.fuzzy = self.event.fuzzy
             self.locked = self.event.locked
+            self.ends_today = self.event.ends_today
         else:
             self.start = start
             self.end = end
@@ -530,6 +546,7 @@ class EventEditorController(object):
             self.category = None
             self.fuzzy = False
             self.locked = False
+            self.ends_today = False
         if start is None:
             start = self.db.get_time_type().now()
         if end is None:
@@ -547,6 +564,7 @@ class EventEditorController(object):
         self.view.set_show_add_more(self.event == None)
         self.view.set_fuzzy(self.fuzzy)
         self.view.set_locked(self.locked)
+        self.view.set_ends_today(self.ends_today)
         if self.start != self.end:
             self.view.set_focus("text")
         else:
@@ -570,6 +588,7 @@ class EventEditorController(object):
         self.name = self._validate_and_save_name(self.view.get_name())
         self.fuzzy = self.view.get_fuzzy()
         self.locked = self.view.get_locked()
+        self.ends_today = self.view.get_ends_today()
         self.category = self.view.get_category()
         start = self.view.get_start()
         if self._dialog_has_signalled_invalid_input(start):
@@ -586,20 +605,34 @@ class EventEditorController(object):
         return time == None 
    
     def _verify_that_time_has_not_been_changed(self, start, end):
-        if self.start != start or self.end != end:
+        self._exception_if_start_has_changed(start)
+        if not self.ends_today:
+            self._exception_if_end_has_changed(end)
+    
+    def _exception_if_start_has_changed(self, start):
+        if self.start != start:
             self.view.set_start(self.start)
+            self._exception_when_start_or_end_has_changed()
+
+    def _exception_if_end_has_changed(self, end):
+        if self.end != end:
             self.view.set_end(self.end)
-            error_message = _("You can't change time when the Event is locked")
-            self.view.display_invalid_start(error_message)
-            raise ValueError()
+            self._exception_when_start_or_end_has_changed()
+
+    def _exception_when_start_or_end_has_changed(self):
+        error_message = _("You can't change time when the Event is locked")
+        self.view.display_invalid_start(error_message)
+        raise ValueError()
         
     def _save_event(self):
         if self.event == None:
             self.event = Event(self.db, self.start, self.end, self.name, 
-                               self.category, self.fuzzy, self.locked)
+                               self.category, self.fuzzy, self.locked, 
+                               self.ends_today)
         else:
             self.event.update(self.start, self.end, self.name, 
-                              self.category, self.fuzzy, self.locked)
+                              self.category, self.fuzzy, self.locked, 
+                              self.ends_today)
         self.event.data = self.view.get_event_data()
         self._save_event_to_db()
         
