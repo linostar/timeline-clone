@@ -157,6 +157,7 @@ class XmlTimeline(MemoryDB):
                     Tag("text", SINGLE, parse_fn_store("tmp_text")),
                     Tag("fuzzy", OPTIONAL, parse_fn_store("tmp_fuzzy")),
                     Tag("locked", OPTIONAL, parse_fn_store("tmp_locked")),
+                    Tag("ends_today", OPTIONAL, parse_fn_store("tmp_ends_today")),
                     Tag("category", OPTIONAL,
                         parse_fn_store("tmp_category")),
                     Tag("description", OPTIONAL,
@@ -198,6 +199,7 @@ class XmlTimeline(MemoryDB):
         text = tmp_dict.pop("tmp_text")
         fuzzy = self._parse_optional_bool(tmp_dict, "tmp_fuzzy")
         locked = self._parse_optional_bool(tmp_dict, "tmp_locked")
+        ends_today = self._parse_optional_bool(tmp_dict, "tmp_ends_today")
         category_text = tmp_dict.pop("tmp_category", None)
         if category_text is None:
             category = None
@@ -211,7 +213,7 @@ class XmlTimeline(MemoryDB):
             icon = None
         else:
             icon = parse_icon(icon_text)
-        event = Event(self, start, end, text, category, fuzzy, locked)
+        event = Event(self, start, end, text, category, fuzzy, locked, ends_today)
         event.set_data("description", description)
         event.set_data("icon", icon)
         self.save_event(event)
@@ -279,6 +281,7 @@ class XmlTimeline(MemoryDB):
         write_simple_tag(file, "text", evt.text, INDENT3)
         write_simple_tag(file, "fuzzy", "%s" % evt.fuzzy, INDENT3)
         write_simple_tag(file, "locked", "%s" % evt.locked, INDENT3)
+        write_simple_tag(file, "ends_today", "%s" % evt.ends_today, INDENT3)
         if evt.category is not None:
             write_simple_tag(file, "category", evt.category.name, INDENT3)
         if evt.get_data("description") is not None:
