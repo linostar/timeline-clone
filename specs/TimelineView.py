@@ -26,6 +26,8 @@ from specs.utils import py_period
 from timelinelib.config import Config
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event
+from timelinelib.db.objects import TimeOutOfRangeLeftError
+from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.gui.components.timelineview import DrawingArea
 from timelinelib.gui.components.timelineview import DrawingAreaController
 from timelinelib.gui.dialogs.mainframe import StatusBarAdapter
@@ -145,6 +147,20 @@ class TimelineViewSpec(unittest.TestCase):
         self.mock_drawer.hidden_event_count = 3
         self.init_view_with_db()
         self.assertTrue("3" in self.get_hidden_event_count_text())
+
+    def test_displays_error_in_status_bar_when_scrolling_too_far_left(self):
+        def navigate(time_period):
+            raise TimeOutOfRangeLeftError()
+        self.init_view_with_db()
+        self.controller.navigate_timeline(navigate)
+        self.assert_displays_status_text(_("Can't scroll more to the left"))
+
+    def test_displays_error_in_status_bar_when_scrolling_too_far_right(self):
+        def navigate(time_period):
+            raise TimeOutOfRangeRightError()
+        self.init_view_with_db()
+        self.controller.navigate_timeline(navigate)
+        self.assert_displays_status_text(_("Can't scroll more to the right"))
 
     def test_creates_event_when_double_clicking_surface(self):
         self.given_time_at_x_is(30, "3 Aug 2010")
@@ -431,6 +447,9 @@ class TimelineViewSpec(unittest.TestCase):
     def assert_is_not_selected(self, event):
         view_properties = self.get_view_properties_used_when_drawing()
         self.assertFalse(view_properties.is_selected(event))
+
+    def assert_displays_status_text(self, text):
+        self.assertEquals(text, self.get_status_text())
 
     def get_view_properties_used_when_drawing(self):
         self.assertTrue(self.view.redraw_surface.called)

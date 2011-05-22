@@ -20,6 +20,8 @@ import wx
 
 from timelinelib.db.interface import STATE_CHANGE_ANY
 from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.objects import TimeOutOfRangeLeftError
+from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing import get_drawer
 from timelinelib.drawing.interface import ViewProperties
@@ -317,6 +319,10 @@ class DrawingAreaController(object):
             navigation_fn(self.view_properties.displayed_period)
             self._redraw_timeline()
             self.status_bar_adapter.set_text("")
+        except (TimeOutOfRangeLeftError), e:
+            self.status_bar_adapter.set_text(_("Can't scroll more to the left"))
+        except (TimeOutOfRangeRightError), e:
+            self.status_bar_adapter.set_text(_("Can't scroll more to the right"))
         except (ValueError, OverflowError), e:
             self.status_bar_adapter.set_text(ex_msg(e))
 

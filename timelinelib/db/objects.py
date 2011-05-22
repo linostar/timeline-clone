@@ -170,6 +170,14 @@ class Category(object):
         self.id = id
 
 
+class TimeOutOfRangeLeftError(ValueError):
+    pass
+
+
+class TimeOutOfRangeRightError(ValueError):
+    pass
+
+
 class TimePeriod(object):
     """
     Represents a period in time using a start and end time.
