@@ -19,6 +19,8 @@
 import unittest
 
 from specs.utils import py_period
+from timelinelib.db.objects import TimeOutOfRangeLeftError
+from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.time.pytime import backward_fn
 from timelinelib.time.pytime import fit_century_fn
 from timelinelib.time.pytime import fit_day_fn
@@ -67,21 +69,43 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self.when_navigating(forward_fn, "1 Jan 2010", "1 Feb 2010")
         self.then_period_becomes("1 Feb 2010", "1 Mar 2010")
 
+    def test_move_page_smart_month_forward_beyond_limit(self):
+        self.assert_navigation_raises(
+            TimeOutOfRangeRightError, forward_fn, "1 Jan 9000", "1 Dec 9989")
+
     def test_move_page_smart_month_backward(self):
         self.when_navigating(backward_fn, "1 Feb 2010", "1 Mar 2010")
         self.then_period_becomes("1 Jan 2010", "1 Feb 2010")
+
+    def test_move_page_smart_month_backward_beyond_limit(self):
+        self.assert_navigation_raises(
+            TimeOutOfRangeLeftError, backward_fn, "1 Jan 11", "1 Dec 25")
+
+    def test_move_page_smart_month_over_year_boundry_backward(self):
+        self.when_navigating(backward_fn, "1 Jan 2010", "1 Mar 2010")
+        self.then_period_becomes("1 Nov 2009", "1 Jan 2010")
 
     def test_move_page_smart_year_forward(self):
         self.when_navigating(forward_fn, "1 Jan 2010", "1 Jan 2011")
         self.then_period_becomes("1 Jan 2011", "1 Jan 2012")
 
+    def test_move_page_smart_year_forward_beyond_limit(self):
+        self.assert_navigation_raises(
+            TimeOutOfRangeRightError, forward_fn, "1 Jan 9000", "1 Jan 9989")
+
     def test_move_page_smart_year_backward(self):
         self.when_navigating(backward_fn, "1 Jan 2011", "1 Jan 2012")
         self.then_period_becomes("1 Jan 2010", "1 Jan 2011")
 
-    def test_move_page_smart_month_over_year_boundry_backward(self):
-        self.when_navigating(backward_fn, "1 Jan 2010", "1 Mar 2010")
-        self.then_period_becomes("1 Nov 2009", "1 Jan 2010")
+    def test_move_page_smart_year_backward_beyond_limit(self):
+        self.assert_navigation_raises(
+            TimeOutOfRangeLeftError, backward_fn, "1 Jan 100", "1 Jan 1000")
+
+    def assert_navigation_raises(self, exception, fn, start, end):
+        def navigation_fn(fn):
+            self.assertRaises(exception, fn, self.time_period)
+        self.time_period = py_period(start, end)
+        fn(None, self.time_period, navigation_fn)
 
     def when_navigating(self, fn, start, end):
         def navigation_fn(fn):

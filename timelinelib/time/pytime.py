@@ -16,20 +16,20 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import re
 from datetime import datetime
 from datetime import time
 from datetime import timedelta
 import calendar
+import re
 
-import wx
-
-from timelinelib.time.typeinterface import TimeType
+from timelinelib.db.objects import TimeOutOfRangeLeftError
+from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.objects import TimePeriod
-from timelinelib.drawing.interface import Strip
 from timelinelib.db.objects import time_period_center
+from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.monthnames import abbreviated_name_of_month
+from timelinelib.time.typeinterface import TimeType
 from timelinelib.weekdaynames import abbreviated_name_of_weekday
 
 
@@ -222,57 +222,86 @@ def go_to_date_fn(main_frame, current_period, navigation_fn):
 
 
 def backward_fn(main_frame, current_period, navigation_fn):
-    move_page_smart(current_period, navigation_fn, -1)
+    _move_page_smart(current_period, navigation_fn, -1)
 
 
 def forward_fn(main_frame, current_period, navigation_fn):
-    move_page_smart(current_period, navigation_fn, 1)
+    _move_page_smart(current_period, navigation_fn, 1)
 
 
-def move_page_smart(current_period, navigation_fn, direction):
-    def months_to_year_and_month(months):
-        years = int(months / 12)
-        month = months - years * 12
-        if month == 0:
-            month = 12
-            years -=1
-        return years, month
-    start, end = current_period.start_time, current_period.end_time
-    year_diff = end.year - start.year
+def _move_page_smart(current_period, navigation_fn, direction):
+    if _whole_number_of_years(current_period):
+        _move_page_years(current_period, navigation_fn, direction)
+    elif _whole_number_of_months(current_period):
+        _move_page_months(current_period, navigation_fn, direction)
+    else:
+        navigation_fn(lambda tp: tp.move_delta(direction*current_period.delta()))
+
+
+def _whole_number_of_years(period):
+    start, end = period.start_time, period.end_time
+    year_diff = _calculate_year_diff(period)
+    whole_years = start.replace(year=start.year+year_diff) == end
+    return whole_years and year_diff > 0
+
+
+def _move_page_years(curret_period, navigation_fn, direction):
+    def navigate(tp):
+        year_delta = direction * _calculate_year_diff(curret_period)
+        new_start_year = curret_period.start_time.year + year_delta
+        new_end_year = curret_period.end_time.year + year_delta
+        try:
+            new_start = curret_period.start_time.replace(year=new_start_year)
+            new_end = curret_period.end_time.replace(year=new_end_year)
+        except ValueError:
+            if direction < 0:
+                raise TimeOutOfRangeLeftError()
+            else:
+                raise TimeOutOfRangeRightError()
+        return tp.update(new_start, new_end)
+    navigation_fn(navigate)
+
+
+def _calculate_year_diff(period):
+    return period.end_time.year - period.start_time.year
+
+
+def _whole_number_of_months(period):
+    start, end = period.start_time, period.end_time
     start_months = start.year * 12 + start.month
     end_months = end.year * 12 + end.month
     month_diff = end_months - start_months
-    whole_years = start.replace(year=start.year + year_diff) == end
     whole_months = start.day == 1 and end.day == 1
-    direction_backward = direction < 0
-    # Whole years
-    if whole_years and year_diff > 0:
-        if direction_backward:
-            new_start = start.replace(year=start.year-year_diff)
-            new_end   = start
-        else:
-            new_start = end
-            new_end   = end.replace(year=new_start.year+year_diff)
-        navigation_fn(lambda tp: tp.update(new_start, new_end))
-    # Whole months
-    elif whole_months and month_diff > 0:
-        if direction_backward:
-            new_end = start
-            new_start_year, new_start_month = months_to_year_and_month(
-                                                    start_months -
-                                                    month_diff)
-            new_start = start.replace(year=new_start_year,
-                                      month=new_start_month)
-        else:
-            new_start = end
-            new_end_year, new_end_month = months_to_year_and_month(
-                                                    end_months +
-                                                    month_diff)
-            new_end = end.replace(year=new_end_year, month=new_end_month)
-        navigation_fn(lambda tp: tp.update(new_start, new_end))
-    # No need for smart delta
-    else:
-        navigation_fn(lambda tp: tp.move_delta(direction*current_period.delta()))
+    return whole_months and month_diff > 0
+
+
+def _move_page_months(curret_period, navigation_fn, direction):
+    def navigate(tp):
+        start_months = curret_period.start_time.year * 12 + curret_period.start_time.month
+        end_months = curret_period.end_time.year * 12 + curret_period.end_time.month
+        month_diff = end_months - start_months
+        month_delta = month_diff * direction
+        new_start_year, new_start_month = _months_to_year_and_month(start_months + month_delta)
+        new_end_year, new_end_month = _months_to_year_and_month(end_months + month_delta)
+        try:
+            new_start = curret_period.start_time.replace(year=new_start_year, month=new_start_month)
+            new_end = curret_period.end_time.replace(year=new_end_year, month=new_end_month)
+        except ValueError:
+            if direction < 0:
+                raise TimeOutOfRangeLeftError()
+            else:
+                raise TimeOutOfRangeRightError()
+        return tp.update(new_start, new_end)
+    navigation_fn(navigate)
+
+
+def _months_to_year_and_month(months):
+    years = int(months / 12)
+    month = months - years * 12
+    if month == 0:
+        month = 12
+        years -= 1
+    return years, month
 
 
 def forward_one_week_fn(main_frame, current_period, navigation_fn):
