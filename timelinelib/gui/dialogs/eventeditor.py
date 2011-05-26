@@ -278,7 +278,8 @@ class EventEditor(wx.Dialog):
         
     def _create_chb(self, box, label, handler):
         chb = wx.CheckBox(self, label=label)
-        self.Bind(wx.EVT_CHECKBOX, handler, chb)
+        if handler is not None:
+            self.Bind(wx.EVT_CHECKBOX, handler, chb)
         box.Add(chb)
         return chb
             
