@@ -17,148 +17,77 @@
 
 
 import unittest
-import datetime
 
-from mock import Mock
-
-from timelinelib.db.objects import TimePeriod
-from timelinelib.time import PyTimeType
+from specs.utils import py_period
+from timelinelib.time.pytime import backward_fn
+from timelinelib.time.pytime import fit_century_fn
 from timelinelib.time.pytime import fit_day_fn
+from timelinelib.time.pytime import fit_decade_fn
+from timelinelib.time.pytime import fit_millennium_fn
 from timelinelib.time.pytime import fit_month_fn
 from timelinelib.time.pytime import fit_year_fn
-from timelinelib.time.pytime import fit_decade_fn
-from timelinelib.time.pytime import fit_century_fn
-from timelinelib.time.pytime import fit_millennium_fn
 from timelinelib.time.pytime import forward_fn
-from timelinelib.time.pytime import backward_fn
 
 
 class PyTimeNavigationFunctionsSpec(unittest.TestCase):
 
-    def _call_fn_with_period(self, fn, start, end):
-        self.time_period = TimePeriod(PyTimeType(), start, end)
-        fn(None, self.time_period, self._nav_fn)
-
-    def _nav_fn(self, fn):
-        fn(self.time_period)
-
-    def _assertTimePeriodEquals(self, start, end):
-        self.assertEquals(start, self.time_period.start_time)
-        self.assertEquals(end, self.time_period.end_time)
-
-    def testFitDayShouldDisplayTheDayThatIsInTheCenter(self):
-        self._call_fn_with_period(
-            fit_day_fn, 
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 1, 2, 12, 0, 0))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 1, 2, 0, 0, 0))
+    def test_fit_day_should_display_the_day_that_is_in_the_center(self):
+        self.when_navigating(fit_day_fn, "1 Jan 2010", "4 Jan 2010")
+        self.then_period_becomes("2 Jan 2010", "3 Jan 2010")
 
     def test_fit_month_should_display_the_month_that_is_in_the_center(self):
-        self._call_fn_with_period(
-            fit_month_fn, 
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 1, 2, 0, 0, 0))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 2, 1, 0, 0, 0))
+        self.when_navigating(fit_month_fn, "1 Jan 2010", "2 Jan 2010")
+        self.then_period_becomes("1 Jan 2010", "1 Feb 2010")
 
     def test_fit_year_should_display_the_year_that_is_in_the_center(self):
-        self._call_fn_with_period(
-            fit_year_fn, 
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 1, 2, 0, 0, 0))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2011, 1, 1, 0, 0, 0))
+        self.when_navigating(fit_year_fn, "1 Jan 2010", "2 Jan 2010")
+        self.then_period_becomes("1 Jan 2010", "1 Jan 2011")
 
     def test_fit_decade_should_display_the_decade_that_is_in_the_center(self):
-        self._call_fn_with_period(
-            fit_decade_fn, 
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 1, 2, 0, 0, 0))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2020, 1, 1, 0, 0, 0))
+        self.when_navigating(fit_decade_fn, "1 Jan 2010", "2 Jan 2010")
+        self.then_period_becomes("1 Jan 2010", "1 Jan 2020")
 
     def test_fit_century_should_display_the_century_that_is_in_the_center(self):
-        self._call_fn_with_period(
-            fit_century_fn, 
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 1, 2, 0, 0, 0))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2000, 1, 1, 0, 0, 0),
-            datetime.datetime(2100, 1, 1, 0, 0, 0))
+        self.when_navigating(fit_century_fn, "1 Jan 2010", "2 Jan 2010")
+        self.then_period_becomes("1 Jan 2000", "1 Jan 2100")
 
     def test_fit_millennium_should_display_the_millennium_that_is_in_the_center(self):
-        self._call_fn_with_period(
-            fit_millennium_fn, 
-            datetime.datetime(2010, 1, 1, 0, 0, 0),
-            datetime.datetime(2010, 1, 2, 0, 0, 0))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2000, 1, 1, 0, 0, 0),
-            datetime.datetime(3000, 1, 1, 0, 0, 0))
+        self.when_navigating(fit_millennium_fn, "1 Jan 2010", "2 Jan 2010")
+        self.then_period_becomes("1 Jan 2000", "1 Jan 3000")
 
-    def testMovePageSmartNotSmart_forward(self):
-        self._call_fn_with_period(
-            forward_fn,
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2010, 1, 5))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 5),
-            datetime.datetime(2010, 1, 9))
+    def test_move_page_smart_not_smart_forward(self):
+        self.when_navigating(forward_fn, "1 Jan 2010", "5 Jan 2010")
+        self.then_period_becomes("5 Jan 2010", "9 Jan 2010")
 
-    def testMovePageSmartNotSmart_backward(self):
-        self._call_fn_with_period(
-            backward_fn,
-            datetime.datetime(2010, 1, 5),
-            datetime.datetime(2010, 1, 9))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2010, 1, 5))
+    def test_move_page_smart_not_smart_backward(self):
+        self.when_navigating(backward_fn, "5 Jan 2010", "9 Jan 2010")
+        self.then_period_becomes("1 Jan 2010", "5 Jan 2010")
 
-    def testMovePageSmartMonth_forward(self):
-        self._call_fn_with_period(
-            forward_fn,
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2010, 2, 1))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 2, 1),
-            datetime.datetime(2010, 3, 1))
+    def test_move_page_smart_month_forward(self):
+        self.when_navigating(forward_fn, "1 Jan 2010", "1 Feb 2010")
+        self.then_period_becomes("1 Feb 2010", "1 Mar 2010")
 
-    def testMovePageSmartMonth_backward(self):
-        self._call_fn_with_period(
-            backward_fn,
-            datetime.datetime(2010, 2, 1),
-            datetime.datetime(2010, 3, 1))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2010, 2, 1))
+    def test_move_page_smart_month_backward(self):
+        self.when_navigating(backward_fn, "1 Feb 2010", "1 Mar 2010")
+        self.then_period_becomes("1 Jan 2010", "1 Feb 2010")
 
-    def testMovePageSmartYear_forward(self):
-        self._call_fn_with_period(
-            forward_fn,
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2011, 1, 1))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2011, 1, 1),
-            datetime.datetime(2012, 1, 1))
+    def test_move_page_smart_year_forward(self):
+        self.when_navigating(forward_fn, "1 Jan 2010", "1 Jan 2011")
+        self.then_period_becomes("1 Jan 2011", "1 Jan 2012")
 
-    def testMovePageSmartYear_backward(self):
-        self._call_fn_with_period(
-            backward_fn,
-            datetime.datetime(2011, 1, 1),
-            datetime.datetime(2012, 1, 1))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2011, 1, 1))
+    def test_move_page_smart_year_backward(self):
+        self.when_navigating(backward_fn, "1 Jan 2011", "1 Jan 2012")
+        self.then_period_becomes("1 Jan 2010", "1 Jan 2011")
 
-    def testMovePageSmartMonthOverYearBoundry_backward(self):
-        self._call_fn_with_period(
-            backward_fn,
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2010, 3, 1))
-        self._assertTimePeriodEquals(
-            datetime.datetime(2009, 11, 1),
-            datetime.datetime(2010, 1, 1))
+    def test_move_page_smart_month_over_year_boundry_backward(self):
+        self.when_navigating(backward_fn, "1 Jan 2010", "1 Mar 2010")
+        self.then_period_becomes("1 Nov 2009", "1 Jan 2010")
+
+    def when_navigating(self, fn, start, end):
+        def navigation_fn(fn):
+            fn(self.time_period)
+        self.time_period = py_period(start, end)
+        fn(None, self.time_period, navigation_fn)
+
+    def then_period_becomes(self, start, end):
+        self.assertEquals(py_period(start, end), self.time_period)
