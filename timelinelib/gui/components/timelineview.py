@@ -904,53 +904,60 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
 
 class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
 
-    def __init__(self, start_time):
+    def __init__(self, initial_time):
         ScrollViewInputHandler.__init__(self)
-        self.start_time = start_time
-        self.end_time = start_time
+        self.initial_time = initial_time
+        self.last_valid_time = initial_time
+        self.current_time = initial_time
 
     def mouse_moved(self, controller, x, y):
         ScrollViewInputHandler.mouse_moved(self, controller, x, y)
-        self._move_end_time(controller)
+        self._move_current_time(controller)
+
+    def view_scrolled(self, controller):
+        self._move_current_time(controller)
+
+    def _move_current_time(self, controller):
+        self.current_time = controller.get_time(self.last_x)
+        try:
+            period = self.get_current_period(controller)
+            self.last_valid_time = self.current_time
+        except ValueError:
+            period = self.get_last_valid_period(controller)
+        controller._redraw_timeline((period.start_time, period.end_time))
+
+    def get_last_valid_period(self, controller):
+        return self._get_period(controller, self.initial_time, self.last_valid_time)
+
+    def get_current_period(self, controller):
+        return self._get_period(controller, self.initial_time, self.current_time)
+
+    def _get_period(self, controller, t1, t2):
+        if t1 > t2:
+            start = t2
+            end = t1
+        else:
+            start = t1
+            end = t2
+        return TimePeriod(
+            controller.get_timeline().get_time_type(), 
+            controller.get_drawer().snap(start),
+            controller.get_drawer().snap(end))
 
     def left_mouse_up(self, controller):
         ScrollViewInputHandler.left_mouse_up(self, controller)
-        self.end_action(controller, self._get_period(controller))
+        self.end_action(controller)
         controller.redraw_timeline()
         controller.change_input_handler(NoOpInputHandler())
 
-    def view_scrolled(self, controller):
-        self._move_end_time(controller)
-
-    def _get_period(self, controller):
-        start = self.start_time
-        end = self.end_time
-        if self.start_time > self.end_time:
-            start = self.end_time
-            end = self.start_time
-        return TimePeriod(controller.get_timeline().get_time_type(), 
-                          controller.get_drawer().snap(start),
-                          controller.get_drawer().snap(end))
-
-    def _move_end_time(self, controller):
-        try:
-            old_end_time = self.end_time
-            self.end_time = controller.get_time(self.last_x)
-            period = self._get_period(controller)
-        except ValueError:
-            self.end_time = old_end_time
-            period = self._get_period(controller)
-        start = period.start_time
-        end = period.end_time
-        controller._redraw_timeline((start, end))
-
-    def end_action(self, controller, period):
+    def end_action(self, controller):
         raise Exception("end_action not implemented in subclass.")
 
 
 class CreatePeriodEventByDragInputHandler(SelectPeriodByDragInputHandler):
 
-    def end_action(self, controller, period):
+    def end_action(self, controller):
+        period = self.get_last_valid_period(controller)
         controller.view.create_new_event(period.start_time, period.end_time)
 
 
@@ -960,8 +967,21 @@ class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
         SelectPeriodByDragInputHandler.__init__(self, start_time)
         controller.status_bar_adapter.set_text(_("Select region to zoom into"))
 
-    def end_action(self, controller, period):
+    def mouse_moved(self, controller, x, y):
+        SelectPeriodByDragInputHandler.mouse_moved(self, controller, x, y)
+        try:
+            p = self.get_current_period(controller)
+        except ValueError:
+            controller.status_bar_adapter.set_text(_("Region too long"))
+        else:
+            if p.delta() < p.time_type.get_min_zoom_delta()[0]:
+                controller.status_bar_adapter.set_text(_("Region too short"))
+            else:
+                controller.status_bar_adapter.set_text("")
+
+    def end_action(self, controller):
         controller.status_bar_adapter.set_text("")
+        period = self.get_last_valid_period(controller)
         start = period.start_time
         end = period.end_time
         delta = end - start

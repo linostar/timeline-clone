@@ -46,21 +46,28 @@ def wx_period(start, end):
 
 
 def human_time_to_py(human_time):
-    (year, month, day) = human_time_to_ymd(human_time)
-    return py_time(year, month, day)
+    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
+    return py_time(year, month, day, hour, minute)
 
 
 def human_time_to_wx(human_time):
-    (year, month, day) = human_time_to_ymd(human_time)
-    return wx_time(year, month, day)
+    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
+    return wx_time(year, month, day, hour, minute)
 
 
-def human_time_to_ymd(human_time):
-    day_part, month_part, year_part = human_time.split(" ")
+def human_time_to_ymdhm(human_time):
+    parts = human_time.split(" ")
+    day_part, month_part, year_part = parts[0], parts[1], parts[2]
     day = int(day_part)
     month = ABBREVIATED_ENGLISH_MONTH_NAMES.index(month_part) + 1
     year = int(year_part)
-    return (year, month, day)
+    if len(parts) == 4:
+        hour = int(parts[3][:2])
+        minute = int(parts[3][3:])
+    else:
+        hour = 0
+        minute = 0
+    return (year, month, day, hour, minute)
 
 
 def py_time(year, month, day, hour=0, minute=0, second=0):

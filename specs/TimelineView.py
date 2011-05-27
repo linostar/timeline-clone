@@ -65,6 +65,30 @@ class TimelineViewSpec(unittest.TestCase):
         self.controller.left_mouse_down(0, 0, ctrl_down=False, shift_down=True)
         self.assert_displays_status_text(_("Select region to zoom into"))
 
+    def test_displays_period_to_short_message_when_zooming(self):
+        self.given_time_at_x_is(0, "1 Aug 2010 00:00")
+        self.given_time_at_x_is(1, "1 Aug 2010 00:01")
+        self.init_view_with_db()
+        self.start_shift_drag_at_x(0)
+        self.move_mouse_to_x(1)
+        self.assert_displays_status_text(_("Region too short"))
+
+    def test_displays_nothing_if_period_ok_when_zooming(self):
+        self.given_time_at_x_is(0, "1 Aug 2010")
+        self.given_time_at_x_is(1, "2 Aug 2010")
+        self.init_view_with_db()
+        self.start_shift_drag_at_x(0)
+        self.move_mouse_to_x(1)
+        self.assert_displays_status_text("")
+
+    def test_displays_period_to_long_message_when_zooming(self):
+        self.given_time_at_x_is(0, "1 Aug 2000")
+        self.given_time_at_x_is(200, "1 Aug 4000")
+        self.init_view_with_db()
+        self.start_shift_drag_at_x(0)
+        self.move_mouse_to_x(200)
+        self.assert_displays_status_text(_("Region too long"))
+
     def test_removes_zoom_instructions_when_zoom_done(self):
         self.init_view_with_db()
         self.simulate_mouse_down_move_up((0, ANY_Y), (20, ANY_Y), shift_down=True)
