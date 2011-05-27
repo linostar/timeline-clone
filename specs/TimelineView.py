@@ -60,6 +60,16 @@ class TimelineViewSpec(unittest.TestCase):
         self.simulate_mouse_down_move_up((0, ANY_Y), (20, ANY_Y), shift_down=True)
         self.assert_displays_period("1 Aug 2010", "3 Aug 2010")
 
+    def test_displays_zoom_intstructions_in_status_bar(self):
+        self.init_view_with_db()
+        self.controller.left_mouse_down(0, 0, ctrl_down=False, shift_down=True)
+        self.assert_displays_status_text(_("Select region to zoom into"))
+
+    def test_removes_zoom_instructions_when_zoom_done(self):
+        self.init_view_with_db()
+        self.simulate_mouse_down_move_up((0, ANY_Y), (20, ANY_Y), shift_down=True)
+        self.assert_displays_status_text("")
+
     def test_hightlights_selected_region_while_zooming(self):
         self.given_time_at_x_is(0, "1 Jan 2010")
         self.given_time_at_x_is(1, "1 Jan 2011")

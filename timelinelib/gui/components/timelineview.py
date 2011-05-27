@@ -673,7 +673,7 @@ class NoOpInputHandler(InputHandler):
             return
         if (event is None and shift_down == True):
             controller._toggle_event_selection(x, y, ctrl_down)
-            controller.change_input_handler(ZoomByDragInputHandler(time_at_x))
+            controller.change_input_handler(ZoomByDragInputHandler(time_at_x, controller))
             return
         controller._toggle_event_selection(x, y, ctrl_down)
 
@@ -956,7 +956,12 @@ class CreatePeriodEventByDragInputHandler(SelectPeriodByDragInputHandler):
 
 class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
 
+    def __init__(self, start_time, controller):
+        SelectPeriodByDragInputHandler.__init__(self, start_time)
+        controller.status_bar_adapter.set_text(_("Select region to zoom into"))
+
     def end_action(self, controller, period):
+        controller.status_bar_adapter.set_text("")
         start = period.start_time
         end = period.end_time
         delta = end - start
