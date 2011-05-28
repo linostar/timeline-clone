@@ -515,14 +515,13 @@ class DrawingAreaController(object):
         self.view.set_default_cursor()
         self.view.Disable()
 
-    def _redraw_timeline(self, period_selection=None):
+    def _redraw_timeline(self):
         def fn_draw(dc):
             try:
                 self.drawing_algorithm.draw(dc, self.timeline, self.view_properties, self.config)
             except TimelineIOError, e:
                 self.fn_handle_db_error(e)
         if self.timeline:
-            self.view_properties.period_selection = period_selection
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
             self.view.redraw_surface(fn_draw)
@@ -924,7 +923,8 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
             self.last_valid_time = self.current_time
         except ValueError:
             period = self.get_last_valid_period(controller)
-        controller._redraw_timeline((period.start_time, period.end_time))
+        controller.view_properties.period_selection = (period.start_time, period.end_time)
+        controller._redraw_timeline()
 
     def get_last_valid_period(self, controller):
         return self._get_period(controller, self.initial_time, self.last_valid_time)
@@ -946,6 +946,7 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
 
     def left_mouse_up(self, controller):
         ScrollViewInputHandler.left_mouse_up(self, controller)
+        controller.view_properties.period_selection = None
         self.end_action(controller)
         controller.redraw_timeline()
         controller.change_input_handler(NoOpInputHandler())
