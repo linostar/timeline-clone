@@ -234,10 +234,25 @@ class DrawingAreaController(object):
         self._set_colors_and_styles()
         self.divider_line_slider.Bind(wx.EVT_SLIDER,       self._slider_on_slider)
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
-        self.change_input_handler(NoOpInputHandler())
+        self.change_input_handler_to_no_op()
 
-    def change_input_handler(self, input_handler):
-        self.input_handler = input_handler
+    def change_input_handler_to_zoom_by_drag(self, start_time):
+        self.input_handler = ZoomByDragInputHandler(start_time, self)
+
+    def change_input_handler_to_create_period_event_by_drag(self, initial_time):
+        self.input_handler = CreatePeriodEventByDragInputHandler(initial_time)
+
+    def change_input_handler_to_resize_by_drag(self, event, direction):
+        self.input_handler = ResizeByDragInputHandler(event, direction)
+
+    def change_input_handler_to_move_by_drag(self, event, start_drag_time):
+        self.input_handler = MoveByDragInputHandler(event, start_drag_time)
+
+    def change_input_handler_to_scroll_by_drag(self, start_time):
+        self.input_handler = ScrollByDragInputHandler(start_time)
+
+    def change_input_handler_to_no_op(self):
+        self.input_handler = NoOpInputHandler()
 
     def get_drawer(self):
         return self.drawing_algorithm
@@ -657,22 +672,22 @@ class NoOpInputHandler(InputHandler):
         time_at_x = controller.get_time(x)
         if self._hit_resize_handle(controller, x, y) is not None:
             direction = self._hit_resize_handle(controller, x, y)
-            controller.change_input_handler(ResizeByDragInputHandler(event, direction))
+            controller.change_input_handler_to_resize_by_drag(event, direction)
             return
         if self._hit_move_handle(controller, x, y):
-            controller.change_input_handler(MoveByDragInputHandler(event, time_at_x))
+            controller.change_input_handler_to_move_by_drag(event, time_at_x)
             return
         if (event is None and ctrl_down == False and shift_down == False):
             controller._toggle_event_selection(x, y, ctrl_down)
-            controller.change_input_handler(ScrollByDragInputHandler(time_at_x))
+            controller.change_input_handler_to_scroll_by_drag(time_at_x)
             return
         if (event is None and ctrl_down == True):
             controller._toggle_event_selection(x, y, ctrl_down)
-            controller.change_input_handler(CreatePeriodEventByDragInputHandler(time_at_x))
+            controller.change_input_handler_to_create_period_event_by_drag(time_at_x)
             return
         if (event is None and shift_down == True):
             controller._toggle_event_selection(x, y, ctrl_down)
-            controller.change_input_handler(ZoomByDragInputHandler(time_at_x, controller))
+            controller.change_input_handler_to_zoom_by_drag(time_at_x)
             return
         controller._toggle_event_selection(x, y, ctrl_down)
 
@@ -785,7 +800,7 @@ class ScrollByDragInputHandler(InputHandler):
         controller._scroll_timeline(delta)
 
     def left_mouse_up(self, controller):
-        controller.change_input_handler(NoOpInputHandler())
+        controller.change_input_handler_to_no_op()
 
 
 class ScrollViewInputHandler(InputHandler):
@@ -830,7 +845,7 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def left_mouse_up(self, controller):
         ScrollViewInputHandler.left_mouse_up(self, controller)
-        controller.change_input_handler(NoOpInputHandler())
+        controller.change_input_handler_to_no_op()
 
     def view_scrolled(self, controller):
         self._move_event(controller)
@@ -877,7 +892,7 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
 
     def left_mouse_up(self, controller):
         ScrollViewInputHandler.left_mouse_up(self, controller)
-        controller.change_input_handler(NoOpInputHandler())
+        controller.change_input_handler_to_no_op()
 
     def view_scrolled(self, controller):
         self._resize_event(controller)
@@ -949,7 +964,7 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
         controller.view_properties.period_selection = None
         self.end_action(controller)
         controller.redraw_timeline()
-        controller.change_input_handler(NoOpInputHandler())
+        controller.change_input_handler_to_no_op()
 
     def end_action(self, controller):
         raise Exception("end_action not implemented in subclass.")
