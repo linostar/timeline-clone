@@ -237,10 +237,10 @@ class DrawingAreaController(object):
         self.change_input_handler_to_no_op()
 
     def change_input_handler_to_zoom_by_drag(self, start_time):
-        self.input_handler = ZoomByDragInputHandler(self, start_time)
+        self.input_handler = ZoomByDragInputHandler(self, self.status_bar_adapter, start_time)
 
     def change_input_handler_to_create_period_event_by_drag(self, initial_time):
-        self.input_handler = CreatePeriodEventByDragInputHandler(self, initial_time)
+        self.input_handler = CreatePeriodEventByDragInputHandler(self, self.view, initial_time)
 
     def change_input_handler_to_resize_by_drag(self, event, direction):
         self.input_handler = ResizeByDragInputHandler(self, event, direction)
@@ -252,7 +252,7 @@ class DrawingAreaController(object):
         self.input_handler = ScrollByDragInputHandler(self, start_time)
 
     def change_input_handler_to_no_op(self):
-        self.input_handler = NoOpInputHandler(self)
+        self.input_handler = NoOpInputHandler(self, self.view)
 
     def get_drawer(self):
         return self.drawing_algorithm
@@ -652,8 +652,9 @@ class InputHandler(object):
 
 class NoOpInputHandler(InputHandler):
 
-    def __init__(self, controller):
+    def __init__(self, controller, view):
         self.controller = controller
+        self.view = view
         self.show_timer_running = False
         self.hide_timer_running = False
 
@@ -696,11 +697,11 @@ class NoOpInputHandler(InputHandler):
         self._display_balloon_on_hover(x, y)
         self.controller._display_eventinfo_in_statusbar(x, y)
         if self._hit_resize_handle(x, y) is not None:
-            self.controller.view.set_size_cursor()
+            self.view.set_size_cursor()
         elif self._hit_move_handle(x, y):
-            self.controller.view.set_move_cursor()
+            self.view.set_move_cursor()
         else:
-            self.controller.view.set_default_cursor()
+            self.view.set_default_cursor()
         return
 
     def balloon_show_timer_fired(self):
@@ -748,7 +749,7 @@ class NoOpInputHandler(InputHandler):
                 # We have no balloon, so we start Timer-1
                 if self.controller.view_properties.hovered_event != self.controller.current_event:
                     #print "Timer-1 Started ", self.controller.current_event
-                    self.controller.view.start_balloon_show_timer(milliseconds=500, oneShot=True)
+                    self.view.start_balloon_show_timer(milliseconds=500, oneShot=True)
                     self.show_timer_running = True
         # We are not pointing to any event....        
         else:
@@ -758,7 +759,7 @@ class NoOpInputHandler(InputHandler):
                 # Otherwise Timer-2 is started.
                 if self.controller.balloon_event != self.controller.view_properties.hovered_event:
                     #print "Timer-2 Started"
-                    self.controller.view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
+                    self.view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
 
     def _hit_move_handle(self, x, y):
         event_and_rect = self.controller.get_drawer().event_with_rect_at(x, y)
@@ -809,16 +810,17 @@ class ScrollViewInputHandler(InputHandler):
 
     def __init__(self, controller):
         self.controller = controller
+        self.view = controller.view
         self.timer_running = False
 
     def mouse_moved(self, x, y):
         self.last_x = x
         if self.controller._in_scroll_zone(x) and not self.timer_running:
-            self.controller.view.start_dragscroll_timer(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
+            self.view.start_dragscroll_timer(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
             self.timer_running = True
 
     def left_mouse_up(self):
-        self.controller.view.stop_dragscroll_timer()
+        self.view.stop_dragscroll_timer()
 
     def dragscroll_timer_fired(self):
         if self.controller._in_scroll_zone(self.last_x):
@@ -978,36 +980,37 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
 
 class CreatePeriodEventByDragInputHandler(SelectPeriodByDragInputHandler):
 
-    def __init__(self, controller, initial_time):
+    def __init__(self, controller, view, initial_time):
         SelectPeriodByDragInputHandler.__init__(self, controller, initial_time)
-        self.controller = controller
+        self.view = view
 
     def end_action(self):
         period = self.get_last_valid_period()
-        self.controller.view.create_new_event(period.start_time, period.end_time)
+        self.view.create_new_event(period.start_time, period.end_time)
 
 
 class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
 
-    def __init__(self, controller, start_time):
+    def __init__(self, controller, status_bar_adapter, start_time):
         SelectPeriodByDragInputHandler.__init__(self, controller, start_time)
         self.controller = controller
-        self.controller.status_bar_adapter.set_text(_("Select region to zoom into"))
+        self.status_bar_adapter = status_bar_adapter
+        self.status_bar_adapter.set_text(_("Select region to zoom into"))
 
     def mouse_moved(self, x, y):
         SelectPeriodByDragInputHandler.mouse_moved(self, x, y)
         try:
             p = self.get_current_period()
         except ValueError:
-            self.controller.status_bar_adapter.set_text(_("Region too long"))
+            self.status_bar_adapter.set_text(_("Region too long"))
         else:
             if p.delta() < p.time_type.get_min_zoom_delta()[0]:
-                self.controller.status_bar_adapter.set_text(_("Region too short"))
+                self.status_bar_adapter.set_text(_("Region too short"))
             else:
-                self.controller.status_bar_adapter.set_text("")
+                self.status_bar_adapter.set_text("")
 
     def end_action(self):
-        self.controller.status_bar_adapter.set_text("")
+        self.status_bar_adapter.set_text("")
         period = self.get_last_valid_period()
         start = period.start_time
         end = period.end_time
