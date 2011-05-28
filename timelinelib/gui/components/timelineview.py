@@ -447,7 +447,7 @@ class DrawingAreaController(object):
         """
         if self.dragscroll_timer_running:
             if not left_is_down:
-                self.left_mouse_up(x)
+                self.left_mouse_up()
 
     def mouse_moved(self, x, y):
         self.input_handler.mouse_moved(x, y)
