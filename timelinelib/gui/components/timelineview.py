@@ -699,7 +699,9 @@ class NoOpInputHandler(InputHandler):
                     self.controller._redraw_balloons(None)
 
     def mouse_moved(self, x, y):
-        self._display_balloon_on_hover(x, y)
+        self.last_hovered_event = self.drawer.event_at(x, y)
+        self.last_hovered_balloon_event = self.drawer.balloon_at(x, y)
+        self._start_balloon_timers()
         self.controller._display_eventinfo_in_statusbar(x, y)
         if self._hit_resize_handle(x, y) is not None:
             self.view.set_size_cursor()
@@ -707,11 +709,55 @@ class NoOpInputHandler(InputHandler):
             self.view.set_move_cursor()
         else:
             self.view.set_default_cursor()
-        return
+
+    def _start_balloon_timers(self):
+        if self._balloons_disabled():
+            return
+        if self._current_event_selected():
+            return
+        if self.show_timer_running:
+            return
+        if self.hide_timer_running:
+            return
+        if self._should_start_balloon_show_timer():
+            self.view.start_balloon_show_timer(milliseconds=500, oneShot=True)
+            self.show_timer_running = True
+        elif self._should_start_balloon_hide_timer():
+            self.view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
+            self.hide_timer_running = True
+
+    def _balloons_disabled(self):
+        return not self.view_properties.show_balloons_on_hover
+
+    def _current_event_selected(self):
+        return (self.last_hovered_event is not None and
+                self.view_properties.is_selected(self.last_hovered_event))
+
+    def _should_start_balloon_show_timer(self):
+        return (self._mouse_is_over_event() and
+                not self._mouse_is_over_balloon() and
+                not self._balloon_shown_for_event(self.last_hovered_event))
+
+    def _should_start_balloon_hide_timer(self):
+        return (self._balloon_is_shown() and
+                not self._mouse_is_over_event() and
+                not self._balloon_shown_for_event(self.last_hovered_balloon_event))
+
+    def _mouse_is_over_event(self):
+        return self.last_hovered_event is not None
+
+    def _mouse_is_over_balloon(self):
+        return self.last_hovered_balloon_event is not None
+
+    def _balloon_is_shown(self):
+        return self.view_properties.hovered_event is not None
+
+    def _balloon_shown_for_event(self, event):
+        return self.view_properties.hovered_event == event
 
     def balloon_show_timer_fired(self):
         self.show_timer_running = False
-        self.controller._redraw_balloons(self.controller.current_event)
+        self.controller._redraw_balloons(self.last_hovered_event)
 
     def balloon_hide_timer_fired(self):
         self.hide_timer_running = False
@@ -719,52 +765,12 @@ class NoOpInputHandler(InputHandler):
         # If there is no balloon visible we don't have to do anything
         if hevt is None:
             return
-        cevt = self.controller.current_event
-        bevt = self.controller.balloon_event
+        cevt = self.last_hovered_event
+        bevt = self.last_hovered_balloon_event
         # If the visible balloon doesn't belong to the event pointed to
         # we remove the ballloon.
         if hevt != cevt and hevt != bevt: 
             self.controller._redraw_balloons(None)
-
-    def _display_balloon_on_hover(self, xpixelpos, ypixelpos):
-        """
-        Show or hide balloons depending on current situation.
-           self.current_event: The event pointed to, or None
-           self.balloon_event: The event that belongs to the balloon pointed
-                               to, or None.
-        """
-        # The balloon functionality is not enabled
-        if not self.view_properties.show_balloons_on_hover:
-            return
-        self.controller.current_event = self.drawer.event_at(xpixelpos, ypixelpos)
-        self.controller.balloon_event = self.drawer.balloon_at(xpixelpos, ypixelpos)
-        # No balloon handling for selected events
-        if self.controller.current_event and self.view_properties.is_selected(self.controller.current_event):
-            return
-        # Timer-1 is running. We have to wait for it to finish before doing anything
-        if self.show_timer_running:
-            return
-        # Timer-2 is running. We have to wait for it to finish before doing anything
-        if self.hide_timer_running:
-            return
-        # We are pointing to an event... 
-        if self.controller.current_event is not None:
-            # We are not pointing on a balloon...
-            if self.controller.balloon_event is None:
-                # We have no balloon, so we start Timer-1
-                if self.view_properties.hovered_event != self.controller.current_event:
-                    #print "Timer-1 Started ", self.controller.current_event
-                    self.view.start_balloon_show_timer(milliseconds=500, oneShot=True)
-                    self.show_timer_running = True
-        # We are not pointing to any event....        
-        else:
-            # We have a balloon...
-            if self.view_properties.hovered_event is not None:
-                # When we are moving within our 'own' balloon we dont't start Timer-2
-                # Otherwise Timer-2 is started.
-                if self.controller.balloon_event != self.view_properties.hovered_event:
-                    #print "Timer-2 Started"
-                    self.view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
 
     def _hit_move_handle(self, x, y):
         event_and_rect = self.drawer.event_with_rect_at(x, y)
