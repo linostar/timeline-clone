@@ -146,17 +146,17 @@ class TimelineViewSpec(unittest.TestCase):
         self.init_view_with_db()
         self.controller.mouse_moved(50, 65)
         self.fire_balloon_show_timer()
-        self.assert_event_hovered(event)
+        self.assert_balloon_drawn_for_event(event)
 
     def test_hides_balloon_when_leaving_event(self):
         event = self.given_event_with(description="any description", pos=(40, 60), size=(20, 10))
         self.init_view_with_db()
         self.controller.mouse_moved(50, 65)
         self.fire_balloon_show_timer()
-        self.assert_event_hovered(event)
+        self.assert_balloon_drawn_for_event(event)
         self.controller.mouse_moved(0, ANY_Y)
         self.fire_balloon_hide_timer()
-        self.assert_event_hovered(None)
+        self.assert_balloon_drawn_for_event(None)
 
     def test_creates_event_when_ctrl_dragging_mouse(self):
         self.given_time_at_x_is(10, "1 Aug 2010")
@@ -452,7 +452,7 @@ class TimelineViewSpec(unittest.TestCase):
     def assert_event_has_period(self, event, start, end):
         self.assertEquals(py_period(start, end), event.time_period)
     
-    def assert_event_hovered(self, event):
+    def assert_balloon_drawn_for_event(self, event):
         view_properties = self.get_view_properties_used_when_drawing()
         self.assertEquals(event, view_properties.hovered_event)
 
