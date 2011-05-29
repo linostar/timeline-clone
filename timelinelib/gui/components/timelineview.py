@@ -661,17 +661,7 @@ class NoOpInputHandler(InputHandler):
         self.hide_timer_running = False
 
     def left_mouse_down(self, x, y, ctrl_down, shift_down):
-        eventWithBalloon = self.drawer.balloon_at(x, y)
-        if eventWithBalloon: 
-            stick = not self.view_properties.event_has_sticky_balloon(eventWithBalloon)
-            self.view_properties.set_event_has_sticky_balloon(eventWithBalloon, has_sticky=stick)
-            if stick:
-                self.controller._redraw_timeline()
-            else:
-                if self.view_properties.show_balloons_on_hover:
-                    self.controller._redraw_balloons(eventWithBalloon)
-                else:
-                    self.controller._redraw_balloons(None)
+        self._toggle_balloon_stickyness(x, y)
         event = self.drawer.event_at(x, y)
         time_at_x = self.controller.get_time(x)
         if self._hit_resize_handle(x, y) is not None:
@@ -694,6 +684,19 @@ class NoOpInputHandler(InputHandler):
             self.controller.change_input_handler_to_zoom_by_drag(time_at_x)
             return
         self.controller._toggle_event_selection(x, y, ctrl_down)
+
+    def _toggle_balloon_stickyness(self, x, y):
+        event_with_balloon = self.drawer.balloon_at(x, y)
+        if event_with_balloon: 
+            stick = not self.view_properties.event_has_sticky_balloon(event_with_balloon)
+            self.view_properties.set_event_has_sticky_balloon(event_with_balloon, has_sticky=stick)
+            if stick:
+                self.controller._redraw_timeline()
+            else:
+                if self.view_properties.show_balloons_on_hover:
+                    self.controller._redraw_balloons(event_with_balloon)
+                else:
+                    self.controller._redraw_balloons(None)
 
     def mouse_moved(self, x, y):
         self._display_balloon_on_hover(x, y)
