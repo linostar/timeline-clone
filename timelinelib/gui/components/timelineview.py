@@ -655,22 +655,24 @@ class NoOpInputHandler(InputHandler):
     def __init__(self, controller, view):
         self.controller = controller
         self.view = view
+        self.drawer = controller.drawing_algorithm
+        self.view_properties = controller.view_properties
         self.show_timer_running = False
         self.hide_timer_running = False
 
     def left_mouse_down(self, x, y, ctrl_down, shift_down):
-        eventWithBalloon = self.controller.drawing_algorithm.balloon_at(x, y)
+        eventWithBalloon = self.drawer.balloon_at(x, y)
         if eventWithBalloon: 
-            stick = not self.controller.view_properties.event_has_sticky_balloon(eventWithBalloon)
-            self.controller.view_properties.set_event_has_sticky_balloon(eventWithBalloon, has_sticky=stick)
+            stick = not self.view_properties.event_has_sticky_balloon(eventWithBalloon)
+            self.view_properties.set_event_has_sticky_balloon(eventWithBalloon, has_sticky=stick)
             if stick:
                 self.controller._redraw_timeline()
             else:
-                if self.controller.view_properties.show_balloons_on_hover:
+                if self.view_properties.show_balloons_on_hover:
                     self.controller._redraw_balloons(eventWithBalloon)
                 else:
                     self.controller._redraw_balloons(None)
-        event = self.controller.get_drawer().event_at(x, y)
+        event = self.drawer.event_at(x, y)
         time_at_x = self.controller.get_time(x)
         if self._hit_resize_handle(x, y) is not None:
             direction = self._hit_resize_handle(x, y)
@@ -710,7 +712,7 @@ class NoOpInputHandler(InputHandler):
 
     def balloon_hide_timer_fired(self):
         self.hide_timer_running = False
-        hevt = self.controller.view_properties.hovered_event
+        hevt = self.view_properties.hovered_event
         # If there is no balloon visible we don't have to do anything
         if hevt is None:
             return
@@ -729,12 +731,12 @@ class NoOpInputHandler(InputHandler):
                                to, or None.
         """
         # The balloon functionality is not enabled
-        if not self.controller.view_properties.show_balloons_on_hover:
+        if not self.view_properties.show_balloons_on_hover:
             return
-        self.controller.current_event = self.controller.drawing_algorithm.event_at(xpixelpos, ypixelpos)
-        self.controller.balloon_event = self.controller.drawing_algorithm.balloon_at(xpixelpos, ypixelpos)
+        self.controller.current_event = self.drawer.event_at(xpixelpos, ypixelpos)
+        self.controller.balloon_event = self.drawer.balloon_at(xpixelpos, ypixelpos)
         # No balloon handling for selected events
-        if self.controller.current_event and self.controller.view_properties.is_selected(self.controller.current_event):
+        if self.controller.current_event and self.view_properties.is_selected(self.controller.current_event):
             return
         # Timer-1 is running. We have to wait for it to finish before doing anything
         if self.show_timer_running:
@@ -747,22 +749,22 @@ class NoOpInputHandler(InputHandler):
             # We are not pointing on a balloon...
             if self.controller.balloon_event is None:
                 # We have no balloon, so we start Timer-1
-                if self.controller.view_properties.hovered_event != self.controller.current_event:
+                if self.view_properties.hovered_event != self.controller.current_event:
                     #print "Timer-1 Started ", self.controller.current_event
                     self.view.start_balloon_show_timer(milliseconds=500, oneShot=True)
                     self.show_timer_running = True
         # We are not pointing to any event....        
         else:
             # We have a balloon...
-            if self.controller.view_properties.hovered_event is not None:
+            if self.view_properties.hovered_event is not None:
                 # When we are moving within our 'own' balloon we dont't start Timer-2
                 # Otherwise Timer-2 is started.
-                if self.controller.balloon_event != self.controller.view_properties.hovered_event:
+                if self.controller.balloon_event != self.view_properties.hovered_event:
                     #print "Timer-2 Started"
                     self.view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
 
     def _hit_move_handle(self, x, y):
-        event_and_rect = self.controller.get_drawer().event_with_rect_at(x, y)
+        event_and_rect = self.drawer.event_with_rect_at(x, y)
         if event_and_rect is None:
             return False
         event, rect = event_and_rect
@@ -776,7 +778,7 @@ class NoOpInputHandler(InputHandler):
         return False
 
     def _hit_resize_handle(self, x, y):
-        event_and_rect = self.controller.get_drawer().event_with_rect_at(x, y)
+        event_and_rect = self.drawer.event_with_rect_at(x, y)
         if event_and_rect == None:
             return None
         event, rect = event_and_rect
