@@ -25,7 +25,7 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.editors.event import EventEditorController
 from timelinelib.time import PyTimeType
-from timelinelib.wxgui.dialogs.eventeditor import EventEditor
+from timelinelib.wxgui.dialogs.eventeditor import EventFormDialog
 
 
 POINT_NOEVENT_NONZEROTIME = 1
@@ -368,7 +368,7 @@ def given_period_event_at_nonzero_time_fuzzy_and_locked():
     
     
 def create_view_and_db():
-    view =  Mock(EventEditor)
+    view =  Mock(EventFormDialog)
     db = Mock(TimelineDB)
     db.get_time_type.return_value = PyTimeType()
     return (view, db)
