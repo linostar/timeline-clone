@@ -25,7 +25,7 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.editors.event import EventEditor
 from timelinelib.time import PyTimeType
-from timelinelib.wxgui.dialogs.eventeditor import EventFormDialog
+from timelinelib.wxgui.dialogs.eventform import EventFormDialog
 
 
 POINT_NOEVENT_NONZEROTIME = 1
