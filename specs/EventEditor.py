@@ -23,7 +23,7 @@ from mock import Mock
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
-from timelinelib.editors.event import EventEditorController
+from timelinelib.editors.event import EventEditor
 from timelinelib.time import PyTimeType
 from timelinelib.wxgui.dialogs.eventeditor import EventFormDialog
 
@@ -47,7 +47,7 @@ LOCKED = 5
 ENDS_TODAY = 6
 
 
-class EventEditorControllerSpec(unittest.TestCase):
+class EventEditorSpec(unittest.TestCase):
     
     def setUp(self):
         pass
@@ -285,14 +285,14 @@ class EventEditorControllerSpec(unittest.TestCase):
 def given_no_event_point_at_zero_time():
     view, db = create_view_and_db()
     tm = create_zero_time1()
-    controller = EventEditorController(view, db, tm, tm, None)
+    controller = EventEditor(view, db, tm, tm, None)
     return controller
 
 
 def given_no_event_point_event_at_nonzero_time():
     view, db = create_view_and_db()
     tm = create_nonzero_time1()
-    controller = EventEditorController(view, db, tm, tm, None)
+    controller = EventEditor(view, db, tm, tm, None)
     return controller
 
 
@@ -300,7 +300,7 @@ def given_no_event_period_at_zero_time():
     view, db = create_view_and_db()
     tm1 = create_zero_time1()
     tm2 = create_zero_time2()
-    controller = EventEditorController(view, db, tm1, tm2, None)
+    controller = EventEditor(view, db, tm1, tm2, None)
     return controller
 
 
@@ -308,7 +308,7 @@ def given_no_event_period_at_nonzero_time():
     view, db = create_view_and_db()
     tm1 = create_nonzero_time1()
     tm2 = create_nonzero_time2()
-    controller = EventEditorController(view, db, tm1, tm2, None)
+    controller = EventEditor(view, db, tm1, tm2, None)
     return controller
 
 
@@ -317,7 +317,7 @@ def given_event_point_at_zero_time():
     tm = create_zero_time1()
     cat = Category("bar", None, True)
     event = Event(db, tm, tm, "foo", cat, fuzzy=False, locked=False)
-    controller = EventEditorController(view, db, None, None, event)
+    controller = EventEditor(view, db, None, None, event)
     return controller
 
 def given_point_event_at_zero_time_ends_today():
@@ -325,7 +325,7 @@ def given_point_event_at_zero_time_ends_today():
     tm = create_zero_time1()
     cat = Category("bar", None, True)
     event = Event(db, tm, tm, "foo", cat, ends_today=True)
-    controller = EventEditorController(view, db, None, None, event)
+    controller = EventEditor(view, db, None, None, event)
     return controller
 
 def given_event_point_at_nonzero_time():
@@ -333,7 +333,7 @@ def given_event_point_at_nonzero_time():
     tm = create_nonzero_time1()
     cat = Category("bar", None, True)
     event = Event(db, tm, tm, "foo", cat, fuzzy=False, locked=False)
-    controller = EventEditorController(view, db, None, None, event)
+    controller = EventEditor(view, db, None, None, event)
     return controller
 
 
@@ -343,7 +343,7 @@ def given_event_period_at_zero_time():
     tm2 = create_zero_time2()
     cat = Category("bar", None, True) 
     event = Event(db, tm1, tm2, "foo", cat, fuzzy=False, locked=False)
-    controller = EventEditorController(view, db, None, None, event)
+    controller = EventEditor(view, db, None, None, event)
     return controller
 
 
@@ -353,7 +353,7 @@ def given_period_event_at_nonzero_time():
     tm2 = create_nonzero_time2()
     cat = Category("bar", None, True)
     event = Event(db, tm1, tm2, "foo", cat, fuzzy=False, locked=False)
-    controller = EventEditorController(view, db, None, None, event)
+    controller = EventEditor(view, db, None, None, event)
     return controller
     
     
@@ -363,7 +363,7 @@ def given_period_event_at_nonzero_time_fuzzy_and_locked():
     tm2 = create_nonzero_time2()
     cat = Category("bar", None, True)
     event = Event(db, tm1, tm2, "foo", cat, fuzzy=True, locked=True)
-    controller = EventEditorController(view, db, None, None, event)
+    controller = EventEditor(view, db, None, None, event)
     return controller
     
     

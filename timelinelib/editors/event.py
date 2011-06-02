@@ -20,7 +20,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 
 
-class EventEditorController(object):
+class EventEditor(object):
 
     def __init__(self, view, db, start, end, event):
         self.view = view
