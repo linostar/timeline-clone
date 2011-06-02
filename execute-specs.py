@@ -30,9 +30,19 @@ def execute_all_specs():
     return all_pass
 
 def setup_paths():
-    # So that the we can write 'import timelinelib.xxx' and 'import specs.xxx'
+    add_self_to_path()
+    add_custom_to_path()
+
+def add_self_to_path():
     root_dir = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, root_dir)
+
+def add_custom_to_path():
+    FLAG = "--path"
+    if FLAG in sys.argv:
+        index = sys.argv.index(FLAG)
+        if len(sys.argv) > index+1:
+            sys.path.insert(0, sys.argv[index+1])
 
 def install_gettext_in_builtin_namespace():
     def _(message):
