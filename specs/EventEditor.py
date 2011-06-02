@@ -20,12 +20,12 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.wxgui.dialogs.eventeditor import EventEditor
-from timelinelib.wxgui.dialogs.eventeditor import EventEditorController
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import Category
 from timelinelib.db.interface import TimelineDB
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
+from timelinelib.editors.event import EventEditorController
 from timelinelib.time import PyTimeType
+from timelinelib.wxgui.dialogs.eventeditor import EventEditor
 
 
 POINT_NOEVENT_NONZEROTIME = 1
