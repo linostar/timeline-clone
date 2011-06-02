@@ -16,14 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Dialog for editing a category.
-
-Implemented as a humble dialog with a controller that is also tested in
-../../../tests/category_editor.py.
-"""
-
-
 import wx
 import wx.lib.colourselect as colourselect
 

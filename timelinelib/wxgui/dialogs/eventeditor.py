@@ -16,11 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Dialog used for creating and editing events.
-"""
-
-
 import os.path
 
 import wx
@@ -43,7 +38,6 @@ import timelinelib.wxgui.utils as gui_utils
 
 
 class EventEditor(wx.Dialog):
-    """Dialog used for creating and editing events."""
 
     def __init__(self, parent, config, title, timeline,
                  start=None, end=None, event=None):

@@ -22,12 +22,6 @@ from timelinelib.wxgui.utils import BORDER
 
 
 class PreferencesDialog(wx.Dialog):
-    """
-    Dialog used to edit application preferences.
-
-    This is essentially a GUI for parts of the preferences in the config
-    module.
-    """
 
     def __init__(self, parent, config):
         wx.Dialog.__init__(self, parent, title=_("Preferences"))

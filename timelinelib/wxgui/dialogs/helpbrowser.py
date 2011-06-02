@@ -16,11 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-GUI front-end to the help system.
-"""
-
-
 import os.path
 
 import wx

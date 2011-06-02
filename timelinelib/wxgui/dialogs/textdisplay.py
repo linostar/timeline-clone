@@ -16,23 +16,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Dialog for displaying a text that also can be copied.
-"""
-
-
 from timelinelib.wxgui.utils import BORDER
 
 import wx
 
 
 class TextDisplayDialog(wx.Dialog):
-    """
-    Dialog used for display of multiline text that can be selectd.
-    
-    Selecting the text enables copying it to the clipboard.
-    """
-    
+
     def __init__(self, title, text, parent=None):
         wx.Dialog.__init__(self, parent, title=title)
         self._create_gui()

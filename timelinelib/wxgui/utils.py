@@ -16,11 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Utility functions for working with GUI.
-"""
-
-
 import wx
 
 from timelinelib.db.interface import TimelineIOError
@@ -50,11 +45,6 @@ class TxtException(ValueError):
 
 
 class WildcardHelper(object):
-    """
-    Help manage wildcards for wx.FileDialog.
-
-    Tested in ../../tests/wildcard_helper.py.
-    """
 
     def __init__(self, name, extensions):
         self.name = name
@@ -182,13 +172,6 @@ def _ask_question(question, parent=None):
 
 
 def _step_function(x_value):
-    """
-    A step function.
-
-            {-1   when x < 0
-    F(x) =  { 0   when x = 0
-            { 1   when x > 0
-    """
     y_value = 0
     if x_value < 0:
         y_value = -1
