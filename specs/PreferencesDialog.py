@@ -20,8 +20,8 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.gui.dialogs.preferences import PreferencesDialog
-from timelinelib.gui.dialogs.preferences import PreferencesDialogController
+from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
+from timelinelib.wxgui.dialogs.preferences import PreferencesDialogController
 from timelinelib.config import Config
 
 

@@ -28,9 +28,9 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
-from timelinelib.gui.components.timelineview import DrawingArea
-from timelinelib.gui.components.timelineview import DrawingAreaController
-from timelinelib.gui.dialogs.mainframe import StatusBarAdapter
+from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timelineview import DrawingAreaController
+from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
 
 # TODO: testSavesEventAfterMove

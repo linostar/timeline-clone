@@ -31,7 +31,7 @@ from timelinelib.arguments import ApplicationArguments
 from timelinelib.config import read_config
 from timelinelib.db import db_open
 from timelinelib.db.objects import TimePeriod
-from timelinelib.gui.setup import start_wx_application
+from timelinelib.wxgui.setup import start_wx_application
 from timelinelib.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.wxtime import WxTimeType

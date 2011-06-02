@@ -26,7 +26,7 @@ import os.path
 import wx
 import wx.html
 
-from timelinelib.gui.utils import _display_error_message
+from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.paths import HELP_RESOURCES_DIR
 from timelinelib.paths import ICONS_DIR
 

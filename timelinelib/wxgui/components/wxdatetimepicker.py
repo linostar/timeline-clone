@@ -24,7 +24,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
 from timelinelib.time import WxTimeType
 from timelinelib.time import try_to_create_wx_date_time_from_dmy
-from timelinelib.gui.utils import _display_error_message
+from timelinelib.wxgui.utils import _display_error_message
 
 
 class WxDateTimePicker(wx.Panel):

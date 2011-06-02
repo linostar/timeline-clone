@@ -19,7 +19,7 @@
 import unittest
 
 from timelinelib.db.objects import Category
-from timelinelib.gui.utils import category_tree
+from timelinelib.wxgui.utils import category_tree
 
 
 class CategoryTreeFunctionSpec(unittest.TestCase):

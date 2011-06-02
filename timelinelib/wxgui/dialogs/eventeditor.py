@@ -29,17 +29,17 @@ from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.domain.category import sort_categories
-from timelinelib.gui.dialogs.categorieseditor import CategoriesEditor
-from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
-from timelinelib.gui.utils import BORDER
-from timelinelib.gui.utils import _display_error_message
-from timelinelib.gui.utils import ID_ERROR
-from timelinelib.gui.utils import _parse_text_from_textbox
-from timelinelib.gui.utils import _set_focus_and_select
-from timelinelib.gui.utils import time_picker_for
-from timelinelib.gui.utils import TxtException
+from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
+from timelinelib.wxgui.dialogs.categoryeditor import CategoryEditor
+from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import ID_ERROR
+from timelinelib.wxgui.utils import _parse_text_from_textbox
+from timelinelib.wxgui.utils import _set_focus_and_select
+from timelinelib.wxgui.utils import time_picker_for
+from timelinelib.wxgui.utils import TxtException
 from timelinelib.utils import ex_msg
-import timelinelib.gui.utils as gui_utils
+import timelinelib.wxgui.utils as gui_utils
 
 
 class EventEditor(wx.Dialog):

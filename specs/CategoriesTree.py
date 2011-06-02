@@ -20,9 +20,9 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.gui.components.cattree import CategoriesTree
-from timelinelib.gui.components.cattree import CategoriesTreeController
-from timelinelib.gui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.cattree import CategoriesTree
+from timelinelib.wxgui.components.cattree import CategoriesTreeController
+from timelinelib.wxgui.components.timelineview import DrawingArea
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.objects import Category
 

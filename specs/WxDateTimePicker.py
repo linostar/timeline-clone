@@ -21,13 +21,13 @@ import unittest
 import wx
 from mock import Mock
 
-from timelinelib.gui.components.wxdatetimepicker import WxDateTimePickerController
-from timelinelib.gui.components.wxdatetimepicker import WxDatePicker
-from timelinelib.gui.components.wxdatetimepicker import WxDatePickerController
-from timelinelib.gui.components.wxdatetimepicker import WxTimePicker
-from timelinelib.gui.components.wxdatetimepicker import WxTimePickerController
-from timelinelib.gui.components.wxdatetimepicker import CalendarPopup
-from timelinelib.gui.components.wxdatetimepicker import CalendarPopupController
+from timelinelib.wxgui.components.wxdatetimepicker import WxDateTimePickerController
+from timelinelib.wxgui.components.wxdatetimepicker import WxDatePicker
+from timelinelib.wxgui.components.wxdatetimepicker import WxDatePickerController
+from timelinelib.wxgui.components.wxdatetimepicker import WxTimePicker
+from timelinelib.wxgui.components.wxdatetimepicker import WxTimePickerController
+from timelinelib.wxgui.components.wxdatetimepicker import CalendarPopup
+from timelinelib.wxgui.components.wxdatetimepicker import CalendarPopupController
 
 
 class AWxDateTimePicker(unittest.TestCase):

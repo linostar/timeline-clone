@@ -20,8 +20,8 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
-from timelinelib.gui.dialogs.categoryeditor import CategoryEditorController
+from timelinelib.wxgui.dialogs.categoryeditor import CategoryEditor
+from timelinelib.wxgui.dialogs.categoryeditor import CategoryEditorController
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category

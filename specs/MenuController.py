@@ -22,7 +22,7 @@ from mock import Mock
 import wx
 
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.gui.dialogs.mainframe import MenuController
+from timelinelib.wxgui.dialogs.mainframe import MenuController
 
 
 class MenuControllerSpec(unittest.TestCase):

@@ -20,8 +20,8 @@ import sys
 
 import wx
 
-from timelinelib.gui.dialogs.mainframe import MainFrame
-from timelinelib.gui.dialogs.textdisplay import TextDisplayDialog
+from timelinelib.wxgui.dialogs.mainframe import MainFrame
+from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.unhandledex import create_error_message
 
 

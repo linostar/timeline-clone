@@ -28,7 +28,7 @@ from wx.lib.masked import TimeCtrl
 from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
 from timelinelib.time import PyTimeType
-from timelinelib.gui.utils import _display_error_message
+from timelinelib.wxgui.utils import _display_error_message
 
 
 class PyDateTimePicker(wx.Panel):

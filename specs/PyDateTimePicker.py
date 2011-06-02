@@ -21,13 +21,13 @@ import datetime
 
 from mock import Mock
 
-from timelinelib.gui.components.pydatetimepicker import PyDateTimePickerController
-from timelinelib.gui.components.pydatetimepicker import PyDatePicker
-from timelinelib.gui.components.pydatetimepicker import PyDatePickerController
-from timelinelib.gui.components.pydatetimepicker import PyTimePicker
-from timelinelib.gui.components.pydatetimepicker import PyTimePickerController
-from timelinelib.gui.components.pydatetimepicker import CalendarPopup
-from timelinelib.gui.components.pydatetimepicker import CalendarPopupController
+from timelinelib.wxgui.components.pydatetimepicker import PyDateTimePickerController
+from timelinelib.wxgui.components.pydatetimepicker import PyDatePicker
+from timelinelib.wxgui.components.pydatetimepicker import PyDatePickerController
+from timelinelib.wxgui.components.pydatetimepicker import PyTimePicker
+from timelinelib.wxgui.components.pydatetimepicker import PyTimePickerController
+from timelinelib.wxgui.components.pydatetimepicker import CalendarPopup
+from timelinelib.wxgui.components.pydatetimepicker import CalendarPopupController
 
 
 class APyDateTimePicker(unittest.TestCase):

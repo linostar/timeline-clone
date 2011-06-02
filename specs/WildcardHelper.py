@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 import wx
 
-from timelinelib.gui.utils import WildcardHelper
+from timelinelib.wxgui.utils import WildcardHelper
 
 
 class TestWildcardHelper(unittest.TestCase):

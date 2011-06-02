@@ -19,12 +19,12 @@
 import wx
 
 from timelinelib.db.interface import TimelineIOError
-from timelinelib.gui.utils import BORDER
-from timelinelib.gui.utils import _set_focus_and_select
-from timelinelib.gui.utils import _display_error_message
+from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.utils import _set_focus_and_select
+from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-import timelinelib.gui.utils as gui_utils
+import timelinelib.wxgui.utils as gui_utils
 
 
 FORWARD = 0

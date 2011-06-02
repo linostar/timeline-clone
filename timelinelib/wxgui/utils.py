@@ -206,9 +206,9 @@ def set_default_cursor(parent):
 
 
 def time_picker_for(time_type):
-    from timelinelib.gui.components.numtimepicker import NumTimePicker
-    from timelinelib.gui.components.pydatetimepicker import PyDateTimePicker
-    from timelinelib.gui.components.wxdatetimepicker import WxDateTimePicker
+    from timelinelib.wxgui.components.numtimepicker import NumTimePicker
+    from timelinelib.wxgui.components.pydatetimepicker import PyDateTimePicker
+    from timelinelib.wxgui.components.wxdatetimepicker import WxDateTimePicker
     from timelinelib.time import NumTimeType
     from timelinelib.time import PyTimeType
     from timelinelib.time import WxTimeType

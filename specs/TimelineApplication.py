@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.gui.dialogs.mainframe import MainFrame
+from timelinelib.wxgui.dialogs.mainframe import MainFrame
 from timelinelib.application import TimelineApplication
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.config import Config

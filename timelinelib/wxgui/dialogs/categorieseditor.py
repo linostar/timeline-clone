@@ -18,12 +18,12 @@
 
 import wx
 
-import timelinelib.gui.utils as gui_utils
-from timelinelib.gui.utils import BORDER
-from timelinelib.gui.components.cattree import CategoriesTree
-from timelinelib.gui.components.cattree import add_category
-from timelinelib.gui.components.cattree import edit_category
-from timelinelib.gui.components.cattree import delete_category
+import timelinelib.wxgui.utils as gui_utils
+from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.components.cattree import CategoriesTree
+from timelinelib.wxgui.components.cattree import add_category
+from timelinelib.wxgui.components.cattree import edit_category
+from timelinelib.wxgui.components.cattree import delete_category
 
 
 class CategoriesEditor(wx.Dialog):

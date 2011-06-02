@@ -18,7 +18,7 @@
 
 import wx
 
-from timelinelib.gui.utils import BORDER
+from timelinelib.wxgui.utils import BORDER
 
 
 class PreferencesDialog(wx.Dialog):

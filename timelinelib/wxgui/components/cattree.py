@@ -20,11 +20,11 @@ import wx
 import wx.lib.agw.customtreectrl as customtreectrl
 
 from timelinelib.utils import version_str_to_tuple
-import timelinelib.gui.utils as gui_utils
-from timelinelib.gui.utils import category_tree
-from timelinelib.gui.utils import ID_ERROR
-from timelinelib.gui.utils import _ask_question
-from timelinelib.gui.dialogs.categoryeditor import CategoryEditor
+import timelinelib.wxgui.utils as gui_utils
+from timelinelib.wxgui.utils import category_tree
+from timelinelib.wxgui.utils import ID_ERROR
+from timelinelib.wxgui.utils import _ask_question
+from timelinelib.wxgui.dialogs.categoryeditor import CategoryEditor
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 

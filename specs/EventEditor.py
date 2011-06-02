@@ -20,8 +20,8 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.gui.dialogs.eventeditor import EventEditor
-from timelinelib.gui.dialogs.eventeditor import EventEditorController
+from timelinelib.wxgui.dialogs.eventeditor import EventEditor
+from timelinelib.wxgui.dialogs.eventeditor import EventEditorController
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Category
 from timelinelib.db.interface import TimelineDB

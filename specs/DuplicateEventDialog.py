@@ -25,13 +25,13 @@ from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.gui.dialogs.duplicateevent import DuplicateEvent
-from timelinelib.gui.dialogs.duplicateevent import DuplicateEventController
+from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEvent
+from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventController
 from timelinelib.time import PyTimeType
 
-from timelinelib.gui.dialogs.duplicateevent import FORWARD
-from timelinelib.gui.dialogs.duplicateevent import BACKWARD
-from timelinelib.gui.dialogs.duplicateevent import BOTH
+from timelinelib.wxgui.dialogs.duplicateevent import FORWARD
+from timelinelib.wxgui.dialogs.duplicateevent import BACKWARD
+from timelinelib.wxgui.dialogs.duplicateevent import BOTH
 
 
 class duplicate_event_dialog_spec_base(unittest.TestCase):

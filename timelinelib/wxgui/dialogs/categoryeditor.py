@@ -29,12 +29,12 @@ import wx.lib.colourselect as colourselect
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
-import timelinelib.gui.utils as gui_utils
-from timelinelib.gui.utils import category_tree
-from timelinelib.gui.utils import _display_error_message
-from timelinelib.gui.utils import _set_focus_and_select
-from timelinelib.gui.utils import BORDER
-from timelinelib.gui.utils import ID_ERROR
+import timelinelib.wxgui.utils as gui_utils
+from timelinelib.wxgui.utils import category_tree
+from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import _set_focus_and_select
+from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.utils import ID_ERROR
 from timelinelib.utils import ex_msg
 
 

@@ -18,9 +18,9 @@
 
 import wx
 
-from timelinelib.gui.utils import BORDER
-from timelinelib.gui.utils import _display_error_message
-from timelinelib.gui.utils import time_picker_for
+from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import time_picker_for
 from timelinelib.utils import ex_msg
 
 

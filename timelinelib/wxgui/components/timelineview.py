@@ -25,8 +25,8 @@ from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing import get_drawer
 from timelinelib.drawing.interface import ViewProperties
-from timelinelib.gui.utils import _ask_question
-from timelinelib.gui.utils import _step_function
+from timelinelib.wxgui.utils import _ask_question
+from timelinelib.wxgui.utils import _step_function
 from timelinelib.utils import ex_msg
 
 

@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from timelinelib.about import APPLICATION_NAME
 from timelinelib.arguments import ApplicationArguments
-from timelinelib.gui.setup import start_wx_application
+from timelinelib.wxgui.setup import start_wx_application
 from timelinelib.paths import LOCALE_DIR
 
 if platform.system() == "Windows":

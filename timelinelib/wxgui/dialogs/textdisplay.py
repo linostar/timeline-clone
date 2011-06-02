@@ -21,7 +21,7 @@ Dialog for displaying a text that also can be copied.
 """
 
 
-from timelinelib.gui.utils import BORDER
+from timelinelib.wxgui.utils import BORDER
 
 import wx
 
