@@ -36,7 +36,7 @@ class EventEditorSpec(unittest.TestCase):
         self.db = Mock(TimelineDB)
         self.db.get_time_type.return_value = PyTimeType()
     
-    def test_dialog_initialisez_with_new_point_event_at_zero_time(self):
+    def test_dialog_initializes_with_new_point_event_at_zero_time(self):
         self.when_editor_opened_with_time("1 Jan 2010")
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010"))
         self.view.set_end.assert_called_with(human_time_to_py("1 Jan 2010"))
@@ -50,7 +50,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
 
-    def test_dialog_initialisez_with_new_point_event_at_nonzero_time(self):
+    def test_dialog_initializes_with_new_point_event_at_nonzero_time(self):
         self.when_editor_opened_with_time("1 Jan 2010 13:50")
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010 13:50"))
         self.view.set_end.assert_called_with(human_time_to_py("1 Jan 2010 13:50"))
@@ -64,7 +64,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
 
-    def test_dialog_initialisez_with_new_period_event_at_zero_time(self):
+    def test_dialog_initializes_with_new_period_event_at_zero_time(self):
         self.when_editor_opened_with_period("1 Jan 2010", "2 Jan 2010")
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010"))
         self.view.set_end.assert_called_with(human_time_to_py("2 Jan 2010"))
@@ -78,7 +78,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("text")
 
-    def test_dialog_initialisez_with_new_period_event_at_nonzero_time(self):
+    def test_dialog_initializes_with_new_period_event_at_nonzero_time(self):
         self.when_editor_opened_with_period("1 Jan 2010 13:00", "1 Jan 2010 14:00")
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010 13:00"))
         self.view.set_end.assert_called_with(human_time_to_py("1 Jan 2010 14:00"))
@@ -92,7 +92,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("text")
 
-    def test_dialog_initialisez_with_point_event_at_zero_time(self):
+    def test_dialog_initializes_with_point_event_at_zero_time(self):
         self.when_editor_opened_with_event(self.anEventWith(time="1 Jan 2010"))
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010"))
         self.view.set_end.assert_called_with(human_time_to_py("1 Jan 2010"))
@@ -106,7 +106,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
         
-    def test_dialog_initialisez_with_point_event_at_nonzero_time(self):
+    def test_dialog_initializes_with_point_event_at_nonzero_time(self):
         self.when_editor_opened_with_event(self.anEventWith(time="1 Jan 2010 13:50"))
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010 13:50"))
         self.view.set_end.assert_called_with(human_time_to_py("1 Jan 2010 13:50"))
@@ -120,7 +120,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("start")
 
-    def test_dialog_initialisez_with_period_event_at_zero_time(self):
+    def test_dialog_initializes_with_period_event_at_zero_time(self):
         self.when_editor_opened_with_event(self.anEventWith(start="1 Jan 2010", end="2 Jan 2010"))
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010"))
         self.view.set_end.assert_called_with(human_time_to_py("2 Jan 2010"))
@@ -134,7 +134,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_ends_today.assert_called_with(False)
         self.view.set_focus.assert_called_with("text")
 
-    def test_dialog_initialisez_with_period_event_at_nonzero_time(self):
+    def test_dialog_initializes_with_period_event_at_nonzero_time(self):
         self.when_editor_opened_with_event(self.anEventWith(start="1 Jan 2010 13:30", end="2 Jan 2010 14:15"))
         self.view.set_start.assert_called_with(human_time_to_py("1 Jan 2010 13:30"))
         self.view.set_end.assert_called_with(human_time_to_py("2 Jan 2010 14:15"))
