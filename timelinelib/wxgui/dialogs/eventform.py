@@ -114,6 +114,9 @@ class EventFormDialog(wx.Dialog):
     def get_fuzzy(self):
         return self.chb_fuzzy.GetValue()
 
+    def get_show_add_more(self):
+        return self.chb_add_more.GetValue()
+
     def set_locked(self, locked):
         self.chb_locked.SetValue(locked)
         self.chb_ends_today.Enable(not self.chb_locked.GetValue())
@@ -325,15 +328,7 @@ class EventFormDialog(wx.Dialog):
         return editor
         
     def _btn_ok_on_click(self, evt):
-        event_saved_or_updated = self.controller.create_or_update_event()
-        if event_saved_or_updated:
-            self._close_or_clear_dialog()
-
-    def _close_or_clear_dialog(self):
-        if self.chb_add_more.GetValue():
-            self._clear_dialog()
-        else:
-            self._close()
+        self.controller.create_or_update_event()
 
     def _clear_dialog(self):
         self.controller.clear()

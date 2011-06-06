@@ -70,9 +70,12 @@ class EventEditor(object):
         try:
             self._get_and_verify_input()
             self._save_event()
-            return True
-        except ValueError, ex:
-            return False
+            if self.view.get_show_add_more():
+                self.view._clear_dialog()
+            else:
+                self.view._close()
+        except ValueError:
+            pass
         
     def clear(self):
         self.name = ""

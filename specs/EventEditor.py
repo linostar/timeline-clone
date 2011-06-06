@@ -278,8 +278,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.get_ends_today.return_value = value
 
     def simulate_user_clicks_ok(self):
-        self.did_save = self.controller.create_or_update_event()
-        return self.did_save
+        self.controller.create_or_update_event()
 
     def assert_start_time_set_to(self, time):
         self.view.set_start.assert_called_with(human_time_to_py(time))
@@ -289,8 +288,6 @@ class EventEditorSpec(unittest.TestCase):
 
     def assert_fails_to_save_with_message(self):
         self.assertEquals(1, self.view.display_error_message.call_count)
-        self.assertTrue(self.view.display_error_message.called)
-        self.assertFalse(self.did_save)
         self.assertFalse(self.db.save_event.called)
         self.assertFalse(self.view._close.called)
         self.assertFalse(self.view._clear_dialog.called)
