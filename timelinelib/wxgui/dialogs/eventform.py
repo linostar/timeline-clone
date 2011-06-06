@@ -75,7 +75,7 @@ class EventFormDialog(wx.Dialog):
             except ValueError, ex:
                 raise TxtException(ex_msg(ex), self.dtp_start)
         except TxtException, ex:
-            _display_error_message("%s" % ex.error_message)
+            _display_error_message("%s" % ex.error_message, self)
             _set_focus_and_select(ex.control)
 
     def set_end(self, start):
@@ -92,7 +92,7 @@ class EventFormDialog(wx.Dialog):
             else:
                 return self.get_start()
         except TxtException, ex:
-            _display_error_message("%s" % ex.error_message)
+            _display_error_message("%s" % ex.error_message, self)
             _set_focus_and_select(ex.control)
 
     def set_show_period(self, show):
@@ -166,11 +166,11 @@ class EventFormDialog(wx.Dialog):
         gui_utils.handle_db_error_in_dialog(self, e)
 
     def _display_invalid_input(self, message, control):
-        _display_error_message(message)
+        _display_error_message(message, self)
         _set_focus_and_select(control)  
 
     def display_error_message(self, message):
-        _display_error_message(message)
+        _display_error_message(message, self)
             
     def _create_gui(self):
         properties_box = self._create_properties_box()
