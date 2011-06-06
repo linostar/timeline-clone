@@ -95,6 +95,7 @@ class EventEditor(object):
             self._verify_that_time_has_not_been_changed(start, end)
         self.start = self._validate_and_save_start(self.view.get_start())
         self.end = self._validate_and_save_end(self.view.get_end())
+        self._validate_period()
         
     def _dialog_has_signalled_invalid_input(self, time):
         return time == None 
@@ -143,6 +144,13 @@ class EventEditor(object):
             self.view.display_invalid_start(_("End must be > Start"))
             raise ValueError()
         return end
+
+    def _validate_period(self):
+        try:
+            TimePeriod(self.db.get_time_type(), self.start, self.end)
+        except ValueError:
+            self.view.display_error_message(_("Entered period is too long."))
+            raise ValueError()
 
     def _validate_and_save_name(self, name):
         if name == "":

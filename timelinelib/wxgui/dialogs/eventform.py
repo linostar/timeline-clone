@@ -168,6 +168,9 @@ class EventFormDialog(wx.Dialog):
     def _display_invalid_input(self, message, control):
         _display_error_message(message)
         _set_focus_and_select(control)  
+
+    def display_error_message(self, message):
+        _display_error_message(message)
             
     def _create_gui(self):
         properties_box = self._create_properties_box()

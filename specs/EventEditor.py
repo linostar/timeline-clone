@@ -222,7 +222,16 @@ class EventEditorSpec(unittest.TestCase):
         self.simulate_user_clicks_ok()
         msg = _("You can't change time when the Event is locked")
         self.view.display_invalid_start.assert_called_with(msg)
-        
+
+    def test_fails_to_save_event_with_too_long_period(self):
+        self.when_editor_opened_with_time("1 Jan 2010")
+        self.simulate_user_enters_name("a valid name") # why needed?
+        self.simulate_user_marks_as_locked(False) # why needed?
+        self.simulate_user_enters_start_time(human_time_to_py("1 Jan 2000"))
+        self.simulate_user_enters_end_time(human_time_to_py("1 Jan 5000"))
+        self.simulate_user_clicks_ok()
+        self.assert_fails_to_save_with_message()
+
     def anEventWith(self, start=None, end=None, time=None, fuzzy=False,
                     locked=False, ends_today=False):
         if time:
@@ -269,4 +278,13 @@ class EventEditorSpec(unittest.TestCase):
         self.view.get_ends_today.return_value = value
 
     def simulate_user_clicks_ok(self):
-        return self.controller.create_or_update_event()
+        self.did_save = self.controller.create_or_update_event()
+        return self.did_save
+
+    def assert_fails_to_save_with_message(self):
+        self.assertEquals(1, self.view.display_error_message.call_count)
+        self.assertTrue(self.view.display_error_message.called)
+        self.assertFalse(self.did_save)
+        self.assertFalse(self.db.save_event.called)
+        self.assertFalse(self.view._close.called)
+        self.assertFalse(self.view._clear_dialog.called)
