@@ -178,6 +178,10 @@ class TimeOutOfRangeRightError(ValueError):
     pass
 
 
+class PeriodTooLongError(ValueError):
+    pass
+
+
 class TimePeriod(object):
     """
     Represents a period in time using a start and end time.
@@ -244,7 +248,7 @@ class TimePeriod(object):
     def _assert_period_lt_max(self, new_start, new_end):
         MAX_ZOOM_DELTA, max_zoom_error_text = self.time_type.get_max_zoom_delta()
         if MAX_ZOOM_DELTA and (new_end - new_start > MAX_ZOOM_DELTA):
-            raise ValueError(max_zoom_error_text)
+            raise PeriodTooLongError(max_zoom_error_text)
         
     def inside(self, time):
         """

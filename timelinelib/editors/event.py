@@ -17,6 +17,7 @@
 
 
 from timelinelib.db.objects import Event
+from timelinelib.db.objects import PeriodTooLongError
 from timelinelib.db.objects import TimePeriod
 
 
@@ -148,7 +149,7 @@ class EventEditor(object):
     def _validate_period(self):
         try:
             TimePeriod(self.db.get_time_type(), self.start, self.end)
-        except ValueError:
+        except PeriodTooLongError:
             self.view.display_error_message(_("Entered period is too long."))
             raise ValueError()
 
