@@ -24,17 +24,20 @@ import tempfile
 import traceback
 import unittest
 
+from mock import Mock
 import wx
 import wx.lib.inspection
 
 from timelinelib.arguments import ApplicationArguments
 from timelinelib.config import read_config
 from timelinelib.db import db_open
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.wxgui.setup import start_wx_application
 from timelinelib.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.wxtime import WxTimeType
+from timelinelib.wxgui.setup import start_wx_application
 
 
 def py_period(start, end):
@@ -76,6 +79,25 @@ def py_time(year, month, day, hour=0, minute=0, second=0):
 
 def wx_time(year, month, day, hour=0, minute=0, second=0):
     return wx.DateTimeFromDMY(day, month-1, year, hour, minute, second)
+
+
+def an_event():
+    return an_event_with(time="1 Jan 2010")
+
+
+def an_event_with(start=None, end=None, time=None, text="foo", fuzzy=False,
+                  locked=False, ends_today=False):
+    db = Mock()
+    db.get_time_type.return_value = PyTimeType()
+    if time:
+        start = human_time_to_py(time)
+        end = human_time_to_py(time)
+    else:
+        start = human_time_to_py(start)
+        end = human_time_to_py(end)
+    return Event(
+        db, start, end, text, Category("bar", None, True),
+        fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
 class WxEndToEndTestCase(unittest.TestCase):

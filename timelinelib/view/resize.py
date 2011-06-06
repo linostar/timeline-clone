@@ -18,14 +18,16 @@
 
 import wx
 
+from timelinelib.db.objects import PeriodTooLongError
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 
 
 class ResizeByDragInputHandler(ScrollViewInputHandler):
 
-    def __init__(self, controller, event, direction):
+    def __init__(self, controller, status_bar, event, direction):
         ScrollViewInputHandler.__init__(self, controller)
         self.controller = controller
+        self.status_bar = status_bar
         self.event = event
         self.direction = direction
         self.timer_running = False
@@ -36,6 +38,7 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
 
     def left_mouse_up(self):
         ScrollViewInputHandler.left_mouse_up(self)
+        self._clear_status_text()
         self.controller.change_input_handler_to_no_op()
 
     def view_scrolled(self):
@@ -56,5 +59,13 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
             new_end = new_snapped_time
             if new_end < new_start:
                 new_end = new_start
-        self.event.update_period(new_start, new_end)
-        self.controller.redraw_timeline()
+        try:
+            self.event.update_period(new_start, new_end)
+        except PeriodTooLongError:
+            self.status_bar.set_text(_("Period is too long"))
+        else:
+            self._clear_status_text()
+            self.controller.redraw_timeline()
+
+    def _clear_status_text(self):
+        self.status_bar.set_text("")

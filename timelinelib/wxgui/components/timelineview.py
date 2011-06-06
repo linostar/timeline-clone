@@ -241,7 +241,8 @@ class DrawingAreaController(object):
         self.input_handler = CreatePeriodEventByDragInputHandler(self, self.view, initial_time)
 
     def change_input_handler_to_resize_by_drag(self, event, direction):
-        self.input_handler = ResizeByDragInputHandler(self, event, direction)
+        self.input_handler = ResizeByDragInputHandler(
+            self, self.status_bar_adapter, event, direction)
 
     def change_input_handler_to_move_by_drag(self, event, start_drag_time):
         self.input_handler = MoveByDragInputHandler(self, event, start_drag_time)
