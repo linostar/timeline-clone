@@ -34,6 +34,8 @@ class NoOpInputHandler(InputHandler):
         self.view_properties = controller.view_properties
         self.show_timer_running = False
         self.hide_timer_running = False
+        self.last_hovered_event = None
+        self.last_hovered_balloon_event = None
 
     def left_mouse_down(self, x, y, ctrl_down, shift_down):
         self._toggle_balloon_stickyness(x, y)
