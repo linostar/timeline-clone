@@ -28,6 +28,8 @@ from timelinelib.drawing.interface import ViewProperties
 from timelinelib.utils import ex_msg
 from timelinelib.view.inputhandler import InputHandler
 from timelinelib.view.noop import NoOpInputHandler
+from timelinelib.view.resize import ResizeByDragInputHandler
+from timelinelib.view.scrollbase import ScrollViewInputHandler
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import _step_function
 
@@ -38,9 +40,6 @@ from timelinelib.wxgui.utils import _step_function
 # timeline. The scroll zone areas are found at the beginning and at the
 # end of the timeline.
 SCROLL_ZONE_WIDTH = 20
-
-# dragscroll timer interval in milliseconds
-DRAGSCROLL_TIMER_MSINTERVAL = 300
 
 LEFT_RIGHT_SCROLL_FACTOR = 1 / 200.0
 MOUSE_SCROLL_FACTOR = 1 / 10.0
@@ -643,35 +642,6 @@ class ScrollByDragInputHandler(InputHandler):
         self.controller.change_input_handler_to_no_op()
 
 
-class ScrollViewInputHandler(InputHandler):
-
-    def __init__(self, controller):
-        self.controller = controller
-        self.view = controller.view
-        self.timer_running = False
-
-    def mouse_moved(self, x, y):
-        self.last_x = x
-        if self.controller._in_scroll_zone(x) and not self.timer_running:
-            self.view.start_dragscroll_timer(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)
-            self.timer_running = True
-
-    def left_mouse_up(self):
-        self.view.stop_dragscroll_timer()
-
-    def dragscroll_timer_fired(self):
-        if self.controller._in_scroll_zone(self.last_x):
-            if self.last_x < SCROLL_ZONE_WIDTH:
-                direction = 1
-            else:
-                direction = -1
-            self.controller._scroll_timeline_view(direction)
-            self.view_scrolled()
-
-    def view_scrolled(self):
-        raise Exception("view_scrolled not implemented in subclass.")
-
-
 class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def __init__(self, controller, event, start_drag_time):
@@ -719,45 +689,6 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
             end = endSnapped
             start = end + width
         self.event.update_period(start, end)
-
-
-class ResizeByDragInputHandler(ScrollViewInputHandler):
-
-    def __init__(self, controller, event, direction):
-        ScrollViewInputHandler.__init__(self, controller)
-        self.controller = controller
-        self.event = event
-        self.direction = direction
-        self.timer_running = False
-
-    def mouse_moved(self, x, y):
-        ScrollViewInputHandler.mouse_moved(self, x, y)
-        self._resize_event()
-
-    def left_mouse_up(self):
-        ScrollViewInputHandler.left_mouse_up(self)
-        self.controller.change_input_handler_to_no_op()
-
-    def view_scrolled(self):
-        self._resize_event()
-
-    def _resize_event(self):
-        if self.event.locked:
-            return
-        new_time = self.controller.get_time(self.last_x)
-        new_snapped_time = self.controller.get_drawer().snap(new_time)
-        if self.direction == wx.LEFT:
-            new_start = new_snapped_time
-            new_end = self.event.time_period.end_time
-            if new_start > new_end:
-                new_start = new_end
-        else:
-            new_start = self.event.time_period.start_time
-            new_end = new_snapped_time
-            if new_end < new_start:
-                new_end = new_start
-        self.event.update_period(new_start, new_end)
-        self.controller.redraw_timeline()
 
 
 class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
