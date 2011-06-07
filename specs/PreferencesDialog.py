@@ -32,16 +32,16 @@ class PreferencesDialogSpec(unittest.TestCase):
         self.config = Mock(Config)
         self.controller = PreferencesDialogController(self.preferences_dialog, self.config)
         
-    def testOpensWithWideDateRangeIfSetInConfig(self):
+    def test_opens_with_wide_date_range_if_set_in_config(self):
         self.config.get_use_wide_date_range.return_value = True
         self.controller.initialize_controls()
         self.preferences_dialog.set_checkbox_enable_wide_date_range.assert_called_with(True)
 
-    def testOpensWithNonwideDateRangeIfNotSetInConfig(self):
+    def test_opens_with_nonwide_date_range_if_not_set_in_config(self):
         self.config.get_use_wide_date_range.return_value = False
         self.controller.initialize_controls()
         self.preferences_dialog.set_checkbox_enable_wide_date_range.assert_called_with(False)
 
-    def testConfigChangesWhenWideDateRangeChanges(self):
+    def test_config_changes_when_wide_date_range_changes(self):
         self.controller.on_use_wide_date_range_changed(False)
         self.config.set_use_wide_date_range.assert_called_with(False)
