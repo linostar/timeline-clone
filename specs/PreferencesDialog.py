@@ -45,3 +45,17 @@ class PreferencesDialogSpec(unittest.TestCase):
     def test_config_changes_when_wide_date_range_changes(self):
         self.controller.on_use_wide_date_range_changed(False)
         self.config.set_use_wide_date_range.assert_called_with(False)
+
+    def test_opens_with_inertial_scrolling_if_set_in_config(self):
+        self.config.get_use_inertial_scrolling.return_value = True
+        self.controller.initialize_controls()
+        self.preferences_dialog.set_checkbox_use_inertial_scrolling.assert_called_with(True)
+
+    def test_opens_with_no_inertial_scrolling_if_not_set_in_config(self):
+        self.config.get_use_inertial_scrolling.return_value = False
+        self.controller.initialize_controls()
+        self.preferences_dialog.set_checkbox_use_inertial_scrolling.assert_called_with(False)
+
+    def test_config_changes_when_inertial_scrolling_changes(self):
+        self.controller.on_use_inertial_scrolling_changed(False)
+        self.config.set_use_inertial_scrolling.assert_called_with(False)

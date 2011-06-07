@@ -31,6 +31,12 @@ class PreferencesDialog(wx.Dialog):
         self._controller = PreferencesDialogController(self, self.config)
         self._controller.initialize_controls()
 
+    def set_checkbox_enable_wide_date_range(self, value):
+        self.chb_wide_date_range.SetValue(value)
+
+    def set_checkbox_use_inertial_scrolling(self, value):
+        self.chb_use_inertial_scrolling.SetValue(value)
+    
     def _create_gui(self):
         main_box = self._create_main_box()
         self.SetSizerAndFit(main_box)
@@ -68,7 +74,11 @@ class PreferencesDialog(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self._chb_open_recent_startup_on_checkbox,
                   chb_open_recent_startup)
         chb_open_recent_startup.SetValue(self.config.get_open_recent_at_startup())
-        return (chb_open_recent_startup,)
+        self.chb_use_inertial_scrolling = wx.CheckBox(panel, 
+                                                  label=_("Use inertial scrolling"))
+        self.Bind(wx.EVT_CHECKBOX, self._chb_use_inertial_scrolling_on_checkbox,
+                  self.chb_use_inertial_scrolling)
+        return (chb_open_recent_startup, self.chb_use_inertial_scrolling)
 
     def _create_date_time_tab(self, notebook):
         panel = self._create_tab_panel(notebook, _("Date && Time")) 
@@ -122,6 +132,9 @@ class PreferencesDialog(wx.Dialog):
         
     def _chb_use_wide_date_range_on_checkbox(self, evt):
         self._controller.on_use_wide_date_range_changed(evt.IsChecked())
+
+    def _chb_use_inertial_scrolling_on_checkbox(self, evt):
+        self._controller.on_use_inertial_scrolling_changed(evt.IsChecked())
     
     def _chb_open_recent_startup_on_checkbox(self, evt):
         self.config.set_open_recent_at_startup(evt.IsChecked())
@@ -143,9 +156,6 @@ class PreferencesDialog(wx.Dialog):
             if i == index:
                 return w
         raise ValueError("Unknown week index '%s'." % index)
-
-    def set_checkbox_enable_wide_date_range(self, value):
-        self.chb_wide_date_range.SetValue(value)
     
 
 class PreferencesDialogController(object):
@@ -157,6 +167,11 @@ class PreferencesDialogController(object):
     def initialize_controls(self):
         self.dialog.set_checkbox_enable_wide_date_range(
             self.config.get_use_wide_date_range())
+        self.dialog.set_checkbox_use_inertial_scrolling(
+            self.config.get_use_inertial_scrolling())
         
     def on_use_wide_date_range_changed(self, value):
         self.config.set_use_wide_date_range(value)
+
+    def on_use_inertial_scrolling_changed(self, value):
+        self.config.set_use_inertial_scrolling(value)
