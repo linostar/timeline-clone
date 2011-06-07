@@ -428,6 +428,7 @@ class TimelineViewSpec(unittest.TestCase):
         x2, y2 = to
         self.controller.left_mouse_down(x1, y1, ctrl_down, shift_down)
         self.controller.mouse_moved(x2, y2)
+        self.controller.config.use_inertial_scrolling = False
         self.controller.left_mouse_up()
 
     def simulate_mouse_move(self, x, y):
