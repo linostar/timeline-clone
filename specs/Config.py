@@ -35,6 +35,7 @@ class ConfigSpec(unittest.TestCase):
         self.assertEquals(self.config.balloon_on_hover, True)
         self.assertEquals(self.config.week_start, "monday")
         self.assertEquals(self.config.get_use_wide_date_range(), False)
+        self.assertEquals(self.config.get_use_inertial_scrolling(), False)
 
     def testWindowSizeCanBeReadAfterStored(self):
         self.config.window_size = (3, 20)
@@ -79,6 +80,14 @@ class ConfigSpec(unittest.TestCase):
     def testConfigReturnsWideDateRangeIsFalseWhenSetToFalse(self):
         self.config.set_use_wide_date_range(False)
         self.assertFalse(self.config.get_use_wide_date_range())
+
+    def testConfigReturnsUseInertialScrollingIsTrueWhenSetToTrue(self):
+        self.config.set_use_inertial_scrolling(True)
+        self.assertTrue(self.config.get_use_inertial_scrolling())
+
+    def testConfigReturnsUseInertialScrollingIsFalseWhenSetToFalse(self):
+        self.config.set_use_inertial_scrolling(False)
+        self.assertFalse(self.config.get_use_inertial_scrolling())
 
     def testConfigReturnsWideDateRangeIsFalseWhenSetToFalseAsPropety(self):
         self.config.use_wide_date_range = False
