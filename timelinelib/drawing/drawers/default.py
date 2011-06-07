@@ -46,6 +46,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self._create_fonts()
         self._create_pens()
         self._create_brushes()
+        self.fast_draw = False
         
     def _create_fonts(self):
         self.header_font = get_default_font(12, True)
@@ -99,12 +100,22 @@ class DefaultDrawingAlgorithm(Drawer):
         return scene
 
     def _perform_drawing(self, view_properties):
+        if self.fast_draw:
+            self._perform_fast_drawing(view_properties)
+        else:
+            self._perform_normal_drawing(view_properties)
+            
+    def _perform_fast_drawing(self, view_properties):
+        self._draw_bg(view_properties)
+        self._draw_events(view_properties)
+    
+    def _perform_normal_drawing(self, view_properties):
         self._draw_period_selection(view_properties)
         self._draw_bg(view_properties)
         self._draw_events(view_properties)
         self._draw_legend(view_properties, self._extract_categories())
         self._draw_ballons(view_properties)
-
+    
     def snap(self, time, snap_region=10):
         if self._distance_to_left_border(time) < snap_region:
             return self._get_time_at_left_border(time)
@@ -182,12 +193,22 @@ class DefaultDrawingAlgorithm(Drawer):
                               end_x - start_x + 1, self.scene.height)
 
     def _draw_bg(self, view_properties):
+        if self.fast_draw:
+            self._draw_fast_bg()
+        else:
+            self._draw_normal_bg(view_properties)
+
+    def _draw_fast_bg(self):
+        self._draw_minor_strips()
+        self._draw_divider_line()
+        
+    def _draw_normal_bg(self, view_properties):
         self._draw_minor_strips()
         self._draw_major_strips()
         self._draw_divider_line()
         self._draw_lines_to_non_period_events(view_properties)
         self._draw_now_line()
-
+        
     def _draw_minor_strips(self):
         for strip_period in self.scene.minor_strip_data:
             self._draw_minor_strip_divider_line_at(strip_period.end_time)
