@@ -341,70 +341,128 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetPen(self._get_box_pen(event))
         self.dc.DrawRectangleRect(rect)
         if event.fuzzy:
-            self._draw_fuzzy_edges(rect)
+            self._draw_fuzzy_edges(rect, event)
         if event.locked:
-            self._draw_locked_edges(rect)
+            self._draw_locked_edges(rect, event)
         self.dc.DestroyClippingRegion()
 
-    def _draw_fuzzy_edges(self, rect):
-        self._draw_fuzzy_start(rect)
-        self._draw_fuzzy_end(rect)
+    def _draw_fuzzy_edges(self, rect, event):
+        self._draw_fuzzy_start(rect, event)
+        self._draw_fuzzy_end(rect, event)
        
-    def _draw_fuzzy_start(self, rect):
+    def _draw_fuzzy_start(self, rect, event):
+        """
+          p1     /p2 ----------
+                /
+          p3  <
+                \
+          p4     \p5 ----------
+        """  
         x1 = rect.x
         x2 = rect.x + rect.height / 2
         y1 = rect.y
         y2 = rect.y + rect.height / 2
         y3 = rect.y + rect.height
         p1 = wx.Point(x1, y1)
-        p2 = wx.Point(x1, y2)
-        p3 = wx.Point(x2, y1)
-        self._draw_fuzzy_polygon(p1, p2 ,p3)
-        p1 = wx.Point(x1, y3)
-        p2 = wx.Point(x1, y2)
-        p3 = wx.Point(x2, y3)
-        self._draw_fuzzy_polygon(p1, p2 ,p3)
+        p2 = wx.Point(x2, y1)
+        p3 = wx.Point(x1, y2)
+        p4 = wx.Point(x1, y3)
+        p5 = wx.Point(x2, y3)
+        self.draw_fuzzy(event, p1, p2, p3, p4, p5)
 
-    def _draw_fuzzy_end(self, rect):
+    def _draw_fuzzy_end(self, rect, event):
+        """
+          ---- P2\    p1
+                  \ 
+                   >  p3
+                  /
+          ---- p4/    p4
+        """
         x1 = rect.x + rect.width - rect.height / 2
         x2 = rect.x + rect.width
         y1 = rect.y
         y2 = rect.y + rect.height / 2
         y3 = rect.y + rect.height
-        p1 = wx.Point(x1, y1)
-        p2 = wx.Point(x2, y1)
+        p1 = wx.Point(x2, y1)
+        p2 = wx.Point(x1, y1)
         p3 = wx.Point(x2, y2)
+        p4 = wx.Point(x2, y3)
+        p5 = wx.Point(x1, y3)
+        self.draw_fuzzy(event, p1, p2, p3, p4, p5)
+        
+    def draw_fuzzy(self, event, p1, p2, p3, p4, p5):
         self._draw_fuzzy_polygon(p1, p2 ,p3)
-        p1 = wx.Point(x1, y3)
-        p2 = wx.Point(x2, y2)
-        p3 = wx.Point(x2, y3)
-        self._draw_fuzzy_polygon(p1, p2 ,p3)
-
+        self._draw_fuzzy_polygon(p3, p4 ,p5)
+        self._draw_fuzzy_border(event, p2, p3, p5)
+             
     def _draw_fuzzy_polygon(self, p1, p2 ,p3):
         self.dc.SetBrush(wx.WHITE_BRUSH)
         self.dc.SetPen(wx.WHITE_PEN)
         self.dc.DrawPolygon((p1, p2, p3))
 
-    def _draw_locked_edges(self, rect):
-        self._draw_locked_start(rect)
-        self._draw_locked_end(rect)
-       
-    def _draw_locked_start(self, rect):
-        x = rect.x
-        y = rect.y + rect.height / 2
-        r = rect.height / 2.5
-        self.dc.SetBrush(wx.WHITE_BRUSH)
-        self.dc.SetPen(wx.WHITE_PEN)
-        self.dc.DrawCircle(x, y, r)
+    def _draw_fuzzy_border(self, event, p1, p2, p3):
+        gc = wx.GraphicsContext.Create(self.dc)
+        path = gc.CreatePath()
+        path.MoveToPoint(p1.x, p1.y)
+        path.AddLineToPoint(p2.x, p2.y)
+        path.AddLineToPoint(p3.x, p3.y)
+        gc.SetPen(self._get_box_pen(event))
+        gc.StrokePath(path)
 
-    def _draw_locked_end(self, rect):
+    def _draw_locked_edges(self, rect, event):
+        self._draw_locked_start(event, rect)
+        self._draw_locked_end(event, rect)
+       
+    def _draw_locked_start(self, event, rect):
+        x = rect.x
+        if event.fuzzy:
+            start_angle = -math.pi / 4
+            end_angle = math.pi / 4
+        else:
+            start_angle = -math.pi
+            end_angle = math.pi 
+        self._draw_locked(event, rect, x, start_angle, end_angle)
+        
+    def _draw_locked_end(self, event, rect):
         x = rect.x + rect.width
+        if event.fuzzy:
+            start_angle = 3 * math.pi / 4
+            end_angle = 5 * math.pi / 4
+        else:
+            start_angle = math.pi / 2
+            end_angle = 3 * math.pi / 2
+        self._draw_locked(event, rect, x, start_angle, end_angle)
+    
+    def _draw_locked(self, event, rect, x, start_angle, end_angle):
         y = rect.y + rect.height / 2
         r = rect.height / 2.5
         self.dc.SetBrush(wx.WHITE_BRUSH)
         self.dc.SetPen(wx.WHITE_PEN)
         self.dc.DrawCircle(x, y, r)
-        
+        self.dc.SetPen(self._get_box_pen(event))
+        self.draw_segment(event, x, y, r, start_angle, end_angle)
+            
+    def draw_segment(self, event, x0, y0, r, start_angle, end_angle):
+        gc = wx.GraphicsContext.Create(self.dc)
+        path = gc.CreatePath()
+        segment_length = 2.0 * (end_angle - start_angle) * r
+        delta = (end_angle - start_angle) / segment_length
+        angle = start_angle
+        x1 = r * math.cos(angle) + x0
+        y1 = r * math.sin(angle) + y0
+        path.MoveToPoint(x1, y1)
+        while angle < end_angle:
+            angle += delta
+            if angle > end_angle:
+                angle = end_angle
+            x2 = r * math.cos(angle) + x0
+            y2 = r * math.sin(angle) + y0
+            path.AddLineToPoint(x2, y2)
+            x1 = x2
+            y1 = y2
+        gc.SetPen(self._get_box_pen(event))
+        gc.StrokePath(path)
+            
     def _draw_text(self, rect, event):
         # Ensure that we can't draw content outside inner rectangle
         rect_copy = wx.Rect(*rect)
