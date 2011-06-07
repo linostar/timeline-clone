@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import time
+
 import wx
 
 from timelinelib.db.interface import STATE_CHANGE_ANY
@@ -233,6 +235,7 @@ class DrawingAreaController(object):
         self.divider_line_slider.Bind(wx.EVT_SLIDER,       self._slider_on_slider)
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
         self.change_input_handler_to_no_op()
+        self.fast_draw = False
 
     def change_input_handler_to_zoom_by_drag(self, start_time):
         self.input_handler = ZoomByDragInputHandler(self, self.status_bar_adapter, start_time)
@@ -270,6 +273,9 @@ class DrawingAreaController(object):
         else:
             self._set_non_null_timeline(timeline)
 
+    def use_fast_draw(self, value):
+        self.fast_draw = value
+        
     def _set_null_timeline(self):
         self.timeline = None
         self.time_type = None
@@ -532,9 +538,12 @@ class DrawingAreaController(object):
     def _redraw_timeline(self):
         def fn_draw(dc):
             try:
+                self.drawing_algorithm.use_fast_draw(self.fast_draw)
                 self.drawing_algorithm.draw(dc, self.timeline, self.view_properties, self.config)
             except TimelineIOError, e:
                 self.fn_handle_db_error(e)
+            finally:
+                self.drawing_algorithm.use_fast_draw(False)
         if self.timeline:
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
@@ -633,16 +642,72 @@ class ScrollByDragInputHandler(InputHandler):
     def __init__(self, controller, start_time):
         self.controller = controller
         self.start_time = start_time
+        self.last_clock_time = time.clock()
+        self.last_x = 0
+        self.last_x_distance = 0
+        self.speed_px_per_sec = 0
+        self.FADE_OUT_SCROLLING_SPEED_THRESHOLD = 200
 
     def mouse_moved(self, x, y):
-        current_time = self.controller.get_time(x)
-        delta = (current_time - self.start_time)
-        self.controller._scroll_timeline(delta)
-
+        self._calculate_sped(x)
+        self._scroll_timeline(x)
+        
     def left_mouse_up(self):
         self.controller.change_input_handler_to_no_op()
+        if self.controller.config.use_inertial_scrolling:
+            if self.speed_px_per_sec > self.FADE_OUT_SCROLLING_SPEED_THRESHOLD:
+                self._inertial_scrolling()
 
+    def _calculate_sped(self, x):
+        MAX_SPEED = 10000
+        self.last_x_distance = x - self.last_x
+        self.last_x = x
+        current_clock_time = time.clock()
+        elapsed_clock_time = current_clock_time - self.last_clock_time
+        if elapsed_clock_time == 0:
+            self.speed_px_per_sec = MAX_SPEED
+        else:
+            self.speed_px_per_sec = min(MAX_SPEED, abs(self.last_x_distance / 
+                                        elapsed_clock_time))
+        self.last_clock_time = current_clock_time
 
+    def _scroll_timeline(self, x):
+        self.current_time = self.controller.get_time(x)
+        delta = (self.current_time - self.start_time)
+        self.controller._scroll_timeline(delta)
+        
+    def _inertial_scrolling(self):
+        frame_time = self._calculate_frame_time()
+        value_factor = self._calculate_scroll_factor() 
+        fade_func = (0.20, 0.15, 0.10, 0.10, 0.10, 0.08, 0.06, 0.06, 0.05, 
+                     0.05, 0.0)
+        self.controller.use_fast_draw(True)
+        next_frame_time = time.clock()
+        for value in fade_func:
+            self.controller._scroll_timeline_view(value * value_factor)
+            next_frame_time += frame_time
+            sleep_time = next_frame_time - time.clock()
+            if sleep_time >= 0:
+                time.sleep(sleep_time)
+        self.controller.use_fast_draw(False)
+        self.controller._redraw_timeline()
+                     
+    def _calculate_frame_time(self):
+        MAX_FRAME_RATE = 26.0
+        frames_per_second = (MAX_FRAME_RATE * self.speed_px_per_sec / 
+                             (100 + self.speed_px_per_sec))
+        frame_time = 1.0 / frames_per_second
+        return frame_time
+    
+    def _calculate_scroll_factor(self):
+        if self.current_time > self.start_time:
+            direction = 1
+        else:
+            direction = -1
+        scroll_factor = (direction * self.speed_px_per_sec / 
+                        self.FADE_OUT_SCROLLING_SPEED_THRESHOLD)
+        return scroll_factor 
+     
 class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def __init__(self, controller, event, start_drag_time):
