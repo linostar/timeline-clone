@@ -39,6 +39,9 @@ class Drawer(object):
         this class variable must be deleted before the draw method ends.
         """
 
+    def use_fast_draw(self, value):
+        self.fast_draw = value
+        
     def event_is_period(self, time_period):
         """
         Return True if the event time_period will make the event appear

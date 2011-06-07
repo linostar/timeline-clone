@@ -500,6 +500,9 @@ class MockDrawer(object):
         self.get_time_calls = {}
         self.hidden_event_count = 0
 
+    def use_fast_draw(self, value):
+        pass
+    
     def setup_get_time_call(self, x, time):
         self.get_time_calls[x] = time
 
