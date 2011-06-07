@@ -646,7 +646,7 @@ class ScrollByDragInputHandler(InputHandler):
         self.last_x = 0
         self.last_x_distance = 0
         self.speed_px_per_sec = 0
-        self.FADE_OUT_SCROLLING_SPEED_THRESHOLD = 200
+        self.INERTIAL_SCROLLING_SPEED_THRESHOLD = 200
 
     def mouse_moved(self, x, y):
         self._calculate_sped(x)
@@ -655,7 +655,7 @@ class ScrollByDragInputHandler(InputHandler):
     def left_mouse_up(self):
         self.controller.change_input_handler_to_no_op()
         if self.controller.config.use_inertial_scrolling:
-            if self.speed_px_per_sec > self.FADE_OUT_SCROLLING_SPEED_THRESHOLD:
+            if self.speed_px_per_sec > self.INERTIAL_SCROLLING_SPEED_THRESHOLD:
                 self._inertial_scrolling()
 
     def _calculate_sped(self, x):
@@ -679,11 +679,10 @@ class ScrollByDragInputHandler(InputHandler):
     def _inertial_scrolling(self):
         frame_time = self._calculate_frame_time()
         value_factor = self._calculate_scroll_factor() 
-        fade_func = (0.20, 0.15, 0.10, 0.10, 0.10, 0.08, 0.06, 0.06, 0.05, 
-                     0.05, 0.0)
+        inertial_func = (0.20, 0.15, 0.10, 0.10, 0.10, 0.08, 0.06, 0.06, 0.05)
         self.controller.use_fast_draw(True)
         next_frame_time = time.clock()
-        for value in fade_func:
+        for value in inertial_func:
             self.controller._scroll_timeline_view(value * value_factor)
             next_frame_time += frame_time
             sleep_time = next_frame_time - time.clock()
@@ -705,8 +704,9 @@ class ScrollByDragInputHandler(InputHandler):
         else:
             direction = -1
         scroll_factor = (direction * self.speed_px_per_sec / 
-                        self.FADE_OUT_SCROLLING_SPEED_THRESHOLD)
+                        self.INERTIAL_SCROLLING_SPEED_THRESHOLD)
         return scroll_factor 
+
      
 class MoveByDragInputHandler(ScrollViewInputHandler):
 
