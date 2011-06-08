@@ -73,6 +73,10 @@ class ConfigSpec(unittest.TestCase):
         self.config.week_start = "sunday"
         self.assertEquals(self.config.week_start, "sunday")
 
+    def testInertialScrollingCanBeReadAfterStored(self):
+        self.config.use_inertial_scrolling = False
+        self.assertEquals(self.config.use_inertial_scrolling, False)
+
     def testConfigReturnsWideDateRangeIsTrueWhenSetToTrue(self):
         self.config.set_use_wide_date_range(True)
         self.assertTrue(self.config.get_use_wide_date_range())
