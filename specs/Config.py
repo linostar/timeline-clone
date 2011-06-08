@@ -24,7 +24,7 @@ from timelinelib.config import Config
 
 class ConfigSpec(unittest.TestCase):
     
-    def testShouldHaveDefaultValuesBeforeConfigHasBeenRead(self):
+    def test_should_have_default_values_before_config_has_been_read(self):
         self.assertEquals(self.config.window_size, (900, 500))
         self.assertEquals(self.config.window_maximized, False)
         self.assertEquals(self.config.show_sidebar, True)
@@ -37,71 +37,71 @@ class ConfigSpec(unittest.TestCase):
         self.assertEquals(self.config.get_use_wide_date_range(), False)
         self.assertEquals(self.config.get_use_inertial_scrolling(), False)
 
-    def testWindowSizeCanBeReadAfterStored(self):
+    def test_window_size_can_be_read_after_stored(self):
         self.config.window_size = (3, 20)
         self.assertEquals(self.config.window_size, (3, 20))
 
-    def testWindowMaximizedCanBeReadAfterStored(self):
+    def test_window_maximized_can_be_read_after_stored(self):
         self.config.window_maximized = True
         self.assertEquals(self.config.window_maximized, True)
 
-    def testShowSidebarCanBeReadAfterStored(self):
+    def test_show_sidebar_can_be_read_after_stored(self):
         self.config.show_sidebar = False
         self.assertEquals(self.config.show_sidebar, False)
 
-    def testShowLegendCanBeReadAfterStored(self):
+    def test_show_legend_can_be_read_after_stored(self):
         self.config.show_legend = False
         self.assertEquals(self.config.show_legend, False)
 
-    def testSidebarWidthCanBeReadAfterStored(self):
+    def test_sidebar_width_can_be_read_after_stored(self):
         self.config.sidebar_width = 20
         self.assertEquals(self.config.sidebar_width, 20)
 
-    def testRecentlyOpenedCanBeReadAfterStored(self):
+    def test_recently_opened_can_be_read_after_stored(self):
         self.config.append_recently_opened(u"foo")
         self.assertEquals(self.config.recently_opened, [abspath(u"foo")])
 
-    def testOpenRecentAtStartupCanBeReadAfterStored(self):
+    def test_open_recent_at_startup_can_be_read_after_stored(self):
         self.config.open_recent_at_startup = False
         self.assertEquals(self.config.open_recent_at_startup, False)
 
-    def testBalloonOnHoverCanBeReadAfterStored(self):
+    def test_balloon_on_hover_can_be_read_after_stored(self):
         self.config.balloon_on_hover = False
         self.assertEquals(self.config.balloon_on_hover, False)
 
-    def testWeekStartCanBeReadAfterStored(self):
+    def test_week_start_can_be_read_after_stored(self):
         self.config.week_start = "sunday"
         self.assertEquals(self.config.week_start, "sunday")
 
-    def testInertialScrollingCanBeReadAfterStored(self):
+    def test_inertial_scrolling_can_be_read_after_stored(self):
         self.config.use_inertial_scrolling = False
         self.assertEquals(self.config.use_inertial_scrolling, False)
 
-    def testConfigReturnsWideDateRangeIsTrueWhenSetToTrue(self):
+    def test_config_returns_wide_date_range_is_true_when_set_to_true(self):
         self.config.set_use_wide_date_range(True)
         self.assertTrue(self.config.get_use_wide_date_range())
 
-    def testConfigReturnsWideDateRangeIsFalseWhenSetToFalse(self):
+    def test_config_returns_wide_date_range_is_false_when_set_to_false(self):
         self.config.set_use_wide_date_range(False)
         self.assertFalse(self.config.get_use_wide_date_range())
 
-    def testConfigReturnsUseInertialScrollingIsTrueWhenSetToTrue(self):
+    def test_config_returns_use_inertial_scrolling_is_true_when_set_to_true(self):
         self.config.set_use_inertial_scrolling(True)
         self.assertTrue(self.config.get_use_inertial_scrolling())
 
-    def testConfigReturnsUseInertialScrollingIsFalseWhenSetToFalse(self):
+    def test_config_returns_use_inertial_scrolling_is_false_when_set_to_false(self):
         self.config.set_use_inertial_scrolling(False)
         self.assertFalse(self.config.get_use_inertial_scrolling())
 
-    def testConfigReturnsWideDateRangeIsFalseWhenSetToFalseAsPropety(self):
+    def test_config_returns_wide_date_range_is_false_when_set_to_false_as_propety(self):
         self.config.use_wide_date_range = False
         self.assertFalse(self.config.use_wide_date_range)
         
-    def testConfigReturnsWideDateRangeIsTrueWhenSetToTrueAsPropety(self):
+    def test_config_returns_wide_date_range_is_true_when_set_to_true_as_propety(self):
         self.config.use_wide_date_range = True
         self.assertTrue(self.config.use_wide_date_range)
 
-    def testRecentlyOpenedContainsLast5Entries(self):
+    def test_recently_opened_contains_last_5_entries(self):
         self.config.append_recently_opened("1")
         self.config.append_recently_opened("2")
         self.config.append_recently_opened("3")
@@ -112,7 +112,7 @@ class ConfigSpec(unittest.TestCase):
         last_five = [abspath(entry) for entry in ["7", "6", "5", "4", "3"]]
         self.assertEquals(self.config.recently_opened, last_five)
 
-    def testRecentlyOpenedListDoesNotContainDuplicates(self):
+    def test_recently_opened_list_does_not_contain_duplicates(self):
         self.config.append_recently_opened("foo")
         self.config.append_recently_opened("bar")
         self.config.append_recently_opened("foo")
@@ -120,15 +120,15 @@ class ConfigSpec(unittest.TestCase):
             self.config.recently_opened,
             [abspath("foo"), abspath("bar")])
 
-    def testConvertsRecentlyOpenedPathToUnicode(self):
+    def test_converts_recently_opened_path_to_unicode(self):
         self.config.append_recently_opened("non-unicode-path")
         self.assertTrue(isinstance(self.config.recently_opened[0], unicode))
 
-    def testRecentlyOpenedDoesNotStoreSpecialTutorialFile(self):
+    def test_recently_opened_does_not_store_special_tutorial_file(self):
         self.config.append_recently_opened(":tutorial:")
         self.assertEquals([], self.config.recently_opened)
 
-    def testSettingInvalidWeekStartRaisesValueError(self):
+    def test_setting_invalid_week_start_raises_value_error(self):
         def set_invalid_week():
             self.config.week_start = "friday"
         self.assertRaises(ValueError, set_invalid_week)
