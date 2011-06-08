@@ -30,6 +30,7 @@ class PreferencesDialogSpec(unittest.TestCase):
     def setUp(self):
         self.preferences_dialog = Mock(PreferencesDialog)
         self.config = Mock(Config)
+        self.config.week_start = "monday"
         self.controller = PreferencesEditor(self.preferences_dialog, self.config)
         
     def test_opens_with_wide_date_range_if_set_in_config(self):
@@ -59,3 +60,25 @@ class PreferencesDialogSpec(unittest.TestCase):
     def test_config_changes_when_inertial_scrolling_changes(self):
         self.controller.on_use_inertial_scrolling_changed(False)
         self.config.set_use_inertial_scrolling.assert_called_with(False)
+
+    def test_opens_with_open_recent_if_set_in_config(self):
+        self.config.get_open_recent_at_startup.return_value = True
+        self.controller.initialize_controls()
+        self.preferences_dialog.set_checkbox_open_recent_at_startup.assert_called_with(True)
+
+    def test_opens_with_no_open_recent_if_not_set_in_config(self):
+        self.config.get_open_recent_at_startup.return_value = False
+        self.controller.initialize_controls()
+        self.preferences_dialog.set_checkbox_open_recent_at_startup.assert_called_with(False)
+
+    def test_config_changes_when_open_recent_changes(self):
+        self.controller.on_open_recent_changed(False)
+        self.config.set_use_inertial_scrolling.set_open_recent_at_startup(False)
+
+    def test_opens_week_start_in_config(self):
+        self.controller.initialize_controls()
+        self.preferences_dialog.set_week_start.assert_called_with(0)
+
+    def test_config_changes_when_week_start_changes(self):
+        self.controller.on_week_start_changed(1)
+        self.assertEqual("sunday", self.config.week_start)
