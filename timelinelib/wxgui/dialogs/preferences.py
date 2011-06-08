@@ -18,6 +18,7 @@
 
 import wx
 
+from timelinelib.editors.preferences import PreferencesEditor
 from timelinelib.wxgui.utils import BORDER
 
 
@@ -28,7 +29,7 @@ class PreferencesDialog(wx.Dialog):
         self.weeks_map = ((0, "monday"), (1, "sunday"))
         self.config = config
         self._create_gui()
-        self._controller = PreferencesDialogController(self, self.config)
+        self._controller = PreferencesEditor(self, self.config)
         self._controller.initialize_controls()
 
     def set_checkbox_enable_wide_date_range(self, value):
@@ -156,22 +157,3 @@ class PreferencesDialog(wx.Dialog):
             if i == index:
                 return w
         raise ValueError("Unknown week index '%s'." % index)
-    
-
-class PreferencesDialogController(object):
-    
-    def __init__(self, dialog, config):
-        self.dialog = dialog
-        self.config = config
-        
-    def initialize_controls(self):
-        self.dialog.set_checkbox_enable_wide_date_range(
-            self.config.get_use_wide_date_range())
-        self.dialog.set_checkbox_use_inertial_scrolling(
-            self.config.get_use_inertial_scrolling())
-        
-    def on_use_wide_date_range_changed(self, value):
-        self.config.set_use_wide_date_range(value)
-
-    def on_use_inertial_scrolling_changed(self, value):
-        self.config.set_use_inertial_scrolling(value)
