@@ -32,7 +32,7 @@ from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingArea
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
-from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEvent
+from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 from timelinelib.wxgui.dialogs.eventform import EventFormDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
@@ -398,7 +398,7 @@ class MainFrame(wx.Frame):
     def duplicate_event(self, event=None):
         def show_dialog(event):
             def create_dialog():
-                return DuplicateEvent(self, self.timeline, event)
+                return DuplicateEventDialog(self, self.timeline, event)
             gui_utils.show_modal(create_dialog, self.handle_db_error)
         if event is None:
             try:

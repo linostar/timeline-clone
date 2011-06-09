@@ -25,8 +25,8 @@ from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEvent
-from timelinelib.editors.duplicateevent import DuplicateEventController
+from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
+from timelinelib.editors.duplicateevent import DuplicateEventEditor
 from timelinelib.time import PyTimeType
 
 from timelinelib.editors.duplicateevent import FORWARD
@@ -37,13 +37,13 @@ from timelinelib.editors.duplicateevent import BOTH
 class duplicate_event_dialog_spec_base(unittest.TestCase):
 
     def setUp(self):
-        self.controller = DuplicateEventController(
+        self.controller = DuplicateEventEditor(
             self._create_view_mock(),
             self._create_db_mock(),
             self._create_event())
 
     def _create_view_mock(self):
-        self.view = Mock(DuplicateEvent)
+        self.view = Mock(DuplicateEventDialog)
         self.view.get_move_period_fn.return_value = self._create_move_period_fn_mock()
         return self.view
 
