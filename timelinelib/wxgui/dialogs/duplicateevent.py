@@ -71,29 +71,39 @@ class DuplicateEventDialog(wx.Dialog):
     def _create_gui(self, move_period_config):
         self._move_period_fns = [fn for (label, fn) in move_period_config]
         period_list = [label for (label, fn) in move_period_config]
-        direction_list = [_("Forward"), _("Backward"), _("Both")]
-        # Create all controls
-        sc_count_box = self._creat_count_spin_control()
-        sc_frequency_box = self._creat_frequency_spin_control()
-        self.rb_period = wx.RadioBox(self, wx.ID_ANY, _("Period"), 
-                                          wx.DefaultPosition, wx.DefaultSize, 
-                                          period_list)#, 1, 
-                                          #wx.RA_SPECIFY_COLS)
-        self.rb_direction = wx.RadioBox(self, wx.ID_ANY, _("Direction"), 
-                                        choices=direction_list)
-        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
-        # Place controls in grid
         vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(sc_count_box, border=BORDER)
-        vbox.Add(self.rb_period, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        vbox.Add(sc_frequency_box, border=BORDER)
-        vbox.Add(self.rb_direction, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self._create_and_add_sc_count_box(vbox)
+        self._create_and_add_rb_period(vbox, period_list)
+        self._create_and_add_sc_frequency_box(vbox)
+        self._create_and_add_rb_direction(vbox)
+        self._create_and_add_button_box(vbox)
         self.SetSizerAndFit(vbox)
-        # Bind event handlers to controls
-        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         _set_focus_and_select(self.sc_count)
 
+    def _create_and_add_sc_count_box(self, form):
+        sc_count_box = self._create_count_spin_control()
+        form.Add(sc_count_box, border=BORDER)
+
+    def _create_count_spin_control(self):
+        st_count = wx.StaticText(self, label=_("Number of duplicates:"))
+        self.sc_count = wx.SpinCtrl(self, wx.ID_ANY, size=(50,-1))
+        self.sc_count.SetRange(1,999)
+        self.sc_count.SetValue(1)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        hbox.Add(st_count, flag=wx.ALL, border=BORDER)
+        hbox.Add(self.sc_count, flag=wx.ALL, border=BORDER)
+        return hbox
+
+    def _create_and_add_rb_period(self, form, period_list):
+        self.rb_period = wx.RadioBox(self, wx.ID_ANY, _("Period"), 
+                                     wx.DefaultPosition, wx.DefaultSize, 
+                                     period_list) 
+        form.Add(self.rb_period, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        
+    def _create_and_add_sc_frequency_box(self, form):
+        sc_frequency_box = self._creat_frequency_spin_control()
+        form.Add(sc_frequency_box, border=BORDER)
+        
     def _creat_frequency_spin_control(self):
         st_frequency = wx.StaticText(self, label=_("Frequency:"))
         self.sc_frequency = wx.SpinCtrl(self, wx.ID_ANY, size=(50,-1))
@@ -104,15 +114,16 @@ class DuplicateEventDialog(wx.Dialog):
         hbox.Add(self.sc_frequency, flag=wx.ALL, border=BORDER)
         return hbox
 
-    def _creat_count_spin_control(self):
-        st_count = wx.StaticText(self, label=_("Number of duplicates:"))
-        self.sc_count = wx.SpinCtrl(self, wx.ID_ANY, size=(50,-1))
-        self.sc_count.SetRange(1,999)
-        self.sc_count.SetValue(1)
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(st_count, flag=wx.ALL, border=BORDER)
-        hbox.Add(self.sc_count, flag=wx.ALL, border=BORDER)
-        return hbox
+    def _create_and_add_rb_direction(self, form):
+        direction_list = [_("Forward"), _("Backward"), _("Both")]
+        self.rb_direction = wx.RadioBox(self, wx.ID_ANY, _("Direction"), 
+                                        choices=direction_list)
+        form.Add(self.rb_direction, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        
+    def _create_and_add_button_box(self, form):
+        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        form.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         
     def _btn_ok_on_click(self, e):
         gui_utils.set_wait_cursor(self)
