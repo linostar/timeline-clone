@@ -680,6 +680,7 @@ class ScrollByDragInputHandler(InputHandler):
         frame_time = self._calculate_frame_time()
         value_factor = self._calculate_scroll_factor() 
         inertial_func = (0.20, 0.15, 0.10, 0.10, 0.10, 0.08, 0.06, 0.06, 0.05)
+        #inertial_func = (0.20, 0.15, 0.10, 0.10, 0.07, 0.05, 0.02, 0.05)
         self.controller.use_fast_draw(True)
         next_frame_time = time.clock()
         for value in inertial_func:
