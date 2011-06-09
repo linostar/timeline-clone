@@ -18,12 +18,9 @@
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import _display_error_message
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import TimePeriod
 from timelinelib.editors.duplicateevent import DuplicateEventEditor
 import timelinelib.wxgui.utils as gui_utils
 
