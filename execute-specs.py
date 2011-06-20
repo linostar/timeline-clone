@@ -23,10 +23,15 @@ import unittest
 import doctest
 
 def execute_all_specs():
+    setup_paths()
     install_gettext_in_builtin_namespace()
     suite = create_suite()
     all_pass = execute_suite(suite)
     return all_pass
+
+def setup_paths():
+    root_dir = os.path.abspath(os.path.dirname(__file__))
+    sys.path.insert(0, os.path.join(root_dir, "libs", "dev"))
 
 def install_gettext_in_builtin_namespace():
     def _(message):

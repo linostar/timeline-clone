@@ -30,7 +30,7 @@ For translations (other than English) you also need the following:
 
 Extra development tools:
 
-  * Mock version 0.6.0 (for running tests)
+  * Mock version 0.6.0 or greater (for running tests, included in repo)
       http://www.voidspace.org.uk/python/mock/
   * Mechanize (for release announcer)
       http://wwwsearch.sourceforge.net/mechanize/
