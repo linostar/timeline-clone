@@ -29,6 +29,7 @@ from timelinelib.drawing import get_drawer
 from timelinelib.drawing.interface import ViewProperties
 from timelinelib.utils import ex_msg
 from timelinelib.view.inputhandler import InputHandler
+from timelinelib.view.move import MoveByDragInputHandler
 from timelinelib.view.noop import NoOpInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrollbase import ScrollViewInputHandler
@@ -709,55 +710,6 @@ class ScrollByDragInputHandler(InputHandler):
         return scroll_factor 
 
      
-class MoveByDragInputHandler(ScrollViewInputHandler):
-
-    def __init__(self, controller, event, start_drag_time):
-        ScrollViewInputHandler.__init__(self, controller)
-        self.controller = controller
-        self.event = event
-        self.event_start_time = event.time_period.start_time
-        self.event_end_time = event.time_period.end_time
-        self.start_drag_time = start_drag_time
-
-    def mouse_moved(self, x, y):
-        ScrollViewInputHandler.mouse_moved(self, x, y)
-        self._move_event()
-
-    def left_mouse_up(self):
-        ScrollViewInputHandler.left_mouse_up(self)
-        self.controller.change_input_handler_to_no_op()
-
-    def view_scrolled(self):
-        self._move_event()
-
-    def _move_event(self):
-        if self.event.locked:
-            return
-        current_time = self.controller.get_time(self.last_x)
-        delta = current_time - self.start_drag_time
-        new_start = self.event_start_time + delta
-        new_end = self.event_end_time + delta
-        self.event.time_period.update(new_start, new_end)
-        if self.controller.get_drawer().event_is_period(self.event.time_period):
-            self._snap()
-        self.controller.redraw_timeline()
-
-    def _snap(self):
-        start = self.event.time_period.start_time
-        end = self.event.time_period.end_time
-        width = start - end
-        startSnapped = self.controller.get_drawer().snap(start)
-        endSnapped = self.controller.get_drawer().snap(end)
-        if startSnapped != start:
-            # Prefer to snap at left edge (in case end snapped as well)
-            start = startSnapped
-            end = start - width
-        elif endSnapped != end:
-            end = endSnapped
-            start = end + width
-        self.event.update_period(start, end)
-
-
 class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
 
     def __init__(self, controller, initial_time):
