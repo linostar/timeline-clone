@@ -1,26 +1,18 @@
 Scripts and files to generate a Debian binary package from a source archive.
 
-Usage:
-
-  1. Download source package to root/timeline-x.y.z.zip
-  2. Extract to root/timeline-x.y.z
-  3. Symlink the debian directory
-     cd root/timeline-x.y.z
-     ln -s <path-to-deb-repo>/debian
-  4. Run ./debian/scripts/build
+build and test scripts work on the current tree.
 
 Update instructions:
 
-  1. Update changelog
-  2. Update rules (if files have changed)
-     1. Check file change with 'hg stat --rev 0.8.0 --rev 0.9.0'
-  3. Update dirs (if needed)
-  4. Update patches
-     1. export QUILT_PATCHES=debian/patches/
-     2. quilt push -a -f
-     3. edit files for which patches were rejected
-     4. quilt refresh
-  5. Update dependencies in control
+  - Update rules (if files have changed)
+     - Check file change with 'hg stat --rev 0.8.0 --rev 0.9.0'
+  - Update dirs (if needed)
+  - Update patches
+     - export QUILT_PATCHES=debian/patches/
+     - quilt push -a -f
+     - edit files for which patches were rejected
+     - quilt refresh
+  - Update dependencies in control
 
 Online resources:
 
