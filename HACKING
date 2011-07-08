@@ -162,7 +162,7 @@ Last changes
 
   1. Update version.py so that DEV=False
     1. Commit
-  2. Run `python make-source-release.py`
+  2. Run `python release/make-source-release.py`
   3. Try running the unzipped release to make a basic check that it works
   4. Run `hg tag x.y.z`
 
@@ -171,6 +171,6 @@ After
 
   * Upload source release to SourceForge
   * Create binary packages and upload to SourceForge
-  * Make release announcement with `python release-announcer.py`
+  * Make release announcement with `python release/release-announcer.py`
 
 <!-- vim: set syntax=mkd: -->

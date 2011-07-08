@@ -22,7 +22,7 @@ import os
 import os.path
 from subprocess import call
 
-ROOT_DIR = os.path.join(os.path.dirname(__file__))
+ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
 # So that the we can write 'import timelinelib.xxx'
 sys.path.insert(0, ROOT_DIR)
