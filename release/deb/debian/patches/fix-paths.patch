@@ -1,0 +1,15 @@
+Index: main/src/paths.py
+===================================================================
+--- main.orig/timelinelib/paths.py	2009-09-28 18:22:57.000000000 +0200
++++ main/timelinelib/paths.py	2009-09-28 18:26:00.000000000 +0200
+@@ -24,7 +24,6 @@
+ import os.path
+ 
+ 
+-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+-ICONS_DIR = os.path.join(_ROOT, "icons")
+-LOCALE_DIR = os.path.join(_ROOT, "po")
+-HELP_RESOURCES_DIR = os.path.join(_ROOT, "help_resources")
++ICONS_DIR = "/usr/share/timeline/icons"
++LOCALE_DIR = "/usr/share/locale"
++HELP_RESOURCES_DIR = "/usr/share/doc/timeline/help_resources"

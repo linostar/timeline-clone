@@ -1,0 +1,143 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+include /usr/share/quilt/quilt.make
+
+configure: configure-stamp
+configure-stamp: patch
+	dh_testdir
+	# Add here commands to configure the package.
+
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: configure-stamp  
+	dh_testdir
+
+	# Add here commands to compile the package.
+	#$(MAKE)
+	#docbook-to-man debian/timeline.sgml > timeline.1
+	scons mo
+
+	touch $@
+
+clean: unpatch
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+
+	# Add here commands to clean up after the build process.
+	scons -c
+
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+
+	# Add here commands to install the package into debian/timeline.
+	#$(MAKE) DESTDIR=$(CURDIR)/debian/timeline install
+
+	# Put source code in /usr/lib/timeline
+	cp timelinelib/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib
+	cp timelinelib/db/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/db
+	cp timelinelib/db/backends/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/db/backends
+	cp timelinelib/drawing/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/drawing
+	cp timelinelib/drawing/drawers/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/drawing/drawers
+	cp timelinelib/wxgui/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui
+	cp timelinelib/wxgui/components/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui/components
+	cp timelinelib/wxgui/dialogs/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui/dialogs
+	cp timelinelib/time/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/time
+	cp timelinelib/editors/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/editors
+	cp timelinelib/domain/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/domain
+	cp timelinelib/view/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/view
+	cp timelinelib/help/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/help
+
+	# Install icons
+	cp icons/16.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
+	cp icons/32.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
+	cp icons/48.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
+	cp icons/calendar.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
+	cp icons/stickypin.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
+	cp icons/unstickypin.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
+
+	# Install man page
+	cp man/man1/timeline.1 $(CURDIR)/debian/timeline/usr/share/man/man1
+
+	# Install .desktop file
+	cp debian/extra-files/timeline-desktop $(CURDIR)/debian/timeline/usr/share/applications/timeline.desktop
+
+	# Install help resources
+	cp help_resources/*.png $(CURDIR)/debian/timeline/usr/share/doc/timeline/help_resources
+
+	# Install translations
+	cp -r po/sv $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/es $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/de $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/pt_BR $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/pt $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/ru $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/ca $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/he $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/fr $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/pl $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/it $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/tr $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/lt $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/vi $(CURDIR)/debian/timeline/usr/share/locale/
+
+	# Install binary
+	cp debian/extra-files/timeline-bin $(CURDIR)/debian/timeline/usr/bin/timeline
+	chmod +x $(CURDIR)/debian/timeline/usr/bin/timeline
+
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs CHANGES
+	dh_installdocs
+	dh_installexamples
+#	dh_install
+#	dh_installmenu
+#	dh_installdebconf	
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+	dh_pysupport
+#	dh_python
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

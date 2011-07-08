@@ -1,0 +1,15 @@
+Source: timeline
+Section: misc
+Priority: extra
+Maintainer: Rickard Lindberg <ricli85@gmail.com>
+Build-Depends: debhelper (>= 7), quilt, scons, gettext
+Standards-Version: 3.7.3
+Homepage: http://thetimelineproj.sourceforge.net/
+
+Package: timeline
+Architecture: all
+Depends: python (>= 2.4), python-wxgtk2.8 (>= 2.8.8)
+Recommends: wx2.8-i18n, python-markdown, python-icalendar
+Description: Display and navigate events on a timeline.
+ Timeline is a free, cross-platform application for displaying and navigating
+ events on a timeline. 
