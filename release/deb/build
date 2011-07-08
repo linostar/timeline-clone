@@ -2,10 +2,10 @@
 
 DEB_TARGET_DIR=`pwd`
 THIS_DIR=`dirname $0`
-SOURCE_DIR=`readlink -m $THIS_DIR/../..`
-VERSION=`python $SOURCE_DIR/timeline.py --version | awk '{print $2}'`
+SOURCE_DIR=`readlink -m "$THIS_DIR/../.."`
+VERSION=`python "$SOURCE_DIR/timeline.py" --version | awk '{print $2}'`
 SOURCE_DIR_NAME=`basename "$SOURCE_DIR"`
-DEBIAN_DIR=`dirname $0`/debian
+DEBIAN_DIR=`dirname "$0"`/debian
 TMP_DIR=`mktemp -d`
 CHANGELOG="$TMP_DIR/$SOURCE_DIR_NAME/debian/changelog"
 

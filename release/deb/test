@@ -1,15 +1,15 @@
 #!/bin/sh
 
-THIS_DIR=`dirname $0`
-SOURCE_DIR=`readlink -m $THIS_DIR/../..`
-VERSION=`python $SOURCE_DIR/timeline.py --version | awk '{print $2}'`
+THIS_DIR=`dirname "$0"`
+SOURCE_DIR=`readlink -m "$THIS_DIR/../.."`
+VERSION=`python "$SOURCE_DIR/timeline.py" --version | awk '{print $2}'`
 DEB_FILE="timeline_$VERSION-1_all.deb"
 LIB_INSTALL_PATH="/usr/lib/timeline/timelinelib"
 SRC_LIB=$SOURCE_DIR/timelinelib
 SRC_LIB_BACKUP=$SOURCE_DIR/timelinelib_old
 
 (
-$THIS_DIR/build &&
+"$THIS_DIR/build" &&
 su -c "dpkg -i $DEB_FILE" &&
 rm $DEB_FILE &&
 

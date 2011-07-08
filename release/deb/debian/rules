@@ -51,56 +51,56 @@ install: build
 	#$(MAKE) DESTDIR=$(CURDIR)/debian/timeline install
 
 	# Put source code in /usr/lib/timeline
-	cp timelinelib/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib
-	cp timelinelib/db/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/db
-	cp timelinelib/db/backends/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/db/backends
-	cp timelinelib/drawing/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/drawing
-	cp timelinelib/drawing/drawers/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/drawing/drawers
-	cp timelinelib/wxgui/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui
-	cp timelinelib/wxgui/components/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui/components
-	cp timelinelib/wxgui/dialogs/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui/dialogs
-	cp timelinelib/time/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/time
-	cp timelinelib/editors/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/editors
-	cp timelinelib/domain/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/domain
-	cp timelinelib/view/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/view
-	cp timelinelib/help/*.py $(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/help
+	cp timelinelib/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib"
+	cp timelinelib/db/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/db"
+	cp timelinelib/db/backends/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/db/backends"
+	cp timelinelib/drawing/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/drawing"
+	cp timelinelib/drawing/drawers/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/drawing/drawers"
+	cp timelinelib/wxgui/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui"
+	cp timelinelib/wxgui/components/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui/components"
+	cp timelinelib/wxgui/dialogs/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/wxgui/dialogs"
+	cp timelinelib/time/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/time"
+	cp timelinelib/editors/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/editors"
+	cp timelinelib/domain/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/domain"
+	cp timelinelib/view/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/view"
+	cp timelinelib/help/*.py "$(CURDIR)/debian/timeline/usr/lib/timeline/timelinelib/help"
 
 	# Install icons
-	cp icons/16.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
-	cp icons/32.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
-	cp icons/48.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
-	cp icons/calendar.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
-	cp icons/stickypin.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
-	cp icons/unstickypin.png $(CURDIR)/debian/timeline/usr/share/timeline/icons
+	cp icons/16.png "$(CURDIR)/debian/timeline/usr/share/timeline/icons"
+	cp icons/32.png "$(CURDIR)/debian/timeline/usr/share/timeline/icons"
+	cp icons/48.png "$(CURDIR)/debian/timeline/usr/share/timeline/icons"
+	cp icons/calendar.png "$(CURDIR)/debian/timeline/usr/share/timeline/icons"
+	cp icons/stickypin.png "$(CURDIR)/debian/timeline/usr/share/timeline/icons"
+	cp icons/unstickypin.png "$(CURDIR)/debian/timeline/usr/share/timeline/icons"
 
 	# Install man page
-	cp man/man1/timeline.1 $(CURDIR)/debian/timeline/usr/share/man/man1
+	cp man/man1/timeline.1 "$(CURDIR)/debian/timeline/usr/share/man/man1"
 
 	# Install .desktop file
-	cp debian/extra-files/timeline-desktop $(CURDIR)/debian/timeline/usr/share/applications/timeline.desktop
+	cp debian/extra-files/timeline-desktop "$(CURDIR)/debian/timeline/usr/share/applications/timeline.desktop"
 
 	# Install help resources
-	cp help_resources/*.png $(CURDIR)/debian/timeline/usr/share/doc/timeline/help_resources
+	cp help_resources/*.png "$(CURDIR)/debian/timeline/usr/share/doc/timeline/help_resources"
 
 	# Install translations
-	cp -r po/sv $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/es $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/de $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/pt_BR $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/pt $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/ru $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/ca $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/he $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/fr $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/pl $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/it $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/tr $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/lt $(CURDIR)/debian/timeline/usr/share/locale/
-	cp -r po/vi $(CURDIR)/debian/timeline/usr/share/locale/
+	cp -r po/sv "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/es "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/de "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/pt_BR "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/pt "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/ru "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/ca "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/he "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/fr "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/pl "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/it "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/tr "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/lt "$(CURDIR)/debian/timeline/usr/share/locale/"
+	cp -r po/vi "$(CURDIR)/debian/timeline/usr/share/locale/"
 
 	# Install binary
-	cp debian/extra-files/timeline-bin $(CURDIR)/debian/timeline/usr/bin/timeline
-	chmod +x $(CURDIR)/debian/timeline/usr/bin/timeline
+	cp debian/extra-files/timeline-bin "$(CURDIR)/debian/timeline/usr/bin/timeline"
+	chmod +x "$(CURDIR)/debian/timeline/usr/bin/timeline"
 
 
 # Build architecture-independent files here.
