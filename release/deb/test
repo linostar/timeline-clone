@@ -1,26 +1,27 @@
 #!/bin/sh
 
-SRC=$1
-VERSION=$2
+THIS_DIR=`dirname $0`
+SOURCE_DIR=`readlink -m $THIS_DIR/../..`
+VERSION=`python $SOURCE_DIR/timeline.py --version | awk '{print $2}'`
 DEB_FILE="timeline_$VERSION-1_all.deb"
 LIB_INSTALL_PATH="/usr/lib/timeline/timelinelib"
-SRC_LIB=$SRC/timelinelib
-SRC_LIB_BACKUP=$SRC/timelinelib_old
+SRC_LIB=$SOURCE_DIR/timelinelib
+SRC_LIB_BACKUP=$SOURCE_DIR/timelinelib_old
 
 (
-./build "$SRC" "$VERSION" &&
+$THIS_DIR/build &&
 su -c "dpkg -i $DEB_FILE" &&
 rm $DEB_FILE &&
 
 mv "$SRC_LIB" "$SRC_LIB_BACKUP" &&
 ln -s "$LIB_INSTALL_PATH" "$SRC_LIB" &&
-"$SRC/execute-specs.py" &&
+"$SOURCE_DIR/execute-specs.py" &&
 rm "$SRC_LIB" &&
 mv "$SRC_LIB_BACKUP" "$SRC_LIB"
 )
 
-exit_code=$?
+spec_exit_code=$?
 
 su -c "apt-get --assume-yes remove timeline"
 
-exit $exit_code
+exit $spec_exit_code

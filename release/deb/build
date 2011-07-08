@@ -1,8 +1,9 @@
 #!/bin/sh
 
 DEB_TARGET_DIR=`pwd`
-SOURCE_DIR=$1
-VERSION=$2
+THIS_DIR=`dirname $0`
+SOURCE_DIR=`readlink -m $THIS_DIR/../..`
+VERSION=`python $SOURCE_DIR/timeline.py --version | awk '{print $2}'`
 SOURCE_DIR_NAME=`basename "$SOURCE_DIR"`
 DEBIAN_DIR=`dirname $0`/debian
 TMP_DIR=`mktemp -d`
@@ -22,12 +23,11 @@ timeline ($VERSION-1) unstable; urgency=low
 END
 cd "$TMP_DIR/$SOURCE_DIR_NAME" &&
 dpkg-buildpackage -B -uc -tc -rfakeroot &&
-echo "hej" &&
 mv "$TMP_DIR/timeline_$VERSION-1_all.deb" "$DEB_TARGET_DIR"
 )
 
-exit_code=$?
+build_exit_code=$?
 
 rm -r $TMP_DIR
 
-exit $exit_code
+exit $build_exit_code
