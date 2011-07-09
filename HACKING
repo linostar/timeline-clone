@@ -14,41 +14,10 @@ We try to follow the
 [Style Guide for Python Code](http://www.python.org/dev/peps/pep-0008/). Other
 guidelines and exceptions to the standard are listed here.
 
-Multiline docstrings
---------------------
-
-We prefer to write multiline docstrings like this:
-
-    """
-    One line summary.
-
-    More comments...
-    """
-
-instead of like this:
-
-    """One line summary.
-
-    More comments...
-
-    """
-
 Strings
 -------
 
 We use the " character for strings. Not the ' character.
-
-Order of blocks inside a module (.py file)
-------------------------------------------
-
-All top-level blocks should be separated with two blank lines. Methods inside a
-class should be separated with one blank line.
-
-  * Module docstring
-  * Imports
-  * Global variables
-  * Classes
-  * Functions
 
 Naming convention for private attributes
 ----------------------------------------
@@ -61,64 +30,8 @@ any underscores. The preferred way to access a class' variable is to write a
 get-method. In general member variables should never be directly accessed
 outside a class.
 
-Naming convention for event handlers
-------------------------------------
-
-`_(object)_on_(name of event)`
-
-Examples:
-
-  * `_btn_close_on_click`
-  * `_window_on_close`
-
-Handling events
----------------
-
-ID's should not be used for events. We prefer to pass an object instead.
-Example:
-
-    FileMenu = wx.Menu()
-    item = FileMenu.append(wx.ID_ANY, "&Quit")
-    self.Bind(wx.EVT_MENU, self.OnQuit, item)
-
-ID's can be used for standard ID's.
-
-Documentation supporting this:
-
-  * [wx.EvtHandler API Documentation](http://www.wxpython.org/docs/api/wx.EvtHandler-class.html#Bind)
-  * [wxPython Migration Guide](http://www.wxpython.org/migrationguide.php) (the "Binding events" part)
-
-GUI Guidelines
-==============
-
-Guidelines for how the GUI should look like to conform to as many standards as possible.
-
-Some good resources:
-
-  * [When to use ellipsis after menu items](http://stackoverflow.com/questions/637683/when-to-use-ellipsis-after-menu-items)
-  * [UI Style Guides](http://www.experiencedynamics.com/science-usability/ui-style-guides) (index with links to other style guides)
-
-From the [GNOME guidelines](http://developer.gnome.org/projects/gup/hig/1.0/menus.html):
-
-> Label the menu item with a trailing ellipsis ("...") only if the command
-> requires further input from the user before it can be performed. Do not add
-> an ellipsis to items that only present a confirmation dialog (such as
-> Delete), or that do not require further input (such as Properties,
-> Preferences or About).
-
-Commit messages guidelines
-==========================
-
-  * Try to limit the first line to a 79-character summary
-  * If a ticket was fixed in this commit, include a message like "Fixed ticket #32" (example in r77)
-
-Release Actions
-===============
-
-Describes the actions to make a source release.
-
-Binary releases are created from source releases. Scripts in our other
-repositories (win and deb) are used for those purposes.
+How to make a release
+=====================
 
 Feature freeze
 --------------
@@ -150,15 +63,12 @@ Work on stable
        http://translations.launchpad.net/thetimelineproj/trunk/+translations
     2. Run `python import-po-from-launchpad-export.py /path/to/launchpad-export.tar.gz`
   3. Check that information and version numbers are correct in
-     1. CHANGES
-     2. INSTALL
-     3. README
-     4. man/man1/timeline.1
-     5. version.py
+     1. version.py
+     2. CHANGES
   4. Run `python execute-specs.py` to find possible errors
 
-Last changes
-------------
+Last changes on stable
+----------------------
 
   1. Update version.py so that DEV=False
     1. Commit
@@ -172,5 +82,3 @@ After
   * Upload source release to SourceForge
   * Create binary packages and upload to SourceForge
   * Make release announcement with `python release/release-announcer.py`
-
-<!-- vim: set syntax=mkd: -->
