@@ -33,6 +33,7 @@ from timelinelib.view.periodbase import SelectPeriodByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
+from timelinelib.view.zoom import ZoomByDragInputHandler
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import _step_function
 
@@ -656,34 +657,3 @@ class CreatePeriodEventByDragInputHandler(SelectPeriodByDragInputHandler):
     def end_action(self):
         period = self.get_last_valid_period()
         self.view.create_new_event(period.start_time, period.end_time)
-
-
-class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
-
-    def __init__(self, controller, status_bar_adapter, start_time):
-        SelectPeriodByDragInputHandler.__init__(self, controller, start_time)
-        self.controller = controller
-        self.status_bar_adapter = status_bar_adapter
-        self.status_bar_adapter.set_text(_("Select region to zoom into"))
-
-    def mouse_moved(self, x, y):
-        SelectPeriodByDragInputHandler.mouse_moved(self, x, y)
-        try:
-            p = self.get_current_period()
-        except ValueError:
-            self.status_bar_adapter.set_text(_("Region too long"))
-        else:
-            if p.delta() < p.time_type.get_min_zoom_delta()[0]:
-                self.status_bar_adapter.set_text(_("Region too short"))
-            else:
-                self.status_bar_adapter.set_text("")
-
-    def end_action(self):
-        self.status_bar_adapter.set_text("")
-        period = self.get_last_valid_period()
-        start = period.start_time
-        end = period.end_time
-        delta = end - start
-        if period.time_type.zoom_is_ok(delta):
-            # Don't zoom in to less than an hour which upsets things.
-            self.controller.navigate_timeline(lambda tp: tp.update(start, end))
