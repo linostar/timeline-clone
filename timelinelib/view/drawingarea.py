@@ -30,7 +30,6 @@ from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
-from timelinelib.wxgui.utils import _step_function
 
 
 # The width in pixels of the vertical scroll zones.
@@ -468,3 +467,12 @@ class DrawingArea(object):
         # TODO: Do we really need that?
         if not visible:
             self._redraw_timeline()
+
+
+def _step_function(x_value):
+    y_value = 0
+    if x_value < 0:
+        y_value = -1
+    elif x_value > 0:
+        y_value = 1
+    return y_value

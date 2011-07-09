@@ -171,15 +171,6 @@ def _ask_question(question, parent=None):
                          wx.YES_NO|wx.CENTRE|wx.NO_DEFAULT, parent)
 
 
-def _step_function(x_value):
-    y_value = 0
-    if x_value < 0:
-        y_value = -1
-    elif x_value > 0:
-        y_value = 1
-    return y_value
-
-
 def set_wait_cursor(parent):
     parent.SetCursor(wx.StockCursor(wx.CURSOR_WAIT))
     
