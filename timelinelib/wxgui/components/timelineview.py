@@ -29,6 +29,7 @@ from timelinelib.utils import ex_msg
 from timelinelib.view.inputhandler import InputHandler
 from timelinelib.view.move import MoveByDragInputHandler
 from timelinelib.view.noop import NoOpInputHandler
+from timelinelib.view.periodbase import SelectPeriodByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
@@ -644,61 +645,6 @@ class DrawingArea(object):
         # TODO: Do we really need that?
         if not visible:
             self._redraw_timeline()
-
-     
-class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
-
-    def __init__(self, controller, initial_time):
-        ScrollViewInputHandler.__init__(self, controller)
-        self.controller = controller
-        self.initial_time = initial_time
-        self.last_valid_time = initial_time
-        self.current_time = initial_time
-
-    def mouse_moved(self, x, y):
-        ScrollViewInputHandler.mouse_moved(self, x, y)
-        self._move_current_time()
-
-    def view_scrolled(self):
-        self._move_current_time()
-
-    def _move_current_time(self):
-        self.current_time = self.controller.get_time(self.last_x)
-        try:
-            period = self.get_current_period()
-            self.last_valid_time = self.current_time
-        except ValueError:
-            period = self.get_last_valid_period()
-        self.controller.view_properties.period_selection = (period.start_time, period.end_time)
-        self.controller._redraw_timeline()
-
-    def get_last_valid_period(self):
-        return self._get_period(self.initial_time, self.last_valid_time)
-
-    def get_current_period(self):
-        return self._get_period(self.initial_time, self.current_time)
-
-    def _get_period(self, t1, t2):
-        if t1 > t2:
-            start = t2
-            end = t1
-        else:
-            start = t1
-            end = t2
-        return TimePeriod(
-            self.controller.get_timeline().get_time_type(), 
-            self.controller.get_drawer().snap(start),
-            self.controller.get_drawer().snap(end))
-
-    def left_mouse_up(self):
-        ScrollViewInputHandler.left_mouse_up(self)
-        self.controller.view_properties.period_selection = None
-        self.end_action()
-        self.controller.redraw_timeline()
-        self.controller.change_input_handler_to_no_op()
-
-    def end_action(self):
-        raise Exception("end_action not implemented in subclass.")
 
 
 class CreatePeriodEventByDragInputHandler(SelectPeriodByDragInputHandler):
