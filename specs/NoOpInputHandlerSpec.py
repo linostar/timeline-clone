@@ -22,9 +22,9 @@ from mock import Mock
 import wx
 
 from specs.utils import an_event, human_time_to_py
+from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.view.noop import NoOpInputHandler
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
-from timelinelib.wxgui.components.timelineview import DrawingArea
 
 
 class NoOpInputHandlerSpec(unittest.TestCase):
