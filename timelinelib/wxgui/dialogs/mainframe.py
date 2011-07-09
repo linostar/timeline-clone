@@ -30,7 +30,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
-from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 from timelinelib.wxgui.dialogs.eventform import EventFormDialog
@@ -768,7 +768,7 @@ class MainPanel(wx.Panel):
     Displays one of the following panels:
 
       * The welcome panel (show_welcome_panel)
-      * A splitter with sidebar and DrawingArea (show_timeline_panel)
+      * A splitter with sidebar and DrawingAreaPanel (show_timeline_panel)
       * The error panel (show_error_panel)
 
     Also displays the search bar.
@@ -902,7 +902,7 @@ class TimelinePanel(wx.Panel):
 
     def _create_drawing_area(self):
         main_frame = wx.GetTopLevelParent(self)
-        self.drawing_area = DrawingArea(
+        self.drawing_area = DrawingAreaPanel(
             self.splitter,
             main_frame.status_bar_adapter,
             self.divider_line_slider,

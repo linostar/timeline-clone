@@ -22,7 +22,7 @@ from mock import Mock
 
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.cattree import CategoriesTreeController
-from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.objects import Category
 
@@ -57,7 +57,7 @@ class CategoriesTreeSpec(unittest.TestCase):
         self.bar = Category("bar", (255, 0, 0), True, parent=None)
         self.db.get_categories.return_value = [self.foo, self.foofoo, self.bar]
         self.view = Mock(CategoriesTree)
-        self.timeline_view = Mock(DrawingArea)
+        self.timeline_view = Mock(DrawingAreaPanel)
         self.timeline_view.get_timeline.return_value = self.db
         self.timeline_view.get_view_properties.return_value = Mock()
         self.controller = CategoriesTreeController(self.view, None)

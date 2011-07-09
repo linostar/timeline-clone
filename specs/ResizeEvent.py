@@ -26,7 +26,7 @@ from specs.utils import an_event_with
 from specs.utils import human_time_to_py
 from specs.utils import py_period
 from timelinelib.view.resize import ResizeByDragInputHandler
-from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.components.timelineview import DrawingAreaController
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
@@ -64,7 +64,7 @@ class ResizeEventSpec(unittest.TestCase):
     def setUp(self):
         self.drawer = Mock()
         self.controller = Mock(DrawingAreaController)
-        self.controller.view = Mock(DrawingArea)
+        self.controller.view = Mock(DrawingAreaPanel)
         self.controller.get_drawer.return_value = self.drawer
         self.status_bar = Mock(StatusBarAdapter)
 

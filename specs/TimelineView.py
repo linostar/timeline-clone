@@ -28,7 +28,7 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
-from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.components.timelineview import DrawingAreaController
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
@@ -366,7 +366,7 @@ class TimelineViewSpec(unittest.TestCase):
 
     def setUp(self):
         self.db = MemoryDB()
-        self.view = Mock(DrawingArea)
+        self.view = Mock(DrawingAreaPanel)
         self.view.GetSizeTuple.return_value = (10, 10)
         self.status_bar_adapter = Mock(StatusBarAdapter)
         self.config = Mock(Config)

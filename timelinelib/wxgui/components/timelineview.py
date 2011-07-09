@@ -48,7 +48,7 @@ LEFT_RIGHT_SCROLL_FACTOR = 1 / 200.0
 MOUSE_SCROLL_FACTOR = 1 / 10.0
 
 
-class DrawingArea(wx.Panel):
+class DrawingAreaPanel(wx.Panel):
 
     def __init__(self, parent, status_bar_adapter, divider_line_slider,
                  fn_handle_db_error, config):

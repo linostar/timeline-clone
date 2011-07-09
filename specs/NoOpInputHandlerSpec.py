@@ -23,7 +23,7 @@ import wx
 
 from specs.utils import an_event, human_time_to_py
 from timelinelib.view.noop import NoOpInputHandler
-from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.components.timelineview import DrawingAreaController
 
 
@@ -40,7 +40,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
 
     def setUp(self):
         self.setup_drawing_area_mock()
-        self.view = Mock(DrawingArea)
+        self.view = Mock(DrawingAreaPanel)
         self.handler = NoOpInputHandler(self.drawing_area, self.view)
 
     def setup_drawing_area_mock(self):
