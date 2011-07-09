@@ -24,7 +24,7 @@ import wx
 from specs.utils import an_event, human_time_to_py
 from timelinelib.view.noop import NoOpInputHandler
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
-from timelinelib.wxgui.components.timelineview import DrawingAreaController
+from timelinelib.wxgui.components.timelineview import DrawingArea
 
 
 class NoOpInputHandlerSpec(unittest.TestCase):
@@ -47,7 +47,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.times_at = {}
         self.events_at = {}
         self.selected_events = []
-        self.drawing_area = Mock(DrawingAreaController)
+        self.drawing_area = Mock(DrawingArea)
         self.drawing_area.drawing_algorithm = Mock()
         self.drawing_area.view_properties = Mock()
         self.drawing_area.get_time.side_effect = lambda x: self.times_at[x]

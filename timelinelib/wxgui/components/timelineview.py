@@ -53,7 +53,7 @@ class DrawingAreaPanel(wx.Panel):
     def __init__(self, parent, status_bar_adapter, divider_line_slider,
                  fn_handle_db_error, config):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
-        self.controller = DrawingAreaController(
+        self.controller = DrawingArea(
             self, status_bar_adapter, config, get_drawer(),
             divider_line_slider, fn_handle_db_error)
         self.surface_bitmap = None
@@ -221,7 +221,7 @@ class DrawingAreaPanel(wx.Panel):
         self.controller.key_up(evt.GetKeyCode())
 
 
-class DrawingAreaController(object):
+class DrawingArea(object):
 
     def __init__(self, view, status_bar_adapter, config, drawing_algorithm,
                  divider_line_slider, fn_handle_db_error):
