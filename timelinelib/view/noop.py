@@ -27,11 +27,11 @@ HIT_REGION_PX_WITH = 5
 
 class NoOpInputHandler(InputHandler):
 
-    def __init__(self, controller, view):
-        self.controller = controller
-        self.view = view
-        self.drawer = controller.drawing_algorithm
-        self.view_properties = controller.view_properties
+    def __init__(self, drawing_area, drawing_area_view):
+        self.drawing_area = drawing_area
+        self.drawing_area_view = drawing_area_view
+        self.drawer = drawing_area.drawing_algorithm
+        self.view_properties = drawing_area.view_properties
         self.show_timer_running = False
         self.hide_timer_running = False
         self.last_hovered_event = None
@@ -39,28 +39,28 @@ class NoOpInputHandler(InputHandler):
 
     def left_mouse_down(self, x, y, ctrl_down, shift_down):
         self._toggle_balloon_stickyness(x, y)
-        event = self.drawer.event_at(x, y)
-        time_at_x = self.controller.get_time(x)
+        event = self.drawing_area.event_at(x, y)
+        time_at_x = self.drawing_area.get_time(x)
         if self._hit_resize_handle(x, y) is not None:
             direction = self._hit_resize_handle(x, y)
-            self.controller.change_input_handler_to_resize_by_drag(event, direction)
+            self.drawing_area.change_input_handler_to_resize_by_drag(event, direction)
             return
         if self._hit_move_handle(x, y):
-            self.controller.change_input_handler_to_move_by_drag(event, time_at_x)
+            self.drawing_area.change_input_handler_to_move_by_drag(event, time_at_x)
             return
         if (event is None and ctrl_down == False and shift_down == False):
-            self.controller._toggle_event_selection(x, y, ctrl_down)
-            self.controller.change_input_handler_to_scroll_by_drag(time_at_x)
+            self.drawing_area._toggle_event_selection(x, y, ctrl_down)
+            self.drawing_area.change_input_handler_to_scroll_by_drag(time_at_x)
             return
         if (event is None and ctrl_down == True):
-            self.controller._toggle_event_selection(x, y, ctrl_down)
-            self.controller.change_input_handler_to_create_period_event_by_drag(time_at_x)
+            self.drawing_area._toggle_event_selection(x, y, ctrl_down)
+            self.drawing_area.change_input_handler_to_create_period_event_by_drag(time_at_x)
             return
         if (event is None and shift_down == True):
-            self.controller._toggle_event_selection(x, y, ctrl_down)
-            self.controller.change_input_handler_to_zoom_by_drag(time_at_x)
+            self.drawing_area._toggle_event_selection(x, y, ctrl_down)
+            self.drawing_area.change_input_handler_to_zoom_by_drag(time_at_x)
             return
-        self.controller._toggle_event_selection(x, y, ctrl_down)
+        self.drawing_area._toggle_event_selection(x, y, ctrl_down)
 
     def _toggle_balloon_stickyness(self, x, y):
         event_with_balloon = self.drawer.balloon_at(x, y)
@@ -68,24 +68,24 @@ class NoOpInputHandler(InputHandler):
             stick = not self.view_properties.event_has_sticky_balloon(event_with_balloon)
             self.view_properties.set_event_has_sticky_balloon(event_with_balloon, has_sticky=stick)
             if stick:
-                self.controller._redraw_timeline()
+                self.drawing_area._redraw_timeline()
             else:
                 if self.view_properties.show_balloons_on_hover:
-                    self.controller._redraw_balloons(event_with_balloon)
+                    self.drawing_area._redraw_balloons(event_with_balloon)
                 else:
-                    self.controller._redraw_balloons(None)
+                    self.drawing_area._redraw_balloons(None)
 
     def mouse_moved(self, x, y):
-        self.last_hovered_event = self.drawer.event_at(x, y)
+        self.last_hovered_event = self.drawing_area.event_at(x, y)
         self.last_hovered_balloon_event = self.drawer.balloon_at(x, y)
         self._start_balloon_timers()
-        self.controller._display_eventinfo_in_statusbar(x, y)
+        self.drawing_area._display_eventinfo_in_statusbar(x, y)
         if self._hit_resize_handle(x, y) is not None:
-            self.view.set_size_cursor()
+            self.drawing_area_view.set_size_cursor()
         elif self._hit_move_handle(x, y):
-            self.view.set_move_cursor()
+            self.drawing_area_view.set_move_cursor()
         else:
-            self.view.set_default_cursor()
+            self.drawing_area_view.set_default_cursor()
 
     def _start_balloon_timers(self):
         if self._balloons_disabled():
@@ -97,10 +97,10 @@ class NoOpInputHandler(InputHandler):
         if self.hide_timer_running:
             return
         if self._should_start_balloon_show_timer():
-            self.view.start_balloon_show_timer(milliseconds=500, oneShot=True)
+            self.drawing_area_view.start_balloon_show_timer(milliseconds=500, oneShot=True)
             self.show_timer_running = True
         elif self._should_start_balloon_hide_timer():
-            self.view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
+            self.drawing_area_view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
             self.hide_timer_running = True
 
     def _balloons_disabled(self):
@@ -108,7 +108,7 @@ class NoOpInputHandler(InputHandler):
 
     def _current_event_selected(self):
         return (self.last_hovered_event is not None and
-                self.view_properties.is_selected(self.last_hovered_event))
+                self.drawing_area.is_selected(self.last_hovered_event))
 
     def _should_start_balloon_show_timer(self):
         return (self._mouse_is_over_event() and
@@ -134,7 +134,7 @@ class NoOpInputHandler(InputHandler):
 
     def balloon_show_timer_fired(self):
         self.show_timer_running = False
-        self.controller._redraw_balloons(self.last_hovered_event)
+        self.drawing_area._redraw_balloons(self.last_hovered_event)
 
     def balloon_hide_timer_fired(self):
         self.hide_timer_running = False
@@ -147,16 +147,16 @@ class NoOpInputHandler(InputHandler):
         # If the visible balloon doesn't belong to the event pointed to
         # we remove the ballloon.
         if hevt != cevt and hevt != bevt: 
-            self.controller._redraw_balloons(None)
+            self.drawing_area._redraw_balloons(None)
 
     def _hit_move_handle(self, x, y):
-        event_and_rect = self.drawer.event_with_rect_at(x, y)
+        event_and_rect = self.drawing_area.event_with_rect_at(x, y)
         if event_and_rect is None:
             return False
         event, rect = event_and_rect
         if event.locked:
             return None
-        if not self.controller.get_view_properties().is_selected(event):
+        if not self.drawing_area.is_selected(event):
             return False
         center = rect.X + rect.Width / 2
         if abs(x - center) <= HIT_REGION_PX_WITH:
@@ -164,13 +164,13 @@ class NoOpInputHandler(InputHandler):
         return False
 
     def _hit_resize_handle(self, x, y):
-        event_and_rect = self.drawer.event_with_rect_at(x, y)
+        event_and_rect = self.drawing_area.event_with_rect_at(x, y)
         if event_and_rect == None:
             return None
         event, rect = event_and_rect
         if event.locked:
             return None
-        if not self.controller.get_view_properties().is_selected(event):
+        if not self.drawing_area.is_selected(event):
             return None
         if abs(x - rect.X) < HIT_REGION_PX_WITH:
             return wx.LEFT

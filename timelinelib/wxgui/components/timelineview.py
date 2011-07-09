@@ -436,6 +436,15 @@ class DrawingAreaController(object):
     def get_time(self, x):
         return self.drawing_algorithm.get_time(x)
 
+    def event_with_rect_at(self, x, y):
+        return self.drawing_algorithm.event_with_rect_at(x, y)
+
+    def event_at(self, x, y):
+        return self.drawing_algorithm.event_at(x, y)
+
+    def is_selected(self, event):
+        return self.view_properties.is_selected(event)
+
     def middle_mouse_clicked(self, x):
         self.navigate_timeline(lambda tp: tp.center(self.get_time(x)))
 
