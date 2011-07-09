@@ -30,6 +30,7 @@ from timelinelib.view.inputhandler import InputHandler
 from timelinelib.view.move import MoveByDragInputHandler
 from timelinelib.view.noop import NoOpInputHandler
 from timelinelib.view.periodbase import SelectPeriodByDragInputHandler
+from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
@@ -646,14 +647,3 @@ class DrawingArea(object):
         # TODO: Do we really need that?
         if not visible:
             self._redraw_timeline()
-
-
-class CreatePeriodEventByDragInputHandler(SelectPeriodByDragInputHandler):
-
-    def __init__(self, controller, view, initial_time):
-        SelectPeriodByDragInputHandler.__init__(self, controller, initial_time)
-        self.view = view
-
-    def end_action(self):
-        period = self.get_last_valid_period()
-        self.view.create_new_event(period.start_time, period.end_time)
