@@ -198,7 +198,7 @@ class TimePeriod(object):
         by the time_type object.
         """
         self.time_type = time_type
-        self.update(start_time, end_time)
+        self.start_time, self.end_time = self._update(start_time, end_time)
 
     def clone(self):
         return TimePeriod(self.time_type, self.start_time, self.end_time)
@@ -217,6 +217,11 @@ class TimePeriod(object):
 
     def update(self, start_time, end_time,
                start_delta=None, end_delta=None):
+        new_start, new_end = self._update(start_time, end_time, start_delta, end_delta)
+        return TimePeriod(self.time_type, new_start, new_end)
+
+    def _update(self, start_time, end_time,
+               start_delta=None, end_delta=None):
         """
         Change the time period data.
 
@@ -234,9 +239,7 @@ class TimePeriod(object):
         new_end = self._ensure_within_range(end_time, end_delta,
                                             _("End time "))
         self._assert_period_is_valid(new_start, new_end)
-        self.start_time = new_start
-        self.end_time = new_end
-        return self
+        return (new_start, new_end)
 
     def _assert_period_is_valid(self, new_start, new_end):
         self._assert_start_gt_end(new_start, new_end)

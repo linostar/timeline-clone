@@ -109,9 +109,9 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
 
     def when_navigating(self, fn, start, end):
         def navigation_fn(fn):
-            fn(self.time_period)
+            self.new_period = fn(self.time_period)
         self.time_period = py_period(start, end)
         fn(None, self.time_period, navigation_fn)
 
     def then_period_becomes(self, start, end):
-        self.assertEquals(py_period(start, end), self.time_period)
+        self.assertEquals(py_period(start, end), self.new_period)
