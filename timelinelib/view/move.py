@@ -47,7 +47,7 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
         delta = current_time - self.start_drag_time
         new_start = self.event_start_time + delta
         new_end = self.event_end_time + delta
-        self.event.time_period.update(new_start, new_end)
+        self.event.time_period = self.event.time_period.update(new_start, new_end)
         if self.controller.event_is_period(self.event):
             self._snap()
         self.controller.redraw_timeline()

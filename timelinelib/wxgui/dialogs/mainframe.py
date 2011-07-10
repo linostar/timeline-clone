@@ -478,7 +478,7 @@ class MainFrame(wx.Frame):
         if all_period == None:
             return
         if all_period.is_period():
-            all_period.zoom(-1)
+            all_period = all_period.zoom(-1)
             self._navigate_timeline(lambda tp: tp.update(all_period.start_time, all_period.end_time))
         else:
             self._navigate_timeline(lambda tp: tp.center(all_period.mean_time()))

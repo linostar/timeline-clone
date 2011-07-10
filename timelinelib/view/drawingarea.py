@@ -159,7 +159,7 @@ class DrawingArea(object):
         if self.timeline == None:
             raise Exception(_("No timeline set"))
         try:
-            navigation_fn(self.view_properties.displayed_period)
+            self.view_properties.displayed_period = navigation_fn(self.view_properties.displayed_period)
             self._redraw_timeline()
             self.status_bar_adapter.set_text("")
         except (TimeOutOfRangeLeftError), e:
