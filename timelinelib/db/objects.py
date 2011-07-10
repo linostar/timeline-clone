@@ -236,6 +236,7 @@ class TimePeriod(object):
         self._assert_period_is_valid(new_start, new_end)
         self.start_time = new_start
         self.end_time = new_end
+        return self
 
     def _assert_period_is_valid(self, new_start, new_end):
         self._assert_start_gt_end(new_start, new_end)
@@ -286,7 +287,7 @@ class TimePeriod(object):
             raise ValueError(max_zoom_error_text)
         if new_delta < MIN_ZOOM_DELTA:
             raise ValueError(min_zoom_error_text)
-        self.update(self.start_time, self.end_time, start_delta, end_delta)
+        return self.update(self.start_time, self.end_time, start_delta, end_delta)
 
     def move(self, direction):
         """
@@ -296,10 +297,10 @@ class TimePeriod(object):
         right.
         """
         delta = self.time_type.mult_timedelta(self.delta(), direction / 10.0)
-        self.move_delta(delta)
+        return self.move_delta(delta)
 
     def move_delta(self, delta):
-        self.update(self.start_time, self.end_time, delta, delta)
+        return self.update(self.start_time, self.end_time, delta, delta)
 
     def delta(self):
         """Return the length of this time period as a timedelta object."""
@@ -318,7 +319,7 @@ class TimePeriod(object):
             delta = self.time_type.get_min_time()[0] - self.start_time
         elif end_overflow == 1:
             delta = self.time_type.get_max_time()[0] - self.end_time
-        self.move_delta(delta)
+        return self.move_delta(delta)
 
     def _ensure_within_range(self, time, delta, error_prefix):
         """
