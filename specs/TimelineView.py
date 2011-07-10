@@ -235,16 +235,6 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_is_selected(period_event)
         self.assert_is_selected(point_event)
 
-    def test_moves_event_when_dragging_move_icon_on_event(self):
-        self.given_time_at_x_is(10, "2 Aug 2010")
-        self.given_time_at_x_is(20, "3 Aug 2010")
-        event = self.given_event_with(start="2 Aug 2010", end="4 Aug 2010", pos=(10, 60), size=(30, 10))
-        self.init_view_with_db()
-        self.simulate_mouse_click(20, 65)
-        self.simulate_mouse_down_move_up((20, 65), (10, 65))
-        self.assert_event_has_period(event, "1 Aug 2010", "3 Aug 2010")
-        self.assert_timeline_redrawn()
-
     def test_displays_move_cursor_when_hovering_move_icon_on_event(self):
         event = self.given_event_with(pos=(0, 60), size=(30, 10))
         self.init_view_with_db()

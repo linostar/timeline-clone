@@ -267,6 +267,9 @@ class DrawingArea(object):
     def is_selected(self, event):
         return self.view_properties.is_selected(event)
 
+    def event_is_period(self, event):
+        return self.get_drawer().event_is_period(event.time_period)
+
     def middle_mouse_clicked(self, x):
         self.navigate_timeline(lambda tp: tp.center(self.get_time(x)))
 
