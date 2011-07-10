@@ -67,7 +67,10 @@ class Event(object):
         """Change the event period."""
         self.time_period = TimePeriod(self.db.get_time_type(), start_time, 
                                       end_time)
-        
+
+    def update_period_o(self, new_period):
+        self.update_period(new_period.start_time, new_period.end_time)
+
     def update_start(self, start_time):
         """Change the event data."""
         if start_time <= self.time_period.end_time:

@@ -34,10 +34,27 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
         self.assert_event_has_period("5 Jan 2011", "5 Jan 2011")
 
     def test_moves_period_events(self):
+        self.given_no_snap()
         self.given_time_at_x_is(50, human_time_to_py("5 Jan 2011"))
         self.when_moving(an_event_with(start="1 Jan 2011", end="3 Jan 2011"),
                          from_time="3 Jan 2011", to_x=50)
         self.assert_event_has_period("3 Jan 2011", "5 Jan 2011")
+
+    def test_snaps_period_events_to_the_left(self):
+        self.given_snaps("3 Jan 2011", "4 Jan 2011")
+        self.given_snaps("4 Jan 2011", "6 Jan 2011")
+        self.given_time_at_x_is(50, human_time_to_py("5 Jan 2011"))
+        self.when_moving(an_event_with(start="1 Jan 2011", end="2 Jan 2011"),
+                         from_time="3 Jan 2011", to_x=50)
+        self.assert_event_has_period("4 Jan 2011", "5 Jan 2011")
+
+    def test_snaps_period_events_to_the_right(self):
+        self.given_snaps("3 Jan 2011", "3 Jan 2011")
+        self.given_snaps("4 Jan 2011", "6 Jan 2011")
+        self.given_time_at_x_is(50, human_time_to_py("5 Jan 2011"))
+        self.when_moving(an_event_with(start="1 Jan 2011", end="2 Jan 2011"),
+                         from_time="3 Jan 2011", to_x=50)
+        self.assert_event_has_period("5 Jan 2011", "6 Jan 2011")
 
     def test_redraws_timeline_after_move(self):
         self.given_time_at_x_is(50, human_time_to_py("5 Jan 2011"))
@@ -46,19 +63,27 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
 
     def setUp(self):
         self.times_at = {}
+        self.period_events = []
+        self.snap_times = {}
         self.drawing_area = Mock(DrawingArea)
         self.drawing_area.view = Mock()
         self.drawing_area.get_time.side_effect = lambda x: self.times_at[x]
-        self.given_no_snap()
+        self.drawing_area.event_is_period.side_effect = lambda event: event in self.period_events
+        self.drawing_area.snap.side_effect = lambda time: self.snap_times[time]
+
+    def given_snaps(self, from_, to):
+        self.snap_times[human_time_to_py(from_)] = human_time_to_py(to)
 
     def given_no_snap(self):
-        self.drawing_area.event_is_period.return_value = False
+        self.drawing_area.snap.side_effect = lambda x: x
 
     def given_time_at_x_is(self, x, time):
         self.times_at[x] = time
 
     def when_moving(self, event, from_time, to_x):
         self.moved_event = event
+        if event.is_period():
+            self.period_events.append(event)
         handler = MoveByDragInputHandler(self.drawing_area, event, human_time_to_py(from_time))
         handler.mouse_moved(to_x, 10)
 

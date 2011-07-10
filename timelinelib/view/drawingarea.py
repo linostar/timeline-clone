@@ -270,6 +270,9 @@ class DrawingArea(object):
     def event_is_period(self, event):
         return self.get_drawer().event_is_period(event.time_period)
 
+    def snap(self, time):
+        return self.get_drawer().snap(time)
+
     def middle_mouse_clicked(self, x):
         self.navigate_timeline(lambda tp: tp.center(self.get_time(x)))
 
