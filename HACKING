@@ -4,8 +4,8 @@ source code.
 Mercurial on Windows
 ====================
 
-Windows users should use the Win32Text extension as described here:
-<http://mercurial.selenic.com/wiki/Win32TextExtension>.
+Windows users should use the EOL extension as described here:
+<http://mercurial.selenic.com/wiki/EolExtension>.
 
 Coding Guidelines
 =================
