@@ -273,6 +273,10 @@ class DrawingArea(object):
     def snap(self, time):
         return self.get_drawer().snap(time)
 
+    def get_selected_events(self):
+        return [self.timeline.find_event_with_id(id_) for id_ in
+                self.view_properties.get_selected_event_ids()]
+
     def middle_mouse_clicked(self, x):
         self.navigate_timeline(lambda tp: tp.center(self.get_time(x)))
 

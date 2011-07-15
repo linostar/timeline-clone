@@ -24,9 +24,18 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
     def __init__(self, drawing_area, event, start_drag_time):
         ScrollViewInputHandler.__init__(self, drawing_area)
         self.drawing_area = drawing_area
-        self.event = event
-        self.original_period = self.event.time_period
         self.start_drag_time = start_drag_time
+        self._store_event_periods(event)
+
+    def _store_event_periods(self, event_being_dragged):
+        self.event_periods = []
+        for event in self.drawing_area.get_selected_events():
+            period_pair = (event, event.time_period)
+            if event == event_being_dragged:
+                self.event_periods.insert(0, period_pair)
+            else:
+                self.event_periods.append(period_pair)
+        assert self.event_periods[0][0] == event_being_dragged
 
     def mouse_moved(self, x, y):
         ScrollViewInputHandler.mouse_moved(self, x, y)
@@ -40,18 +49,22 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
         self._move_event()
 
     def _move_event(self):
-        if self.event.locked:
+        if self.event_periods[0][0].locked:
             return
-        self.event.update_period_o(
-            self.original_period.move_delta(self._get_total_move_delta()))
+        self._move_selected_events()
         self.drawing_area.redraw_timeline()
+
+    def _move_selected_events(self):
+        total_move_delta = self._get_total_move_delta()
+        for (event, original_period) in self.event_periods:
+            event.update_period_o(original_period.move_delta(total_move_delta))
 
     def _get_total_move_delta(self):
         moved_delta = self._get_moved_delta()
-        if self.drawing_area.event_is_period(self.event):
-            new_period = self.original_period.move_delta(moved_delta)
+        if self.drawing_area.event_is_period(self.event_periods[0][0]):
+            new_period = self.event_periods[0][1].move_delta(moved_delta)
             snapped_period = self._snap(new_period)
-            return snapped_period.start_time - self.original_period.start_time
+            return snapped_period.start_time - self.event_periods[0][1].start_time
         else:
             return moved_delta
 
