@@ -21,9 +21,10 @@ from timelinelib.view.scrollbase import ScrollViewInputHandler
      
 class MoveByDragInputHandler(ScrollViewInputHandler):
 
-    def __init__(self, drawing_area, event, start_drag_time):
+    def __init__(self, drawing_area, status_bar_adapter, event, start_drag_time):
         ScrollViewInputHandler.__init__(self, drawing_area)
         self.drawing_area = drawing_area
+        self.status_bar_adapter = status_bar_adapter
         self.start_drag_time = start_drag_time
         self._store_event_periods(event)
 
@@ -43,16 +44,24 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def left_mouse_up(self):
         ScrollViewInputHandler.left_mouse_up(self)
+        self.status_bar_adapter.set_text("")
         self.drawing_area.change_input_handler_to_no_op()
 
     def view_scrolled(self):
         self._move_event()
 
     def _move_event(self):
-        if self.event_periods[0][0].locked:
+        if self._any_event_locked():
+            self.status_bar_adapter.set_text(_("Can't move locked event"))
             return
         self._move_selected_events()
         self.drawing_area.redraw_timeline()
+
+    def _any_event_locked(self):
+        for (event, original_period) in self.event_periods:
+            if event.locked:
+                return True
+        return False
 
     def _move_selected_events(self):
         total_move_delta = self._get_total_move_delta()

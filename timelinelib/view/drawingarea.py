@@ -71,7 +71,8 @@ class DrawingArea(object):
             self, self.status_bar_adapter, event, direction)
 
     def change_input_handler_to_move_by_drag(self, event, start_drag_time):
-        self.input_handler = MoveByDragInputHandler(self, event, start_drag_time)
+        self.input_handler = MoveByDragInputHandler(
+            self, self.status_bar_adapter, event, start_drag_time)
 
     def change_input_handler_to_scroll_by_drag(self, start_time):
         self.input_handler = ScrollByDragInputHandler(self, start_time)
