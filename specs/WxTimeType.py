@@ -32,29 +32,49 @@ class WxTimeTypeSpec(unittest.TestCase):
     def setUp(self):
         self.time_type = WxTimeType()
 
-    def testConvertsWxDateTimeToString(self):
+    def test_time_string_method(self):
         self.assertEquals(
             "2010-08-31 13:44:00",
             self.time_type.time_string(wx.DateTimeFromDMY(31, 7, 2010, 13, 44)))
 
-    def testParsesWxDateTimeFromString(self):
+    def test_event_date_string_method(self):
+        self.assertEquals(
+            "2010-08-31",
+            self.time_type.event_date_string(wx.DateTimeFromDMY(31, 7, 2010, 13, 44, 22)))
+
+    def test_event_time_string_method(self):
+        self.assertEquals(
+            "13:44",
+            self.time_type.event_time_string(wx.DateTimeFromDMY(31, 7, 2010, 13, 44, 22)))
+
+    def test_eventtimes_equals_method_when_equals(self):
+        self.assertTrue(
+            self.time_type.eventtimes_equals(wx.DateTimeFromDMY(31, 7, 2010, 13, 44, 22),
+                                             wx.DateTimeFromDMY(31, 7, 2010, 13, 44, 00)))
+
+    def test_eventtimes_equals_method_when_not_equals(self):
+        self.assertFalse(
+            self.time_type.eventtimes_equals(wx.DateTimeFromDMY(31, 7, 2010, 13, 44, 22),
+                                             wx.DateTimeFromDMY(31, 6, 2010, 13, 44, 22)))
+        
+    def test_parse_time_method(self):
         self.assertEquals(
             wx.DateTimeFromDMY(31, 7, 2010, 13, 44),
             self.time_type.parse_time("2010-08-31 13:44:00"))
 
-    def testRaisesValueErrorWhenParsingInvalidTime(self):
+    def test_raises_ValueError_when_parsing_invalid_time(self):
         # This test don't run in windows
         if platform.system() != "Windows":
             self.assertRaises(
                 ValueError,
                 self.time_type.parse_time, "2010-31-31 0:0:0")
 
-    def testRaisesValueErrorWhenParsingBadlyFormattedTime(self):
+    def test_raises_ValueError_when_parsing_badly_formatted_time(self):
         self.assertRaises(
             ValueError,
             self.time_type.parse_time, "2010-31-hello 0:0:0")
 
-    def testFormatsPeriodToString(self):
+    def test_format_period_method(self):
         time_period = TimePeriod(self.time_type, 
                                  wx.DateTimeFromDMY(1, 7, 2010, 13, 44),
                                  wx.DateTimeFromDMY(2, 7, 2010, 13, 30))
@@ -62,22 +82,22 @@ class WxTimeTypeSpec(unittest.TestCase):
             u"01 %s 2010 13:44 to 02 %s 2010 13:30" % (_("Aug"), _("Aug")),
             self.time_type.format_period(time_period))
 
-    def testReturnsYear4700BcAsMinTime(self):
+    def test_returns_year_4700_bc_as_min_time(self):
         self.assertEquals(
             wx.DateTimeFromDMY(1, 0, -4700),
             self.time_type.get_min_time()[0])
 
-    def testReturnsYear120000AsMaxTime(self):
+    def test_returns_year_120000_as_max_time(self):
         self.assertEquals(
             wx.DateTimeFromDMY(1, 0, 120000),
             self.time_type.get_max_time()[0])
 
-    def testReturnsMarginDelta(self):
+    def test_returns_margin_delta(self):
         delta = wx.TimeSpan.Days(days=48)
         margin_delta = self.time_type.margin_delta(delta)
         self.assertEquals(wx.TimeSpan.Days(2), margin_delta) 
         
-    def testReturnsHalfDelta(self):
+    def test_returns_half_delta(self):
         delta = wx.TimeSpan.Days(100 * 365)
         half_delta = self.time_type.half_delta(delta)
         self.assertEquals(wx.TimeSpan.Days(50 * 365).GetMilliseconds(), 

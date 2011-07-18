@@ -236,7 +236,7 @@ class PyDatePickerController(object):
         self.py_date_picker = py_date_picker
         self.error_bg = error_bg
         self.original_bg = self.py_date_picker.GetBackgroundColour()
-        self.separator = "-"
+        self.separator = PyTimeType().event_date_string(PyTimeType().now())[4]
         self.region_year = 0
         self.region_month = 1
         self.region_day = 2
@@ -256,11 +256,7 @@ class PyDatePickerController(object):
             raise ValueError("Invalid date.")
 
     def set_py_date(self, py_date):
-        year_string = "%04d" % py_date.year
-        month_string = "%02d" % py_date.month
-        day_string = "%02d" % py_date.day
-        date_components = [year_string, month_string, day_string]
-        date_string = self.separator.join(date_components)
+        date_string = PyTimeType().event_date_string(py_date)
         self.py_date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
@@ -524,7 +520,7 @@ class PyTimePickerController(object):
     def __init__(self, py_time_picker):
         self.py_time_picker = py_time_picker
         self.original_bg = self.py_time_picker.GetBackgroundColour()
-        self.separator = ":"
+        self.separator = PyTimeType().event_time_string(PyTimeType().now())[2]
         self.hour_part = 0
         self.minute_part = 1
         self.last_selection = None
@@ -542,7 +538,7 @@ class PyTimePickerController(object):
             raise ValueError("Invalid time.")
 
     def set_py_time(self, py_time):
-        time_string = "%02d:%02d" % (py_time.hour, py_time.minute)
+        time_string = PyTimeType().event_time_string(py_time)
         self.py_time_picker.set_time_string(time_string)
 
     def on_set_focus(self):

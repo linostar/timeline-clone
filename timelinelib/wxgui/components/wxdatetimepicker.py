@@ -252,7 +252,7 @@ class WxDatePickerController(object):
         self.wx_date_picker = py_date_picker
         self.error_bg = error_bg
         self.original_bg = self.wx_date_picker.GetBackgroundColour()
-        self.separator = "-"
+        self.separator = WxTimeType().event_date_string(WxTimeType().now())[4]
         self.region_year = 0
         self.region_month = 1
         self.region_day = 2
@@ -272,11 +272,7 @@ class WxDatePickerController(object):
             raise ValueError("Invalid date.")
 
     def set_date(self, wx_date):
-        year_string = "%04d" % wx_date.Year
-        month_string = "%02d" % (wx_date.Month + 1)
-        day_string = "%02d" % wx_date.Day
-        date_components = [year_string, month_string, day_string]
-        date_string = self.separator.join(date_components)
+        date_string = WxTimeType().event_date_string(wx_date)
         self.wx_date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
@@ -398,7 +394,7 @@ class WxDatePickerController(object):
     def _parse_year_month_day(self):
         date_string = self.wx_date_picker.get_date_string()
         date_bc = False 
-        if (date_string[0:1] == "-"):
+        if (date_string[0:1] == self.separator):
             date_string = date_string[1:]
             date_bc = True 
         components = date_string.split(self.separator)
@@ -556,7 +552,7 @@ class WxTimePickerController(object):
     def __init__(self, wx_time_picker):
         self.wx_time_picker = wx_time_picker
         self.original_bg = self.wx_time_picker.GetBackgroundColour()
-        self.separator = ":"
+        self.separator = WxTimeType().event_time_string(WxTimeType().now())[2]
         self.hour_part = 0
         self.minute_part = 1
         self.last_selection = None
@@ -574,7 +570,7 @@ class WxTimePickerController(object):
             raise ValueError("Invalid time.")
 
     def set_time(self, wx_time):
-        time_string = "%02d:%02d" % (wx_time.GetHour(), wx_time.GetMinute())
+        time_string = WxTimeType().event_time_string(wx_time)
         self.wx_time_picker.set_time_string(time_string)
 
     def on_set_focus(self):

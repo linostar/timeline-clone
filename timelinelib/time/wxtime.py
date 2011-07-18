@@ -211,10 +211,18 @@ class WxTimeType(TimeType):
     def margin_delta(self, delta):
         microseconds = delta_to_microseconds(delta) / 24
         return microseconds_to_delta(microseconds)
+
+    def event_date_string(self, time):
+        return time.Format("%Y-%m-%d")
+    
+    def event_time_string(self, time):
+        return time.Format("%H:%M")
     
     def eventtimes_equals(self, time1, time2):
-        s1 = time1.Format("%Y-%m-%d %H:%M")
-        s2 = time2.Format("%Y-%m-%d %H:%M")
+        s1 = "%s %s" % (self.event_date_string(time1), 
+                        self.event_date_string(time1))
+        s2 = "%s %s" % (self.event_date_string(time2), 
+                        self.event_date_string(time2))
         return s1 == s2 
     
         
