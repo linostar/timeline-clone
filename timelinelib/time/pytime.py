@@ -209,6 +209,13 @@ class PyTimeType(TimeType):
     def margin_delta(self, delta):
         return delta / 24
 
+    def eventtimes_equals(self, time1, time2):
+        s1 = "%s-%s-%s %s:%s" % (time1.year, time1.month, time1.day, 
+                                 time1.hour, time1.minute)
+        s2 = "%s-%s-%s %s:%s" % (time2.year, time2.month, time2.day,
+                                 time2.hour, time2.minute)
+        return s1 == s2 
+    
     
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

@@ -212,7 +212,12 @@ class WxTimeType(TimeType):
         microseconds = delta_to_microseconds(delta) / 24
         return microseconds_to_delta(microseconds)
     
+    def eventtimes_equals(self, time1, time2):
+        s1 = time1.Format("%Y-%m-%d %H:%M")
+        s2 = time2.Format("%Y-%m-%d %H:%M")
+        return s1 == s2 
     
+        
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(wx.DateTime.Now()))
 
@@ -688,3 +693,4 @@ def try_to_create_wx_date_time_from_dmy(day, month, year, hour=0, minute=0, seco
         if not datetime.IsValid():
             fail_with_invalid_date()
         return datetime
+

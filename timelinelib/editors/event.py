@@ -110,12 +110,12 @@ class EventEditor(object):
             self._exception_if_end_has_changed(end)
     
     def _exception_if_start_has_changed(self, start):
-        if self.start != start:
+        if not self.db.get_time_type().eventtimes_equals(self.start, start):
             self.view.set_start(self.start)
             self._exception_when_start_or_end_has_changed()
 
     def _exception_if_end_has_changed(self, end):
-        if self.end != end:
+        if not self.db.get_time_type().eventtimes_equals(self.end, end):
             self.view.set_end(self.end)
             self._exception_when_start_or_end_has_changed()
 
