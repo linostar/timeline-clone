@@ -1,6 +1,29 @@
 Timeline 0.14.0, released on 30 July 2011
 =========================================
 
+This is a new feature release.
+
+New features, enhancements:
+
+  * Move all selected events
+  * Mark event period as fuzzy and edges will change to triangles
+  * Mark event period as locked and edges will be curved and the event can not
+    be moved or resized
+  * Mark event as ending today and its period will be updated to end today
+  * Experimental support for inertial scrolling (can be enabled in preferences)
+  * Shows status text when zooming
+
+Bug fixes:
+
+  * Not possible to select too large period when zooming with shift+drag
+  * Prevent exception (in cases when year was out of range) when scrolling with
+    page up/down
+  * Show user friendly message when creating event with too long period
+  * Display error message in status bar if period is too long when resizing
+    event
+  * No time exception when exporting to SVG
+  * No exception when using extended date range and exporting to SVG
+
 Timeline 0.13.0, released on 30 April 2011
 ==========================================
 
