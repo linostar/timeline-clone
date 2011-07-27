@@ -19,8 +19,12 @@
 
 
 import datetime
+import os.path
+import sys
 import traceback
 
+# Make sure that we can import mechanize
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "libs", "dev"))
 import mechanize
 import wx
 
@@ -248,7 +252,7 @@ class MainFrameController(object):
 
     def on_version_to_release_edited(self):
         self.view.set_sf_news_header(
-            "Timeline version %s released" % self.view.get_version_to_release())
+            "Version %s released" % self.view.get_version_to_release())
         if self._release_is_major_version():
             self.view.enable_input_of_next_version()
             self.view.enable_input_of_next_version_release_date()
