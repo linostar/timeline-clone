@@ -30,9 +30,9 @@ For translations (other than English) you also need the following:
 
 Extra development tools:
 
-  * Mock version 0.6.0 or greater (for running tests, included in repo)
+  * Mock version 0.7.2 (for running tests, included in repo)
       http://www.voidspace.org.uk/python/mock/
-  * Mechanize version 0.2.5 or greater (for release announcer, included in repo)
+  * Mechanize version 0.2.5 (for release announcer, included in repo)
       http://wwwsearch.sourceforge.net/mechanize/
 
 Installing prerequisites on a Debian-based system
