@@ -16,9 +16,9 @@ Optional:
 
   * Markdown version 1.7 or greater (for viewing help pages)
       http://www.freewisdom.org/projects/python-markdown/
-  * iCalendar version 2.1 or greater (for working with ics files)
+  * iCalendar version 2.1 (for working with ics files, included in repo)
       http://pypi.python.org/pypi/icalendar/2.1
-  * pysvg version 0.2.1 or greater (for exporting to SVG)
+  * pysvg version 0.2.1 (for exporting to SVG, included in repo)
       http://codeboje.de/pysvg/
 
 For translations (other than English) you also need the following:
