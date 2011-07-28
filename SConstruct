@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-SCons configuration file.
-"""
-
 import os
 
 env = Environment()
@@ -30,7 +26,6 @@ Targets:
 
   mo      - compiled translations
   pot     - translation template
-  tags    - tags file for the Vim text editor
   hacking - html version of HACKING
 """)
 
@@ -44,16 +39,12 @@ for env_var in ["PYTHONPATH"]:
 
 env["MSGFMT"] = WhereIs("msgfmt")
 env["XGETTEXT"] = WhereIs("xgettext")
-env["CTAGS"] = WhereIs("ctags")
 
 if not env["MSGFMT"]:
     print "Warning: msgfmt not found, can't generate mo files"
 
 if not env["XGETTEXT"]:
     print "Warning: xgettext not found, can't generate pot file"
-
-if not env["CTAGS"]:
-    print "Warning: ctags not found, can't generate tags file"
 
 # Import modules that we need
 
@@ -96,13 +87,6 @@ env["XGETTEXTFLAGS"] = " --copyright-holder=\"Rickard Lindberg\"" \
 pot = env.Command("po/timeline.pot", sources,
                   '"$XGETTEXT" -o $TARGET $XGETTEXTFLAGS $SOURCES')
 env.Alias("pot", pot)
-
-# Target: tags
-
-tags = env.Command("tags",
-                   sources + find_py_files_in("specs") + find_py_files_in("tests"),
-                   "$CTAGS --python-kinds=-i --tag-relative=yes --extra=+f -f $TARGET $SOURCES")
-env.Alias("tags", tags)
 
 # Target: hacking
 
