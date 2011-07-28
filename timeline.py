@@ -29,6 +29,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "pysvg-0.2.1"))
 # Make sure that we can import icalendar
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "icalendar-2.1"))
+# Make sure that we can import markdown
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "markdown-2.0.3"))
 
 from timelinelib.about import APPLICATION_NAME
 from timelinelib.arguments import ApplicationArguments
