@@ -24,7 +24,7 @@ import sys
 import traceback
 
 # Make sure that we can import mechanize
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "libs", "dev"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "libs", "dev", "mechanize-0.2.5"))
 import mechanize
 import wx
 
