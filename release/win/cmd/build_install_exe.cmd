@@ -4,14 +4,16 @@ rem for the Windows target os.
 
 set TIMELINE_DIR=..\..\..\
 set PACKAGE_DIR=..
+set ICALENDAR_DIR=%TIMELINE_DIR%\libs\dependencies\icalendar-2.1\icalendar
+set PYSVG_DIR=%TIMELINE_DIR%\libs\dependencies\pysvg-0.2.1\pysvg
 
 echo ***. Copying icalendar package to timeline directory.
 mkdir %TIMELINE_DIR%\icalendar
-copy %PACKAGE_DIR%\icalendar\*.*  %TIMELINE_DIR%\icalendar\*.*
+copy %ICALENDAR_DIR%\*.*  %TIMELINE_DIR%\icalendar\*.*
 
 echo ***. Copying pysvg package to timeline directory.
 mkdir %TIMELINE_DIR%\pysvg
-copy %PACKAGE_DIR%\pysvg\*.*  %TIMELINE_DIR%\pysvg\*.*
+copy %PYSVG_DIR%\*.*  %TIMELINE_DIR%\pysvg\*.*
 
 echo *** Copying setup.py to timeline directory
 copy ..\inno\setup.py  %TIMELINE_DIR%\setup.py
