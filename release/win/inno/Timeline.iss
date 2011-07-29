@@ -23,7 +23,7 @@ DefaultGroupName=Timeline
 SourceDir=..\..\..\
 LicenseFile=COPYING
 InfoBeforeFile=release\win\inno\WINSTALL
-OutputDir=..\bin\
+OutputDir=.\bin\
 Compression=lzma
 SolidCompression=yes
 
