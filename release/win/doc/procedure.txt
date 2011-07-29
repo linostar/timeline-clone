@@ -1,161 +1,43 @@
 Procedure to produce Win install exe's
 ======================================
 
+1. Download the timeline project from SourceForge
+-------------------------------------------------
+hg clone http://thetimelineproj.hg.sourceforge.net:8000/hgroot/thetimelineproj/main
+hg clone http://thetimelineproj.hg.sourceforge.net:8000/hgroot/thetimelineproj/stable
 
-0. Download the win project from SourceForge
----------------------------------------------
-hg clone http://thetimelineproj.hg.sourceforge.net:8000/hgroot/thetimelineproj/win
-
-to the win directory.
-
-At the moment the Inno scripts have a absolute reference to the directory
-W:\Projects\Hg\win\timeline where the source is expected to be found.
+to a new directory
 
 
-
-1. Copy version
-----------------
-Copy the contents of the version zip-file to the win\timeline
-directory (after deleting all old files from the dir).
-
-
-2. Create po files and other
-----------------------------
-Run the command...
-    scons
-from the win\timeline directory to produce po files and doc.
-
-2.5 Code fixes
---------------
-py2exe can't use the __file__ statement.
-Instead we have to use the following peace of code:
-
-2.5.1 timeline.py
+2. Check po files
 -----------------
-Replace the following code:
+Check that all po files found in the directory win\timeline\po also are mentioned
+in the main\release\win\inno\Timeline.iss file.
 
->>>>
-# Make sure that we can import timelinelib
-sys.path.insert(0, os.path.dirname(__file__))
-<<<<
-
-with the following code
->>>>
-# Make sure that we can import timelinelib
-exepath = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
-sys.path.insert(0, exepath)
-<<<<
-
-2.5.2 timelinelib/paths.py
---------------------------
-Replace the following code:
-
->>>>
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-<<<<
-
-with the following code
->>>>
-import sys
-_ROOT = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
-<<<<
-
-2.5.3 icalendar
----------------
-Include the icalendar directory directly under the win\timeline directory
-
-Icalendar can be downloaded from http://codespeak.net/icalendar/
-
-Latest version used is iCalendar-1.2. The directory structure in the
-downloaded archive file looks like:
-
- iCalendar-1.2
- |
- +--- doc
- |
- +--- src
-      |
-      +--- icalendar
-
-It is the icalendar directory that is to be copied and placed under the
-win\timeline directory.
-
-3. Edit inno scripts
---------------------
-Inno scripts are found in the win\inno directory
-
-3.1 TimelineStd.iss
--------------------
-Edit the TimelineStd.iss script. (New version number)
-
-Change version numbers:
-[Setup]
-AppVerName=Timeline x.y.z
-OutputBaseFilename=SetupTimelinexyzStd
-
-Check that all po files found in the directory win\timeline\po are used.
 [Files]
 Source: "po\sv\LC_MESSAGES\*"; DestDir: "{app}\po\sv\LC_MESSAGES"; Flags: ignoreversion
 
-3.1 TimelineExeWin7.iss
+
+3. Execute build script
 -----------------------
-Edit the TimelineExeWin7.iss script. (New version number)
-
-Change version numbers:
-[Setup]
-AppVerName=Timeline x.y.z
-OutputBaseFilename=SetupTimelinexyzStd
-
-Check that all po files found in the directory win\timeline\po are used.
-[Files]
-Source: "po\sv\LC_MESSAGES\*"; DestDir: "{app}\po\sv\LC_MESSAGES"; Flags: ignoreversion
+Run the script main\release\win\cmd\build_install_exe.cmd
 
 
-4. Create Std version
----------------------
-Run the inno script TimelineStd.iss and create a timeline installation
-in C:\Program Files\TimelineStd.
+4. Test the install exe
+-----------------------
+Install the new version of Timeline by executing the script
+main\bin\SetupTimeline9nn9Py2Exe.exe
 
-The following files are required (timeline not included). They are
-under version control in the win project.
-win\inno\run.pyw
-win\inno\setup.py
-win\inno\Timeline.ico
-win\inno\WINSTALL
-
-C:\Program Files\Python25\lib\site-packages\wx-2.8-msw-unicode\wx\MSVCP71.dll
-C:\Program Files\Python25\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll
-
-
-Check StartPy2Exe in "Completing the Timeline Setup Wizard"
-The created installer exe will end up in the win\bin directory
-
-
-5. Uninstall check
-------------------
-Try to uninstall the just installed program.
-Verify that all files are removed.
-
-
-6. Reinstall TimelineStd
+5. Test the installation
 ------------------------
-Paragraph 4. again
-
-
-7. Create Exe version
----------------------
-Run the inno script TimelineExeWin7.iss and create a timeline installation
-in C:\Program Files\TimelineExe
-
-
-8. Final test
---------------
-As a final test, uninstall the two versions (Std, Exe)
-Run the installation exe (win\bin\SetupTimelinexyzPy2Exe.exe) and verify
-that it is possible to install Timeline.
+Test Timeline
 
 
 9. Dsitribute the exe
 ---------------------
 Rename the instalaltion exe to win\bin\SetupTimelinexyzPy2Exe.ex_ and mail
 to the person responsiblen for uploading the file to SourceForge.
+
+or
+
+Uplod the file directly to SourceForge
