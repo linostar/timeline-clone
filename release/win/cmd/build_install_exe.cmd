@@ -62,6 +62,5 @@ del %TIMELINE_DIR%\dist\po\*.pot
 
 echo ***. Compile Inno Std script
 pushd  ..\inno
-set PATH=%PATH%;"C:\Program Files\Inno Setup 5"
-call iscc.exe Timeline.iss
+call "%ProgramFiles%\Inno Setup 5\iscc.exe" Timeline.iss
 
