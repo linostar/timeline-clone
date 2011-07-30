@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import wx
+
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.wxgui.utils import category_tree
@@ -68,9 +70,15 @@ class CategoryEditorController(object):
                 self.category.parent = new_parent
             self.db.save_category(self.category)
             self.view.close()
+            self._redraw_timeline()
         except TimelineIOError, e:
             self.view.handle_db_error(e)
 
+    def _redraw_timeline(self):
+        frame = wx.GetApp().GetTopWindow()
+        drawing_area = frame.main_panel.drawing_area
+        drawing_area.redraw_timeline()
+        
     def _name_valid(self, name):
         return len(name) > 0
 
