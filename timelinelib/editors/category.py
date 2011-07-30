@@ -20,22 +20,7 @@ import wx
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
-from timelinelib.wxgui.utils import category_tree
-
-
-class DbWrapperCategoryRepository(object):
-
-    def __init__(self, db):
-        self.db = db
-
-    def get_all(self):
-        return self.db.get_categories()
-
-    def get_tree(self, remove):
-        return category_tree(self.get_all(), remove=remove)
-
-    def save(self, category):
-        self.db.save_category(category)
+from timelinelib.repositories import DbWrapperCategoryRepository
 
 
 class CategoryEditor(object):
