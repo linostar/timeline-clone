@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
-from timelinelib.wxgui.dialogs.categoryeditor import CategoryEditorController
+from timelinelib.editors.category import CategoryEditor
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
@@ -42,7 +42,7 @@ class CategoryEditorBaseFixture(unittest.TestCase):
         self.view = Mock(WxCategoryEdtiorDialog)
 
     def _initializeControllerWith(self, category):
-        self.controller = CategoryEditorController(self.view, self.db, category)
+        self.controller = CategoryEditor(self.view, self.db, category)
         self.controller.initialize()
 
 

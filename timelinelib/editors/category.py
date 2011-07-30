@@ -23,7 +23,7 @@ from timelinelib.db.objects import Category
 from timelinelib.wxgui.utils import category_tree
 
 
-class CategoryEditorController(object):
+class CategoryEditor(object):
 
     def __init__(self, view, db, category):
         self.view = view
