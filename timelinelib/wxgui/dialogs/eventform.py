@@ -26,7 +26,7 @@ from timelinelib.domain.category import sort_categories
 from timelinelib.editors.event import EventEditor
 from timelinelib.utils import ex_msg
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
-from timelinelib.wxgui.dialogs.categoryeditor import CategoryEditor
+from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
@@ -358,7 +358,7 @@ class EventFormDialog(wx.Dialog):
 
     def _add_category(self):
         def create_category_editor():
-            return CategoryEditor(self, _("Add Category"), self.timeline, None)
+            return WxCategoryEdtiorDialog(self, _("Add Category"), self.timeline, None)
         def handle_success(dialog):
             if dialog.GetReturnCode() == wx.ID_OK:
                 try:

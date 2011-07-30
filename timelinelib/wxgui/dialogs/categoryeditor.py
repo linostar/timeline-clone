@@ -26,7 +26,7 @@ from timelinelib.wxgui.utils import BORDER
 from timelinelib.editors.category import CategoryEditorController
 
 
-class CategoryEditor(wx.Dialog):
+class WxCategoryEdtiorDialog(wx.Dialog):
 
     def __init__(self, parent, title, timeline, category):
         wx.Dialog.__init__(self, parent, title=title)
