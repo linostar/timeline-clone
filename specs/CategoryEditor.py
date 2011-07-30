@@ -42,8 +42,8 @@ class CategoryEditorBaseFixture(unittest.TestCase):
         self.view = Mock(WxCategoryEdtiorDialog)
 
     def _initializeControllerWith(self, category):
-        self.controller = CategoryEditor(self.view, self.db, category)
-        self.controller.initialize()
+        self.controller = CategoryEditor(self.view)
+        self.controller.edit(category, self.db)
 
 
 class WhenEditingANewCategory(CategoryEditorBaseFixture):

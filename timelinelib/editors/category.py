@@ -40,12 +40,12 @@ class DbWrapperCategoryRepository(object):
 
 class CategoryEditor(object):
 
-    def __init__(self, view, db, category):
+    def __init__(self, view):
         self.view = view
+
+    def edit(self, category, db):
         self.category = category
         self.category_repository = DbWrapperCategoryRepository(db)
-
-    def initialize(self):
         try:
             tree = self.category_repository.get_tree(remove=self.category)
         except TimelineIOError, e:

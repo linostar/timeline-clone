@@ -31,8 +31,8 @@ class WxCategoryEdtiorDialog(wx.Dialog):
     def __init__(self, parent, title, timeline, category):
         wx.Dialog.__init__(self, parent, title=title)
         self._create_gui()
-        self.controller = CategoryEditor(self, timeline, category)
-        self.controller.initialize()
+        self.controller = CategoryEditor(self)
+        self.controller.edit(category, timeline)
 
     def set_category_tree(self, tree):
         def add_tree(tree, indent=""):
