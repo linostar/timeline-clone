@@ -19,7 +19,6 @@
 
 import codecs
 import tempfile
-import os
 import os.path
 import shutil
 from datetime import datetime
@@ -84,7 +83,7 @@ class XmlTimelineSpec(unittest.TestCase):
     def _create_db(self):
         db = XmlTimeline(self.tmp_path)
         # Create categories
-        cat1 = Category("Category 1", (255, 0, 0), None, True)
+        cat1 = Category("Category 1", (255, 0, 0), (0, 0, 255), True)
         db.save_category(cat1)
         cat2 = Category("Category 2", (0, 255, 0), None, True, parent=cat1)
         db.save_category(cat2)
@@ -127,6 +126,7 @@ class XmlTimelineSpec(unittest.TestCase):
             self.assertTrue(cat.has_id())
             if cat.name == "Category 1":
                 self.assertEquals(cat.color, (255, 0, 0))
+                self.assertEquals(cat.font_color, (0, 0, 255))
                 self.assertTrue(vp.category_visible(cat))
                 self.assertEquals(cat.parent, None)
             elif cat.name == "Category 2":

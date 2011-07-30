@@ -19,15 +19,11 @@
 import wx
 import wx.lib.colourselect as colourselect
 
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.objects import Category
 import timelinelib.wxgui.utils as gui_utils
-from timelinelib.wxgui.utils import category_tree
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import BORDER
-from timelinelib.wxgui.utils import ID_ERROR
-from timelinelib.utils import ex_msg
+from timelinelib.editors.category import CategoryEditorController
 
 
 class CategoryEditor(wx.Dialog):
@@ -58,8 +54,16 @@ class CategoryEditor(wx.Dialog):
         (r, g, b) = self.colorpicker.GetValue()
         return (r, g, b)
 
+    def get_font_color(self):
+        # Convert wx.Color to (r, g, b) tuple
+        (r, g, b) = self.fontcolorpicker.GetValue()
+        return (r, g, b)
+
     def set_color(self, new_color):
         self.colorpicker.SetValue(new_color)
+
+    def set_font_color(self, new_color):
+        self.fontcolorpicker.SetValue(new_color)
 
     def get_parent(self):
         selection = self.parentlistbox.GetSelection()
@@ -94,15 +98,11 @@ class CategoryEditor(wx.Dialog):
         return self.controller.category
 
     def _create_gui(self):
-        # The name text box
         self.txt_name = wx.TextCtrl(self, size=(150, -1))
-        # The color chooser
         self.colorpicker = colourselect.ColourSelect(self)
-        # The parent listbox
+        self.fontcolorpicker = colourselect.ColourSelect(self)
         self.parentlistbox = wx.Choice(self, wx.ID_ANY)
-        # Setup layout
         vbox = wx.BoxSizer(wx.VERTICAL)
-        # Grid for controls
         field_grid = wx.FlexGridSizer(3, 2, BORDER, BORDER)
         field_grid.Add(wx.StaticText(self, label=_("Name:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
@@ -110,6 +110,9 @@ class CategoryEditor(wx.Dialog):
         field_grid.Add(wx.StaticText(self, label=_("Color:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.colorpicker)
+        field_grid.Add(wx.StaticText(self, label=_("Font Color:")),
+                       flag=wx.ALIGN_CENTER_VERTICAL)
+        field_grid.Add(self.fontcolorpicker)
         field_grid.Add(wx.StaticText(self, label=_("Parent:")),
                        flag=wx.ALIGN_CENTER_VERTICAL)
         field_grid.Add(self.parentlistbox)
@@ -123,59 +126,3 @@ class CategoryEditor(wx.Dialog):
 
     def _btn_ok_on_click(self, e):
         self.controller.save()
-
-
-class CategoryEditorController(object):
-
-    def __init__(self, view, db, category):
-        self.view = view
-        self.db = db
-        self.category = category
-
-    def initialize(self):
-        try:
-            tree = category_tree(self.db.get_categories(), remove=self.category)
-        except TimelineIOError, e:
-            self.view.handle_db_error(e)
-        else:
-            self.view.set_category_tree(tree)
-            if self.category is None:
-                self.view.set_name("")
-                self.view.set_color((255, 0, 0))
-                self.view.set_parent(None)
-            else:
-                self.view.set_name(self.category.name)
-                self.view.set_color(self.category.color)
-                self.view.set_parent(self.category.parent)
-
-    def save(self):
-        try:
-            new_name = self.view.get_name()
-            new_color = self.view.get_color()
-            new_parent = self.view.get_parent()
-            if not self._name_valid(new_name):
-                self.view.handle_invalid_name(new_name)
-                return
-            if self._name_in_use(new_name):
-                self.view.handle_used_name(new_name)
-                return
-            if self.category is None:
-                self.category = Category(new_name, new_color, None, True,
-                                         parent=new_parent)
-            else:
-                self.category.name = new_name
-                self.category.color = new_color
-                self.category.parent = new_parent
-            self.db.save_category(self.category)
-            self.view.close()
-        except TimelineIOError, e:
-            self.view.handle_db_error(e)
-
-    def _name_valid(self, name):
-        return len(name) > 0
-
-    def _name_in_use(self, name):
-        for cat in self.db.get_categories():
-            if cat != self.category and cat.name == name:
-                return True
-        return False

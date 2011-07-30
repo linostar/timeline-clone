@@ -502,9 +502,9 @@ class DefaultDrawingAlgorithm(Drawer):
         
     def _set_text_foreground_color(self, event):
         if event.category is None:
-            fg_color = wx.Color(0, 0, 0)
+            fg_color = BLACK
         elif event.category.font_color is None:
-            fg_color = wx.Color(0, 0, 0)
+            fg_color = BLACK
         else:
             font_color = event.category.font_color
             fg_color = wx.Color(font_color[0], font_color[1], font_color[2])

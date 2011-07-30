@@ -27,17 +27,17 @@ from timelinelib.db.backends.memory import MemoryDB
 
 def create_in_memory_tutorial_db():
     tutcreator = TutorialTimelineCreator()
-    tutcreator.add_category(_("Welcome"), (255, 80, 80))
+    tutcreator.add_category(_("Welcome"), (255, 80, 80), (0, 0, 0))
     tutcreator.add_event(
         _("Welcome to Timeline"),
         "",
         timedelta(days=4))
-    tutcreator.add_category(_("Intro"), (250, 250, 20))
+    tutcreator.add_category(_("Intro"), (250, 250, 20), (0, 0, 0))
     tutcreator.add_event(
         _("Hover me!"),
         _("Hovering events with a triangle shows the event description."),
         timedelta(days=5))
-    tutcreator.add_category(_("Features"), (100, 100, 250))
+    tutcreator.add_category(_("Features"), (100, 100, 250), (250, 250, 20))
     tutcreator.add_event(
         _("Scroll"),
         _("Left click somewhere on the timeline and start dragging."
@@ -83,7 +83,7 @@ def create_in_memory_tutorial_db():
         _("First select me and then drag the handles."),
         timedelta(days=11),
         timedelta(days=19))
-    tutcreator.add_category(_("Saving"), (50, 200, 50))
+    tutcreator.add_category(_("Saving"), (50, 200, 50), (0, 0, 0))
     tutcreator.add_event(
         _("Saving"),
         _("This timeline is stored in memory and modifications to it will not "
@@ -106,12 +106,12 @@ class TutorialTimelineCreator(object):
                                                  self.start, self.end))
         self.last_cat = None
 
-    def add_category(self, name, color, make_last_added_parent=False):
+    def add_category(self, name, color, font_color, make_last_added_parent=False):
         if make_last_added_parent:
             parent = self.last_cat
         else:
             parent = None
-        self.last_cat = Category(name, color, None, True, parent)
+        self.last_cat = Category(name, color, font_color, True, parent)
         self.db.save_category(self.last_cat)
 
     def add_event(self, text, description, start_add, end_add=None):

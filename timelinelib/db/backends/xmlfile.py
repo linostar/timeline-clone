@@ -147,6 +147,7 @@ class XmlTimeline(MemoryDB):
                 Tag("category", ANY, self._parse_category, [
                     Tag("name", SINGLE, parse_fn_store("tmp_name")),
                     Tag("color", SINGLE, parse_fn_store("tmp_color")),
+                    Tag("font_color", OPTIONAL, parse_fn_store("tmp_font_color")),
                     Tag("parent", OPTIONAL, parse_fn_store("tmp_parent")),
                 ])
             ]),
@@ -182,6 +183,7 @@ class XmlTimeline(MemoryDB):
     def _parse_category(self, text, tmp_dict):
         name = tmp_dict.pop("tmp_name")
         color = parse_color(tmp_dict.pop("tmp_color"))
+        font_color = self._parse_optional_color(tmp_dict, "tmp_font_color")
         parent_name = tmp_dict.pop("tmp_parent", None)
         if parent_name:
             parent = tmp_dict["category_map"].get(parent_name, None)
@@ -189,7 +191,7 @@ class XmlTimeline(MemoryDB):
                 raise ParseException("Parent category '%s' not found." % parent_name)
         else:
             parent = None
-        category = Category(name, color, None, True, parent=parent)
+        category = Category(name, color, font_color, True, parent=parent)
         tmp_dict["category_map"][name] = category
         self.save_category(category)
 
@@ -223,6 +225,12 @@ class XmlTimeline(MemoryDB):
             return tmp_dict.pop(id) == "True"
         else:
             return False
+    
+    def _parse_optional_color(self, tmp_dict, id):
+        if tmp_dict.has_key(id):
+            return parse_color(tmp_dict.pop(id))
+        else:
+            return (0, 0, 0)
     
     def _parse_displayed_period(self, text, tmp_dict):
         start = self._parse_time(tmp_dict.pop("tmp_start"))
@@ -264,6 +272,7 @@ class XmlTimeline(MemoryDB):
     def _write_category(self, file, cat):
         write_simple_tag(file, "name", cat.name, INDENT3)
         write_simple_tag(file, "color", color_string(cat.color), INDENT3)
+        write_simple_tag(file, "font_color", color_string(cat.font_color), INDENT3)
         if cat.parent:
             write_simple_tag(file, "parent", cat.parent.name, INDENT3)
     _write_category = wrap_in_tag(_write_category, "category", INDENT2)
