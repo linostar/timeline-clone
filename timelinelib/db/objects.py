@@ -163,6 +163,10 @@ class Category(object):
         self.id = None
         self.name = name
         self.color = color
+        if font_color is None:
+            self.font_color = (0, 0, 0)
+        else:    
+            self.font_color = font_color
         self.visible = visible
         self.parent = parent
 

@@ -25,7 +25,6 @@ from timelinelib.domain.category import sort_categories
 from timelinelib.drawing.interface import Drawer
 from timelinelib.drawing.scene import TimelineScene
 from timelinelib.drawing.utils import darken_color
-from timelinelib.drawing.utils import get_contrast_ratio
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.paths import ICONS_DIR
 
@@ -502,13 +501,14 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.DestroyClippingRegion()
         
     def _set_text_foreground_color(self, event):
-        light_color = self._get_box_brush(event).GetColour()
-        dark_color = wx.Color(0,0,0)
-        contrast_ratio = get_contrast_ratio(light_color, dark_color)
-        if contrast_ratio < CONTRAST_RATIO_THREASHOLD:
-            self.dc.SetTextForeground(WHITE)
+        if event.category is None:
+            fg_color = wx.Color(0, 0, 0)
+        elif event.category.font_color is None:
+            fg_color = wx.Color(0, 0, 0)
         else:
-            self.dc.SetTextForeground(BLACK)
+            font_color = event.category.font_color
+            fg_color = wx.Color(font_color[0], font_color[1], font_color[2])
+        self.dc.SetTextForeground(fg_color)
         
     def _draw_contents_indicator(self, event, rect):
         """
