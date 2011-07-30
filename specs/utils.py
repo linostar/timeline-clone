@@ -96,7 +96,7 @@ def an_event_with(start=None, end=None, time=None, text="foo", fuzzy=False,
         start = human_time_to_py(start)
         end = human_time_to_py(end)
     return Event(
-        db, start, end, text, Category("bar", None, True),
+        db, start, end, text, Category("bar", None, None, True),
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 

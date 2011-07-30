@@ -109,7 +109,7 @@ def copy_db(from_db, to_db):
     cat_map = {}
     for cat in from_db.get_categories():
         # name, color, and visible all immutable so safe to copy
-        new_cat = Category(cat.name, cat.color, cat.visible)
+        new_cat = Category(cat.name, cat.color, None, cat.visible)
         cat_map[cat.name] = new_cat
         to_db.save_category(new_cat)
     # Fix parent attribute

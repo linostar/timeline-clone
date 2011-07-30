@@ -40,7 +40,7 @@ class CategorySorter(unittest.TestCase):
         self.sorted_categories = sort_categories(categories)
 
     def category_named(self, name):
-        return Category(name, (0, 0, 0), True)
+        return Category(name, (0, 0, 0), None, True)
 
     def assert_sorted_in_order(self, names):
         self.assertEquals(

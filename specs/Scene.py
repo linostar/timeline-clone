@@ -109,7 +109,7 @@ class SceneSpec(unittest.TestCase):
         self.given_event_at(time, visible=False)
 
     def given_event_at(self, start_time, end_time=None, visible=True):
-        category = Category("category", (0, 0, 0), visible)
+        category = Category("category", (0, 0, 0), None, visible)
         if end_time is None:
             end_time = start_time
         event = Event(self.db, human_time_to_py(start_time), 

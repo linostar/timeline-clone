@@ -189,7 +189,7 @@ class XmlTimeline(MemoryDB):
                 raise ParseException("Parent category '%s' not found." % parent_name)
         else:
             parent = None
-        category = Category(name, color, True, parent=parent)
+        category = Category(name, color, None, True, parent=parent)
         tmp_dict["category_map"][name] = category
         self.save_category(category)
 

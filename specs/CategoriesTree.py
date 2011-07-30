@@ -52,9 +52,9 @@ class CategoriesTreeSpec(unittest.TestCase):
 
     def setUp(self):
         self.db = Mock(TimelineDB)
-        self.foo = Category("foo", (255, 0, 0), True, parent=None)
-        self.foofoo = Category("foofoo", (255, 0, 0), True, parent=self.foo)
-        self.bar = Category("bar", (255, 0, 0), True, parent=None)
+        self.foo = Category("foo", (255, 0, 0), None, True, parent=None)
+        self.foofoo = Category("foofoo", (255, 0, 0), None, True, parent=self.foo)
+        self.bar = Category("bar", (255, 0, 0), None, True, parent=None)
         self.db.get_categories.return_value = [self.foo, self.foofoo, self.bar]
         self.view = Mock(CategoriesTree)
         self.timeline_view = Mock(DrawingAreaPanel)

@@ -203,7 +203,7 @@ class FileTimeline(MemoryDB):
             visible = True
             if len(category_data) == 3:
                 visible = parse_bool(category_data[2])
-            cat = Category(name, color, visible)
+            cat = Category(name, color, None, visible)
             self.save_category(cat)
             return (cat, not visible)
         except ParseException, e:

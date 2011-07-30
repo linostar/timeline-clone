@@ -84,11 +84,11 @@ class XmlTimelineSpec(unittest.TestCase):
     def _create_db(self):
         db = XmlTimeline(self.tmp_path)
         # Create categories
-        cat1 = Category("Category 1", (255, 0, 0), True)
+        cat1 = Category("Category 1", (255, 0, 0), None, True)
         db.save_category(cat1)
-        cat2 = Category("Category 2", (0, 255, 0), True, parent=cat1)
+        cat2 = Category("Category 2", (0, 255, 0), None, True, parent=cat1)
         db.save_category(cat2)
-        cat3 = Category("Category 3", (0, 0, 255), True, parent=cat2)
+        cat3 = Category("Category 3", (0, 0, 255), None, True, parent=cat2)
         db.save_category(cat3)
         # Create events
         ev1 = Event(db, datetime(2010, 3, 3), datetime(2010, 3, 6),

@@ -151,10 +151,10 @@ class MemoryDBSpec(unittest.TestCase):
         #   c11
         #     c111
         #   c12
-        c1 = Category("c1", (255, 0, 0), True, parent=None)
-        c11 = Category("c11", (255, 0, 0), True, parent=c1)
-        c111 = Category("c111", (255, 0, 0), True, parent=c11)
-        c12 = Category("c12", (255, 0, 0), True, parent=c1)
+        c1 = Category("c1", (255, 0, 0), None, True, parent=None)
+        c11 = Category("c11", (255, 0, 0), None, True, parent=c1)
+        c111 = Category("c111", (255, 0, 0), None, True, parent=c11)
+        c12 = Category("c12", (255, 0, 0), None, True, parent=c1)
         self.db.save_category(c1)
         self.db.save_category(c11)
         self.db.save_category(c111)
@@ -221,10 +221,10 @@ class MemoryDBSpec(unittest.TestCase):
         #   c11
         #   c12
         #     c121
-        c1 = Category("c1", (255, 0, 0), True, parent=None)
-        c11 = Category("c11", (255, 0, 0), True, parent=c1)
-        c12 = Category("c12", (255, 0, 0), True, parent=c1)
-        c121 = Category("c121", (255, 0, 0), True, parent=c12)
+        c1 = Category("c1", (255, 0, 0), None, True, parent=None)
+        c11 = Category("c11", (255, 0, 0), None, True, parent=c1)
+        c12 = Category("c12", (255, 0, 0), None, True, parent=c1)
+        c121 = Category("c121", (255, 0, 0), None, True, parent=c12)
         self.db.save_category(c1)
         self.db.save_category(c11)
         self.db.save_category(c12)
@@ -241,8 +241,8 @@ class MemoryDBSpec(unittest.TestCase):
         # Create hierarchy:
         # c1
         #   c11
-        c1 = Category("c1", (255, 0, 0), True, parent=None)
-        c11 = Category("c11", (255, 0, 0), True, parent=c1)
+        c1 = Category("c1", (255, 0, 0), None, True, parent=None)
+        c11 = Category("c11", (255, 0, 0), None, True, parent=c1)
         self.db.save_category(c1)
         self.db.save_category(c11)
         # Create event belonging to c11
@@ -404,8 +404,8 @@ class MemoryDBSpec(unittest.TestCase):
         self.db = MemoryDB()
         self.db._save = Mock()
         self.db_listener = Mock()
-        self.c1 = Category("work", (255, 0, 0), True)
-        self.c2 = Category("private", (0, 255, 0), True)
+        self.c1 = Category("work", (255, 0, 0), None, True)
+        self.c2 = Category("private", (0, 255, 0), None, True)
         self.e1 = Event(self.db, datetime(2010, 2, 13), datetime(2010, 2, 13), 
                         "holiday")
         self.e2 = Event(self.db, datetime(2010, 2, 14), datetime(2010, 2, 14), 

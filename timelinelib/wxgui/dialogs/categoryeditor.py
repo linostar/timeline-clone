@@ -160,7 +160,7 @@ class CategoryEditorController(object):
                 self.view.handle_used_name(new_name)
                 return
             if self.category is None:
-                self.category = Category(new_name, new_color, True,
+                self.category = Category(new_name, new_color, None, True,
                                          parent=new_parent)
             else:
                 self.category.name = new_name

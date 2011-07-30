@@ -241,7 +241,7 @@ class EventEditorSpec(unittest.TestCase):
             start = human_time_to_py(start)
             end = human_time_to_py(end)
         return Event(
-            self.db, start, end, "foo", Category("bar", None, True),
+            self.db, start, end, "foo", Category("bar", None, None, True),
             fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
     def when_editor_opened_with_time(self, time):
