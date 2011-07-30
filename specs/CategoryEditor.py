@@ -20,11 +20,11 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
-from timelinelib.editors.category import CategoryEditor
-from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
+from timelinelib.editors.category import CategoryEditor
+from timelinelib.repositories import CategoryRepository
+from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
 
 
 class CategoryEditorBaseFixture(unittest.TestCase):
@@ -34,16 +34,33 @@ class CategoryEditorBaseFixture(unittest.TestCase):
         # foo
         #   foofoo
         # bar
-        self.db = Mock(TimelineDB)
+        self.category_repository = Mock(CategoryRepository)
         self.foo = Category("foo", (255, 0, 0), None, True, parent=None)
         self.foofoo = Category("foofoo", (255, 0, 0), (0, 255, 0), True, parent=self.foo)
         self.bar = Category("bar", (255, 0, 0), None, True, parent=None)
-        self.db.get_categories.return_value = [self.foo, self.foofoo, self.bar]
+        self.category_repository.get_all.return_value = [self.foo, self.foofoo, self.bar]
+        def get_tree_mock(remove):
+            if remove is None:
+                return [
+                    (self.bar, []),
+                    (self.foo, [
+                        (self.foofoo,
+                            [])
+                    ])
+                ]
+            elif remove is self.foofoo:
+                return [
+                    (self.bar, []),
+                    (self.foo, [])
+                ]
+            else:
+                return []
+        self.category_repository.get_tree.side_effect = get_tree_mock
         self.view = Mock(WxCategoryEdtiorDialog)
 
     def _initializeControllerWith(self, category):
         self.controller = CategoryEditor(self.view)
-        self.controller.edit(category, self.db)
+        self.controller.edit(category, self.category_repository)
 
 
 class WhenEditingANewCategory(CategoryEditorBaseFixture):
@@ -102,7 +119,7 @@ class WhenTryingToEditACategoryButDbRaisesException(CategoryEditorBaseFixture):
 
     def setUp(self):
         CategoryEditorBaseFixture.setUp(self)
-        self.db.get_categories.side_effect = TimelineIOError
+        self.category_repository.get_tree.side_effect = TimelineIOError
         self._initializeControllerWith(None)
 
     def test_error_is_handled_by_view(self):
@@ -124,9 +141,9 @@ class WhenSavingACategory(CategoryEditorBaseFixture):
         self.controller.save()
 
     def _getSavedCategory(self):
-        if not self.db.save_category.called:
+        if not self.category_repository.save.called:
             self.fail("No category was saved.")
-        return self.db.save_category.call_args_list[0][0][0]
+        return self.category_repository.save.call_args_list[0][0][0]
 
     def test_saved_category_has_name_from_view(self):
         self.assertEquals("new_cat", self._getSavedCategory().name)
@@ -150,7 +167,7 @@ class WhenTryingToSaveACategoryButDbRaisesException(CategoryEditorBaseFixture):
         CategoryEditorBaseFixture.setUp(self)
         self._initializeControllerWith(None)
         self.view.get_name.return_value = "foobar"
-        self.db.save_category.side_effect = TimelineIOError
+        self.category_repository.save.side_effect = TimelineIOError
         self.controller.save()
 
     def test_error_is_handled_by_view(self):
@@ -169,7 +186,7 @@ class WhenSavingACategoryWithAnInvalidName(CategoryEditorBaseFixture):
         self.controller.save()
 
     def test_the_category_is_not_saved_to_db(self):
-        self.assertFalse(self.db.save_category.called)
+        self.assertFalse(self.category_repository.save.called)
 
     def test_the_view_shows_an_error_message(self):
         self.assertTrue(self.view.handle_invalid_name.called)
@@ -187,7 +204,7 @@ class WhenSavingACategoryWithAUsedName(CategoryEditorBaseFixture):
         self.controller.save()
 
     def test_the_category_is_not_saved_to_db(self):
-        self.assertFalse(self.db.save_category.called)
+        self.assertFalse(self.category_repository.save.called)
 
     def test_the_view_shows_an_error_message(self):
         self.assertTrue(self.view.handle_used_name.called)

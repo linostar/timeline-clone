@@ -20,7 +20,6 @@ import wx
 
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
-from timelinelib.repositories import DbWrapperCategoryRepository
 
 
 class CategoryEditor(object):
@@ -28,9 +27,9 @@ class CategoryEditor(object):
     def __init__(self, view):
         self.view = view
 
-    def edit(self, category, db):
+    def edit(self, category, category_repository):
         self.category = category
-        self.category_repository = DbWrapperCategoryRepository(db)
+        self.category_repository = category_repository
         try:
             tree = self.category_repository.get_tree(remove=self.category)
         except TimelineIOError, e:
