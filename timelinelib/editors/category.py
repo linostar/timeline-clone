@@ -23,16 +23,31 @@ from timelinelib.db.objects import Category
 from timelinelib.wxgui.utils import category_tree
 
 
+class DbWrapperCategoryRepository(object):
+
+    def __init__(self, db):
+        self.db = db
+
+    def get_all(self):
+        return self.db.get_categories()
+
+    def get_tree(self, remove):
+        return category_tree(self.get_all(), remove=remove)
+
+    def save(self, category):
+        self.db.save_category(category)
+
+
 class CategoryEditor(object):
 
     def __init__(self, view, db, category):
         self.view = view
-        self.db = db
         self.category = category
+        self.category_repository = DbWrapperCategoryRepository(db)
 
     def initialize(self):
         try:
-            tree = category_tree(self.db.get_categories(), remove=self.category)
+            tree = self.category_repository.get_tree(remove=self.category)
         except TimelineIOError, e:
             self.view.handle_db_error(e)
         else:
@@ -68,7 +83,7 @@ class CategoryEditor(object):
                 self.category.color = new_color
                 self.category.font_color = new_font_color
                 self.category.parent = new_parent
-            self.db.save_category(self.category)
+            self.category_repository.save(self.category)
             self.view.close()
         except TimelineIOError, e:
             self.view.handle_db_error(e)
@@ -77,8 +92,7 @@ class CategoryEditor(object):
         return len(name) > 0
 
     def _name_in_use(self, name):
-        for cat in self.db.get_categories():
+        for cat in self.category_repository.get_all():
             if cat != self.category and cat.name == name:
                 return True
         return False
-        
