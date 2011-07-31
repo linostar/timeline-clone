@@ -19,6 +19,7 @@
 import wx
 
 from timelinelib.db.interface import STATE_CHANGE_ANY
+from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
@@ -361,7 +362,8 @@ class DrawingArea(object):
         self._redraw_timeline()
 
     def _timeline_changed(self, state_change):
-        if state_change == STATE_CHANGE_ANY:
+        if (state_change == STATE_CHANGE_ANY or 
+            state_change == STATE_CHANGE_CATEGORY):
             self._redraw_timeline()
 
     def _set_initial_values_to_member_variables(self):
