@@ -33,6 +33,9 @@ class TimeType(object):
     def format_period(self, time_period):
         raise NotImplementedError("format_period not implemented.")
 
+    def format_delta(self, time_period):
+        raise NotImplementedError("format_delta not implemented.")
+
     def get_min_time(self):
         raise NotImplementedError("return the min time for this time type.")
 

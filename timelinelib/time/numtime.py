@@ -64,6 +64,9 @@ class NumTimeType(TimeType):
             label = u"%s" % time_period.start_time
         return label
 
+    def format_delta(self, delta):
+        return "%d" % delta
+
     def get_min_time(self):
         return(None, None)
 

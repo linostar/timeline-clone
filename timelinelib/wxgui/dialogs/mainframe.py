@@ -37,6 +37,7 @@ from timelinelib.wxgui.dialogs.eventform import EventFormDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
+from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import WildcardHelper
@@ -367,6 +368,7 @@ class MainFrame(wx.Frame):
         timeline_menu = wx.Menu()
         self._create_timeline_create_event_menu_item(timeline_menu)
         self._create_timeline_duplicate_event_menu_item(timeline_menu)
+        self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
         self._create_timeline_edit_categories(timeline_menu)
         main_menu_bar.Append(timeline_menu, _("&Timeline"))
 
@@ -395,6 +397,14 @@ class MainFrame(wx.Frame):
     def _mnu_timeline_duplicate_event_on_click(self, evt):
         self.duplicate_event()
 
+    def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
+        self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
+            wx.ID_ANY, _("&Measure Distance between two Events..."), 
+            _("Measure the Distance between two Events"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_measure_distance_between_events_on_click,
+                  self.mnu_timeline_measure_distance_between_events)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_measure_distance_between_events)
+
     def duplicate_event(self, event=None):
         def show_dialog(event):
             def create_dialog():
@@ -409,6 +419,44 @@ class MainFrame(wx.Frame):
                 # No event selected so do nothing!
                 return
         show_dialog(event)
+
+    def _mnu_timeline_measure_distance_between_events_on_click(self, evt):
+        self._measure_distance_between_events()
+
+    def _measure_distance_between_events(self):
+        event1, event2 = self._get_selected_events()
+        distance = self._calc_events_distance(event1, event2)
+        self._display_distance(distance)
+    
+    def _get_selected_events(self):
+        view_properties = self.main_panel.drawing_area.get_view_properties()
+        event_id_1 = view_properties.selected_event_ids[0]
+        event_id_2 = view_properties.selected_event_ids[1]
+        event1 = self.timeline.find_event_with_id(event_id_1)
+        event2 = self.timeline.find_event_with_id(event_id_2)
+        return event1, event2
+    
+    def _calc_events_distance(self,event1, event2):    
+        if event1.time_period.start_time <= event2.time_period.start_time:
+            distance = (event2.time_period.start_time - 
+                        event1.time_period.end_time)
+        else:    
+            distance = (event1.time_period.start_time - 
+                        event2.time_period.end_time)
+        return distance
+    
+    def _display_distance(self, distance):
+        header = _("Distance between selected events")
+        distance_text = self.timeline.get_time_type().format_delta(distance)
+        if distance_text == "0":
+            distance_text = _("Events are overlapping or distance is 0")
+        self._display_text(header, distance_text)
+
+    def _display_text(self, header, text):
+        dialog = wx.MessageDialog(self, text, header, 
+                                  wx.OK | wx.ICON_INFORMATION)
+        dialog.ShowModal()
+        dialog.Destroy()
 
     def _create_timeline_edit_categories(self, timeline_menu):
         edit_categories_item = timeline_menu.Append(
@@ -677,12 +725,18 @@ class MainFrame(wx.Frame):
     def enable_disable_menus(self):
         self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())                                                        
         self._enable_disable_duplicate_event_menu()
+        self._enable_disable_measure_distance_between_two_events_menu()
         self._enable_disable_searchbar()
   
     def _enable_disable_duplicate_event_menu(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
         one_event_selected = len(view_properties.selected_event_ids) == 1
         self.mnu_timeline_duplicate_event.Enable(one_event_selected)
+
+    def _enable_disable_measure_distance_between_two_events_menu(self):
+        view_properties = self.main_panel.drawing_area.get_view_properties()
+        two_events_selected = len(view_properties.selected_event_ids) == 2
+        self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
 
     def _enable_disable_searchbar(self): 
         if self.timeline == None:

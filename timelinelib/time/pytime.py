@@ -113,6 +113,28 @@ class PyTimeType(TimeType):
                 label = u"%s" % label_without_time(time_period.start_time)
         return label
 
+    def format_delta(self, delta):
+        days = delta.days
+        hours = delta.seconds / 3600
+        minutes = (delta.seconds - hours * 3600) / 60
+        collector = []
+        if days == 1:
+            collector.append(u"1 %s" % _("day"))
+        elif days > 1:
+            collector.append(u"%d %s" % (days, _("days")))
+        if hours == 1:
+            collector.append(u"1 %s" % _("hour"))
+        elif hours > 1:
+            collector.append(u"%d %s" % (hours, _("hours")))
+        if minutes == 1:
+            collector.append(u"1 %s" % _("minute"))
+        elif minutes > 1:
+            collector.append(u"%d %s" % (minutes, _("minutes")))
+        delta_string = u" ".join(collector) 
+        if delta_string == "":
+            delta_string = "0"
+        return delta_string
+    
     def get_min_time(self):
         min_time = datetime(10, 1, 1)
         return (min_time, _("can't be before year 10"))
