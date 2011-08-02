@@ -614,8 +614,10 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_ballon(self, event, event_rect, sticky):
         """Draw one ballon on a selected event that has 'description' data."""
         # Constants
-        MAX_TEXT_WIDTH = 200
+        MIN_TEXT_WIDTH = 200
         MIN_WIDTH = 100
+        SLIDER_WIDTH = 20
+        
         inner_rect_w = 0
         inner_rect_h = 0
         # Icon
@@ -625,6 +627,7 @@ class DefaultDrawingAlgorithm(Drawer):
             (iw, ih) = icon.Size
             inner_rect_w = iw
             inner_rect_h = ih
+        max_text_width = max(MIN_TEXT_WIDTH, (self.scene.width - SLIDER_WIDTH - event_rect.X - iw)) 
         # Text
         self.dc.SetFont(get_default_font(8))
         font_h = self.dc.GetCharHeight()
@@ -632,14 +635,14 @@ class DefaultDrawingAlgorithm(Drawer):
         description = event.get_data("description")
         lines = None
         if description != None:
-            lines = break_text(description, self.dc, MAX_TEXT_WIDTH)
+            lines = break_text(description, self.dc, max_text_width)
             th = len(lines) * self.dc.GetCharHeight()
             for line in lines:
                 (lw, lh) = self.dc.GetTextExtent(line)
                 tw = max(lw, tw)
             if icon != None:
                 inner_rect_w += BALLOON_RADIUS
-            inner_rect_w += min(tw, MAX_TEXT_WIDTH)
+            inner_rect_w += min(tw, max_text_width)
             inner_rect_h = max(inner_rect_h, th)
         inner_rect_w = max(MIN_WIDTH, inner_rect_w)
         bounding_rect, x, y = self._draw_balloon_bg(
