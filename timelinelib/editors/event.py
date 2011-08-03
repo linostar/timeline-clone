@@ -43,10 +43,6 @@ class EventEditor(object):
             self.fuzzy = False
             self.locked = False
             self.ends_today = False
-        if start is None:
-            start = self.db.get_time_type().now()
-        if end is None:
-            end = self.db.get_time_type().now()
         
     def initialize(self):
         if self.event != None:
