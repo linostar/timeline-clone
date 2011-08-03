@@ -99,7 +99,7 @@ install: build
 	cp -r po/vi "$(CURDIR)/debian/timeline/usr/share/locale/"
 
 	# Install binary
-	cp debian/extra-files/timeline-bin "$(CURDIR)/debian/timeline/usr/bin/timeline"
+	cp timeline.py "$(CURDIR)/debian/timeline/usr/bin/timeline"
 	chmod +x "$(CURDIR)/debian/timeline/usr/bin/timeline"
 
 

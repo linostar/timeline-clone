@@ -1,0 +1,30 @@
+Index: stable/timeline.py
+===================================================================
+--- stable.orig/timeline.py	2011-08-03 10:29:54.000000000 +0200
++++ stable/timeline.py	2011-08-03 10:30:13.000000000 +0200
+@@ -18,24 +18,16 @@
+ # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ import gettext
+-import locale
+-import os
+-import platform
+ import sys
+ 
+ # Make sure that we can import timelinelib
+-sys.path.insert(0, os.path.dirname(__file__))
++sys.path.insert(0, "/usr/lib/timeline")
+ 
+ from timelinelib.about import APPLICATION_NAME
+ from timelinelib.arguments import ApplicationArguments
+ from timelinelib.wxgui.setup import start_wx_application
+ from timelinelib.paths import LOCALE_DIR
+ 
+-if platform.system() == "Windows":
+-    # The appropriate environment variables are set on other systems
+-    language, encoding = locale.getdefaultlocale()
+-    os.environ['LANG'] = language
+-
+ gettext.install(APPLICATION_NAME.lower(), LOCALE_DIR, unicode=True)
+ 
+ application_arguments = ApplicationArguments()
