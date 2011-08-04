@@ -18,14 +18,13 @@
 
 import os.path
 
-import wx
+import wx.calendar
 
-from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
 from timelinelib.time import WxTimeType
 from timelinelib.time import try_to_create_wx_date_time_from_dmy
 from timelinelib.wxgui.utils import _display_error_message
-
+  
 
 class WxDateTimePicker(wx.Panel):
 
@@ -128,13 +127,14 @@ class CalendarPopup(wx.PopupTransientWindow):
         self.controller = CalendarPopupController(self)
         wx.PopupTransientWindow.__init__(self, parent, style=wx.BORDER_NONE)
         border = 2
-        style = self._style()
+        style = self._get_cal_style()
         self.cal = wx.calendar.CalendarCtrl(self, -1, wx_date, 
                                             pos=(border,border), style=style)
+        self._set_cal_range()
         self._set_size(border)
         self._bind_events()
 
-    def _style(self):
+    def _get_cal_style(self):
         style = (wx.calendar.CAL_SHOW_HOLIDAYS | 
                  wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION)
         if self.config.week_start == "monday":
@@ -143,6 +143,12 @@ class CalendarPopup(wx.PopupTransientWindow):
             style |= wx.calendar.CAL_SUNDAY_FIRST
         return style
     
+    def _set_cal_range(self):
+        min_date, msg = WxTimeType().get_min_time()
+        max_date, msg = WxTimeType().get_max_time()
+        max_date -= wx.DateSpan.Day()
+        self.cal.SetDateRange(min_date, max_date)
+        
     def _set_size(self, border):
         size = self.cal.GetBestSize()
         self.SetSize((size.width + border * 2, size.height + border * 2))

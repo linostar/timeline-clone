@@ -17,15 +17,10 @@
 
 
 import os.path
-import re
 import datetime
-from datetime import time
-
-import wx
+  
 import wx.calendar
-from wx.lib.masked import TimeCtrl
 
-from timelinelib.db.objects import TimePeriod
 from timelinelib.paths import ICONS_DIR
 from timelinelib.time import PyTimeType
 from timelinelib.wxgui.utils import _display_error_message
@@ -122,19 +117,44 @@ class PyDateTimePickerController(object):
 class CalendarPopup(wx.PopupTransientWindow):
 
     def __init__(self, parent, wx_date, config):
-        self.controller = CalendarPopupController(self)
+        self.config = config
         wx.PopupTransientWindow.__init__(self, parent, style=wx.BORDER_NONE)
-        border = 2
-        style = wx.calendar.CAL_SHOW_HOLIDAYS|wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION
-        if config.week_start == "monday":
+        self._create_gui(wx_date)
+        self.controller = CalendarPopupController(self)
+        self._bind_events()
+
+    def _create_gui(self, wx_date):
+        BORDER = 2
+        self.cal = self._create_calendar_control(wx_date, BORDER)
+        size = self.cal.GetBestSize()
+        self.SetSize((size.width + BORDER * 2, size.height + BORDER * 2))
+        
+    def _create_calendar_control(self, wx_date, border):
+        style = self._get_cal_style()
+        cal = wx.calendar.CalendarCtrl(self, -1, wx_date, 
+                                       pos=(border,border), style=style)
+        self._set_cal_range(cal)
+        return cal
+
+    def _get_cal_style(self):
+        style = (wx.calendar.CAL_SHOW_HOLIDAYS | 
+                 wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION) 
+        if self.config.week_start == "monday":
             style |= wx.calendar.CAL_MONDAY_FIRST
         else:
             style |= wx.calendar.CAL_SUNDAY_FIRST
-        self.cal = wx.calendar.CalendarCtrl(self, -1, wx_date,
-                                            pos=(border,border), style=style)
-        sz = self.cal.GetBestSize()
-        self.SetSize((sz.width+border*2, sz.height+border*2))
-        self._bind_events()
+        return style
+         
+    def _set_cal_range(self, cal):
+        min_date, msg = PyTimeType().get_min_time()
+        max_date, msg = PyTimeType().get_max_time()
+        min_date = self._py_date_to_wx_date(min_date)
+        max_date = self._py_date_to_wx_date(max_date) - wx.DateSpan.Day()
+        cal.SetDateRange(min_date, max_date)
+
+    def _py_date_to_wx_date(self, py_date):
+        return wx.DateTimeFromDMY(py_date.day, py_date.month - 1, py_date.year,
+                                  0, 0, 0)
 
     def _bind_events(self):
         def on_month(evt):
