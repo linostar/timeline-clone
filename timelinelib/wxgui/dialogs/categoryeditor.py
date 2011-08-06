@@ -42,6 +42,7 @@ class CategoryEditor(wx.Dialog):
         self.parentlistbox.Clear()
         self.parentlistbox.Append("", None) # No parent
         add_tree(tree)
+        self.SetSizerAndFit(self.vbox)
 
     def get_name(self):
         return self.txt_name.GetValue().strip()
@@ -98,31 +99,33 @@ class CategoryEditor(wx.Dialog):
         return self.controller.category
 
     def _create_gui(self):
+        self.vbox = wx.BoxSizer(wx.VERTICAL)
+        field_grid = self._create_field_grid()
+        button_box = self._create_button_box()
+        self.vbox.Add(field_grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        self.vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        _set_focus_and_select(self.txt_name)
+        
+    def _create_field_grid(self):
         self.txt_name = wx.TextCtrl(self, size=(150, -1))
         self.colorpicker = colourselect.ColourSelect(self)
         self.fontcolorpicker = colourselect.ColourSelect(self)
         self.parentlistbox = wx.Choice(self, wx.ID_ANY)
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        field_grid = wx.FlexGridSizer(3, 2, BORDER, BORDER)
-        field_grid.Add(wx.StaticText(self, label=_("Name:")),
-                       flag=wx.ALIGN_CENTER_VERTICAL)
-        field_grid.Add(self.txt_name)
-        field_grid.Add(wx.StaticText(self, label=_("Color:")),
-                       flag=wx.ALIGN_CENTER_VERTICAL)
-        field_grid.Add(self.colorpicker)
-        field_grid.Add(wx.StaticText(self, label=_("Font Color:")),
-                       flag=wx.ALIGN_CENTER_VERTICAL)
-        field_grid.Add(self.fontcolorpicker)
-        field_grid.Add(wx.StaticText(self, label=_("Parent:")),
-                       flag=wx.ALIGN_CENTER_VERTICAL)
-        field_grid.Add(self.parentlistbox)
-        vbox.Add(field_grid, flag=wx.EXPAND|wx.ALL, border=BORDER)
-        # Buttons
+        grid = wx.FlexGridSizer(3, 2, BORDER, BORDER)
+        self._add_ctrl_to_grid(_("Name:"), self.txt_name, grid)
+        self._add_ctrl_to_grid(_("Color:"), self.colorpicker, grid)
+        self._add_ctrl_to_grid(_("Font Color:"), self.fontcolorpicker, grid)
+        self._add_ctrl_to_grid(_("Parent:"), self.parentlistbox, grid)
+        return grid
+
+    def _add_ctrl_to_grid(self, name, ctrl, grid):
+        grid.Add(wx.StaticText(self, label=name), flag=wx.ALIGN_CENTER_VERTICAL)
+        grid.Add(ctrl)
+
+    def _create_button_box(self):
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        self.SetSizerAndFit(vbox)
-        _set_focus_and_select(self.txt_name)
+        return button_box
 
     def _btn_ok_on_click(self, e):
         self.controller.save()
