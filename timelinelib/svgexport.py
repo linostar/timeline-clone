@@ -16,8 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
+from types import UnicodeType
 
 from pysvg.structure import *
 from pysvg.core import *
@@ -31,6 +30,7 @@ from timelinelib.drawing.utils import darken_color
 
 from datetime import datetime
 
+
 OUTER_PADDING = 5      # Space between event boxes (pixels)
 INNER_PADDING = 3      # Space inside event box to text (pixels)
 BASELINE_PADDING = 15  # Extra space to move events away from baseline (pixels)
@@ -41,15 +41,11 @@ SMALL_FONT_SIZE = 9
 MAJOR_STRIP_FONT_SIZE = 6
 
 
-
 def export(path, scene, view_properties):
-    print path
-    print scene
-    print view_properties
     svgDrawer = SVGDrawingAlgorithm(path, scene, view_properties, shadow=True)
     svgDrawer.draw()
     svgDrawer.write(path)
-    pass
+
 
 class SVGDrawingAlgorithm(object):
     # options:  shadow=True|False
@@ -173,7 +169,7 @@ class SVGDrawingAlgorithm(object):
         middley = self.scene.divider_y
         # self.dc.DrawText(label, middle - tw / 2, middley - th)
         # Label
-        myText = text(label, middle, middley)
+        myText = self._text(label, middle, middley)
         myText.set_style(style)
         group.addElement(myText)
 
@@ -204,10 +200,9 @@ class SVGDrawingAlgorithm(object):
                 extra_vertical_padding = fontSize * 4
                 # since there is no function like textwidth() for SVG, just take into account that text can be overwritten
                 # do not perform a special handling for right border, SVG is unlimited 
-            myText = text(label, x, fontSize*4+INNER_PADDING+extra_vertical_padding)
+            myText = self._text(label, x, fontSize*4+INNER_PADDING+extra_vertical_padding)
             myText.set_style(style)
             group.addElement(myText)
-
 
     def _draw_divider_line(self, group):
         # self.dc.SetPen(self.black_solid_pen)
@@ -244,8 +239,6 @@ class SVGDrawingAlgorithm(object):
             group.addElement(line)
             # self.dc.SetPen(self.darkred_solid_pen)
             # self.dc.DrawLine(x, 0, x, self.scene.height)
-
-
 
     def _get_base_color(self, event):
         if event.category:
@@ -396,8 +389,8 @@ class SVGDrawingAlgorithm(object):
         # TODO (low): Transparency ?
         return indicator
 
-
     def _svg_clipped_text(self, myString, rectTuple, myStyle):
+        myString = self._encode_unicode_text(myString)
         # Put text,clipping into a SVG group
         group=g()
         rx, ry, width, height = rectTuple        
@@ -430,3 +423,12 @@ class SVGDrawingAlgorithm(object):
         group.addElement(myText)
         return group
 
+    def _text(self, the_text, x, y):
+        encoded_text = self._encode_unicode_text(the_text)
+        return text(encoded_text, x, y)
+    
+    def _encode_unicode_text(self, text):
+        if type(text) is UnicodeType:
+            return text.encode('ISO-8859-1')
+        else:
+            return text
