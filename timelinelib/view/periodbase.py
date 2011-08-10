@@ -66,10 +66,16 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
 
     def left_mouse_up(self):
         ScrollViewInputHandler.left_mouse_up(self)
+        self._end_action()
+
+    def _end_action(self):
         self.end_action()
+        self._remove_selection()
+        self.controller.change_input_handler_to_no_op()
+                
+    def _remove_selection(self):
         self.controller.view_properties.period_selection = None
         self.controller.redraw_timeline()
-        self.controller.change_input_handler_to_no_op()
 
     def end_action(self):
         raise Exception("end_action not implemented in subclass.")
