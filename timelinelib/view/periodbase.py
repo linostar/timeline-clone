@@ -66,8 +66,8 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
 
     def left_mouse_up(self):
         ScrollViewInputHandler.left_mouse_up(self)
-        self.controller.view_properties.period_selection = None
         self.end_action()
+        self.controller.view_properties.period_selection = None
         self.controller.redraw_timeline()
         self.controller.change_input_handler_to_no_op()
 
