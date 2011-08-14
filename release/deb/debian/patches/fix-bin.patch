@@ -1,8 +1,8 @@
-Index: stable/timeline.py
+Index: main-sf/timeline.py
 ===================================================================
---- stable.orig/timeline.py	2011-08-03 10:29:54.000000000 +0200
-+++ stable/timeline.py	2011-08-03 10:30:13.000000000 +0200
-@@ -18,24 +18,16 @@
+--- main-sf.orig/timeline.py	2011-08-14 19:48:02.000000000 +0200
++++ main-sf/timeline.py	2011-08-14 19:49:04.000000000 +0200
+@@ -18,30 +18,16 @@
  # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
  
  import gettext
@@ -13,6 +13,12 @@ Index: stable/timeline.py
  
  # Make sure that we can import timelinelib
 -sys.path.insert(0, os.path.dirname(__file__))
+-# Make sure that we can import pysvg
+-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "pysvg-0.2.1"))
+-# Make sure that we can import icalendar
+-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "icalendar-2.1"))
+-# Make sure that we can import markdown
+-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "markdown-2.0.3"))
 +sys.path.insert(0, "/usr/lib/timeline")
  
  from timelinelib.about import APPLICATION_NAME
