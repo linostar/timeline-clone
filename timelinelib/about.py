@@ -42,6 +42,7 @@ DEVELOPERS = [
     u"    Alan Jackson",
     u"    Glenn J. Mason",
     u"    Joe Gilmour",
+    u"    Thomas Mohr",
 ]
 TRANSLATORS = [
     u"Brazilian Portuguese:",
