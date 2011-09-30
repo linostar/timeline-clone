@@ -32,7 +32,6 @@ from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import time_picker_for
-from timelinelib.wxgui.utils import TxtException
 import timelinelib.wxgui.utils as gui_utils
 
 
@@ -516,3 +515,11 @@ class IconEditor(wx.Panel):
 
     def _btn_clear_on_click(self, evt):
         self.set_icon(None)
+
+
+class TxtException(ValueError):
+
+    def __init__(self, error_message, control):
+        ValueError.__init__(self, error_message)
+        self.error_message = error_message
+        self.control = control

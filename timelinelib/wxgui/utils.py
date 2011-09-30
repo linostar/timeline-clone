@@ -29,21 +29,6 @@ BORDER = 5
 ID_ERROR = wx.NewId()
 
 
-class TxtException(ValueError):
-    """
-    Thrown if a text control contains an invalid value.
-
-    The constructor takes two arguments.
-
-    The first is a text string containing any exception text.
-    The seocond is a TextCtrl object.
-    """
-    def __init__(self, error_message, control):
-        ValueError.__init__(self, error_message)
-        self.error_message = error_message
-        self.control = control
-
-
 class WildcardHelper(object):
 
     def __init__(self, name, extensions):
