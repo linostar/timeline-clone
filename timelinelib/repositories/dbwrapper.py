@@ -17,6 +17,7 @@
 
 
 from timelinelib.repositories.interface import CategoryRepository
+from timelinelib.repositories.interface import EventRepository
 from timelinelib.wxgui.utils import category_tree
 
 
@@ -33,3 +34,12 @@ class DbWrapperCategoryRepository(CategoryRepository):
 
     def save(self, category):
         self.db.save_category(category)
+
+
+class DbWrapperEventRepository(EventRepository):
+
+    def __init__(self, db):
+        self.db = db
+
+    def save(self, event):
+        self.db.save_event(event)

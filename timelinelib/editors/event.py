@@ -19,13 +19,15 @@
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import PeriodTooLongError
 from timelinelib.db.objects import TimePeriod
+from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 
 
 class EventEditor(object):
 
     def __init__(self, view, db, start, end, event):
         self.view = view
-        self.db = db
+        self.event_repository = DbWrapperEventRepository(db)
+        self.time_type = db.get_time_type()
         self.event = event
         if self.event != None:
             self.start = self.event.time_period.start_time
@@ -106,12 +108,12 @@ class EventEditor(object):
             self._exception_if_end_has_changed(end)
     
     def _exception_if_start_has_changed(self, start):
-        if not self.db.get_time_type().eventtimes_equals(self.start, start):
+        if not self.time_type.eventtimes_equals(self.start, start):
             self.view.set_start(self.start)
             self._exception_when_start_or_end_has_changed()
 
     def _exception_if_end_has_changed(self, end):
-        if not self.db.get_time_type().eventtimes_equals(self.end, end):
+        if not self.time_type.eventtimes_equals(self.end, end):
             self.view.set_end(self.end)
             self._exception_when_start_or_end_has_changed()
 
@@ -122,7 +124,7 @@ class EventEditor(object):
         
     def _save_event(self):
         if self.event == None:
-            self.event = Event(self.db.get_time_type(), self.start, self.end, self.name, 
+            self.event = Event(self.time_type, self.start, self.end, self.name, 
                                self.category, self.fuzzy, self.locked, 
                                self.ends_today)
         else:
@@ -147,7 +149,7 @@ class EventEditor(object):
 
     def _validate_period(self):
         try:
-            TimePeriod(self.db.get_time_type(), self.start, self.end)
+            TimePeriod(self.time_type, self.start, self.end)
         except PeriodTooLongError:
             self.view.display_error_message(_("Entered period is too long."))
             raise ValueError()
@@ -161,13 +163,13 @@ class EventEditor(object):
         
     def _save_event_to_db(self):
         try:
-            self.db.save_event(self.event)
+            self.event_repository.save(self.event)
         except Exception, e:
             self.view.display_db_exception(e)
         
     def _event_has_nonzero_time(self):
         try:
-            time_type = self.db.get_time_type()
+            time_type = self.time_type
             time_period = TimePeriod(time_type, self.start, self.end)
             return time_period.has_nonzero_time()
         except Exception:

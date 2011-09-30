@@ -26,3 +26,9 @@ class CategoryRepository(object):
 
     def save(self, category):
         raise NotImplementedError()
+
+
+class EventRepository(object):
+
+    def save(self, event):
+        raise NotImplementedError()

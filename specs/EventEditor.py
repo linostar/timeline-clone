@@ -20,21 +20,14 @@ import unittest
 
 from mock import Mock
 
-from specs.utils import human_time_to_py
+from specs.utils import an_event_with, human_time_to_py
 from timelinelib.db.interface import TimelineDB
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Event
 from timelinelib.editors.event import EventEditor
 from timelinelib.time import PyTimeType
 from timelinelib.wxgui.dialogs.eventform import EventFormDialog
 
 
-class EventEditorSpec(unittest.TestCase):
-
-    def setUp(self):
-        self.view =  Mock(EventFormDialog)
-        self.db = Mock(TimelineDB)
-        self.db.get_time_type.return_value = PyTimeType()
+class describe_event_editor(unittest.TestCase):
     
     def test_dialog_initializes_with_new_point_event_at_zero_time(self):
         self.when_editor_opened_with_time("1 Jan 2010")
@@ -93,7 +86,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_focus.assert_called_with("text")
 
     def test_dialog_initializes_with_point_event_at_zero_time(self):
-        self.when_editor_opened_with_event(self.an_event_with(time="1 Jan 2010"))
+        self.when_editor_opened_with_event(an_event_with(time="1 Jan 2010"))
         self.assert_start_time_set_to("1 Jan 2010")
         self.assert_end_time_set_to("1 Jan 2010")
         self.view.set_show_period.assert_called_with(False)
@@ -107,7 +100,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_focus.assert_called_with("start")
         
     def test_dialog_initializes_with_point_event_at_nonzero_time(self):
-        self.when_editor_opened_with_event(self.an_event_with(time="1 Jan 2010 13:50"))
+        self.when_editor_opened_with_event(an_event_with(time="1 Jan 2010 13:50"))
         self.assert_start_time_set_to("1 Jan 2010 13:50")
         self.assert_end_time_set_to("1 Jan 2010 13:50")
         self.view.set_show_period.assert_called_with(False)
@@ -121,7 +114,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_focus.assert_called_with("start")
 
     def test_dialog_initializes_with_period_event_at_zero_time(self):
-        self.when_editor_opened_with_event(self.an_event_with(start="1 Jan 2010", end="2 Jan 2010"))
+        self.when_editor_opened_with_event(an_event_with(start="1 Jan 2010", end="2 Jan 2010"))
         self.assert_start_time_set_to("1 Jan 2010")
         self.assert_end_time_set_to("2 Jan 2010")
         self.view.set_show_period.assert_called_with(True)
@@ -135,7 +128,7 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_focus.assert_called_with("text")
 
     def test_dialog_initializes_with_period_event_at_nonzero_time(self):
-        self.when_editor_opened_with_event(self.an_event_with(start="1 Jan 2010 13:30", end="2 Jan 2010 14:15"))
+        self.when_editor_opened_with_event(an_event_with(start="1 Jan 2010 13:30", end="2 Jan 2010 14:15"))
         self.assert_start_time_set_to("1 Jan 2010 13:30")
         self.assert_end_time_set_to("2 Jan 2010 14:15")
         self.view.set_show_period.assert_called_with(True)
@@ -149,16 +142,16 @@ class EventEditorSpec(unittest.TestCase):
         self.view.set_focus.assert_called_with("text")
 
     def test_on_init_dialog_displays_fuzzy_and_locked(self):
-        self.when_editor_opened_with_event(self.an_event_with(start="1 Jan 2010 13:30", end="2 Jan 2010 14:15", fuzzy=True, locked=True))
+        self.when_editor_opened_with_event(an_event_with(start="1 Jan 2010 13:30", end="2 Jan 2010 14:15", fuzzy=True, locked=True))
         self.view.set_fuzzy.assert_called_with(True)
         self.view.set_locked.assert_called_with(True)
 
     def test_on_init_dialog_displays_ends_today(self):
-        self.when_editor_opened_with_event(self.an_event_with(time="1 Jan 2010", ends_today=True))
+        self.when_editor_opened_with_event(an_event_with(time="1 Jan 2010", ends_today=True))
         self.view.set_ends_today.assert_called_with(True)
 
     def test_on_ok_fuzzy_and_locked_are_updated(self):
-        self.when_editor_opened_with_event(self.an_event_with(start="1 Jan 2010 13:30", end="2 Jan 2010 14:15", fuzzy=True, locked=True))
+        self.when_editor_opened_with_event(an_event_with(start="1 Jan 2010 13:30", end="2 Jan 2010 14:15", fuzzy=True, locked=True))
         self.view.set_fuzzy.assert_called_with(True)
         self.view.set_locked.assert_called_with(True)
         self.simulate_user_enters_name("new_event")
@@ -171,27 +164,27 @@ class EventEditorSpec(unittest.TestCase):
         self.assertFalse(self.controller.event.locked)
 
     def test_on_ok_new_event_is_saved_to_db(self):
-        self.when_editor_opened_with_event(self.an_event_with(time="1 Jan 2010"))
+        self.when_editor_opened_with_event(an_event_with(time="1 Jan 2010"))
         self.simulate_user_enters_name("new_event")
         self.simulate_user_enters_start_time("1 Jan 2011 12:00")
         self.simulate_user_enters_end_time("2 Jan 2011 12:00")
         self.simulate_user_marks_as_locked(False)
         self.simulate_user_clicks_ok()
-        self.assertTrue(self.controller.db.save_event.called)
+        self.assertTrue(self.db.save_event.called)
         self.assertEquals("new_event", self.controller.event.text)
         
     def test_on_ok_event_is_updated(self):
-        self.when_editor_opened_with_event(self.an_event_with(time="1 Jan 2010 13:50"))
+        self.when_editor_opened_with_event(an_event_with(time="1 Jan 2010 13:50"))
         self.simulate_user_enters_name("updated_event")
         self.simulate_user_enters_start_time("1 Jan 2011 12:00")
         self.simulate_user_enters_end_time("2 Jan 2011 12:00")
         self.simulate_user_marks_as_locked(False)
         self.simulate_user_clicks_ok()
-        self.assertTrue(self.controller.db.save_event.called)
+        self.assertTrue(self.db.save_event.called)
         self.assertEquals("updated_event", self.controller.event.text)
 
     def test_on_ok_event_prorty_ends_today_is_updated(self):
-        self.when_editor_opened_with_event(self.an_event_with(time="1 Jan 2010"))
+        self.when_editor_opened_with_event(an_event_with(time="1 Jan 2010"))
         self.simulate_user_enters_name("evt")
         self.simulate_user_enters_start_time("1 Jan 2010")
         self.simulate_user_enters_end_time("1 Jan 2010")
@@ -232,17 +225,11 @@ class EventEditorSpec(unittest.TestCase):
         self.simulate_user_clicks_ok()
         self.assert_fails_to_save_with_message()
 
-    def an_event_with(self, start=None, end=None, time=None, fuzzy=False,
-                      locked=False, ends_today=False):
-        if time:
-            start = human_time_to_py(time)
-            end = human_time_to_py(time)
-        else:
-            start = human_time_to_py(start)
-            end = human_time_to_py(end)
-        return Event(
-            self.db.get_time_type(), start, end, "foo", Category("bar", None, None, True),
-            fuzzy=fuzzy, locked=locked, ends_today=ends_today)
+    def setUp(self):
+        self.view = Mock(EventFormDialog)
+        self.time_type = PyTimeType()
+        self.db = Mock(TimelineDB)
+        self.db.get_time_type.return_value = self.time_type
 
     def when_editor_opened_with_time(self, time):
         self.when_editor_opened_with(

@@ -87,8 +87,6 @@ def an_event():
 
 def an_event_with(start=None, end=None, time=None, text="foo", fuzzy=False,
                   locked=False, ends_today=False):
-    db = Mock()
-    db.get_time_type.return_value = PyTimeType()
     if time:
         start = human_time_to_py(time)
         end = human_time_to_py(time)
@@ -96,7 +94,7 @@ def an_event_with(start=None, end=None, time=None, text="foo", fuzzy=False,
         start = human_time_to_py(start)
         end = human_time_to_py(end)
     return Event(
-        db.get_time_type(), start, end, text, Category("bar", None, None, True),
+        PyTimeType(), start, end, text, Category("bar", None, None, True),
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
