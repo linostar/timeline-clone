@@ -36,7 +36,7 @@ from timelinelib.wxgui.utils import TxtException
 import timelinelib.wxgui.utils as gui_utils
 
 
-class EventFormDialog(wx.Dialog):
+class EventEditorDialog(wx.Dialog):
 
     def __init__(self, parent, config, title, timeline,
                  start=None, end=None, event=None):

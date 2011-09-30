@@ -33,7 +33,7 @@ from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
-from timelinelib.wxgui.dialogs.eventform import EventFormDialog
+from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
@@ -383,8 +383,9 @@ class MainFrame(wx.Frame):
 
     def create_new_event(self, start=None, end=None):
         def create_event_editor():
-            return EventFormDialog(self, self.config, _("Create Event"), self.timeline,
-                                   start, end)
+            return EventEditorDialog(
+                self, self.config, _("Create Event"), self.timeline,
+                start, end)
         gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
     def _create_timeline_duplicate_event_menu_item(self, timeline_menu):
@@ -623,8 +624,8 @@ class MainFrame(wx.Frame):
 
     def edit_event(self, event):
         def create_event_editor():
-            return EventFormDialog(self, self.config, _("Edit Event"), self.timeline,
-                                   event=event)
+            return EventEditorDialog(
+                self, self.config, _("Edit Event"), self.timeline, event=event)
         gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
     def handle_db_error(self, error):

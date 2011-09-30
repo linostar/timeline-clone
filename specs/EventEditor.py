@@ -24,7 +24,7 @@ from specs.utils import an_event_with, human_time_to_py
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.interface import EventRepository
 from timelinelib.time import PyTimeType
-from timelinelib.wxgui.dialogs.eventform import EventFormDialog
+from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 
 
 class describe_event_editor(unittest.TestCase):
@@ -226,7 +226,7 @@ class describe_event_editor(unittest.TestCase):
         self.assert_fails_to_save_with_message()
 
     def setUp(self):
-        self.view = Mock(EventFormDialog)
+        self.view = Mock(EventEditorDialog)
         self.event_repository = Mock(EventRepository)
 
     def when_editor_opened_with_time(self, time):
