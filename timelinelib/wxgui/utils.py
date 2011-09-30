@@ -144,21 +144,6 @@ def _set_focus_and_select(ctrl):
         ctrl.SelectAll()
 
 
-def _parse_text_from_textbox(txt, name):
-    """
-    Return a text control field.
-
-    If the value is an empty string the method raises a ValueError
-    exception and sets focus on the control.
-
-    If the value is valid the text in the control is returned
-    """
-    data = txt.GetValue().strip()
-    if len(data) == 0:
-        raise TxtException, (_("Field '%s' can't be empty.") % name, txt)
-    return data
-
-
 def _display_error_message(message, parent=None):
     """Display an error message in a modal dialog box"""
     dial = wx.MessageDialog(parent, message, _("Error"), wx.OK | wx.ICON_ERROR)
