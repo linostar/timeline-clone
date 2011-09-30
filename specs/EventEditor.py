@@ -23,6 +23,7 @@ from mock import Mock
 from specs.utils import an_event_with, human_time_to_py
 from timelinelib.db.interface import TimelineDB
 from timelinelib.editors.event import EventEditor
+from timelinelib.repositories.interface import EventRepository
 from timelinelib.time import PyTimeType
 from timelinelib.wxgui.dialogs.eventform import EventFormDialog
 
@@ -170,7 +171,7 @@ class describe_event_editor(unittest.TestCase):
         self.simulate_user_enters_end_time("2 Jan 2011 12:00")
         self.simulate_user_marks_as_locked(False)
         self.simulate_user_clicks_ok()
-        self.assertTrue(self.db.save_event.called)
+        self.assertTrue(self.event_repository.save.called)
         self.assertEquals("new_event", self.controller.event.text)
         
     def test_on_ok_event_is_updated(self):
@@ -180,7 +181,7 @@ class describe_event_editor(unittest.TestCase):
         self.simulate_user_enters_end_time("2 Jan 2011 12:00")
         self.simulate_user_marks_as_locked(False)
         self.simulate_user_clicks_ok()
-        self.assertTrue(self.db.save_event.called)
+        self.assertTrue(self.event_repository.save.called)
         self.assertEquals("updated_event", self.controller.event.text)
 
     def test_on_ok_event_prorty_ends_today_is_updated(self):
@@ -230,6 +231,7 @@ class describe_event_editor(unittest.TestCase):
         self.time_type = PyTimeType()
         self.db = Mock(TimelineDB)
         self.db.get_time_type.return_value = self.time_type
+        self.event_repository = Mock(EventRepository)
 
     def when_editor_opened_with_time(self, time):
         self.when_editor_opened_with(
@@ -243,7 +245,7 @@ class describe_event_editor(unittest.TestCase):
         self.when_editor_opened_with(None, None, event)
 
     def when_editor_opened_with(self, start, end, event):
-        self.controller = EventEditor(self.view, self.db, start, end, event)
+        self.controller = EventEditor(self.view, self.db, self.event_repository, start, end, event)
         self.controller.initialize()
 
     def simulate_user_enters_start_time(self, time):
@@ -275,6 +277,6 @@ class describe_event_editor(unittest.TestCase):
 
     def assert_fails_to_save_with_message(self):
         self.assertEquals(1, self.view.display_error_message.call_count)
-        self.assertFalse(self.db.save_event.called)
+        self.assertFalse(self.event_repository.save.called)
         self.assertFalse(self.view._close.called)
         self.assertFalse(self.view._clear_dialog.called)

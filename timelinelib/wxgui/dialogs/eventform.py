@@ -24,6 +24,7 @@ from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.domain.category import sort_categories
 from timelinelib.editors.event import EventEditor
+from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 from timelinelib.utils import ex_msg
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
@@ -54,8 +55,8 @@ class EventFormDialog(wx.Dialog):
         self.timeline = timeline
         self.config = config
         self._create_gui()
-        self.controller = EventEditor(self, timeline, start, end, 
-                                                event)
+        self.controller = EventEditor(
+            self, timeline, DbWrapperEventRepository(timeline), start, end, event)
         self.controller.initialize()
 
     def set_focus(self, control_name):

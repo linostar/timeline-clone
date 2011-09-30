@@ -19,14 +19,13 @@
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import PeriodTooLongError
 from timelinelib.db.objects import TimePeriod
-from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 
 
 class EventEditor(object):
 
-    def __init__(self, view, db, start, end, event):
+    def __init__(self, view, db, event_repository, start, end, event):
         self.view = view
-        self.event_repository = DbWrapperEventRepository(db)
+        self.event_repository = event_repository
         self.time_type = db.get_time_type()
         self.event = event
         if self.event != None:
