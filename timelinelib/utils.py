@@ -28,11 +28,3 @@ def ex_msg(e):
             # unicode) should always contain a single unicode message. So we
             # should never end up here.
             return ""
-
-
-def version_str_to_tuple(version_str):
-    """
-    >>> version_str_to_tuple("0.4.44.3")
-    (0, 4, 44, 3)
-    """
-    return tuple([int(x) for x in version_str.split(".")])

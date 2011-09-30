@@ -19,7 +19,6 @@
 import wx
 import wx.lib.agw.customtreectrl as customtreectrl
 
-from timelinelib.utils import version_str_to_tuple
 import timelinelib.wxgui.utils as gui_utils
 from timelinelib.wxgui.utils import category_tree
 from timelinelib.wxgui.utils import ID_ERROR
@@ -252,3 +251,11 @@ def delete_category(parent_ctrl, db, cat, fn_handle_db_error):
             db.delete_category(cat)
         except TimelineIOError, e:
             fn_handle_db_error(e)
+
+
+def version_str_to_tuple(version_str):
+    """
+    >>> version_str_to_tuple("0.4.44.3")
+    (0, 4, 44, 3)
+    """
+    return tuple([int(x) for x in version_str.split(".")])
