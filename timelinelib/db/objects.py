@@ -33,6 +33,7 @@ class Event(object):
     def __init__(self, db, start_time, end_time, text, category=None, 
                  fuzzy=False, locked=False, ends_today=False):
         self.db = db
+        self.time_type = self.db.get_time_type()
         self.fuzzy = fuzzy
         self.locked = locked
         self.ends_today = ends_today
@@ -51,8 +52,7 @@ class Event(object):
     def update(self, start_time, end_time, text, category=None, fuzzy=None, 
                locked=None, ends_today=None):
         """Change the event data."""
-        time_type = self.db.get_time_type()
-        self.time_period = TimePeriod(time_type, start_time, end_time)
+        self.time_period = TimePeriod(self.time_type, start_time, end_time)
         self.text = text
         self.category = category
         if ends_today is not None:
@@ -65,8 +65,7 @@ class Event(object):
 
     def update_period(self, start_time, end_time):
         """Change the event period."""
-        self.time_period = TimePeriod(self.db.get_time_type(), start_time, 
-                                      end_time)
+        self.time_period = TimePeriod(self.time_type, start_time, end_time)
 
     def update_period_o(self, new_period):
         self.update_period(new_period.start_time, new_period.end_time)
@@ -74,16 +73,16 @@ class Event(object):
     def update_start(self, start_time):
         """Change the event data."""
         if start_time <= self.time_period.end_time:
-            self.time_period = TimePeriod(self.db.get_time_type(), start_time, 
-                                          self.time_period.end_time)
+            self.time_period = TimePeriod(
+                self.time_type, start_time, self.time_period.end_time)
             return True
         return False            
 
     def update_end(self, end_time):
         """Change the event data."""
         if end_time >= self.time_period.start_time:
-            self.time_period = TimePeriod(self.db.get_time_type(), 
-                                          self.time_period.start_time, end_time)
+            self.time_period = TimePeriod(
+                self.time_type, self.time_period.start_time, end_time)
             return True
         return False            
 
