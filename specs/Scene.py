@@ -112,7 +112,7 @@ class SceneSpec(unittest.TestCase):
         category = Category("category", (0, 0, 0), None, visible)
         if end_time is None:
             end_time = start_time
-        event = Event(self.db, human_time_to_py(start_time), 
+        event = Event(self.db.get_time_type(), human_time_to_py(start_time), 
                       human_time_to_py(end_time), "event-text", category)
         self.db.save_category(category)
         self.db.save_event(event)

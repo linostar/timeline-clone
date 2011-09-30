@@ -120,7 +120,7 @@ class DirTimeline(MemoryDB):
             start_time, end_time = end_time, start_time
         text = os.path.basename(file_path)
         category = self._category_from_path(file_path)
-        evt = Event(self, start_time, end_time, text, category)
+        evt = Event(self.get_time_type(), start_time, end_time, text, category)
         return evt
 
     def _category_from_path(self, file_path):

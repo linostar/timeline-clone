@@ -375,7 +375,7 @@ class TimelineViewSpec(unittest.TestCase):
     def given_event_with(self, start="4 Aug 2010", end="10 Aug 2010",
                          text="Text", description=None,
                          pos=(0, 0), size=(0, 0)):
-        event = Event(self.db, human_time_to_py(start), human_time_to_py(end), text)
+        event = Event(self.db.get_time_type(), human_time_to_py(start), human_time_to_py(end), text)
         if description is not None:
             event.set_data("description", description)
         self.db.save_event(event)

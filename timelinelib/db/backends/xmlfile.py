@@ -215,7 +215,7 @@ class XmlTimeline(MemoryDB):
             icon = None
         else:
             icon = parse_icon(icon_text)
-        event = Event(self, start, end, text, category, fuzzy, locked, ends_today)
+        event = Event(self.get_time_type(), start, end, text, category, fuzzy, locked, ends_today)
         event.set_data("description", description)
         event.set_data("icon", icon)
         self.save_event(event)

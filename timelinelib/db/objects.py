@@ -30,10 +30,9 @@ class Event(object):
     it will set the event id to a unique integer.
     """
 
-    def __init__(self, db, start_time, end_time, text, category=None, 
+    def __init__(self, time_type, start_time, end_time, text, category=None, 
                  fuzzy=False, locked=False, ends_today=False):
-        self.db = db
-        self.time_type = self.db.get_time_type()
+        self.time_type = time_type
         self.fuzzy = fuzzy
         self.locked = locked
         self.ends_today = ends_today
@@ -130,7 +129,7 @@ class Event(object):
 
     def clone(self):
         # Objects of type datetime are immutable.
-        new_event = Event(self.db, self.time_period.start_time, 
+        new_event = Event(self.time_type, self.time_period.start_time, 
                           self.time_period.end_time, self.text, self.category)
         # Description is immutable
         new_event.set_data("description", self.get_data("description") )

@@ -62,7 +62,7 @@ class duplicate_event_dialog_spec_base(unittest.TestCase):
 
     def _create_event(self):
         self.event = Event(
-            self.db, 
+            self.db.get_time_type(), 
             datetime.datetime(2010, 1, 1),
             datetime.datetime(2010, 1, 1),
             "foo",

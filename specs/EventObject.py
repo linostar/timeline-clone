@@ -60,10 +60,10 @@ class EventSpec(unittest.TestCase):
         return self.db.get_time_type().parse_time(tm)
 
     def given_default_point_event(self):
-        self.event = Event(self.db, self.now, self.now, "evt")
+        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
 
     def given_point_event(self):
-        self.event = Event(self.db, self.time("2000-01-01 10:01:01"), 
+        self.event = Event(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
                            self.time("2000-01-01 10:01:01"), "evt")
         
 
@@ -88,16 +88,16 @@ class EventCosntructorSpec(unittest.TestCase):
         self.assertEqual(True, self.event.ends_today)
     
     def given_default_point_event(self):
-        self.event = Event(self.db, self.now, self.now, "evt")
+        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
         
     def given_point_event_wich_ends_today(self):
-        self.event = Event(self.db, self.now, self.now, "evt", ends_today=True)
+        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", ends_today=True)
 
     def given_fuzzy_point_event(self):
-        self.event = Event(self.db, self.now, self.now, "evt", fuzzy=True)
+        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", fuzzy=True)
 
     def given_locked_point_event(self):
-        self.event = Event(self.db, self.now, self.now, "evt", locked=True)
+        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", locked=True)
         
     def setUp(self):
         self.db = MemoryDB()

@@ -52,7 +52,7 @@ class DrawerSpec(unittest.TestCase):
         self.assert_text_drawn_above("mike's birthday", BASELINE_Y_POS)
 
     def given_event(self, name, start, end):
-        event = Event(self.timeline, start, end, name)
+        event = Event(self.timeline.get_time_type(), start, end, name)
         self.timeline.save_event(event)
         
     def when_timeline_is_drawn(self):

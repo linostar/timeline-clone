@@ -406,10 +406,10 @@ class MemoryDBSpec(unittest.TestCase):
         self.db_listener = Mock()
         self.c1 = Category("work", (255, 0, 0), None, True)
         self.c2 = Category("private", (0, 255, 0), None, True)
-        self.e1 = Event(self.db, datetime(2010, 2, 13), datetime(2010, 2, 13), 
+        self.e1 = Event(self.db.get_time_type(), datetime(2010, 2, 13), datetime(2010, 2, 13), 
                         "holiday")
-        self.e2 = Event(self.db, datetime(2010, 2, 14), datetime(2010, 2, 14), 
+        self.e2 = Event(self.db.get_time_type(), datetime(2010, 2, 14), datetime(2010, 2, 14), 
                         "work starts")
-        self.e3 = Event(self.db, datetime(2010, 2, 15), datetime(2010, 2, 16), 
+        self.e3 = Event(self.db.get_time_type(), datetime(2010, 2, 15), datetime(2010, 2, 16), 
                         "period")
         self.db.register(self.db_listener)

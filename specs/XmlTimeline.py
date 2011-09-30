@@ -45,7 +45,7 @@ class XmlTimelineSpec(unittest.TestCase):
     def testDisplayedPeriodTagNotWrittenIfNotSet(self):
         # Create a new db and add one event
         db = db_open(self.tmp_path)
-        db.save_event(Event(db, datetime(2010, 8, 31, 0, 0, 0),
+        db.save_event(Event(db.get_time_type(), datetime(2010, 8, 31, 0, 0, 0),
                             datetime(2010, 8, 31, 0, 0, 0),
                             "test"))
         # Read the file content from disk
@@ -90,7 +90,7 @@ class XmlTimelineSpec(unittest.TestCase):
         cat3 = Category("Category 3", (0, 0, 255), None, True, parent=cat2)
         db.save_category(cat3)
         # Create events
-        ev1 = Event(db, datetime(2010, 3, 3), datetime(2010, 3, 6),
+        ev1 = Event(db.get_time_type(), datetime(2010, 3, 3), datetime(2010, 3, 6),
                     "Event 1", cat1)
         ev1.set_data("description", u"The <b>first</b> event åäö.")
         db.save_event(ev1)

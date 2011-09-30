@@ -122,7 +122,7 @@ class EventEditor(object):
         
     def _save_event(self):
         if self.event == None:
-            self.event = Event(self.db, self.start, self.end, self.name, 
+            self.event = Event(self.db.get_time_type(), self.start, self.end, self.name, 
                                self.category, self.fuzzy, self.locked, 
                                self.ends_today)
         else:
