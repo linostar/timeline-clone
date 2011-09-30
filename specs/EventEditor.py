@@ -21,7 +21,6 @@ import unittest
 from mock import Mock
 
 from specs.utils import an_event_with, human_time_to_py
-from timelinelib.db.interface import TimelineDB
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.interface import EventRepository
 from timelinelib.time import PyTimeType
@@ -228,9 +227,6 @@ class describe_event_editor(unittest.TestCase):
 
     def setUp(self):
         self.view = Mock(EventFormDialog)
-        self.time_type = PyTimeType()
-        self.db = Mock(TimelineDB)
-        self.db.get_time_type.return_value = self.time_type
         self.event_repository = Mock(EventRepository)
 
     def when_editor_opened_with_time(self, time):
@@ -245,7 +241,8 @@ class describe_event_editor(unittest.TestCase):
         self.when_editor_opened_with(None, None, event)
 
     def when_editor_opened_with(self, start, end, event):
-        self.controller = EventEditor(self.view, self.db, self.event_repository, start, end, event)
+        self.controller = EventEditor(
+            self.view, PyTimeType(), self.event_repository, start, end, event)
         self.controller.initialize()
 
     def simulate_user_enters_start_time(self, time):

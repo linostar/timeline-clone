@@ -56,7 +56,8 @@ class EventFormDialog(wx.Dialog):
         self.config = config
         self._create_gui()
         self.controller = EventEditor(
-            self, timeline, DbWrapperEventRepository(timeline), start, end, event)
+            self, timeline.get_time_type(), DbWrapperEventRepository(timeline),
+            start, end, event)
         self.controller.initialize()
 
     def set_focus(self, control_name):
