@@ -23,7 +23,7 @@ from mock import Mock
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.editors.category import CategoryEditor
-from timelinelib.repositories import CategoryRepository
+from timelinelib.repositories.interface import CategoryRepository
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
 
 

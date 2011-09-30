@@ -24,7 +24,7 @@ from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.editors.category import CategoryEditor
-from timelinelib.repositories import DbWrapperCategoryRepository
+from timelinelib.repositories.dbwrapper import DbWrapperCategoryRepository
 
 
 class WxCategoryEdtiorDialog(wx.Dialog):

@@ -16,19 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from timelinelib.repositories.interface import CategoryRepository
 from timelinelib.wxgui.utils import category_tree
-
-
-class CategoryRepository(object):
-
-    def get_all(self):
-        raise NotImplementedError()
-
-    def get_tree(self, remove):
-        raise NotImplementedError()
-
-    def save(self, category):
-        raise NotImplementedError()
 
 
 class DbWrapperCategoryRepository(CategoryRepository):
