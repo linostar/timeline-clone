@@ -90,7 +90,7 @@ class IcsTimeline(TimelineDB):
             return max(events, key=lambda x: x.time_period.end_time)
         else:
             return None
-        
+
     def save_event(self, event):
         pass
 
@@ -118,7 +118,7 @@ class IcsTimeline(TimelineDB):
             if e.id == id:
                 return e
         return None
-    
+
     def _get_events(self, decider_fn=None):
         events = []
         for event in self.cal.walk("VEVENT"):

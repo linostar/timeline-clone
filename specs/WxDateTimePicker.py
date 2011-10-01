@@ -110,7 +110,7 @@ class AWxDatePicker(WxDatePickerBaseFixture):
     def testChangesToErrorBackgroundWhenIncorrectDateIsEntered(self):
         self.simulate_change_date_string("foo")
         self.assertBackgroundChangedTo("pink")
-        
+
     def testChangesToErrorBackgroundWhenIvalidDateIsEntered(self):
         self.simulate_change_date_string("2010-08-40")
         self.assertBackgroundChangedTo("pink")
@@ -503,7 +503,7 @@ class ACalendarPopup(unittest.TestCase):
         call = self.calendar_popup.reset_mock()
         self._simulateMonthChange()
         self.assertFalse(self.calendar_popup.Popup.called)
-        
+
     def _simulateMonthChange(self):
         self.controller.on_month()
         self.controller.on_dismiss()

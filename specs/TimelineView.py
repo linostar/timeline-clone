@@ -442,7 +442,7 @@ class TimelineViewSpec(unittest.TestCase):
 
     def assert_event_has_period(self, event, start, end):
         self.assertEquals(py_period(start, end), event.time_period)
-    
+
     def assert_balloon_drawn_for_event(self, event):
         view_properties = self.get_view_properties_used_when_drawing()
         self.assertEquals(event, view_properties.hovered_event)
@@ -493,7 +493,7 @@ class MockDrawer(object):
 
     def use_fast_draw(self, value):
         pass
-    
+
     def setup_get_time_call(self, x, time):
         self.get_time_calls[x] = time
 

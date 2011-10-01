@@ -17,12 +17,12 @@
 
 
 class PreferencesEditor(object):
-    
+
     def __init__(self, dialog, config):
         self.dialog = dialog
         self.config = config
         self.weeks_map = ((0, "monday"), (1, "sunday"))
-        
+
     def initialize_controls(self):
         self.dialog.set_checkbox_enable_wide_date_range(
             self.config.get_use_wide_date_range())
@@ -50,10 +50,9 @@ class PreferencesEditor(object):
             if w == week:
                 return i
         raise ValueError("Unknown week '%s'." % week)
-        
+
     def _index_week(self, index):
         for (i, w) in self.weeks_map:
             if i == index:
                 return w
         raise ValueError("Unknown week index '%s'." % index)
-        

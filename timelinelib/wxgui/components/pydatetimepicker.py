@@ -18,7 +18,7 @@
 
 import os.path
 import datetime
-  
+
 import wx.calendar
 
 from timelinelib.paths import ICONS_DIR
@@ -78,7 +78,7 @@ class PyDateTimePicker(wx.Panel):
             self.calendar_popup = calendar_popup
         except ValueError:
              _display_error_message(_("Invalid date"))
-            
+
 
     def _calendar_on_date_changed(self, evt):
         wx_date = evt.GetEventObject().GetDate()
@@ -128,7 +128,7 @@ class CalendarPopup(wx.PopupTransientWindow):
         self.cal = self._create_calendar_control(wx_date, BORDER)
         size = self.cal.GetBestSize()
         self.SetSize((size.width + BORDER * 2, size.height + BORDER * 2))
-        
+
     def _create_calendar_control(self, wx_date, border):
         style = self._get_cal_style()
         cal = wx.calendar.CalendarCtrl(self, -1, wx_date, 
@@ -144,7 +144,7 @@ class CalendarPopup(wx.PopupTransientWindow):
         else:
             style |= wx.calendar.CAL_SUNDAY_FIRST
         return style
-         
+
     def _set_cal_range(self, cal):
         min_date, msg = PyTimeType().get_min_time()
         max_date, msg = PyTimeType().get_max_time()
@@ -414,7 +414,7 @@ class PyDatePickerController(object):
         self.set_py_date(new_date)
         restore_selection(selection)
         self.save_preferred_day = True
-                    
+
     def _set_valid_day(self, new_year, new_month, new_day):
         done = False
         while not done:
@@ -430,14 +430,14 @@ class PyDatePickerController(object):
             self.preferred_day = date.day
         else:
             self.preferred_day = None
-        
+
     def _current_date_is_valid(self):
         try:
             self.get_py_date()
         except ValueError:
             return False
         return True
-        
+
     def _select_region_if_possible(self, region):
         region_range = self._get_region_range(region)
         if region_range:
@@ -528,7 +528,7 @@ class PyTimePicker(wx.TextCtrl):
             else:
                 evt.Skip()    
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
-        
+
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("00:00")
         width = w + 20
@@ -567,10 +567,10 @@ class PyTimePickerController(object):
             self.py_time_picker.SetSelection(start, end)
         else:
             self._select_part(self.hour_part)
-            
+
     def on_kill_focus(self):
         self.last_selection = self.py_time_picker.GetSelection()
-            
+
     def on_tab(self):
         if self._in_minute_part():
             return True
@@ -590,7 +590,7 @@ class PyTimePickerController(object):
         except ValueError:
             self.py_time_picker.SetBackgroundColour("pink")
         self.py_time_picker.Refresh()
-        
+
     def on_up(self):
         def increment_hour(time):
             new_hour = time.hour + 1
@@ -616,7 +616,7 @@ class PyTimePickerController(object):
             new_time = increment_minutes(current_time)
         if current_time != new_time:    
             self._set_new_time_and_restore_selection(new_time, selection)  
-        
+
     def on_down(self):
         def decrement_hour(time):
             new_hour = time.hour - 1
@@ -665,7 +665,7 @@ class PyTimePickerController(object):
             time_string_len = len(self.py_time_picker.get_time_string())
             self.py_time_picker.SetSelection(self._separator_pos() + 1, time_string_len)
         self.preferred_part = part
-        
+
     def _in_hour_part(self):
         if self._separator_pos() == -1:
             return

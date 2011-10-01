@@ -96,14 +96,14 @@ class MainFrame(wx.Frame):
         self._create_main_panel()
         self._create_main_menu_bar()
         self._bind_frame_events()
-        
+
     def _create_status_bar(self):
         self.CreateStatusBar()
         self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
-        
+
     def _create_main_panel(self):
         self.main_panel = MainPanel(self, self.config)
-        
+
     def _create_main_menu_bar(self):
         main_menu_bar = wx.MenuBar()
         self._create_file_menu(main_menu_bar)
@@ -113,7 +113,7 @@ class MainFrame(wx.Frame):
         self._create_navigate_menu(main_menu_bar)
         self._create_help_menu(main_menu_bar)
         self.SetMenuBar(main_menu_bar)
-        
+
     def _create_file_menu(self, main_menu_bar):
         file_menu = wx.Menu()
         self._create_file_new_menu(file_menu)
@@ -254,7 +254,7 @@ class MainFrame(wx.Frame):
                 type = self.images_wildcard_helper.get_extension_data(path)
                 image.SaveFile(path, type)
         dialog.Destroy()
- 
+
     def _create_file_export_to_svg_menu_item(self, file_menu):
         mnu_file_export_svg = file_menu.Append(
             wx.ID_ANY, _("&Export to SVG..."), _("Export the current view to a SVG image"))
@@ -428,7 +428,7 @@ class MainFrame(wx.Frame):
         event1, event2 = self._get_selected_events()
         distance = self._calc_events_distance(event1, event2)
         self._display_distance(distance)
-    
+
     def _get_selected_events(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
         event_id_1 = view_properties.selected_event_ids[0]
@@ -436,7 +436,7 @@ class MainFrame(wx.Frame):
         event1 = self.timeline.find_event_with_id(event_id_1)
         event2 = self.timeline.find_event_with_id(event_id_2)
         return event1, event2
-    
+
     def _calc_events_distance(self,event1, event2):    
         if event1.time_period.start_time <= event2.time_period.start_time:
             distance = (event2.time_period.start_time - 
@@ -445,7 +445,7 @@ class MainFrame(wx.Frame):
             distance = (event1.time_period.start_time - 
                         event2.time_period.end_time)
         return distance
-    
+
     def _display_distance(self, distance):
         header = _("Distance between selected events")
         distance_text = self.timeline.get_time_type().format_delta(distance)
@@ -559,7 +559,7 @@ class MainFrame(wx.Frame):
     def _last_time(self, events):
         end_time = lambda event: event.time_period.end_time
         return end_time(max(events, key=end_time))
-    
+
     def _create_help_menu(self, main_menu_bar):
         help_menu = wx.Menu()
         self._create_help_contents_menu_item(help_menu)
@@ -728,7 +728,7 @@ class MainFrame(wx.Frame):
         self._enable_disable_duplicate_event_menu()
         self._enable_disable_measure_distance_between_two_events_menu()
         self._enable_disable_searchbar()
-  
+
     def _enable_disable_duplicate_event_menu(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
         one_event_selected = len(view_properties.selected_event_ids) == 1
@@ -742,7 +742,7 @@ class MainFrame(wx.Frame):
     def _enable_disable_searchbar(self): 
         if self.timeline == None:
             self.main_panel.show_searchbar(False)
-        
+
     def _save_current_timeline_data(self):
         if self.timeline:
             try:
@@ -773,7 +773,7 @@ class MainFrame(wx.Frame):
 
 
 class MenuController(object):
-    
+
     def __init__(self):
         self.current_timeline = None
         self.menus_requiring_timeline = []
@@ -782,7 +782,7 @@ class MenuController(object):
 
     def on_timeline_change(self, timeline):
         self.current_timeline = timeline
-        
+
     def add_menu_requiring_writable_timeline(self, menu):
         self.menus_requiring_writable_timeline.append(menu)
 
@@ -791,7 +791,7 @@ class MenuController(object):
 
     def add_menu_requiring_visible_timeline_view(self, menu):
         self.menus_requiring_visible_timeline_view.append(menu)
-        
+
     def enable_disable_menus(self, timeline_view_visible):
         for menu in self.menus_requiring_writable_timeline:
             self._enable_disable_menu_requiring_writable_timeline(menu)
@@ -799,7 +799,7 @@ class MenuController(object):
             self._enable_disable_menu_requiring_timeline(menu)
         for menu in self.menus_requiring_visible_timeline_view:
             self._enable_disable_menu_requiring_visible_timeline_view(menu, timeline_view_visible)
-        
+
     def _enable_disable_menu_requiring_writable_timeline(self, menu):
         if self.current_timeline == None:
             menu.Enable(False)
@@ -814,7 +814,7 @@ class MenuController(object):
     def _enable_disable_menu_requiring_visible_timeline_view(self, menu, timeline_view_visible):
         has_timeline = self.current_timeline != None
         menu.Enable(has_timeline and timeline_view_visible)
-        
+
 
 class MainPanel(wx.Panel):
     """

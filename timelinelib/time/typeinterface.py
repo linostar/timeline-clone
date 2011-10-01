@@ -44,7 +44,7 @@ class TimeType(object):
 
     def choose_strip(self, metrics, config):
         raise NotImplementedError("choose_strip not implemented.")
-    
+
     def mult_timedelta(self, delta, num):
         raise NotImplementedError("mult_timedelta not implemented.")
 
@@ -57,19 +57,19 @@ class TimeType(object):
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
         raise NotImplementedError("get_time_for_x not implemented.")
-        
+
     def div_timedeltas(self, delta1, delta2):
         raise NotImplementedError("div_timedeltas not implemented.")
-    
+
     def get_max_zoom_delta(self):
         raise NotImplementedError("get_max_zoom_delta not implemented.")
 
     def get_min_zoom_delta(self):
         raise NotImplementedError("get_max_zoom_delta not implemented.")
-    
+
     def get_zero_delta(self):
         raise NotImplementedError("get_zero_delta not implemented.")
-    
+
     def time_period_has_nonzero_time(self, time_period):
         raise NotImplementedError("time_period_has_nonzero_time not implemented.")
 
@@ -84,7 +84,7 @@ class TimeType(object):
 
     def margin_delta(self, delta):
         raise NotImplementedError("margin_delta not implemented.")
-    
+
     def event_date_string(self, time):
         raise NotImplementedError("eventtimes_equals not implemented.")
 

@@ -42,7 +42,7 @@ class CategoriesEditor(wx.Dialog):
 
     def _fill_controls_with_data(self):
         self.cat_tree.initialize_from_db(self.db)
-        
+
     def _create_gui(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
         cat_tree = self._create_cat_tree(vbox)
@@ -87,7 +87,7 @@ class CategoriesEditor(wx.Dialog):
             edit_category(self, self.db, selected_category, 
                           self.db_error_handler)
             self._updateButtons()
-        
+
     def _create_add_button(self, button_box):
         btn = wx.Button(self, wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn)
@@ -97,7 +97,7 @@ class CategoriesEditor(wx.Dialog):
     def _btn_add_on_click(self, e):
         add_category(self, self.db, self.db_error_handler)
         self._updateButtons()
-        
+
     def _create_delete_button(self, button_box):
         btn = wx.Button(self, wx.ID_DELETE)
         btn.Disable()
@@ -120,7 +120,7 @@ class CategoriesEditor(wx.Dialog):
 
     def _btn_close_on_click(self, e):
         self.Close()
-        
+
     def db_error_handler(self, e):
         gui_utils.handle_db_error_in_dialog(self, e)
 
@@ -128,4 +128,4 @@ class CategoriesEditor(wx.Dialog):
         selected_category = self.cat_tree.get_selected_category() is not None
         self.btn_edit.Enable(selected_category)
         self.btn_del.Enable(selected_category)
-        
+

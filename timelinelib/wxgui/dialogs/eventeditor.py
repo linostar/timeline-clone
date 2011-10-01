@@ -47,7 +47,7 @@ class EventEditorDialog(wx.Dialog):
         self.controller.edit(
             timeline.get_time_type(), DbWrapperEventRepository(timeline),
             start, end, event)
-            
+
     def _create_gui(self):
         properties_box = self._create_properties_box()
         self._create_checkbox_add_more(properties_box)
@@ -100,7 +100,7 @@ class EventEditorDialog(wx.Dialog):
     def _create_time_picker(self):
         time_type = self.timeline.get_time_type()
         return time_picker_for(time_type)(self, config=self.config)
-    
+
     def _create_checkboxes(self, grid):
         grid.AddStretchSpacer()
         when_box = wx.BoxSizer(wx.HORIZONTAL)
@@ -130,7 +130,7 @@ class EventEditorDialog(wx.Dialog):
     def _create_fuzzy_checkbox(self, box):
         handler = None
         return self._create_chb(box, _("Fuzzy"), handler)
-    
+
     def _create_locked_checkbox(self, box):
         handler = self._chb_show_time_on_locked
         return self._create_chb(box, _("Locked"), handler)
@@ -148,7 +148,7 @@ class EventEditorDialog(wx.Dialog):
             self.Bind(wx.EVT_CHECKBOX, handler, chb)
         box.Add(chb)
         return chb
-            
+
     def _create_text_field(self, grid):
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY, name="text")
         grid.Add(wx.StaticText(self, label=_("Text:")),
@@ -212,7 +212,7 @@ class EventEditorDialog(wx.Dialog):
         for data_id in self.timeline.supported_event_data():
             self._add_editor(notebook, data_id)
         return notebook
-     
+
     def _add_editor(self, notebook, data_id):
         editor_class_decription = self._get_editor_class_description(data_id)
         if editor_class_decription is None:
@@ -237,7 +237,7 @@ class EventEditorDialog(wx.Dialog):
         sizer.Add(editor, flag=wx.EXPAND, proportion=1)
         panel.SetSizer(sizer)
         return editor
-    
+
     def _create_checkbox_add_more(self, properties_box):
         label = _("Add more events after this one")
         self.chb_add_more = wx.CheckBox(self, label=label)
@@ -247,14 +247,14 @@ class EventEditorDialog(wx.Dialog):
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         properties_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
-        
+
     def _btn_ok_on_click(self, evt):
         self.controller.create_or_update_event()
 
     def _show_to_time(self, show=True):
         self.lbl_to.Show(show)
         self.dtp_end.Show(show)
-        
+
     def _fill_categories_listbox(self, select_category):
         # We can not do error handling here since this method is also called
         # from the constructor (and then error handling is done by the code
@@ -320,7 +320,7 @@ class EventEditorDialog(wx.Dialog):
         self.txt_text.SetValue(name)
     def get_name(self):
         return self.txt_text.GetValue().strip()
-    
+
     def set_category(self, category):
         self._fill_categories_listbox(category)
     def get_category(self):
@@ -378,7 +378,7 @@ class EventEditorDialog(wx.Dialog):
         self.controller.clear()
         for data_id, editor in self.event_data:
             editor.clear_data()
-        
+
     def close(self):
         # TODO: Replace with EventRuntimeData
         self.EndModal(wx.ID_OK)

@@ -90,7 +90,7 @@ class PyTimeType(TimeType):
 
     def is_date_time_type(self):
         return True
-    
+
     def format_period(self, time_period):
         """Returns a unicode string describing the time period."""
         def label_with_time(time):
@@ -134,7 +134,7 @@ class PyTimeType(TimeType):
         if delta_string == "":
             delta_string = "0"
         return delta_string
-    
+
     def get_min_time(self):
         min_time = datetime(10, 1, 1)
         return (min_time, _("can't be before year 10"))
@@ -142,7 +142,7 @@ class PyTimeType(TimeType):
     def get_max_time(self):
         max_time = datetime(9990, 1, 1)
         return (max_time, _("can't be after year 9989"))
-    
+
     def choose_strip(self, metrics, config):
         """
         Return a tuple (major_strip, minor_strip) for current time period and
@@ -166,7 +166,7 @@ class PyTimeType(TimeType):
             return (StripCentury(), StripDecade())
         else:
             return (StripCentury(), StripCentury())
-        
+
     def mult_timedelta(self, delta, num):
         """Return a new timedelta that is `num` times larger than `delta`."""
         days = delta.days * num
@@ -179,7 +179,7 @@ class PyTimeType(TimeType):
 
     def now(self):
         return datetime.now()
-        
+
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
         microsecs = delta_to_microseconds(time_period.delta())
@@ -205,7 +205,7 @@ class PyTimeType(TimeType):
 
     def get_zero_delta(self):
         return timedelta(0)
-    
+
     def time_period_has_nonzero_time(self, time_period):
         nonzero_time = (time_period.start_time.time() != time(0, 0, 0) or
                         time_period.end_time.time()   != time(0, 0, 0))
@@ -221,7 +221,7 @@ class PyTimeType(TimeType):
             (_("Month"), move_period_num_months),
             (_("Year"), move_period_num_years),
         ]
-    
+
     def zoom_is_ok(self, delta):
         return (delta.seconds > 3600) or (delta.days > 0)
 
@@ -233,18 +233,18 @@ class PyTimeType(TimeType):
 
     def event_date_string(self, time):
         return "%04d-%02d-%02d" % (time.year, time.month, time.day)
-    
+
     def event_time_string(self, time):
         return "%02d:%02d" % (time.hour, time.minute)
-    
+
     def eventtimes_equals(self, time1, time2):
         s1 = "%s %s" % (self.event_date_string(time1), 
                         self.event_date_string(time1))
         s2 = "%s %s" % (self.event_date_string(time2), 
                         self.event_date_string(time2))
         return s1 == s2 
-    
-    
+
+
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))
 
@@ -456,7 +456,7 @@ class StripCentury(Strip):
 
     def _century_start_year(self, year):
         return (int(year) / 100) * 100
-   
+
 
 class StripDecade(Strip):
 
@@ -528,7 +528,7 @@ class StripDay(Strip):
         else:
             return get_default_font(8)
 
- 
+
 class StripWeek(Strip):
 
     def __init__(self, config):
@@ -624,13 +624,13 @@ class StripHour(Strip):
 
     def increment(self, time):
         return time + timedelta(hours=1)
-    
+
     def get_font(self, time_period):
         return get_default_font(8)
-    
+
     def get_metrics(self, size, time_period, divider_line_slider_position):
         return PyTimeMetrics(size, time_period, divider_line_slider_position)
-    
+
 
 def microseconds_to_delta(microsecs):
     """Return a timedelta representing the given number of microseconds."""

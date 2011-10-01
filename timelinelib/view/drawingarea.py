@@ -100,12 +100,12 @@ class DrawingArea(object):
 
     def use_fast_draw(self, value):
         self.fast_draw = value
-        
+
     def _set_null_timeline(self):
         self.timeline = None
         self.time_type = None
         self.view.Disable()
-        
+
     def _set_non_null_timeline(self, timeline):
         self.timeline = timeline
         self.time_type = timeline.get_time_type()
@@ -128,7 +128,7 @@ class DrawingArea(object):
             self.fn_handle_db_error(e)
             properties_loaded = False
         return properties_loaded
-        
+
     def _unregister_timeline(self, timeline):
         if timeline != None:
             timeline.unregister(self._timeline_changed)
@@ -219,21 +219,21 @@ class DrawingArea(object):
             id = selected_event_ids[0]
             return self.timeline.find_event_with_id(id)
         return None 
-        
+
     def _context_menu_on_edit_event(self, evt):
         self.view.edit_event(self.context_menu_event)
 
     def _context_menu_on_duplicate_event(self, evt):
         self.view.duplicate_event(self.context_menu_event)
-        
+
     def _context_menu_on_delete_event(self, evt):
         self.context_menu_event.selected = True
         self._delete_selected_events()
-        
+
     def _context_menu_on_sticky_balloon_event(self, evt):
         self.view_properties.set_event_has_sticky_balloon(self.context_menu_event, has_sticky=True)
         self._redraw_timeline()
-    
+
     def left_mouse_dclick(self, x, y, ctrl_down):
         """
         Event handler used when the left mouse button has been double clicked.
@@ -288,7 +288,7 @@ class DrawingArea(object):
     def mouse_enter(self, x, left_is_down):
         """
         Mouse event handler, when the mouse is entering the window.
-        
+
         If there is an ongoing selection-marking (dragscroll timer running)
         and the left mouse button is not down when we enter the window, we 
         want to simulate a 'mouse left up'-event, so that the dialog for 
@@ -300,7 +300,7 @@ class DrawingArea(object):
 
     def mouse_moved(self, x, y):
         self.input_handler.mouse_moved(x, y)
-                
+
     def mouse_wheel_moved(self, rotation, ctrl_down, shift_down):
         direction = _step_function(rotation)
         if ctrl_down:
@@ -338,7 +338,7 @@ class DrawingArea(object):
                 self.timeline.place_event_before_event(selected_event, 
                                                        overlapping_event)
             self._redraw_timeline()
-                
+
     def key_up(self, keycode):
         if keycode == wx.WXK_CONTROL:
             self.view.set_default_cursor()
@@ -372,7 +372,7 @@ class DrawingArea(object):
         self.view_properties.show_legend = self.config.get_show_legend()
         self.view_properties.show_balloons_on_hover = self.config.get_balloon_on_hover()
         self.dragscroll_timer_running = False
-        
+
     def _set_colors_and_styles(self):
         """Define the look and feel of the drawing area."""
         self.view.SetBackgroundColour(wx.WHITE)
@@ -418,17 +418,17 @@ class DrawingArea(object):
             self.status_bar_adapter.set_text(event.get_label())
         else:
             self.status_bar_adapter.set_text("")
-            
+
     def balloon_show_timer_fired(self):
         self.input_handler.balloon_show_timer_fired()
 
     def balloon_hide_timer_fired(self):
         self.input_handler.balloon_hide_timer_fired()
-    
+
     def _redraw_balloons(self, event):
         self.view_properties.hovered_event = event
         self._redraw_timeline()
-        
+
     def _in_scroll_zone(self, x):
         """
         Return True if x is within the left hand or right hand area
@@ -438,7 +438,7 @@ class DrawingArea(object):
         if width - x < SCROLL_ZONE_WIDTH or x < SCROLL_ZONE_WIDTH:
             return True
         return False
-        
+
     def dragscroll_timer_fired(self):
         self.input_handler.dragscroll_timer_fired()
 

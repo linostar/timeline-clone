@@ -41,14 +41,14 @@ class Drawer(object):
 
     def use_fast_draw(self, value):
         self.fast_draw = value
-        
+
     def event_is_period(self, time_period):
         """
         Return True if the event time_period will make the event appear
         below the center line, as a period event.
         """
         return None
-     
+
     def snap(self, time, snap_region=10):
         """Snap time to minor strip if within snap_region pixels."""
         return time
@@ -90,7 +90,7 @@ class Drawer(object):
     def get_closest_overlapping_event(event_to_move, up=True):
         raise NotImplementedError()
 
-    
+
 class ViewProperties(object):
     """
     Store properties of a view.
@@ -154,10 +154,10 @@ class ViewProperties(object):
 
     def get_selected_event_ids(self):
         return self.selected_event_ids[:]
-        
+
     def category_visible(self, category):
         return not category.id in self.hidden_categories
-    
+
     def set_category_visible(self, category, is_visible=True):
         if is_visible == True and category.id in self.hidden_categories:
             self.hidden_categories.remove(category.id)
@@ -196,7 +196,7 @@ class Strip(object):
         Increment the given time so that it points to the start of the next
         strip.
         """
-        
+
     def get_font(self, time_period):
         """
         Return the preferred font for this strip

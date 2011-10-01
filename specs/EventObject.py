@@ -33,12 +33,12 @@ class EventSpec(unittest.TestCase):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", fuzzy=True) 
         self.assertEqual(True, self.event.fuzzy)
-    
+
     def testEventPropertyLockedCanBeUpdated(self):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", locked=True) 
         self.assertEqual(True, self.event.locked)
-    
+
     def testEventPropertyEndsTodayCantBeSetOnLockedEvent(self):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", locked=True) 
@@ -51,11 +51,11 @@ class EventSpec(unittest.TestCase):
         self.assertEqual(True, self.event.ends_today)
         self.event.update(self.now, self.now, "evt", ends_today=False) 
         self.assertEqual(True, self.event.ends_today)
-    
+
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
-    
+
     def time(self, tm):
         return self.db.get_time_type().parse_time(tm)
 
@@ -65,7 +65,7 @@ class EventSpec(unittest.TestCase):
     def given_point_event(self):
         self.event = Event(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
                            self.time("2000-01-01 10:01:01"), "evt")
-        
+
 
 class EventCosntructorSpec(unittest.TestCase):
 
@@ -74,22 +74,22 @@ class EventCosntructorSpec(unittest.TestCase):
         self.assertEqual(False, self.event.fuzzy)
         self.assertEqual(False, self.event.locked)
         self.assertEqual(False, self.event.ends_today)
-    
+
     def testEventPropertyFuzzyCanBeSetAtConstruction(self):
         self.given_fuzzy_point_event()
         self.assertEqual(True, self.event.fuzzy)
-    
+
     def testEventPropertyLockedCanBeSetAtConstruction(self):
         self.given_locked_point_event()
         self.assertEqual(True, self.event.locked)
-    
+
     def testEventPropertyEndsTodayCanBeSetAtConstruction(self):
         self.given_point_event_wich_ends_today()
         self.assertEqual(True, self.event.ends_today)
-    
+
     def given_default_point_event(self):
         self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
-        
+
     def given_point_event_wich_ends_today(self):
         self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", ends_today=True)
 
@@ -98,7 +98,7 @@ class EventCosntructorSpec(unittest.TestCase):
 
     def given_locked_point_event(self):
         self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", locked=True)
-        
+
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()

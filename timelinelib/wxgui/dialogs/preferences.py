@@ -38,10 +38,10 @@ class PreferencesDialog(wx.Dialog):
 
     def set_checkbox_open_recent_at_startup(self, value): 
         self.chb_open_recent.SetValue(value)
-         
+
     def set_week_start(self, index):
         self.choice_week.SetSelection(index)
-        
+
     def _create_gui(self):
         main_box = self._create_main_box()
         self.SetSizerAndFit(main_box)
@@ -60,14 +60,14 @@ class PreferencesDialog(wx.Dialog):
         self._create_general_tab(notebook)
         self._create_date_time_tab(notebook)
         return notebook
-        
+
     def _create_button_box(self):
         btn_close = self._create_close_button()
         button_box = wx.BoxSizer(wx.HORIZONTAL)
         button_box.AddStretchSpacer()
         button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
         return button_box
-        
+
     def _create_general_tab(self, notebook):
         panel = self._create_tab_panel(notebook, _("General")) 
         controls = self._create_general_tab_controls(panel)
@@ -82,7 +82,7 @@ class PreferencesDialog(wx.Dialog):
         panel = self._create_tab_panel(notebook, _("Date && Time")) 
         controls = self._create_date_time_tab_controls(panel)
         self._size_tab_panel(panel, controls)
-        
+
     def _create_date_time_tab_controls(self, panel):
         self.chb_wide_date_range = self._create_chb_wide_date_range(panel)
         self.choice_week = self._create_choice_week(panel)
@@ -99,25 +99,25 @@ class PreferencesDialog(wx.Dialog):
         panel = wx.Panel(notebook)
         notebook.AddPage(panel, label)
         return panel
-    
+
     def _size_tab_panel(self, panel, controls):
         sizer = wx.BoxSizer(wx.VERTICAL)
         for control in controls:
             sizer.Add(control, flag=wx.ALL|wx.EXPAND, border=BORDER)
         panel.SetSizer(sizer)
-        
+
     def _create_chb_open_recent(self, panel):
         label = _("Open most recent timeline on startup")
         handler = self._chb_open_recent_startup_on_checkbox
         chb = self._create_chb(panel, label, handler)
         return chb 
-                
+
     def _create_chb_inertial_scrolling(self, panel):
         label = _("Use inertial scrolling")
         handler = self._chb_use_inertial_scrolling_on_checkbox
         chb = self._create_chb(panel, label, handler) 
         return chb
-    
+
     def _create_chb_wide_date_range(self, panel):
         label = _("Use extended date range (before 1 AD)")
         handler = self._chb_use_wide_date_range_on_checkbox
@@ -133,7 +133,7 @@ class PreferencesDialog(wx.Dialog):
         choice_week = wx.Choice(panel, choices=[_("Monday"), _("Sunday")])
         self.Bind(wx.EVT_CHOICE, self._choice_week_on_choice, choice_week)
         return choice_week
-    
+
     def _create_close_button(self):
         btn_close = wx.Button(self, wx.ID_CLOSE)
         btn_close.SetDefault()
@@ -141,13 +141,13 @@ class PreferencesDialog(wx.Dialog):
         self.SetAffirmativeId(wx.ID_CLOSE)
         self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
         return btn_close 
-        
+
     def _chb_use_wide_date_range_on_checkbox(self, evt):
         self._controller.on_use_wide_date_range_changed(evt.IsChecked())
 
     def _chb_use_inertial_scrolling_on_checkbox(self, evt):
         self._controller.on_use_inertial_scrolling_changed(evt.IsChecked())
-    
+
     def _chb_open_recent_startup_on_checkbox(self, evt):
         self._controller.on_open_recent_changed(evt.IsChecked())
 

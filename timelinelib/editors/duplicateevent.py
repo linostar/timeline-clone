@@ -30,7 +30,7 @@ class DuplicateEventEditor(object):
         self.view = view
         self.db = db
         self.event = event
-        
+
     def initialize(self):
         self.view.set_count(1)
         self.view.set_frequency(1)

@@ -35,7 +35,7 @@ CHECKBOX_TYPE = 1
 class CategoriesTree(customtreectrl.CustomTreeCtrl):
     """
     Display categories in tree and provide editing functions.
-    
+
     If this control is initialized with initialize_from_timeline_view then the
     visibility of categories can also be altered using check boxes. A context
     menu is always available that can be used to edit, add, and delete
@@ -115,7 +115,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
                 visible = view_properties.category_visible(cat)
                 self.CheckItem2(item, visible)
             self._update_categories_from_tree(subtree, item, view_properties)
-        
+
     def _on_right_down(self, e):
         (item, flags) = self.HitTest(e.GetPosition())
         if item is not None:

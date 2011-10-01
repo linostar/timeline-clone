@@ -48,7 +48,7 @@ class EventEditor(object):
             self.locked = False
             self.ends_today = False
         self.initialize()
-        
+
     def initialize(self):
         if self.event != None:
             self.view.set_event_data(self.event.data)
@@ -77,7 +77,7 @@ class EventEditor(object):
                 self.view.close()
         except ValueError:
             pass
-        
+
     def clear(self):
         self.name = ""
         self.event = None
@@ -116,15 +116,15 @@ class EventEditor(object):
                 self.view.display_invalid_end("%s" % ex_msg(ex))
         else:
             return self.get_start_from_view()
-        
+
     def _dialog_has_signalled_invalid_input(self, time):
         return time == None 
-   
+
     def _verify_that_time_has_not_been_changed(self, start, end):
         self._exception_if_start_has_changed(start)
         if not self.ends_today:
             self._exception_if_end_has_changed(end)
-    
+
     def _exception_if_start_has_changed(self, start):
         if not self.time_type.eventtimes_equals(self.start, start):
             self.view.set_start(self.start)
@@ -139,7 +139,7 @@ class EventEditor(object):
         error_message = _("You can't change time when the Event is locked")
         self.view.display_invalid_start(error_message)
         raise ValueError()
-        
+
     def _save_event(self):
         if self.event == None:
             self.event = Event(self.time_type, self.start, self.end, self.name, 
@@ -151,7 +151,7 @@ class EventEditor(object):
                               self.ends_today)
         self.event.data = self.view.get_event_data()
         self._save_event_to_db()
-        
+
     def _validate_and_save_start(self, start):
         if start == None:
             raise ValueError()
@@ -178,13 +178,13 @@ class EventEditor(object):
             self.view.display_invalid_name(msg)
             raise ValueError()
         return name
-        
+
     def _save_event_to_db(self):
         try:
             self.event_repository.save(self.event)
         except Exception, e:
             self.view.display_db_exception(e)
-        
+
     def _event_has_nonzero_time(self):
         try:
             time_type = self.time_type

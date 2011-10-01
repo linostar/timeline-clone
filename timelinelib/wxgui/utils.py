@@ -56,7 +56,7 @@ class WildcardHelper(object):
             ext_name = split_path[-1]
             return self.ext_data.get(ext_name, None)
         return None
-        
+
     def _extract_ext_info(self, extensions):
         for ext in extensions:
             if isinstance(ext, tuple):
@@ -143,8 +143,8 @@ def _ask_question(question, parent=None):
 
 def set_wait_cursor(parent):
     parent.SetCursor(wx.StockCursor(wx.CURSOR_WAIT))
-    
-    
+
+
 def set_default_cursor(parent):
     parent.SetCursor(wx.StockCursor(wx.CURSOR_DEFAULT))    
 

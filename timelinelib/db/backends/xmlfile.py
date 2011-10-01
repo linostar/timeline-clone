@@ -86,7 +86,7 @@ class XmlTimeline(MemoryDB):
     def _set_time_type(self, use_wide_date_range):
         if use_wide_date_range == True:
             self.time_type = WxTimeType()
-             
+
     def _parse_time(self, time_string):
         return self.get_time_type().parse_time(time_string)
 
@@ -138,7 +138,7 @@ class XmlTimeline(MemoryDB):
     def _create_rest_of_schema(self, tmp_dict):
         """
         Ensure all versions of the xml format can be parsed with this schema.
-        
+
         tmp_dict["version"] can be used to create different schemas depending
         on the version.
         """
@@ -225,13 +225,13 @@ class XmlTimeline(MemoryDB):
             return tmp_dict.pop(id) == "True"
         else:
             return False
-    
+
     def _parse_optional_color(self, tmp_dict, id):
         if tmp_dict.has_key(id):
             return parse_color(tmp_dict.pop(id))
         else:
             return (0, 0, 0)
-    
+
     def _parse_displayed_period(self, text, tmp_dict):
         start = self._parse_time(tmp_dict.pop("tmp_start"))
         end = self._parse_time(tmp_dict.pop("tmp_end"))

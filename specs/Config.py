@@ -23,7 +23,7 @@ from timelinelib.config import Config
 
 
 class ConfigSpec(unittest.TestCase):
-    
+
     def test_should_have_default_values_before_config_has_been_read(self):
         self.assertEquals(self.config.window_size, (900, 500))
         self.assertEquals(self.config.window_maximized, False)
@@ -96,7 +96,7 @@ class ConfigSpec(unittest.TestCase):
     def test_config_returns_wide_date_range_is_false_when_set_to_false_as_propety(self):
         self.config.use_wide_date_range = False
         self.assertFalse(self.config.use_wide_date_range)
-        
+
     def test_config_returns_wide_date_range_is_true_when_set_to_true_as_propety(self):
         self.config.use_wide_date_range = True
         self.assertTrue(self.config.use_wide_date_range)

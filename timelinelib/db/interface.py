@@ -99,11 +99,11 @@ class TimelineDB(Observable):
     def get_first_event(self):
         """Return the event with the earliest start time."""
         raise NotImplementedError()
-        
+
     def get_last_event(self):
         """Return the event with the latest end time."""
         raise NotImplementedError()
-        
+
     def save_event(self, event):
         """
         Make sure that the given event is saved to persistent storage.
@@ -148,7 +148,7 @@ class TimelineDB(Observable):
         Not required if is_read_only returns True.
         """
         raise NotImplementedError()
-    
+
     def load_view_properties(self, view_properties):
         """
         Load saved view properties from persistent storage into view_properties
@@ -172,7 +172,7 @@ class TimelineDB(Observable):
 
     def place_event_after_event(self, event_to_place, target_event):
         raise NotImplementedError()
-    
+
     def place_event_before_event(self, event_to_place, target_event):
         raise NotImplementedError()
 

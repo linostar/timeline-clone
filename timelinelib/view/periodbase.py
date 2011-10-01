@@ -19,7 +19,7 @@
 from timelinelib.db.objects import TimePeriod
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 
-     
+
 class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
 
     def __init__(self, controller, initial_time):
@@ -72,7 +72,7 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
         self.end_action()
         self._remove_selection()
         self.controller.change_input_handler_to_no_op()
-                
+
     def _remove_selection(self):
         self.controller.view_properties.period_selection = None
         self.controller.redraw_timeline()

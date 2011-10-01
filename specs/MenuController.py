@@ -95,16 +95,16 @@ class MenuControllerSpec(unittest.TestCase):
 
     def given_no_timeline_exists(self):
         self.menu_controller.on_timeline_change(None)
-        
+
     def given_timeline_exists(self):
         self.menu_controller.on_timeline_change(self.timeline)
 
     def given_no_timeline_view_exists(self):
         self.timeline_panel_visible = False
-        
+
     def given_timeline_view_exists(self):
         self.timeline_panel_visible = True
-        
+
     def given_timeline_is_updateable(self):
         self.timeline.is_read_only.return_value = False
 
@@ -113,6 +113,6 @@ class MenuControllerSpec(unittest.TestCase):
 
     def given_timeline_panel_is_visible(self):
         self.timeline_panel_visible = True
-        
+
     def when_menu_state_possibly_has_changed(self):
         self.menu_controller.enable_disable_menus(self.timeline_panel_visible)

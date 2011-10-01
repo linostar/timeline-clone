@@ -76,7 +76,7 @@ class PyTimeTypeSpec(unittest.TestCase):
         delta = datetime.timedelta(days=48)
         margin_delta = self.time_type.margin_delta(delta)
         self.assertEquals(datetime.timedelta(days=2), margin_delta) 
-        
+
     def test_event_date_string_method(self):
         self.assertEquals(
             "2010-08-01",
@@ -96,7 +96,7 @@ class PyTimeTypeSpec(unittest.TestCase):
         self.assertFalse(
             self.time_type.eventtimes_equals(datetime.datetime(2010, 8, 01, 13, 44, 22),
                                              datetime.datetime(2010, 7, 01, 13, 44, 22)))
-                
+
 class PyTimeTypeDeltaFormattingSpec(unittest.TestCase):
 
     def setUp(self):
@@ -183,7 +183,7 @@ class PyTimeTypeDeltaFormattingSpec(unittest.TestCase):
                                   datetime.datetime(2010, 8, 03, 13, 44))
         delta = time_period2.start_time - time_period1.end_time
         self.assertEquals("0", self.time_type.format_delta(delta))
-        
+
     def  get_days_delta(self, days=0, hours=0, minutes=0):
         def add_mars(month, days):
             if days >= 31:
@@ -208,7 +208,7 @@ class PyTimeTypeDeltaFormattingSpec(unittest.TestCase):
         time_period1 = self.create_point_period(1, 1, 1999, 0, 0)
         time_period2 = self.create_point_period(1 + days, month, 1999, hours, minutes)
         return time_period2.start_time - time_period1.start_time
-        
+
     def create_point_period(self, day, month, year, hour, minute):
         dt = datetime.datetime(year, month, day, hour, minute)
         return TimePeriod(self.time_type, dt, dt)

@@ -23,7 +23,7 @@ class WxEndToEndSpec(WxEndToEndTestCase):
 
     GUI = True
     IO = True
-    
+
     def test_sidebar_gets_same_width_as_in_config(self):
         self.config.set_show_sidebar(True)
         self.config.set_sidebar_width(234)

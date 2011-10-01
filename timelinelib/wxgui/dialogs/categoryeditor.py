@@ -106,7 +106,7 @@ class WxCategoryEdtiorDialog(wx.Dialog):
         self.vbox.Add(field_grid, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         _set_focus_and_select(self.txt_name)
-        
+
     def _create_field_grid(self):
         self.txt_name = wx.TextCtrl(self, size=(150, -1))
         self.colorpicker = colourselect.ColourSelect(self)

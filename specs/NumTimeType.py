@@ -42,7 +42,7 @@ class NumTimeTypeSpec(unittest.TestCase):
     def test_format_delta_1(self):
         delta = 1
         self.assertEquals("1", self.time_type.format_delta(delta)) 
-    
+
     def test_format_delta_2(self):
         delta = 2
         self.assertEquals("2", self.time_type.format_delta(delta)) 

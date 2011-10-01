@@ -114,26 +114,26 @@ class TimelineScene(object):
             else:
                 direction = BACKWARD
         return direction
-    
+
     def _get_overlapping_event(self, period, direction, selected_event, rect):
         list = self._get_overlapping_events_list(period, rect)
         event = self._get_overlapping_event_from_list(list, direction, 
                                                       selected_event)
         return event
-    
+
     def _get_overlapping_events_list(self, period, rect):
         if period:
             list = self._get_list_with_overlapping_period_events(rect)
         else:
             list = self._get_list_with_overlapping_point_events(rect)
         return list
-    
+
     def _get_overlapping_event_from_list(self, list, direction, selected_event):
         if direction == FORWARD:
             return self._get_next_overlapping_event(list, selected_event)
         else:        
             return self._get_prev_overlapping_event(list, selected_event)
-            
+
     def _get_next_overlapping_event(self, list, selected_event):
         selected_event_found = False
         for (e,r) in list:
@@ -150,12 +150,12 @@ class TimelineScene(object):
             if e == selected_event:
                 return prev_event
             prev_event = e
-   
+
     def _calc_event_positions(self):
         self.events_from_db = self._db.get_events(self._view_properties.displayed_period)
         visible_events = self._view_properties.filter_events(self.events_from_db)
         self._calc_rects(visible_events)
-        
+
     def _calc_rects(self, events):
         self.event_data = []
         for event in events:
@@ -169,7 +169,7 @@ class TimelineScene(object):
         self._ensure_rect_is_not_far_outisde_screen(rect)
         self._prevent_overlapping_by_adjusting_rect_y(event, rect)
         return rect
-        
+
     def _create_ideal_rect_for_event(self, event):
         if event.ends_today:
             event.time_period.end_time = self._db.get_time_type().now()
@@ -247,7 +247,7 @@ class TimelineScene(object):
             if rect.Y < self.height and (rect.Y + rect.Height) > 0:
                 num_visible += 1
         return num_visible
-    
+
     def _prevent_overlapping_by_adjusting_rect_y(self, event, event_rect):
         if self._display_as_period(event):
             self._adjust_period_rect(event_rect)
@@ -258,7 +258,7 @@ class TimelineScene(object):
         rect = self._get_overlapping_period_rect_with_largest_y(event_rect)
         if rect is not None:
             event_rect.Y = rect.Y + event_rect.height
-    
+
     def _get_overlapping_period_rect_with_largest_y(self, event_rect):
         list = self._get_list_with_overlapping_period_events(event_rect)
         rect_with_largest_y = None
@@ -271,7 +271,7 @@ class TimelineScene(object):
         return [(event, rect) for (event, rect) in self.event_data 
                 if (self._rects_overlap(event_rect, rect) and
                     rect.Y >= self.divider_y )]
- 
+
     def _adjust_point_rect(self, event_rect):
         rect = self._get_overlapping_point_rect_with_smallest_y(event_rect)
         if rect is not None:
@@ -284,12 +284,12 @@ class TimelineScene(object):
             if rect_with_smallest_y is None or rect.Y < rect_with_smallest_y.Y:
                 rect_with_smallest_y = rect
         return rect_with_smallest_y
-    
+
     def _get_list_with_overlapping_point_events(self, event_rect):
         return [(event, rect) for (event, rect) in self.event_data 
                 if (self._rects_overlap(event_rect, rect) and
                     rect.Y < self.divider_y  )]
-        
+
     def _rects_overlap(self, rect1, rect2):
         return (rect2.x <= rect1.x + rect1.width and
                 rect1.x <= rect2.x + rect2.width)   

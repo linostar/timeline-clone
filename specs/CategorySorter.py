@@ -23,7 +23,7 @@ from timelinelib.domain.category import sort_categories
 
 
 class CategorySorter(unittest.TestCase):
-    
+
     def test_sorts_categories_by_name(self):
         self.sort([
             self.category_named("b"),

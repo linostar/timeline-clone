@@ -499,7 +499,7 @@ class ACalendarPopup(unittest.TestCase):
         call = self.calendar_popup.reset_mock()
         self._simulateMonthChange()
         self.assertFalse(self.calendar_popup.Popup.called)
-        
+
     def _simulateMonthChange(self):
         self.controller.on_month()
         self.controller.on_dismiss()

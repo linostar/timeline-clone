@@ -38,13 +38,13 @@ class DuplicateEventDialog(wx.Dialog):
 
     def get_count(self):
         return self.sc_count.GetValue() 
-        
+
     def set_frequency(self, count):
         self.sc_frequency.SetValue(count)
-        
+
     def get_frequency(self):
         return self.sc_frequency.GetValue() 
-        
+
     def select_move_period_fn_at_index(self, index):
         self.rb_period.SetSelection(index)
 
@@ -67,7 +67,7 @@ class DuplicateEventDialog(wx.Dialog):
        _display_error_message(
             _("%d Events not duplicated due to missing dates.") 
             % error_count)
-        
+
     def _create_gui(self, move_period_config):
         self._move_period_fns = [fn for (label, fn) in move_period_config]
         period_list = [label for (label, fn) in move_period_config]
@@ -99,11 +99,11 @@ class DuplicateEventDialog(wx.Dialog):
                                      wx.DefaultPosition, wx.DefaultSize, 
                                      period_list) 
         form.Add(self.rb_period, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        
+
     def _create_and_add_sc_frequency_box(self, form):
         sc_frequency_box = self._creat_frequency_spin_control()
         form.Add(sc_frequency_box, border=BORDER)
-        
+
     def _creat_frequency_spin_control(self):
         st_frequency = wx.StaticText(self, label=_("Frequency:"))
         self.sc_frequency = wx.SpinCtrl(self, wx.ID_ANY, size=(50,-1))
@@ -119,12 +119,12 @@ class DuplicateEventDialog(wx.Dialog):
         self.rb_direction = wx.RadioBox(self, wx.ID_ANY, _("Direction"), 
                                         choices=direction_list)
         form.Add(self.rb_direction, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        
+
     def _create_and_add_button_box(self, form):
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         form.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        
+
     def _btn_ok_on_click(self, e):
         gui_utils.set_wait_cursor(self)
         self.controller.create_duplicates_and_save()

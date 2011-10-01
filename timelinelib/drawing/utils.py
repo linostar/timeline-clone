@@ -36,7 +36,7 @@ class Metrics(object):
         self.half_height = int(round(divider_line_slider * self.height))
         self.time_type = time_type
         self.time_period = time_period
-        
+
     def calc_exact_x(self, time):
         """Return the x position in pixels as a float for the given time."""
         delta1 = self.time_type.div_timedeltas(time - self.time_period.start_time,
@@ -65,7 +65,7 @@ class Metrics(object):
     def get_difftime(self, x1, x2):
         """Return the time length between two x positions."""
         return self.get_time(x1) - self.get_time(x2)
-    
+
 
 def get_default_font(size, bold=False):
     if bold:

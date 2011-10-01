@@ -82,7 +82,7 @@ class SceneSpec(unittest.TestCase):
         self.when_scene_is_created()
         self.assertEqual(self.scene.event_data[0][1].Y, 
                          self.scene.event_data[1][1].Y)
-        
+
     def setUp(self):
         self.db = MemoryDB()
         self.view_properties = ViewProperties()

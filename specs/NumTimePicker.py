@@ -25,16 +25,16 @@ from timelinelib.wxgui.components.numtimepicker import NumTimePicker
 
 
 class ANumTimePicker(unittest.TestCase):
-    
+
     def setUp(self):
         self.time_picker = Mock(NumTimePicker)
         self.controller = NumTimePickerController(self.time_picker, 0)
-        
+
     def testTimeControlIsAssignedTimeFromSetValue(self):
         self.controller.set_value(5)
         self.time_picker.set_value.assert_called_with(5)
-        
+
     def testTimeControlIsAssignedZeroIfSetWithValueNone(self):
         self.controller.set_value(None)
         self.time_picker.set_value.assert_called_with(0)        
-    
+

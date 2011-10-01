@@ -144,8 +144,8 @@ class NumTimeType(TimeType):
 
     def eventtimes_equals(self, time1, time2):
         return time_string(time1) == time_string(time2)
-    
-    
+
+
 class NumStrip(Strip):
 
     def __init__(self, size):

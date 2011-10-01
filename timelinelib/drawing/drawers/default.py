@@ -46,7 +46,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self._create_pens()
         self._create_brushes()
         self.fast_draw = False
-        
+
     def _create_fonts(self):
         self.header_font = get_default_font(12, True)
         self.small_text_font = get_default_font(8)
@@ -103,18 +103,18 @@ class DefaultDrawingAlgorithm(Drawer):
             self._perform_fast_drawing(view_properties)
         else:
             self._perform_normal_drawing(view_properties)
-            
+
     def _perform_fast_drawing(self, view_properties):
         self._draw_bg(view_properties)
         self._draw_events(view_properties)
-    
+
     def _perform_normal_drawing(self, view_properties):
         self._draw_period_selection(view_properties)
         self._draw_bg(view_properties)
         self._draw_events(view_properties)
         self._draw_legend(view_properties, self._extract_categories())
         self._draw_ballons(view_properties)
-    
+
     def snap(self, time, snap_region=10):
         if self._distance_to_left_border(time) < snap_region:
             return self._get_time_at_left_border(time)
@@ -126,7 +126,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _distance_to_left_border(self, time):
         left_strip_time, right_strip_time = self._snap_region(time)
         return self.scene.distance_between_times(time, left_strip_time)
-        
+
     def _distance_to_right_border(self, time):
         left_strip_time, right_strip_time = self._snap_region(time)
         return self.scene.distance_between_times(time, right_strip_time)
@@ -179,7 +179,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def get_hidden_event_count(self):
         return self.scene.get_hidden_event_count()
-     
+
     def _draw_period_selection(self, view_properties):
         if not view_properties.period_selection:
             return
@@ -200,14 +200,14 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_fast_bg(self):
         self._draw_minor_strips()
         self._draw_divider_line()
-        
+
     def _draw_normal_bg(self, view_properties):
         self._draw_minor_strips()
         self._draw_major_strips()
         self._draw_divider_line()
         self._draw_lines_to_non_period_events(view_properties)
         self._draw_now_line()
-        
+
     def _draw_minor_strips(self):
         for strip_period in self.scene.minor_strip_data:
             self._draw_minor_strip_divider_line_at(strip_period.end_time)
@@ -369,7 +369,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_fuzzy_edges(self, rect, event):
         self._draw_fuzzy_start(rect, event)
         self._draw_fuzzy_end(rect, event)
-       
+
     def _draw_fuzzy_start(self, rect, event):
         """
           p1     /p2 ----------
@@ -409,12 +409,12 @@ class DefaultDrawingAlgorithm(Drawer):
         p4 = wx.Point(x2, y3)
         p5 = wx.Point(x1, y3)
         self.draw_fuzzy(event, p1, p2, p3, p4, p5)
-        
+
     def draw_fuzzy(self, event, p1, p2, p3, p4, p5):
         self._draw_fuzzy_polygon(p1, p2 ,p3)
         self._draw_fuzzy_polygon(p3, p4 ,p5)
         self._draw_fuzzy_border(event, p2, p3, p5)
-             
+
     def _draw_fuzzy_polygon(self, p1, p2 ,p3):
         self.dc.SetBrush(wx.WHITE_BRUSH)
         self.dc.SetPen(wx.WHITE_PEN)
@@ -432,7 +432,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_locked_edges(self, rect, event):
         self._draw_locked_start(event, rect)
         self._draw_locked_end(event, rect)
-       
+
     def _draw_locked_start(self, event, rect):
         x = rect.x
         if event.fuzzy:
@@ -442,7 +442,7 @@ class DefaultDrawingAlgorithm(Drawer):
             start_angle = -math.pi
             end_angle = math.pi 
         self._draw_locked(event, rect, x, start_angle, end_angle)
-        
+
     def _draw_locked_end(self, event, rect):
         x = rect.x + rect.width
         if event.fuzzy:
@@ -452,7 +452,7 @@ class DefaultDrawingAlgorithm(Drawer):
             start_angle = math.pi / 2
             end_angle = 3 * math.pi / 2
         self._draw_locked(event, rect, x, start_angle, end_angle)
-    
+
     def _draw_locked(self, event, rect, x, start_angle, end_angle):
         y = rect.y + rect.height / 2
         r = rect.height / 2.5
@@ -461,7 +461,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawCircle(x, y, r)
         self.dc.SetPen(self._get_box_pen(event))
         self.draw_segment(event, x, y, r, start_angle, end_angle)
-            
+
     def draw_segment(self, event, x0, y0, r, start_angle, end_angle):
         gc = wx.GraphicsContext.Create(self.dc)
         path = gc.CreatePath()
@@ -482,7 +482,7 @@ class DefaultDrawingAlgorithm(Drawer):
             y1 = y2
         gc.SetPen(self._get_box_pen(event))
         gc.StrokePath(path)
-            
+
     def _draw_text(self, rect, event):
         # Ensure that we can't draw content outside inner rectangle
         rect_copy = wx.Rect(*rect)
@@ -499,7 +499,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self._set_text_foreground_color(event)
             self.dc.DrawText(event.text, text_x, text_y)
             self.dc.DestroyClippingRegion()
-        
+
     def _set_text_foreground_color(self, event):
         if event.category is None:
             fg_color = BLACK
@@ -509,7 +509,7 @@ class DefaultDrawingAlgorithm(Drawer):
             font_color = event.category.font_color
             fg_color = wx.Color(font_color[0], font_color[1], font_color[2])
         self.dc.SetTextForeground(fg_color)
-        
+
     def _draw_contents_indicator(self, event, rect):
         """
         The data contents indicator is a small triangle drawn in the upper
@@ -617,7 +617,7 @@ class DefaultDrawingAlgorithm(Drawer):
         MIN_TEXT_WIDTH = 200
         MIN_WIDTH = 100
         SLIDER_WIDTH = 20
-        
+
         inner_rect_w = 0
         inner_rect_h = 0
         # Icon

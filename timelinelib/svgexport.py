@@ -426,7 +426,7 @@ class SVGDrawingAlgorithm(object):
     def _text(self, the_text, x, y):
         encoded_text = self._encode_unicode_text(the_text)
         return text(encoded_text, x, y)
-    
+
     def _encode_unicode_text(self, text):
         if type(text) is UnicodeType:
             return text.encode('ISO-8859-1')

@@ -46,7 +46,7 @@ class CategoriesTreeSpec(unittest.TestCase):
                 (self.foofoo, []),
             ])
         ], self.timeline_view.get_view_properties())
-    
+
     def testInitializingFromNoneTimelineViewShouldNotRaiseException(self):
         self.controller.initialize_from_timeline_view(None)
 

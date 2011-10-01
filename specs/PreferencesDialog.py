@@ -26,13 +26,13 @@ from timelinelib.config import Config
 
 
 class PreferencesDialogSpec(unittest.TestCase):
-    
+
     def setUp(self):
         self.preferences_dialog = Mock(PreferencesDialog)
         self.config = Mock(Config)
         self.config.week_start = "monday"
         self.controller = PreferencesEditor(self.preferences_dialog, self.config)
-        
+
     def test_opens_with_wide_date_range_if_set_in_config(self):
         self.config.get_use_wide_date_range.return_value = True
         self.controller.initialize_controls()

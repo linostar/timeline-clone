@@ -35,7 +35,7 @@ class ScrollByDragInputHandler(InputHandler):
     def mouse_moved(self, x, y):
         self._calculate_sped(x)
         self._scroll_timeline(x)
-        
+
     def left_mouse_up(self):
         self.controller.change_input_handler_to_no_op()
         if self.controller.config.use_inertial_scrolling:
@@ -59,7 +59,7 @@ class ScrollByDragInputHandler(InputHandler):
         self.current_time = self.controller.get_time(x)
         delta = (self.current_time - self.start_time)
         self.controller._scroll_timeline(delta)
-        
+
     def _inertial_scrolling(self):
         frame_time = self._calculate_frame_time()
         value_factor = self._calculate_scroll_factor() 
@@ -75,14 +75,14 @@ class ScrollByDragInputHandler(InputHandler):
                 time.sleep(sleep_time)
         self.controller.use_fast_draw(False)
         self.controller._redraw_timeline()
-                     
+
     def _calculate_frame_time(self):
         MAX_FRAME_RATE = 26.0
         frames_per_second = (MAX_FRAME_RATE * self.speed_px_per_sec / 
                              (100 + self.speed_px_per_sec))
         frame_time = 1.0 / frames_per_second
         return frame_time
-    
+
     def _calculate_scroll_factor(self):
         if self.current_time > self.start_time:
             direction = 1

@@ -56,7 +56,7 @@ class WxTimeTypeSpec(unittest.TestCase):
         self.assertFalse(
             self.time_type.eventtimes_equals(wx.DateTimeFromDMY(31, 7, 2010, 13, 44, 22),
                                              wx.DateTimeFromDMY(31, 6, 2010, 13, 44, 22)))
-        
+
     def test_parse_time_method(self):
         self.assertEquals(
             wx.DateTimeFromDMY(31, 7, 2010, 13, 44),
@@ -96,7 +96,7 @@ class WxTimeTypeSpec(unittest.TestCase):
         delta = wx.TimeSpan.Days(days=48)
         margin_delta = self.time_type.margin_delta(delta)
         self.assertEquals(wx.TimeSpan.Days(2), margin_delta) 
-        
+
     def test_returns_half_delta(self):
         delta = wx.TimeSpan.Days(100 * 365)
         half_delta = self.time_type.half_delta(delta)
@@ -115,7 +115,7 @@ class WxDateTimeConstructorSpec(unittest.TestCase):
         self.assertEquals(
             wx.DateTimeFromDMY(20, 7, 2010, 0, 0, 0),
             try_to_create_wx_date_time_from_dmy(20, 7, 2010))
-    
+
     def test_raises_value_error_if_date_is_invalid(self):
         # This test don't run in windows
         if platform.system() != "Windows":
@@ -200,7 +200,7 @@ class WxTimeTypeDeltaFormattingSpec(unittest.TestCase):
                                  wx.DateTimeFromDMY(2, 7, 2010, 13, 30))
         delta = time_period2.start_time - time_period1.end_time
         self.assertEquals("0", self.time_type.format_delta(delta))
-        
+
     def  get_days_delta(self, days=0, hours=0, minutes=0):
         def add_mars(month, days):
             if days >= 31:
@@ -225,7 +225,7 @@ class WxTimeTypeDeltaFormattingSpec(unittest.TestCase):
         time_period1 = self.create_point_period(1, 0, 1999, 0, 0)
         time_period2 = self.create_point_period(1 + days, month, 1999, hours, minutes)
         return time_period2.start_time - time_period1.start_time
-        
+
     def create_point_period(self, day, month, year, hour, minute):
         datetime = wx.DateTimeFromDMY(day, month, year, hour, minute)
         return TimePeriod(self.time_type, datetime, datetime)

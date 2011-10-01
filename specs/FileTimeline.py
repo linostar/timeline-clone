@@ -87,7 +87,7 @@ class FileTimelineSpec(unittest.TestCase):
         vp = ViewProperties()
         vp.displayed_period = zero_tp
         self.assertRaises(TimelineIOError, timeline.save_view_properties, vp)
-    
+
     def setUp(self):
         # Create temporary dir and names
         self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")

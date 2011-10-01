@@ -46,7 +46,7 @@ class TextDisplayDialog(wx.Dialog):
         button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
         vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(vbox)
-        
+
     def _btn_copy_on_click(self, evt):
         if wx.TheClipboard.Open():
             obj = wx.TextDataObject(self._text.GetValue())

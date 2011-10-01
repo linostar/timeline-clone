@@ -18,7 +18,7 @@
 
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 
-     
+
 class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def __init__(self, drawing_area, status_bar_adapter, event, start_drag_time):

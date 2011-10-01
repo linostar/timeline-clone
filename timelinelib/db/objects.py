@@ -138,7 +138,7 @@ class Event(object):
         new_event.set_data("icon", self.get_data("icon"))    
         return new_event
 
-    
+
 class Category(object):
     """
     Store persistent data about a category.
@@ -249,7 +249,7 @@ class TimePeriod(object):
     def _assert_period_is_valid(self, new_start, new_end):
         self._assert_start_gt_end(new_start, new_end)
         self._assert_period_lt_max(new_start, new_end)
-        
+
     def _assert_start_gt_end(self, new_start, new_end):
         if new_start > new_end:
             raise ValueError(_("Start time can't be after end time"))
@@ -258,7 +258,7 @@ class TimePeriod(object):
         MAX_ZOOM_DELTA, max_zoom_error_text = self.time_type.get_max_zoom_delta()
         if MAX_ZOOM_DELTA and (new_end - new_start > MAX_ZOOM_DELTA):
             raise PeriodTooLongError(max_zoom_error_text)
-        
+
     def inside(self, time):
         """
         Return True if the given time is inside this period or on the border,

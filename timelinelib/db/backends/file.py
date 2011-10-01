@@ -70,7 +70,7 @@ class FileTimeline(MemoryDB):
       EVENT:...
       ...
       # END
-    
+
     Only the first and last line are required. See comments in _load_*
     functions for information how the format looks like for the different
     parts.
@@ -158,9 +158,9 @@ class FileTimeline(MemoryDB):
     def _load_header(self, header_text):
         """
         Expected format '# Written by Timeline <version> on <date>'.
-        
+
         Expected format of <version> '0.3.0[dev<revision>]'.
-        
+
         We are just interested in the first part of the version.
         """
         match = re.search(r"^# Written by Timeline (\d+)\.(\d+)\.(\d+)",
@@ -190,7 +190,7 @@ class FileTimeline(MemoryDB):
     def _load_category(self, category_text):
         """
         Expected format 'name;color;visible'.
-        
+
         Visible attribute added in version 0.2.0. If it is not found (we read
         an older file), we automatically set it to True.
         """
@@ -216,7 +216,7 @@ class FileTimeline(MemoryDB):
         Changed in version 0.4.0: made category compulsory and added support
         for additional data. Format for version < 0.4.0 looked like this:
         'start_time;end_time;text[;category]'.
-        
+
         If an event does not have a category the empty string will be written
         as category name. Since category names can not be the empty string
         there will be no confusion.
@@ -344,7 +344,7 @@ def parse_bool(bool_string):
 def parse_color(color_string):
     """
     Return a tuple (r, g, b) or raise exception.
-    
+
     Expected format 'r,g,b'.
     """
     def verify_255_number(num):

@@ -89,7 +89,7 @@ class WxTimeType(TimeType):
 
     def is_date_time_type(self):
         return True
-    
+
     def format_period(self, time_period):
         """Returns a unicode string describing the time period."""
         def label_with_time(time):
@@ -136,7 +136,7 @@ class WxTimeType(TimeType):
         if delta_string == "":
             delta_string = "0"
         return delta_string
-    
+
     def get_min_time(self):
         min_time = wx.DateTimeFromDMY(1, 0, MIN_YEAR)
         return (min_time, _("can't be before year %d") % (MIN_YEAR))
@@ -144,7 +144,7 @@ class WxTimeType(TimeType):
     def get_max_time(self):
         max_time = wx.DateTimeFromDMY(1, 0, MAX_YEAR)
         return (max_time, _("can't be after year %d") % (MAX_YEAR))
-    
+
     def choose_strip(self, metrics, config):
         """
         Return a tuple (major_strip, minor_strip) for current time period and
@@ -168,7 +168,7 @@ class WxTimeType(TimeType):
             return (StripCentury(), StripDecade())
         else:
             return (StripCentury(), StripCentury())
-        
+
     def mult_timedelta(self, delta, num):
         """Return a new timedelta that is `num` times larger than `delta`."""
         microsecs = delta_to_microseconds(delta) * num
@@ -180,7 +180,7 @@ class WxTimeType(TimeType):
 
     def now(self):
         return wx.DateTime.Now()
-        
+
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
         microsecs = delta_to_microseconds(time_period.delta())
@@ -206,7 +206,7 @@ class WxTimeType(TimeType):
 
     def get_zero_delta(self):
         return wx.TimeSpan()
-    
+
     def time_period_has_nonzero_time(self, time_period):
         nonzero_time = (not time_period.start_time.IsSameTime(wx.DateTimeFromHMS(0, 0, 0))  or
                         not time_period.end_time.IsSameTime(wx.DateTimeFromHMS(0, 0, 0))    )
@@ -222,32 +222,32 @@ class WxTimeType(TimeType):
             (_("Month"), move_period_num_months),
             (_("Year"), move_period_num_years),
         ]
-    
+
     def zoom_is_ok(self, delta):
         return (delta.GetMilliseconds() > 3600000) or (delta.GetDays() > 0)
 
     def half_delta(self, delta):
         microseconds = delta_to_microseconds(delta) / 2
         return microseconds_to_delta(microseconds)
-    
+
     def margin_delta(self, delta):
         microseconds = delta_to_microseconds(delta) / 24
         return microseconds_to_delta(microseconds)
 
     def event_date_string(self, time):
         return time.Format("%Y-%m-%d")
-    
+
     def event_time_string(self, time):
         return time.Format("%H:%M")
-    
+
     def eventtimes_equals(self, time1, time2):
         s1 = "%s %s" % (self.event_date_string(time1), 
                         self.event_date_string(time1))
         s2 = "%s %s" % (self.event_date_string(time2), 
                         self.event_date_string(time2))
         return s1 == s2 
-    
-        
+
+
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(wx.DateTime.Now()))
 
@@ -292,7 +292,7 @@ def _move_smart_year(navigation_fn, direction, start, end):
     start.SetYear(start.Year + year_diff)
     end.SetYear(end.Year + year_diff)
     navigation_fn(lambda tp: tp.update(start, end))
-    
+
 
 def _months_to_year_and_month(months):
     years = int(months / 12)
@@ -453,7 +453,7 @@ class StripCentury(Strip):
 
     def _century_start_year(self, year):
         return (int(year) / 100) * 100
-   
+
 
 class StripDecade(Strip):
 
@@ -530,7 +530,7 @@ class StripDay(Strip):
             bold = True
         return get_default_font(8, bold)
 
- 
+
 class StripWeek(Strip):
 
     def __init__(self, config):
@@ -625,14 +625,14 @@ class StripHour(Strip):
     def increment(self, time):
         new_time = time + wx.TimeSpan.Hour()
         return new_time
-    
+
     def get_font(self, time_period):
         return get_default_font(8)
-    
+
     def get_metrics(self, size, time_period, divider_line_slider_position):
         # TODO:
         return PyTimeMetrics(size, time_period, divider_line_slider_position)
-    
+
 
 def microseconds_to_delta(microsecs):
     # The wx.TimeSpan.Milliseconds(ms) take a wxLong argument instead
