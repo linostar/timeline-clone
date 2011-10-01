@@ -251,11 +251,6 @@ class EventEditorDialog(wx.Dialog):
     def _btn_ok_on_click(self, evt):
         self.controller.create_or_update_event()
 
-    def _clear_dialog(self):
-        self.controller.clear()
-        for data_id, editor in self.event_data:
-            editor.clear_data()
-        
     def _show_to_time(self, show=True):
         self.lbl_to.Show(show)
         self.dtp_end.Show(show)
@@ -293,10 +288,6 @@ class EventEditorDialog(wx.Dialog):
         if not selection_set:
             self.lst_category.SetSelection(0)
         self.current_category_selection = self.lst_category.GetSelection()
-
-    def _close(self):
-        # TODO: Replace with EventRuntimeData
-        self.EndModal(wx.ID_OK)
 
     def set_start(self, start):
         self.dtp_start.set_value(start)
@@ -392,6 +383,15 @@ class EventEditorDialog(wx.Dialog):
 
     def display_error_message(self, message):
         _display_error_message(message, self)
+
+    def clear_dialog(self):
+        self.controller.clear()
+        for data_id, editor in self.event_data:
+            editor.clear_data()
+        
+    def close(self):
+        # TODO: Replace with EventRuntimeData
+        self.EndModal(wx.ID_OK)
 
 
 class DescriptionEditor(wx.TextCtrl):

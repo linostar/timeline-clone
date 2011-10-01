@@ -70,8 +70,8 @@ class EventEditorTestCase(unittest.TestCase):
     def assert_fails_to_save_with_message(self):
         self.assertEquals(1, self.view.display_error_message.call_count)
         self.assertFalse(self.event_repository.save.called)
-        self.assertFalse(self.view._close.called)
-        self.assertFalse(self.view._clear_dialog.called)
+        self.assertFalse(self.view.close.called)
+        self.assertFalse(self.view.clear_dialog.called)
 
     def assert_no_event_saved(self):
         self.assertFalse(self.event_repository.save.called)

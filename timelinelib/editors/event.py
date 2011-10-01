@@ -72,9 +72,9 @@ class EventEditor(object):
             self._get_and_verify_input()
             self._save_event()
             if self.view.get_show_add_more():
-                self.view._clear_dialog()
+                self.view.clear_dialog()
             else:
-                self.view._close()
+                self.view.close()
         except ValueError:
             pass
         
