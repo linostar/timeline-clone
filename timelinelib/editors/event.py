@@ -23,8 +23,10 @@ from timelinelib.db.objects import TimePeriod
 
 class EventEditor(object):
 
-    def __init__(self, view, time_type, event_repository, start, end, event):
+    def __init__(self, view):
         self.view = view
+
+    def edit(self, time_type, event_repository, start, end, event):
         self.time_type = time_type
         self.event_repository = event_repository
         self.event = event
@@ -44,6 +46,7 @@ class EventEditor(object):
             self.fuzzy = False
             self.locked = False
             self.ends_today = False
+        self.initialize()
         
     def initialize(self):
         if self.event != None:

@@ -48,9 +48,9 @@ class EventEditorTestCase(unittest.TestCase):
         self.when_editor_opened_with(None, None, event)
 
     def when_editor_opened_with(self, start, end, event):
-        self.controller = EventEditor(
-            self.view, PyTimeType(), self.event_repository, start, end, event)
-        self.controller.initialize()
+        self.controller = EventEditor(self.view)
+        self.controller.edit(
+            PyTimeType(), self.event_repository, start, end, event)
 
     def simulate_user_enters_start_time(self, time):
         self.view.get_start.return_value = human_time_to_py(time)
