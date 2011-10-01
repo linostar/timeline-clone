@@ -255,16 +255,6 @@ class EventEditorDialog(wx.Dialog):
         self.lbl_to.Show(show)
         self.dtp_end.Show(show)
         
-    def _fill_chb_show_time_control_with_data(self, event, start, end):
-        if event == None:
-            self.chb_show_time.SetValue(False)
-        if start != None and end != None:
-            time_period = TimePeriod(self.timeline.get_time_type(), start, end)
-            has_nonzero_type = time_period.has_nonzero_time()
-            self.chb_show_time.SetValue(has_nonzero_type)
-        self.dtp_start.show_time(self.chb_show_time.IsChecked())
-        self.dtp_end.show_time(self.chb_show_time.IsChecked())
-
     def _fill_categories_listbox(self, select_category):
         # We can not do error handling here since this method is also called
         # from the constructor (and then error handling is done by the code
