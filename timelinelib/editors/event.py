@@ -19,6 +19,7 @@
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import PeriodTooLongError
 from timelinelib.db.objects import TimePeriod
+from timelinelib.utils import ex_msg
 
 
 class EventEditor(object):
@@ -89,17 +90,32 @@ class EventEditor(object):
         self.locked = self.view.get_locked()
         self.ends_today = self.view.get_ends_today()
         self.category = self.view.get_category()
-        start = self.view.get_start()
+        start = self.get_start_from_view()
         if self._dialog_has_signalled_invalid_input(start):
             raise ValueError()
-        end = self.view.get_end()
+        end = self.get_end_from_view()
         if self._dialog_has_signalled_invalid_input(end):
             raise ValueError()
         if self.locked:
             self._verify_that_time_has_not_been_changed(start, end)
-        self.start = self._validate_and_save_start(self.view.get_start())
-        self.end = self._validate_and_save_end(self.view.get_end())
+        self.start = self._validate_and_save_start(self.get_start_from_view())
+        self.end = self._validate_and_save_end(self.get_end_from_view())
         self._validate_period()
+
+    def get_start_from_view(self):
+        try:
+            return self.view.get_start()
+        except ValueError, ex:
+            self.view.display_invalid_start("%s" % ex_msg(ex))
+
+    def get_end_from_view(self):
+        if self.view.get_show_period():
+            try:
+                return self.view.get_end()
+            except ValueError, ex:
+                self.view.display_invalid_end("%s" % ex_msg(ex))
+        else:
+            return self.get_start_from_view()
         
     def _dialog_has_signalled_invalid_input(self, time):
         return time == None 

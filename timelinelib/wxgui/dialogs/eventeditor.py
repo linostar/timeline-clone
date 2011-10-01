@@ -25,7 +25,6 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.domain.category import sort_categories
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
-from timelinelib.utils import ex_msg
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
 from timelinelib.wxgui.utils import BORDER
@@ -70,31 +69,16 @@ class EventEditorDialog(wx.Dialog):
         self.dtp_start.set_value(start)
 
     def get_start(self):
-        try:
-            try:
-                return self.dtp_start.get_value()
-            except ValueError, ex:
-                raise TxtException(ex_msg(ex), self.dtp_start)
-        except TxtException, ex:
-            _display_error_message("%s" % ex.error_message, self)
-            _set_focus_and_select(ex.control)
+        return self.dtp_start.get_value()
 
     def set_end(self, start):
         self.dtp_end.set_value(start)
 
     def get_end(self):
-        try:
-            if self.chb_period.IsChecked():
-                try:
-                    end_time = self.dtp_end.get_value()
-                    return end_time
-                except ValueError, ex:
-                    raise TxtException(ex_msg(ex), self.dtp_end)
-            else:
-                return self.get_start()
-        except TxtException, ex:
-            _display_error_message("%s" % ex.error_message, self)
-            _set_focus_and_select(ex.control)
+        return self.dtp_end.get_value()
+
+    def get_show_period(self):
+        return self.chb_period.IsChecked()
 
     def set_show_period(self, show):
         self.chb_period.SetValue(show)
@@ -162,6 +146,9 @@ class EventEditorDialog(wx.Dialog):
 
     def display_invalid_start(self, message):
         self._display_invalid_input(message, self.dtp_start)
+
+    def display_invalid_end(self, message):
+        self._display_invalid_input(message, self.dtp_end)
 
     def display_invalid_name(self, message):
         self._display_invalid_input(message, self.txt_text)
@@ -515,11 +502,3 @@ class IconEditor(wx.Panel):
 
     def _btn_clear_on_click(self, evt):
         self.set_icon(None)
-
-
-class TxtException(ValueError):
-
-    def __init__(self, error_message, control):
-        ValueError.__init__(self, error_message)
-        self.error_message = error_message
-        self.control = control
