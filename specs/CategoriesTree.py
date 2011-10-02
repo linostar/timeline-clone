@@ -20,16 +20,16 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.db.interface import TimelineDB
+from timelinelib.db.objects import Category
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.cattree import CategoriesTreeController
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
-from timelinelib.db.interface import TimelineDB
-from timelinelib.db.objects import Category
 
 
-class CategoriesTreeSpec(unittest.TestCase):
+class describe_categories_tree_control(unittest.TestCase):
 
-    def testCategoriesArePopulatedFromDbWhenInitializingFromDb(self):
+    def test_categories_are_populated_from_db_when_initializing_from_db(self):
         self.controller.initialize_from_db(self.db)
         self.view.set_category_tree.assert_called_with([
             (self.bar, []),
@@ -38,7 +38,7 @@ class CategoriesTreeSpec(unittest.TestCase):
             ])
         ], None)
 
-    def testCategoriesArePopulatedFromDbWhenInitializingFromTimelineView(self):
+    def test_categories_are_populated_from_db_when_initializing_from_timeline_view(self):
         self.controller.initialize_from_timeline_view(self.timeline_view)
         self.view.set_category_tree.assert_called_with([
             (self.bar, []),
@@ -47,7 +47,7 @@ class CategoriesTreeSpec(unittest.TestCase):
             ])
         ], self.timeline_view.get_view_properties())
 
-    def testInitializingFromNoneTimelineViewShouldNotRaiseException(self):
+    def test_initializing_from_none_timeline_view_should_not_raise_exception(self):
         self.controller.initialize_from_timeline_view(None)
 
     def setUp(self):

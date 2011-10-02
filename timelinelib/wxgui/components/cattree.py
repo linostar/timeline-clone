@@ -19,13 +19,12 @@
 import wx
 import wx.lib.agw.customtreectrl as customtreectrl
 
-import timelinelib.wxgui.utils as gui_utils
-from timelinelib.wxgui.utils import category_tree
-from timelinelib.wxgui.utils import ID_ERROR
-from timelinelib.wxgui.utils import _ask_question
-from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
-from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.interface import STATE_CHANGE_CATEGORY
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
+from timelinelib.wxgui.utils import _ask_question
+from timelinelib.wxgui.utils import category_tree
+import timelinelib.wxgui.utils as gui_utils
 
 
 NO_CHECKBOX_TYPE = 0
@@ -33,14 +32,6 @@ CHECKBOX_TYPE = 1
 
 
 class CategoriesTree(customtreectrl.CustomTreeCtrl):
-    """
-    Display categories in tree and provide editing functions.
-
-    If this control is initialized with initialize_from_timeline_view then the
-    visibility of categories can also be altered using check boxes. A context
-    menu is always available that can be used to edit, add, and delete
-    categories.
-    """
 
     def __init__(self, parent, fn_handle_db_error):
         style = wx.BORDER_SUNKEN
@@ -222,21 +213,18 @@ class CategoriesTreeController(object):
 
 
 def edit_category(parent_ctrl, db, cat, fn_handle_db_error):
-    """Open category editor to edit the given category."""
     def create_category_editor():
         return WxCategoryEdtiorDialog(parent_ctrl, _("Edit Category"), db, cat)
     gui_utils.show_modal(create_category_editor, fn_handle_db_error)
 
 
 def add_category(parent_ctrl, db, fn_handle_db_error):
-    """Open category editor to create a new category."""
     def create_category_editor():
         return WxCategoryEdtiorDialog(parent_ctrl, _("Add Category"), db, None)
     gui_utils.show_modal(create_category_editor, fn_handle_db_error)
 
 
 def delete_category(parent_ctrl, db, cat, fn_handle_db_error):
-    """Delete the given category after given confirmation from user."""
     delete_warning = _("Are you sure you want to "
                        "delete category '%s'?") % cat.name
     if cat.parent is None:
