@@ -212,3 +212,12 @@ class WxEndToEndTestCase(unittest.TestCase):
         if name.startswith("wxID_"):
             return getattr(wx, name[2:])
         return None
+
+
+class ObjectWithTruthValue(object):
+
+    def __init__(self, truth_value):
+        self.truth_value = truth_value
+
+    def __nonzero__(self):
+        return self.truth_value
