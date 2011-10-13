@@ -45,3 +45,6 @@ class TimelineApplication(object):
             self.config.append_recently_opened(path)
             self.main_frame._update_open_recent_submenu()
             self.main_frame._display_timeline(timeline)
+            
+    def on_play_clicked(self):
+        print "PLAY TIMELINE!"

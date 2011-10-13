@@ -127,6 +127,8 @@ class MainFrame(wx.Frame):
         self._create_file_export_to_image_menu_item(file_menu)
         self._create_file_export_to_svg_menu_item(file_menu)
         file_menu.AppendSeparator()
+        self._create_file_play(file_menu)
+        file_menu.AppendSeparator()
         self._create_file_exit_menu_item(file_menu)
         main_menu_bar.Append(file_menu, _("&File"))
 
@@ -289,6 +291,15 @@ class MainFrame(wx.Frame):
             return True
         except ImportError:
             return False
+
+    def _create_file_play(self, file_menu):
+        mnu_play = file_menu.Append(
+            wx.ID_ANY, _("Play timeline"), _("Play timeline as movie"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_play)
+        self.Bind(wx.EVT_MENU, self._mnu_play_on_click, mnu_play)
+
+    def _mnu_play_on_click(self, file_menu):
+        self.controller.on_play_clicked()
 
     def _create_file_exit_menu_item(self, file_menu):
         file_menu.Append(wx.ID_EXIT, "", _("Exit the program"))
