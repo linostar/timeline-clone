@@ -41,17 +41,6 @@ class SourceCodeDistributionSpec(unittest.TestCase):
             self.get_module_version_string() in
             self.read_first_line_from(self.CHANGES))
 
-    def test_version_number_in_manpage_should_match_that_in_version_module(self):
-        self.assertTrue(
-            self.get_module_version_string() in
-            self.read_first_line_from(self.MANPAGE))
-
-    def test_release_date_in_manpage_should_match_that_in_CHANGES(self):
-        release_date = self.get_release_date_from_changes()
-        self.assertTrue(
-            self.release_date_in_man_format(release_date) in
-            self.read_first_line_from(self.MANPAGE))
-
     def test_all_authors_mentioned_in_about_module_should_be_mentioned_in_AUTHORS(self):
         authors_content = self.read_utf8_encoded_text_from(self.AUTHORS)
         for author in self.get_authors_from_about_module():
