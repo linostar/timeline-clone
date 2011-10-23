@@ -161,10 +161,6 @@ The *Edit Event* dialog can be opened by double clicking on an event.
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 To select an event, click on it. To select multiple events, hold down the *Ctrl* key while clicking events.
-
-Selected events are indicated with a striped background:
-
-HelpFigure(selected_event)
 """))
 
     help_system.install_page(
