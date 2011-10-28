@@ -644,7 +644,7 @@ class MainFrame(wx.Frame):
         self._switch_to_error_view(error)
 
     def _switch_to_error_view(self, error):
-        self._display_timeline(None)
+        self.controller.set_no_timeline()
         self.main_panel.error_panel.populate(error)
         self.main_panel.show_error_panel()
         self.enable_disable_menus()

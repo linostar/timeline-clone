@@ -25,6 +25,7 @@ class TimelineApplication(object):
         self.main_frame = main_frame
         self.db_open_fn = db_open_fn
         self.config = config
+        self.timeline = None
 
     def on_started(self, application_arguments):
         input_files = application_arguments.get_files()
@@ -38,13 +39,17 @@ class TimelineApplication(object):
 
     def open_timeline(self, path):
         try:
-            timeline = self.db_open_fn(path, self.config.get_use_wide_date_range())
+            self.timeline = self.db_open_fn(path, self.config.get_use_wide_date_range())
         except TimelineIOError, e:
             self.main_frame.handle_db_error(e)
         else:
             self.config.append_recently_opened(path)
             self.main_frame._update_open_recent_submenu()
-            self.main_frame._display_timeline(timeline)
+            self.main_frame._display_timeline(self.timeline)
             
+    def set_no_timeline(self):
+        self.timeline = None
+        self.main_frame._display_timeline(None)
+
     def on_play_clicked(self):
         print "PLAY TIMELINE!"

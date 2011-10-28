@@ -32,6 +32,10 @@ class MainFrameSpec(unittest.TestCase):
         self.when_timeline_is_opened("foo.timeline")
         self.db_open.assert_called_with("foo.timeline", self.USE_WIDE_DATE_RANGE)
 
+    def test_create_empty_timeline(self):
+        self.controller.set_no_timeline()
+        self.main_frame._display_timeline.assert_called_with(None)
+
     def test_adds_opened_timeline_to_recently_opened_list(self):
         self.when_timeline_is_opened("foo.timeline")
         self.config.append_recently_opened.assert_called_with("foo.timeline")
