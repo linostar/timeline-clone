@@ -127,8 +127,6 @@ class MainFrame(wx.Frame):
         self._create_file_export_to_image_menu_item(file_menu)
         self._create_file_export_to_svg_menu_item(file_menu)
         file_menu.AppendSeparator()
-        self._create_file_play(file_menu)
-        file_menu.AppendSeparator()
         self._create_file_exit_menu_item(file_menu)
         main_menu_bar.Append(file_menu, _("&File"))
 
