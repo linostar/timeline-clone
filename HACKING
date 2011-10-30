@@ -59,7 +59,7 @@ Work on stable
 
   1. Fix bugs
   2. Import translations from Launchpad
-    1. Request download from here
+    1. Request download from here (login required)
        http://translations.launchpad.net/thetimelineproj/trunk/+translations
     2. Run `python import-po-from-launchpad-export.py /path/to/launchpad-export.tar.gz`
   3. Check that information and version numbers are correct in

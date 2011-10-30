@@ -4,6 +4,21 @@ Timeline 0.16.0, released on 31 Jan 2012
 Timeline 0.15.0, released on 30 October 2011
 ============================================
 
+This is a new feature release.
+
+New features, enhancements:
+
+  * Custom font color for categories
+  * Measure distance between events
+  * Only break text in balloon if needed to keep balloon on screen
+
+Bug fixes:
+
+  * SVG export can now handle text with non-english characters
+  * Long category names are now visible in category editor
+  * Timeline repaints after editing category color
+  * No year of out range exception in event dialog
+
 Timeline 0.14.0, released on 30 July 2011
 =========================================
 
