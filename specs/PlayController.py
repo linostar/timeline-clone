@@ -16,21 +16,23 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
+import unittest
 
+from mock import Mock
+
+from timelinelib.wxgui.dialogs.playframe import PlayFrame
+from timelinelib.db.interface import TimelineDB
 from timelinelib.play.playcontroller import PlayController
 
 
-class PlayFrame(wx.Dialog):
+class PlayControllerSpec(unittest.TestCase):
 
-    def __init__(self, timeline):
-        self.controller = PlayController(self, timeline)
-        wx.Dialog.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
-        self.close_button = wx.Button(self, wx.ID_ANY, label="knapp")
-        self.Bind(wx.EVT_BUTTON, self.on_close_clicked, self.close_button)
-
-    def on_close_clicked(self, e):
+    def setUp(self):
+        self.play_frame = Mock(PlayFrame)
+        self.timeline = Mock(TimelineDB)
+        self.controller = PlayController(
+            self.play_frame, self.timeline)
+        
+    def test_on_close_clicked(self):
         self.controller.on_close_clicked()
-
-    def close(self):
-        self.EndModal(wx.ID_OK) 
+        self.play_frame.close.assert_called_with()

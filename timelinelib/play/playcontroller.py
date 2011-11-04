@@ -16,21 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
+class PlayController(object):
 
-from timelinelib.play.playcontroller import PlayController
+    def __init__(self, play_frame, timeline):
+        self.play_frame = play_frame
+        self.timeline = timeline
 
-
-class PlayFrame(wx.Dialog):
-
-    def __init__(self, timeline):
-        self.controller = PlayController(self, timeline)
-        wx.Dialog.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
-        self.close_button = wx.Button(self, wx.ID_ANY, label="knapp")
-        self.Bind(wx.EVT_BUTTON, self.on_close_clicked, self.close_button)
-
-    def on_close_clicked(self, e):
-        self.controller.on_close_clicked()
-
-    def close(self):
-        self.EndModal(wx.ID_OK) 
+    def on_close_clicked(self):
+        self.play_frame.close()
