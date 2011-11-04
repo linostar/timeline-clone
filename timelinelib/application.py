@@ -52,4 +52,4 @@ class TimelineApplication(object):
         self.main_frame._display_timeline(None)
 
     def on_play_clicked(self):
-        print "PLAY TIMELINE!"
+        self.main_frame.open_play_frame(self.timeline)
