@@ -30,7 +30,7 @@ import tempfile
 import sys
 
 if len(sys.argv) != 2:
-    print("Usage: python importpo.py /path/to/launchpad-export.tar.gz")
+    print("Usage: python import-po-from-launchpad-export.py /path/to/launchpad-export.tar.gz")
     raise SystemExit()
 
 # extract from

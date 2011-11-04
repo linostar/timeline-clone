@@ -26,7 +26,6 @@ Targets:
 
   mo      - compiled translations
   pot     - translation template
-  hacking - html version of HACKING
 """)
 
 # Import environment variables
@@ -48,15 +47,8 @@ if not env["XGETTEXT"]:
 
 # Import modules that we need
 
-try:
-    import markdown
-except ImportError:
-    print "Warning: markdown Python module not found, can't generate developer documentation"
-
 import os
 import os.path
-import codecs
-import re
 
 # Helper functions
 
@@ -87,26 +79,5 @@ env["XGETTEXTFLAGS"] = " --copyright-holder=\"Rickard Lindberg\"" \
 pot = env.Command("po/timeline.pot", sources,
                   '"$XGETTEXT" -o $TARGET $XGETTEXTFLAGS $SOURCES')
 env.Alias("pot", pot)
-
-# Target: hacking
-
-def markdown_convert(target, source, env):
-    html_body = markdown.markdown(codecs.open(source[0].abspath, "r", "utf-8").read())
-    title = str(target[0])
-    html_template = """
-    <html>
-    <head>
-    <title>%s</title>
-    </head>
-    <body>
-    %s
-    </body>
-    </html>
-    """
-    html = html_template % (title, html_body)
-    codecs.open(target[0].abspath, "w", "utf-8").write(html)
-
-html = env.Command("HACKING.html", "HACKING", markdown_convert)
-env.Alias("hacking", html)
 
 # vim: syntax=python
