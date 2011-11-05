@@ -16,20 +16,27 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Definition of interface that timeline databases should adhere to.
-
-Actual implementations of timeline databases are in the backends package.
-"""
-
-
-from timelinelib.observer import Observable
-
-
 # A category was added, edited, or deleted
 STATE_CHANGE_CATEGORY = 1
 # Something happened that changed the state of the timeline
 STATE_CHANGE_ANY = 2
+
+
+class Observable(object):
+
+    def __init__(self):
+        self.observers = []
+
+    def register(self, fn):
+        self.observers.append(fn)
+
+    def unregister(self, fn):
+        if fn in self.observers:
+            self.observers.remove(fn)
+
+    def _notify(self, state_change):
+        for fn in self.observers:
+            fn(state_change)
 
 
 class TimelineDB(Observable):
