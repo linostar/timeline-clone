@@ -17,12 +17,9 @@
 
 
 import unittest
-import datetime
-import calendar
 
-from timelinelib.time import PyTimeType
-from timelinelib.time.typeinterface import TimeType
 from timelinelib.db.objects import TimePeriod
+from timelinelib.time.typeinterface import TimeType
 
 
 class ATime(object):

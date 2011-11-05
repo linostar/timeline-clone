@@ -16,14 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
 import datetime
-import calendar
+import unittest
 
-from mock import Mock
-
-from timelinelib.time import PyTimeType
 from timelinelib.db.objects import TimePeriod
+from timelinelib.time import PyTimeType
 
 
 class PyTimeTypeSpec(unittest.TestCase):
