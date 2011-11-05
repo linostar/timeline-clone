@@ -19,7 +19,7 @@
 from os.path import abspath
 import unittest
 
-from timelinelib.config import Config
+from timelinelib.config.dotfile import Config
 
 
 class ConfigSpec(unittest.TestCase):

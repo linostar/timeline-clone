@@ -28,8 +28,8 @@ from mock import Mock
 import wx
 import wx.lib.inspection
 
-from timelinelib.arguments import ApplicationArguments
-from timelinelib.config import read_config
+from timelinelib.config.arguments import ApplicationArguments
+from timelinelib.config.dotfile import read_config
 from timelinelib.db import db_open
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event

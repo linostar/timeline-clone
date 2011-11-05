@@ -23,10 +23,12 @@ import wx
 from timelinelib.about import APPLICATION_NAME
 from timelinelib.about import display_about_dialog
 from timelinelib.application import TimelineApplication
-from timelinelib.config import read_config
+from timelinelib.config.dotfile import read_config
 from timelinelib.db import db_open
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
+from timelinelib.paths import ICONS_DIR
+from timelinelib.utils import ex_msg
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
@@ -36,15 +38,13 @@ from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
-from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
+from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import WildcardHelper
-from timelinelib.paths import ICONS_DIR
-from timelinelib.utils import ex_msg
-import timelinelib.wxgui.utils as gui_utils
 import timelinelib.printing as printing
+import timelinelib.wxgui.utils as gui_utils
 
 
 class MainFrame(wx.Frame):

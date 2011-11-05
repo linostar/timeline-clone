@@ -23,13 +23,13 @@ import wx
 
 from specs.utils import human_time_to_py
 from specs.utils import py_period
-from timelinelib.config import Config
+from timelinelib.config.dotfile import Config
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
-from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
 
