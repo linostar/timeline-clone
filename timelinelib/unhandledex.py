@@ -25,7 +25,7 @@ import traceback
 from sys import version as python_version
 import platform
 
-from timelinelib.version import get_version
+from timelinelib.meta.version import get_version
 
 import wx
 

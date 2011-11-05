@@ -19,7 +19,7 @@
 from optparse import OptionParser
 import os.path
 
-from timelinelib.version import get_version
+from timelinelib.meta.version import get_version
 
 import wx
 

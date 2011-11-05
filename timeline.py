@@ -32,9 +32,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies
 # Make sure that we can import markdown
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "markdown-2.0.3"))
 
-from timelinelib.about import APPLICATION_NAME
 from timelinelib.config.arguments import ApplicationArguments
 from timelinelib.config.paths import LOCALE_DIR
+from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.wxgui.setup import start_wx_application
 
 if platform.system() == "Windows":

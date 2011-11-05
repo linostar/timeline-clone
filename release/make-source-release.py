@@ -27,10 +27,10 @@ ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 # So that the we can write 'import timelinelib.xxx'
 sys.path.insert(0, ROOT_DIR)
 
-import timelinelib.version
+import timelinelib.meta.version
 
 def make_source_release():
-    zip_file_name = "timeline-%s.zip" % timelinelib.version.get_version()
+    zip_file_name = "timeline-%s.zip" % timelinelib.meta.version.get_version()
     warn_if_file_exists(zip_file_name)
     warn_if_dev_version()
     warn_if_specs_fail()
@@ -41,7 +41,7 @@ def warn_if_file_exists(zip_file_name):
         continue_despite_warning("Archive '%s' already exists." % zip_file_name)
 
 def warn_if_dev_version():
-    if timelinelib.version.DEV:
+    if timelinelib.meta.version.DEV:
         continue_despite_warning("This is a development version.")
 
 def warn_if_specs_fail():

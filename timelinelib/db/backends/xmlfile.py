@@ -30,21 +30,21 @@ from xml.sax.saxutils import escape as xmlescape
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.objects import TimePeriod
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import Category
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.utils import safe_write
-from timelinelib.version import get_version
-from timelinelib.utils import ex_msg
-from timelinelib.db.backends.xmlparser import parse
-from timelinelib.db.backends.xmlparser import Tag
-from timelinelib.db.backends.xmlparser import SINGLE
 from timelinelib.db.backends.xmlparser import ANY
 from timelinelib.db.backends.xmlparser import OPTIONAL
+from timelinelib.db.backends.xmlparser import parse
 from timelinelib.db.backends.xmlparser import parse_fn_store
+from timelinelib.db.backends.xmlparser import SINGLE
+from timelinelib.db.backends.xmlparser import Tag
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import TimePeriod
+from timelinelib.db.utils import safe_write
+from timelinelib.meta.version import get_version
 from timelinelib.time import WxTimeType
+from timelinelib.utils import ex_msg
 
 
 ENCODING = "utf-8"

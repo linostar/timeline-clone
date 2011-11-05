@@ -34,13 +34,13 @@ import StringIO
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.objects import TimePeriod
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import Category
 from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import safe_write
-from timelinelib.version import get_version
+from timelinelib.meta.version import get_version
 from timelinelib.utils import ex_msg
 
 

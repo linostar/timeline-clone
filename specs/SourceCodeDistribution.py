@@ -21,10 +21,10 @@ import os
 import unittest
 import datetime
 
-import timelinelib.version
-import timelinelib.about
 from timelinelib.monthnames import english_name_of_month
 from timelinelib.monthnames import month_from_english_name
+import timelinelib.meta.about
+import timelinelib.meta.version
 
 
 class SourceCodeDistributionSpec(unittest.TestCase):
@@ -60,9 +60,9 @@ class SourceCodeDistributionSpec(unittest.TestCase):
                 if self.is_author_from_about_module(possible_author)]
 
     def get_possible_authors_from_about_module(self):
-        return (timelinelib.about.DEVELOPERS +
-                timelinelib.about.TRANSLATORS +
-                timelinelib.about.ARTISTS)
+        return (timelinelib.meta.about.DEVELOPERS +
+                timelinelib.meta.about.TRANSLATORS +
+                timelinelib.meta.about.ARTISTS)
 
     def is_author_from_about_module(self, possible_author):
         return possible_author and not self.is_header(possible_author)
@@ -86,7 +86,7 @@ class SourceCodeDistributionSpec(unittest.TestCase):
         return "%s %s" % (english_name_of_month(date.month), date.year)
 
     def get_module_version_string(self):
-        return "%s.%s.%s" % timelinelib.version.VERSION
+        return "%s.%s.%s" % timelinelib.meta.version.VERSION
 
     def read_first_line_from(self, path):
         f = open(path, "r")

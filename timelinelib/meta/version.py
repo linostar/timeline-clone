@@ -30,7 +30,7 @@ def _get_revision():
     try:
         import os
         from subprocess import Popen, PIPE
-        root = os.path.join(os.path.dirname(__file__), "..")
+        root = os.path.join(os.path.dirname(__file__), "..", "..")
         cmd = ["hg", "id", "-i", "-R", root]
         rev = Popen(cmd, stdout=PIPE).communicate()[0].strip()
         return rev

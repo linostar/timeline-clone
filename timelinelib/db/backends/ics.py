@@ -32,19 +32,19 @@ from datetime import timedelta
 
 from icalendar import Calendar
 
-from timelinelib.time import PyTimeType
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import STATE_CHANGE_ANY
 from timelinelib.db.interface import STATE_CHANGE_CATEGORY
-from timelinelib.db.objects import TimePeriod
-from timelinelib.db.objects import Event
+from timelinelib.db.interface import TimelineDB
+from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
+from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import time_period_center
-from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import generic_event_search
+from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import safe_write
-from timelinelib.version import get_version
+from timelinelib.meta.version import get_version
+from timelinelib.time import PyTimeType
 from timelinelib.utils import ex_msg
 
 

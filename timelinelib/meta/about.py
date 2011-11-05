@@ -17,17 +17,9 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Functionality and information for displaying the About dialog.
-
-This information is also available in the source distribution files.  It is
-copied here to be available from Python code.
-"""
-
-
 import wx
 
-from version import get_version
+from timelinelib.meta.version import get_version
 
 
 APPLICATION_NAME = "Timeline"
