@@ -16,13 +16,16 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from sys import version as python_version
+import platform
 import sys
+import traceback
 
 import wx
 
+from timelinelib.meta.version import get_version
 from timelinelib.wxgui.dialogs.mainframe import MainFrame
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
-from timelinelib.unhandledex import create_error_message
 
 
 def start_wx_application(application_arguments, before_main_loop_hook=None):
@@ -41,3 +44,28 @@ def unhandled_exception_hook(type, value, tb):
     dialog = TextDisplayDialog(title, text)
     dialog.ShowModal()
     dialog.Destroy()
+
+
+def create_error_message(type, value, tb):
+    intro = create_intro_message()
+    exception = ("".join(traceback.format_exception(type, value, tb))).strip()
+    versions = create_versions_message()
+    return "%s\n\n%s\n\n%s" % (intro, exception, versions)
+
+
+def create_intro_message():
+    intro1 = ("An unexpected error has occurred. Please report this by copying "
+              "this error message and sending it to "
+              "thetimelineproj-user@lists.sourceforge.net.")
+    intro2 = ("It would also be useful if you can describe what you did just "
+              "before the error occurred.")
+    return "%s\n\n%s" % (intro1, intro2)
+
+
+def create_versions_message():
+    return "\n".join([
+        "Timeline version: %s" % get_version(),
+        "System version: %s" % ", ".join(platform.uname()),
+        "Python version: %s" % python_version.replace("\n", ""),
+        "wxPython version: %s" % wx.version(),
+    ])
