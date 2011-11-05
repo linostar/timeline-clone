@@ -270,7 +270,7 @@ class MainFrame(wx.Frame):
         if not self._has_pysvg_module():
             _display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
             return
-        import timelinelib.svgexport as svgexport
+        import timelinelib.export.svg as svgexport
         wildcard = self.images_svg_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Export to SVG"),
                                wildcard=wildcard, style=wx.FD_SAVE)
