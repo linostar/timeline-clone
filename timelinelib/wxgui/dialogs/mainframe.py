@@ -24,11 +24,11 @@ from timelinelib.about import APPLICATION_NAME
 from timelinelib.about import display_about_dialog
 from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import read_config
+from timelinelib.config.paths import ICONS_DIR
 from timelinelib.db import db_open
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.export.bitmap import export_to_image
-from timelinelib.paths import ICONS_DIR
 from timelinelib.utils import ex_msg
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton

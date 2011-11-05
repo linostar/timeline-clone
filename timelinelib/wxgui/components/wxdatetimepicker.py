@@ -20,9 +20,9 @@ import os.path
 
 import wx.calendar
 
-from timelinelib.paths import ICONS_DIR
-from timelinelib.time import WxTimeType
+from timelinelib.config.paths import ICONS_DIR
 from timelinelib.time import try_to_create_wx_date_time_from_dmy
+from timelinelib.time import WxTimeType
 from timelinelib.wxgui.utils import _display_error_message
 
 
