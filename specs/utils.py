@@ -34,7 +34,7 @@ from timelinelib.db import db_open
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
+from timelinelib.calendar.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.wxtime import WxTimeType
 from timelinelib.wxgui.setup import start_wx_application

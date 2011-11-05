@@ -22,15 +22,15 @@ from datetime import timedelta
 import calendar
 import re
 
+from timelinelib.calendar.monthnames import abbreviated_name_of_month
+from timelinelib.calendar.weekdaynames import abbreviated_name_of_weekday
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
-from timelinelib.monthnames import abbreviated_name_of_month
 from timelinelib.time.typeinterface import TimeType
-from timelinelib.weekdaynames import abbreviated_name_of_weekday
 
 
 # To save computation power (used by `delta_to_microseconds`)

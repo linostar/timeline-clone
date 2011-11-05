@@ -21,8 +21,8 @@ import os
 import unittest
 import datetime
 
-from timelinelib.monthnames import english_name_of_month
-from timelinelib.monthnames import month_from_english_name
+from timelinelib.calendar.monthnames import english_name_of_month
+from timelinelib.calendar.monthnames import month_from_english_name
 import timelinelib.meta.about
 import timelinelib.meta.version
 
