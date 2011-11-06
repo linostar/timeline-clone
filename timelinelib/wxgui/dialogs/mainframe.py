@@ -38,6 +38,7 @@ from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
+from timelinelib.wxgui.dialogs.playframe import PlayFrame
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
@@ -628,7 +629,7 @@ class MainFrame(wx.Frame):
         self._switch_to_error_view(error)
 
     def _switch_to_error_view(self, error):
-        self._display_timeline(None)
+        self.controller.set_no_timeline()
         self.main_panel.error_panel.populate(error)
         self.main_panel.show_error_panel()
         self.enable_disable_menus()
@@ -764,6 +765,11 @@ class MainFrame(wx.Frame):
         dialog = TimeEditorDialog(self, self.config, time_type, initial_time, title)
         if dialog.ShowModal() == wx.ID_OK:
             handle_new_time_fn(dialog.time)
+        dialog.Destroy()
+
+    def open_play_frame(self, timeline):
+        dialog = PlayFrame(timeline)
+        dialog.ShowModal()
         dialog.Destroy()
 
 
