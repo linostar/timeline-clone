@@ -768,7 +768,7 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
 
     def open_play_frame(self, timeline):
-        dialog = PlayFrame(timeline)
+        dialog = PlayFrame(timeline, self.config)
         dialog.ShowModal()
         dialog.Destroy()
 

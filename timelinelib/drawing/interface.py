@@ -152,6 +152,9 @@ class ViewProperties(object):
         elif is_selected == False and event.id in self.selected_event_ids:
             self.selected_event_ids.remove(event.id)
 
+    def set_displayed_period(self, period):
+        self.displayed_period = period
+
     def get_selected_event_ids(self):
         return self.selected_event_ids[:]
 

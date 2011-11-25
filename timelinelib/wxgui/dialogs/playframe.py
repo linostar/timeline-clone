@@ -16,21 +16,75 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import datetime
+
 import wx
 
+from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.play.playcontroller import PlayController
 
 
 class PlayFrame(wx.Dialog):
 
-    def __init__(self, timeline):
-        self.controller = PlayController(self, timeline)
+    def __init__(self, timeline, config):
         wx.Dialog.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
-        self.close_button = wx.Button(self, wx.ID_ANY, label="knapp")
+        self.close_button = wx.Button(self, wx.ID_ANY, label=_("Close"))
+        self.drawing_area = DrawingArea(self)
         self.Bind(wx.EVT_BUTTON, self.on_close_clicked, self.close_button)
+
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(self.drawing_area)
+        vbox.Add(self.close_button)
+        self.SetSizerAndFit(vbox)
+
+        drawing_algorithm = DefaultDrawingAlgorithm()
+        self.controller = PlayController(
+            self, timeline, drawing_algorithm, config)
+        self.controller.start_movie()
+
+    def redraw_drawing_area(self, fn):
+        self.drawing_area.redraw_surface(fn)
 
     def on_close_clicked(self, e):
         self.controller.on_close_clicked()
 
     def close(self):
         self.EndModal(wx.ID_OK) 
+
+    def get_view_period_length(self):
+        return datetime.timedelta(days=10)
+
+
+class DrawingArea(wx.Panel):
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent, size=(600, 400))
+        self.surface_bitmap = None
+        self._create_gui()
+
+    def _create_gui(self):
+        self.Bind(wx.EVT_PAINT, self._on_paint)
+
+    def redraw_surface(self, fn_draw):
+        width, height = self.GetSizeTuple()
+        self.surface_bitmap = wx.EmptyBitmap(width, height)
+        memdc = wx.MemoryDC()
+        memdc.SelectObject(self.surface_bitmap)
+        memdc.BeginDrawing()
+        memdc.SetBackground(wx.Brush(wx.WHITE, wx.SOLID))
+        memdc.Clear()
+        fn_draw(memdc)
+        memdc.EndDrawing()
+        del memdc
+        self.Refresh()
+        self.Update()
+
+    def _on_paint(self, event):
+        dc = wx.AutoBufferedPaintDC(self)
+        dc.BeginDrawing()
+        if self.surface_bitmap:
+            dc.DrawBitmap(self.surface_bitmap, 0, 0, True)
+        else:
+            pass # TODO: Fill with white?
+        dc.EndDrawing()
+
