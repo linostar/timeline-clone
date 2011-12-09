@@ -45,7 +45,7 @@ class NoOpInputHandler(InputHandler):
             direction = self._hit_resize_handle(x, y, alt_down)
             self.drawing_area.change_input_handler_to_resize_by_drag(event, direction)
             return
-        if self._hit_move_handle(x, y, alt_down):
+        if self._hit_move_handle(x, y, alt_down) and not event.ends_today:
             self.drawing_area.change_input_handler_to_move_by_drag(event, time_at_x)
             return
         if (event is None and ctrl_down == False and shift_down == False):

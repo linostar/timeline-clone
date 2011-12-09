@@ -40,6 +40,9 @@ from timelinelib.time.wxtime import WxTimeType
 from timelinelib.wxgui.setup import start_wx_application
 
 
+ANY_TIME = "1 Jan 2010"
+
+
 def py_period(start, end):
     return TimePeriod(PyTimeType(), human_time_to_py(start), human_time_to_py(end))
 
@@ -82,17 +85,17 @@ def wx_time(year, month, day, hour=0, minute=0, second=0):
 
 
 def an_event():
-    return an_event_with(time="1 Jan 2010")
+    return an_event_with(time=ANY_TIME)
 
 
-def an_event_with(start=None, end=None, time=None, text="foo", fuzzy=False,
+def an_event_with(start=None, end=None, time=ANY_TIME, text="foo", fuzzy=False,
                   locked=False, ends_today=False):
-    if time:
-        start = human_time_to_py(time)
-        end = human_time_to_py(time)
-    else:
+    if start and end:
         start = human_time_to_py(start)
         end = human_time_to_py(end)
+    else:
+        start = human_time_to_py(time)
+        end = human_time_to_py(time)
     return Event(
         PyTimeType(), start, end, text, Category("bar", None, None, True),
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
