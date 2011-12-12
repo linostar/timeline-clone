@@ -96,7 +96,7 @@ class EventEditor(object):
         end = self.get_end_from_view()
         if self._dialog_has_signalled_invalid_input(end):
             raise ValueError()
-        if self.locked:
+        if self.event != None and self.locked:
             self._verify_that_time_has_not_been_changed(start, end)
         self.start = self._validate_and_save_start(self.get_start_from_view())
         self.end = self._validate_and_save_end(self.get_end_from_view())
