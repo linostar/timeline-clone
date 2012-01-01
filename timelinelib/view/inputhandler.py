@@ -18,10 +18,10 @@
 
 class InputHandler(object):
 
-    def left_mouse_down(self, x, y, ctrl_down, shift_down):
+    def left_mouse_down(self, x, y, ctrl_down, shift_down, alt_down=False):
         pass
 
-    def mouse_moved(self, x, y):
+    def mouse_moved(self, x, y, alt_down=False):
         pass
 
     def left_mouse_up(self):

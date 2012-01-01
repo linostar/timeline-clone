@@ -37,7 +37,7 @@ class NoOpInputHandler(InputHandler):
         self.last_hovered_event = None
         self.last_hovered_balloon_event = None
 
-    def left_mouse_down(self, x, y, ctrl_down, shift_down):
+    def left_mouse_down(self, x, y, ctrl_down, shift_down, alt_down=False):
         self._toggle_balloon_stickyness(x, y)
         event = self.drawing_area.event_at(x, y)
         time_at_x = self.drawing_area.get_time(x)
@@ -75,7 +75,7 @@ class NoOpInputHandler(InputHandler):
                 else:
                     self.drawing_area._redraw_balloons(None)
 
-    def mouse_moved(self, x, y):
+    def mouse_moved(self, x, y, alt_down=False):
         self.last_hovered_event = self.drawing_area.event_at(x, y)
         self.last_hovered_balloon_event = self.drawer.balloon_at(x, y)
         self._start_balloon_timers()

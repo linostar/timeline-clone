@@ -32,7 +32,7 @@ class ScrollByDragInputHandler(InputHandler):
         self.speed_px_per_sec = 0
         self.INERTIAL_SCROLLING_SPEED_THRESHOLD = 200
 
-    def mouse_moved(self, x, y):
+    def mouse_moved(self, x, y, alt_down=False):
         self._calculate_sped(x)
         self._scroll_timeline(x)
 

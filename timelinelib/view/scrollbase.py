@@ -33,7 +33,7 @@ class ScrollViewInputHandler(InputHandler):
         self.view = controller.view
         self.timer_running = False
 
-    def mouse_moved(self, x, y):
+    def mouse_moved(self, x, y, alt_down=False):
         self.last_x = x
         if self.controller._in_scroll_zone(x) and not self.timer_running:
             self.view.start_dragscroll_timer(milliseconds=DRAGSCROLL_TIMER_MSINTERVAL)

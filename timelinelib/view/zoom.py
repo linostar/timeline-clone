@@ -27,8 +27,8 @@ class ZoomByDragInputHandler(SelectPeriodByDragInputHandler):
         self.status_bar_adapter = status_bar_adapter
         self.status_bar_adapter.set_text(_("Select region to zoom into"))
 
-    def mouse_moved(self, x, y):
-        SelectPeriodByDragInputHandler.mouse_moved(self, x, y)
+    def mouse_moved(self, x, y, alt_down=False):
+        SelectPeriodByDragInputHandler.mouse_moved(self, x, y, alt_down)
         try:
             p = self.get_current_period()
         except ValueError:
