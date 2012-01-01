@@ -87,7 +87,7 @@ class Drawer(object):
         Return True if a balloon for event is drawn at (x, y), otherwise False.
         """
 
-    def get_closest_overlapping_event(event_to_move, up=True):
+    def get_closest_overlapping_event(self, event_to_move, up=True):
         raise NotImplementedError()
 
 
