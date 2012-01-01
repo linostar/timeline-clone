@@ -20,19 +20,14 @@ import os.path
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.objects import TimePeriod
-from timelinelib.domain.category import sort_categories
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
-from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
-from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
+from timelinelib.wxgui.components.categorychoice import CategoryChoice
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import time_picker_for
 import timelinelib.wxgui.utils as gui_utils
-
 
 class EventEditorDialog(wx.Dialog):
 
@@ -156,50 +151,12 @@ class EventEditorDialog(wx.Dialog):
         grid.Add(self.txt_text, flag=wx.EXPAND)
 
     def _create_categories_listbox(self, grid):
-        self.lst_category = wx.Choice(self, wx.ID_ANY)
+        self.lst_category = CategoryChoice(self, self.timeline)
         label = wx.StaticText(self, label=_("Category:"))
         grid.Add(label, flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.lst_category)
-        self.Bind(wx.EVT_CHOICE, self._lst_category_on_choice, 
+        self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, 
                   self.lst_category)
-
-    def _lst_category_on_choice(self, e):
-        new_selection_index = e.GetSelection()
-        if new_selection_index > self.last_real_category_index:
-            self.lst_category.SetSelection(self.current_category_selection)
-            if new_selection_index == self.add_category_item_index:
-                self._add_category()
-            elif new_selection_index == self.edit_categoris_item_index:
-                self._edit_categories()
-        else:
-            self.current_category_selection = new_selection_index
-
-    def _add_category(self):
-        def create_category_editor():
-            return WxCategoryEdtiorDialog(self, _("Add Category"), self.timeline, None)
-        def handle_success(dialog):
-            if dialog.GetReturnCode() == wx.ID_OK:
-                try:
-                    self._fill_categories_listbox(dialog.get_edited_category())
-                except TimelineIOError, e:
-                    gui_utils.handle_db_error_in_dialog(self, e)
-        gui_utils.show_modal(create_category_editor,
-                             gui_utils.create_dialog_db_error_handler(self),
-                             handle_success)
-
-    def _edit_categories(self):
-        def create_categories_editor():
-            return CategoriesEditor(self, self.timeline)
-        def handle_success(dialog):
-            try:
-                prev_index = self.lst_category.GetSelection()
-                prev_category = self.lst_category.GetClientData(prev_index)
-                self._fill_categories_listbox(prev_category)
-            except TimelineIOError, e:
-                gui_utils.handle_db_error_in_dialog(self, e)
-        gui_utils.show_modal(create_categories_editor,
-                             gui_utils.create_dialog_db_error_handler(self),
-                             handle_success)
 
     def _create_notebook_content(self, properties_box_content):
         notebook = self._create_notebook()
@@ -255,30 +212,6 @@ class EventEditorDialog(wx.Dialog):
         self.lbl_to.Show(show)
         self.dtp_end.Show(show)
 
-    def _fill_categories_listbox(self, select_category):
-        # We can not do error handling here since this method is also called
-        # from the constructor (and then error handling is done by the code
-        # calling the constructor).
-        self.lst_category.Clear()
-        self.lst_category.Append("", None) # The None-category
-        selection_set = False
-        current_item_index = 1
-        for cat in sort_categories(self.timeline.get_categories()):
-            self.lst_category.Append(cat.name, cat)
-            if cat == select_category:
-                self.lst_category.SetSelection(current_item_index)
-                selection_set = True
-            current_item_index += 1
-        self.last_real_category_index = current_item_index - 1
-        self.add_category_item_index = self.last_real_category_index + 2
-        self.edit_categoris_item_index = self.last_real_category_index + 3
-        self.lst_category.Append("", None)
-        self.lst_category.Append(_("Add new"), None)
-        self.lst_category.Append(_("Edit categories"), None)
-        if not selection_set:
-            self.lst_category.SetSelection(0)
-        self.current_category_selection = self.lst_category.GetSelection()
-
     def set_start(self, start):
         self.dtp_start.set_value(start)
     def get_start(self):
@@ -322,11 +255,9 @@ class EventEditorDialog(wx.Dialog):
         return self.txt_text.GetValue().strip()
 
     def set_category(self, category):
-        self._fill_categories_listbox(category)
+        self.lst_category.select(category)
     def get_category(self):
-        selection = self.lst_category.GetSelection()
-        category = self.lst_category.GetClientData(selection)
-        return category
+        return self.lst_category.get()
 
     def set_event_data(self, event_data):
         for data_id, editor in self.event_data:
