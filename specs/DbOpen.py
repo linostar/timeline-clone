@@ -26,7 +26,7 @@ import unittest
 
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db import db_open
-from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.viewproperties import ViewProperties
 
 import wx
 

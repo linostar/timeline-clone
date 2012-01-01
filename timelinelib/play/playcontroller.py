@@ -20,7 +20,7 @@ import datetime
 
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.pytime import PyTimeType
-from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.viewproperties import ViewProperties
 
 
 class PlayController(object):

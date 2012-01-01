@@ -24,7 +24,7 @@ from specs.utils import py_period
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
-from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.drawing.scene import TimelineScene
 
 

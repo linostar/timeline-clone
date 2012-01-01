@@ -30,7 +30,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.interface import TimelineIOError
-from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.viewproperties import ViewProperties
 
 
 def db_open(path, use_wide_date_range=False):

@@ -31,7 +31,7 @@ from timelinelib.db.backends.file import quote
 from timelinelib.db.backends.file import dequote
 from timelinelib.db.backends.file import split_on_semicolon
 from timelinelib.time import PyTimeType
-from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.viewproperties import ViewProperties
 
 
 class FileTimelineSpec(unittest.TestCase):

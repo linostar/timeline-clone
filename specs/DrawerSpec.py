@@ -25,7 +25,7 @@ from mock import Mock
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event, TimePeriod
 from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
-from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.pytime import PyTimeType
 
 

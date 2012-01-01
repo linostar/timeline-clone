@@ -23,7 +23,7 @@ from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
-from timelinelib.drawing.interface import ViewProperties
+from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.utils import ex_msg
 from timelinelib.view.move import MoveByDragInputHandler
 from timelinelib.view.noop import NoOpInputHandler
