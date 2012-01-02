@@ -193,3 +193,21 @@ class TimelineIOError(Exception):
     Also raised by the get_timeline method if loading of a timeline failed.
     """
     pass
+
+
+class ContainerStrategy(object):
+    
+    def __init__(self, container):
+        self.container = container
+        
+    def register_subevent(self, subevent):
+        """Return the event with the latest end time."""
+        raise NotImplementedError()    
+
+    def unregister_subevent(self, subevent):
+        """Return the event with the latest end time."""
+        raise NotImplementedError()    
+
+    def update(self, subevent):
+        """Update container properties when adding a new sub-event."""
+        raise NotImplementedError()    
