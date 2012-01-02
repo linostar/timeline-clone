@@ -37,6 +37,7 @@ from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
+from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.playframe import PlayFrame
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
@@ -620,8 +621,14 @@ class MainFrame(wx.Frame):
 
     def edit_event(self, event):
         def create_event_editor():
-            return EventEditorDialog(
-                self, self.config, _("Edit Event"), self.timeline, event=event)
+            if event.is_container():
+                parent = self
+                title = _("Edit Container")
+                timeline = self.timeline
+                return ContainerEditorDialog(parent, title, timeline, event)
+            else:
+                return EventEditorDialog(self, self.config, _("Edit Event"), 
+                                         self.timeline, event=event)
         gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
     def handle_db_error(self, error):

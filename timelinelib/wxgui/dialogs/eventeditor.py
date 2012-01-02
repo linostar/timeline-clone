@@ -20,14 +20,17 @@ import os.path
 
 import wx
 
+from timelinelib.db.interface import TimelineIOError
 from timelinelib.editors.event import EventEditor
-from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
+from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.components.categorychoice import CategoryChoice
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import time_picker_for
 import timelinelib.wxgui.utils as gui_utils
+from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
+
 
 class EventEditorDialog(wx.Dialog):
 
@@ -39,9 +42,8 @@ class EventEditorDialog(wx.Dialog):
         self.config = config
         self._create_gui()
         self.controller = EventEditor(self)
-        self.controller.edit(
-            timeline.get_time_type(), DbWrapperEventRepository(timeline),
-            start, end, event)
+        self.controller.edit(timeline.get_time_type(), DbWrapperEventRepository(timeline),
+                             timeline, start, end, event)
 
     def _create_gui(self):
         properties_box = self._create_properties_box()
@@ -51,15 +53,15 @@ class EventEditorDialog(wx.Dialog):
 
     def _create_properties_box(self):
         properties_box = wx.BoxSizer(wx.VERTICAL)
-        self._create_main_box_content(properties_box)
+        self._create_propeties_controls(properties_box)
         return properties_box
 
-    def _create_main_box_content(self, properties_box):
+    def _create_propeties_controls(self, sizer):
         groupbox = wx.StaticBox(self, wx.ID_ANY, _("Event Properties"))
         main_box_content = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
         self._create_detail_content(main_box_content)
         self._create_notebook_content(main_box_content)
-        properties_box.Add(main_box_content, flag=wx.EXPAND|wx.ALL, 
+        sizer.Add(main_box_content, flag=wx.EXPAND|wx.ALL, 
                            border=BORDER, proportion=1)
 
     def _create_detail_content(self, properties_box_content):
@@ -74,6 +76,7 @@ class EventEditorDialog(wx.Dialog):
         self._create_checkboxes(grid)
         self._create_text_field(grid)
         self._create_categories_listbox(grid)
+        self._create_container_listbox(grid)
         return grid    
 
     def _create_time_details(self, grid):
@@ -107,6 +110,44 @@ class EventEditorDialog(wx.Dialog):
         self.chb_ends_today = self._create_ends_today_checkbox(when_box)
         grid.Add(when_box)
 
+    def _create_container_listbox(self, grid):
+        grid.AddStretchSpacer()
+        container_box = wx.BoxSizer(wx.HORIZONTAL)
+        grid.Add(container_box)
+        self._create_containers_listbox(grid)
+
+    def _create_containers_listbox(self, grid):
+        self.lst_containers = wx.Choice(self, wx.ID_ANY)
+        label = wx.StaticText(self, label=_("Container:"))
+        grid.Add(label, flag=wx.ALIGN_CENTER_VERTICAL)
+        grid.Add(self.lst_containers)
+        self.Bind(wx.EVT_CHOICE, self._lst_containers_on_choice, 
+                  self.lst_containers)
+
+    def _lst_containers_on_choice(self, e):
+        new_selection_index = e.GetSelection()
+        if new_selection_index > self.last_real_container_index:
+            self.lst_containers.SetSelection(self.current_container_selection)
+            if new_selection_index == self.add_container_item_index:
+                self._add_container()
+            elif new_selection_index == self.edit_container_item_index:
+                self._edit_containers()
+        else:
+            self.current_container_selection = new_selection_index
+
+    def _add_container(self):
+        def create_container_editor():
+            return ContainerEditorDialog(self, _("Add Container"), self.timeline, None)
+        def handle_success(dialog):
+            if dialog.GetReturnCode() == wx.ID_OK:
+                try:
+                    self._fill_containers_listbox(dialog.get_edited_container())
+                except TimelineIOError, e:
+                    gui_utils.handle_db_error_in_dialog(self, e)
+        gui_utils.show_modal(create_container_editor,
+                             gui_utils.create_dialog_db_error_handler(self),
+                             handle_success)
+        
     def _create_period_checkbox(self, box):
         handler = self._chb_period_on_checkbox
         return self._create_chb(box, _("Period"), handler)
@@ -155,8 +196,7 @@ class EventEditorDialog(wx.Dialog):
         label = wx.StaticText(self, label=_("Category:"))
         grid.Add(label, flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.lst_category)
-        self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, 
-                  self.lst_category)
+        self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, self.lst_category)
 
     def _create_notebook_content(self, properties_box_content):
         notebook = self._create_notebook()
@@ -212,6 +252,36 @@ class EventEditorDialog(wx.Dialog):
         self.lbl_to.Show(show)
         self.dtp_end.Show(show)
 
+    def _fill_containers_listbox(self, select_container):
+        # We can not do error handling here since this method is also called
+        # from the constructor (and then error handling is done by the code
+        # calling the constructor).
+        self.lst_containers.Clear()
+        self.lst_containers.Append("", None) # The None-container
+        selection_set = False
+        current_item_index = 1
+        if select_container != None and select_container not in self.timeline.get_containers():
+            self.lst_containers.Append(select_container.text, select_container)
+            self.lst_containers.SetSelection(current_item_index)
+            current_item_index += 1
+            selection_set = True
+        for container in self.timeline.get_containers():
+            self.lst_containers.Append(container.text, container)
+            if not selection_set:
+                if container == select_container:
+                    self.lst_containers.SetSelection(current_item_index)
+                    selection_set = True
+            current_item_index += 1
+                    
+        self.last_real_container_index = current_item_index - 1
+        self.add_container_item_index = self.last_real_container_index + 2
+        self.edit_container_item_index = self.last_real_container_index + 3
+        self.lst_containers.Append("", None)
+        self.lst_containers.Append(_("Add new"), None)
+        if not selection_set:
+            self.lst_containers.SetSelection(0)
+        self.current_container_selection = self.lst_containers.GetSelection()
+
     def set_start(self, start):
         self.dtp_start.set_value(start)
     def get_start(self):
@@ -251,13 +321,26 @@ class EventEditorDialog(wx.Dialog):
 
     def set_name(self, name):
         self.txt_text.SetValue(name)
+        
     def get_name(self):
         return self.txt_text.GetValue().strip()
 
     def set_category(self, category):
         self.lst_category.select(category)
+        
     def get_category(self):
         return self.lst_category.get()
+
+    def set_container(self, container):
+        self._fill_containers_listbox(container)
+        
+    def get_container(self):
+        selection = self.lst_containers.GetSelection()
+        if selection != -1:
+            container = self.lst_containers.GetClientData(selection)
+        else:
+            container = None
+        return container
 
     def set_event_data(self, event_data):
         for data_id, editor in self.event_data:

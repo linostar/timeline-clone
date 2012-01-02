@@ -25,6 +25,7 @@ from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.interface import EventRepository
 from timelinelib.time import PyTimeType
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
+from timelinelib.db.backends.memory import MemoryDB
 
 
 class EventEditorTestCase(unittest.TestCase):
@@ -32,6 +33,7 @@ class EventEditorTestCase(unittest.TestCase):
     def setUp(self):
         self.view = Mock(EventEditorDialog)
         self.event_repository = Mock(EventRepository)
+        self.timeline = MemoryDB()
 
     def when_editing_a_new_event(self):
         self.when_editor_opened_with_time("1 Jan 2010")
@@ -49,8 +51,8 @@ class EventEditorTestCase(unittest.TestCase):
 
     def when_editor_opened_with(self, start, end, event):
         self.editor = EventEditor(self.view)
-        self.editor.edit(
-            PyTimeType(), self.event_repository, start, end, event)
+        self.editor.edit(PyTimeType(), self.event_repository, self.timeline, 
+                         start, end, event)
 
     def simulate_user_enters_start_time(self, time):
         self.view.get_start.return_value = human_time_to_py(time)
@@ -232,8 +234,12 @@ class describe_event_editor__saving(object):
         self.view.get_name.return_value = "new event"
         self.view.get_category.return_value = sentinel.CATEGORY
         self.view.get_event_data.return_value = sentinel.EVENT_DATA
+        self.view.get_container.return_value = None
         self.simulate_user_clicks_ok()
+        er = self.event_repository
+        ca = self.event_repository.save.call_args
         self.saved_event = self.event_repository.save.call_args[0][0]
+        pass
 
     def test_saves_start_time(self):
         self.given_saving_valid_event()
