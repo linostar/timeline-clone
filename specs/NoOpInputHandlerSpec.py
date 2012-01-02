@@ -51,8 +51,8 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.drawing_area.drawing_algorithm = Mock()
         self.drawing_area.view_properties = Mock()
         self.drawing_area.get_time.side_effect = lambda x: self.times_at[x]
-        self.drawing_area.event_with_rect_at.side_effect = lambda x, y: self.events_at[(x, y)]
-        self.drawing_area.event_at.side_effect = lambda x, y: self.events_at[(x, y)][0]
+        self.drawing_area.event_with_rect_at.side_effect = lambda x, y, alt: self.events_at[(x, y)]
+        self.drawing_area.event_at.side_effect = lambda x, y, alt: self.events_at[(x, y)][0]
         self.drawing_area.is_selected.side_effect = lambda event: event in self.selected_events
 
     def given_time_at_x_is(self, x, time):

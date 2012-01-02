@@ -30,11 +30,18 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def _store_event_periods(self, event_being_dragged):
         self.event_periods = []
-        for event in self.drawing_area.get_selected_events():
+        selected_events = self.drawing_area.get_selected_events()
+        if not event_being_dragged in selected_events:
+            return
+        for event in selected_events:        
             period_pair = (event, event.time_period)
             if event == event_being_dragged:
                 self.event_periods.insert(0, period_pair)
             else:
+                self.event_periods.append(period_pair)
+        if event.is_container():
+            for subevent in event.events:
+                period_pair = (subevent, subevent.time_period)
                 self.event_periods.append(period_pair)
         assert self.event_periods[0][0] == event_being_dragged
 
@@ -51,6 +58,8 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
         self._move_event()
 
     def _move_event(self):
+        if len(self.event_periods) == 0:
+            return
         if self._any_event_locked():
             self.status_bar_adapter.set_text(_("Can't move locked event"))
             return

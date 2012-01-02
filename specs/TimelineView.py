@@ -509,7 +509,7 @@ class MockDrawer(object):
     def snap_selection(self, selection):
         return selection
 
-    def event_at(self, x, y):
+    def event_at(self, x, y, alt_down=False):
         for (event, rect) in self.events_and_rects:
             if rect.Contains((x, y)):
                 return event
@@ -521,7 +521,7 @@ class MockDrawer(object):
                 return rect
         raise Exception("Should not get here in tests.")
 
-    def event_with_rect_at(self, x, y):
+    def event_with_rect_at(self, x, y, alt_down=False):
         event = self.event_at(x, y)
         if event is None:
             return None

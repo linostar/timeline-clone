@@ -177,10 +177,10 @@ class DrawingArea(object):
     def window_resized(self):
         self._redraw_timeline()
 
-    def left_mouse_down(self, x, y, ctrl_down, shift_down):
-        self.input_handler.left_mouse_down(x, y, ctrl_down, shift_down)
+    def left_mouse_down(self, x, y, ctrl_down, shift_down, alt_down=False):
+        self.input_handler.left_mouse_down(x, y, ctrl_down, shift_down, alt_down)
 
-    def right_mouse_down(self, x, y):
+    def right_mouse_down(self, x, y, alt_down=False):
         """
         Event handler used when the right mouse button has been pressed.
 
@@ -189,7 +189,7 @@ class DrawingArea(object):
         """
         if self.timeline.is_read_only():
             return
-        self.context_menu_event = self.drawing_algorithm.event_at(x, y)
+        self.context_menu_event = self.drawing_algorithm.event_at(x, y, alt_down)
         if self.context_menu_event is None:
             return
         menu_definitions = [
@@ -234,7 +234,7 @@ class DrawingArea(object):
         self.view_properties.set_event_has_sticky_balloon(self.context_menu_event, has_sticky=True)
         self._redraw_timeline()
 
-    def left_mouse_dclick(self, x, y, ctrl_down):
+    def left_mouse_dclick(self, x, y, ctrl_down, alt_down=False):
         """
         Event handler used when the left mouse button has been double clicked.
 
@@ -249,8 +249,8 @@ class DrawingArea(object):
         # that occurs in the handling of EVT_LEFT_DOWN, since we still want
         # the event(s) selected or deselected after a left doubleclick
         # It doesn't look too god but I havent found any other way to do it.
-        self._toggle_event_selection(x, y, ctrl_down)
-        event = self.drawing_algorithm.event_at(x, y)
+        self._toggle_event_selection(x, y, ctrl_down, alt_down)
+        event = self.drawing_algorithm.event_at(x, y, alt_down)
         if event:
             self.view.edit_event(event)
         else:
@@ -260,11 +260,11 @@ class DrawingArea(object):
     def get_time(self, x):
         return self.drawing_algorithm.get_time(x)
 
-    def event_with_rect_at(self, x, y):
-        return self.drawing_algorithm.event_with_rect_at(x, y)
+    def event_with_rect_at(self, x, y, alt_down=False):
+        return self.drawing_algorithm.event_with_rect_at(x, y, alt_down)
 
-    def event_at(self, x, y):
-        return self.drawing_algorithm.event_at(x, y)
+    def event_at(self, x, y, alt_down=False):
+        return self.drawing_algorithm.event_at(x, y, alt_down)
 
     def is_selected(self, event):
         return self.view_properties.is_selected(event)
@@ -298,8 +298,8 @@ class DrawingArea(object):
             if not left_is_down:
                 self.left_mouse_up()
 
-    def mouse_moved(self, x, y):
-        self.input_handler.mouse_moved(x, y)
+    def mouse_moved(self, x, y, alt_down=False):
+        self.input_handler.mouse_moved(x, y, alt_down)
 
     def mouse_wheel_moved(self, rotation, ctrl_down, shift_down):
         direction = _step_function(rotation)
@@ -400,8 +400,8 @@ class DrawingArea(object):
         text = _("%s events hidden") % self.drawing_algorithm.get_hidden_event_count()
         self.status_bar_adapter.set_hidden_event_count_text(text)
 
-    def _toggle_event_selection(self, xpixelpos, ypixelpos, control_down):
-        event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
+    def _toggle_event_selection(self, xpixelpos, ypixelpos, control_down, alt_down=False):
+        event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos, alt_down)
         if event:
             selected = not self.view_properties.is_selected(event)
             if not control_down:
@@ -412,8 +412,8 @@ class DrawingArea(object):
         self._redraw_timeline()
         return event != None
 
-    def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos):
-        event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos)
+    def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos, alt_down=False):
+        event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos, alt_down)
         if event != None:
             self.status_bar_adapter.set_text(event.get_label())
         else:

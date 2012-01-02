@@ -164,14 +164,16 @@ class DrawingAreaPanel(wx.Panel):
         self.controller.window_resized()
 
     def _on_left_down(self, evt):
-        self.controller.left_mouse_down(evt.m_x, evt.m_y, evt.m_controlDown, evt.m_shiftDown)
+        self.controller.left_mouse_down(evt.m_x, evt.m_y, evt.m_controlDown, 
+                                        evt.m_shiftDown, evt.m_altDown)
         evt.Skip()
 
     def _on_right_down(self, evt):
-        self.controller.right_mouse_down(evt.m_x, evt.m_y)
+        self.controller.right_mouse_down(evt.m_x, evt.m_y, evt.m_altDown)
 
     def _on_left_dclick(self, evt):
-        self.controller.left_mouse_dclick(evt.m_x, evt.m_y, evt.m_controlDown)
+        self.controller.left_mouse_dclick(evt.m_x, evt.m_y, evt.m_controlDown, 
+                                          evt.m_altDown)
 
     def _on_middle_up(self, evt):
         self.controller.middle_mouse_clicked(evt.m_x)
@@ -183,7 +185,7 @@ class DrawingAreaPanel(wx.Panel):
         self.controller.mouse_enter(evt.m_x, evt.LeftIsDown())
 
     def _on_motion(self, evt):
-        self.controller.mouse_moved(evt.m_x, evt.m_y)
+        self.controller.mouse_moved(evt.m_x, evt.m_y, evt.m_altDown)
 
     def _on_mousewheel(self, evt):
         self.controller.mouse_wheel_moved(evt.m_wheelRotation, evt.ControlDown(), evt.ShiftDown())
