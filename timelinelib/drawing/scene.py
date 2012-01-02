@@ -154,8 +154,17 @@ class TimelineScene(object):
     def _calc_event_positions(self):
         self.events_from_db = self._db.get_events(self._view_properties.displayed_period)
         visible_events = self._view_properties.filter_events(self.events_from_db)
+        visible_events = self._place_subevents_last(visible_events)
         self._calc_rects(visible_events)
 
+    def _place_subevents_last(self, events):
+        reordered_events = [event  for event in events 
+                            if not event.is_subevent()]
+        subevents = [event for event in events 
+                     if event.is_subevent()]
+        reordered_events.extend(subevents)
+        return reordered_events
+    
     def _calc_rects(self, events):
         self.event_data = []
         for event in events:
@@ -166,14 +175,15 @@ class TimelineScene(object):
 
     def _create_rectangle_for_event(self, event):
         rect = self._create_ideal_rect_for_event(event)
-        self._ensure_rect_is_not_far_outisde_screen(rect)
-        self._prevent_overlapping_by_adjusting_rect_y(event, rect)
+        if not event.is_subevent():
+            self._ensure_rect_is_not_far_outisde_screen(rect)
+            self._prevent_overlapping_by_adjusting_rect_y(event, rect)
         return rect
 
     def _create_ideal_rect_for_event(self, event):
         if event.ends_today:
             event.time_period.end_time = self._db.get_time_type().now()
-        if self._display_as_period(event):
+        if self._display_as_period(event) or event.is_subevent():
             return self._create_ideal_rect_for_period_event(event)
         else:
             return self._create_ideal_rect_for_non_period_event(event)
@@ -185,14 +195,27 @@ class TimelineScene(object):
     def _create_ideal_rect_for_period_event(self, event):
         tw, th = self._get_text_size(event.text)
         ew = self._metrics.calc_width(event.time_period)
-        rw = ew + 2 * self._outer_padding
+        min_w = 5 * self._outer_padding
+        rw = max(ew + 2 * self._outer_padding, min_w)
         rh = th + 2 * self._inner_padding + 2 * self._outer_padding
         rx = (self._metrics.calc_x(event.time_period.start_time) -
               self._outer_padding)
-        ry = self._metrics.half_height + self._baseline_padding
+        ry = self._get_ry(event)
         rect = wx.Rect(rx, ry, rw, rh)
         return rect
 
+    def _get_ry(self, event):
+        if event.is_subevent():
+            return self._get_container_ry(event)
+        else:
+            return self._metrics.half_height + self._baseline_padding
+        
+    def _get_container_ry(self, subevent):
+        for (event, rect) in self.event_data:
+            if event == subevent.container:
+                return rect.y
+        return self._metrics.half_height + self._baseline_padding
+        
     def _create_ideal_rect_for_non_period_event(self, event):
         tw, th = self._get_text_size(event.text)
         rw = tw + 2 * self._inner_padding + 2 * self._outer_padding

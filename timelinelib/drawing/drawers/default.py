@@ -149,17 +149,33 @@ class DefaultDrawingAlgorithm(Drawer):
         start, end = period_selection
         return (self.snap(start), self.snap(end))
 
-    def event_at(self, x, y):
+    def event_at(self, x, y, alt_down=False):
+        container_event = None
         for (event, rect) in self.scene.event_data:
             if rect.Contains(wx.Point(x, y)):
-                return event
-        return None
+                if event.is_container():
+                    if alt_down:
+                        return event
+                    container_event = event
+                else:
+                    return event        
+        return container_event
 
-    def event_with_rect_at(self, x, y):
+    def event_with_rect_at(self, x, y, alt_down=False):
+        container_event = None
+        container_rect = None
         for (event, rect) in self.scene.event_data:
             if rect.Contains(wx.Point(x, y)):
-                return (event, rect)
-        return None
+                if event.is_container():
+                    if alt_down:
+                        return event, rect
+                    container_event = event
+                    container_rect = rect
+                else:
+                    return event, rect      
+        if container_event == None:
+            return None 
+        return container_event, container_rect
 
     def event_rect(self, evt):
         for (event, rect) in self.scene.event_data:
@@ -348,13 +364,25 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetFont(self.small_text_font)
         self.dc.DestroyClippingRegion()
         for (event, rect) in self.scene.event_data:
-            self._draw_box(rect, event)
-            self._draw_text(rect, event)
-            if event.has_data():
-                self._draw_contents_indicator(event, rect)
-            if view_properties.is_selected(event):
-                self._draw_selection_and_handles(rect, event)
+            if event.is_container():
+                self._draw_container(event, rect, view_properties)
+            else:
+                self._draw_event(event, rect, view_properties)
 
+    def _draw_container(self, event, rect, view_properties):
+        box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)           
+        self._draw_box(box_rect, event)
+        if view_properties.is_selected(event):
+            self._draw_selection_and_handles(rect, event)
+
+    def _draw_event(self, event, rect, view_properties):
+        self._draw_box(rect, event)
+        self._draw_text(rect, event)
+        if event.has_data():
+            self._draw_contents_indicator(event, rect)
+        if view_properties.is_selected(event):
+            self._draw_selection_and_handles(rect, event)
+    
     def _draw_box(self, rect, event):
         self.dc.SetClippingRect(rect)
         self.dc.SetBrush(self._get_box_brush(event))
