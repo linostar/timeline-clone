@@ -138,7 +138,13 @@ class Event(object):
         new_event.set_data("icon", self.get_data("icon"))    
         return new_event
 
-
+    def is_container(self):
+        return False
+    
+    def is_subevent(self):
+        return False
+    
+    
 class Category(object):
     """
     Store persistent data about a category.

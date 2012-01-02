@@ -74,7 +74,9 @@ class EventCosntructorSpec(unittest.TestCase):
         self.assertEqual(False, self.event.fuzzy)
         self.assertEqual(False, self.event.locked)
         self.assertEqual(False, self.event.ends_today)
-
+        self.assertEqual(False, self.event.is_container())
+        self.assertEqual(False, self.event.is_subevent())
+        
     def testEventPropertyFuzzyCanBeSetAtConstruction(self):
         self.given_fuzzy_point_event()
         self.assertEqual(True, self.event.fuzzy)
