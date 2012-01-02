@@ -40,6 +40,8 @@ from timelinelib.db.backends.xmlparser import Tag
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
+from timelinelib.db.container import Container
+from timelinelib.db.subevent import Subevent
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import safe_write
 from timelinelib.meta.version import get_version
@@ -82,6 +84,7 @@ class XmlTimeline(MemoryDB):
         self._set_time_type(use_wide_date_range)
         if load == True:
             self._load()
+            self._fill_containers()
 
     def _set_time_type(self, use_wide_date_range):
         if use_wide_date_range == True:
@@ -93,6 +96,22 @@ class XmlTimeline(MemoryDB):
     def _time_string(self, time):
         return self.get_time_type().time_string(time)
 
+    def _fill_containers(self):
+        container_events = [event for event in self.events
+                            if event.is_container()]
+        subevents = [event for event in self.events
+                     if event.is_subevent()]
+        containers = {}
+        for container in container_events:
+            containers[container.cid()] = container
+        for subevent in subevents:
+            try:
+                container = containers[subevent.cid()]
+                container.register_subevent(subevent)
+            except:
+                #TODO: Create container
+                pass
+                 
     def _load(self):
         """
         Load timeline data from the file that this timeline points to.
@@ -215,11 +234,41 @@ class XmlTimeline(MemoryDB):
             icon = None
         else:
             icon = parse_icon(icon_text)
-        event = Event(self.get_time_type(), start, end, text, category, fuzzy, locked, ends_today)
+        if self._is_container_event(text):
+            cid, text = self._extract_container_id(text)
+            event = Container(self.get_time_type(), start, end, text, category, cid=cid)
+        elif self._is_subevent(text):
+            cid, text = self._extract_subid(text)
+            event = Subevent(self.get_time_type(), start, end, text, category, cid=cid)
+        else:
+            event = Event(self.get_time_type(), start, end, text, category, fuzzy, locked, ends_today)
         event.set_data("description", description)
         event.set_data("icon", icon)
         self.save_event(event)
 
+    def _is_container_event(self, text):
+        return text.startswith("[")
+
+    def _is_subevent(self, text):
+        return text.startswith("(")
+            
+    def _extract_container_id(self, text):
+        str_id, text = text.split("]", 1)
+        try:
+            str_id = str_id[1:]
+            id = int(str_id)
+        except:
+            id = -1
+        return id, text
+    
+    def _extract_subid(self, text):
+        id, text = text.split(")", 1)
+        try:
+            id = int(id[1:])
+        except:
+            id = -1
+        return id, text
+    
     def _parse_optional_bool(self, tmp_dict, id):
         if tmp_dict.has_key(id):
             return tmp_dict.pop(id) == "True"
@@ -247,8 +296,15 @@ class XmlTimeline(MemoryDB):
         self._set_hidden_categories(tmp_dict.pop("hidden_categories"))
 
     def _save(self):
+        self._make_sure_subevets_are_saved_last()
         safe_write(self.path, ENCODING, self._write_xml_doc)
 
+    def _make_sure_subevets_are_saved_last(self):
+        subevents = [event for event in self.events if event.is_subevent()]
+        events = [event for event in self.events if not event.is_subevent()]
+        events.extend(subevents)
+        self.events = events
+        
     def _write_xml_doc(self, file):
         file.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
         self._write_timeline(file)
@@ -287,7 +343,12 @@ class XmlTimeline(MemoryDB):
                          self._time_string(evt.time_period.start_time), INDENT3)
         write_simple_tag(file, "end",
                          self._time_string(evt.time_period.end_time), INDENT3)
-        write_simple_tag(file, "text", evt.text, INDENT3)
+        if evt.is_container():
+            write_simple_tag(file, "text", "[%d]%s " % (evt.cid(), evt.text), INDENT3)
+        elif evt.is_subevent():
+            write_simple_tag(file, "text", "(%d)%s " % (evt.cid(), evt.text), INDENT3)
+        else:
+            write_simple_tag(file, "text", evt.text, INDENT3)
         write_simple_tag(file, "fuzzy", "%s" % evt.fuzzy, INDENT3)
         write_simple_tag(file, "locked", "%s" % evt.locked, INDENT3)
         write_simple_tag(file, "ends_today", "%s" % evt.ends_today, INDENT3)

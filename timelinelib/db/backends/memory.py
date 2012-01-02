@@ -34,6 +34,7 @@ from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import STATE_CHANGE_ANY
 from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 from timelinelib.db.objects import Event
+from timelinelib.db.container import Container
 from timelinelib.db.objects import Category
 from timelinelib.db.utils import IdCounter
 from timelinelib.db.utils import generic_event_search
@@ -97,15 +98,66 @@ class MemoryDB(TimelineDB):
                                       event.id)
             self.events.append(event)
             event.set_id(self.event_id_counter.get_next())
+            if event.is_subevent():
+                self._register_subevent(event)
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_ANY)
 
+    def _register_subevent(self, subevent):
+        container_events = [event for event in self.events
+                            if event.is_container()]
+        containers = {}
+        for container in container_events:
+            key = container.cid()
+            containers[key] = container
+        try:
+            container = containers[subevent.cid()]
+            container.register_subevent(subevent)
+        except:
+            id = subevent.cid()
+            if id == 0:
+                id = self._get_max_container_id(container_events) + 1
+                subevent.set_cid(id) 
+            name = "[%d]Container" % id
+            container = Container(subevent.time_type, 
+                                  subevent.time_period.start_time, 
+                                  subevent.time_period.end_time, name)
+            self.save_event(container)
+            self._register_subevent(subevent)
+            pass
+
+    def _get_max_container_id(self, container_events):
+        id = 0
+        for event in container_events:
+            if id < event.cid():
+                id = event.cid()
+        return id
+    
+    def _unregister_subevent(self, subevent):
+        container_events = [event for event in self.events
+                            if event.is_container()]
+        containers = {}
+        for container in container_events:
+            containers[container.cid()] = container
+        try:
+            container = containers[subevent.cid()]
+            container.unregister_subevent(subevent)
+            if len(container.events) == 0:
+                self.events.remove(container)
+        except:
+            pass
+            
     def delete_event(self, event_or_id):
         if isinstance(event_or_id, Event):
             event = event_or_id
         else:
             event = self.find_event_with_id(event_or_id)
         if event in self.events:
+            if event.is_subevent():
+                self._unregister_subevent(event)
+            if event.is_container():
+                for subevent in event.events:
+                    self.events.remove(subevent)
             self.events.remove(event)
             event.set_id(None)
             self._save_if_not_disabled()
@@ -115,6 +167,11 @@ class MemoryDB(TimelineDB):
 
     def get_categories(self):
         return list(self.categories)
+
+    def get_containers(self):
+        containers = [event for event in self.events 
+                      if event.is_container()]
+        return containers
 
     def save_category(self, category):
         if (category.parent is not None and
