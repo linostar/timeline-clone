@@ -26,60 +26,147 @@ from timelinelib.db.strategies import DefaultContainerStrategy
 
 class DefaultContainerStartegySpec(unittest.TestCase):
     
-    def testConstruction(self):
+    def test_construction(self):
         self.given_strategy_with_container()
         self.assertEqual(self.container, self.strategy.container)
 
-    def testFirstRegisteredEventDecidesContainerPeriod(self):
+    def test_first_registered_event_decides_container_period(self):
         self.given_strategy_with_container()
         self.given_subevent1()
         self.strategy.register_subevent(self.subevent1)
-        self.assertEqual(self.container.time_period.start_time, self.subevent1.time_period.start_time)
-        self.assertEqual(self.container.time_period.end_time, self.subevent1.time_period.end_time)
+        self.assert_equal_start(self.container, self.subevent1)
+        self.assert_equal_end(self.container, self.subevent1)
 
-    def testSecondRegisteredEventExpandsContainerPeriod(self):
-        self.given_strategy_with_container()
-        self.given_subevent1()
-        self.given_subevent2()
-        self.strategy.register_subevent(self.subevent1)
-        self.strategy.register_subevent(self.subevent2)
-        self.assertEqual(self.container.time_period.start_time, self.subevent1.time_period.start_time)
-        self.assertEqual(self.container.time_period.end_time, self.subevent2.time_period.end_time)
+    def test_second_registered_event_expands_container_period(self):
+        # Container event:   +-------+
+        # New sub-event:                 +-------+
+        self.given_container_with_two_events_with_nonoverlapping_periods()
+        self.assert_equal_start(self.container, self.subevent1)
+        self.assert_equal_end(self.container, self.subevent2)
 
-    def testRemovingOneEventContractsContainerPeriod(self):
-        self.given_strategy_with_container()
-        self.given_subevent1()
-        self.given_subevent2()
-        self.strategy.register_subevent(self.subevent1)
-        self.strategy.register_subevent(self.subevent2)
+    def test_removing_one_event_contracts_container_period(self):
+        # Container event:   +-------+
+        # New sub-event:                 +-------+
+        self.given_container_with_two_events_with_nonoverlapping_periods()
         self.strategy.unregister_subevent(self.subevent1)
-        self.assertEqual(self.container.time_period.start_time, self.subevent2.time_period.start_time)
-        self.assertEqual(self.container.time_period.end_time, self.subevent2.time_period.end_time)
+        self.assert_equal_start(self.container, self.subevent2)
+        self.assert_equal_end(self.container, self.subevent2)
 
-    def testUpdatingSubeventExpandsContainerPeriod(self):
-        self.given_strategy_with_container()
-        self.given_subevent1()
-        self.given_subevent2()
-        self.strategy.register_subevent(self.subevent1)
-        self.strategy.register_subevent(self.subevent2)
+    def test_updating_subevent_expands_container_period(self):
+        # Container event:   +-------+
+        # New sub-event:                 +-------+
+        self.given_container_with_two_events_with_nonoverlapping_periods()
         self.subevent2.time_period.end_time = self.time("2000-05-01 10:01:01")
         self.strategy.update(self.subevent2)
-        self.assertEqual(self.container.time_period.start_time, self.subevent1.time_period.start_time)
-        self.assertEqual(self.container.time_period.end_time, self.subevent2.time_period.end_time)
+        self.assert_equal_start(self.container, self.subevent1)
+        self.assert_equal_end(self.container, self.subevent2)
     
+    def test_adding_partial_overlapping_event_moves_overlapped_event_backwards(self):
+        # Container event:   +-------+
+        # New sub-event:          +-------+
+        self.given_container_with_two_events_with_overlapping_periods()
+        self.assert_start_equals_end(self.subevent2, self.subevent1)
+
+    def test_adding_partial_overlapping_event_moves_overlapped_event_forward(self):
+        # Container event:        +-------+
+        # New sub-event:     +-------+
+        self.given_container_with_two_events_with_overlapping_periods_reversed_order()
+        self.assert_start_equals_end(self.subevent2, self.subevent1)
+
+    def test_adding_event_with_same_period_moves_overlapped_event_forward(self):
+        # Container event:   +-------+
+        # New sub-event:     +-------+
+        self.given_container_with_two_events_with_same_periods()
+        self.assert_start_equals_end(self.subevent1, self.subevent2)
+
+    def test_adding_event_with_same_start_moves_overlapped_event_forward(self):
+        # Container event:   +-------+
+        # New sub-event:     +---+
+        self.given_container_with_two_events_with_same_start_time()
+        self.assert_start_equals_end(self.subevent1, self.subevent2)
+        
+    def given_container_with_two_events_with_nonoverlapping_periods(self):
+        self.given_strategy_with_container()
+        self.given_two_events_with_nonoverlapping_periods()
+        self.strategy.register_subevent(self.subevent1)
+        self.strategy.register_subevent(self.subevent2)
+             
+    def given_container_with_two_events_with_overlapping_periods(self):
+        self.given_strategy_with_container()
+        self.given_two_overlapping_events()
+        self.strategy.register_subevent(self.subevent1)
+        self.strategy.register_subevent(self.subevent2)
+
+    def given_container_with_two_events_with_overlapping_periods_reversed_order(self):
+        self.given_strategy_with_container()
+        self.given_two_overlapping_events()
+        self.strategy.register_subevent(self.subevent2)
+        self.strategy.register_subevent(self.subevent1)
+
+    def given_container_with_two_events_with_same_periods(self):
+        self.given_strategy_with_container()
+        self.given_two_events_with_same_period()
+        self.strategy.register_subevent(self.subevent1)
+        self.strategy.register_subevent(self.subevent2)
+
+    def given_container_with_two_events_with_same_start_time(self):
+        self.given_strategy_with_container()
+        self.given_two_events_with_same_start_time()
+        self.strategy.register_subevent(self.subevent1)
+        self.strategy.register_subevent(self.subevent2)
+
     def given_strategy_with_container(self):
-        self.container = Container(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
+        self.container = Container(self.db.get_time_type(), 
+                                   self.time("2000-01-01 10:01:01"), 
                                    self.time("2000-01-01 10:01:01"), "Container1")
         self.strategy = DefaultContainerStrategy(self.container)
 
-    def given_subevent1(self):
-        self.subevent1 = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
-                                  self.time("2000-02-01 10:01:01"), "Container1")
+    def given_two_overlapping_events(self):
+        self.subevent1 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-03-01 10:01:01"), 
+                                  self.time("2000-06-01 10:01:01"), "Container1")
+        self.subevent2 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-05-01 10:01:01"), 
+                                  self.time("2000-07-01 10:01:01"), "Container1")
 
-    def given_subevent2(self):
-        self.subevent2 = Subevent(self.db.get_time_type(), self.time("2000-03-01 10:01:01"), 
+    def given_two_events_with_same_period(self):
+        self.subevent1 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-03-01 10:01:01"), 
+                                  self.time("2000-06-01 10:01:01"), "Container1")
+        self.subevent2 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-03-01 10:01:01"), 
+                                  self.time("2000-06-01 10:01:01"), "Container1")
+
+    def given_two_events_with_same_start_time(self):
+        self.subevent1 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-03-01 10:01:01"), 
+                                  self.time("2000-06-01 10:01:01"), "Container1")
+        self.subevent2 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-03-01 10:01:01"), 
                                   self.time("2000-04-01 10:01:01"), "Container1")
 
+    def given_two_events_with_nonoverlapping_periods(self):
+        self.subevent1 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-01-01 10:01:01"), 
+                                  self.time("2000-02-01 10:01:01"), "Container1")
+        self.subevent2 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-03-01 10:01:01"), 
+                                  self.time("2000-04-01 10:01:01"), "Container1")
+        
+    def given_subevent1(self):
+        self.subevent1 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-01-01 10:01:01"), 
+                                  self.time("2000-02-01 10:01:01"), "Container1")
+
+    def assert_equal_start(self, obj1, obj2):
+        self.assertEqual(obj1.time_period.start_time, obj2.time_period.start_time)
+        
+    def assert_equal_end(self, obj1, obj2):
+        self.assertEqual(obj1.time_period.end_time, obj2.time_period.end_time)
+
+    def assert_start_equals_end(self, obj1, obj2):
+        self.assertEqual(obj1.time_period.start_time, obj2.time_period.end_time)
+        
     def time(self, tm):
         return self.db.get_time_type().parse_time(tm)
     

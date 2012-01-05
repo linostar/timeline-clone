@@ -102,8 +102,11 @@ class DefaultContainerStrategy(ContainerStrategy):
         delta = None
         delta_start = None
         for event in self.container.events:
-            if (event.time_period.start_time > subevent.time_period.start_time and
-                event.time_period.end_time < subevent.time_period.end_time):
+            if event == subevent:
+                continue
+            if ((event.time_period.start_time > subevent.time_period.start_time and
+                 event.time_period.end_time < subevent.time_period.end_time) or 
+                (event.time_period.start_time == subevent.time_period.start_time)):
                 if delta == None or delta_start < event.time_period.start_time: 
                     delta = subevent.time_period.end_time - event.time_period.start_time
                     delta_start = event.time_period.start_time 
@@ -111,6 +114,8 @@ class DefaultContainerStrategy(ContainerStrategy):
              
     def _subevent_start_overlaps_other_event(self, subevent):
         for event in self.container.events:
+            if event == subevent:
+                continue
             if (event.time_period.start_time < subevent.time_period.start_time and
                 event.time_period.end_time > subevent.time_period.start_time):
                 delta = event.time_period.end_time - subevent.time_period.start_time 
@@ -119,6 +124,8 @@ class DefaultContainerStrategy(ContainerStrategy):
 
     def _subevent_end_overlaps_other_event(self, subevent):
         for event in self.container.events:
+            if event == subevent:
+                continue
             if (event.time_period.start_time < subevent.time_period.end_time and
                 event.time_period.end_time > subevent.time_period.end_time):
                 delta = subevent.time_period.end_time - event.time_period.start_time 
@@ -139,7 +146,9 @@ class DefaultContainerStrategy(ContainerStrategy):
                     
     def _adjust_back_events(self, subevent, delta):
         for event in self.container.events:
-            if event.time_period.start_time > subevent.time_period.start_time:
+            if event == subevent:
+                continue
+            if event.time_period.start_time >= subevent.time_period.start_time:
                 start = event.time_period.start_time + delta
                 end = event.time_period.end_time + delta
                 event.time_period.start_time = start
