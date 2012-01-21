@@ -29,15 +29,16 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.export.bitmap import export_to_image
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
+from timelinelib.meta.version import DEV
 from timelinelib.utils import ex_msg
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
+from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
-from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.playframe import PlayFrame
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
@@ -128,8 +129,9 @@ class MainFrame(wx.Frame):
         self._create_file_export_to_image_menu_item(file_menu)
         self._create_file_export_to_svg_menu_item(file_menu)
         file_menu.AppendSeparator()
-        self._create_file_play(file_menu)
-        file_menu.AppendSeparator()
+        if DEV:
+            self._create_file_play(file_menu)
+            file_menu.AppendSeparator()
         self._create_file_exit_menu_item(file_menu)
         main_menu_bar.Append(file_menu, _("&File"))
 
