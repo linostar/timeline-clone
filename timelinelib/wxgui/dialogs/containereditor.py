@@ -26,65 +26,20 @@ from timelinelib.wxgui.utils import _set_focus_and_select
 import timelinelib.wxgui.utils as gui_utils
 
 
-class ContainerEditorDialog(wx.Dialog):
-    """
-    This dialog is used for two purposes, editing an existing container
-    event and creating a new container event (container==None).
-    The 'business logic' is handled by the controller.
-    """
-    def __init__(self, parent, title, db, container=None):
+class StaticContainerEditorDialog(wx.Dialog):
 
+    def __init__(self, parent, title, db):
         wx.Dialog.__init__(self, parent, title=title, name="container_editor",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.db = db
         self._create_gui()
-        self.controller = ContainerEditor(self, db, container)
 
-    #
-    # Controller API
-    #
-    def set_name(self, name):
-        self.txt_name.SetValue(name)
-        
-    def get_name(self):
-        return self.txt_name.GetValue().strip()
-
-    def set_category(self, category):
-        self.lst_category.select(category)
-        
-    def get_category(self):
-        return self.lst_category.get()
-    
-    def display_invalid_name(self, message):
-        _display_error_message(message, self)
-        _set_focus_and_select(self.txt_name)  
-
-    def display_db_exception(self, e):
-        gui_utils.handle_db_error_in_dialog(self, e)
-
-    def close(self):
-        self.EndModal(wx.ID_OK)
-
-    #
-    # Parent API
-    #
-    def get_edited_container(self):
-        return self.controller.get_container()
-    
-    #
-    # GUI Creation
-    #
     def _create_gui(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
         self._create_propeties_groupbox(sizer)
         self._create_buttons(sizer)
         self.SetSizerAndFit(sizer)
         self.txt_name.SetFocus()
-        self._bind_events()
-
-    def _bind_events(self):
-        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, self.lst_category)
 
     def _create_propeties_groupbox(self, sizer):
         groupbox = wx.StaticBox(self, wx.ID_ANY, _("Container Properties"))
@@ -114,9 +69,57 @@ class ContainerEditorDialog(wx.Dialog):
     def _create_buttons(self, properties_box):
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         properties_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
+        
+
+class ContainerEditorControllerApi(object):
+
+    def __init__(self, db, container):
+        self._bind_events()
+        self.controller = ContainerEditor(self, db, container)
+
+    def set_name(self, name):
+        self.txt_name.SetValue(name)
+        
+    def get_name(self):
+        return self.txt_name.GetValue().strip()
+
+    def set_category(self, category):
+        self.lst_category.select(category)
+        
+    def get_category(self):
+        return self.lst_category.get()
+    
+    def display_invalid_name(self, message):
+        _display_error_message(message, self)
+        _set_focus_and_select(self.txt_name)  
+
+    def display_db_exception(self, e):
+        gui_utils.handle_db_error_in_dialog(self, e)
+
+    def close(self):
+        self.EndModal(wx.ID_OK)
+
+    def _bind_events(self):
+        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
+        self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, self.lst_category)
+            
+    def _btn_ok_on_click(self, evt):
+        self.controller.save()        
+            
+            
+class ContainerEditorDialog(StaticContainerEditorDialog, 
+                            ContainerEditorControllerApi):
+    """
+    This dialog is used for two purposes, editing an existing container
+    event and creating a new container event (container==None).
+    The 'business logic' is handled by the controller.
+    """
+    def __init__(self, parent, title, db, container=None):
+        StaticContainerEditorDialog.__init__(self, parent, title, db)
+        ContainerEditorControllerApi.__init__(self, db, container)
 
     #
-    # Event Handlers
+    # Parent API
     #
-    def _btn_ok_on_click(self, evt):
-        self.controller.save()
+    def get_edited_container(self):
+        return self.controller.get_container()
