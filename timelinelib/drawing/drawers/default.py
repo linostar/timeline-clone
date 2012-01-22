@@ -281,6 +281,8 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_lines_to_non_period_events(self, view_properties):
         self.dc.SetBrush(self.black_solid_brush)
         for (event, rect) in self.scene.event_data:
+            if self._subevent_displayed_as_point_event(event, rect):
+                continue
             if rect.Y < self.scene.divider_y:
                 x = self.scene.x_pos_for_time(event.mean_time())
                 y = rect.Y + rect.Height / 2
@@ -372,10 +374,14 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_container(self, event, rect, view_properties):
         box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)           
         self._draw_box(box_rect, event)
+        if self._event_displayed_as_point_event(event, rect):
+            self._draw_text(rect, event)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
     def _draw_event(self, event, rect, view_properties):
+        if self._subevent_displayed_as_point_event(event, rect):
+            return
         self._draw_box(rect, event)
         self._draw_text(rect, event)
         if event.has_data():
@@ -383,6 +389,13 @@ class DefaultDrawingAlgorithm(Drawer):
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
     
+    def _subevent_displayed_as_point_event(self, event, rect):
+        return (event.is_subevent() and 
+                self._event_displayed_as_point_event(event, rect))
+    
+    def _event_displayed_as_point_event(self, event, rect):
+        return self.scene.divider_y > rect.Y
+        
     def _draw_box(self, rect, event):
         self.dc.SetClippingRect(rect)
         self.dc.SetBrush(self._get_box_brush(event))
