@@ -138,12 +138,21 @@ class EventEditorDialog(wx.Dialog):
             
     def _enable_disable_checkboxes(self):
         self._enable_disable_ends_today()
+        self._enable_disable_locked()
 
     def _enable_disable_ends_today(self):
-        index = self.lst_containers.GetSelection()
-        enable = (index == 0) and (not self.chb_locked.GetValue())
+        enable = (self._container_not_selected() and 
+                  not self.chb_locked.GetValue())
         self.chb_ends_today.Enable(enable)
-                    
+
+    def _enable_disable_locked(self):
+        enable = self._container_not_selected()
+        self.chb_locked.Enable(enable)
+
+    def _container_not_selected(self):
+        index = self.lst_containers.GetSelection()
+        return (index == 0)
+    
     def _add_container(self):
         def create_container_editor():
             return ContainerEditorDialog(self, _("Add Container"), self.timeline, None)
