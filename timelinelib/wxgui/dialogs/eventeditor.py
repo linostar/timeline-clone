@@ -134,7 +134,16 @@ class EventEditorDialog(wx.Dialog):
                 self._edit_containers()
         else:
             self.current_container_selection = new_selection_index
+        self._enable_disable_checkboxes()
+            
+    def _enable_disable_checkboxes(self):
+        self._enable_disable_ends_today()
 
+    def _enable_disable_ends_today(self):
+        index = self.lst_containers.GetSelection()
+        enable = (index == 0) and (not self.chb_locked.GetValue())
+        self.chb_ends_today.Enable(enable)
+                    
     def _add_container(self):
         def create_container_editor():
             return ContainerEditorDialog(self, _("Add Container"), self.timeline, None)
@@ -172,7 +181,7 @@ class EventEditorDialog(wx.Dialog):
         return self._create_chb(box, _("Locked"), handler)
 
     def _chb_show_time_on_locked(self, e):
-        self.chb_ends_today.Enable(not self.chb_locked.GetValue())
+        self._enable_disable_ends_today()
 
     def _create_ends_today_checkbox(self, box):
         handler = None
@@ -281,6 +290,7 @@ class EventEditorDialog(wx.Dialog):
         if not selection_set:
             self.lst_containers.SetSelection(0)
         self.current_container_selection = self.lst_containers.GetSelection()
+        self._enable_disable_checkboxes()
 
     def set_start(self, start):
         self.dtp_start.set_value(start)
@@ -312,7 +322,7 @@ class EventEditorDialog(wx.Dialog):
         return self.chb_locked.GetValue()
     def set_locked(self, locked):
         self.chb_locked.SetValue(locked)
-        self.chb_ends_today.Enable(not self.chb_locked.GetValue())
+        self._enable_disable_ends_today()
 
     def get_ends_today(self):
         return self.chb_ends_today.GetValue()
