@@ -1,6 +1,17 @@
 Timeline 0.16.0, released on 31 Jan 2012
 ========================================
 
+This is a new feature release.
+
+New features, enhancements:
+
+  * Events can be grouped in containers
+
+Bug fixes:
+
+  * Timeline files with non-English names can be opened
+  * Creating new locked events does not raise exception
+
 Timeline 0.15.0, released on 30 October 2011
 ============================================
 
