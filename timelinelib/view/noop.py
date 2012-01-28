@@ -64,7 +64,7 @@ class NoOpInputHandler(InputHandler):
 
     def _toggle_balloon_stickyness(self, x, y):
         event_with_balloon = self.drawer.balloon_at(x, y)
-        if event_with_balloon: 
+        if event_with_balloon:
             stick = not self.view_properties.event_has_sticky_balloon(event_with_balloon)
             self.view_properties.set_event_has_sticky_balloon(event_with_balloon, has_sticky=stick)
             if stick:
@@ -82,7 +82,7 @@ class NoOpInputHandler(InputHandler):
         self.drawing_area._display_eventinfo_in_statusbar(x, y, alt_down)
         if self._hit_resize_handle(x, y, alt_down) is not None:
             self.drawing_area_view.set_size_cursor()
-        elif self._hit_move_handle(x, y, alt_down):
+        elif self._hit_move_handle(x, y, alt_down) and not self.last_hovered_event.ends_today:
             self.drawing_area_view.set_move_cursor()
         else:
             self.drawing_area_view.set_default_cursor()
@@ -146,7 +146,7 @@ class NoOpInputHandler(InputHandler):
         bevt = self.last_hovered_balloon_event
         # If the visible balloon doesn't belong to the event pointed to
         # we remove the ballloon.
-        if hevt != cevt and hevt != bevt: 
+        if hevt != cevt and hevt != bevt:
             self.drawing_area._redraw_balloons(None)
 
     def _hit_move_handle(self, x, y, alt_down=False):

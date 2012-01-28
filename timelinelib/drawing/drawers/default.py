@@ -372,7 +372,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 self._draw_event(event, rect, view_properties)
 
     def _draw_container(self, event, rect, view_properties):
-        box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)           
+        box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
         self._draw_box(box_rect, event)
         if self._event_displayed_as_point_event(event, rect):
             self._draw_text(rect, event)
@@ -388,14 +388,14 @@ class DefaultDrawingAlgorithm(Drawer):
             self._draw_contents_indicator(event, rect)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
-    
+
     def _subevent_displayed_as_point_event(self, event, rect):
-        return (event.is_subevent() and 
+        return (event.is_subevent() and
                 self._event_displayed_as_point_event(event, rect))
-    
+
     def _event_displayed_as_point_event(self, event, rect):
         return self.scene.divider_y > rect.Y
-        
+
     def _draw_box(self, rect, event):
         self.dc.SetClippingRect(rect)
         self.dc.SetBrush(self._get_box_brush(event))
@@ -481,7 +481,7 @@ class DefaultDrawingAlgorithm(Drawer):
             end_angle = math.pi / 4
         else:
             start_angle = -math.pi
-            end_angle = math.pi 
+            end_angle = math.pi
         self._draw_locked(event, rect, x, start_angle, end_angle)
 
     def _draw_locked_end(self, event, rect):
@@ -598,7 +598,7 @@ class DefaultDrawingAlgorithm(Drawer):
         if not event.locked:
             self.dc.DrawRectangleRect(east_rect)
             self.dc.DrawRectangleRect(west_rect)
-        if not event.locked:
+        if not event.locked and not event.ends_today:
             self.dc.DrawRectangleRect(center_rect)
 
     def _get_base_color(self, event):
