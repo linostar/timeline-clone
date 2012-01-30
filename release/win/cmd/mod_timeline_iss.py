@@ -1,6 +1,6 @@
 
 def get_version():
-    f = open("..\\..\\..\\timelinelib\\version.py", "r")
+    f = open("..\\..\\..\\timelinelib\\meta\\version.py", "r")
     text = f.read()
     lines = text.split("\n")
     for line in lines:
