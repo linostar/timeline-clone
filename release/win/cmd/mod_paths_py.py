@@ -1,4 +1,4 @@
-f = open("..\\..\\..\\timelinelib\\paths.py", "r")
+f = open("..\\..\\..\\timelinelib\\config\\paths.py", "r")
 text = f.read()
 lines = text.split("\n")
 for line in lines:
