@@ -36,14 +36,27 @@ class PlayController(object):
         self.play_frame.close()
 
     def start_movie(self):
-        def draw_fn(dc):
-            view_properties = ViewProperties()
-            period_length = self.play_frame.get_view_period_length()
-            first_event_time = self.timeline.get_first_event().time_period.start_time
-            start_time = first_event_time - period_length / 2
-            end_time = first_event_time + period_length / 2
-            start_period = TimePeriod(self.timeline.get_time_type(), start_time, end_time)
-            view_properties.set_displayed_period(start_period)
-            self.drawing_algorithm.draw(dc, self.timeline,
-                    view_properties, self.config)
-        self.play_frame.redraw_drawing_area(draw_fn)
+        period_length = self.play_frame.get_view_period_length()
+        first_event_time = self.timeline.get_first_event().time_period.start_time
+        self.last_event_time = self.timeline.get_last_event().time_period.end_time + period_length / 2
+        start_time = first_event_time - period_length / 2
+        end_time = first_event_time + period_length / 2
+        self.current_period = TimePeriod(self.timeline.get_time_type(), start_time, end_time)
+        self.play_frame.redraw_drawing_area(self.draw_fn)
+        self.play_frame.start_timer(10)
+
+    def tick(self):
+        self.play_frame.redraw_drawing_area(self.draw_fn)
+
+    def draw_fn(self, dc):
+        view_properties = ViewProperties()
+        view_properties.set_displayed_period(self.get_period())
+        self.drawing_algorithm.draw(
+            dc, self.timeline, view_properties, self.config)
+
+    def get_period(self):
+        if self.current_period.end_time > self.last_event_time:
+            self.play_frame.stop_timer()
+        delta_to_move = self.current_period.delta() / 100
+        self.current_period = self.current_period.move_delta(delta_to_move)
+        return self.current_period

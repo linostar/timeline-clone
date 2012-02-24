@@ -42,6 +42,13 @@ class PlayFrame(wx.Dialog):
             self, timeline, drawing_algorithm, config)
         self.controller.start_movie()
 
+    def start_timer(self, interval_in_ms):
+        self.timer = OurTimer(self.controller.tick)
+        self.timer.Start(interval_in_ms)
+
+    def stop_timer(self):
+        self.timer.Stop()
+
     def redraw_drawing_area(self, fn):
         self.drawing_area.redraw_surface(fn)
 
@@ -49,10 +56,20 @@ class PlayFrame(wx.Dialog):
         self.controller.on_close_clicked()
 
     def close(self):
-        self.EndModal(wx.ID_OK) 
+        self.EndModal(wx.ID_OK)
 
     def get_view_period_length(self):
         return datetime.timedelta(days=10)
+
+
+class OurTimer(wx.Timer):
+
+    def __init__(self, fn):
+        wx.Timer.__init__(self)
+        self.tick_function = fn
+
+    def Notify(self):
+        self.tick_function()
 
 
 class DrawingArea(wx.Panel):
