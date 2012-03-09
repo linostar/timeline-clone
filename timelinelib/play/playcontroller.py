@@ -45,16 +45,16 @@ class PlayController(object):
             self.timeline.get_first_event().time_period.start_time,
             period_length)
 
-        second_period = start_period.move(1)
-
-        end_period = time_period_center(
-            self.timeline.get_time_type(),
-            self.timeline.get_last_event().time_period.end_time,
-            period_length)
+        all_events = self.timeline.get_all_events()
+        all_events.sort(key=lambda event: event.time_period.start_time)
+        all_events = all_events[1:]
 
         self.animations = []
-        self.animations.append((2.5, second_period))
-        self.animations.append((10.5, end_period))
+        for event in all_events:
+            period = time_period_center(self.timeline.get_time_type(),
+                    event.time_period.start_time,
+                    period_length)
+            self.animations.append((3, period))
 
         self.last_time = time.time()
 
