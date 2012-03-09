@@ -20,8 +20,9 @@ import datetime
 import time
 
 from timelinelib.db.objects import TimePeriod
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.time.pytime import PyTimeType
 
 
 class PlayController(object):
@@ -39,29 +40,27 @@ class PlayController(object):
     def start_movie(self):
         period_length = self.play_frame.get_view_period_length()
 
-        first_event_time = self.timeline.get_first_event().time_period.start_time
-        start_time = first_event_time - period_length / 2
-        end_time = first_event_time + period_length / 2
-        self.start_period = TimePeriod(self.timeline.get_time_type(), start_time, end_time)
+        start_period = time_period_center(
+            self.timeline.get_time_type(),
+            self.timeline.get_first_event().time_period.start_time,
+            period_length)
 
-        second_period = self.start_period.move(1)
+        second_period = start_period.move(1)
 
-        last_event_time = self.timeline.get_last_event().time_period.end_time
-        start_time = last_event_time - period_length / 2
-        end_time = last_event_time + period_length / 2
-        end_period = TimePeriod(self.timeline.get_time_type(), start_time, end_time)
+        end_period = time_period_center(
+            self.timeline.get_time_type(),
+            self.timeline.get_last_event().time_period.end_time,
+            period_length)
 
         self.animations = []
         self.animations.append((2.5, second_period))
         self.animations.append((10.5, end_period))
 
-        self.current_period = self.start_period
-
         self.last_time = time.time()
 
         self.current_animation = Animation(
             self.timeline,
-            self.start_period, self.animations[0][0], self.animations[0][1])
+            start_period, self.animations[0][0], self.animations[0][1])
 
         self.play_frame.start_timer(50)
 
