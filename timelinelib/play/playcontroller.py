@@ -58,7 +58,6 @@ class PlayController(object):
         self.current_period = self.start_period
 
         self.last_time = time.time()
-        self.total_animation_time = 0
 
         self.current_animation = Animation(
             self.timeline,
@@ -80,8 +79,7 @@ class PlayController(object):
             dc, self.timeline, view_properties, self.config)
 
     def get_period(self):
-        self.total_animation_time += self.delta
-        self.current_animation.change_current_period(self.total_animation_time)
+        self.current_animation.change_current_period(self.delta)
 
         if self.current_animation.is_done():
             (speed, period) = self.animations.pop(0)
@@ -92,7 +90,6 @@ class PlayController(object):
                 self.current_animation = Animation(
                     self.timeline,
                     period, self.animations[0][0], self.animations[0][1])
-                self.total_animation_time = 0
 
         return self.current_animation.current_period
 
@@ -107,14 +104,16 @@ class Animation(object):
         self.current_period = start_period
         self.total_animation_delta = TimePeriod(self.timeline.get_time_type(),
                 self.start_period.start_time, self.end_period.start_time).delta()
+        self.total_animation_time = 0
 
     def is_done(self):
         return self.current_period.end_time >= self.end_period.end_time
 
-    def change_current_period(self, total_animation_time):
+    def change_current_period(self, delta):
+        self.total_animation_time += delta
 
         delta_to_move = self.timeline.get_time_type().mult_timedelta(
             self.total_animation_delta,
-            min(1, total_animation_time/self.duration_in_seconds))
+            min(1, self.total_animation_time/self.duration_in_seconds))
 
         self.current_period = self.start_period.move_delta(delta_to_move)
