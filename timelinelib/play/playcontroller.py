@@ -60,6 +60,10 @@ class PlayController(object):
         self.last_time = time.time()
         self.total_animation_time = 0
 
+        self.current_animation = Animation(
+            self.timeline,
+            self.start_period, self.animations[0][0], self.animations[0][1])
+
         self.play_frame.start_timer(50)
 
     def tick(self):
@@ -76,24 +80,41 @@ class PlayController(object):
             dc, self.timeline, view_properties, self.config)
 
     def get_period(self):
-        if self.current_period.end_time >= self.animations[0][1].end_time:
+        self.total_animation_time += self.delta
+        self.current_animation.change_current_period(self.total_animation_time)
+
+        if self.current_animation.is_done():
             (speed, period) = self.animations.pop(0)
             if len(self.animations) == 0:
                 self.play_frame.stop_timer()
                 return period
             else:
-                self.start_period = period
+                self.current_animation = Animation(
+                    self.timeline,
+                    period, self.animations[0][0], self.animations[0][1])
                 self.total_animation_time = 0
 
-        self.total_animation_time += self.delta
+        return self.current_animation.current_period
 
-        s1 = self.start_period.start_time
-        s2 = self.animations[0][1].start_time
-        total_animation_delta = TimePeriod(self.timeline.get_time_type(), s1, s2).delta()
+
+class Animation(object):
+
+    def __init__(self, timeline, start_period, duration_in_seconds, end_period):
+        self.timeline = timeline
+        self.start_period = start_period
+        self.duration_in_seconds = duration_in_seconds
+        self.end_period = end_period
+        self.current_period = start_period
+        self.total_animation_delta = TimePeriod(self.timeline.get_time_type(),
+                self.start_period.start_time, self.end_period.start_time).delta()
+
+    def is_done(self):
+        return self.current_period.end_time >= self.end_period.end_time
+
+    def change_current_period(self, total_animation_time):
 
         delta_to_move = self.timeline.get_time_type().mult_timedelta(
-            total_animation_delta,
-            min(1, self.total_animation_time/self.animations[0][0]))
+            self.total_animation_delta,
+            min(1, total_animation_time/self.duration_in_seconds))
 
         self.current_period = self.start_period.move_delta(delta_to_move)
-        return self.current_period
