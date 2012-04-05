@@ -103,7 +103,7 @@ class Animation(object):
         self.current_period = start_period
         self.total_animation_delta = TimePeriod(self.timeline.get_time_type(),
                 self.start_period.start_time, self.end_period.start_time).delta()
-        self.total_animation_time = 0
+        self.total_animation_time = 0.0
 
     def is_done(self):
         return self.current_period.end_time >= self.end_period.end_time
