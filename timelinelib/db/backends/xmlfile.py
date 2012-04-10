@@ -182,6 +182,8 @@ class XmlTimeline(MemoryDB):
                         parse_fn_store("tmp_category")),
                     Tag("description", OPTIONAL,
                         parse_fn_store("tmp_description")),
+                    Tag("alert", OPTIONAL,
+                        parse_fn_store("tmp_alert")),
                     Tag("icon", OPTIONAL,
                         parse_fn_store("tmp_icon")),
                 ])
@@ -229,6 +231,7 @@ class XmlTimeline(MemoryDB):
             if category is None:
                 raise ParseException("Category '%s' not found." % category_text)
         description = tmp_dict.pop("tmp_description", None)
+        alert = tmp_dict.pop("tmp_alert", None)
         icon_text = tmp_dict.pop("tmp_icon", None)
         if icon_text is None:
             icon = None
@@ -244,6 +247,7 @@ class XmlTimeline(MemoryDB):
             event = Event(self.get_time_type(), start, end, text, category, fuzzy, locked, ends_today)
         event.set_data("description", description)
         event.set_data("icon", icon)
+        event.set_data("alert", alert)
         self.save_event(event)
 
     def _is_container_event(self, text):
@@ -356,6 +360,9 @@ class XmlTimeline(MemoryDB):
             write_simple_tag(file, "category", evt.category.name, INDENT3)
         if evt.get_data("description") is not None:
             write_simple_tag(file, "description", evt.get_data("description"),
+                             INDENT3)
+        if evt.get_data("alert") is not None:
+            write_simple_tag(file, "alert", evt.get_data("alert"),
                              INDENT3)
         if evt.get_data("icon") is not None:
             icon_text = icon_string(evt.get_data("icon"))

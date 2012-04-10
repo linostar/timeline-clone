@@ -93,6 +93,7 @@ class XmlTimelineSpec(unittest.TestCase):
         ev1 = Event(db.get_time_type(), datetime(2010, 3, 3), datetime(2010, 3, 6),
                     "Event 1", cat1)
         ev1.set_data("description", u"The <b>first</b> event åäö.")
+        ev1.set_data("alert", u"2012-12-31 12.00.00;Time to go")
         db.save_event(ev1)
         # Create view properties
         vp = ViewProperties()
@@ -112,6 +113,7 @@ class XmlTimelineSpec(unittest.TestCase):
         self.assertEquals(event.time_period.end_time, datetime(2010, 3, 6))
         self.assertEquals(event.category.name, "Category 1")
         self.assertEquals(event.get_data("description"), u"The <b>first</b> event åäö.")
+        self.assertEquals(event.get_data("alert"), u"2012-12-31 12.00.00;Time to go")
         self.assertEquals(event.get_data("icon"), None)
         # Assert that correct view properties are loaded (category visibility
         # checked later)
