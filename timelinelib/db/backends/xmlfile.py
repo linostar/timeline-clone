@@ -258,7 +258,7 @@ class XmlTimeline(MemoryDB):
                 alert_time = self._parse_time(time_string)
                 alert = (alert_time, alert_text)
             except:
-                raise ParseException("Could not parse alert from '%s'." % alert)
+                raise ParseException("Could not parse alert from '%s'." % alert_string)
         else:
             alert = None
         return alert
