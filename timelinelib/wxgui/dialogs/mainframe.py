@@ -49,6 +49,7 @@ from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import WildcardHelper
 import timelinelib.printing as printing
 import timelinelib.wxgui.utils as gui_utils
+from timelinelib.time.wxtime import WxTimeType
 
 
 class MainFrame(wx.Frame):
@@ -79,7 +80,14 @@ class MainFrame(wx.Frame):
         self.enable_disable_menus()
 
         self.controller.on_started(application_arguments)
+        self._create_and_start_timer()
 
+    def _create_and_start_timer(self):
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self._timer_tick, self.timer)
+        self.timer.Start(10000)
+        self.alert_dialog_open = False
+                
     def _set_initial_values_to_member_variables(self):
         self.timeline = None
         self.timeline_wildcard_helper = WildcardHelper(
@@ -781,7 +789,58 @@ class MainFrame(wx.Frame):
         dialog.ShowModal()
         dialog.Destroy()
 
+    def _timer_tick(self, evt):
+        self._handle_event_alerts()
+        
+    def _handle_event_alerts(self):
+        if self.timeline is None:
+            return
+        if self.alert_dialog_open:
+            return
+        self._display_events_alerts()
+        self.alert_dialog_open = False
 
+    def _display_events_alerts(self):
+        self.alert_dialog_open = True
+        all_events = self.timeline.get_all_events()
+        AlertController().display_events_alerts(all_events, self.timeline.time_type)
+
+
+class AlertController(object):
+    
+    def display_events_alerts(self, all_events, time_type):
+        self.time_type = time_type
+        for event in all_events:
+            alert = event.get_data("alert")
+            if alert is not None:
+                alert_time = self._alert_time_as_text(alert)
+                if self._time_has_expired(alert_time):
+                    self._display_and_delete_event_alert(event, alert)
+
+    def _display_and_delete_event_alert(self, event, alert):
+        self._display_alert_dialog(alert, event)
+        event.set_data("alert", None)
+        
+    def _alert_time_as_text(self, alert):
+        return "%s" % alert[0]
+    
+    def _time_has_expired(self, time_as_text):
+        now_as_text = "%s" % self.time_type.now()
+        return time_as_text <= now_as_text
+    
+    def _display_alert_dialog(self, alert, event):
+        text = self._format_alert_text(alert, event)
+        dialog = TextDisplayDialog("Alert", text)
+        dialog.ShowModal()
+        dialog.Destroy()
+    
+    def _format_alert_text(self, alert, event):    
+        text1 = "Trigger time: %s\n\n" % alert[0]
+        text2 = "Event: %s\n\n" % event.get_label()
+        text = "%s%s%s" % (text1, text2, alert[1])
+        return text
+
+                
 class MenuController(object):
 
     def __init__(self):
