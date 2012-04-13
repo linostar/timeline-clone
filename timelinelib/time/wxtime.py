@@ -418,8 +418,8 @@ def fit_year_fn(main_frame, current_period, navigation_fn):
 def fit_month_fn(main_frame, current_period, navigation_fn):
     mean = current_period.mean_time()
     start = wx.DateTimeFromDMY(1, mean.Month, mean.Year)
-    if mean.Month == 12:
-        end = wx.DateTimeFromDMY(1, 1, ean.Year + 1)
+    if mean.Month == 11:
+        end = wx.DateTimeFromDMY(1, 0, mean.Year + 1)
     else:
         end = wx.DateTimeFromDMY(1, mean.Month + 1, mean.Year)
     navigation_fn(lambda tp: tp.update(start, end))
