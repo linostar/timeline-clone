@@ -628,9 +628,6 @@ class StripHour(Strip):
     def get_font(self, time_period):
         return get_default_font(8)
 
-    def get_metrics(self, size, time_period, divider_line_slider_position):
-        return PyTimeMetrics(size, time_period, divider_line_slider_position)
-
 
 def microseconds_to_delta(microsecs):
     """Return a timedelta representing the given number of microseconds."""
