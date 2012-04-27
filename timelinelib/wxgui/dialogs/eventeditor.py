@@ -38,6 +38,8 @@ class EventEditorDialog(wx.Dialog):
                  start=None, end=None, event=None):
         wx.Dialog.__init__(self, parent, title=title, name="event_editor",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+        self.start = start
+        self.event = event
         self.timeline = timeline
         self.config = config
         self._create_gui()
@@ -237,6 +239,7 @@ class EventEditorDialog(wx.Dialog):
 
     def _get_editor_class_description(self, editor_class_id):
         editors = {"description" : (_("Description"), DescriptionEditor),
+                   "alert" : (_("Alert"), AlertEditor),
                    "icon" : (_("Icon"), IconEditor) }
         if editors.has_key(editor_class_id):
             return editors[editor_class_id]  
@@ -246,7 +249,7 @@ class EventEditorDialog(wx.Dialog):
     def _create_editor(self, notebook, editor_class_decription):
         name, editor_class = editor_class_decription
         panel = wx.Panel(notebook)
-        editor = editor_class(panel)
+        editor = editor_class(panel, self)
         notebook.AddPage(panel, name)
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(editor, flag=wx.EXPAND, proportion=1)
@@ -419,7 +422,7 @@ class EventEditorDialog(wx.Dialog):
 
 class DescriptionEditor(wx.TextCtrl):
 
-    def __init__(self, parent):
+    def __init__(self, parent, editor):
         wx.TextCtrl.__init__(self, parent, style=wx.TE_MULTILINE)
 
     def get_data(self):
@@ -437,7 +440,7 @@ class DescriptionEditor(wx.TextCtrl):
 
 class IconEditor(wx.Panel):
 
-    def __init__(self, parent):
+    def __init__(self, parent, editor):
         wx.Panel.__init__(self, parent)
         self.MAX_SIZE = (128, 128)
         # Controls
@@ -505,3 +508,102 @@ class IconEditor(wx.Panel):
 
     def _btn_clear_on_click(self, evt):
         self.set_icon(None)
+
+
+class AlertEditor(wx.Panel):
+
+    def __init__(self, parent, editor):
+        wx.Panel.__init__(self, parent)
+        self.editor = editor
+        self._create_gui()
+        self._initialize_data()
+        
+    def _create_gui(self):
+        self._create_controls()
+        self._layout_controls()
+
+    def _initialize_data(self):
+        self._set_initial_time()
+        self._set_initial_text()
+        self._set_visible(False)
+        
+    def _set_initial_time(self):
+        if self.editor.event is not None:
+            self.dtp_start.set_value(self.editor.event.time_period.start_time)
+        else:
+            self.dtp_start.set_value(self.editor.start)
+
+    def _set_initial_text(self):
+        self.text_data.SetValue("")
+            
+    def _create_controls(self):
+        self.btn_add = self._create_add_button()
+        self.btn_clear = self._create_clear_button()
+        self.alert_panel = self._create_input_controls()
+    
+    def _layout_controls(self):
+        self._layout_input_controls(self.alert_panel)
+        sizer = wx.GridBagSizer(5, 5)
+        sizer.Add(self.btn_add, wx.GBPosition(0, 0), wx.GBSpan(1, 1))
+        sizer.Add(self.btn_clear, wx.GBPosition(0, 1), wx.GBSpan(1, 1))
+        sizer.Add(self.alert_panel, wx.GBPosition(1, 0), wx.GBSpan(4, 5))
+        self.SetSizerAndFit(sizer)
+                    
+    def _create_add_button(self):
+        btn_add = wx.Button(self, wx.ID_ADD)
+        self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn_add)
+        return btn_add
+
+    def _create_clear_button(self):
+        btn_clear = wx.Button(self, wx.ID_CLEAR)
+        self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, btn_clear)
+        return btn_clear
+    
+    def _create_input_controls(self):
+        alert_panel = wx.Panel(self)
+        time_type = self.editor.timeline.get_time_type()
+        self.dtp_start =  time_picker_for(time_type)(alert_panel, config=self.editor.config)
+        self.text_data = wx.TextCtrl(alert_panel, size=(300,80), style=wx.TE_MULTILINE)
+        return alert_panel
+
+    def _layout_input_controls(self, alert_panel):
+        when = wx.StaticText(alert_panel, label=_("When:"))
+        text = wx.StaticText(alert_panel, label=_("Text:"))
+        sizer = wx.GridBagSizer(5, 10)
+        sizer.Add(when, wx.GBPosition(0, 0), wx.GBSpan(1, 1))
+        sizer.Add(self.dtp_start, wx.GBPosition(0, 1), wx.GBSpan(1, 3))
+        sizer.Add(text, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
+        sizer.Add(self.text_data, wx.GBPosition(1, 1), wx.GBSpan(1, 9))
+        alert_panel.SetSizerAndFit(sizer)
+
+    def get_data(self):
+        if self.alert_visible:
+            time = self.dtp_start.get_value()
+            text = self.text_data.GetValue()
+            return (time, text)
+        else:
+            return None
+        
+    def set_data(self, data):
+        if data == None:
+            self._set_visible(False)
+        else:
+            self._set_visible(True)
+            time, text = data
+            self.dtp_start.set_value(time)
+            self.text_data.SetValue(text)
+
+    def _btn_add_on_click(self, evt):
+        self._set_visible(True)
+
+    def _btn_clear_on_click(self, evt):
+        self._set_initial_time()
+        self._set_initial_text()
+        self._set_visible(False)
+
+    def _set_visible(self, value):
+        self.alert_visible = value
+        self.alert_panel.Show(self.alert_visible)
+        self.btn_add.Enable(not value)
+        self.btn_clear.Enable(value)
+        self.GetSizer().Layout()
