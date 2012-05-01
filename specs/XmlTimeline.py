@@ -26,7 +26,6 @@ import unittest
 import wx
 
 from timelinelib.db.backends.xmlfile import XmlTimeline
-from timelinelib.db.backends.xmlfile import alert_string
 from timelinelib.db import db_open
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
@@ -51,13 +50,15 @@ class XmlTimelineSpec(unittest.TestCase):
         self.assertEqual("2012-11-11 00:00:00", "%s" % time)
 
     def testAlertDataConversionGivesAlertString(self):
+        timeline = XmlTimeline(None, load=False, use_wide_date_range=False)
         alert = (datetime(2010, 8, 31, 0, 0, 0), "Hoho")
-        alert_text = alert_string(alert)
-        self.assertEqual("2010-08-31 00:00:00;Hoho", alert_text)
+        alert_text = timeline.alert_string(alert)
+        self.assertEqual("2010-8-31 0:0:0;Hoho", alert_text)
         
     def testWxTimeAlertDataConversionGivesAlertString(self):
+        timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
         alert = (wx.DateTimeFromDMY(30, 8, 2010, 0, 0, 0), "Hoho")
-        alert_text = alert_string(alert)
+        alert_text = timeline.alert_string(alert)
         self.assertEqual("2010-09-30 00:00:00;Hoho", alert_text)
         
     def testDisplayedPeriodTagNotWrittenIfNotSet(self):
