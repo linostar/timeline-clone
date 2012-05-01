@@ -251,6 +251,11 @@ class XmlTimeline(MemoryDB):
         event.set_data("alert", alert)
         self.save_event(event)
 
+    def alert_string(self, alert):
+        time, text = alert
+        time_string = self._time_string(time)
+        return "%s;%s" % (time_string, text)
+    
     def _parse_alert_string(self, alert_string):
         if alert_string is not None:
             try:
@@ -376,7 +381,7 @@ class XmlTimeline(MemoryDB):
                              INDENT3)
         alert = evt.get_data("alert")    
         if alert is not None:
-            write_simple_tag(file, "alert", alert_string(alert),
+            write_simple_tag(file, "alert", self.alert_string(alert),
                              INDENT3)
         if evt.get_data("icon") is not None:
             icon_text = icon_string(evt.get_data("icon"))
@@ -454,12 +459,6 @@ def parse_color(color_string):
     else:
         raise ParseException("Color not on correct format, color string = '%s'"
                              % color_string)
-
-
-def alert_string(alert):
-    string = "%s;%s" % alert 
-    return string
-
 
 def icon_string(bitmap):
     output = StringIO.StringIO()

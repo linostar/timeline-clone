@@ -19,12 +19,10 @@
 import datetime
 import unittest
 import wx
-from mock import Mock
 
 from specs.utils import an_event
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.wxtime import WxTimeType
-from timelinelib.time.wxtime import forward_one_week_fn
 from timelinelib.wxgui.dialogs.mainframe import AlertController
 
 class AlertControllerSpec(unittest.TestCase):
