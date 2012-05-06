@@ -84,6 +84,20 @@ class DefaultContainerStartegySpec(unittest.TestCase):
         # New sub-event:     +---+
         self.given_container_with_two_events_with_same_start_time()
         self.assert_start_equals_end(self.subevent1, self.subevent2)
+    
+    def test_overlapping_nonperiod_event_at_begining_moves_nonperiod_event_backwards(self):
+        # Container event:    +
+        # New sub-event:     +----------+
+        self.given_strategy_with_container()
+        self.given_event_overlapping_point_event()
+        self.assert_start_equals_start(self.subevent1, self.subevent2)
+        
+    def test_overlapping_nonperiod_event_at_end_moves_nonperiod_event_forward(self):
+        # Container event:             +
+        # New sub-event:     +----------+
+        self.given_strategy_with_container()
+        self.given_event_overlapping_point_event2()
+        self.assert_start_equals_end(self.subevent1, self.subevent2)
         
     def given_container_with_two_events_with_nonoverlapping_periods(self):
         self.given_strategy_with_container()
@@ -121,6 +135,26 @@ class DefaultContainerStartegySpec(unittest.TestCase):
                                    self.time("2000-01-01 10:01:01"), "Container1")
         self.strategy = DefaultContainerStrategy(self.container)
 
+    def given_event_overlapping_point_event(self):
+        self.subevent1 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-05-01 10:02:01"), 
+                                  self.time("2000-05-01 10:02:01"), "Container1")
+        self.subevent2 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-05-01 10:01:01"), 
+                                  self.time("2000-07-01 10:01:01"), "Container1")
+        self.strategy.register_subevent(self.subevent1)
+        self.strategy.register_subevent(self.subevent2)
+
+    def given_event_overlapping_point_event2(self):
+        self.subevent1 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-07-01 10:00:01"), 
+                                  self.time("2000-07-01 10:00:01"), "Container1")
+        self.subevent2 = Subevent(self.db.get_time_type(), 
+                                  self.time("2000-05-01 10:01:01"), 
+                                  self.time("2000-07-01 10:01:01"), "Container1")
+        self.strategy.register_subevent(self.subevent1)
+        self.strategy.register_subevent(self.subevent2)
+        
     def given_two_overlapping_events(self):
         self.subevent1 = Subevent(self.db.get_time_type(), 
                                   self.time("2000-03-01 10:01:01"), 
@@ -166,6 +200,9 @@ class DefaultContainerStartegySpec(unittest.TestCase):
 
     def assert_start_equals_end(self, obj1, obj2):
         self.assertEqual(obj1.time_period.start_time, obj2.time_period.end_time)
+        
+    def assert_start_equals_start(self, obj1, obj2):
+        self.assertEqual(obj1.time_period.start_time, obj2.time_period.start_time)
         
     def time(self, tm):
         return self.db.get_time_type().parse_time(tm)
