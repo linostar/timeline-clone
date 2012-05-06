@@ -174,17 +174,31 @@ class TimelineScene(object):
             rect.Deflate(self._outer_padding, self._outer_padding)
 
     def _create_rectangle_for_event(self, event):
-        rect = self._create_ideal_rect_for_event(event)
-        if not event.is_subevent():
-            self._ensure_rect_is_not_far_outisde_screen(rect)
-            self._prevent_overlapping_by_adjusting_rect_y(event, rect)
-        return rect
+        if self._period_subevent(event):
+            return self._create_rectangle_for_period_subevent(event)
+        else:
+            return self._create_rectangle_for_possibly_overlapping_event(event)
 
+    def _period_subevent(self, event):
+        return event.is_subevent() and event.is_period()
+    
+    def _create_rectangle_for_period_subevent(self, event):
+        return self._create_ideal_rect_for_event(event)
+
+    def _create_rectangle_for_possibly_overlapping_event(self, event):
+        rect = self._create_ideal_rect_for_event(event)
+        self._ensure_rect_is_not_far_outisde_screen(rect)
+        self._prevent_overlapping_by_adjusting_rect_y(event, rect)
+        return rect
+        
     def _create_ideal_rect_for_event(self, event):
         if event.ends_today:
             event.time_period.end_time = self._db.get_time_type().now()
         if self._display_as_period(event) or event.is_subevent():
-            return self._create_ideal_rect_for_period_event(event)
+            if self._display_as_period(event):
+                return self._create_ideal_rect_for_period_event(event)
+            else:
+                return self._create_ideal_rect_for_non_period_event(event)
         else:
             return self._create_ideal_rect_for_non_period_event(event)
 
@@ -198,9 +212,10 @@ class TimelineScene(object):
     def _calc_min_subevent_threshold_width(self, container):
         min_width = self._metrics.calc_width(container.time_period)
         for event in container.events:
-            width = self._calc_subevent_threshold_width(event)
-            if width > 0 and width < min_width:
-                min_width = width
+            if event.is_period():
+                width = self._calc_subevent_threshold_width(event)
+                if width > 0 and width < min_width:
+                    min_width = width
         return min_width
 
     def _calc_subevent_threshold_width(self, event):
@@ -222,8 +237,11 @@ class TimelineScene(object):
         return rect
 
     def _get_ry(self, event):
-        if event.is_subevent():
-            return self._get_container_ry(event)
+        if event.is_subevent(): 
+            if event.is_period():
+                return self._get_container_ry(event)
+            else:
+                return self._metrics.half_height - self._baseline_padding
         else:
             return self._metrics.half_height + self._baseline_padding
         

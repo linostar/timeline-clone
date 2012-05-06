@@ -221,7 +221,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self._draw_minor_strips()
         self._draw_major_strips()
         self._draw_divider_line()
-        self._draw_lines_to_non_period_events(view_properties)
         self._draw_now_line()
 
     def _draw_minor_strips(self):
@@ -282,19 +281,31 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetBrush(self.black_solid_brush)
         for (event, rect) in self.scene.event_data:
             if self._subevent_displayed_as_point_event(event, rect):
-                continue
+                if event.is_period():
+                    continue
             if rect.Y < self.scene.divider_y:
                 x = self.scene.x_pos_for_time(event.mean_time())
-                y = rect.Y + rect.Height / 2
+                y = rect.Y + rect.Height
                 if view_properties.is_selected(event):
                     self.dc.SetPen(self.red_solid_pen)
                     self.dc.SetBrush(self.red_solid_brush)
                 else:
                     self.dc.SetBrush(self.black_solid_brush)
                     self.dc.SetPen(self.black_solid_pen)
-                self.dc.DrawLine(x, y, x, self.scene.divider_y)
-                self.dc.DrawCircle(x, self.scene.divider_y, 2)
+                if event.is_subevent() and not event.is_period():
+                    y2 = self._get_container_y(event.container_id)
+                else:
+                    y2 = self.scene.divider_y
+                self.dc.DrawLine(x, y, x, y2)
+                self.dc.DrawCircle(x, y2, 2)
 
+    def _get_container_y(self, id):
+        for (event, rect) in self.scene.event_data:
+            if event.is_container():
+                if event.container_id == id:
+                    return rect.y - 1
+        return self.scene.divider_y
+    
     def _draw_now_line(self):
         now_time = self.time_type.now()
         x = self.scene.x_pos_for_time(now_time)
@@ -370,6 +381,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 self._draw_container(event, rect, view_properties)
             else:
                 self._draw_event(event, rect, view_properties)
+        self._draw_lines_to_non_period_events(view_properties)
 
     def _draw_container(self, event, rect, view_properties):
         box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
@@ -381,7 +393,8 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _draw_event(self, event, rect, view_properties):
         if self._subevent_displayed_as_point_event(event, rect):
-            return
+            if event.is_period():
+                return
         self._draw_box(rect, event)
         self._draw_text(rect, event)
         if event.has_data():
