@@ -104,3 +104,18 @@ class EventCosntructorSpec(unittest.TestCase):
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
+
+
+class EventFunctionsSpec(unittest.TestCase):
+
+    def test_zero_time_span(self):
+        self.given_default_point_event()
+        self.assertEqual(self.event.time_type.get_zero_delta(), self.event.time_span())
+
+    def given_default_point_event(self):
+        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
+
+    def setUp(self):
+        self.db = MemoryDB()
+        self.now = self.db.get_time_type().now()
+        
