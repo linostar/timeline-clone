@@ -278,27 +278,37 @@ class DefaultDrawingAlgorithm(Drawer):
                          self.scene.divider_y)
 
     def _draw_lines_to_non_period_events(self, view_properties):
-        self.dc.SetBrush(self.black_solid_brush)
         for (event, rect) in self.scene.event_data:
-            if self._subevent_displayed_as_point_event(event, rect):
-                if event.is_period():
-                    continue
-            if rect.Y < self.scene.divider_y:
-                x = self.scene.x_pos_for_time(event.mean_time())
-                y = rect.Y + rect.Height
-                if view_properties.is_selected(event):
-                    self.dc.SetPen(self.red_solid_pen)
-                    self.dc.SetBrush(self.red_solid_brush)
-                else:
-                    self.dc.SetBrush(self.black_solid_brush)
-                    self.dc.SetPen(self.black_solid_pen)
-                if event.is_subevent() and not event.is_period():
-                    y2 = self._get_container_y(event.container_id)
-                else:
-                    y2 = self.scene.divider_y
-                self.dc.DrawLine(x, y, x, y2)
-                self.dc.DrawCircle(x, y2, 2)
+            if self._invisible_container_subevent(event, rect):
+                continue
+            if self._event_displayed_as_point_event(rect):
+                self._draw_line(view_properties, event, rect)
 
+    def _invisible_container_subevent(self, event, rect):
+        return (self._subevent_displayed_as_point_event(event, rect) and
+                event.is_period())
+
+    def _event_displayed_as_point_event(self, rect):
+        return self.scene.divider_y > rect.Y
+
+    def _draw_line(self, view_properties, event, rect):
+        x = self.scene.x_pos_for_time(event.mean_time())
+        y = rect.Y + rect.Height
+        y2 = self._get_end_of_line(event)
+        self._set_line_color(view_properties, event)
+        self.dc.DrawLine(x, y, x, y2)
+        self.dc.DrawCircle(x, y2, 2)
+
+    def _get_end_of_line(self, event):
+        if self._point_subevent(event):
+            y = self._get_container_y(event.container_id)
+        else:
+            y = self.scene.divider_y
+        return y
+
+    def _point_subevent(self, event):
+        return event.is_subevent() and not event.is_period()
+    
     def _get_container_y(self, id):
         for (event, rect) in self.scene.event_data:
             if event.is_container():
@@ -306,6 +316,14 @@ class DefaultDrawingAlgorithm(Drawer):
                     return rect.y - 1
         return self.scene.divider_y
     
+    def _set_line_color(self, view_properties, event):
+        if view_properties.is_selected(event):
+            self.dc.SetPen(self.red_solid_pen)
+            self.dc.SetBrush(self.red_solid_brush)
+        else:
+            self.dc.SetBrush(self.black_solid_brush)
+            self.dc.SetPen(self.black_solid_pen)
+
     def _draw_now_line(self):
         now_time = self.time_type.now()
         x = self.scene.x_pos_for_time(now_time)
@@ -386,7 +404,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_container(self, event, rect, view_properties):
         box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
         self._draw_box(box_rect, event)
-        if self._event_displayed_as_point_event(event, rect):
+        if self._event_displayed_as_point_event(rect):
             self._draw_text(rect, event)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
@@ -404,10 +422,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _subevent_displayed_as_point_event(self, event, rect):
         return (event.is_subevent() and
-                self._event_displayed_as_point_event(event, rect))
-
-    def _event_displayed_as_point_event(self, event, rect):
-        return self.scene.divider_y > rect.Y
+                self._event_displayed_as_point_event(rect))
 
     def _draw_box(self, rect, event):
         self.dc.SetClippingRect(rect)
@@ -768,7 +783,6 @@ class DefaultDrawingAlgorithm(Drawer):
         path.AddLineToPoint(p1.x, p1.y)
         # Start of lower left rounded corner
         p2 = wx.Point(p1.x - W_ARROW_OFFSET + R, p1.y)
-        bottom_y = p2.y
         path.AddLineToPoint(p2.x, p2.y)
         # The lower left rounded corner. p3 is the center of the arc
         p3 = wx.Point(p2.x, p2.y - R)
@@ -789,7 +803,6 @@ class DefaultDrawingAlgorithm(Drawer):
         path.AddArc(p7.x, p7.y, R, math.radians(-90), math.radians(0))
         # The right side
         p8 = wx.Point(p7.x + R , p7.y + H - R)
-        right_x = p8.x
         path.AddLineToPoint(p8.x, p8.y)
         # The lower right rounded corner. p9 is the center of the arc
         p9 = wx.Point(p8.x - R, p8.y)
