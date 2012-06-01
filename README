@@ -1,7 +1,7 @@
 This directory contains the 0.17.0 release of Timeline.
 
 Timeline is a cross-platform application for displaying and navigating events
-on a timeline. 
+on a timeline.
 
 Timeline is free software, distributed under the GNU General Public License,
 version 3. For more information, see the file COPYING.
@@ -18,6 +18,8 @@ To learn what is new in this version of Timeline, see CHANGES.
 For installation instructions, see INSTALL.
 
 For information about working with the source code, see HACKING.
+
+For project status, see STATUS.
 
 For more information about Timeline, visit its website at
 http://thetimelineproj.sourceforge.net/ or send an email to the user mailing
