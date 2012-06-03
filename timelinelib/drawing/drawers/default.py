@@ -394,12 +394,12 @@ class DefaultDrawingAlgorithm(Drawer):
         """Draw all event boxes and the text inside them."""
         self.dc.SetFont(self.small_text_font)
         self.dc.DestroyClippingRegion()
+        self._draw_lines_to_non_period_events(view_properties)
         for (event, rect) in self.scene.event_data:
             if event.is_container():
                 self._draw_container(event, rect, view_properties)
             else:
                 self._draw_event(event, rect, view_properties)
-        self._draw_lines_to_non_period_events(view_properties)
 
     def _draw_container(self, event, rect, view_properties):
         box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
