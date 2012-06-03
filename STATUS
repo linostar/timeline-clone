@@ -18,10 +18,10 @@ milestone.
 Release cycle
 =============
 
-Roughly every third month there is a new feature release of Timeline. That
-means that Y will increase by one. At the moment X is 0. That does not mean
-that Timeline is unstable, but rather that we develop it incrementally in small
-steps, releasing new versions often.
+Roughly every third month there is a new feature release of Timeline (if new
+features have been developed). That means that Y will increase by one. At the
+moment X is 0. That does not mean that Timeline is unstable, but rather that we
+develop it incrementally in small steps, releasing new versions often.
 
 If critical bugs are found in a X.Y release, we try to fix them as fast as
 possible and make the fix available in a bugfix release (X.Y is the same but Z
@@ -33,3 +33,21 @@ Future plans
 In our issue tracker
 (http://sourceforge.net/apps/trac/thetimelineproj/report/3) we keep a list of
 things we might want to implement in the future.
+
+1.0.0
+-----
+
+For the first incompatible version we would like to clean up some parts:
+
+- Get rid of printing
+    Printing does not work very well. A better way to print is to generate an
+    image and then print the image from another program.
+
+- Get rid of old file formats
+    It was a long time since the old file format was used. It would be nice to
+    get rid of that code.
+
+- Get rid of extended date ranges / Think of a better solution
+    Extended date ranges does not work very well and it added lots of
+    complexity to the code. It would be nice to get rid of it all together.
+    Perhaps we can come up with a better way to handle extended dates?
