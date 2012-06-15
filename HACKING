@@ -53,6 +53,7 @@ Features for the next version (x.y+1) can continue to be developed in main.
      1. version.py
      2. CHANGES
      3. Run `python execute-specs.py` to find where else you need to modify
+  4. Commit and push
 
 Work on stable
 --------------
