@@ -21,11 +21,9 @@ import unittest
 
 from mock import Mock
 
-from specs.utils import an_event
-from timelinelib.wxgui.dialogs.playframe import PlayFrame
-from timelinelib.db.interface import TimelineDB
+from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.play.playcontroller import PlayController
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.wxgui.dialogs.playframe import PlayFrame
 
 
 class PlayControllerSpec(unittest.TestCase):
@@ -33,7 +31,7 @@ class PlayControllerSpec(unittest.TestCase):
     def setUp(self):
         self.play_frame = Mock(PlayFrame)
         self.play_frame.get_view_period_length.return_value = datetime.timedelta(1)
-        self.timeline = Mock(TimelineDB)
+        self.timeline = Mock(MemoryDB)
         self.drawing_algorithm = Mock()
         self.config = Mock()
         self.controller = PlayController(self.play_frame, self.timeline,

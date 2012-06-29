@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.db.interface import TimelineDB
+from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.cattree import CategoriesTreeController
@@ -51,7 +51,7 @@ class describe_categories_tree_control(unittest.TestCase):
         self.controller.initialize_from_timeline_view(None)
 
     def setUp(self):
-        self.db = Mock(TimelineDB)
+        self.db = Mock(MemoryDB)
         self.foo = Category("foo", (255, 0, 0), None, True, parent=None)
         self.foofoo = Category("foofoo", (255, 0, 0), None, True, parent=self.foo)
         self.bar = Category("bar", (255, 0, 0), None, True, parent=None)

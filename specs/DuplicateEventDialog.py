@@ -16,22 +16,21 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
 import datetime
+import unittest
 
 from mock import Mock
 
-from timelinelib.db.interface import TimelineDB
+from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
-from timelinelib.editors.duplicateevent import DuplicateEventEditor
-from timelinelib.time import PyTimeType
-
-from timelinelib.editors.duplicateevent import FORWARD
 from timelinelib.editors.duplicateevent import BACKWARD
 from timelinelib.editors.duplicateevent import BOTH
+from timelinelib.editors.duplicateevent import DuplicateEventEditor
+from timelinelib.editors.duplicateevent import FORWARD
+from timelinelib.time import PyTimeType
+from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 
 
 class duplicate_event_dialog_spec_base(unittest.TestCase):
@@ -56,13 +55,13 @@ class duplicate_event_dialog_spec_base(unittest.TestCase):
         return self.move_period_fn
 
     def _create_db_mock(self):
-        self.db = Mock(TimelineDB)
+        self.db = Mock(MemoryDB)
         self.db.get_time_type.return_value = PyTimeType()
         return self.db
 
     def _create_event(self):
         self.event = Event(
-            self.db.get_time_type(), 
+            self.db.get_time_type(),
             datetime.datetime(2010, 1, 1),
             datetime.datetime(2010, 1, 1),
             "foo",
