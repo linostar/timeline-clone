@@ -16,34 +16,18 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Implementation of timeline database that reads and writes (todo) ICS files.
-"""
-
-
-import re
-import codecs
-import shutil
-import os.path
-from os.path import abspath
 from datetime import date
 from datetime import datetime
-from datetime import timedelta
+from os.path import abspath
+import os.path
 
 from icalendar import Calendar
 
-from timelinelib.db.interface import STATE_CHANGE_ANY
-from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
-from timelinelib.db.objects import TimePeriod
-from timelinelib.db.objects import time_period_center
 from timelinelib.db.utils import generic_event_search
 from timelinelib.db.utils import IdCounter
-from timelinelib.db.utils import safe_write
-from timelinelib.meta.version import get_version
 from timelinelib.time import PyTimeType
 from timelinelib.utils import ex_msg
 
@@ -134,9 +118,6 @@ class IcsTimeline(TimelineDB):
 
     def _load_data(self):
         self.cal = Calendar()
-        if not os.path.exists(self.path):
-            # Nothing to load. Will create a new timeline on save.
-            return
         try:
             file = open(self.path, "rb")
             try:
@@ -156,26 +137,19 @@ class IcsTimeline(TimelineDB):
             whole_msg = (msg + "\n\n%s") % (abspath(self.path), e)
             raise TimelineIOError(whole_msg)
 
-    def _save_data(self):
-        #def save(file):
-        #    file.write(self.cal.as_string())
-        #safe_write(self.path, None, save)
-        pass
-
 
 def extract_start_end(vevent):
-    """Return (start_time, end_time)."""
-    start = ensure_datetime(vevent.decoded("dtstart"))
+    start = convert_to_datetime(vevent.decoded("dtstart"))
     if vevent.has_key("dtend"):
-        end = ensure_datetime(vevent.decoded("dtend"))
+        end = convert_to_datetime(vevent.decoded("dtend"))
     elif vevent.has_key("duration"):
         end = start + vevent.decoded("duration")
     else:
-        end = ensure_datetime(vevent.decoded("dtstart"))
+        end = convert_to_datetime(vevent.decoded("dtstart"))
     return (start, end)
 
 
-def ensure_datetime(d):
+def convert_to_datetime(d):
     if isinstance(d, datetime):
         return datetime(d.year, d.month, d.day, d.hour, d.minute, d.second)
     elif isinstance(d, date):
