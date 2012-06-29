@@ -16,20 +16,16 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Implementation of timeline database with flat file storage using our own custom
-format.
-
-This database was only used for version 0.1.0 - 0.9.0.
-"""
+# This database was only used in version 0.1.0 - 0.9.0.
+# We plan to remove this in version 1.0.0.
 
 
-import re
+from datetime import datetime
+from os.path import abspath
+import base64
 import codecs
 import os.path
-from os.path import abspath
-from datetime import datetime
-import base64
+import re
 import StringIO
 
 import wx
@@ -54,13 +50,6 @@ class ParseException(Exception):
 
 class FileTimeline(MemoryDB):
     """
-    Implements the timeline database interface.
-
-    The comments in the TimelineDB class describe what the public methods do.
-
-    Every public method (including the constructor) can raise a TimelineIOError
-    if there was a problem reading or writing from file.
-
     The general format of the file looks like this for version >= 0.3.0:
 
       # Written by Timeline 0.3.0 on 2009-7-23 9:40:33
@@ -102,7 +91,7 @@ class FileTimeline(MemoryDB):
 
         If a read error occurs a TimelineIOError will be raised.
         """
-        if not os.path.exists(self.path): 
+        if not os.path.exists(self.path):
             # Nothing to load. Will create a new timeline on save.
             return
         try:
@@ -179,7 +168,7 @@ class FileTimeline(MemoryDB):
         try:
             if len(times) != 2:
                 raise ParseException("Unexpected number of components.")
-            tp = TimePeriod(self.get_time_type(), self._parse_time(times[0]), 
+            tp = TimePeriod(self.get_time_type(), self._parse_time(times[0]),
                             self._parse_time(times[1]))
             self._set_displayed_period(tp)
             if not tp.is_period():
