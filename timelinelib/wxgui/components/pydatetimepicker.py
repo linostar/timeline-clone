@@ -131,14 +131,14 @@ class CalendarPopup(wx.PopupTransientWindow):
 
     def _create_calendar_control(self, wx_date, border):
         style = self._get_cal_style()
-        cal = wx.calendar.CalendarCtrl(self, -1, wx_date, 
+        cal = wx.calendar.CalendarCtrl(self, -1, wx_date,
                                        pos=(border,border), style=style)
         self._set_cal_range(cal)
         return cal
 
     def _get_cal_style(self):
-        style = (wx.calendar.CAL_SHOW_HOLIDAYS | 
-                 wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION) 
+        style = (wx.calendar.CAL_SHOW_HOLIDAYS |
+                 wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION)
         if self.config.week_start == "monday":
             style |= wx.calendar.CAL_MONDAY_FIRST
         else:
@@ -186,7 +186,7 @@ class CalendarPopupController(object):
         # month or day. The control is closed on a double-click on a day or
         # a single click outside of the control
         if self.repop and not self.repoped:
-            self.calendar_popup.Popup() 
+            self.calendar_popup.Popup()
             self.repoped = True
 
 
@@ -241,8 +241,8 @@ class PyDatePicker(wx.TextCtrl):
             elif evt.GetKeyCode() == wx.WXK_DOWN:
                 self.controller.on_down()
             else:
-                evt.Skip()    
-        self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
+                evt.Skip()
+        self.Bind(wx.EVT_KEY_DOWN, on_key_down)
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("0000-00-00")
@@ -285,7 +285,7 @@ class PyDatePickerController(object):
             self.py_date_picker.SetSelection(start, end)
         else:
             self._select_region_if_possible(self.region_year)
-            self.last_selection = self.py_date_picker.GetSelection()    
+            self.last_selection = self.py_date_picker.GetSelection()
 
     def on_kill_focus(self):
         if self.last_selection:
@@ -312,8 +312,8 @@ class PyDatePickerController(object):
             # To prevent saving of preferred day when year or month is changed
             # in on_up() and on_down()...
             # Save preferred day only when text is entered in the date text
-            # control and not when up or down keys has been used. 
-            # When up and down keys are used, the preferred day is saved in 
+            # control and not when up or down keys has been used.
+            # When up and down keys are used, the preferred day is saved in
             # on_up() and on_down() only when day is changed.
             if self.save_preferred_day:
                 self._save_preferred_day(current_date)
@@ -325,9 +325,9 @@ class PyDatePickerController(object):
             return date
         def increment_month(date):
             if date.month < 12:
-                return self._set_valid_day(date.year, date.month + 1, 
+                return self._set_valid_day(date.year, date.month + 1,
                                            date.day)
-            elif date.year < PyTimeType().get_max_time()[0].year - 1:    
+            elif date.year < PyTimeType().get_max_time()[0].year - 1:
                 return self._set_valid_day(date.year + 1, 1, date.day)
             return date
         def increment_day(date):
@@ -345,8 +345,8 @@ class PyDatePickerController(object):
         else:
             new_date = increment_day(current_date)
             self._save_preferred_day(new_date)
-        if current_date != new_date:    
-            self._set_new_date_and_restore_selection(new_date, selection)  
+        if current_date != new_date:
+            self._set_new_date_and_restore_selection(new_date, selection)
 
     def on_down(self):
         def decrement_year(date):
@@ -356,7 +356,7 @@ class PyDatePickerController(object):
         def decrement_month(date):
             if date.month > 1:
                 return self._set_valid_day(date.year, date.month - 1, date.day)
-            elif date.year > PyTimeType().get_min_time()[0].year:    
+            elif date.year > PyTimeType().get_min_time()[0].year:
                 return self._set_valid_day(date.year - 1, 12, date.day)
             return date
         def decrement_day(date):
@@ -378,8 +378,8 @@ class PyDatePickerController(object):
         else:
             new_date = decrement_day(current_date)
             self._save_preferred_day(new_date)
-        if current_date != new_date:  
-            self._set_new_date_and_restore_selection(new_date, selection)  
+        if current_date != new_date:
+            self._set_new_date_and_restore_selection(new_date, selection)
 
     def _change_background_depending_on_date_validity(self):
         if self._current_date_is_valid():
@@ -409,7 +409,7 @@ class PyDatePickerController(object):
             self.py_date_picker.SetSelection(selection[0], selection[1])
         self.save_preferred_day = False
         if self.preferred_day != None:
-            new_date = self._set_valid_day(new_date.year, new_date.month, 
+            new_date = self._set_valid_day(new_date.year, new_date.month,
                                            self.preferred_day)
         self.set_py_date(new_date)
         restore_selection(selection)
@@ -421,7 +421,7 @@ class PyDatePickerController(object):
             try:
                 date = datetime.date(year=new_year, month=new_month, day=new_day)
                 done = True
-            except Exception, ex:                    
+            except Exception, ex:
                 new_day -= 1
         return date
 
@@ -449,16 +449,16 @@ class PyDatePickerController(object):
             return self.py_date_picker.GetInsertionPoint() in region_range
 
     def _get_region_range(self, n):
-        # Returns a range of valid cursor positions for a valid region year, 
+        # Returns a range of valid cursor positions for a valid region year,
         # month or day.
         def region_is_not_valid(region):
-            return region not in (self.region_year, self.region_month, 
+            return region not in (self.region_year, self.region_month,
                                   self.region_day)
         def date_has_exactly_two_seperators(datestring):
             return len(datestring.split(self.separator)) == 3
         def calculate_pos_range(region, datestring):
             pos_of_separator1 = datestring.find(self.separator)
-            pos_of_separator2 = datestring.find(self.separator, 
+            pos_of_separator2 = datestring.find(self.separator,
                                                 pos_of_separator1 + 1)
             if region == self.region_year:
                 return range(0, pos_of_separator1 + 1)
@@ -526,8 +526,8 @@ class PyTimePicker(wx.TextCtrl):
             elif evt.GetKeyCode() == wx.WXK_DOWN:
                 self.controller.on_down()
             else:
-                evt.Skip()    
-        self.Bind(wx.EVT_KEY_DOWN, on_key_down)        
+                evt.Skip()
+        self.Bind(wx.EVT_KEY_DOWN, on_key_down)
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("00:00")
@@ -600,7 +600,7 @@ class PyTimePickerController(object):
         def increment_minutes(time):
             new_hour = time.hour
             new_minute = time.minute + 1
-            if new_minute > 59: 
+            if new_minute > 59:
                 new_minute = 0
                 new_hour = time.hour + 1
                 if new_hour > 23:
@@ -614,8 +614,8 @@ class PyTimePickerController(object):
             new_time = increment_hour(current_time)
         else:
             new_time = increment_minutes(current_time)
-        if current_time != new_time:    
-            self._set_new_time_and_restore_selection(new_time, selection)  
+        if current_time != new_time:
+            self._set_new_time_and_restore_selection(new_time, selection)
 
     def on_down(self):
         def decrement_hour(time):
@@ -626,7 +626,7 @@ class PyTimePickerController(object):
         def decrement_minutes(time):
             new_hour = time.hour
             new_minute = time.minute - 1
-            if new_minute < 0: 
+            if new_minute < 0:
                 new_minute = 59
                 new_hour = time.hour - 1
                 if new_hour < 0:
@@ -640,8 +640,8 @@ class PyTimePickerController(object):
             new_time = decrement_hour(current_time)
         else:
             new_time = decrement_minutes(current_time)
-        if current_time != new_time:    
-            self._set_new_time_and_restore_selection(new_time, selection)  
+        if current_time != new_time:
+            self._set_new_time_and_restore_selection(new_time, selection)
 
     def _set_new_time_and_restore_selection(self, new_time, selection):
         def restore_selection(selection):
@@ -661,7 +661,7 @@ class PyTimePickerController(object):
             return
         if part == self.hour_part:
             self.py_time_picker.SetSelection(0, self._separator_pos())
-        else:    
+        else:
             time_string_len = len(self.py_time_picker.get_time_string())
             self.py_time_picker.SetSelection(self._separator_pos() + 1, time_string_len)
         self.preferred_part = part

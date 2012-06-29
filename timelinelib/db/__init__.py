@@ -59,7 +59,7 @@ def db_open(path, use_wide_date_range=False):
             from timelinelib.db.backends.file import FileTimeline
             from timelinelib.db.backends.xmlfile import XmlTimeline
             file_db = FileTimeline(path)
-            xml_db = XmlTimeline(path, load=False, 
+            xml_db = XmlTimeline(path, load=False,
                                  use_wide_date_range=use_wide_date_range)
             copy_db(file_db, xml_db)
             return xml_db

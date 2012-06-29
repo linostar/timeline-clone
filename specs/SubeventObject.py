@@ -33,7 +33,7 @@ class SubeventSpec(unittest.TestCase):
         self.assertEqual(self.container, self.subevent.container)
 
     def given_default_subevent(self):
-        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
+        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
                                  self.time("2000-01-03 10:01:01"), "evt")
 
     def given_container_with_cid(self):
@@ -42,7 +42,7 @@ class SubeventSpec(unittest.TestCase):
 
     def time(self, tm):
         return self.db.get_time_type().parse_time(tm)
-    
+
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
@@ -64,11 +64,11 @@ class ContainerSubeventSpec(unittest.TestCase):
         self.assertEqual(99, self.subevent.cid())
 
     def given_default_subevent(self):
-        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
+        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
                                  self.time("2000-01-03 10:01:01"), "evt")
 
     def given_subevent_with_cid(self):
-        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
+        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
                                  self.time("2000-01-03 10:01:01"), "evt", cid=99)
 
     def time(self, tm):

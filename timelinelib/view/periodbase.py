@@ -60,7 +60,7 @@ class SelectPeriodByDragInputHandler(ScrollViewInputHandler):
             start = t1
             end = t2
         return TimePeriod(
-            self.controller.get_timeline().get_time_type(), 
+            self.controller.get_timeline().get_time_type(),
             self.controller.get_drawer().snap(start),
             self.controller.get_drawer().snap(end))
 

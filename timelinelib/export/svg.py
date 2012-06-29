@@ -54,7 +54,7 @@ class SVGDrawingAlgorithm(object):
         self.path = path
         self.scene = scene
         self.view_properties = view_properties
-        # SVG document size, maybe TODO 
+        # SVG document size, maybe TODO
         self.metrics = dict({'widthpx':1052, 'heightpx':744});
         # SVG document handle
         self.svg = svg(width="%dpx" % self.metrics['widthpx'], height="%dpx" % self.metrics['heightpx'])
@@ -64,8 +64,8 @@ class SVGDrawingAlgorithm(object):
         self.mySmallTextStyle = StyleBuilder()
         self.myHeaderStyle.setFontFamily(fontfamily="Verdana")
         self.mySmallTextStyle.setFontFamily(fontfamily="Verdana")
-        self.mySmallTextStyle.setFontSize('3') 
-        self.myHeaderStyle.setFontSize('7') 
+        self.mySmallTextStyle.setFontSize('3')
+        self.myHeaderStyle.setFontSize('7')
         self.mySmallTextStyle.setFilling("black")
         self.myHeaderStyle.setFilling("black")
         filterShadow = filter(x="-.3",y="-.5", width=1.9, height=1.9)
@@ -76,7 +76,7 @@ class SVGDrawingAlgorithm(object):
         filtOffset.set_in("out1")
         filtOffset.set_dx(4)
         filtOffset.set_dy(-4)
-        filtOffset.set_result("out2")       
+        filtOffset.set_result("out2")
         filtMergeNode1 = feMergeNode()
         filtMergeNode1.set_in("out2")
         filtMergeNode2 = feMergeNode()
@@ -179,7 +179,7 @@ class SVGDrawingAlgorithm(object):
         oh = ShapeBuilder()
         style.setStrokeDashArray("")
         fontSize = MAJOR_STRIP_FONT_SIZE
-        style.setFontSize("%dem" % fontSize)        
+        style.setFontSize("%dem" % fontSize)
         for tp in self.scene.major_strip_data:
             # Divider line
             x = self.scene.x_pos_for_time(tp.end_time)
@@ -199,7 +199,7 @@ class SVGDrawingAlgorithm(object):
                 x = INNER_PADDING
                 extra_vertical_padding = fontSize * 4
                 # since there is no function like textwidth() for SVG, just take into account that text can be overwritten
-                # do not perform a special handling for right border, SVG is unlimited 
+                # do not perform a special handling for right border, SVG is unlimited
             myText = self._text(label, x, fontSize*4+INNER_PADDING+extra_vertical_padding)
             myText.set_style(style)
             group.addElement(myText)
@@ -226,7 +226,7 @@ class SVGDrawingAlgorithm(object):
                 oh = ShapeBuilder()
                 line = oh.createLine(x, y, x, self.scene.divider_y, stroke=myStroke)
                 group.addElement(line)
-                circle = oh.createCircle(x, self.scene.divider_y, 2)  
+                circle = oh.createCircle(x, self.scene.divider_y, 2)
                 group.addElement(circle)
                 # self.dc.DrawLine(x, y, x, self.scene.divider_y)
                 # self.dc.DrawCircle(x, self.scene.divider_y, 2)
@@ -253,8 +253,8 @@ class SVGDrawingAlgorithm(object):
         return border_color
 
     def _map_svg_color(self, color):
-        """ 
-        map (r,g,b) color to svg string 
+        """
+        map (r,g,b) color to svg string
         """
         sColor = "#%02X%02X%02X" % color
         return sColor
@@ -295,10 +295,10 @@ class SVGDrawingAlgorithm(object):
             Motivation for positioning in right corner:
             SVG text cannot be centered since the text width cannot be calculated
             and the first part of each event text is important.
-            ergo: text needs to be left aligned. 
+            ergo: text needs to be left aligned.
                   But then the probability is high that a lot of text is at the left
                   bottom
-                  ergo: put the legend to the right. 
+                  ergo: put the legend to the right.
 
           +----------+
           | Name   O |
@@ -335,10 +335,10 @@ class SVGDrawingAlgorithm(object):
                                   cur_y, item_height, item_height, fill=base_color,
                                   stroke=border_color)
                 svgGroup.addElement(color_box_rect)
-                myText = self._svg_clipped_text(cat.name, 
-                                       (x + OUTER_PADDING + INNER_PADDING+item_height, 
+                myText = self._svg_clipped_text(cat.name,
+                                       (x + OUTER_PADDING + INNER_PADDING+item_height,
                                         cur_y, width-OUTER_PADDING-INNER_PADDING-item_height,
-                                        item_height ), 
+                                        item_height ),
                                         myStyle)
                 svgGroup.addElement(myText)
                 cur_y = cur_y + item_height + INNER_PADDING
@@ -358,12 +358,12 @@ class SVGDrawingAlgorithm(object):
             # Ensure that we can't draw content outside inner rectangle
             boxColor = self._get_box_color(event)
             boxBorderColor = self._get_box_border_color(event)
-            svgRect = oh.createRect(rect.X, rect.Y, 
-                                         rect.GetWidth(), rect.GetHeight(), 
+            svgRect = oh.createRect(rect.X, rect.Y,
+                                         rect.GetWidth(), rect.GetHeight(),
                                          stroke=boxBorderColor,
                                          fill=boxColor )
             if self.shadowFlag:
-                svgRect.set_filter("url(#filterShadow)")     
+                svgRect.set_filter("url(#filterShadow)")
             svgGroup.addElement(svgRect)
             if rect.Width > 0:
                 # Draw the text (if there is room for it)
@@ -393,7 +393,7 @@ class SVGDrawingAlgorithm(object):
         myString = self._encode_unicode_text(myString)
         # Put text,clipping into a SVG group
         group=g()
-        rx, ry, width, height = rectTuple        
+        rx, ry, width, height = rectTuple
         text_x = rx + INNER_PADDING
         text_y = ry + height - INNER_PADDING
         # TODO: in SVG, negative value should be OK, but they
@@ -405,7 +405,7 @@ class SVGDrawingAlgorithm(object):
             text_x = INNER_PADDING
         pathId = "path%d_%d" % (text_x, text_y)
         p = path(pathData= "M %d %d H %d V %d H %d" % \
-                               (rx, ry + height, 
+                               (rx, ry + height,
                                 text_x+width-INNER_PADDING,
                                 ry, rx))
         clip = clipPath()

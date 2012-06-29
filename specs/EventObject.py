@@ -26,30 +26,30 @@ class EventSpec(unittest.TestCase):
 
     def testEventPropertyEndsTodayCanBeUpdated(self):
         self.given_default_point_event()
-        self.event.update(self.now, self.now, "evt", ends_today=True) 
+        self.event.update(self.now, self.now, "evt", ends_today=True)
         self.assertEqual(True, self.event.ends_today)
 
     def testEventPropertyFuzzyCanBeUpdated(self):
         self.given_default_point_event()
-        self.event.update(self.now, self.now, "evt", fuzzy=True) 
+        self.event.update(self.now, self.now, "evt", fuzzy=True)
         self.assertEqual(True, self.event.fuzzy)
 
     def testEventPropertyLockedCanBeUpdated(self):
         self.given_default_point_event()
-        self.event.update(self.now, self.now, "evt", locked=True) 
+        self.event.update(self.now, self.now, "evt", locked=True)
         self.assertEqual(True, self.event.locked)
 
     def testEventPropertyEndsTodayCantBeSetOnLockedEvent(self):
         self.given_default_point_event()
-        self.event.update(self.now, self.now, "evt", locked=True) 
-        self.event.update(self.now, self.now, "evt", ends_today=True) 
+        self.event.update(self.now, self.now, "evt", locked=True)
+        self.event.update(self.now, self.now, "evt", ends_today=True)
         self.assertEqual(False, self.event.ends_today)
 
     def testEventPropertyEndsTodayCantBeUnsetOnLockedEvent(self):
         self.given_default_point_event()
-        self.event.update(self.now, self.now, "evt", locked=True, ends_today=True) 
+        self.event.update(self.now, self.now, "evt", locked=True, ends_today=True)
         self.assertEqual(True, self.event.ends_today)
-        self.event.update(self.now, self.now, "evt", ends_today=False) 
+        self.event.update(self.now, self.now, "evt", ends_today=False)
         self.assertEqual(True, self.event.ends_today)
 
     def setUp(self):
@@ -63,7 +63,7 @@ class EventSpec(unittest.TestCase):
         self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
 
     def given_point_event(self):
-        self.event = Event(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
+        self.event = Event(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
                            self.time("2000-01-01 10:01:01"), "evt")
 
 
@@ -76,7 +76,7 @@ class EventCosntructorSpec(unittest.TestCase):
         self.assertEqual(False, self.event.ends_today)
         self.assertEqual(False, self.event.is_container())
         self.assertEqual(False, self.event.is_subevent())
-        
+
     def testEventPropertyFuzzyCanBeSetAtConstruction(self):
         self.given_fuzzy_point_event()
         self.assertEqual(True, self.event.fuzzy)
@@ -118,4 +118,3 @@ class EventFunctionsSpec(unittest.TestCase):
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
-        

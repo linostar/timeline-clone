@@ -146,7 +146,7 @@ def set_wait_cursor(parent):
 
 
 def set_default_cursor(parent):
-    parent.SetCursor(wx.StockCursor(wx.CURSOR_DEFAULT))    
+    parent.SetCursor(wx.StockCursor(wx.CURSOR_DEFAULT))
 
 
 def time_picker_for(time_type):

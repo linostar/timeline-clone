@@ -36,5 +36,5 @@ class ANumTimePicker(unittest.TestCase):
 
     def testTimeControlIsAssignedZeroIfSetWithValueNone(self):
         self.controller.set_value(None)
-        self.time_picker.set_value.assert_called_with(0)        
+        self.time_picker.set_value.assert_called_with(0)
 

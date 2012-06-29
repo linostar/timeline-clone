@@ -49,7 +49,7 @@ class ContainerSpec(unittest.TestCase):
     def testNameAndCategoryCanBeUpdated(self):
         self.given_default_container()
         new_name = "new text"
-        new_category = Category("cat", (255,0,0), (255,0,0), True) 
+        new_category = Category("cat", (255,0,0), (255,0,0), True)
         self.container.update_properties(new_name, new_category)
         self.assertEqual(new_category, self.container.category)
 
@@ -62,12 +62,12 @@ class ContainerSpec(unittest.TestCase):
         self.container = Container(self.db.get_time_type(), self.now, self.now, "container")
 
     def given_period_subevent(self):
-        self.event = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"), 
+        self.event = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
                               self.time("2000-01-03 10:01:01"), "evt")
 
     def time(self, tm):
         return self.db.get_time_type().parse_time(tm)
-    
+
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
@@ -98,4 +98,3 @@ class ContainerConstructorSpec(unittest.TestCase):
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
-        

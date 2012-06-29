@@ -51,7 +51,7 @@ class ScrollByDragInputHandler(InputHandler):
         if elapsed_clock_time == 0:
             self.speed_px_per_sec = MAX_SPEED
         else:
-            self.speed_px_per_sec = min(MAX_SPEED, abs(self.last_x_distance / 
+            self.speed_px_per_sec = min(MAX_SPEED, abs(self.last_x_distance /
                                         elapsed_clock_time))
         self.last_clock_time = current_clock_time
 
@@ -62,7 +62,7 @@ class ScrollByDragInputHandler(InputHandler):
 
     def _inertial_scrolling(self):
         frame_time = self._calculate_frame_time()
-        value_factor = self._calculate_scroll_factor() 
+        value_factor = self._calculate_scroll_factor()
         inertial_func = (0.20, 0.15, 0.10, 0.10, 0.10, 0.08, 0.06, 0.06, 0.05)
         #inertial_func = (0.20, 0.15, 0.10, 0.10, 0.07, 0.05, 0.02, 0.05)
         self.controller.use_fast_draw(True)
@@ -78,7 +78,7 @@ class ScrollByDragInputHandler(InputHandler):
 
     def _calculate_frame_time(self):
         MAX_FRAME_RATE = 26.0
-        frames_per_second = (MAX_FRAME_RATE * self.speed_px_per_sec / 
+        frames_per_second = (MAX_FRAME_RATE * self.speed_px_per_sec /
                              (100 + self.speed_px_per_sec))
         frame_time = 1.0 / frames_per_second
         return frame_time
@@ -88,6 +88,6 @@ class ScrollByDragInputHandler(InputHandler):
             direction = 1
         else:
             direction = -1
-        scroll_factor = (direction * self.speed_px_per_sec / 
+        scroll_factor = (direction * self.speed_px_per_sec /
                         self.INERTIAL_SCROLLING_SPEED_THRESHOLD)
-        return scroll_factor 
+        return scroll_factor

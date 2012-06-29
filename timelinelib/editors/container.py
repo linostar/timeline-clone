@@ -30,8 +30,8 @@ class ContainerEditor(object):
     container is saved to the database.
     The reason for this behavior is that we don't want to have empty Conatiners
     in the database.
-    When updating the properties of an existing Container event the changes 
-    are stored in the timeline database. 
+    When updating the properties of an existing Container event the changes
+    are stored in the timeline database.
     """
     def __init__(self, view, db, container):
         self._set_initial_values_to_member_variables(view, db, container)
@@ -41,7 +41,7 @@ class ContainerEditor(object):
         self.view = view
         self.db = db
         self.container = container
-        self.container_exists = (self.container != None) 
+        self.container_exists = (self.container != None)
         if self.container_exists:
             self.name = self.container.text
             self.category = self.container.category
@@ -52,7 +52,7 @@ class ContainerEditor(object):
     def _set_view_initial_values(self):
         self.view.set_name(self.name)
         self.view.set_category(self.category)
-        
+
     #
     # Dialog API
     #
@@ -71,12 +71,12 @@ class ContainerEditor(object):
 
     def get_container(self):
         return self.container
-    
+
     #
     # Internals
     #
     def _verify_name(self):
-        name_is_invalid = (self.name == "") 
+        name_is_invalid = (self.name == "")
         if name_is_invalid:
             msg = _("Field '%s' can't be empty.") % _("Name")
             self.view.display_invalid_name(msg)
@@ -85,7 +85,7 @@ class ContainerEditor(object):
     def _update_container(self):
         self.container.update_properties(self.name, self.category)
         self._save_to_db()
-        
+
     def _save_to_db(self):
         try:
             DbWrapperEventRepository(self.db).save(self.container)
@@ -97,5 +97,5 @@ class ContainerEditor(object):
         time_type = self.db.get_time_type()
         start = time_type.now()
         end = start
-        self.container = Container(time_type, start, end, self.name, 
+        self.container = Container(time_type, start, end, self.name,
                                    self.category)

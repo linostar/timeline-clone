@@ -75,7 +75,7 @@ class WxTimeTypeSpec(unittest.TestCase):
             self.time_type.parse_time, "2010-31-hello 0:0:0")
 
     def test_format_period_method(self):
-        time_period = TimePeriod(self.time_type, 
+        time_period = TimePeriod(self.time_type,
                                  wx.DateTimeFromDMY(1, 7, 2010, 13, 44),
                                  wx.DateTimeFromDMY(2, 7, 2010, 13, 30))
         self.assertEquals(
@@ -95,13 +95,13 @@ class WxTimeTypeSpec(unittest.TestCase):
     def test_returns_margin_delta(self):
         delta = wx.TimeSpan.Days(days=48)
         margin_delta = self.time_type.margin_delta(delta)
-        self.assertEquals(wx.TimeSpan.Days(2), margin_delta) 
+        self.assertEquals(wx.TimeSpan.Days(2), margin_delta)
 
     def test_returns_half_delta(self):
         delta = wx.TimeSpan.Days(100 * 365)
         half_delta = self.time_type.half_delta(delta)
-        self.assertEquals(wx.TimeSpan.Days(50 * 365).GetMilliseconds(), 
-                          half_delta.GetMilliseconds()) 
+        self.assertEquals(wx.TimeSpan.Days(50 * 365).GetMilliseconds(),
+                          half_delta.GetMilliseconds())
 
 
 class WxDateTimeConstructorSpec(unittest.TestCase):
@@ -192,10 +192,10 @@ class WxTimeTypeDeltaFormattingSpec(unittest.TestCase):
         self.assertEquals(u"790 %s" % _("days"), self.time_type.format_delta(delta))
 
     def test_format_overlapping_events(self):
-        time_period1 = TimePeriod(self.time_type, 
+        time_period1 = TimePeriod(self.time_type,
                                  wx.DateTimeFromDMY(1, 7, 2010, 13, 44),
                                  wx.DateTimeFromDMY(2, 7, 2010, 13, 30))
-        time_period2 = TimePeriod(self.time_type, 
+        time_period2 = TimePeriod(self.time_type,
                                  wx.DateTimeFromDMY(1, 7, 2010, 13, 44),
                                  wx.DateTimeFromDMY(2, 7, 2010, 13, 30))
         delta = time_period2.start_time - time_period1.end_time

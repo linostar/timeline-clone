@@ -128,14 +128,14 @@ class CalendarPopup(wx.PopupTransientWindow):
         wx.PopupTransientWindow.__init__(self, parent, style=wx.BORDER_NONE)
         border = 2
         style = self._get_cal_style()
-        self.cal = wx.calendar.CalendarCtrl(self, -1, wx_date, 
+        self.cal = wx.calendar.CalendarCtrl(self, -1, wx_date,
                                             pos=(border,border), style=style)
         self._set_cal_range()
         self._set_size(border)
         self._bind_events()
 
     def _get_cal_style(self):
-        style = (wx.calendar.CAL_SHOW_HOLIDAYS | 
+        style = (wx.calendar.CAL_SHOW_HOLIDAYS |
                  wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION)
         if self.config.week_start == "monday":
             style |= wx.calendar.CAL_MONDAY_FIRST
@@ -183,7 +183,7 @@ class CalendarPopupController(object):
         # month or day. The control is closed on a double-click on a day or
         # a single click outside of the control
         if self.repop and not self.repoped:
-            self.calendar_popup.Popup() 
+            self.calendar_popup.Popup()
             self.repoped = True
 
 
@@ -212,7 +212,7 @@ class WxDatePicker(wx.TextCtrl):
         self.Bind(wx.EVT_KILL_FOCUS, self._on_kill_focus)
         self.Bind(wx.EVT_CHAR, self._on_char)
         self.Bind(wx.EVT_TEXT, self._on_text)
-        self.Bind(wx.EVT_KEY_DOWN, self._on_key_down)        
+        self.Bind(wx.EVT_KEY_DOWN, self._on_key_down)
 
     def _on_set_focus(self, evt):
         # CallAfter is a trick to prevent default behavior of selecting all
@@ -244,7 +244,7 @@ class WxDatePicker(wx.TextCtrl):
         elif evt.GetKeyCode() == wx.WXK_DOWN:
             self.controller.on_down()
         else:
-            evt.Skip()    
+            evt.Skip()
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("0000-00-00")
@@ -287,7 +287,7 @@ class WxDatePickerController(object):
             self.wx_date_picker.SetSelection(start, end)
         else:
             self._select_region_if_possible(self.region_year)
-            self.last_selection = self.wx_date_picker.GetSelection()    
+            self.last_selection = self.wx_date_picker.GetSelection()
 
     def on_kill_focus(self):
         if self.last_selection:
@@ -314,8 +314,8 @@ class WxDatePickerController(object):
             # To prevent saving of preferred day when year or month is changed
             # in on_up() and on_down()...
             # Save preferred day only when text is entered in the date text
-            # control and not when up or down keys has been used. 
-            # When up and down keys are used, the preferred day is saved in 
+            # control and not when up or down keys has been used.
+            # When up and down keys are used, the preferred day is saved in
             # on_up() and on_down() only when day is changed.
             if self.save_preferred_day:
                 self._save_preferred_day(current_date)
@@ -330,7 +330,7 @@ class WxDatePickerController(object):
         else:
             new_date = self._increment_day()
             self._save_preferred_day(new_date)
-        self._set_new_date_and_restore_selection(new_date)  
+        self._set_new_date_and_restore_selection(new_date)
 
     def on_down(self):
         if not self._current_date_is_valid():
@@ -342,7 +342,7 @@ class WxDatePickerController(object):
         else:
             new_date = self._decrement_day()
             self._save_preferred_day(new_date)
-        self._set_new_date_and_restore_selection(new_date)  
+        self._set_new_date_and_restore_selection(new_date)
 
     def _increment_year(self):
         date = self.get_date()
@@ -354,7 +354,7 @@ class WxDatePickerController(object):
         date = self.get_date()
         if date.Month < 11:
             date = self._set_valid_day(date.Year, date.Month + 1, date.Day)
-        elif date.Year < WxTimeType().get_max_time()[0].Year - 1:    
+        elif date.Year < WxTimeType().get_max_time()[0].Year - 1:
             date = self._set_valid_day(date.Year + 1, 0, date.Day)
         return date
 
@@ -374,7 +374,7 @@ class WxDatePickerController(object):
         date = self.get_date()
         if date.Month > 0:
             date = self._set_valid_day(date.Year, date.Month - 1, date.Day)
-        elif date.Year > WxTimeType().get_min_time()[0].Year:    
+        elif date.Year > WxTimeType().get_min_time()[0].Year:
             date = self._set_valid_day(date.Year - 1, 11, date.Day)
         return date
 
@@ -399,10 +399,10 @@ class WxDatePickerController(object):
 
     def _parse_year_month_day(self):
         date_string = self.wx_date_picker.get_date_string()
-        date_bc = False 
+        date_bc = False
         if (date_string[0:1] == self.separator):
             date_string = date_string[1:]
-            date_bc = True 
+            date_bc = True
         components = date_string.split(self.separator)
         if len(components) != 3:
             raise ValueError()
@@ -424,7 +424,7 @@ class WxDatePickerController(object):
         selection = self.wx_date_picker.GetSelection()
         self.save_preferred_day = False
         if self.preferred_day != None:
-            new_date = self._set_valid_day(new_date.Year, new_date.Month, 
+            new_date = self._set_valid_day(new_date.Year, new_date.Month,
                                            self.preferred_day)
         self.set_date(new_date)
         restore_selection(selection)
@@ -434,7 +434,7 @@ class WxDatePickerController(object):
         while True:
             try:
                 return try_to_create_wx_date_time_from_dmy(new_day, new_month, new_year)
-            except ValueError:                    
+            except ValueError:
                 new_day -= 1
 
     def _save_preferred_day(self, date):
@@ -462,16 +462,16 @@ class WxDatePickerController(object):
             return self.wx_date_picker.GetInsertionPoint() in region_range
 
     def _get_region_range(self, n):
-        # Returns a range of valid cursor positions for a valid region year, 
+        # Returns a range of valid cursor positions for a valid region year,
         # month or day.
         def region_is_not_valid(region):
-            return region not in (self.region_year, self.region_month, 
+            return region not in (self.region_year, self.region_month,
                                   self.region_day)
         def date_has_exactly_two_seperators(datestring):
             return len(datestring.split(self.separator)) == 3
         def calculate_pos_range(region, datestring):
             pos_of_separator1 = datestring.find(self.separator)
-            pos_of_separator2 = datestring.find(self.separator, 
+            pos_of_separator2 = datestring.find(self.separator,
                                                 pos_of_separator1 + 1)
             if region == self.region_year:
                 return range(0, pos_of_separator1 + 1)
@@ -513,7 +513,7 @@ class WxTimePicker(wx.TextCtrl):
         self.Bind(wx.EVT_KILL_FOCUS, self._on_kill_focus)
         self.Bind(wx.EVT_CHAR, self._on_char)
         self.Bind(wx.EVT_TEXT, self._on_text)
-        self.Bind(wx.EVT_KEY_DOWN, self._on_key_down)        
+        self.Bind(wx.EVT_KEY_DOWN, self._on_key_down)
 
     def _on_set_focus(self, evt):
         # CallAfter is a trick to prevent default behavior of selecting all
@@ -545,7 +545,7 @@ class WxTimePicker(wx.TextCtrl):
         elif evt.GetKeyCode() == wx.WXK_DOWN:
             self.controller.on_down()
         else:
-            evt.Skip()    
+            evt.Skip()
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("00:00")
@@ -616,7 +616,7 @@ class WxTimePickerController(object):
             new_time = self._increment_hour()
         else:
             new_time = self._increment_minutes()
-        self._set_new_time_and_restore_selection(new_time)  
+        self._set_new_time_and_restore_selection(new_time)
 
     def on_down(self):
         if not self._time_is_valid():
@@ -625,7 +625,7 @@ class WxTimePickerController(object):
             new_time = self._decrement_hour()
         else:
             new_time = self._decrement_minutes()
-        self._set_new_time_and_restore_selection(new_time)  
+        self._set_new_time_and_restore_selection(new_time)
 
     def _increment_hour(self):
         time = self.get_time()
@@ -639,13 +639,13 @@ class WxTimePickerController(object):
         time = self.get_time()
         new_hour = time.Hour
         new_minute = time.Minute + 1
-        if new_minute > 59: 
+        if new_minute > 59:
             new_minute = 0
             new_hour = time.Hour + 1
             if new_hour > 23:
                 new_hour = 0
         time.SetHour(new_hour)
-        time.SetMinute(new_minute)        
+        time.SetMinute(new_minute)
         return time
 
     def _decrement_hour(self):
@@ -660,7 +660,7 @@ class WxTimePickerController(object):
         time = self.get_time()
         new_hour = time.Hour
         new_minute = time.Minute - 1
-        if new_minute < 0: 
+        if new_minute < 0:
             new_minute = 59
             new_hour = time.Hour - 1
             if new_hour < 0:
@@ -688,7 +688,7 @@ class WxTimePickerController(object):
             return
         if part == self.hour_part:
             self.wx_time_picker.SetSelection(0, self._separator_pos())
-        else:    
+        else:
             time_string_len = len(self.wx_time_picker.get_time_string())
             self.wx_time_picker.SetSelection(self._separator_pos() + 1, time_string_len)
         self.preferred_part = part

@@ -47,7 +47,7 @@ class ViewProperties(object):
             if cat is None:
                 return True
             elif e.is_subevent():
-                container_visible = category_visible(e.container, 
+                container_visible = category_visible(e.container,
                                                      e.container.category)
                 if container_visible:
                     if self.category_visible(cat) == True:

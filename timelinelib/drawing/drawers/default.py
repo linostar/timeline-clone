@@ -139,7 +139,7 @@ class DefaultDrawingAlgorithm(Drawer):
         left_strip_time, right_strip_time = self._snap_region(time)
         return right_strip_time
 
-    def _snap_region(self, time): 
+    def _snap_region(self, time):
         time_x = self.scene.x_pos_for_time(time)
         left_strip_time = self.scene.minor_strip.start(time)
         right_strip_time = self.scene.minor_strip.increment(left_strip_time)
@@ -158,7 +158,7 @@ class DefaultDrawingAlgorithm(Drawer):
                         return event
                     container_event = event
                 else:
-                    return event        
+                    return event
         return container_event
 
     def event_with_rect_at(self, x, y, alt_down=False):
@@ -172,9 +172,9 @@ class DefaultDrawingAlgorithm(Drawer):
                     container_event = event
                     container_rect = rect
                 else:
-                    return event, rect      
+                    return event, rect
         if container_event == None:
-            return None 
+            return None
         return container_event, container_rect
 
     def event_rect(self, evt):
@@ -308,14 +308,14 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _point_subevent(self, event):
         return event.is_subevent() and not event.is_period()
-    
+
     def _get_container_y(self, id):
         for (event, rect) in self.scene.event_data:
             if event.is_container():
                 if event.container_id == id:
                     return rect.y - 1
         return self.scene.divider_y
-    
+
     def _set_line_color(self, view_properties, event):
         if view_properties.is_selected(event):
             self.dc.SetPen(self.red_solid_pen)
@@ -446,7 +446,7 @@ class DefaultDrawingAlgorithm(Drawer):
           p3  <
                 \
           p4     \p5 ----------
-        """  
+        """
         x1 = rect.x
         x2 = rect.x + rect.height / 2
         y1 = rect.y
@@ -462,7 +462,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_fuzzy_end(self, rect, event):
         """
           ---- P2\    p1
-                  \ 
+                  \
                    >  p3
                   /
           ---- p4/    p4
@@ -561,7 +561,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.SetClippingRect(rect_copy)
             text_x = rect.X + INNER_PADDING
             if event.fuzzy or event.locked:
-                text_x += rect.Height / 2    
+                text_x += rect.Height / 2
             text_y = rect.Y + INNER_PADDING
             if text_x < INNER_PADDING:
                 text_x = INNER_PADDING
@@ -696,7 +696,7 @@ class DefaultDrawingAlgorithm(Drawer):
             (iw, ih) = icon.Size
             inner_rect_w = iw
             inner_rect_h = ih
-        max_text_width = max(MIN_TEXT_WIDTH, (self.scene.width - SLIDER_WIDTH - event_rect.X - iw)) 
+        max_text_width = max(MIN_TEXT_WIDTH, (self.scene.width - SLIDER_WIDTH - event_rect.X - iw))
         # Text
         self.dc.SetFont(get_default_font(8))
         font_h = self.dc.GetCharHeight()

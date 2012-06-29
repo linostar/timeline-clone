@@ -132,7 +132,7 @@ class WxTimeType(TimeType):
             collector.append(u"1 %s" % _("minute"))
         elif minutes > 1:
             collector.append(u"%d %s" % (minutes, _("minutes")))
-        delta_string = u" ".join(collector) 
+        delta_string = u" ".join(collector)
         if delta_string == "":
             delta_string = "0"
         return delta_string
@@ -195,7 +195,7 @@ class WxTimeType(TimeType):
         total_us1 = delta_to_microseconds(delta1)
         total_us2 = delta_to_microseconds(delta2)
         # Make sure that the result is a floating point number
-        return float(total_us1) / float(total_us2)        
+        return float(total_us1) / float(total_us2)
 
     def get_max_zoom_delta(self):
         max_zoom_delta = wx.TimeSpan.Days(1200 * 365)
@@ -241,11 +241,11 @@ class WxTimeType(TimeType):
         return time.Format("%H:%M")
 
     def eventtimes_equals(self, time1, time2):
-        s1 = "%s %s" % (self.event_date_string(time1), 
+        s1 = "%s %s" % (self.event_date_string(time1),
                         self.event_date_string(time1))
-        s2 = "%s %s" % (self.event_date_string(time2), 
+        s2 = "%s %s" % (self.event_date_string(time2),
                         self.event_date_string(time2))
-        return s1 == s2 
+        return s1 == s2
 
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
@@ -318,7 +318,7 @@ def _move_smart_month_backward(navigation_fn, start, end):
     new_start_year, new_start_month = _months_to_year_and_month(
                                             start_months -
                                             month_diff)
-    new_start = wx.DateTimeFromDMY(start.Day, new_start_month, new_start_year, 
+    new_start = wx.DateTimeFromDMY(start.Day, new_start_month, new_start_year,
                                    start.Hour, start.Minute, start.Second)
     navigation_fn(lambda tp: tp.update(new_start, new_end))
 
@@ -331,7 +331,7 @@ def _move_smart_month_forward(navigation_fn, start, end):
     new_end_year, new_end_month = _months_to_year_and_month(
                                             end_months +
                                             month_diff)
-    new_end = wx.DateTimeFromDMY(end.Day, new_end_month, new_end_year, 
+    new_end = wx.DateTimeFromDMY(end.Day, new_end_month, new_end_year,
                                  end.Hour, end.Minute, end.Second)
     navigation_fn(lambda tp: tp.update(new_start, new_end))
 
@@ -619,7 +619,7 @@ class StripHour(Strip):
         return str(time.Hour)
 
     def start(self, time):
-        start_time = wx.DateTimeFromDMY(time.Day, time.Month, time.Year, time.Hour) 
+        start_time = wx.DateTimeFromDMY(time.Day, time.Month, time.Year, time.Hour)
         return start_time
 
     def increment(self, time):
@@ -642,7 +642,7 @@ def microseconds_to_delta(microsecs):
         counter += 1
     delta = wx.TimeSpan.Milliseconds(milliseconds)
     while counter > 0:
-        delta = delta * 2;     
+        delta = delta * 2;
         counter -= 1
     return delta
 
@@ -657,7 +657,7 @@ def delta_to_microseconds(delta):
     neg = False
     if days < 0:
         neg = True
-        days  = -days 
+        days  = -days
         hours = -hours
         minutes = -minutes
         seconds = -seconds
@@ -672,7 +672,7 @@ def delta_to_microseconds(delta):
                 if milliseconds >= 0:
                      microsecs = milliseconds * 1000
     if neg:
-        microsecs = -microsecs 
+        microsecs = -microsecs
     return microsecs
 
 

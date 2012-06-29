@@ -69,7 +69,7 @@ class StaticContainerEditorDialog(wx.Dialog):
     def _create_buttons(self, properties_box):
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         properties_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
-        
+
 
 class ContainerEditorControllerApi(object):
 
@@ -79,19 +79,19 @@ class ContainerEditorControllerApi(object):
 
     def set_name(self, name):
         self.txt_name.SetValue(name)
-        
+
     def get_name(self):
         return self.txt_name.GetValue().strip()
 
     def set_category(self, category):
         self.lst_category.select(category)
-        
+
     def get_category(self):
         return self.lst_category.get()
-    
+
     def display_invalid_name(self, message):
         _display_error_message(message, self)
-        _set_focus_and_select(self.txt_name)  
+        _set_focus_and_select(self.txt_name)
 
     def display_db_exception(self, e):
         gui_utils.handle_db_error_in_dialog(self, e)
@@ -102,12 +102,12 @@ class ContainerEditorControllerApi(object):
     def _bind_events(self):
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, self.lst_category)
-            
+
     def _btn_ok_on_click(self, evt):
-        self.controller.save()        
-            
-            
-class ContainerEditorDialog(StaticContainerEditorDialog, 
+        self.controller.save()
+
+
+class ContainerEditorDialog(StaticContainerEditorDialog,
                             ContainerEditorControllerApi):
     """
     This dialog is used for two purposes, editing an existing container

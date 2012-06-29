@@ -51,7 +51,7 @@ class EventEditorTestCase(unittest.TestCase):
 
     def when_editor_opened_with(self, start, end, event):
         self.editor = EventEditor(self.view)
-        self.editor.edit(PyTimeType(), self.event_repository, self.timeline, 
+        self.editor.edit(PyTimeType(), self.event_repository, self.timeline,
                          start, end, event)
 
     def simulate_user_enters_start_time(self, time):

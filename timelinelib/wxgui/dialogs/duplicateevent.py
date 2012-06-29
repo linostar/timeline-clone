@@ -37,13 +37,13 @@ class DuplicateEventDialog(wx.Dialog):
         self.sc_count.SetValue(count)
 
     def get_count(self):
-        return self.sc_count.GetValue() 
+        return self.sc_count.GetValue()
 
     def set_frequency(self, count):
         self.sc_frequency.SetValue(count)
 
     def get_frequency(self):
-        return self.sc_frequency.GetValue() 
+        return self.sc_frequency.GetValue()
 
     def select_move_period_fn_at_index(self, index):
         self.rb_period.SetSelection(index)
@@ -52,10 +52,10 @@ class DuplicateEventDialog(wx.Dialog):
         return self._move_period_fns[self.rb_period.GetSelection()]
 
     def set_direction(self, direction):
-        self.rb_direction.SetSelection(direction)                             
+        self.rb_direction.SetSelection(direction)
 
     def get_direction(self):
-        return self.rb_direction.GetSelection()                             
+        return self.rb_direction.GetSelection()
 
     def close(self):
         self.EndModal(wx.ID_OK)
@@ -65,7 +65,7 @@ class DuplicateEventDialog(wx.Dialog):
 
     def handle_date_errors(self, error_count):
        _display_error_message(
-            _("%d Events not duplicated due to missing dates.") 
+            _("%d Events not duplicated due to missing dates.")
             % error_count)
 
     def _create_gui(self, move_period_config):
@@ -95,9 +95,9 @@ class DuplicateEventDialog(wx.Dialog):
         return hbox
 
     def _create_and_add_rb_period(self, form, period_list):
-        self.rb_period = wx.RadioBox(self, wx.ID_ANY, _("Period"), 
-                                     wx.DefaultPosition, wx.DefaultSize, 
-                                     period_list) 
+        self.rb_period = wx.RadioBox(self, wx.ID_ANY, _("Period"),
+                                     wx.DefaultPosition, wx.DefaultSize,
+                                     period_list)
         form.Add(self.rb_period, flag=wx.ALL|wx.EXPAND, border=BORDER)
 
     def _create_and_add_sc_frequency_box(self, form):
@@ -116,7 +116,7 @@ class DuplicateEventDialog(wx.Dialog):
 
     def _create_and_add_rb_direction(self, form):
         direction_list = [_("Forward"), _("Backward"), _("Both")]
-        self.rb_direction = wx.RadioBox(self, wx.ID_ANY, _("Direction"), 
+        self.rb_direction = wx.RadioBox(self, wx.ID_ANY, _("Direction"),
                                         choices=direction_list)
         form.Add(self.rb_direction, flag=wx.ALL|wx.EXPAND, border=BORDER)
 

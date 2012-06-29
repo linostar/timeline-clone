@@ -126,4 +126,4 @@ class Strip(object):
     def get_font(self, time_period):
         """
         Return the preferred font for this strip
-        """    
+        """

@@ -49,7 +49,7 @@ class PyTimeTypeSpec(unittest.TestCase):
             self.time_type.parse_time, "2010-31-hello 0:0:0")
 
     def test_formats_period_to_string(self):
-        time_period = TimePeriod(self.time_type, 
+        time_period = TimePeriod(self.time_type,
                                  datetime.datetime(2010, 8, 01, 13, 44),
                                  datetime.datetime(2010, 8, 02, 13, 30))
         self.assertEquals(
@@ -57,22 +57,22 @@ class PyTimeTypeSpec(unittest.TestCase):
             self.time_type.format_period(time_period))
 
     def test_returns_min_time(self):
-        self.assertEquals(datetime.datetime(10, 1, 1), 
-                          self.time_type.get_min_time()[0]) 
+        self.assertEquals(datetime.datetime(10, 1, 1),
+                          self.time_type.get_min_time()[0])
 
     def test_returns_max_time(self):
-        self.assertEquals(datetime.datetime(9990, 1, 1), 
+        self.assertEquals(datetime.datetime(9990, 1, 1),
                           self.time_type.get_max_time()[0])
 
     def test_returns_half_delta(self):
         delta = datetime.timedelta(days=4)
         half_delta = self.time_type.half_delta(delta)
-        self.assertEquals(datetime.timedelta(days=2), half_delta) 
+        self.assertEquals(datetime.timedelta(days=2), half_delta)
 
     def test_returns_margin_delta(self):
         delta = datetime.timedelta(days=48)
         margin_delta = self.time_type.margin_delta(delta)
-        self.assertEquals(datetime.timedelta(days=2), margin_delta) 
+        self.assertEquals(datetime.timedelta(days=2), margin_delta)
 
     def test_event_date_string_method(self):
         self.assertEquals(
@@ -100,10 +100,10 @@ class PyTimeTypeDeltaFormattingSpec(unittest.TestCase):
         self.time_type = PyTimeType()
 
     def test_format_delta_method(self):
-        time_period1 = TimePeriod(self.time_type, 
+        time_period1 = TimePeriod(self.time_type,
                                   datetime.datetime(2010, 8, 01, 13, 44),
                                   datetime.datetime(2010, 8, 01, 13, 44))
-        time_period2 = TimePeriod(self.time_type, 
+        time_period2 = TimePeriod(self.time_type,
                                   datetime.datetime(2010, 8, 02, 13, 44),
                                   datetime.datetime(2010, 8, 02, 13, 44))
         delta = time_period2.start_time - time_period1.start_time
@@ -172,10 +172,10 @@ class PyTimeTypeDeltaFormattingSpec(unittest.TestCase):
         self.assertEquals(u"790 %s" % _("days"), self.time_type.format_delta(delta))
 
     def test_format_overlapping_events(self):
-        time_period1 = TimePeriod(self.time_type, 
+        time_period1 = TimePeriod(self.time_type,
                                   datetime.datetime(2010, 8, 01, 13, 44),
                                   datetime.datetime(2010, 8, 03, 13, 44))
-        time_period2 = TimePeriod(self.time_type, 
+        time_period2 = TimePeriod(self.time_type,
                                   datetime.datetime(2010, 8, 01, 13, 44),
                                   datetime.datetime(2010, 8, 03, 13, 44))
         delta = time_period2.start_time - time_period1.end_time

@@ -33,7 +33,7 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
         selected_events = self.drawing_area.get_selected_events()
         if not event_being_dragged in selected_events:
             return
-        for event in selected_events:        
+        for event in selected_events:
             period_pair = (event, event.time_period)
             if event == event_being_dragged:
                 self.event_periods.insert(0, period_pair)

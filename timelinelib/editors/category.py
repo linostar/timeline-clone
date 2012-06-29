@@ -60,7 +60,7 @@ class CategoryEditor(object):
                 self.view.handle_used_name(new_name)
                 return
             if self.category is None:
-                self.category = Category(new_name, new_color, new_font_color, 
+                self.category = Category(new_name, new_color, new_font_color,
                                          True, parent=new_parent)
             else:
                 self.category.name = new_name

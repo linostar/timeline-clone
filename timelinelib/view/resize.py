@@ -71,6 +71,6 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
 
     def _adjust_container_edges(self):
         self.event.strategy._set_time_period()
-        
+
     def _clear_status_text(self):
         self.status_bar.set_text("")

@@ -30,7 +30,7 @@ class Event(object):
     it will set the event id to a unique integer.
     """
 
-    def __init__(self, time_type, start_time, end_time, text, category=None, 
+    def __init__(self, time_type, start_time, end_time, text, category=None,
                  fuzzy=False, locked=False, ends_today=False):
         self.time_type = time_type
         self.fuzzy = fuzzy
@@ -48,14 +48,14 @@ class Event(object):
     def set_id(self, id):
         self.id = id
 
-    def update(self, start_time, end_time, text, category=None, fuzzy=None, 
+    def update(self, start_time, end_time, text, category=None, fuzzy=None,
                locked=None, ends_today=None):
         """Change the event data."""
         self.time_period = TimePeriod(self.time_type, start_time, end_time)
         self.text = text
         self.category = category
         if ends_today is not None:
-            if not self.locked: 
+            if not self.locked:
                 self.ends_today = ends_today
         if fuzzy is not None:
             self.fuzzy = fuzzy
@@ -75,7 +75,7 @@ class Event(object):
             self.time_period = TimePeriod(
                 self.time_type, start_time, self.time_period.end_time)
             return True
-        return False            
+        return False
 
     def update_end(self, end_time):
         """Change the event data."""
@@ -83,7 +83,7 @@ class Event(object):
             self.time_period = TimePeriod(
                 self.time_type, self.time_period.start_time, end_time)
             return True
-        return False            
+        return False
 
     def inside_period(self, time_period):
         """Wrapper for time period method."""
@@ -129,25 +129,25 @@ class Event(object):
 
     def clone(self):
         # Objects of type datetime are immutable.
-        new_event = Event(self.time_type, self.time_period.start_time, 
+        new_event = Event(self.time_type, self.time_period.start_time,
                           self.time_period.end_time, self.text, self.category)
         # Description is immutable
         new_event.set_data("description", self.get_data("description") )
-        # Icon is immutable in the sense that it is never changed by our 
-        # application.    
-        new_event.set_data("icon", self.get_data("icon"))    
+        # Icon is immutable in the sense that it is never changed by our
+        # application.
+        new_event.set_data("icon", self.get_data("icon"))
         return new_event
 
     def is_container(self):
         return False
-    
+
     def is_subevent(self):
         return False
-    
+
     def time_span(self):
         return self.time_period.end_time - self.time_period.start_time
-        
-    
+
+
 class Category(object):
     """
     Store persistent data about a category.
@@ -172,7 +172,7 @@ class Category(object):
         self.color = color
         if font_color is None:
             self.font_color = (0, 0, 0)
-        else:    
+        else:
             self.font_color = font_color
         self.visible = visible
         self.parent = parent
@@ -244,11 +244,11 @@ class TimePeriod(object):
         If data is invalid, it will not be set, and a ValueError will be raised
         instead.
 
-        Data is invalid if time + delta is not within the range 
-        [self.time_type.get_min_time(), self.time_type.get_max_time()] or if 
+        Data is invalid if time + delta is not within the range
+        [self.time_type.get_min_time(), self.time_type.get_max_time()] or if
         the start time is larger than the end time.
         """
-        new_start = self._ensure_within_range(start_time, start_delta, 
+        new_start = self._ensure_within_range(start_time, start_delta,
                                               _("Start time "))
         new_end = self._ensure_within_range(end_time, end_delta,
                                             _("End time "))
@@ -341,7 +341,7 @@ class TimePeriod(object):
     def _ensure_within_range(self, time, delta, error_prefix):
         """
         Return new time (time + delta) or raise ValueError if it is not within
-        the range [self.time_type.get_min_time(), 
+        the range [self.time_type.get_min_time(),
         self.time_type.get_max_time()].
         """
         if delta == None:

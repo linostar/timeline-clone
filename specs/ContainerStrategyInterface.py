@@ -22,11 +22,11 @@ from timelinelib.db.interface import ContainerStrategy
 
 
 class ContainerStrategyInterfaceSpec(unittest.TestCase):
-    
+
     def testConstruction(self):
         self.given_strategy_with_none_container()
         self.assertEqual(None, self.strategy.container)
-    
+
     def testRegisterSubeventNotImplemented(self):
         self.given_strategy_with_none_container()
         self.assertRaises(NotImplementedError, self.strategy.register_subevent, None)
@@ -34,14 +34,13 @@ class ContainerStrategyInterfaceSpec(unittest.TestCase):
     def testUnregisterSubeventNotImplemented(self):
         self.given_strategy_with_none_container()
         self.assertRaises(NotImplementedError, self.strategy.unregister_subevent, None)
-        
+
     def testUpdateSubeventNotImplemented(self):
         self.given_strategy_with_none_container()
         self.assertRaises(NotImplementedError, self.strategy.update, None)
-        
+
     def given_strategy_with_none_container(self):
         self.strategy = ContainerStrategy(None)
 
     def setUp(self):
         pass
-    

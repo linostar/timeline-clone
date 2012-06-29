@@ -93,7 +93,7 @@ class WxDatePickerBaseFixture(unittest.TestCase):
         self.controller.on_text_changed()
 
     def simulate_change_insertion_point(self, new_insertion_point):
-        self.py_date_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point) 
+        self.py_date_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point)
         self.py_date_picker.GetInsertionPoint.return_value = new_insertion_point
 
     def _update_insertion_point_and_selection(self, from_pos, to_pos):
@@ -363,12 +363,12 @@ class WxTimePickerBaseFixture(unittest.TestCase):
         self.controller.on_text_changed()
 
     def simulate_change_insertion_point(self, new_insertion_point):
-        self.py_time_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point) 
+        self.py_time_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point)
         self.py_time_picker.GetInsertionPoint.return_value = new_insertion_point
 
     def _update_insertion_point_and_selection(self, from_pos, to_pos):
         self.py_time_picker.GetInsertionPoint.return_value = from_pos
-        self.py_time_picker.GetSelection.return_value = (from_pos, to_pos) 
+        self.py_time_picker.GetSelection.return_value = (from_pos, to_pos)
 
 
 class AWxTimePicker(WxTimePickerBaseFixture):

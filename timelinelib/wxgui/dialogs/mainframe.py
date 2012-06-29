@@ -57,7 +57,7 @@ class MainFrame(wx.Frame):
     def __init__(self, application_arguments):
         self.config = read_config(application_arguments.get_config_file_path())
 
-        wx.Frame.__init__(self, None, size=self.config.get_window_size(), 
+        wx.Frame.__init__(self, None, size=self.config.get_window_size(),
                           pos=self.config.get_window_pos(),
                           style=wx.DEFAULT_FRAME_STYLE, name="main_frame")
 
@@ -87,7 +87,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self._timer_tick, self.timer)
         self.timer.Start(10000)
         self.alert_dialog_open = False
-                
+
     def _set_initial_values_to_member_variables(self):
         self.timeline = None
         self.timeline_wildcard_helper = WildcardHelper(
@@ -407,7 +407,7 @@ class MainFrame(wx.Frame):
 
     def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
         self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
-            wx.ID_ANY, _("&Measure Distance between two Events..."), 
+            wx.ID_ANY, _("&Measure Distance between two Events..."),
             _("Measure the Distance between two Events"))
         self.Bind(wx.EVT_MENU, self._mnu_timeline_measure_distance_between_events_on_click,
                   self.mnu_timeline_measure_distance_between_events)
@@ -420,7 +420,7 @@ class MainFrame(wx.Frame):
             gui_utils.show_modal(create_dialog, self.handle_db_error)
         if event is None:
             try:
-                drawing_area = self.main_panel.drawing_area 
+                drawing_area = self.main_panel.drawing_area
                 id = drawing_area.get_view_properties().get_selected_event_ids()[0]
                 event = self.timeline.find_event_with_id(id)
             except IndexError, e:
@@ -444,12 +444,12 @@ class MainFrame(wx.Frame):
         event2 = self.timeline.find_event_with_id(event_id_2)
         return event1, event2
 
-    def _calc_events_distance(self,event1, event2):    
+    def _calc_events_distance(self,event1, event2):
         if event1.time_period.start_time <= event2.time_period.start_time:
-            distance = (event2.time_period.start_time - 
+            distance = (event2.time_period.start_time -
                         event1.time_period.end_time)
-        else:    
-            distance = (event1.time_period.start_time - 
+        else:
+            distance = (event1.time_period.start_time -
                         event2.time_period.end_time)
         return distance
 
@@ -461,7 +461,7 @@ class MainFrame(wx.Frame):
         self._display_text(header, distance_text)
 
     def _display_text(self, header, text):
-        dialog = wx.MessageDialog(self, text, header, 
+        dialog = wx.MessageDialog(self, text, header,
                                   wx.OK | wx.ICON_INFORMATION)
         dialog.ShowModal()
         dialog.Destroy()
@@ -503,7 +503,7 @@ class MainFrame(wx.Frame):
         if event:
             start = event.time_period.start_time
             delta = self.main_panel.drawing_area.get_view_properties().displayed_period.delta()
-            end   = start + delta 
+            end   = start + delta
             margin_delta = self.timeline.get_time_type().margin_delta(delta)
             self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
 
@@ -637,7 +637,7 @@ class MainFrame(wx.Frame):
                 timeline = self.timeline
                 return ContainerEditorDialog(parent, title, timeline, event)
             else:
-                return EventEditorDialog(self, self.config, _("Edit Event"), 
+                return EventEditorDialog(self, self.config, _("Edit Event"),
                                          self.timeline, event=event)
         gui_utils.show_modal(create_event_editor, self.handle_db_error)
 
@@ -737,7 +737,7 @@ class MainFrame(wx.Frame):
             _display_error_message(_("File '%s' does not exist.") % path, self)
 
     def enable_disable_menus(self):
-        self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())                                                        
+        self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())
         self._enable_disable_duplicate_event_menu()
         self._enable_disable_measure_distance_between_two_events_menu()
         self._enable_disable_searchbar()
@@ -752,7 +752,7 @@ class MainFrame(wx.Frame):
         two_events_selected = len(view_properties.selected_event_ids) == 2
         self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
 
-    def _enable_disable_searchbar(self): 
+    def _enable_disable_searchbar(self):
         if self.timeline == None:
             self.main_panel.show_searchbar(False)
 
@@ -791,7 +791,7 @@ class MainFrame(wx.Frame):
 
     def _timer_tick(self, evt):
         self._handle_event_alerts()
-        
+
     def _handle_event_alerts(self):
         if self.timeline is None:
             return
@@ -807,7 +807,7 @@ class MainFrame(wx.Frame):
 
 
 class AlertController(object):
-    
+
     def display_events_alerts(self, all_events, time_type):
         self.time_type = time_type
         for event in all_events:
@@ -820,27 +820,27 @@ class AlertController(object):
     def _display_and_delete_event_alert(self, event, alert):
         self._display_alert_dialog(alert, event)
         event.set_data("alert", None)
-        
+
     def _alert_time_as_text(self, alert):
         return "%s" % alert[0]
-    
+
     def _time_has_expired(self, time_as_text):
         now_as_text = "%s" % self.time_type.now()
         return time_as_text <= now_as_text
-    
+
     def _display_alert_dialog(self, alert, event):
         text = self._format_alert_text(alert, event)
         dialog = TextDisplayDialog("Alert", text)
         dialog.ShowModal()
         dialog.Destroy()
-    
-    def _format_alert_text(self, alert, event):    
+
+    def _format_alert_text(self, alert, event):
         text1 = "Trigger time: %s\n\n" % alert[0]
         text2 = "Event: %s\n\n" % event.get_label()
         text = "%s%s%s" % (text1, text2, alert[1])
         return text
 
-                
+
 class MenuController(object):
 
     def __init__(self):

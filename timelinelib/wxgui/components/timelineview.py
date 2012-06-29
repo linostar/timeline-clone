@@ -164,7 +164,7 @@ class DrawingAreaPanel(wx.Panel):
         self.controller.window_resized()
 
     def _on_left_down(self, evt):
-        self.controller.left_mouse_down(evt.m_x, evt.m_y, evt.m_controlDown, 
+        self.controller.left_mouse_down(evt.m_x, evt.m_y, evt.m_controlDown,
                                         evt.m_shiftDown, evt.m_altDown)
         evt.Skip()
 
@@ -172,7 +172,7 @@ class DrawingAreaPanel(wx.Panel):
         self.controller.right_mouse_down(evt.m_x, evt.m_y, evt.m_altDown)
 
     def _on_left_dclick(self, evt):
-        self.controller.left_mouse_dclick(evt.m_x, evt.m_y, evt.m_controlDown, 
+        self.controller.left_mouse_dclick(evt.m_x, evt.m_y, evt.m_controlDown,
                                           evt.m_altDown)
 
     def _on_middle_up(self, evt):

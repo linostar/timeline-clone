@@ -59,7 +59,7 @@ class CategoryChoice(wx.Choice):
         selection = self.GetSelection()
         category = self.GetClientData(selection)
         return category
-       
+
     def on_choice(self, e):
         new_selection_index = e.GetSelection()
         if new_selection_index > self.last_real_category_index:
@@ -73,7 +73,7 @@ class CategoryChoice(wx.Choice):
 
     def _add_category(self):
         def create_category_editor():
-            return WxCategoryEdtiorDialog(self, _("Add Category"), 
+            return WxCategoryEdtiorDialog(self, _("Add Category"),
                                           self.timeline, None)
         def handle_success(dialog):
             if dialog.GetReturnCode() == wx.ID_OK:
@@ -97,4 +97,4 @@ class CategoryChoice(wx.Choice):
                 gui_utils.handle_db_error_in_dialog(self, e)
         gui_utils.show_modal(create_categories_editor,
                              gui_utils.create_dialog_db_error_handler(self),
-                             handle_success)        
+                             handle_success)

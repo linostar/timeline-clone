@@ -20,17 +20,17 @@ from timelinelib.db.objects import Event
 
 
 class Subevent(Event):
-    
-    def __init__(self, time_type, start_time, end_time, text, category=None, 
+
+    def __init__(self, time_type, start_time, end_time, text, category=None,
                  container=None, cid=-1):
-        Event.__init__(self, time_type, start_time, end_time, text, category, 
+        Event.__init__(self, time_type, start_time, end_time, text, category,
                        False, False, False)
         self.container = container
         if self.container != None:
             self.container_id = self.container.cid()
         else:
             self.container_id = cid
-        
+
     def is_container(self):
         """Overrides parent method."""
         return False

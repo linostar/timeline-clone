@@ -130,7 +130,7 @@ class PyTimeType(TimeType):
             collector.append(u"1 %s" % _("minute"))
         elif minutes > 1:
             collector.append(u"%d %s" % (minutes, _("minutes")))
-        delta_string = u" ".join(collector) 
+        delta_string = u" ".join(collector)
         if delta_string == "":
             delta_string = "0"
         return delta_string
@@ -194,10 +194,10 @@ class PyTimeType(TimeType):
         total_us1 = delta_to_microseconds(delta1)
         total_us2 = delta_to_microseconds(delta2)
         # Make sure that the result is a floating point number
-        return total_us1 / float(total_us2)        
+        return total_us1 / float(total_us2)
 
     def get_max_zoom_delta(self):
-        return (timedelta(days=1200*365), 
+        return (timedelta(days=1200*365),
                 _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):
@@ -238,11 +238,11 @@ class PyTimeType(TimeType):
         return "%02d:%02d" % (time.hour, time.minute)
 
     def eventtimes_equals(self, time1, time2):
-        s1 = "%s %s" % (self.event_date_string(time1), 
+        s1 = "%s %s" % (self.event_date_string(time1),
                         self.event_date_string(time1))
-        s2 = "%s %s" % (self.event_date_string(time2), 
+        s2 = "%s %s" % (self.event_date_string(time2),
                         self.event_date_string(time2))
-        return s1 == s2 
+        return s1 == s2
 
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
@@ -643,8 +643,8 @@ def delta_to_microseconds(delta):
 
 def move_period_num_days(period, num):
     delta = timedelta(days=1) * num
-    start_time = period.start_time + delta  
-    end_time = period.end_time + delta  
+    start_time = period.start_time + delta
+    end_time = period.end_time + delta
     return TimePeriod(period.time_type, start_time, end_time)
 
 

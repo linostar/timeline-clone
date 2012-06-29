@@ -42,25 +42,24 @@ class ContainerEditorTestCase(unittest.TestCase):
         self.given_editor_without_container()
         self.view.set_name.assert_called_with("")
         self.view.set_category.assert_called_with(None)
-                  
+
     def testConstructionWithContainer(self):
         self.given_editor_with_container()
         self.view.set_name.assert_called_with("Container1")
         self.view.set_category.assert_called_with(None)
-                  
+
     def testContainerCreated(self):
         self.given_editor_without_container()
         self.editor.save()
         self.view.get_name.assert_called()
         self.view.get_category.assert_called()
         self.assertFalse(self.editor.container == None)
-                          
+
     def given_editor_without_container(self):
         self.editor = ContainerEditor(self.view, self.db, None)
 
     def given_editor_with_container(self):
         self.editor = ContainerEditor(self.view, self.db, self.container)
-                          
+
     def time(self, tm):
         return self.db.get_time_type().parse_time(tm)
-        

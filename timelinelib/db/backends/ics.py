@@ -134,7 +134,7 @@ class IcsTimeline(TimelineDB):
 
     def _load_data(self):
         self.cal = Calendar()
-        if not os.path.exists(self.path): 
+        if not os.path.exists(self.path):
             # Nothing to load. Will create a new timeline on save.
             return
         try:

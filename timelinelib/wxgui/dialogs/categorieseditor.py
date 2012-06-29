@@ -84,7 +84,7 @@ class CategoriesEditor(wx.Dialog):
     def _btn_edit_on_click(self, e):
         selected_category = self.cat_tree.get_selected_category()
         if selected_category is not None:
-            edit_category(self, self.db, selected_category, 
+            edit_category(self, self.db, selected_category,
                           self.db_error_handler)
             self._updateButtons()
 
@@ -108,7 +108,7 @@ class CategoriesEditor(wx.Dialog):
     def _btn_del_on_click(self, e):
         selected_category = self.cat_tree.get_selected_category()
         if selected_category is not None:
-            delete_category(self, self.db, selected_category, 
+            delete_category(self, self.db, selected_category,
                             self.db_error_handler)
             self._updateButtons()
 

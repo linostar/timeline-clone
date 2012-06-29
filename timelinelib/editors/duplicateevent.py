@@ -39,13 +39,13 @@ class DuplicateEventEditor(object):
 
     def create_duplicates_and_save(self):
         (periods, nbr_of_missing_dates) = self._repeat_period(
-            self.event.time_period, 
+            self.event.time_period,
             self.view.get_move_period_fn(),
             self.view.get_frequency(),
             self.view.get_count(),
             self.view.get_direction())
         try:
-            for period in periods: 
+            for period in periods:
                 event = self.event.clone()
                 event.update_period(period.start_time, period.end_time)
                 self.db.save_event(event)
@@ -57,14 +57,14 @@ class DuplicateEventEditor(object):
 
     def _repeat_period(self, period, move_period_fn, frequency,
                        repetitions, direction):
-        periods = []     
+        periods = []
         nbr_of_missing_dates = 0
         for index in self._calc_indicies(direction, repetitions):
             new_period = move_period_fn(period, index*frequency)
             if new_period == None:
                 nbr_of_missing_dates += 1
             else:
-                periods.append(new_period)     
+                periods.append(new_period)
         return (periods, nbr_of_missing_dates)
 
     def _calc_indicies(self, direction, repetitions):

@@ -37,8 +37,8 @@ class TimelineScene(object):
         self._baseline_padding = 15
         self._period_threshold = 20
         self._data_indicator_size = 10
-        self._metrics = Metrics(size, self._db.get_time_type(), 
-                                self._view_properties.displayed_period, 
+        self._metrics = Metrics(size, self._db.get_time_type(),
+                                self._view_properties.displayed_period,
                                 self._view_properties.divider_position)
         self.width, self.height = size
         self.divider_y = self._metrics.half_height
@@ -100,7 +100,7 @@ class TimelineScene(object):
         return None
 
     def _event_rect_drawn_as_period(self, event_rect):
-        return event_rect.Y >= self.divider_y 
+        return event_rect.Y >= self.divider_y
 
     def _get_direction(self, period, up):
         if up:
@@ -117,7 +117,7 @@ class TimelineScene(object):
 
     def _get_overlapping_event(self, period, direction, selected_event, rect):
         list = self._get_overlapping_events_list(period, rect)
-        event = self._get_overlapping_event_from_list(list, direction, 
+        event = self._get_overlapping_event_from_list(list, direction,
                                                       selected_event)
         return event
 
@@ -131,7 +131,7 @@ class TimelineScene(object):
     def _get_overlapping_event_from_list(self, list, direction, selected_event):
         if direction == FORWARD:
             return self._get_next_overlapping_event(list, selected_event)
-        else:        
+        else:
             return self._get_prev_overlapping_event(list, selected_event)
 
     def _get_next_overlapping_event(self, list, selected_event):
@@ -158,13 +158,13 @@ class TimelineScene(object):
         self._calc_rects(visible_events)
 
     def _place_subevents_last(self, events):
-        reordered_events = [event  for event in events 
+        reordered_events = [event  for event in events
                             if not event.is_subevent()]
-        subevents = [event for event in events 
+        subevents = [event for event in events
                      if event.is_subevent()]
         reordered_events.extend(subevents)
         return reordered_events
-    
+
     def _calc_rects(self, events):
         self.event_data = []
         for event in events:
@@ -181,7 +181,7 @@ class TimelineScene(object):
 
     def _period_subevent(self, event):
         return event.is_subevent() and event.is_period()
-    
+
     def _create_rectangle_for_period_subevent(self, event):
         return self._create_ideal_rect_for_event(event)
 
@@ -190,7 +190,7 @@ class TimelineScene(object):
         self._ensure_rect_is_not_far_outisde_screen(rect)
         self._prevent_overlapping_by_adjusting_rect_y(event, rect)
         return rect
-        
+
     def _create_ideal_rect_for_event(self, event):
         if event.ends_today:
             event.time_period.end_time = self._db.get_time_type().now()
@@ -219,11 +219,11 @@ class TimelineScene(object):
         return min_width
 
     def _calc_subevent_threshold_width(self, event):
-        # The enlarging factor allows sub-events to be smaller than a normal 
+        # The enlarging factor allows sub-events to be smaller than a normal
         # event before the container becomes a point event.
         enlarging_factor = 2
         return enlarging_factor * self._metrics.calc_width(event.time_period)
-            
+
     def _create_ideal_rect_for_period_event(self, event):
         tw, th = self._get_text_size(event.text)
         ew = self._metrics.calc_width(event.time_period)
@@ -237,20 +237,20 @@ class TimelineScene(object):
         return rect
 
     def _get_ry(self, event):
-        if event.is_subevent(): 
+        if event.is_subevent():
             if event.is_period():
                 return self._get_container_ry(event)
             else:
                 return self._metrics.half_height - self._baseline_padding
         else:
             return self._metrics.half_height + self._baseline_padding
-        
+
     def _get_container_ry(self, subevent):
         for (event, rect) in self.event_data:
             if event == subevent.container:
                 return rect.y
         return self._metrics.half_height + self._baseline_padding
-        
+
     def _create_ideal_rect_for_non_period_event(self, event):
         tw, th = self._get_text_size(event.text)
         rw = tw + 2 * self._inner_padding + 2 * self._outer_padding
@@ -326,7 +326,7 @@ class TimelineScene(object):
         return rect_with_largest_y
 
     def _get_list_with_overlapping_period_events(self, event_rect):
-        return [(event, rect) for (event, rect) in self.event_data 
+        return [(event, rect) for (event, rect) in self.event_data
                 if (self._rects_overlap(event_rect, rect) and
                     rect.Y >= self.divider_y )]
 
@@ -344,10 +344,10 @@ class TimelineScene(object):
         return rect_with_smallest_y
 
     def _get_list_with_overlapping_point_events(self, event_rect):
-        return [(event, rect) for (event, rect) in self.event_data 
+        return [(event, rect) for (event, rect) in self.event_data
                 if (self._rects_overlap(event_rect, rect) and
                     rect.Y < self.divider_y  )]
 
     def _rects_overlap(self, rect1, rect2):
         return (rect2.x <= rect1.x + rect1.width and
-                rect1.x <= rect2.x + rect2.width)   
+                rect1.x <= rect2.x + rect2.width)

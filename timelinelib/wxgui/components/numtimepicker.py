@@ -29,7 +29,7 @@ class NumTimePicker(wx.Panel):
     def __init__(self, parent, show_time=False, config=None):
         wx.Panel.__init__(self, parent)
         self.time_picker = self._create_gui()
-        self.controller = NumTimePickerController(self, 0) 
+        self.controller = NumTimePickerController(self, 0)
 
     def get_value(self):
         return self.time_picker.GetValue()

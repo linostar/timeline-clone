@@ -84,7 +84,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertRaises(TimelineIOError, self.db.save_view_properties, vp)
 
     def testGetSetDisplayedPeriod(self):
-        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 3, 23), 
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 3, 23),
                         datetime(2010, 3, 24))
         self.db._set_displayed_period(tp)
         # Assert that we get back the same period
@@ -268,7 +268,7 @@ class MemoryDBSpec(unittest.TestCase):
 
     def testSaveNewEvent(self):
         self.db.save_event(self.e1)
-        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12), 
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12),
                         datetime(2010, 2, 14))
         self.assertTrue(self.e1.has_id())
         self.assertEqual(self.db.get_events(tp), [self.e1])
@@ -282,7 +282,7 @@ class MemoryDBSpec(unittest.TestCase):
         id_before = self.e1.id
         self.e1.text = "new text"
         self.db.save_event(self.e1)
-        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12), 
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12),
                         datetime(2010, 2, 14))
         self.assertEqual(id_before, self.e1.id)
         self.assertEqual(self.db.get_events(tp), [self.e1])
@@ -300,7 +300,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEquals(self.db._save.call_count, 0)
 
     def testDeleteExistingEvent(self):
-        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12), 
+        tp = TimePeriod(self.db.get_time_type(), datetime(2010, 2, 12),
                         datetime(2010, 2, 15))
         self.db.save_event(self.e1)
         self.db.save_event(self.e2)
@@ -406,10 +406,10 @@ class MemoryDBSpec(unittest.TestCase):
         self.db_listener = Mock()
         self.c1 = Category("work", (255, 0, 0), None, True)
         self.c2 = Category("private", (0, 255, 0), None, True)
-        self.e1 = Event(self.db.get_time_type(), datetime(2010, 2, 13), datetime(2010, 2, 13), 
+        self.e1 = Event(self.db.get_time_type(), datetime(2010, 2, 13), datetime(2010, 2, 13),
                         "holiday")
-        self.e2 = Event(self.db.get_time_type(), datetime(2010, 2, 14), datetime(2010, 2, 14), 
+        self.e2 = Event(self.db.get_time_type(), datetime(2010, 2, 14), datetime(2010, 2, 14),
                         "work starts")
-        self.e3 = Event(self.db.get_time_type(), datetime(2010, 2, 15), datetime(2010, 2, 16), 
+        self.e3 = Event(self.db.get_time_type(), datetime(2010, 2, 15), datetime(2010, 2, 16),
                         "period")
         self.db.register(self.db_listener)

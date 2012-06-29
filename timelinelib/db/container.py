@@ -21,15 +21,15 @@ from timelinelib.db.strategies import DefaultContainerStrategy
 
 
 class Container(Event):
-    
-    def __init__(self, time_type, start_time, end_time, text, category=None, 
+
+    def __init__(self, time_type, start_time, end_time, text, category=None,
                  cid=-1):
-        Event.__init__(self, time_type, start_time, end_time, text, category, 
+        Event.__init__(self, time_type, start_time, end_time, text, category,
                        False, False, False)
         self.container_id = cid
         self.events = []
         self.strategy = DefaultContainerStrategy(self)
-        
+
     def is_container(self):
         return True
 
@@ -38,19 +38,19 @@ class Container(Event):
 
     def cid(self):
         return self.container_id
-    
+
     def set_cid(self, cid):
         self.container_id = cid
-        
+
     def register_subevent(self, subevent):
         self.strategy.register_subevent(subevent)
 
     def unregister_subevent(self, subevent):
         self.strategy.unregister_subevent(subevent)
-            
+
     def update_container(self, subevent):
         self.strategy.update(subevent)
-        
+
     def update_properties(self, text, category=None):
         self.text = text
         self.category = category

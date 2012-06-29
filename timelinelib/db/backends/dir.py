@@ -58,10 +58,10 @@ class DirTimeline(MemoryDB):
         For each sub-directory a category is created and all events (files)
         belong the category (directory) in which they are.
         """
-        if not os.path.exists(dir_path): 
+        if not os.path.exists(dir_path):
             # Nothing to load
             return
-        if not os.path.isdir(dir_path): 
+        if not os.path.isdir(dir_path):
             # Nothing to load
             return
         try:
@@ -110,8 +110,8 @@ class DirTimeline(MemoryDB):
 
     def _event_from_path(self, file_path):
         stat = os.stat(file_path)
-        # st_atime (time of most recent access), 
-        # st_mtime (time of most recent content modification), 
+        # st_atime (time of most recent access),
+        # st_mtime (time of most recent content modification),
         # st_ctime (platform dependent; time of most recent metadata change on
         #           Unix, or the time of creation on Windows):
         start_time = datetime.fromtimestamp(int(stat.st_mtime))
