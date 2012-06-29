@@ -39,20 +39,20 @@ class AlertControllerSpec(unittest.TestCase):
         time_as_text = "%s" % self.tm
         expired = self.controller._time_has_expired(time_as_text)
         self.assertTrue(expired)
-        
+
     def test_pytime_has_not_expired(self):
         self.given_late_pytimes()
         time_as_text = "%s" % self.tm
         expired = self.controller._time_has_expired(time_as_text)
         self.assertFalse(expired)
-        
+
     def test_wxtime_has_expired(self):
         self.given_early_wxtimes()
         self.given_controller_time_type(WxTimeType())
         time_as_text = "%s" % self.tm
         expired = self.controller._time_has_expired(time_as_text)
         self.assertTrue(expired)
-        
+
     def test_wxtime_has_not_expired(self):
         self.given_late_wxtimes()
         self.given_controller_time_type(WxTimeType())
@@ -89,24 +89,24 @@ class AlertControllerSpec(unittest.TestCase):
 
     def given_wxtime_later(self):
         self.tm = self.now + wx.TimeSpan(hours=12)
-                
+
     def given_wxtime_earlier(self):
         self.tm = self.now - wx.TimeSpan(hours=12)
-                
+
     def given_pytime_now(self):
         self.now = PyTimeType().now()
-                
+
     def given_pytime_later(self):
         self.tm = self.now + datetime.timedelta(days=1)
-                
+
     def given_pytime_earlier(self):
         self.tm = self.now + datetime.timedelta(days=-1)
 
     def given_controller_time_type(self, time_type):
         self.controller.time_type = time_type
-                        
+
     def setUp(self):
         self.now = PyTimeType().now()
         self.alert = (self.now, "Time to go")
-        self.event = an_event() 
+        self.event = an_event()
         self.controller = AlertController()

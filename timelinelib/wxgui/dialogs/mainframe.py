@@ -803,7 +803,7 @@ class MainFrame(wx.Frame):
     def _display_events_alerts(self):
         self.alert_dialog_open = True
         all_events = self.timeline.get_all_events()
-        AlertController().display_events_alerts(all_events, self.timeline.time_type)
+        AlertController().display_events_alerts(all_events, self.timeline.get_time_type())
 
 
 class AlertController(object):

@@ -17,12 +17,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from datetime import datetime
 import codecs
-import tempfile
 import os.path
 import shutil
-from datetime import datetime
+import tempfile
 import unittest
+
 import wx
 
 from timelinelib.db.backends.xmlfile import XmlTimeline
@@ -41,26 +42,26 @@ class XmlTimelineSpec(unittest.TestCase):
 
     def testUseWxTimeTypeWhenUseWideDateRangeIsTrue(self):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
-        self.assertTrue(isinstance(timeline.time_type, WxTimeType))
+        self.assertTrue(isinstance(timeline.get_time_type(), WxTimeType))
 
     def testAlertStringParsingGivesAlertData(self):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
         time, text = timeline._parse_alert_string("2012-11-11 00:00:00;Now is the time")
         self.assertEqual("Now is the time", text)
-        self.assertEqual("2012-11-11 00:00:00", "%s" % timeline.time_type.time_string(time))
+        self.assertEqual("2012-11-11 00:00:00", "%s" % timeline.get_time_type().time_string(time))
 
     def testAlertDataConversionGivesAlertString(self):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=False)
         alert = (datetime(2010, 8, 31, 0, 0, 0), "Hoho")
         alert_text = timeline.alert_string(alert)
         self.assertEqual("2010-8-31 0:0:0;Hoho", alert_text)
-        
+
     def testWxTimeAlertDataConversionGivesAlertString(self):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
         alert = (wx.DateTimeFromDMY(30, 8, 2010, 0, 0, 0), "Hoho")
         alert_text = timeline.alert_string(alert)
         self.assertEqual("2010-09-30 00:00:00;Hoho", alert_text)
-        
+
     def testDisplayedPeriodTagNotWrittenIfNotSet(self):
         # Create a new db and add one event
         db = db_open(self.tmp_path)
