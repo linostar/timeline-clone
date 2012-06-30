@@ -17,11 +17,11 @@
 
 
 from timelinelib.db.objects import Event
-from timelinelib.db.subevent import Subevent
 from timelinelib.db.objects import PeriodTooLongError
+from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
-from timelinelib.utils import ex_msg
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
+from timelinelib.utils import ex_msg
 
 
 class EventEditor(object):

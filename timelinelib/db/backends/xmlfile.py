@@ -35,8 +35,8 @@ from timelinelib.db.container import Container
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
+from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.subevent import Subevent
 from timelinelib.db.utils import safe_write
 from timelinelib.meta.version import get_version
 from timelinelib.time import WxTimeType

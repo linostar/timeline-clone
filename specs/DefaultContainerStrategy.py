@@ -20,7 +20,7 @@ import unittest
 
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.container import Container
-from timelinelib.db.subevent import Subevent
+from timelinelib.db.objects import Subevent
 from timelinelib.db.strategies import DefaultContainerStrategy
 
 
