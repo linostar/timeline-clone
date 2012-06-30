@@ -23,19 +23,20 @@ import os.path
 
 from icalendar import Calendar
 
-from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
+from timelinelib.db.observer import Observable
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
 from timelinelib.time import PyTimeType
 from timelinelib.utils import ex_msg
 
 
-class IcsTimeline(TimelineDB):
+class IcsTimeline(Observable):
 
     def __init__(self, path):
-        TimelineDB.__init__(self, path)
+        Observable.__init__(self)
+        self.path = path
         self.event_id_counter = IdCounter()
         self._load_data()
 

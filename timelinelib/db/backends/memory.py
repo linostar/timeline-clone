@@ -30,20 +30,21 @@ query persistent storage to retrieve data.
 
 
 from timelinelib.db.container import Container
-from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
+from timelinelib.db.observer import Observable
 from timelinelib.db.observer import STATE_CHANGE_ANY
 from timelinelib.db.observer import STATE_CHANGE_CATEGORY
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
 
 
-class MemoryDB(TimelineDB):
+class MemoryDB(Observable):
 
     def __init__(self):
-        TimelineDB.__init__(self, "")
+        Observable.__init__(self)
+        self.path = ""
         self.categories = []
         self.category_id_counter = IdCounter()
         self.events = []
