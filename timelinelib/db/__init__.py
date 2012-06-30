@@ -16,12 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Functionality for reading and writing timeline data from and to persistent
-storage.
-"""
-
-
 import os.path
 
 from timelinelib.db.backends.memory import MemoryDB

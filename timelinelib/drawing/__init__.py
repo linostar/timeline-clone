@@ -16,16 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Functionality for drawing timelines onto device contexts (wx.DC).
-"""
-
-
 def get_drawer():
-    """
-    Factory method.
-
-    Return the drawing algorithm that should be used by the application.
-    """
     from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
     return DefaultDrawingAlgorithm()
