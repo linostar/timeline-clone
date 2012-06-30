@@ -25,9 +25,15 @@ from timelinelib.db.backends.memory import MemoryDB
 
 class BackendTest(object):
 
+    # These tests should work for any backend. They are tested with different
+    # backends below.
+
     def test_get_all_events_returns_a_list(self):
         all_events = self.backend.get_all_events()
         self.assertTrue(isinstance(all_events, list))
+
+    def test_has_time_type_method(self):
+        self.backend.get_time_type()
 
 
 class MemoryBackendTest(unittest.TestCase, BackendTest):
