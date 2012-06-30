@@ -16,22 +16,12 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.exceptions import TimelineIOError
+class TimelineIOError(Exception):
+    """
+    Raised from a backend if a read/write error occurs.
 
+    The constructor and any of the public methods can raise this exception.
 
-class ContainerStrategy(object):
-
-    def __init__(self, container):
-        self.container = container
-
-    def register_subevent(self, subevent):
-        """Return the event with the latest end time."""
-        raise NotImplementedError()
-
-    def unregister_subevent(self, subevent):
-        """Return the event with the latest end time."""
-        raise NotImplementedError()
-
-    def update(self, subevent):
-        """Update container properties when adding a new sub-event."""
-        raise NotImplementedError()
+    Also raised by the get_timeline method if loading of a timeline failed.
+    """
+    pass
