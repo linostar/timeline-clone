@@ -29,9 +29,9 @@ query persistent storage to retrieve data.
 """
 
 
-from timelinelib.db.container import Container
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
+from timelinelib.db.objects import Container
 from timelinelib.db.objects import Event
 from timelinelib.db.observer import Observable
 from timelinelib.db.observer import STATE_CHANGE_ANY

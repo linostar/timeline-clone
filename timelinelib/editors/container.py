@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.container import Container
+from timelinelib.db.objects import Container
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 
 

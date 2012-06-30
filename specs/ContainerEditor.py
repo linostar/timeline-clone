@@ -21,11 +21,11 @@ import unittest
 from mock import Mock, sentinel
 
 from specs.utils import an_event_with, human_time_to_py, ObjectWithTruthValue
+from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.db.objects import Container
 from timelinelib.editors.container import ContainerEditor
 from timelinelib.repositories.interface import EventRepository
 from timelinelib.wxgui.dialogs.eventeditor import ContainerEditorDialog
-from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.container import Container
 
 
 class ContainerEditorTestCase(unittest.TestCase):

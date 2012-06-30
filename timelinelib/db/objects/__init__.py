@@ -17,6 +17,7 @@
 
 
 from timelinelib.db.objects.category import Category
+from timelinelib.db.objects.container import Container
 from timelinelib.db.objects.event import Event
 from timelinelib.db.objects.subevent import Subevent
 from timelinelib.db.objects.timeperiod import PeriodTooLongError
