@@ -16,11 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
 from StringIO import StringIO
+import unittest
 import xml.sax
 
-import timelinelib.db.backends.xmlparser as xmlparser
+import timelinelib.xml.parser as xmlparser
 
 
 class TestXmlParser(unittest.TestCase):

@@ -57,7 +57,7 @@ def add_specs(suite):
             load_test_cases_from_module_name(suite, abs_module_name)
 
 def add_doctests(suite):
-    load_doc_test_from_module_name(suite, "timelinelib.db.backends.xmlparser")
+    load_doc_test_from_module_name(suite, "timelinelib.xml.parser")
     load_doc_test_from_module_name(suite, "timelinelib.utils")
 
 def load_test_cases_from_module_name(suite, module_name):
