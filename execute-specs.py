@@ -32,6 +32,7 @@ def execute_all_specs():
 def setup_paths():
     root_dir = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, os.path.join(root_dir, "libs", "dev", "mock-0.7.2"))
+    sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "icalendar-2.1"))
 
 def install_gettext_in_builtin_namespace():
     def _(message):
