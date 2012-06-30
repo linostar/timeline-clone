@@ -19,13 +19,10 @@
 
 from datetime import datetime
 import codecs
-import os.path
-import shutil
-import tempfile
-import unittest
 
 import wx
 
+from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db import db_open
 from timelinelib.db.objects import Category
@@ -36,7 +33,7 @@ from timelinelib.meta.version import get_version
 from timelinelib.time import WxTimeType
 
 
-class XmlTimelineSpec(unittest.TestCase):
+class XmlTimelineSpec(TmpDirTestCase):
 
     IO = True
 
@@ -163,8 +160,5 @@ class XmlTimelineSpec(unittest.TestCase):
                 self.fail("Unknown category.")
 
     def setUp(self):
-        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
-        self.tmp_path = os.path.join(self.tmp_dir, "test.timeline")
-
-    def tearDown(self):
-        shutil.rmtree(self.tmp_dir)
+        TmpDirTestCase.setUp(self)
+        self.tmp_path = self.get_tmp_path("test.timeline")

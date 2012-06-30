@@ -16,11 +16,9 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os.path
-import shutil
-import tempfile
 import unittest
 
+from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.ics import IcsTimeline
 from timelinelib.db.backends.memory import MemoryDB
 
@@ -38,21 +36,18 @@ class MemoryBackendTest(unittest.TestCase, BackendTest):
         self.backend = MemoryDB()
 
 
-class IcsBackendTest(unittest.TestCase, BackendTest):
+class IcsBackendTest(TmpDirTestCase, BackendTest):
 
     def setUp(self):
-        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
-        self.tmp_path = os.path.join(self.tmp_dir, "test.ics")
-        self.write_ics_content()
-        self.backend = IcsTimeline(self.tmp_path)
-
-    def tearDown(self):
-        shutil.rmtree(self.tmp_dir)
+        TmpDirTestCase.setUp(self)
+        self.backend = IcsTimeline(self.write_ics_content())
 
     def write_ics_content(self):
-        f = open(self.tmp_path, "w")
+        tmp_path = self.get_tmp_path("test.ics")
+        f = open(tmp_path, "w")
         f.write(ICS_EXAMPLE)
         f.close()
+        return tmp_path
 
 
 ICS_EXAMPLE = """

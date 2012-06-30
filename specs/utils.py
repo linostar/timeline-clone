@@ -24,17 +24,16 @@ import tempfile
 import traceback
 import unittest
 
-from mock import Mock
 import wx
 import wx.lib.inspection
 
+from timelinelib.calendar.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.config.arguments import ApplicationArguments
 from timelinelib.config.dotfile import read_config
 from timelinelib.db import db_open
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.calendar.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.wxtime import WxTimeType
 from timelinelib.wxgui.setup import start_wx_application
@@ -101,18 +100,30 @@ def an_event_with(start=None, end=None, time=ANY_TIME, text="foo", fuzzy=False,
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
-class WxEndToEndTestCase(unittest.TestCase):
+class TmpDirTestCase(unittest.TestCase):
 
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
-        self.timeline_path = os.path.join(self.tmp_dir, "test.timeline")
-        self.config_file_path = os.path.join(self.tmp_dir, "thetimelineproj.cfg")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_dir)
+
+    def get_tmp_path(self, name):
+        return os.path.join(self.tmp_dir, name)
+
+
+class WxEndToEndTestCase(TmpDirTestCase):
+
+    def setUp(self):
+        TmpDirTestCase.setUp(self)
+        self.timeline_path = self.get_tmp_path("test.timeline")
+        self.config_file_path = self.get_tmp_path("thetimelineproj.cfg")
         self.config = read_config(self.config_file_path)
         self.standard_excepthook = sys.excepthook
         self.error_in_gui_thread = None
 
     def tearDown(self):
-        shutil.rmtree(self.tmp_dir)
+        TmpDirTestCase.tearDown(self)
         sys.excepthook = self.standard_excepthook
 
     def start_timeline_and(self, steps_to_perform_in_gui):

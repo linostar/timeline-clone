@@ -18,12 +18,8 @@
 
 from datetime import datetime
 import codecs
-import os
-import os.path
-import shutil
-import tempfile
-import unittest
 
+from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db import db_open
 from timelinelib.drawing.viewproperties import ViewProperties
@@ -93,7 +89,7 @@ CONTENT_0100 = u"""
 """.strip()
 
 
-class DbOpenSpec(unittest.TestCase):
+class DbOpenSpec(TmpDirTestCase):
 
     IO = True
 
@@ -245,11 +241,8 @@ class DbOpenSpec(unittest.TestCase):
                 self.fail("Unknown category.")
 
     def setUp(self):
-        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
-        self.tmp_path = os.path.join(self.tmp_dir, "test.timeline")
-
-    def tearDown(self):
-        shutil.rmtree(self.tmp_dir)
+        TmpDirTestCase.setUp(self)
+        self.tmp_path = self.get_tmp_path("test.timeline")
 
     def writeContentToTmpFile(self, content):
         f = codecs.open(self.tmp_path, "w", "utf-8")

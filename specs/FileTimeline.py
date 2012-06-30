@@ -16,25 +16,21 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import tempfile
-import shutil
-import os.path
-import unittest
-import os
-import stat
 import datetime
+import unittest
 
-from timelinelib.db.interface import TimelineIOError
-from timelinelib.db.objects import TimePeriod
+from specs.utils import TmpDirTestCase
+from timelinelib.db.backends.file import dequote
 from timelinelib.db.backends.file import FileTimeline
 from timelinelib.db.backends.file import quote
-from timelinelib.db.backends.file import dequote
 from timelinelib.db.backends.file import split_on_semicolon
-from timelinelib.time import PyTimeType
+from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.time import PyTimeType
 
 
-class FileTimelineSpec(unittest.TestCase):
+class FileTimelineSpec(TmpDirTestCase):
 
     IO = True
 
@@ -89,13 +85,13 @@ class FileTimelineSpec(unittest.TestCase):
         self.assertRaises(TimelineIOError, timeline.save_view_properties, vp)
 
     def setUp(self):
+        TmpDirTestCase.setUp(self)
         # Create temporary dir and names
-        self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
-        self.corrupt_file = os.path.join(self.tmp_dir, "corrupt.timeline")
-        self.missingeof_file = os.path.join(self.tmp_dir, "missingeof.timeline")
-        self._021_file = os.path.join(self.tmp_dir, "021.timeline")
-        self.invalid_time_period_file = os.path.join(self.tmp_dir, "invalid_time_period.timeline")
-        self.valid_file = os.path.join(self.tmp_dir, "valid.timeline")
+        self.corrupt_file = self.get_tmp_path("corrupt.timeline")
+        self.missingeof_file = self.get_tmp_path("missingeof.timeline")
+        self._021_file = self.get_tmp_path("021.timeline")
+        self.invalid_time_period_file = self.get_tmp_path("invalid_time_period.timeline")
+        self.valid_file = self.get_tmp_path("valid.timeline")
         # Write content to files
         HEADER_030 = "# Written by Timeline 0.3.0 on 2009-7-23 9:40:33"
         HEADER_030_DEV = "# Written by Timeline 0.3.0dev on 2009-7-23 9:40:33"
@@ -119,9 +115,6 @@ class FileTimelineSpec(unittest.TestCase):
             "# END",
         ]
         self.write_timeline(self.valid_file, valid)
-
-    def tearDown(self):
-        shutil.rmtree(self.tmp_dir)
 
     def write_timeline(self, path, lines):
         f = file(path, "w")
