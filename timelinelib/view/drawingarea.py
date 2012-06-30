@@ -18,7 +18,7 @@
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.observer import STATE_CHANGE_ANY

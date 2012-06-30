@@ -16,9 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.exceptions import TimelineIOError
-
-
 class ContainerStrategy(object):
 
     def __init__(self, container):

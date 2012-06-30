@@ -31,10 +31,10 @@ import time
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.objects import Event
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
 
 
 class DirTimeline(MemoryDB):

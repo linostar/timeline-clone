@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 
 
 class TimelineApplication(object):

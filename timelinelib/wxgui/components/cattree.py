@@ -19,7 +19,7 @@
 import wx
 import wx.lib.agw.customtreectrl as customtreectrl
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.observer import STATE_CHANGE_CATEGORY
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
 from timelinelib.wxgui.utils import _ask_question

@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.editors.category import CategoryEditor
 from timelinelib.repositories.interface import CategoryRepository

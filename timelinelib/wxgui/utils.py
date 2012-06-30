@@ -18,7 +18,7 @@
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.domain.category import sort_categories
 
 

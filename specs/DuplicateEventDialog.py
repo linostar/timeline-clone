@@ -22,7 +22,7 @@ import unittest
 from mock import Mock
 
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.editors.duplicateevent import BACKWARD

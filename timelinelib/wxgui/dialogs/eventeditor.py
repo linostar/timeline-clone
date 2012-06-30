@@ -20,16 +20,16 @@ import os.path
 
 import wx
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.editors.event import EventEditor
-from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
+from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 from timelinelib.wxgui.components.categorychoice import CategoryChoice
+from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import time_picker_for
 import timelinelib.wxgui.utils as gui_utils
-from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 
 
 class EventEditorDialog(wx.Dialog):

@@ -22,7 +22,7 @@ from mock import Mock
 
 from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import Config
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.wxgui.dialogs.mainframe import MainFrame
 
 

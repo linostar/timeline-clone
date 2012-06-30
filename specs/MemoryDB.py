@@ -21,13 +21,13 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.time import PyTimeType
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.time import PyTimeType
 
 
 class MemoryDBSpec(unittest.TestCase):

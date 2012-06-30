@@ -24,7 +24,7 @@ from timelinelib.db.backends.file import dequote
 from timelinelib.db.backends.file import FileTimeline
 from timelinelib.db.backends.file import quote
 from timelinelib.db.backends.file import split_on_semicolon
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time import PyTimeType

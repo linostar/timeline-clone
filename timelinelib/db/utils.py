@@ -20,7 +20,7 @@ import codecs
 import os
 import os.path
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 
 
 class IdCounter(object):

@@ -18,11 +18,11 @@
 
 import wx
 
-from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
-from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
-import timelinelib.wxgui.utils as gui_utils
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.domain.category import sort_categories
+from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
+from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
+import timelinelib.wxgui.utils as gui_utils
 
 
 class CategoryChoice(wx.Choice):

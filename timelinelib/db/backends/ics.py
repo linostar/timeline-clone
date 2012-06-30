@@ -23,7 +23,7 @@ import os.path
 
 from icalendar import Calendar
 
-from timelinelib.db.interface import TimelineIOError
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Event
 from timelinelib.db.observer import Observable
 from timelinelib.db.search import generic_event_search

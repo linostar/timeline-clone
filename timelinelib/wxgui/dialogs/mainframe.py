@@ -23,13 +23,14 @@ import wx
 from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import read_config
 from timelinelib.config.paths import ICONS_DIR
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
-from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.export.bitmap import export_to_image
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
 from timelinelib.meta.version import DEV
+from timelinelib.time.wxtime import WxTimeType
 from timelinelib.utils import ex_msg
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
@@ -49,7 +50,6 @@ from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import WildcardHelper
 import timelinelib.printing as printing
 import timelinelib.wxgui.utils as gui_utils
-from timelinelib.time.wxtime import WxTimeType
 
 
 class MainFrame(wx.Frame):
