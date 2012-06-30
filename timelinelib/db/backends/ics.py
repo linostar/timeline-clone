@@ -26,7 +26,7 @@ from icalendar import Calendar
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Event
-from timelinelib.db.utils import generic_event_search
+from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
 from timelinelib.time import PyTimeType
 from timelinelib.utils import ex_msg
