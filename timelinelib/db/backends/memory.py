@@ -30,12 +30,12 @@ query persistent storage to retrieve data.
 
 
 from timelinelib.db.container import Container
-from timelinelib.db.interface import STATE_CHANGE_ANY
-from timelinelib.db.interface import STATE_CHANGE_CATEGORY
 from timelinelib.db.interface import TimelineDB
 from timelinelib.db.interface import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
+from timelinelib.db.observer import STATE_CHANGE_ANY
+from timelinelib.db.observer import STATE_CHANGE_CATEGORY
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
 
