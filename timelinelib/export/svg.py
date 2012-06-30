@@ -25,7 +25,7 @@ from pysvg.shape import *
 from pysvg.builders import *
 from pysvg.filter import *
 
-from timelinelib.domain.category import sort_categories
+from timelinelib.db.objects.category import sort_categories
 from timelinelib.drawing.utils import darken_color
 
 from datetime import datetime

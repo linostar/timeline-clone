@@ -18,8 +18,8 @@
 
 import unittest
 
+from timelinelib.db.objects.category import sort_categories
 from timelinelib.db.objects import Category
-from timelinelib.domain.category import sort_categories
 
 
 class CategorySorter(unittest.TestCase):

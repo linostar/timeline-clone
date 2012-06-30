@@ -39,3 +39,9 @@ class Category(object):
 
     def set_id(self, id):
         self.id = id
+
+
+def sort_categories(categories):
+    sorted_categories = list(categories)
+    sorted_categories.sort(cmp, lambda x: x.name.lower())
+    return sorted_categories
