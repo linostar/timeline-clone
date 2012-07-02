@@ -666,7 +666,7 @@ def delta_to_microseconds(delta):
             if seconds >= 0:
                 microsecs = seconds * US_PER_SEC
                 if milliseconds >= 0:
-                     microsecs = milliseconds * 1000
+                    microsecs = milliseconds * 1000
     if neg:
         microsecs = -microsecs
     return microsecs
