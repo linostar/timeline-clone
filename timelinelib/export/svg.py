@@ -18,6 +18,7 @@
 
 from types import UnicodeType
 
+import wx
 from pysvg.structure import *
 from pysvg.core import *
 from pysvg.text import *
