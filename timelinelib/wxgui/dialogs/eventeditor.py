@@ -597,6 +597,9 @@ class AlertEditor(wx.Panel):
         self._set_visible(True)
 
     def _btn_clear_on_click(self, evt):
+        self.clear_data()
+
+    def clear_data(self):
         self._set_initial_time()
         self._set_initial_text()
         self._set_visible(False)
