@@ -134,7 +134,6 @@ class SVGDrawingAlgorithm(object):
         myStyle.setFontFamily(fontfamily="Verdana")
         myStyle.setFontSize("2em")
         myStyle.setTextAnchor('left')
-        oh = ShapeBuilder()
         svgGroup = g()
         self._draw_minor_strips(svgGroup, myStyle)
         self._draw_major_strips(svgGroup, myStyle)

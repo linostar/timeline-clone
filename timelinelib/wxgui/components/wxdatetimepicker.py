@@ -72,7 +72,7 @@ class WxDateTimePicker(wx.Panel):
             self._position_calendar_popup(evt)
             self.calendar_popup.Popup()
         except:
-             _display_error_message(_("Invalid date"))
+            _display_error_message(_("Invalid date"))
 
     def _create_calendar_popup(self):
         wx_date = self.controller.get_value()

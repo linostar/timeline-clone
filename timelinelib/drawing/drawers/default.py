@@ -140,7 +140,6 @@ class DefaultDrawingAlgorithm(Drawer):
         return right_strip_time
 
     def _snap_region(self, time):
-        time_x = self.scene.x_pos_for_time(time)
         left_strip_time = self.scene.minor_strip.start(time)
         right_strip_time = self.scene.minor_strip.increment(left_strip_time)
         return (left_strip_time, right_strip_time)
