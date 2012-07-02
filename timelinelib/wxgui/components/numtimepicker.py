@@ -16,12 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os.path
-import re
-
 import wx
-
-from timelinelib.time import NumTimeType
 
 
 class NumTimePicker(wx.Panel):

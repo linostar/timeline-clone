@@ -16,10 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 import re
-
-import wx
 
 from timelinelib.time.typeinterface import TimeType
 from timelinelib.db.objects import time_period_center

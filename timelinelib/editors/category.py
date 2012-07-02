@@ -16,8 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
-
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Category
 

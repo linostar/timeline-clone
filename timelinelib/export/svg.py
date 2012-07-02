@@ -28,8 +28,6 @@ from pysvg.filter import *
 from timelinelib.db.objects.category import sort_categories
 from timelinelib.drawing.utils import darken_color
 
-from datetime import datetime
-
 
 OUTER_PADDING = 5      # Space between event boxes (pixels)
 INNER_PADDING = 3      # Space inside event box to text (pixels)

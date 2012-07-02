@@ -18,10 +18,6 @@
 
 import sys
 import re
-from wx import DateTime
-from wx import DateSpan
-from wx import TimeSpan
-import calendar
 
 import wx
 

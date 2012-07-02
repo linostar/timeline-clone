@@ -16,13 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
 import time
 
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.time.pytime import PyTimeType
 
 
 class PlayController(object):
