@@ -1,6 +1,11 @@
 Timeline 0.18.0, released on 30 September 2012
 ==============================================
 
+Bug fixes:
+
+  * Adding multiple events without closing event dialog, works again. 
+
+
 Timeline 0.17.0, released on 15 June 2012
 =========================================
 
