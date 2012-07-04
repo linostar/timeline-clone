@@ -18,6 +18,8 @@ class MainFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
         timeline_component = TimelineComponent(self)
+        timeline_component.open_timeline(
+            os.path.join(root_dir, "example.timeline"))
 
 
 if __name__ == "__main__":

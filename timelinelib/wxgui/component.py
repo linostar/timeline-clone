@@ -23,3 +23,6 @@ class TimelineComponent(wx.Button):
 
     def __init__(self, parent):
         wx.Button.__init__(self, parent)
+
+    def open_timeline(self, path):
+        pass
