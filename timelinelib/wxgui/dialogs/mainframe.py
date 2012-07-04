@@ -934,7 +934,9 @@ class MainPanel(wx.Panel):
         self.searchbar.Show(False)
         # Panels
         self.welcome_panel = WelcomePanel(self)
-        self.timeline_panel = TimelinePanel(self, self.config)
+        main_frame = wx.GetTopLevelParent(self)
+        self.timeline_panel = TimelinePanel(
+            self, self.config, main_frame.handle_db_error)
         self.error_panel = ErrorPanel(self)
         # Layout
         self.sizerOuter = wx.BoxSizer(wx.VERTICAL)
@@ -991,9 +993,10 @@ class WelcomePanel(wx.Panel):
 
 class TimelinePanel(wx.Panel):
 
-    def __init__(self, parent, config):
+    def __init__(self, parent, config, handle_db_error):
         wx.Panel.__init__(self, parent)
         self.config = config
+        self.handle_db_error = handle_db_error
         self.sidebar_width = self.config.get_sidebar_width()
         self._create_gui()
 
@@ -1021,7 +1024,7 @@ class TimelinePanel(wx.Panel):
             self.sidebar_width = self.splitter.GetSashPosition()
 
     def _create_sidebar(self):
-        self.sidebar = Sidebar(self.splitter)
+        self.sidebar = Sidebar(self.splitter, self.handle_db_error)
 
     def _create_drawing_area(self):
         main_frame = wx.GetTopLevelParent(self)
@@ -1096,13 +1099,12 @@ class Sidebar(wx.Panel):
     Currently only shows the categories with visibility check boxes.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, handle_db_error):
         wx.Panel.__init__(self, parent, style=wx.BORDER_NONE)
-        self._create_gui()
+        self._create_gui(handle_db_error)
 
-    def _create_gui(self):
-        main_frame = wx.GetTopLevelParent(self)
-        self.cattree = CategoriesTree(self, main_frame.handle_db_error)
+    def _create_gui(self, handle_db_error):
+        self.cattree = CategoriesTree(self, handle_db_error)
         # Layout
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.cattree, flag=wx.GROW, proportion=1)
