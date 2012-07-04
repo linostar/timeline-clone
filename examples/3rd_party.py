@@ -22,7 +22,15 @@ class MainFrame(wx.Frame):
             os.path.join(root_dir, "example.timeline"))
 
 
+def install_gettext_in_builtin_namespace():
+    def _(message):
+        return message
+    import __builtin__
+    __builtin__.__dict__["_"] = _
+
+
 if __name__ == "__main__":
+    install_gettext_in_builtin_namespace()
     app = wx.PySimpleApp()
     main_frame = MainFrame()
     main_frame.Show()
