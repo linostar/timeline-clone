@@ -111,7 +111,7 @@ class MainFrame(wx.Frame):
         self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
 
     def _create_main_panel(self):
-        self.main_panel = MainPanel(self, self.config)
+        self.main_panel = MainPanel(self, self.config, self)
 
     def _create_main_menu_bar(self):
         main_menu_bar = wx.MenuBar()
@@ -897,9 +897,10 @@ class MainPanel(wx.Panel):
     Also displays the search bar.
     """
 
-    def __init__(self, parent, config):
+    def __init__(self, parent, config, main_frame):
         wx.Panel.__init__(self, parent)
         self.config = config
+        self.main_frame = main_frame
         self._create_gui()
         # Install variables for backwards compatibility
         self.cattree = self.timeline_panel.sidebar.cattree
@@ -933,12 +934,11 @@ class MainPanel(wx.Panel):
         self.searchbar = SearchBar(self, search_close)
         self.searchbar.Show(False)
         # Panels
-        self.welcome_panel = WelcomePanel(self)
-        main_frame = wx.GetTopLevelParent(self)
+        self.welcome_panel = WelcomePanel(self, self.main_frame)
         self.timeline_panel = TimelinePanel(
-            self, self.config, main_frame.handle_db_error,
-            main_frame.status_bar_adapter, main_frame)
-        self.error_panel = ErrorPanel(self)
+            self, self.config, self.main_frame.handle_db_error,
+            self.main_frame.status_bar_adapter, self.main_frame)
+        self.error_panel = ErrorPanel(self, self.main_frame)
         # Layout
         self.sizerOuter = wx.BoxSizer(wx.VERTICAL)
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -962,8 +962,9 @@ class MainPanel(wx.Panel):
 
 class WelcomePanel(wx.Panel):
 
-    def __init__(self, parent):
+    def __init__(self, parent, main_frame):
         wx.Panel.__init__(self, parent)
+        self.main_frame = main_frame
         self._create_gui()
 
     def _create_gui(self):
@@ -986,7 +987,7 @@ class WelcomePanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_tutorial_on_click(self, e):
-        wx.GetTopLevelParent(self).open_timeline(":tutorial:")
+        self.main_frame.open_timeline(":tutorial:")
 
     def activated(self):
         pass
@@ -1063,8 +1064,9 @@ class TimelinePanel(wx.Panel):
 
 class ErrorPanel(wx.Panel):
 
-    def __init__(self, parent):
+    def __init__(self, parent, main_frame):
         wx.Panel.__init__(self, parent)
+        self.main_frame = main_frame
         self._create_gui()
 
     def populate(self, error):
@@ -1090,7 +1092,7 @@ class ErrorPanel(wx.Panel):
         self.SetSizer(hsizer)
 
     def _btn_contact_on_click(self, e):
-        wx.GetTopLevelParent(self).help_browser.show_page("contact")
+        self.main_frame.help_browser.show_page("contact")
 
     def activated(self):
         pass
