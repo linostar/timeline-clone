@@ -936,7 +936,8 @@ class MainPanel(wx.Panel):
         self.welcome_panel = WelcomePanel(self)
         main_frame = wx.GetTopLevelParent(self)
         self.timeline_panel = TimelinePanel(
-            self, self.config, main_frame.handle_db_error)
+            self, self.config, main_frame.handle_db_error,
+            main_frame.status_bar_adapter)
         self.error_panel = ErrorPanel(self)
         # Layout
         self.sizerOuter = wx.BoxSizer(wx.VERTICAL)
@@ -993,10 +994,11 @@ class WelcomePanel(wx.Panel):
 
 class TimelinePanel(wx.Panel):
 
-    def __init__(self, parent, config, handle_db_error):
+    def __init__(self, parent, config, handle_db_error, status_bar_adapter):
         wx.Panel.__init__(self, parent)
         self.config = config
         self.handle_db_error = handle_db_error
+        self.status_bar_adapter = status_bar_adapter
         self.sidebar_width = self.config.get_sidebar_width()
         self._create_gui()
 
@@ -1027,12 +1029,11 @@ class TimelinePanel(wx.Panel):
         self.sidebar = Sidebar(self.splitter, self.handle_db_error)
 
     def _create_drawing_area(self):
-        main_frame = wx.GetTopLevelParent(self)
         self.drawing_area = DrawingAreaPanel(
             self.splitter,
-            main_frame.status_bar_adapter,
+            self.status_bar_adapter,
             self.divider_line_slider,
-            main_frame.handle_db_error,
+            self.handle_db_error,
             self.config)
 
     def _layout_components(self):
