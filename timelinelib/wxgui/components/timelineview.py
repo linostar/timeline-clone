@@ -89,7 +89,7 @@ class DrawingAreaPanel(wx.Panel):
         self.main_frame.duplicate_event(event)
 
     def create_new_event(self, start_time, end_time):
-        wx.GetTopLevelParent(self).create_new_event(start_time, end_time)
+        self.main_frame.create_new_event(start_time, end_time)
 
     def start_balloon_show_timer(self, milliseconds=-1, oneShot=False):
         self.balloon_show_timer.Start(milliseconds, oneShot)
