@@ -60,12 +60,18 @@ class DummyStatusBarAdapter(object):
         pass
 
 
+class DummyMainFrame(object):
+
+    def enable_disable_menus(self):
+        pass
+
+
 class TimelineComponent(TimelinePanel):
 
     def __init__(self, parent):
         TimelinePanel.__init__(
             self, parent, DummyConfig(), self.handle_db_error,
-            DummyStatusBarAdapter())
+            DummyStatusBarAdapter(), DummyMainFrame())
 
     def handle_db_error(self, e):
         pass
