@@ -34,7 +34,7 @@ class ATime(object):
     def __eq__(self, other):
         return isinstance(other, ATime) and self.num == other.num
 
-    def __ne__(self, ohter):
+    def __ne__(self, other):
         return not (self == other)
 
     def __add__(self, other):
@@ -72,7 +72,7 @@ class ADelta(object):
         return isinstance(other, ADelta) and self.num == other.num
 
     # Exists only only to simplify testing
-    def __ne__(self, ohter):
+    def __ne__(self, other):
         return not (self == other)
 
     # Exists only only to simplify testing
