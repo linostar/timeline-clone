@@ -18,11 +18,58 @@
 
 import wx
 
+from timelinelib.db import db_open
+from timelinelib.wxgui.dialogs.mainframe import TimelinePanel
 
-class TimelineComponent(wx.Button):
+
+class DummyConfig(object):
+
+    def __init__(self):
+        self.window_size = (100, 100)
+        self.window_pos = (100, 100)
+        self.window_maximized = False
+        self.show_sidebar = True
+        self.show_legend = True
+        self.sidebar_width = 200
+        self.recently_opened = []
+        self.open_recent_at_startup = False
+        self.balloon_on_hover = True
+        self.week_start = "monaday"
+        self.use_wide_date_range = False
+        self.use_inertial_scrolling = False
+
+    def get_sidebar_width(self):
+        return self.sidebar_width
+
+    def get_show_legend(self):
+        return self.show_legend
+
+    def get_balloon_on_hover(self):
+        return self.balloon_on_hover
+
+
+class DummyStatusBarAdapter(object):
+
+    def set_text(self, text):
+        pass
+
+    def set_hidden_event_count_text(self, text):
+        pass
+
+    def set_read_only_text(self, text):
+        pass
+
+
+class TimelineComponent(TimelinePanel):
 
     def __init__(self, parent):
-        wx.Button.__init__(self, parent)
+        TimelinePanel.__init__(
+            self, parent, DummyConfig(), self.handle_db_error,
+            DummyStatusBarAdapter())
+
+    def handle_db_error(self, e):
+        pass
 
     def open_timeline(self, path):
-        pass
+        timeline = db_open(path)
+        self.drawing_area.set_timeline(timeline)
