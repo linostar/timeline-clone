@@ -26,7 +26,8 @@ def install_gettext_in_builtin_namespace():
     def _(message):
         return message
     import __builtin__
-    __builtin__.__dict__["_"] = _
+    if not "_" in __builtin__.__dict__:
+        __builtin__.__dict__["_"] = _
 
 
 if __name__ == "__main__":
