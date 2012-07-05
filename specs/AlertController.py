@@ -37,27 +37,24 @@ class AlertControllerSpec(unittest.TestCase):
         self.given_early_pytimes()
         self.given_controller_time_type(PyTimeType())
         time_as_text = "%s" % self.tm
-        expired = self.controller._time_has_expired(time_as_text)
+        expired = self.controller._time_has_expired(self.tm)
         self.assertTrue(expired)
 
     def test_pytime_has_not_expired(self):
         self.given_late_pytimes()
-        time_as_text = "%s" % self.tm
-        expired = self.controller._time_has_expired(time_as_text)
+        expired = self.controller._time_has_expired(self.tm)
         self.assertFalse(expired)
 
     def test_wxtime_has_expired(self):
         self.given_early_wxtimes()
         self.given_controller_time_type(WxTimeType())
-        time_as_text = "%s" % self.tm
-        expired = self.controller._time_has_expired(time_as_text)
+        expired = self.controller._time_has_expired(self.tm)
         self.assertTrue(expired)
 
     def test_wxtime_has_not_expired(self):
         self.given_late_wxtimes()
         self.given_controller_time_type(WxTimeType())
-        time_as_text = "%s" % self.tm
-        expired = self.controller._time_has_expired(time_as_text)
+        expired = self.controller._time_has_expired(self.tm)
         self.assertFalse(expired)
 
     def given_early_pytimes(self):
