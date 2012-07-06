@@ -791,8 +791,7 @@ class AlertController(object):
         for event in all_events:
             alert = event.get_data("alert")
             if alert is not None:
-                alert_time = self._alert_time_as_text(alert)
-                if self._time_has_expired(alert_time):
+                if self._time_has_expired(alert[0]):
                     self._display_and_delete_event_alert(event, alert)
 
     def _display_and_delete_event_alert(self, event, alert):
@@ -802,9 +801,9 @@ class AlertController(object):
     def _alert_time_as_text(self, alert):
         return "%s" % alert[0]
 
-    def _time_has_expired(self, time_as_text):
-        now_as_text = "%s" % self.time_type.now()
-        return time_as_text <= now_as_text
+    def _time_has_expired(self, time):
+        return time <= self.time_type.now()
+
 
     def _display_alert_dialog(self, alert, event):
         text = self._format_alert_text(alert, event)
