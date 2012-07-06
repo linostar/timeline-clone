@@ -255,7 +255,7 @@ class DrawingArea(object):
             self.view.open_event_editor_for(event)
         else:
             current_time = self.get_time(x)
-            self.view.create_new_event(current_time, current_time)
+            self.view.open_create_event_editor(current_time, current_time)
 
     def get_time(self, x):
         return self.drawing_algorithm.get_time(x)

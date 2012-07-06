@@ -39,6 +39,7 @@ from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
+from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.playframe import PlayFrame
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
@@ -385,14 +386,8 @@ class MainFrame(wx.Frame):
         self.menu_controller.add_menu_requiring_writable_timeline(create_event_item)
 
     def _mnu_timeline_create_event_on_click(self, evt):
-        self.create_new_event()
-
-    def create_new_event(self, start=None, end=None):
-        def create_event_editor():
-            return EventEditorDialog(
-                self, self.config, _("Create Event"), self.timeline,
-                start, end)
-        gui_utils.show_modal(create_event_editor, self.handle_db_error)
+        open_create_event_editor(
+            self, self.config, self.timeline, self.handle_db_error)
 
     def _create_timeline_duplicate_event_menu_item(self, timeline_menu):
         self.mnu_timeline_duplicate_event = timeline_menu.Append(

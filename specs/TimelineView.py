@@ -462,7 +462,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assertTrue(self.view.redraw_surface.called)
 
     def assert_created_event_with_period(self, start, end):
-        self.view.create_new_event.assert_called_with(
+        self.view.open_create_event_editor.assert_called_with(
             human_time_to_py(start), human_time_to_py(end))
 
     def assert_is_selected(self, event):

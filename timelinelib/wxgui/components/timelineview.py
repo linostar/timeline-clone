@@ -21,6 +21,7 @@ import wx
 from timelinelib.drawing import get_drawer
 from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
+from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.eventeditor import open_event_editor_for
 from timelinelib.wxgui.utils import _ask_question
 
@@ -101,8 +102,14 @@ class DrawingAreaPanel(wx.Panel):
             self.fn_handle_db_error,
             event)
 
-    def create_new_event(self, start_time, end_time):
-        self.main_frame.create_new_event(start_time, end_time)
+    def open_create_event_editor(self, start_time, end_time):
+        open_create_event_editor(
+            self,
+            self.config,
+            self.controller.get_timeline(),
+            self.fn_handle_db_error,
+            start_time,
+            end_time)
 
     def start_balloon_show_timer(self, milliseconds=-1, oneShot=False):
         self.balloon_show_timer.Start(milliseconds, oneShot)
