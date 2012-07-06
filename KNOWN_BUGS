@@ -1,5 +1,8 @@
 Sorting of categories is incorrect when using non-english characters
 
+    The sorting isn't correct for å and ä. ä comes before å. Is it possible to
+    fix that?
+
     The problem with unicode is that it has no knowledge about an alphabet. I
     am note sure how Python does the comparison, but it seems like the English
     alphabet is correctly sorted. Maybe with the exception that upper case are
