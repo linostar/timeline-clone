@@ -37,7 +37,7 @@ from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
-from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_selected_event
+from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.playframe import PlayFrame
@@ -402,7 +402,18 @@ class MainFrame(wx.Frame):
         self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_duplicate_event)
 
     def _mnu_timeline_duplicate_event_on_click(self, evt):
-        open_duplicate_event_dialog_for_selected_event(self)
+        try:
+            drawing_area = self.main_panel.drawing_area
+            id = drawing_area.get_view_properties().get_selected_event_ids()[0]
+            event = self.timeline.find_event_with_id(id)
+        except IndexError, e:
+            # No event selected so do nothing!
+            return
+        open_duplicate_event_dialog_for_event(
+            self,
+            self.timeline,
+            self.handle_db_error,
+            event)
 
     def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
         self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(

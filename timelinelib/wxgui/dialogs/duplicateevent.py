@@ -135,18 +135,3 @@ def open_duplicate_event_dialog_for_event(parent, db, handle_db_error, event):
     def create_dialog():
         return DuplicateEventDialog(parent, db, event)
     gui_utils.show_modal(create_dialog, handle_db_error)
-
-
-def open_duplicate_event_dialog_for_selected_event(main_frame):
-    try:
-        drawing_area = main_frame.main_panel.drawing_area
-        id = drawing_area.get_view_properties().get_selected_event_ids()[0]
-        event = main_frame.timeline.find_event_with_id(id)
-    except IndexError, e:
-        # No event selected so do nothing!
-        return
-    open_duplicate_event_dialog_for_event(
-        main_frame,
-        main_frame.timeline,
-        main_frame.handle_db_error,
-        event)
