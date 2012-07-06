@@ -623,17 +623,18 @@ def edit_event(parent, config, db, handle_db_error, event):
     gui_utils.show_modal(create_event_editor, handle_db_error)
 
 
-def duplicate_event(main_frame, event=None):
-    def show_dialog(event):
-        def create_dialog():
-            return DuplicateEventDialog(main_frame, main_frame.timeline, event)
-        gui_utils.show_modal(create_dialog, main_frame.handle_db_error)
-    if event is None:
-        try:
-            drawing_area = main_frame.main_panel.drawing_area
-            id = drawing_area.get_view_properties().get_selected_event_ids()[0]
-            event = main_frame.timeline.find_event_with_id(id)
-        except IndexError, e:
-            # No event selected so do nothing!
-            return
-    show_dialog(event)
+def duplicate_event(main_frame, event):
+    def create_dialog():
+        return DuplicateEventDialog(main_frame, main_frame.timeline, event)
+    gui_utils.show_modal(create_dialog, main_frame.handle_db_error)
+
+
+def duplicate_selected_event(main_frame):
+    try:
+        drawing_area = main_frame.main_panel.drawing_area
+        id = drawing_area.get_view_properties().get_selected_event_ids()[0]
+        event = main_frame.timeline.find_event_with_id(id)
+    except IndexError, e:
+        # No event selected so do nothing!
+        return
+    duplicate_event(main_frame, event)
