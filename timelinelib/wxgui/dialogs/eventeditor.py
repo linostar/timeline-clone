@@ -25,7 +25,6 @@ from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 from timelinelib.wxgui.components.categorychoice import CategoryChoice
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
-from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
@@ -621,20 +620,3 @@ def edit_event(parent, config, db, handle_db_error, event):
             return EventEditorDialog(
                 parent, config, _("Edit Event"), db, event=event)
     gui_utils.show_modal(create_event_editor, handle_db_error)
-
-
-def duplicate_event(main_frame, event):
-    def create_dialog():
-        return DuplicateEventDialog(main_frame, main_frame.timeline, event)
-    gui_utils.show_modal(create_dialog, main_frame.handle_db_error)
-
-
-def duplicate_selected_event(main_frame):
-    try:
-        drawing_area = main_frame.main_panel.drawing_area
-        id = drawing_area.get_view_properties().get_selected_event_ids()[0]
-        event = main_frame.timeline.find_event_with_id(id)
-    except IndexError, e:
-        # No event selected so do nothing!
-        return
-    duplicate_event(main_frame, event)

@@ -18,10 +18,10 @@
 
 import wx
 
-from timelinelib.wxgui.utils import BORDER
-from timelinelib.wxgui.utils import _set_focus_and_select
-from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.editors.duplicateevent import DuplicateEventEditor
+from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import _set_focus_and_select
 import timelinelib.wxgui.utils as gui_utils
 
 
@@ -129,3 +129,20 @@ class DuplicateEventDialog(wx.Dialog):
         gui_utils.set_wait_cursor(self)
         self.controller.create_duplicates_and_save()
         gui_utils.set_default_cursor(self)
+
+
+def duplicate_event(main_frame, event):
+    def create_dialog():
+        return DuplicateEventDialog(main_frame, main_frame.timeline, event)
+    gui_utils.show_modal(create_dialog, main_frame.handle_db_error)
+
+
+def duplicate_selected_event(main_frame):
+    try:
+        drawing_area = main_frame.main_panel.drawing_area
+        id = drawing_area.get_view_properties().get_selected_event_ids()[0]
+        event = main_frame.timeline.find_event_with_id(id)
+    except IndexError, e:
+        # No event selected so do nothing!
+        return
+    duplicate_event(main_frame, event)

@@ -37,7 +37,7 @@ from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
-from timelinelib.wxgui.dialogs.eventeditor import duplicate_selected_event
+from timelinelib.wxgui.dialogs.duplicateevent import duplicate_selected_event
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.playframe import PlayFrame

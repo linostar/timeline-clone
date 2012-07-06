@@ -20,7 +20,7 @@ import wx
 
 from timelinelib.drawing import get_drawer
 from timelinelib.view.drawingarea import DrawingArea
-from timelinelib.wxgui.dialogs.eventeditor import duplicate_event
+from timelinelib.wxgui.dialogs.duplicateevent import duplicate_event
 from timelinelib.wxgui.dialogs.eventeditor import edit_event
 from timelinelib.wxgui.utils import _ask_question
 
