@@ -37,7 +37,7 @@ from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
-from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
+from timelinelib.wxgui.dialogs.eventeditor import duplicate_event
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.playframe import PlayFrame
@@ -402,7 +402,7 @@ class MainFrame(wx.Frame):
         self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_duplicate_event)
 
     def _mnu_timeline_duplicate_event_on_click(self, evt):
-        self.duplicate_event()
+        duplicate_event(self)
 
     def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
         self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
@@ -411,21 +411,6 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_timeline_measure_distance_between_events_on_click,
                   self.mnu_timeline_measure_distance_between_events)
         self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_measure_distance_between_events)
-
-    def duplicate_event(self, event=None):
-        def show_dialog(event):
-            def create_dialog():
-                return DuplicateEventDialog(self, self.timeline, event)
-            gui_utils.show_modal(create_dialog, self.handle_db_error)
-        if event is None:
-            try:
-                drawing_area = self.main_panel.drawing_area
-                id = drawing_area.get_view_properties().get_selected_event_ids()[0]
-                event = self.timeline.find_event_with_id(id)
-            except IndexError, e:
-                # No event selected so do nothing!
-                return
-        show_dialog(event)
 
     def _mnu_timeline_measure_distance_between_events_on_click(self, evt):
         self._measure_distance_between_events()

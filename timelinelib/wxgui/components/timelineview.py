@@ -20,6 +20,7 @@ import wx
 
 from timelinelib.drawing import get_drawer
 from timelinelib.view.drawingarea import DrawingArea
+from timelinelib.wxgui.dialogs.eventeditor import duplicate_event
 from timelinelib.wxgui.dialogs.eventeditor import edit_event
 from timelinelib.wxgui.utils import _ask_question
 
@@ -94,7 +95,7 @@ class DrawingAreaPanel(wx.Panel):
             event)
 
     def duplicate_event(self, event):
-        self.main_frame.duplicate_event(event)
+        duplicate_event(self.main_frame, event)
 
     def create_new_event(self, start_time, end_time):
         self.main_frame.create_new_event(start_time, end_time)
