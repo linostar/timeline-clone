@@ -221,10 +221,10 @@ class DrawingArea(object):
         return None
 
     def _context_menu_on_edit_event(self, evt):
-        self.view.edit_event(self.context_menu_event)
+        self.view.open_event_editor_for(self.context_menu_event)
 
     def _context_menu_on_duplicate_event(self, evt):
-        self.view.duplicate_event(self.context_menu_event)
+        self.view.open_duplicate_event_dialog_for_event(self.context_menu_event)
 
     def _context_menu_on_delete_event(self, evt):
         self.context_menu_event.selected = True
@@ -252,7 +252,7 @@ class DrawingArea(object):
         self._toggle_event_selection(x, y, ctrl_down, alt_down)
         event = self.drawing_algorithm.event_at(x, y, alt_down)
         if event:
-            self.view.edit_event(event)
+            self.view.open_event_editor_for(event)
         else:
             current_time = self.get_time(x)
             self.view.create_new_event(current_time, current_time)

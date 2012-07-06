@@ -207,7 +207,7 @@ class TimelineViewSpec(unittest.TestCase):
         event = self.given_event_with(pos=(40, 60), size=(20, 10))
         self.init_view_with_db()
         self.simulate_mouse_double_click(50, 65)
-        self.view.edit_event.assert_called_with(event)
+        self.view.open_event_editor_for.assert_called_with(event)
         self.assert_timeline_redrawn()
 
     def test_selects_and_deselects_event_when_clicking_on_it(self):

@@ -611,7 +611,7 @@ class AlertEditor(wx.Panel):
         self.btn_clear.Enable(value)
         self.GetSizer().Layout()
 
-def edit_event(parent, config, db, handle_db_error, event):
+def open_event_editor_for(parent, config, db, handle_db_error, event):
     def create_event_editor():
         if event.is_container():
             title = _("Edit Container")
