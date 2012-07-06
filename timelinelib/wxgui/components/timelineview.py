@@ -20,6 +20,7 @@ import wx
 
 from timelinelib.drawing import get_drawer
 from timelinelib.view.drawingarea import DrawingArea
+from timelinelib.wxgui.dialogs.eventeditor import edit_event
 from timelinelib.wxgui.utils import _ask_question
 
 
@@ -28,6 +29,8 @@ class DrawingAreaPanel(wx.Panel):
     def __init__(self, parent, status_bar_adapter, divider_line_slider,
                  fn_handle_db_error, config, main_frame):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
+        self.fn_handle_db_error = fn_handle_db_error
+        self.config = config
         self.main_frame = main_frame
         self.controller = DrawingArea(
             self, status_bar_adapter, config, get_drawer(),
@@ -83,7 +86,12 @@ class DrawingAreaPanel(wx.Panel):
         self.main_frame.enable_disable_menus()
 
     def edit_event(self, event):
-        self.main_frame.edit_event(event)
+        edit_event(
+            self,
+            self.config,
+            self.controller.get_timeline(),
+            self.fn_handle_db_error,
+            event)
 
     def duplicate_event(self, event):
         self.main_frame.duplicate_event(event)

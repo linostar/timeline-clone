@@ -628,18 +628,6 @@ class MainFrame(wx.Frame):
         self.controller.open_timeline(input_file)
         self._update_navigation_menu_items()
 
-    def edit_event(self, event):
-        def create_event_editor():
-            if event.is_container():
-                parent = self
-                title = _("Edit Container")
-                timeline = self.timeline
-                return ContainerEditorDialog(parent, title, timeline, event)
-            else:
-                return EventEditorDialog(self, self.config, _("Edit Event"),
-                                         self.timeline, event=event)
-        gui_utils.show_modal(create_event_editor, self.handle_db_error)
-
     def handle_db_error(self, error):
         _display_error_message(ex_msg(error), self)
         self._switch_to_error_view(error)

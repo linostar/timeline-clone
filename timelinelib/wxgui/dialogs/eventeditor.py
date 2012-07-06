@@ -610,3 +610,13 @@ class AlertEditor(wx.Panel):
         self.btn_add.Enable(not value)
         self.btn_clear.Enable(value)
         self.GetSizer().Layout()
+
+def edit_event(parent, config, db, handle_db_error, event):
+    def create_event_editor():
+        if event.is_container():
+            title = _("Edit Container")
+            return ContainerEditorDialog(parent, title, db, event)
+        else:
+            return EventEditorDialog(
+                parent, config, _("Edit Event"), db, event=event)
+    gui_utils.show_modal(create_event_editor, handle_db_error)
