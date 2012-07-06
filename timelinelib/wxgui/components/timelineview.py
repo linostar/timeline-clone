@@ -95,7 +95,11 @@ class DrawingAreaPanel(wx.Panel):
             event)
 
     def open_duplicate_event_dialog_for_event(self, event):
-        open_duplicate_event_dialog_for_event(self.main_frame, event)
+        open_duplicate_event_dialog_for_event(
+            self,
+            self.controller.get_timeline(),
+            self.fn_handle_db_error,
+            event)
 
     def create_new_event(self, start_time, end_time):
         self.main_frame.create_new_event(start_time, end_time)

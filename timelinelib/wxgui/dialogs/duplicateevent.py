@@ -131,10 +131,10 @@ class DuplicateEventDialog(wx.Dialog):
         gui_utils.set_default_cursor(self)
 
 
-def open_duplicate_event_dialog_for_event(main_frame, event):
+def open_duplicate_event_dialog_for_event(parent, db, handle_db_error, event):
     def create_dialog():
-        return DuplicateEventDialog(main_frame, main_frame.timeline, event)
-    gui_utils.show_modal(create_dialog, main_frame.handle_db_error)
+        return DuplicateEventDialog(parent, db, event)
+    gui_utils.show_modal(create_dialog, handle_db_error)
 
 
 def open_duplicate_event_dialog_for_selected_event(main_frame):
@@ -145,4 +145,8 @@ def open_duplicate_event_dialog_for_selected_event(main_frame):
     except IndexError, e:
         # No event selected so do nothing!
         return
-    open_duplicate_event_dialog_for_event(main_frame, event)
+    open_duplicate_event_dialog_for_event(
+        main_frame,
+        main_frame.timeline,
+        main_frame.handle_db_error,
+        event)
