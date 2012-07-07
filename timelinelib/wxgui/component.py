@@ -41,6 +41,9 @@ class DummyConfig(object):
     def get_sidebar_width(self):
         return self.sidebar_width
 
+    def get_show_sidebar(self):
+        return self.show_sidebar
+
     def get_show_legend(self):
         return self.show_legend
 
@@ -72,6 +75,7 @@ class TimelineComponent(TimelinePanel):
         TimelinePanel.__init__(
             self, parent, DummyConfig(), self.handle_db_error,
             DummyStatusBarAdapter(), DummyMainFrame())
+        self.activated()
 
     def handle_db_error(self, e):
         pass
@@ -79,3 +83,4 @@ class TimelineComponent(TimelinePanel):
     def open_timeline(self, path):
         timeline = db_open(path)
         self.drawing_area.set_timeline(timeline)
+        self.sidebar.cattree.initialize_from_timeline_view(self.drawing_area)
