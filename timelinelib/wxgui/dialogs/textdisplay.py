@@ -16,9 +16,10 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.wxgui.utils import BORDER
-
 import wx
+
+from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.utils import _display_error_message
 
 
 class TextDisplayDialog(wx.Dialog):
