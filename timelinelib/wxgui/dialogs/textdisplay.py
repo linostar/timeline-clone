@@ -20,6 +20,7 @@ import wx
 
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.editors.textdisplay import TextDisplayEditor
 
 
 class TextDisplayDialog(wx.Dialog):
@@ -27,7 +28,14 @@ class TextDisplayDialog(wx.Dialog):
     def __init__(self, title, text, parent=None):
         wx.Dialog.__init__(self, parent, title=title)
         self._create_gui()
+        self.controller = TextDisplayEditor(self, text)
+        self.controller.initialize()
+
+    def set_text(self, text):
         self._text.SetValue(text)
+
+    def get_text(self):
+        return self._text.GetValue()
 
     def _create_gui(self):
         self._text = wx.TextCtrl(self, size=(660, 300), style=wx.TE_MULTILINE)
@@ -50,7 +58,7 @@ class TextDisplayDialog(wx.Dialog):
 
     def _btn_copy_on_click(self, evt):
         if wx.TheClipboard.Open():
-            obj = wx.TextDataObject(self._text.GetValue())
+            obj = wx.TextDataObject(self.controller.get_text())
             wx.TheClipboard.SetData(obj)
             wx.TheClipboard.Close()
         else:
