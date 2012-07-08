@@ -5,6 +5,7 @@ Bug fixes:
 
   * Adding multiple events without closing event dialog, works again. 
   * Alert time comparision problem solved
+  * Fixed problem with ends-today property
 
 
 Timeline 0.17.0, released on 15 June 2012
