@@ -52,6 +52,11 @@ class EventEditor(object):
         self.view.set_name(self.name)
         self.view.set_focus("start")
 
+    def start_is_in_history(self):
+        if self.start is None:
+            return False
+        return self.start < self.timeline.time_type.now()
+    
     def _set_values(self, start, end, event):
         self.event = event
         if self.event != None:

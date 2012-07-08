@@ -144,7 +144,8 @@ class EventEditorDialog(wx.Dialog):
 
     def _enable_disable_ends_today(self):
         enable = (self._container_not_selected() and
-                  not self.chb_locked.GetValue())
+                  not self.chb_locked.GetValue() and
+                  self.controller.start_is_in_history())
         self.chb_ends_today.Enable(enable)
 
     def _enable_disable_locked(self):
