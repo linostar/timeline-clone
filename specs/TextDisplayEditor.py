@@ -34,18 +34,24 @@ class TextDisplayEditorSpec(unittest.TestCase):
         self.view.set_text.assert_called_with(self.text)
 
     def test_get_text_returns_dialog_text(self):
-        self.view.get_text.return_value = "foo"
-        self.editor.initialize()
-        text = self.editor.get_text()
-        self.assertEqual("foo", text) 
-
-    def test_get_text_returns_dialog_text2(self):
-        self.view.get_text.return_value = "foo2"
-        self.editor.initialize()
-        text = self.editor.get_text()
-        self.assertEqual("foo2", text) 
+        self.assertTrue(WhenDialogTextIs("foo2", self.view, self.editor).controller_returns("foo2"))
+        self.assertTrue(WhenDialogTextIs("foo3", self.view, self.editor).controller_returns("foo3"))
 
     def setUp(self):
         self.text = "buu"
         self.view = Mock(TextDisplayDialog)
         self.editor = TextDisplayEditor(self.view, self.text)
+
+
+class WhenDialogTextIs(object):
+
+    def __init__(self, text, view, editor):
+        self.text = text
+        view.get_text.return_value = text
+        self.editor = editor
+        self.editor.initialize()
+
+    def controller_returns(self, text):
+        text = self.editor.get_text()
+        return self.text == text
+
