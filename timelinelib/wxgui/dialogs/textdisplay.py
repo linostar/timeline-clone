@@ -23,11 +23,53 @@ from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.editors.textdisplay import TextDisplayEditor
 
 
-class TextDisplayDialog(wx.Dialog):
+class TextDisplayDialogGui(wx.Dialog):
 
-    def __init__(self, title, text, parent=None):
+    def __init__(self, title, parent=None):
         wx.Dialog.__init__(self, parent, title=title)
         self._create_gui()
+
+    def _create_gui(self):
+        self._text = self._create_text_control()
+        button_box = self._create_button_box()
+        vbox = self._create_vbox(self._text, button_box)
+        self.SetSizerAndFit(vbox)
+
+    def _create_text_control(self):
+        return wx.TextCtrl(self, size=(660, 300), style=wx.TE_MULTILINE)
+
+    def _create_button_box(self):
+        self.btn_copy = self._create_copy_btn()
+        self.btn_close = self._create_close_btn()
+        button_box = wx.BoxSizer(wx.HORIZONTAL)
+        button_box.Add(self.btn_copy, flag=wx.RIGHT, border=BORDER)
+        button_box.AddStretchSpacer()
+        button_box.Add(self.btn_close, flag=wx.LEFT, border=BORDER)
+        return button_box
+
+    def _create_vbox(self, text, btn_box):
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(text, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        vbox.Add(btn_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        return vbox
+
+    def _create_copy_btn(self):
+        btn_copy = wx.Button(self, wx.ID_COPY)
+        return btn_copy
+
+    def _create_close_btn(self):
+        btn_close = wx.Button(self, wx.ID_CLOSE)
+        btn_close.SetDefault()
+        btn_close.SetFocus()
+        self.SetAffirmativeId(wx.ID_CLOSE)
+        return btn_close
+
+
+class TextDisplayDialog(TextDisplayDialogGui):
+
+    def __init__(self, title, text, parent=None):
+        TextDisplayDialogGui.__init__(self, title, parent)
+        self._bind_events()
         self.controller = TextDisplayEditor(self, text)
         self.controller.initialize()
 
@@ -37,33 +79,19 @@ class TextDisplayDialog(wx.Dialog):
     def get_text(self):
         return self._text.GetValue()
 
-    def _create_gui(self):
-        self._text = wx.TextCtrl(self, size=(660, 300), style=wx.TE_MULTILINE)
-        btn_copy = wx.Button(self, wx.ID_COPY)
-        self.Bind(wx.EVT_BUTTON, self._btn_copy_on_click, btn_copy)
-        btn_close = wx.Button(self, wx.ID_CLOSE)
-        btn_close.SetDefault()
-        btn_close.SetFocus()
-        self.SetAffirmativeId(wx.ID_CLOSE)
-        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, btn_close)
-        # Layout
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(self._text, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        button_box = wx.BoxSizer(wx.HORIZONTAL)
-        button_box.Add(btn_copy, flag=wx.RIGHT, border=BORDER)
-        button_box.AddStretchSpacer()
-        button_box.Add(btn_close, flag=wx.LEFT, border=BORDER)
-        vbox.Add(button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
-        self.SetSizerAndFit(vbox)
+    def _bind_events(self):
+        self.Bind(wx.EVT_BUTTON, self._btn_copy_on_click, self.btn_copy)
+        self.Bind(wx.EVT_BUTTON, self._btn_close_on_click, self.btn_close)
 
     def _btn_copy_on_click(self, evt):
         if wx.TheClipboard.Open():
-            obj = wx.TextDataObject(self.controller.get_text())
-            wx.TheClipboard.SetData(obj)
-            wx.TheClipboard.Close()
+            self._copy_text_to_clipboard()
         else:
-            msg = _("Unable to copy to clipboard.")
-            _display_error_message(msg)
+            _display_error_message(_("Unable to copy to clipboard."))
 
+    def _copy_text_to_clipboard(self):
+        obj = wx.TextDataObject(self.controller.get_text())
+        wx.TheClipboard.SetData(obj)
+        wx.TheClipboard.Close()
     def _btn_close_on_click(self, evt):
         self.Close()
