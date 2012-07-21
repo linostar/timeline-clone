@@ -301,10 +301,10 @@ class DrawingArea(object):
     def mouse_moved(self, x, y, alt_down=False):
         self.input_handler.mouse_moved(x, y, alt_down)
 
-    def mouse_wheel_moved(self, rotation, ctrl_down, shift_down):
+    def mouse_wheel_moved(self, rotation, ctrl_down, shift_down, x):
         direction = _step_function(rotation)
         if ctrl_down:
-            self._zoom_timeline(direction)
+            self._zoom_timeline(direction, x)
         elif shift_down:
             self.divider_line_slider.SetValue(self.divider_line_slider.GetValue() + direction)
             self._redraw_timeline()
@@ -454,8 +454,11 @@ class DrawingArea(object):
     def _scroll_timeline(self, delta):
         self.navigate_timeline(lambda tp: tp.move_delta(-delta))
 
-    def _zoom_timeline(self, direction=0):
-        self.navigate_timeline(lambda tp: tp.zoom(direction))
+    def _zoom_timeline(self, direction, x):
+        """ zoom time line at position x """
+        width, height = self.view.GetSizeTuple()
+        x_percent_of_width=float(x)/width
+        self.navigate_timeline(lambda tp: tp.zoom(direction, x_percent_of_width))
 
     def _delete_selected_events(self):
         """After acknowledge from the user, delete all selected events."""

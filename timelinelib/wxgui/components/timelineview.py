@@ -209,7 +209,7 @@ class DrawingAreaPanel(wx.Panel):
         self.controller.mouse_moved(evt.m_x, evt.m_y, evt.m_altDown)
 
     def _on_mousewheel(self, evt):
-        self.controller.mouse_wheel_moved(evt.m_wheelRotation, evt.ControlDown(), evt.ShiftDown())
+        self.controller.mouse_wheel_moved(evt.m_wheelRotation, evt.ControlDown(), evt.ShiftDown(), evt.GetX())
 
     def _on_key_down(self, evt):
         self.controller.key_down(evt.GetKeyCode(), evt.AltDown())
