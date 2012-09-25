@@ -115,10 +115,6 @@ class TimePeriod(object):
         return self.start_time + self.time_type.half_delta(self.delta())
 
     def zoom(self, times, ratio=0.5):
-        if times < 0:
-            ratio = 0.5
-            # alternatively zooming out inverse centered
-            # ratio = 1-ratio
         MAX_ZOOM_DELTA, max_zoom_error_text = self.time_type.get_max_zoom_delta()
         MIN_ZOOM_DELTA, min_zoom_error_text = self.time_type.get_min_zoom_delta()
         start_delta = self.time_type.mult_timedelta(self.delta(), times * ratio / 5.0)
