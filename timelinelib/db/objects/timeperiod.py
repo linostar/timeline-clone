@@ -114,12 +114,7 @@ class TimePeriod(object):
         """
         return self.start_time + self.time_type.half_delta(self.delta())
 
-    def zoom(self, times, ratio):
-        """
-        Zoom at specific position x, ratio provides x in percent of width.
-        When zooming out (times < 0) stay centered
-        
-	"""
+    def zoom(self, times, ratio=0.5):
         if times < 0:
             ratio = 0.5
             # alternatively zooming out inverse centered
