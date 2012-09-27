@@ -404,8 +404,10 @@ def fit_millennium_fn(main_frame, current_period, navigation_fn):
 def get_min_year():
     return PyTimeType().get_min_time()[0].year
 
+
 def get_millenium_max_year():
     return PyTimeType().get_max_time()[0].year - 1000
+
     
 def fit_century_fn(main_frame, current_period, navigation_fn):
     mean = current_period.mean_time()
