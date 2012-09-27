@@ -392,7 +392,10 @@ def backward_one_year_fn(main_frame, current_period, navigation_fn):
 
 def fit_millennium_fn(main_frame, current_period, navigation_fn):
     mean = current_period.mean_time()
-    year = max(get_min_year(), int(mean.year/1000)*1000)
+    if mean.year > get_millenium_max_year():
+        year = get_millenium_max_year()
+    else:
+        year = max(get_min_year(), int(mean.year/1000)*1000)
     start = datetime(year, 1, 1)
     end = datetime(year + 1000, 1, 1)
     navigation_fn(lambda tp: tp.update(start, end))
@@ -401,6 +404,8 @@ def fit_millennium_fn(main_frame, current_period, navigation_fn):
 def get_min_year():
     return PyTimeType().get_min_time()[0].year
 
+def get_millenium_max_year():
+    return PyTimeType().get_max_time()[0].year - 1000
     
 def fit_century_fn(main_frame, current_period, navigation_fn):
     mean = current_period.mean_time()
