@@ -83,6 +83,14 @@ class SceneSpec(unittest.TestCase):
         self.assertEqual(self.scene.event_data[0][1].Y,
                          self.scene.event_data[1][1].Y)
 
+    def test_scene_must_be_created_at_last_century(self):
+        self.given_displayed_period("1 Jan 9890", "1 Jan 9990")
+        try:
+            self.when_scene_is_created()
+            self.assertTrue(self.scene != None)
+        except:
+            self.assertTrue(False)
+        
     def setUp(self):
         self.db = MemoryDB()
         self.view_properties = ViewProperties()

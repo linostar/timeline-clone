@@ -409,10 +409,18 @@ def get_millenium_max_year():
     return PyTimeType().get_max_time()[0].year - 1000
 
     
+def get_century_max_year():
+    return PyTimeType().get_max_time()[0].year - 100
+
+
 def fit_century_fn(main_frame, current_period, navigation_fn):
     mean = current_period.mean_time()
-    start = datetime(int(mean.year/100)*100, 1, 1)
-    end = datetime(int(mean.year/100)*100 + 100, 1, 1)
+    if mean.year > get_century_max_year():
+        year = get_century_max_year()
+    else:
+        year = max(get_min_year(), int(mean.year/100)*100)
+    start = datetime(year, 1, 1)
+    end = datetime(year + 100, 1, 1)
     navigation_fn(lambda tp: tp.update(start, end))
 
 
@@ -461,13 +469,16 @@ class StripCentury(Strip):
         return datetime(max(self._century_start_year(time.year), 10), 1, 1)
 
     def increment(self, time):
-        return time.replace(year=time.year+100)
+        return time.replace(year=time.year + 100)
 
     def get_font(self, time_period):
         return get_default_font(8)
 
     def _century_start_year(self, year):
-        return (int(year) / 100) * 100
+        year = (int(year) / 100) * 100
+        #if year > get_century_max_year():
+        #    year = get_century_max_year
+        return year 
 
 
 class StripDecade(Strip):
