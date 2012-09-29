@@ -11,6 +11,7 @@ Bug fixes:
   * Alert time comparision problem solved
   * Fixed problem with ends-today property
   * Fit millennium now works close to edges
+  * Fit century now works close to edges
 
   
 
