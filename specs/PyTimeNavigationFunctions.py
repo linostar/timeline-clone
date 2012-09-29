@@ -37,6 +37,14 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self.when_navigating(fit_day_fn, "1 Jan 2010", "4 Jan 2010")
         self.then_period_becomes("2 Jan 2010", "3 Jan 2010")
 
+    def test_fit_first_day_should_display_the_day_that_is_in_the_center(self):
+        self.when_navigating(fit_day_fn, "1 Jan 10", "2 Jan 10")
+        self.then_period_becomes("1 Jan 10", "2 Jan 10")
+
+    def test_fit_last_day_should_display_the_day_that_is_in_the_center(self):
+        self.when_navigating(fit_day_fn, "31 Dec 9989", "1 Jan 9990")
+        self.then_period_becomes("31 Dec 9989", "1 Jan 9990")
+
     def test_fit_month_should_display_the_month_that_is_in_the_center(self):
         self.when_navigating(fit_month_fn, "1 Jan 2010", "2 Jan 2010")
         self.then_period_becomes("1 Jan 2010", "1 Feb 2010")
@@ -45,13 +53,37 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self.when_navigating(fit_month_fn, "1 Dec 2010", "2 Dec 2010")
         self.then_period_becomes("1 Dec 2010", "1 Jan 2011")
 
+    def test_fit_first_month_december_should_display_the_month_that_is_in_the_center(self):
+        self.when_navigating(fit_month_fn, "1 Jan 10", "2 Jan 10")
+        self.then_period_becomes("1 Jan 10", "1 Feb 10")
+
+    def test_fit_last_month_december_should_display_the_month_that_is_in_the_center(self):
+        self.when_navigating(fit_month_fn, "1 Dec 9989", "1 Jan 9990")
+        self.then_period_becomes("1 Dec 9989", "1 Jan 9990")
+
     def test_fit_year_should_display_the_year_that_is_in_the_center(self):
         self.when_navigating(fit_year_fn, "1 Jan 2010", "2 Jan 2010")
         self.then_period_becomes("1 Jan 2010", "1 Jan 2011")
 
+    def test_fit_first_year_should_display_the_year_that_is_in_the_center(self):
+        self.when_navigating(fit_year_fn, "1 Jan 10", "2 Jan 10")
+        self.then_period_becomes("1 Jan 10", "1 Jan 11")
+
+    def test_fit_last_year_should_display_the_year_that_is_in_the_center(self):
+        self.when_navigating(fit_year_fn, "1 Jan 9989", "1 Jan 9990")
+        self.then_period_becomes("1 Jan 9989", "1 Jan 9990")
+
     def test_fit_decade_should_display_the_decade_that_is_in_the_center(self):
         self.when_navigating(fit_decade_fn, "1 Jan 2010", "2 Jan 2010")
         self.then_period_becomes("1 Jan 2010", "1 Jan 2020")
+
+    def test_fit_first_decade_should_display_the_decade_that_is_in_the_center(self):
+        self.when_navigating(fit_decade_fn, "1 Jan 10", "2 Jan 10")
+        self.then_period_becomes("1 Jan 10", "1 Jan 20")
+
+    def test_fit_last_decade_should_display_the_decade_that_is_in_the_center(self):
+        self.when_navigating(fit_decade_fn, "1 Jan 9989", "1 Jan 9990")
+        self.then_period_becomes("1 Jan 9980", "1 Jan 9990")
 
     def test_fit_century_should_display_the_century_that_is_in_the_center(self):
         self.when_navigating(fit_century_fn, "1 Jan 2010", "2 Jan 2010")
