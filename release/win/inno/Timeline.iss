@@ -52,6 +52,7 @@ Source: "dist\po\ca\LC_MESSAGES\*"; DestDir: "{app}\po\ca\LC_MESSAGES"; Flags: i
 Source: "dist\po\de\LC_MESSAGES\*"; DestDir: "{app}\po\de\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\es\LC_MESSAGES\*"; DestDir: "{app}\po\es\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\fr\LC_MESSAGES\*"; DestDir: "{app}\po\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "dist\po\fr\LC_MESSAGES\*"; DestDir: "{app}\po\gl\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\he\LC_MESSAGES\*"; DestDir: "{app}\po\he\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\it\LC_MESSAGES\*"; DestDir: "{app}\po\it\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\lt\LC_MESSAGES\*"; DestDir: "{app}\po\lt\LC_MESSAGES"; Flags: ignoreversion
@@ -62,6 +63,7 @@ Source: "dist\po\ru\LC_MESSAGES\*"; DestDir: "{app}\po\ru\LC_MESSAGES"; Flags: i
 Source: "dist\po\sv\LC_MESSAGES\*"; DestDir: "{app}\po\sv\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\tr\LC_MESSAGES\*"; DestDir: "{app}\po\tr\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\vi\LC_MESSAGES\*"; DestDir: "{app}\po\vi\LC_MESSAGES"; Flags: ignoreversion
+Source: "dist\po\fr\LC_MESSAGES\*"; DestDir: "{app}\po\zh_CN\LC_MESSAGES"; Flags: ignoreversion
 
 
 [UninstallDelete]
