@@ -23,8 +23,9 @@ import os
 import platform
 import sys
 
-import wxversion
-wxversion.ensureMinimal('2.8')
+if platform.system() != "Windows":
+    import wxversion
+    wxversion.ensureMinimal('2.8')
 
 # Make sure that we can import timelinelib
 sys.path.insert(0, os.path.dirname(__file__))
