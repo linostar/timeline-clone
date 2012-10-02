@@ -455,7 +455,7 @@ class Freshmeat(Site):
         self.browser = browser
 
     def login(self, username, password):
-        self.browser.open("http://freshmeat.net/session/new?return_to=%2F")
+        self.browser.open("http://freecode.com/session/new?return_to=%2F")
         self._select_form_with_controls(["user_session[login]"])
         self.browser["user_session[login]"] = username
         self.browser["user_session[password]"] = password
