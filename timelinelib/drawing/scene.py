@@ -286,10 +286,14 @@ class TimelineScene(object):
         def fill(list, strip):
             """Fill the given list with the given strip."""
             current_start = strip.start(self._view_properties.displayed_period.start_time)
-            while current_start < self._view_properties.displayed_period.end_time:
-                next_start = strip.increment(current_start)
-                list.append(TimePeriod(self._db.get_time_type(), current_start, next_start))
-                current_start = next_start
+            try:
+                while current_start < self._view_properties.displayed_period.end_time:
+                    next_start = strip.increment(current_start)
+                    list.append(TimePeriod(self._db.get_time_type(), current_start, next_start))
+                    current_start = next_start
+            except:
+                #Exception occurs when major=century and when we are at the end of the calendar
+                pass
         self.major_strip_data = [] # List of time_period
         self.minor_strip_data = [] # List of time_period
         self.major_strip, self.minor_strip = self._db.get_time_type().choose_strip(self._metrics, self._config)

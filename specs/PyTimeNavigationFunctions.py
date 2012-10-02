@@ -89,6 +89,14 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self.when_navigating(fit_century_fn, "1 Jan 2010", "2 Jan 2010")
         self.then_period_becomes("1 Jan 2000", "1 Jan 2100")
 
+    def test_fit_first_century_should_display_the_century_that_is_in_the_center(self):
+        self.when_navigating(fit_century_fn, "1 Jan 10", "1 Jan 11")
+        self.then_period_becomes("1 Jan 10", "1 Jan 110")
+
+    def test_fit_last_century_should_display_the_century_that_is_in_the_center(self):
+        self.when_navigating(fit_century_fn, "1 Jan 9989", "1 Jan 9990")
+        self.then_period_becomes("1 Jan 9890", "1 Jan 9990")
+
     def test_fit_millennium_should_display_the_millennium_that_is_in_the_center(self):
         self.when_navigating(fit_millennium_fn, "1 Jan 2010", "2 Jan 2010")
         self.then_period_becomes("1 Jan 2000", "1 Jan 3000")
