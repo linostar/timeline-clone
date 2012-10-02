@@ -1,5 +1,3 @@
-Fit millennium gives year out of range exception of close to edges
-
 Sorting of categories is incorrect when using non-english characters
 
     The sorting isn't correct for å and ä. ä comes before å. Is it possible to
