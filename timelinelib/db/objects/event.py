@@ -127,6 +127,7 @@ class Event(object):
         # Icon is immutable in the sense that it is never changed by our
         # application.
         new_event.set_data("icon", self.get_data("icon"))
+        new_event.set_data("hyperlink", self.get_data("hyperlink"))
         return new_event
 
     def is_container(self):

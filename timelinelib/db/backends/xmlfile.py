@@ -184,6 +184,8 @@ class XmlTimeline(MemoryDB):
                         parse_fn_store("tmp_description")),
                     Tag("alert", OPTIONAL,
                         parse_fn_store("tmp_alert")),
+                    Tag("hyperlink", OPTIONAL,
+                        parse_fn_store("tmp_hyperlink")),
                     Tag("icon", OPTIONAL,
                         parse_fn_store("tmp_icon")),
                 ])
@@ -238,6 +240,7 @@ class XmlTimeline(MemoryDB):
             icon = None
         else:
             icon = parse_icon(icon_text)
+        hyperlink = tmp_dict.pop("tmp_hyperlink", None)
         if self._is_container_event(text):
             cid, text = self._extract_container_id(text)
             event = Container(self.get_time_type(), start, end, text, category, cid=cid)
@@ -249,6 +252,7 @@ class XmlTimeline(MemoryDB):
         event.set_data("description", description)
         event.set_data("icon", icon)
         event.set_data("alert", alert)
+        event.set_data("hyperlink", hyperlink)
         self.save_event(event)
 
     def alert_string(self, alert):
@@ -383,6 +387,9 @@ class XmlTimeline(MemoryDB):
         if alert is not None:
             write_simple_tag(file, "alert", self.alert_string(alert),
                              INDENT3)
+        hyperlink = evt.get_data("hyperlink")
+        if hyperlink is not None:
+            write_simple_tag(file, "hyperlink", hyperlink, INDENT3)
         if evt.get_data("icon") is not None:
             icon_text = icon_string(evt.get_data("icon"))
             write_simple_tag(file, "icon", icon_text, INDENT3)

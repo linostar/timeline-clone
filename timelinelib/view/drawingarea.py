@@ -17,6 +17,7 @@
 
 
 import wx
+import webbrowser
 
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimeOutOfRangeLeftError
@@ -199,6 +200,9 @@ class DrawingArea(object):
         ]
         if self.context_menu_event.has_data():
             menu_definitions.append((_("Sticky Balloon"), self._context_menu_on_sticky_balloon_event))
+        hyperlink = self.context_menu_event.get_data("hyperlink")
+        if hyperlink is not None:
+            menu_definitions.append((_("Goto URL"), self._context_menu_on_goto_hyperlink_event))
         menu = wx.Menu()
         for menu_definition in menu_definitions:
             text, method = menu_definition
@@ -234,6 +238,12 @@ class DrawingArea(object):
         self.view_properties.set_event_has_sticky_balloon(self.context_menu_event, has_sticky=True)
         self._redraw_timeline()
 
+    def _context_menu_on_goto_hyperlink_event(self, evt):
+        hyperlink = self.context_menu_event.get_data("hyperlink")
+        webbrowser.open(hyperlink)
+
+
+    
     def left_mouse_dclick(self, x, y, ctrl_down, alt_down=False):
         """
         Event handler used when the left mouse button has been double clicked.

@@ -62,7 +62,7 @@ class MemoryDB(Observable):
         return False
 
     def supported_event_data(self):
-        return ["description", "icon", "alert"]
+        return ["description", "icon", "alert", "hyperlink"]
 
     def search(self, search_string):
         return generic_event_search(self.events, search_string)
