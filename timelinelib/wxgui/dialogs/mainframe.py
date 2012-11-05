@@ -80,6 +80,9 @@ class MainFrame(wx.Frame):
         self.controller.on_started(application_arguments)
         self._create_and_start_timer()
 
+    def week_starts_on_monday(self):
+        return self.config.week_start == "monday"
+        
     def _create_and_start_timer(self):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self._timer_tick, self.timer)

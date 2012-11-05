@@ -80,6 +80,7 @@ class WxTimeType(TimeType):
             (_("Fit Decade"), fit_decade_fn),
             (_("Fit Year"), fit_year_fn),
             (_("Fit Month"), fit_month_fn),
+            (_("Fit Week"), fit_week_fn),
             (_("Fit Day"), fit_day_fn),
         ]
 
@@ -428,6 +429,16 @@ def fit_day_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.update(start, end))
 
 
+def fit_week_fn(main_frame, current_period, navigation_fn):
+    mean = current_period.mean_time()
+    start = wx.DateTimeFromDMY(mean.Day, mean.Month, mean.Year)
+    start.SetToWeekDayInSameWeek(1)
+    if not main_frame.week_starts_on_monday():
+        start = start - wx.DateSpan.Day()
+    end = start + wx.DateSpan.Days(7)
+    navigation_fn(lambda tp: tp.update(start, end))
+
+  
 class StripCentury(Strip):
 
     def label(self, time, major=False):

@@ -18,20 +18,32 @@
 
 import unittest
 
+from mock import Mock
+
 from specs.utils import py_period
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.time.pytime import backward_fn
 from timelinelib.time.pytime import fit_century_fn
+from timelinelib.time.pytime import fit_week_fn
 from timelinelib.time.pytime import fit_day_fn
 from timelinelib.time.pytime import fit_decade_fn
 from timelinelib.time.pytime import fit_millennium_fn
 from timelinelib.time.pytime import fit_month_fn
 from timelinelib.time.pytime import fit_year_fn
 from timelinelib.time.pytime import forward_fn
+from timelinelib.wxgui.dialogs.mainframe import MainFrame
 
 
 class PyTimeNavigationFunctionsSpec(unittest.TestCase):
+
+    def test_fit_week_should_display_the_week_of_the_day_that_is_in_the_center(self):
+        self.when_navigating(fit_week_fn, "30 Oct 2012", "13 Nov 2012")
+        self.then_period_becomes("5 Nov 2012", "12 Nov 2012")
+
+    def test_fit_week_sunday_start_should_display_the_week_of_the_day_that_is_in_the_center(self):
+        self.when_navigating(fit_week_fn, "30 Oct 2012", "13 Nov 2012", False)
+        self.then_period_becomes("4 Nov 2012", "11 Nov 2012")
 
     def test_fit_day_should_display_the_day_that_is_in_the_center(self):
         self.when_navigating(fit_day_fn, "1 Jan 2010", "4 Jan 2010")
@@ -159,11 +171,13 @@ class PyTimeNavigationFunctionsSpec(unittest.TestCase):
         self.time_period = py_period(start, end)
         fn(None, self.time_period, navigation_fn)
 
-    def when_navigating(self, fn, start, end):
+    def when_navigating(self, fn, start, end, week_starts_on_monday=True):
         def navigation_fn(fn):
             self.new_period = fn(self.time_period)
         self.time_period = py_period(start, end)
-        fn(None, self.time_period, navigation_fn)
+        main_frame = Mock(MainFrame)
+        main_frame.week_starts_on_monday.return_value = week_starts_on_monday
+        fn(main_frame, self.time_period, navigation_fn)
 
     def then_period_becomes(self, start, end):
         self.assertEquals(py_period(start, end), self.new_period)
