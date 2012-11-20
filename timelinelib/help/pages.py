@@ -47,6 +47,7 @@ def install(help_system):
 - **%s**
     - Help(create_event)
     - Help(edit_event)
+    - Help(move_event_vertically)
     - Help(delete_event)
     - Help(edit_categories)
     - Help(select_events)
@@ -149,6 +150,19 @@ The *Create Event* dialog can be opened in the following ways:
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 The *Edit Event* dialog can be opened by double clicking on an event.
+"""))
+
+    help_system.install_page(
+        id="move_event_vertically",
+        header=_("Move event vertically"),
+        related_pages=["events", "select_events"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+An event can be moved vertically. This is done by first selecting the event and therefter using the Alt+Up or Alt+Down keys.
 """))
 
     help_system.install_page(
