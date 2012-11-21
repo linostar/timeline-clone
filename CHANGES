@@ -5,7 +5,7 @@ New features, enhancements:
 
   * Possibilty to define URL on events and execute "Goto URL" to open web browser.
   * Implemented 'fit week' navigation function.
-  * Help text added, to describe vertcial movement of events.
+  * Help text added, to describe vertical movement of events.
   
 Bug fixes:
 
