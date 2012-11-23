@@ -9,7 +9,7 @@ New features, enhancements:
   
 Bug fixes:
 
-
+  * Build script generates zip file with only LF as line endings in files
 
 
 Timeline 0.18.0, released on 30 September 2012
