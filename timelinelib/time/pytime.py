@@ -245,6 +245,8 @@ class PyTimeType(TimeType):
                         self.event_date_string(time2))
         return s1 == s2
 
+    def adjust_for_bc_years(self, time):
+        return time
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))

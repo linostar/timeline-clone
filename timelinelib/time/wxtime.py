@@ -244,6 +244,12 @@ class WxTimeType(TimeType):
                         self.event_date_string(time2))
         return s1 == s2
 
+    def adjust_for_bc_years(self, time):
+        if time.Year == 0:
+            return time  + wx.DateSpan.Year()
+        else:
+            return time
+
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(wx.DateTime.Now()))
@@ -484,7 +490,7 @@ class StripDecade(Strip):
 class StripYear(Strip):
 
     def label(self, time, major=False):
-        return str(time.Year)
+        return str(wx.DateTime.ConvertYearToBC(time.Year))
 
     def start(self, time):
         return wx.DateTimeFromDMY(1, 0, time.Year)

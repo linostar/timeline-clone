@@ -93,3 +93,6 @@ class TimeType(object):
 
     def eventtimes_equals(self, time1, time2):
         raise NotImplementedError("eventtimes_equals not implemented.")
+
+    def adjust_for_bc_years(self, time):
+        raise NotImplementedError("adjust_for_zero_year not implemented.")
