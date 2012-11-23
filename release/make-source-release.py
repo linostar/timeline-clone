@@ -59,7 +59,7 @@ def continue_despite_warning(warning_text):
 def export_from_hg_to(zip_file_name):
     cmd = ["hg", "archive",
            "-R", ROOT_DIR,
-           "-t", "zip",
+           "-t", "zip", "--no-decode",
            "--exclude", "%s/.hgignore" % (ROOT_DIR or "."),
            "--exclude", "%s/.hgtags" % (ROOT_DIR or "."),
            "--exclude", "%s/.hg_archival.txt" % (ROOT_DIR or "."),
