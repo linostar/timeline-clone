@@ -137,7 +137,7 @@ class AWxDatePicker(WxDatePickerBaseFixture):
         self.assertRaises(ValueError, self.controller.get_date)
 
     def testChangesToErrorBackgroundWhenTooSmallDateIsEntered(self):
-        self.simulate_change_date_string("-4701-12-31")
+        self.simulate_change_date_string("-4702-12-31")
         self.assertBackgroundChangedTo("pink")
 
     def testHasOriginalBackgroundWhenSmallestValidDateIsEntered(self):
@@ -227,9 +227,9 @@ class WxDatePickerWithFocusOnYear(WxDatePickerBaseFixture):
         self.py_date_picker.set_date_string.assert_called_with("119999-01-01")
 
     def testDontDecreaseYearOnDownWhenTooSmallDate(self):
-        self.simulate_change_date_string("-4700-01-01")
+        self.simulate_change_date_string("-4701-01-01")
         self.controller.on_down()
-        self.py_date_picker.set_date_string.assert_called_with("-4700-01-01")
+        self.py_date_picker.set_date_string.assert_called_with("-4701-01-01")
 
     def testChangesDayOnDownWhenLeapYeer(self):
         self.simulate_change_date_string("2012-02-29")
@@ -281,9 +281,9 @@ class WxDatePickerWithFocusOnMonth(WxDatePickerBaseFixture):
         self.py_date_picker.set_date_string.assert_called_with("2009-06-30")
 
     def testDontDecreaseMonthOnDownWhenTooSmallDate(self):
-        self.simulate_change_date_string("-4700-01-01")
+        self.simulate_change_date_string("-4701-01-01")
         self.controller.on_down()
-        self.py_date_picker.set_date_string.assert_called_with("-4700-01-01")
+        self.py_date_picker.set_date_string.assert_called_with("-4701-01-01")
 
     def testDecreasesYearOnDownWhenJanuary(self):
         self.simulate_change_date_string("2010-01-01")
@@ -325,9 +325,9 @@ class WxDatePickerWithFocusOnDay(WxDatePickerBaseFixture):
         self.py_date_picker.set_date_string.assert_called_with("2010-01-09")
 
     def testDontDecreaseDayOnDownWhenTooSmallDate(self):
-        self.simulate_change_date_string("-4700-01-01")
+        self.simulate_change_date_string("-4701-01-01")
         self.controller.on_down()
-        self.py_date_picker.set_date_string.assert_called_with("-4700-01-01")
+        self.py_date_picker.set_date_string.assert_called_with("-4701-01-01")
 
     def testDecreasesMonthOnDownWhenDayOne(self):
         self.simulate_change_date_string("2010-02-01")
