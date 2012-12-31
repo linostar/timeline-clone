@@ -33,7 +33,7 @@ from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Container
 from timelinelib.db.objects import Event
-from timelinelib.db.observer import Observable
+from timelinelib.utilities.observer import Observable
 from timelinelib.db.observer import STATE_CHANGE_ANY
 from timelinelib.db.observer import STATE_CHANGE_CATEGORY
 from timelinelib.db.search import generic_event_search
