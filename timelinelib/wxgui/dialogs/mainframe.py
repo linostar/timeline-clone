@@ -46,6 +46,7 @@ from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import WildcardHelper
+from timelinelib.wxgui.timer import TimelineTimer
 import timelinelib.printing as printing
 import timelinelib.wxgui.utils as gui_utils
 
@@ -84,10 +85,10 @@ class MainFrame(wx.Frame):
         return self.config.week_start == "monday"
         
     def _create_and_start_timer(self):
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self._timer_tick, self.timer)
-        self.timer.Start(10000)
         self.alert_dialog_open = False
+        self.timer = TimelineTimer(self)
+        self.timer.register(self._timer_tick)
+        self.timer.start(10000)
 
     def _set_initial_values_to_member_variables(self):
         self.timeline = None
