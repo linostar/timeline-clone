@@ -20,6 +20,8 @@
 STATE_CHANGE_CATEGORY = 1
 # Something happened that changed the state of the timeline
 STATE_CHANGE_ANY = 2
+# A timer ticked
+TIMER_TICK = 3
 
 
 class Observable(object):
