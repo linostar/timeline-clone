@@ -725,7 +725,8 @@ class MainFrame(wx.Frame):
     def _enable_disable_duplicate_event_menu(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
         one_event_selected = len(view_properties.selected_event_ids) == 1
-        self.mnu_timeline_duplicate_event.Enable(one_event_selected)
+        self.menu_controller.enable_disable_duplicate_event_menu(
+                self.mnu_timeline_duplicate_event, one_event_selected)
 
     def _enable_disable_measure_distance_between_two_events_menu(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
@@ -848,6 +849,16 @@ class MenuController(object):
         for menu in self.menus_requiring_visible_timeline_view:
             self._enable_disable_menu_requiring_visible_timeline_view(menu, timeline_view_visible)
 
+    def enable_disable_duplicate_event_menu(self, menu, one_event_selected):
+        if self.current_timeline == None: 
+            menu.Enable(False)
+        elif self.current_timeline.is_read_only():
+            menu.Enable(False)
+        elif one_event_selected:
+            menu.Enable(True)
+        else:
+            menu.Enable(False)
+    
     def _enable_disable_menu_requiring_writable_timeline(self, menu):
         if self.current_timeline == None:
             menu.Enable(False)
