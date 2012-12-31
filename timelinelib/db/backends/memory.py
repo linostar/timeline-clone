@@ -34,8 +34,8 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Container
 from timelinelib.db.objects import Event
 from timelinelib.utilities.observer import Observable
-from timelinelib.db.observer import STATE_CHANGE_ANY
-from timelinelib.db.observer import STATE_CHANGE_CATEGORY
+from timelinelib.utilities.observer import STATE_CHANGE_ANY
+from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
 

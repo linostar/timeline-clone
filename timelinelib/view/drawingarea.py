@@ -22,8 +22,8 @@ import webbrowser
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
-from timelinelib.db.observer import STATE_CHANGE_ANY
-from timelinelib.db.observer import STATE_CHANGE_CATEGORY
+from timelinelib.utilities.observer import STATE_CHANGE_ANY
+from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.utils import ex_msg
 from timelinelib.view.move import MoveByDragInputHandler
