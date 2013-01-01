@@ -323,7 +323,8 @@ class DrawingArea(object):
 
     def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
-            self._delete_selected_events()
+            if not self.timeline.is_read_only():
+                self._delete_selected_events()
         elif alt_down:
             if keycode == wx.WXK_UP:
                 self._move_event_vertically(up=True)
