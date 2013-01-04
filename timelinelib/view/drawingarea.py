@@ -188,7 +188,7 @@ class DrawingArea(object):
         If the mouse hits an event and the timeline is not readonly, the
         context menu for that event is displayed.
         """
-        if self.is_read_only_timeline():
+        if self.timeline.is_read_only():
             return
         self.context_menu_event = self.drawing_algorithm.event_at(x, y, alt_down)
         if self.context_menu_event is None:
@@ -252,7 +252,7 @@ class DrawingArea(object):
         If the mouse hits an event, a dialog opens for editing this event.
         Otherwise a dialog for creating a new event is opened.
         """
-        if self.is_read_only_timeline():
+        if self.timeline.is_read_only():
             return
         # Since the event sequence is, 1. EVT_LEFT_DOWN  2. EVT_LEFT_UP
         # 3. EVT_LEFT_DCLICK we must compensate for the toggle_event_selection
@@ -323,8 +323,7 @@ class DrawingArea(object):
 
     def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
-            if not self.is_read_only_timeline():
-                self._delete_selected_events()
+            self._delete_selected_events()
         elif alt_down:
             if keycode == wx.WXK_UP:
                 self._move_event_vertically(up=True)
@@ -494,9 +493,6 @@ class DrawingArea(object):
         # TODO: Do we really need that?
         if not visible:
             self._redraw_timeline()
-            
-    def is_read_only_timeline(self):
-        return self.timeline.is_read_only()
 
 
 def _step_function(x_value):

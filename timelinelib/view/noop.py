@@ -53,9 +53,8 @@ class NoOpInputHandler(InputHandler):
             self.drawing_area.change_input_handler_to_scroll_by_drag(time_at_x)
             return
         if (event is None and ctrl_down == True):
-            if not self.drawing_area.is_read_only_timeline():
-                self.drawing_area._toggle_event_selection(x, y, ctrl_down)
-                self.drawing_area.change_input_handler_to_create_period_event_by_drag(time_at_x)
+            self.drawing_area._toggle_event_selection(x, y, ctrl_down)
+            self.drawing_area.change_input_handler_to_create_period_event_by_drag(time_at_x)
             return
         if (event is None and shift_down == True):
             self.drawing_area._toggle_event_selection(x, y, ctrl_down)
