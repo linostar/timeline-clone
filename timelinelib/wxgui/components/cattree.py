@@ -34,6 +34,7 @@ CHECKBOX_TYPE = 1
 class CategoriesTree(customtreectrl.CustomTreeCtrl):
 
     def __init__(self, parent, fn_handle_db_error):
+        self.parent = parent
         style = wx.BORDER_SUNKEN
         agwStyle = (customtreectrl.TR_HIDE_ROOT |
                     customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT |
@@ -108,18 +109,20 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
             self._update_categories_from_tree(subtree, item, view_properties)
 
     def _on_right_down(self, e):
-        (item, flags) = self.HitTest(e.GetPosition())
-        if item is not None:
-            self.SelectItem(item, True)
-        self._update_menu_enableness()
-        self.PopupMenu(self.mnu)
+        if self.parent.ok_to_edit():
+            (item, flags) = self.HitTest(e.GetPosition())
+            if item is not None:
+                self.SelectItem(item, True)
+            self._update_menu_enableness()
+            self.PopupMenu(self.mnu)
 
     def _on_key_down(self, e):
         if self.GetFirstVisibleItem() is None:
             return
         keycode = e.GetKeyCode()
         if keycode == wx.WXK_DELETE:
-            self.controller.delete_selected_category()
+            if self.parent.ok_to_edit():
+                self.controller.delete_selected_category()
         e.Skip()
 
     def _mnu_add_on_click(self, e):

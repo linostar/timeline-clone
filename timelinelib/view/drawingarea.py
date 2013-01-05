@@ -260,12 +260,13 @@ class DrawingArea(object):
         # the event(s) selected or deselected after a left doubleclick
         # It doesn't look too god but I havent found any other way to do it.
         self._toggle_event_selection(x, y, ctrl_down, alt_down)
-        event = self.drawing_algorithm.event_at(x, y, alt_down)
-        if event:
-            self.view.open_event_editor_for(event)
-        else:
-            current_time = self.get_time(x)
-            self.view.open_create_event_editor(current_time, current_time)
+        if self.view.ok_to_edit():
+            event = self.drawing_algorithm.event_at(x, y, alt_down)
+            if event:
+                self.view.open_event_editor_for(event)
+            else:
+                current_time = self.get_time(x)
+                self.view.open_create_event_editor(current_time, current_time)
 
     def get_time(self, x):
         return self.drawing_algorithm.get_time(x)
@@ -323,12 +324,15 @@ class DrawingArea(object):
 
     def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
-            self._delete_selected_events()
+            if self.view.ok_to_edit():
+                self._delete_selected_events()
         elif alt_down:
             if keycode == wx.WXK_UP:
-                self._move_event_vertically(up=True)
+                if self.view.ok_to_edit():
+                    self._move_event_vertically(up=True)
             elif keycode == wx.WXK_DOWN:
-                self._move_event_vertically(up=False)
+                if self.view.ok_to_edit():
+                    self._move_event_vertically(up=False)
             elif keycode == wx.WXK_RIGHT:
                 self._scroll_timeline_view_by_factor(LEFT_RIGHT_SCROLL_FACTOR)
             elif keycode == wx.WXK_LEFT:

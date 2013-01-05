@@ -138,6 +138,9 @@ class DrawingAreaPanel(wx.Panel):
     def ask_question(self, question):
         return _ask_question(question, self)
 
+    def ok_to_edit(self):
+        return self.main_frame.ok_to_edit()
+    
     def _create_gui(self):
         self.balloon_show_timer = wx.Timer(self, -1)
         self.balloon_hide_timer = wx.Timer(self, -1)

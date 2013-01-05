@@ -61,3 +61,5 @@ class TimelineApplication(object):
         except:
             pass
         
+    def ok_to_edit(self):
+        return not self.timeline.is_read_only()
