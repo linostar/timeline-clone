@@ -53,3 +53,11 @@ class TimelineApplication(object):
 
     def on_play_clicked(self):
         self.main_frame.open_play_frame(self.timeline)
+        
+    def set_timeline_in_readonly_mode(self):
+        try:
+            self.timeline.set_readonly()
+            self.main_frame.timeline_is_readonly()
+        except:
+            pass
+        

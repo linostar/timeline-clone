@@ -379,6 +379,7 @@ class MainFrame(wx.Frame):
         self._create_timeline_duplicate_event_menu_item(timeline_menu)
         self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
         self._create_timeline_edit_categories(timeline_menu)
+        self._create_timeline_set_readonly(timeline_menu)
         main_menu_bar.Append(timeline_menu, _("&Timeline"))
 
     def _create_timeline_create_event_menu_item(self, timeline_menu):
@@ -467,6 +468,19 @@ class MainFrame(wx.Frame):
 
     def _mnu_timeline_edit_categories_on_click(self, evt):
         self.edit_categories()
+
+    def _create_timeline_set_readonly(self, timeline_menu):
+        item = timeline_menu.Append(
+            wx.ID_ANY, _("Read Only"), _("Read Only"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_readonly_on_click, item)
+        self.menu_controller.add_menu_requiring_writable_timeline(item)
+
+    def _mnu_timeline_set_readonly_on_click(self, evt):
+        self.controller.set_timeline_in_readonly_mode()
+        
+    def timeline_is_readonly(self):
+        self.status_bar_adapter.set_read_only_text(_("read-only"))
+        self.enable_disable_menus()
 
     def edit_categories(self):
         def create_categories_editor():

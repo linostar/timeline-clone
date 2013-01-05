@@ -54,13 +54,17 @@ class MemoryDB(Observable):
         self.save_disabled = False
         from timelinelib.time.pytime import PyTimeType
         self.time_type = PyTimeType()
+        self.readonly = False
 
     def get_time_type(self):
         return self.time_type
 
     def is_read_only(self):
-        return False
+        return self.readonly
 
+    def set_readonly(self):
+        self.readonly = True
+        
     def supported_event_data(self):
         return ["description", "icon", "alert", "hyperlink"]
 
