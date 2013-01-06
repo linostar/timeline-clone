@@ -81,6 +81,7 @@ class DrawingArea(object):
 
     def change_input_handler_to_no_op(self):
         self.input_handler = NoOpInputHandler(self, self.view)
+        self.view.edit_ends()
 
     def get_drawer(self):
         return self.drawing_algorithm
@@ -267,6 +268,7 @@ class DrawingArea(object):
             else:
                 current_time = self.get_time(x)
                 self.view.open_create_event_editor(current_time, current_time)
+            self.view.edit_ends()
 
     def get_time(self, x):
         return self.drawing_algorithm.get_time(x)
@@ -326,13 +328,17 @@ class DrawingArea(object):
         if keycode == wx.WXK_DELETE:
             if self.view.ok_to_edit():
                 self._delete_selected_events()
+                self.view.edit_ends()
+
         elif alt_down:
             if keycode == wx.WXK_UP:
                 if self.view.ok_to_edit():
                     self._move_event_vertically(up=True)
+                    self.view.edit_ends()
             elif keycode == wx.WXK_DOWN:
                 if self.view.ok_to_edit():
                     self._move_event_vertically(up=False)
+                    self.view.edit_ends()
             elif keycode == wx.WXK_RIGHT:
                 self._scroll_timeline_view_by_factor(LEFT_RIGHT_SCROLL_FACTOR)
             elif keycode == wx.WXK_LEFT:

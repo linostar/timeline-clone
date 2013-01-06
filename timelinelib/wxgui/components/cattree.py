@@ -115,6 +115,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
                 self.SelectItem(item, True)
             self._update_menu_enableness()
             self.PopupMenu(self.mnu)
+            self.parent.edit_ends()
 
     def _on_key_down(self, e):
         if self.GetFirstVisibleItem() is None:
@@ -123,6 +124,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
         if keycode == wx.WXK_DELETE:
             if self.parent.ok_to_edit():
                 self.controller.delete_selected_category()
+                self.parent.edit_ends()
         e.Skip()
 
     def _mnu_add_on_click(self, e):

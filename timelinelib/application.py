@@ -78,8 +78,14 @@ class TimelineApplication(object):
             else:
                 self.set_timeline_in_readonly_mode()
             return False
+        self._lock()
         return True
     
+    def edit_ends(self):
+        if self.timeline is not None:
+            self.last_changed = self._get_modification_date()
+            self._unlock()
+        
     def _get_modification_date(self):
         return os.path.getmtime(self.timelinepath)
     
@@ -90,3 +96,11 @@ class TimelineApplication(object):
         self.open_timeline(self.timelinepath)
         vp.set_displayed_period(displayed_period) 
         drawing_area.redraw_timeline()
+
+    def _lock(self):
+        print "lock"
+        pass
+
+    def _unlock(self):
+        print "unlock"
+        pass

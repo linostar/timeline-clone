@@ -87,6 +87,9 @@ class MainFrame(wx.Frame):
     def ok_to_edit(self):
         return self.controller.ok_to_edit()
         
+    def edit_ends(self):
+        self.controller.edit_ends()
+        
     def _create_and_start_timer(self):
         self.alert_dialog_open = False
         self.timer = TimelineTimer(self)
@@ -333,6 +336,7 @@ class MainFrame(wx.Frame):
             dialog = PreferencesDialog(self, self.config)
             dialog.ShowModal()
             dialog.Destroy()
+            self.edit_ends()
 
     def _create_view_menu(self, main_menu_bar):
         view_menu = wx.Menu()
@@ -396,6 +400,7 @@ class MainFrame(wx.Frame):
         if self.ok_to_edit():
             open_create_event_editor(
                 self, self.config, self.timeline, self.handle_db_error)
+            self.edit_ends()
 
     def _create_timeline_duplicate_event_menu_item(self, timeline_menu):
         self.mnu_timeline_duplicate_event = timeline_menu.Append(
@@ -418,6 +423,7 @@ class MainFrame(wx.Frame):
                 self.timeline,
                 self.handle_db_error,
                 event)
+            self.edit_ends()
 
     def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
         self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
@@ -475,6 +481,7 @@ class MainFrame(wx.Frame):
     def _mnu_timeline_edit_categories_on_click(self, evt):
         if self.ok_to_edit():
             self.edit_categories()
+            self.edit_ends()
 
     def _create_timeline_set_readonly(self, timeline_menu):
         item = timeline_menu.Append(
@@ -1120,6 +1127,9 @@ class Sidebar(wx.Panel):
         
     def ok_to_edit(self):
         return self.main_frame.ok_to_edit()
+
+    def edit_ends(self):
+        return self.main_frame.edit_ends()
 
 
 class StatusBarAdapter(object):

@@ -141,6 +141,9 @@ class DrawingAreaPanel(wx.Panel):
     def ok_to_edit(self):
         return self.main_frame.ok_to_edit()
     
+    def edit_ends(self):
+        return self.main_frame.edit_ends()
+    
     def _create_gui(self):
         self.balloon_show_timer = wx.Timer(self, -1)
         self.balloon_hide_timer = wx.Timer(self, -1)
