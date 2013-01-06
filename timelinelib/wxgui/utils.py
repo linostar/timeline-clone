@@ -135,6 +135,11 @@ def _display_error_message(message, parent=None):
     dial.ShowModal()
 
 
+def get_user_ack(question, parent=None):
+    return wx.MessageBox(question, _("Question"),
+                         wx.YES_NO|wx.CENTRE|wx.NO_DEFAULT, parent) == wx.YES
+
+
 def _ask_question(question, parent=None):
     """Ask a yes/no question and return the reply."""
     return wx.MessageBox(question, _("Question"),

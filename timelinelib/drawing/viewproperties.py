@@ -42,6 +42,9 @@ class ViewProperties(object):
         self.period_selection = None
         self.displayed_period = None
 
+    def get_displayed_period(self):
+        return self.displayed_period
+    
     def filter_events(self, events):
         def category_visible(e, cat):
             if cat is None:
