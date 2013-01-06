@@ -17,9 +17,16 @@
 
 
 import os
+import getpass
+
 
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.wxgui.utils import get_user_ack
+from timelinelib.wxgui.utils import display_warning_message
+
+
+class LockedException(Exception):
+    pass
 
 
 class TimelineApplication(object):
@@ -70,6 +77,9 @@ class TimelineApplication(object):
     def ok_to_edit(self):
         if self.timeline.is_read_only():
             return False
+        if self._locked():
+            display_warning_message("The Timeline is Locked by someone else.\nTry again later")
+            return False
         last_changed = self._get_modification_date()
         if last_changed > self.last_changed:
             ack = get_user_ack(_("Someoneelse has changed the Timeline.\nYou have two choices!\n  1. Set Timeline in Read-Only mode.\n  2. Synchronize Timeline.\n\nDo you want to Synchronize?"))
@@ -83,11 +93,15 @@ class TimelineApplication(object):
     
     def edit_ends(self):
         if self.timeline is not None:
-            self.last_changed = self._get_modification_date()
-            self._unlock()
+            if self._the_lock_is_mine():
+                self.last_changed = self._get_modification_date()
+                self._unlock()
         
     def _get_modification_date(self):
-        return os.path.getmtime(self.timelinepath)
+        try:
+            return os.path.getmtime(self.timelinepath)
+        except:
+            return 0
     
     def _synchronize(self):
         drawing_area = self.main_frame.main_panel.timeline_panel.drawing_area
@@ -98,9 +112,47 @@ class TimelineApplication(object):
         drawing_area.redraw_timeline()
 
     def _lock(self):
-        print "lock"
-        pass
+        fp = None
+        try:
+            ts = self._get_timestamp_string()
+            path = self._get_lockpath()
+            fp = open(path, "w")
+            fp.write("%s\n%s\n%s" % (getpass.getuser(), ts, os.getpid()))
+        except Exception, ex:
+            print ex
+            raise LockedException("Unable to take lock on %s" % self.timelinepath)
+        finally:
+            if fp is not None:
+                fp.close()
+                
+    def _get_lockpath(self):
+        return "%s.lock" % self.timelinepath
 
+    def _get_timestamp_string(self):
+        now = self.timeline.time_type.now()
+        return self.timeline.time_type.time_string(now)
+
+    def _locked(self):
+        lockpath = self._get_lockpath()
+        return os.path.exists(lockpath)
+    
     def _unlock(self):
-        print "unlock"
-        pass
+        lockpath = self._get_lockpath()
+        if os.path.exists(lockpath):
+            os.remove(lockpath)
+
+    def _the_lock_is_mine(self):
+        fp = None
+        try:
+            user = getpass.getuser()
+            pid = os.getpid()
+            lockpath = self._get_lockpath()
+            fp = open(lockpath, "r")
+            lines = fp.readlines()
+            lines = [line.strip() for line in lines]
+            return lines[0] == user and lines[2] == "%s" % pid
+        except:
+            return False
+        finally:
+            if fp is not None:
+                fp.close()
