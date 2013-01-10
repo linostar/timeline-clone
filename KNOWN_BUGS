@@ -43,5 +43,3 @@ Using an extended calendar causes some problems
     Perhaps that is something we should incorporate in timeline.
 
     Or we should just make the gregorian calendar work better when extended.
-
-Source release (.zip) contains CRLF if done on Windows and LF if done on Linux
