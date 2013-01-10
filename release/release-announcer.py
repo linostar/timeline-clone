@@ -67,8 +67,8 @@ class MainFrame(wx.Frame):
         self.grid.AddGrowableCol(1)
         self._create_sf_username_controls()
         self._create_sf_password_controls()
-        self._create_freshmeat_username_controls()
-        self._create_freshmeat_password_controls()
+        self._create_freecode_username_controls()
+        self._create_freecode_password_controls()
         self._create_version_to_release_controls()
         self._create_next_version_controls()
         self._create_next_version_release_date_controls()
@@ -94,23 +94,23 @@ class MainFrame(wx.Frame):
     def get_sf_password(self):
         return self.sf_password_text.GetValue()
 
-    def _create_freshmeat_username_controls(self):
-        self._add_label_to_grid("Freshmeat username:")
-        self.freshmeat_username_text = wx.TextCtrl(
+    def _create_freecode_username_controls(self):
+        self._add_label_to_grid("Freecode username:")
+        self.freecode_username_text = wx.TextCtrl(
             self.main_panel, size=(self.LARGE_WIDTH, -1))
-        self.grid.Add(self.freshmeat_username_text, flag=wx.EXPAND)
+        self.grid.Add(self.freecode_username_text, flag=wx.EXPAND)
 
-    def get_freshmeat_username(self):
-        return self.freshmeat_username_text.GetValue()
+    def get_freecode_username(self):
+        return self.freecode_username_text.GetValue()
 
-    def _create_freshmeat_password_controls(self):
-        self._add_label_to_grid("Freshmeat password:")
-        self.freshmeat_password_text = wx.TextCtrl(
+    def _create_freecode_password_controls(self):
+        self._add_label_to_grid("Freecode password:")
+        self.freecode_password_text = wx.TextCtrl(
             self.main_panel, size=(self.LARGE_WIDTH, -1), style=wx.TE_PASSWORD)
-        self.grid.Add(self.freshmeat_password_text, flag=wx.EXPAND)
+        self.grid.Add(self.freecode_password_text, flag=wx.EXPAND)
 
-    def get_freshmeat_password(self):
-        return self.freshmeat_password_text.GetValue()
+    def get_freecode_password(self):
+        return self.freecode_password_text.GetValue()
 
     def _create_version_to_release_controls(self):
         self._add_label_to_grid("Version to release:")
@@ -282,21 +282,17 @@ class MainFrameController(object):
     def on_announce_button_clicked(self):
         self._setup_browser()
         self.view.clear_log()
-        if not self._login_to_sf() or not self._login_to_freshmeat():
+        if not self._login_to_sf() or not self._login_to_freecode():
             self.view.show_error_message("Check login fields and try again.")
             return
-        if self._release_is_major_version():
-            self._add_new_milestone_in_trac()
-        self._close_current_milestone_in_trac()
-        self._add_version_in_trac()
         self._submit_news_on_sf()
-        self._submit_news_on_freshmeat()
+        self._submit_news_on_freecode()
         self.view.disable_announce_button()
 
     def _setup_browser(self):
         browser = mechanize.Browser()
         self.sf_site = SF(browser)
-        self.freshmeat_site = Freshmeat(browser)
+        self.freecoce_site = Freecode(browser)
 
     def _login_to_sf(self):
         self.view.log_information("\nLogging in to SourceForge...")
@@ -310,45 +306,17 @@ class MainFrameController(object):
             self.view.log_error(traceback.format_exc())
             return False
 
-    def _login_to_freshmeat(self):
-        self.view.log_information("\nLogging in to Freshmeat...")
+    def _login_to_freecode(self):
+        self.view.log_information("\nLogging in to Freecode...")
         try:
-            self.freshmeat_site.login(
-                self.view.get_freshmeat_username(),
-                self.view.get_freshmeat_password())
+            self.freecoce_site.login(
+                self.view.get_freecode_username(),
+                self.view.get_freecode_password())
             self.view.log_information(" OK")
             return True
         except Exception, e:
             self.view.log_error(traceback.format_exc())
             return False
-
-    def _add_new_milestone_in_trac(self):
-        self.view.log_information("\nAdding new milestone in Trac...")
-        try:
-            self.sf_site.add_milestone_in_trac(
-                self.view.get_next_version(),
-                self.view.get_next_version_release_date())
-            self.view.log_information(" OK")
-        except Exception, e:
-            self.view.log_error(traceback.format_exc())
-
-    def _close_current_milestone_in_trac(self):
-        self.view.log_information("\nClosing milestone in Trac...")
-        try:
-            self.sf_site.close_milestone_in_trac(
-                self.view.get_version_to_release())
-            self.view.log_information(" OK")
-        except Exception, e:
-            self.view.log_error(traceback.format_exc())
-
-    def _add_version_in_trac(self):
-        self.view.log_information("\nAdding version in Trac...")
-        try:
-            self.sf_site.add_version_in_trac(
-                self.view.get_version_to_release())
-            self.view.log_information(" OK")
-        except Exception, e:
-            self.view.log_error(traceback.format_exc())
 
     def _submit_news_on_sf(self):
         self.view.log_information("\nSubmitting news on SourceForge...")
@@ -360,10 +328,10 @@ class MainFrameController(object):
         except Exception, e:
             self.view.log_error(traceback.format_exc())
 
-    def _submit_news_on_freshmeat(self):
-        self.view.log_information("\nSubmitting news on Freshmeat...")
+    def _submit_news_on_freecode(self):
+        self.view.log_information("\nSubmitting news on Freecode...")
         try:
-            self.freshmeat_site.add_release(
+            self.freecoce_site.add_release(
                 self.view.get_version_to_release(),
                 self.view.get_release_message(),
                 self.view.get_tags())
@@ -404,39 +372,6 @@ class SF(Site):
     def _ensure_logged_in(self):
         self.browser.find_link(text="Log Out")
 
-    def add_milestone_in_trac(self, name, due):
-        self._open_trac_url("admin/ticket/milestones")
-        self._select_form_with_controls(["name", "duedate"])
-        self.browser["name"] = name
-        self.browser["duedate"] = due
-        self.browser.submit("add")
-        self._ensure_milestone_added(name)
-
-    def _ensure_milestone_added(self, name):
-        self.browser.find_link(text=name)
-
-    def close_milestone_in_trac(self, name):
-        self._open_trac_url("admin/ticket/milestones/%s" % name)
-        self._select_form_with_controls(["name", "duedate"])
-        self.browser.form.find_control("completed").items[0].selected = True
-        self.browser.submit("save")
-        self._ensure_milestone_closed(name)
-
-    def _ensure_milestone_closed(self, name):
-        self._open_trac_url("admin/ticket/milestones/%s" % name)
-        self._select_form_with_controls(["name", "duedate"])
-        assert self.browser.form.find_control("completed").items[0].selected == True
-
-    def add_version_in_trac(self, name):
-        self._open_trac_url("admin/ticket/versions")
-        self._select_form_with_controls(["name", "time"])
-        self.browser["name"] = name
-        self.browser.submit("add")
-        self._ensure_version_added(name)
-
-    def _ensure_version_added(self, name):
-        self.browser.find_link(text=name)
-
     def submitt_news(self, subject, details):
         self.browser.open("https://sourceforge.net/news/submit.php?group_id=241839")
         self.browser.select_form(name="postNews")
@@ -445,11 +380,8 @@ class SF(Site):
         self.browser.submit("submitb")
         assert "News Added." in self.browser.response().read()
 
-    def _open_trac_url(self, url):
-        self.browser.open("https://sourceforge.net/apps/trac/thetimelineproj/%s" % url)
 
-
-class Freshmeat(Site):
+class Freecode(Site):
 
     def __init__(self, browser):
         self.browser = browser
@@ -467,7 +399,7 @@ class Freshmeat(Site):
         assert "Logged in successfully." in self.browser.response().read()
 
     def add_release(self, version, summary, tags):
-        self.browser.open("http://freshmeat.net/projects/timeline-2/releases/new")
+        self.browser.open("http://freecode.com/projects/timeline-2/releases/new")
         self._select_form_with_controls(["release[version]"])
         self.browser["release[version]"] = version
         self.browser["release[changelog]"] = summary

@@ -1,5 +1,5 @@
-Timeline 0.20.0, released on 30 Mars 2013
-==============================================
+Timeline 0.20.0, released on 30 March 2013
+==========================================
 
 New features, enhancements:
 
@@ -9,11 +9,11 @@ Bug fixes:
 
 
 Timeline 0.19.0, released on 30 December 2012
-==============================================
+=============================================
 
 New features, enhancements:
 
-  * Possibilty to define URL on events and execute "Goto URL" to open web browser.
+  * Possibility to define URL on events and execute "Goto URL" to open web browser.
   * Implemented 'fit week' navigation function.
   * Help text added, to describe vertical movement of events.
   
@@ -21,7 +21,6 @@ Bug fixes:
 
   * Build script generates zip file with only LF as line endings in files
   * Year 0 removed from timeline display when using extended date range
-
 
 Timeline 0.18.0, released on 30 September 2012
 ==============================================
@@ -37,8 +36,6 @@ Bug fixes:
   * Fixed problem with ends-today property
   * Fit millennium now works close to edges
   * Fit century now works close to edges
-
-  
 
 Timeline 0.17.0, released on 15 June 2012
 =========================================
