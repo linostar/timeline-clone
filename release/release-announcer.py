@@ -285,10 +285,6 @@ class MainFrameController(object):
         if not self._login_to_sf() or not self._login_to_freecode():
             self.view.show_error_message("Check login fields and try again.")
             return
-        if self._release_is_major_version():
-            self._add_new_milestone_in_trac()
-        self._close_current_milestone_in_trac()
-        self._add_version_in_trac()
         self._submit_news_on_sf()
         self._submit_news_on_freecode()
         self.view.disable_announce_button()
@@ -321,34 +317,6 @@ class MainFrameController(object):
         except Exception, e:
             self.view.log_error(traceback.format_exc())
             return False
-
-    def _add_new_milestone_in_trac(self):
-        self.view.log_information("\nAdding new milestone in Trac...")
-        try:
-            self.sf_site.add_milestone_in_trac(
-                self.view.get_next_version(),
-                self.view.get_next_version_release_date())
-            self.view.log_information(" OK")
-        except Exception, e:
-            self.view.log_error(traceback.format_exc())
-
-    def _close_current_milestone_in_trac(self):
-        self.view.log_information("\nClosing milestone in Trac...")
-        try:
-            self.sf_site.close_milestone_in_trac(
-                self.view.get_version_to_release())
-            self.view.log_information(" OK")
-        except Exception, e:
-            self.view.log_error(traceback.format_exc())
-
-    def _add_version_in_trac(self):
-        self.view.log_information("\nAdding version in Trac...")
-        try:
-            self.sf_site.add_version_in_trac(
-                self.view.get_version_to_release())
-            self.view.log_information(" OK")
-        except Exception, e:
-            self.view.log_error(traceback.format_exc())
 
     def _submit_news_on_sf(self):
         self.view.log_information("\nSubmitting news on SourceForge...")
@@ -404,39 +372,6 @@ class SF(Site):
     def _ensure_logged_in(self):
         self.browser.find_link(text="Log Out")
 
-    def add_milestone_in_trac(self, name, due):
-        self._open_trac_url("admin/ticket/milestones")
-        self._select_form_with_controls(["name", "duedate"])
-        self.browser["name"] = name
-        self.browser["duedate"] = due
-        self.browser.submit("add")
-        self._ensure_milestone_added(name)
-
-    def _ensure_milestone_added(self, name):
-        self.browser.find_link(text=name)
-
-    def close_milestone_in_trac(self, name):
-        self._open_trac_url("admin/ticket/milestones/%s" % name)
-        self._select_form_with_controls(["name", "duedate"])
-        self.browser.form.find_control("completed").items[0].selected = True
-        self.browser.submit("save")
-        self._ensure_milestone_closed(name)
-
-    def _ensure_milestone_closed(self, name):
-        self._open_trac_url("admin/ticket/milestones/%s" % name)
-        self._select_form_with_controls(["name", "duedate"])
-        assert self.browser.form.find_control("completed").items[0].selected == True
-
-    def add_version_in_trac(self, name):
-        self._open_trac_url("admin/ticket/versions")
-        self._select_form_with_controls(["name", "time"])
-        self.browser["name"] = name
-        self.browser.submit("add")
-        self._ensure_version_added(name)
-
-    def _ensure_version_added(self, name):
-        self.browser.find_link(text=name)
-
     def submitt_news(self, subject, details):
         self.browser.open("https://sourceforge.net/news/submit.php?group_id=241839")
         self.browser.select_form(name="postNews")
@@ -444,9 +379,6 @@ class SF(Site):
         self.browser["details"] = details
         self.browser.submit("submitb")
         assert "News Added." in self.browser.response().read()
-
-    def _open_trac_url(self, url):
-        self.browser.open("https://sourceforge.net/apps/trac/thetimelineproj/%s" % url)
 
 
 class Freecode(Site):
