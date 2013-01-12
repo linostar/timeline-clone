@@ -94,6 +94,8 @@ The date data object used does not support week numbers for weeks that start on 
 The timeline shows dates according to the Gregorian calendar on the x-axis. Currently the dates are limited to dates between year 10 and year 9989.
 
 Future versions might support various kinds of timelines so that you for example can specify a time in terms of number of minutes since a start time. If you are interested in such a feature, please get in touch.
+
+The timeline is divided in two areas with a horizontal adjustable divider line. Period events are displayed below the line and point events are displayed above the line.
 """))
 
     help_system.install_page(
