@@ -7,6 +7,7 @@ New features, enhancements:
   
 Bug fixes:
 
+  * Fixed problem with Event texts starting with '('- or '['-character
 
 
 Timeline 0.19.0, released on 30 December 2012
