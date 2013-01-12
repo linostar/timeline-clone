@@ -40,6 +40,7 @@ def install(help_system):
     - Help(categories_delete)
     - Help(why_not_timeline_in_my_language)
     - Help(week_numbers_sunday_week_start)
+    - Help(multiple_users)
 - **%s**
     - Help(timeline)
     - Help(events)
@@ -80,6 +81,24 @@ There is no save button. Timeline will automatically save your data whenever nee
 The date data object used does not support week numbers for weeks that start on Sunday at present.  We plan on using a different date object that will support this in future versions.
 """))
 
+    help_system.install_page(
+        id="multiple_users",
+        header=_("Can multiple users work with the same timeline?"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+There are some support for multiple users to work on the same timeline file.
+
+When you try to make a change and someone else has made a change you will be asked to make one of two choices:
+
+- Set timeline in read-only mode.
+- Synchronize the timeline.
+ 
+During the your edit action the timeline is locked for changes by others. If you try to edit a timeline when it is locked by someone else you will be notified about this situation.
+"""))
 
     help_system.install_page(
         id="timeline",
