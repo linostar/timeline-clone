@@ -142,6 +142,7 @@ class DrawingAreaPanel(wx.Panel):
         return self.main_frame.ok_to_edit()
     
     def edit_ends(self):
+        self.SetFocusIgnoringChildren()
         return self.main_frame.edit_ends()
     
     def _create_gui(self):
