@@ -35,7 +35,11 @@ class PyDateTimePicker(wx.Panel):
         self.controller = PyDateTimePickerController(
             self.date_picker, self.time_picker, datetime.datetime.now)
         self.show_time(show_time)
+        self.parent = parent
 
+    def on_return(self):
+        self.parent.on_return()
+        
     def show_time(self, show=True):
         self.time_picker.Show(show)
         self.GetSizer().Layout()
@@ -197,6 +201,7 @@ class PyDatePicker(wx.TextCtrl):
         self.controller = PyDatePickerController(self)
         self._bind_events()
         self._resize_to_fit_text()
+        self.parent = parent
 
     def get_py_date(self):
         return self.controller.get_py_date()
@@ -240,9 +245,13 @@ class PyDatePicker(wx.TextCtrl):
                 self.controller.on_up()
             elif evt.GetKeyCode() == wx.WXK_DOWN:
                 self.controller.on_down()
+            elif (evt.GetKeyCode() == wx.WXK_NUMPAD_ENTER or 
+                  evt.GetKeyCode() == wx.WXK_RETURN):
+                self.parent.on_return()
             else:
                 evt.Skip()
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)
+       
 
     def _resize_to_fit_text(self):
         w, h = self.GetTextExtent("0000-00-00")
@@ -482,6 +491,7 @@ class PyTimePicker(wx.TextCtrl):
         self.controller = PyTimePickerController(self)
         self._bind_events()
         self._resize_to_fit_text()
+        self.parent = parent
 
     def get_py_time(self):
         return self.controller.get_py_time()
@@ -525,6 +535,9 @@ class PyTimePicker(wx.TextCtrl):
                 self.controller.on_up()
             elif evt.GetKeyCode() == wx.WXK_DOWN:
                 self.controller.on_down()
+            elif (evt.GetKeyCode() == wx.WXK_NUMPAD_ENTER or 
+                  evt.GetKeyCode() == wx.WXK_RETURN):
+                self.parent.on_return()
             else:
                 evt.Skip()
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)

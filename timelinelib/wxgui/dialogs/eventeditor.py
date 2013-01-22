@@ -269,6 +269,9 @@ class EventEditorDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         properties_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
 
+    def on_return(self):
+        self._btn_ok_on_click(None)
+        
     def _btn_ok_on_click(self, evt):
         self.controller.create_or_update_event()
 
