@@ -138,6 +138,8 @@ class MainFrame(wx.Frame):
         self._create_file_open_menu_item(file_menu)
         self._create_file_open_recent_menu(file_menu)
         file_menu.AppendSeparator()
+        self._create_file_save_as_menu(file_menu)
+        file_menu.AppendSeparator()
         self._create_file_page_setup_menu_item(file_menu)
         self._create_file_print_preview_menu_item(file_menu)
         self._create_file_print_menu_item(file_menu)
@@ -207,6 +209,36 @@ class MainFrame(wx.Frame):
     def _mnu_file_open_on_click(self, event):
         self._open_existing_timeline()
 
+    def mnu_file_save_as_on_click(self, event):
+        if self.timeline is not None:
+            self._save_as()
+
+    def _save_as(self):
+        new_timeline_path = self._get_new_timeline_path_from_user()
+        self._save_timeline_to_new_path(new_timeline_path)
+    
+    def _get_new_timeline_path_from_user(self):
+        defaultDir = os.path.dirname(self.timeline.path)
+        timeline_wildcard_helper = WildcardHelper(_("Timeline files"), 
+                                                  ["timeline"])
+        wildcard = timeline_wildcard_helper.wildcard_string()
+        style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT
+        message = _("Save Timeline As")
+        dialog = wx.FileDialog(self, message=message, defaultDir=defaultDir,
+                               wildcard=wildcard, style=style)
+        if dialog.ShowModal() == wx.ID_OK:
+            new_timeline_path = dialog.GetPath()
+        else:
+            new_timeline_path = None
+        dialog.Destroy()
+        return new_timeline_path
+
+    def _save_timeline_to_new_path(self, new_timeline_path):
+        if new_timeline_path is not None:
+            self.timeline.path = new_timeline_path
+            self._save_current_timeline_data()
+            self.open_timeline(self.timeline.path)
+        
     def _open_existing_timeline(self):
         dir = ""
         if self.timeline is not None:
@@ -224,6 +256,11 @@ class MainFrame(wx.Frame):
         self.mnu_file_open_recent_submenu = wx.Menu()
         file_menu.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
         self._update_open_recent_submenu()
+
+    def _create_file_save_as_menu(self, file_menu):
+        menu = file_menu.Append(wx.ID_SAVEAS, "", _("Save As..."))
+        self.menu_controller.add_menu_requiring_timeline(menu)
+        self.Bind(wx.EVT_MENU, self.mnu_file_save_as_on_click, id=wx.ID_SAVEAS)
 
     def _create_file_page_setup_menu_item(self, file_menu):
         mnu_file_print_setup = file_menu.Append(
