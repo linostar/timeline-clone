@@ -88,7 +88,8 @@ class TimelineApplication(object):
             else:
                 self.set_timeline_in_readonly_mode()
             return False
-        self._lock()
+        if last_changed > 0:
+            self._lock()
         return True
     
     def edit_ends(self):
