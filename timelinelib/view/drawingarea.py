@@ -484,18 +484,20 @@ class DrawingArea(object):
         """After acknowledge from the user, delete all selected events."""
         selected_event_ids = self.view_properties.get_selected_event_ids()
         nbr_of_selected_event_ids = len(selected_event_ids)
-        if nbr_of_selected_event_ids > 1:
-            text = _("Are you sure you want to delete %d events?" %
-                     nbr_of_selected_event_ids)
-        else:
-            text = _("Are you sure you want to delete this event?")
-        if self.view.ask_question(text) == wx.YES:
-            try:
-                for event_id in selected_event_ids:
-                    self.timeline.delete_event(event_id)
-            except TimelineIOError, e:
-                self.fn_handle_db_error(e)
-
+        if self.view.ok_to_edit():
+            if nbr_of_selected_event_ids > 1:
+                text = _("Are you sure you want to delete %d events?" %
+                         nbr_of_selected_event_ids)
+            else:
+                text = _("Are you sure you want to delete this event?")
+            if self.view.ask_question(text) == wx.YES:
+                try:
+                    for event_id in selected_event_ids:
+                        self.timeline.delete_event(event_id)
+                except TimelineIOError, e:
+                    self.fn_handle_db_error(e)
+            self.view.edit_ends()
+            
     def balloon_visibility_changed(self, visible):
         self.view_properties.show_balloons_on_hover = visible
         # When display on hovering is disabled we have to make sure
