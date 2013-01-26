@@ -80,6 +80,9 @@ class TimelineApplication(object):
         if self._locked():
             display_warning_message("The Timeline is Locked by someone else.\nTry again later")
             return False
+        if self._timeline_path_doesnt_exists_yet():
+            self._lock()
+            return True
         last_changed = self._get_modification_date()
         if last_changed > self.last_changed:
             ack = get_user_ack(_("Someoneelse has changed the Timeline.\nYou have two choices!\n  1. Set Timeline in Read-Only mode.\n  2. Synchronize Timeline.\n\nDo you want to Synchronize?"))
@@ -92,6 +95,9 @@ class TimelineApplication(object):
             self._lock()
         return True
     
+    def _timeline_path_doesnt_exists_yet(self):
+        return not os.path.exists(self.timelinepath)
+        
     def edit_ends(self):
         if self.timeline is not None:
             if self._the_lock_is_mine():
