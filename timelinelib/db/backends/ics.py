@@ -105,7 +105,7 @@ class IcsTimeline(Observable):
         return None
 
     def _get_events(self, decider_fn=None):
-        events = []
+        self.events = []
         for event in self.cal.walk("VEVENT"):
             start, end = extract_start_end(event)
             txt = ""
@@ -114,8 +114,8 @@ class IcsTimeline(Observable):
             e = Event(self.get_time_type(), start, end, txt)
             e.set_id(event["timeline_id"])
             if decider_fn is None or decider_fn(e):
-                events.append(e)
-        return events
+                self.events.append(e)
+        return self.events
 
     def _load_data(self):
         self.cal = Calendar()

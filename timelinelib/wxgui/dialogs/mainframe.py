@@ -27,6 +27,7 @@ from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.objects import TimePeriod
+from timelinelib.db.transformers.toxmltimeline import transform_to_xml_timeline
 from timelinelib.export.bitmap import export_to_image
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
@@ -236,7 +237,11 @@ class MainFrame(wx.Frame):
 
     def _save_timeline_to_new_path(self, new_timeline_path):
         if new_timeline_path is not None:
-            self.timeline.path = new_timeline_path
+            if isinstance(self.timeline, XmlTimeline):
+                self.timeline.path = new_timeline_path
+            else:
+                self.timeline =  transform_to_xml_timeline(new_timeline_path, 
+                                                           self.timeline)
             self._save_current_timeline_data()
             self.open_timeline(self.timeline.path)
         
@@ -260,7 +265,6 @@ class MainFrame(wx.Frame):
 
     def _create_file_save_as_menu(self, file_menu):
         menu = file_menu.Append(wx.ID_SAVEAS, "", _("Save As..."))
-        self.menu_controller.add_menu_requiring_xml_timeline(menu)
         self.Bind(wx.EVT_MENU, self.mnu_file_save_as_on_click, id=wx.ID_SAVEAS)
 
     def _create_file_page_setup_menu_item(self, file_menu):
@@ -894,7 +898,6 @@ class MenuController(object):
         self.menus_requiring_timeline = []
         self.menus_requiring_writable_timeline = []
         self.menus_requiring_visible_timeline_view = []
-        self.menus_requiring_xml_timeline = []
 
     def on_timeline_change(self, timeline):
         self.current_timeline = timeline
@@ -908,9 +911,6 @@ class MenuController(object):
     def add_menu_requiring_visible_timeline_view(self, menu):
         self.menus_requiring_visible_timeline_view.append(menu)
 
-    def add_menu_requiring_xml_timeline(self, menu):
-        self.menus_requiring_xml_timeline.append(menu)
-
     def enable_disable_menus(self, timeline_view_visible):
         for menu in self.menus_requiring_writable_timeline:
             self._enable_disable_menu_requiring_writable_timeline(menu)
@@ -918,8 +918,6 @@ class MenuController(object):
             self._enable_disable_menu_requiring_timeline(menu)
         for menu in self.menus_requiring_visible_timeline_view:
             self._enable_disable_menu_requiring_visible_timeline_view(menu, timeline_view_visible)
-        for menu in self.menus_requiring_xml_timeline:
-            self._enable_disable_menu_requiring_xml_timeline(menu)
 
     def _enable_disable_menu_requiring_writable_timeline(self, menu):
         if self.current_timeline == None:
