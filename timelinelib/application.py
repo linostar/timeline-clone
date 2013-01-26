@@ -21,6 +21,7 @@ import getpass
 
 
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.wxgui.utils import get_user_ack
 from timelinelib.wxgui.utils import display_warning_message
 
@@ -120,6 +121,8 @@ class TimelineApplication(object):
 
     def _lock(self):
         fp = None
+        if not isinstance(self.timeline, XmlTimeline):
+            return
         try:
             ts = self._get_timestamp_string()
             path = self._get_lockpath()
