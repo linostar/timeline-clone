@@ -326,9 +326,7 @@ class DrawingArea(object):
 
     def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
-            if self.view.ok_to_edit():
-                self._delete_selected_events()
-                self.view.edit_ends()
+            self._delete_selected_events()
 
         elif alt_down:
             if keycode == wx.WXK_UP:
