@@ -59,13 +59,16 @@ class TimeEditorDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self._ok_button_on_click, id=wx.ID_OK)
 
     def _ok_button_on_click(self, e):
+        self.on_return()
+
+    def on_return(self):
         try:
             self.time = self.time_picker.get_value()
         except ValueError, ex:
             _display_error_message(ex_msg(ex))
         else:
             self.EndModal(wx.ID_OK)
-
+        
     def _layout_components(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
         if self._should_display_show_time_checkbox():
