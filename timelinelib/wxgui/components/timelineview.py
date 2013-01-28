@@ -108,15 +108,14 @@ class DrawingAreaPanel(wx.Panel):
         
 
     def open_create_event_editor(self, start_time, end_time):
-        if self.ok_to_edit():
-            open_create_event_editor(
-                self,
-                self.config,
-                self.controller.get_timeline(),
-                self.fn_handle_db_error,
-                start_time,
-                end_time)
-            self.edit_ends()
+        open_create_event_editor(
+            self,
+            self.config,
+            self.controller.get_timeline(),
+            self.fn_handle_db_error,
+            start_time,
+            end_time)
+
 
     def start_balloon_show_timer(self, milliseconds=-1, oneShot=False):
         self.balloon_show_timer.Start(milliseconds, oneShot)

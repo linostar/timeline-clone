@@ -728,6 +728,12 @@ def open_event_editor_for(parent, config, db, handle_db_error, event):
 
 def open_create_event_editor(parent, config, db, handle_db_error, start=None, end=None):
     def create_event_editor():
-        return EventEditorDialog(
-            parent, config, _("Create Event"), db, start, end)
-    gui_utils.show_modal(create_event_editor, handle_db_error)
+        label = _("Create Event")
+        return EventEditorDialog(parent, config, label, db, start, end)
+    if parent.ok_to_edit():
+        try:
+            gui_utils.show_modal(create_event_editor, handle_db_error)
+        except:
+            raise
+        finally:
+            parent.edit_ends()

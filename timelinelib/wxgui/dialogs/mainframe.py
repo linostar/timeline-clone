@@ -439,10 +439,8 @@ class MainFrame(wx.Frame):
         self.menu_controller.add_menu_requiring_writable_timeline(create_event_item)
 
     def _mnu_timeline_create_event_on_click(self, evt):
-        if self.ok_to_edit():
-            open_create_event_editor(
-                self, self.config, self.timeline, self.handle_db_error)
-            self.edit_ends()
+        open_create_event_editor(self, self.config, self.timeline, 
+                                 self.handle_db_error)
 
     def _create_timeline_duplicate_event_menu_item(self, timeline_menu):
         self.mnu_timeline_duplicate_event = timeline_menu.Append(
