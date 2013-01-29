@@ -88,14 +88,12 @@ class DrawingAreaPanel(wx.Panel):
         self.main_frame.enable_disable_menus()
 
     def open_event_editor_for(self, event):
-        if self.ok_to_edit():
-            open_event_editor_for(
-                self,
-                self.config,
-                self.controller.get_timeline(),
-                self.fn_handle_db_error,
-                event)
-            self.edit_ends()
+        open_event_editor_for(
+            self,
+            self.config,
+            self.controller.get_timeline(),
+            self.fn_handle_db_error,
+            event)
 
     def open_duplicate_event_dialog_for_event(self, event):
         if self.ok_to_edit():

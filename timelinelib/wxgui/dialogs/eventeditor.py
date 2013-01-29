@@ -723,7 +723,13 @@ def open_event_editor_for(parent, config, db, handle_db_error, event):
         else:
             return EventEditorDialog(
                 parent, config, _("Edit Event"), db, event=event)
-    gui_utils.show_modal(create_event_editor, handle_db_error)
+    if parent.ok_to_edit():
+        try:
+            gui_utils.show_modal(create_event_editor, handle_db_error)
+        except:
+            raise
+        finally:
+            parent.edit_ends()
 
 
 def open_create_event_editor(parent, config, db, handle_db_error, start=None, end=None):
