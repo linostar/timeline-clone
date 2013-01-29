@@ -491,8 +491,15 @@ class DrawingArea(object):
                     for event_id in selected_event_ids:
                         self.timeline.delete_event(event_id)
                 except TimelineIOError, e:
+                    # edit_ends() needs an open timeline, so we must call it
+                    # before the handler, which closes the timeline so
+                    # the lock file removes.
+                    self.view.edit_ends()
                     self.fn_handle_db_error(e)
-            self.view.edit_ends()
+                finally:
+                    # In case of any other exception (or ok) we want to 
+                    # remove the lock file
+                    self.view.edit_ends()
             
     def balloon_visibility_changed(self, visible):
         self.view_properties.show_balloons_on_hover = visible
