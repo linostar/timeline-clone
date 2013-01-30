@@ -48,7 +48,11 @@ class NoOpInputHandler(InputHandler):
             return
         if self._hit_move_handle(x, y, alt_down) and not event.ends_today:
             if self.drawing_area_view.ok_to_edit():
-                self.drawing_area.change_input_handler_to_move_by_drag(event, time_at_x)
+                try:
+                    self.drawing_area.change_input_handler_to_move_by_drag(event, time_at_x)
+                except:
+                    self.drawing_area_view.edit_ends()
+                    raise
             return
         if (event is None and ctrl_down == False and shift_down == False):
             self.drawing_area._toggle_event_selection(x, y, ctrl_down)
