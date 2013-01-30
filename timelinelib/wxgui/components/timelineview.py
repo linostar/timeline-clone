@@ -96,14 +96,11 @@ class DrawingAreaPanel(wx.Panel):
             event)
 
     def open_duplicate_event_dialog_for_event(self, event):
-        if self.ok_to_edit():
-            open_duplicate_event_dialog_for_event(
-                self,
-                self.controller.get_timeline(),
-                self.fn_handle_db_error,
-                event)
-            self.edit_ends()
-        
+        open_duplicate_event_dialog_for_event(
+            self,
+            self.controller.get_timeline(),
+            self.fn_handle_db_error,
+            event)
 
     def open_create_event_editor(self, start_time, end_time):
         open_create_event_editor(
@@ -113,7 +110,6 @@ class DrawingAreaPanel(wx.Panel):
             self.fn_handle_db_error,
             start_time,
             end_time)
-
 
     def start_balloon_show_timer(self, milliseconds=-1, oneShot=False):
         self.balloon_show_timer.Start(milliseconds, oneShot)

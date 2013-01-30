@@ -457,13 +457,11 @@ class MainFrame(wx.Frame):
         except IndexError, e:
             # No event selected so do nothing!
             return
-        if self.ok_to_edit():
-            open_duplicate_event_dialog_for_event(
-                self,
-                self.timeline,
-                self.handle_db_error,
-                event)
-            self.edit_ends()
+        open_duplicate_event_dialog_for_event(
+            self,
+            self.timeline,
+            self.handle_db_error,
+            event)
 
     def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
         self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
