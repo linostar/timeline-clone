@@ -194,6 +194,7 @@ class DrawingArea(object):
         self.context_menu_event = self.drawing_algorithm.event_at(x, y, alt_down)
         if self.context_menu_event is None:
             return
+        self.view_properties.set_selected(self.context_menu_event, True)
         menu_definitions = [
             (_("Edit"), self._context_menu_on_edit_event),
             (_("Duplicate..."), self._context_menu_on_duplicate_event),
