@@ -81,8 +81,6 @@ class DrawingArea(object):
 
     def change_input_handler_to_no_op(self):
         self.input_handler = NoOpInputHandler(self, self.view)
-        if self.timeline is not None:
-            self.timeline._save_if_not_disabled()
         self.view.edit_ends()
 
     def get_drawer(self):
@@ -328,35 +326,39 @@ class DrawingArea(object):
     def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()
-
         elif alt_down:
             if keycode == wx.WXK_UP:
-                if self.view.ok_to_edit():
-                    self._move_event_vertically(up=True)
-                    self.view.edit_ends()
+                self._try_move_event_vertically(up=True)
             elif keycode == wx.WXK_DOWN:
-                if self.view.ok_to_edit():
-                    self._move_event_vertically(up=False)
-                    self.view.edit_ends()
+                self._try_move_event_vertically(up=True)
             elif keycode == wx.WXK_RIGHT:
                 self._scroll_timeline_view_by_factor(LEFT_RIGHT_SCROLL_FACTOR)
             elif keycode == wx.WXK_LEFT:
                 self._scroll_timeline_view_by_factor(-LEFT_RIGHT_SCROLL_FACTOR)
 
-    def _move_event_vertically(self, up=True):
+    def _try_move_event_vertically(self, up=True):
         if self._one_and_only_one_event_selected():
-            selected_event = self._get_first_selected_event()
-            (overlapping_event, direction) = self.drawing_algorithm.get_closest_overlapping_event(selected_event,
-                                                                                                  up=up)
-            if overlapping_event is None:
-                return
-            if direction > 0:
-                self.timeline.place_event_after_event(selected_event,
-                                                      overlapping_event)
-            else:
-                self.timeline.place_event_before_event(selected_event,
-                                                       overlapping_event)
-            self._redraw_timeline()
+            self._move_event_vertically()
+
+    def _move_event_vertically(self, up=True):
+        if self.view.ok_to_edit():
+            try:
+                selected_event = self._get_first_selected_event()
+                (overlapping_event, direction) = self.drawing_algorithm.get_closest_overlapping_event(selected_event,
+                                                                                                      up=up)
+                if overlapping_event is None:
+                    return
+                if direction > 0:
+                    self.timeline.place_event_after_event(selected_event,
+                                                          overlapping_event)
+                else:
+                    self.timeline.place_event_before_event(selected_event,
+                                                           overlapping_event)
+                self._redraw_timeline()
+            except:
+                raise
+            finally:
+                self.view.edit_ends()
 
     def key_up(self, keycode):
         if keycode == wx.WXK_CONTROL:
