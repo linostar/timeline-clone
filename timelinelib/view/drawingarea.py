@@ -328,9 +328,9 @@ class DrawingArea(object):
             self._delete_selected_events()
         elif alt_down:
             if keycode == wx.WXK_UP:
-                self._try_move_event_vertically(up=True)
+                self._try_move_event_vertically(True)
             elif keycode == wx.WXK_DOWN:
-                self._try_move_event_vertically(up=True)
+                self._try_move_event_vertically(False)
             elif keycode == wx.WXK_RIGHT:
                 self._scroll_timeline_view_by_factor(LEFT_RIGHT_SCROLL_FACTOR)
             elif keycode == wx.WXK_LEFT:
@@ -338,7 +338,7 @@ class DrawingArea(object):
 
     def _try_move_event_vertically(self, up=True):
         if self._one_and_only_one_event_selected():
-            self._move_event_vertically()
+            self._move_event_vertically(up)
 
     def _move_event_vertically(self, up=True):
         if self.view.ok_to_edit():
