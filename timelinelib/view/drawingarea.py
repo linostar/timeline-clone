@@ -81,8 +81,8 @@ class DrawingArea(object):
 
     def change_input_handler_to_no_op(self):
         self.input_handler = NoOpInputHandler(self, self.view)
-        for event in self.get_selected_events():
-            self.timeline.save_event(event)
+        if self.timeline is not None:
+            self.timeline._save_if_not_disabled()
         self.view.edit_ends()
 
     def get_drawer(self):
