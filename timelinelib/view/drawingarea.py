@@ -355,6 +355,7 @@ class DrawingArea(object):
                     self.timeline.place_event_before_event(selected_event,
                                                            overlapping_event)
                 self._redraw_timeline()
+                self.timeline._save_if_not_disabled()
             except:
                 raise
             finally:
