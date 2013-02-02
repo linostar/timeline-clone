@@ -518,8 +518,12 @@ class MainFrame(wx.Frame):
 
     def _mnu_timeline_edit_categories_on_click(self, evt):
         if self.ok_to_edit():
-            self.edit_categories()
-            self.edit_ends()
+            try:
+                self.edit_categories()
+            except:
+                raise
+            finally:
+                self.edit_ends()
 
     def _create_timeline_set_readonly(self, timeline_menu):
         item = timeline_menu.Append(
