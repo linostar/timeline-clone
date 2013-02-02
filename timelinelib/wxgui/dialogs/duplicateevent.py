@@ -23,6 +23,7 @@ from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import _display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 import timelinelib.wxgui.utils as gui_utils
+from timelinelib.db.utils import safe_locking
 
 
 class DuplicateEventDialog(wx.Dialog):
@@ -134,10 +135,6 @@ class DuplicateEventDialog(wx.Dialog):
 def open_duplicate_event_dialog_for_event(parent, db, handle_db_error, event):
     def create_dialog():
         return DuplicateEventDialog(parent, db, event)
-    if parent.ok_to_edit():
-        try:
-            gui_utils.show_modal(create_dialog, handle_db_error)
-        except:
-            raise
-        finally:
-            parent.edit_ends()
+    def edit_function():
+        gui_utils.show_modal(create_dialog, handle_db_error)
+    safe_locking(parent, edit_function)

@@ -22,6 +22,7 @@ import webbrowser
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
+from timelinelib.db.utils import safe_locking
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 from timelinelib.drawing.viewproperties import ViewProperties
@@ -342,25 +343,21 @@ class DrawingArea(object):
             self._move_event_vertically(up)
 
     def _move_event_vertically(self, up=True):
-        if self.view.ok_to_edit():
-            try:
-                selected_event = self._get_first_selected_event()
-                (overlapping_event, direction) = self.drawing_algorithm.get_closest_overlapping_event(selected_event,
-                                                                                                      up=up)
-                if overlapping_event is None:
-                    return
-                if direction > 0:
-                    self.timeline.place_event_after_event(selected_event,
-                                                          overlapping_event)
-                else:
-                    self.timeline.place_event_before_event(selected_event,
-                                                           overlapping_event)
-                self._redraw_timeline()
-                self.timeline._save_if_not_disabled()
-            except:
-                raise
-            finally:
-                self.view.edit_ends()
+        def edit_function():
+            selected_event = self._get_first_selected_event()
+            (overlapping_event, direction) = self.drawing_algorithm.get_closest_overlapping_event(selected_event,
+                                                                                                  up=up)
+            if overlapping_event is None:
+                return
+            if direction > 0:
+                self.timeline.place_event_after_event(selected_event,
+                                                      overlapping_event)
+            else:
+                self.timeline.place_event_before_event(selected_event,
+                                                       overlapping_event)
+            self._redraw_timeline()
+            self.timeline._save_if_not_disabled()
+        safe_locking(self.view, edit_function)
 
     def key_up(self, keycode):
         if keycode == wx.WXK_CONTROL:
@@ -487,26 +484,24 @@ class DrawingArea(object):
         """After acknowledge from the user, delete all selected events."""
         selected_event_ids = self.view_properties.get_selected_event_ids()
         nbr_of_selected_event_ids = len(selected_event_ids)
-        if self.view.ok_to_edit():
+        def user_ack():
             if nbr_of_selected_event_ids > 1:
                 text = _("Are you sure you want to delete %d events?" %
                          nbr_of_selected_event_ids)
             else:
                 text = _("Are you sure you want to delete this event?")
-            if self.view.ask_question(text) == wx.YES:
-                try:
-                    for event_id in selected_event_ids:
-                        self.timeline.delete_event(event_id)
-                except TimelineIOError, e:
-                    # edit_ends() needs an open timeline, so we must call it
-                    # before the handler, which closes the timeline so
-                    # the lock file removes.
-                    self.view.edit_ends()
-                    self.fn_handle_db_error(e)
-                finally:
-                    # In case of any other exception (or ok) we want to 
-                    # remove the lock file
-                    self.view.edit_ends()
+            return self.view.ask_question(text) == wx.YES
+        def exception_handler(ex):
+            if isinstance(ex, TimelineIOError):
+                self.fn_handle_db_error(ex)
+            else:
+                raise(ex)
+        def edit_function():
+            if user_ack():
+                for event_id in selected_event_ids:
+                    self.timeline.delete_event(event_id)
+                raise TimelineIOError("test")
+        safe_locking(self.view, edit_function, exception_handler)
             
     def balloon_visibility_changed(self, visible):
         self.view_properties.show_balloons_on_hover = visible

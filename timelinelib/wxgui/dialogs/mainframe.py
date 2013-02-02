@@ -28,6 +28,7 @@ from timelinelib.db import db_open
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.transformers.toxmltimeline import transform_to_xml_timeline
+from timelinelib.db.utils import safe_locking
 from timelinelib.export.bitmap import export_to_image
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
@@ -374,15 +375,11 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click, preferences_item)
 
     def _mnu_edit_preferences_on_click(self, evt):
-        if self.ok_to_edit():
-            try:
-                dialog = PreferencesDialog(self, self.config)
-                dialog.ShowModal()
-                dialog.Destroy()
-            except:
-                raise
-            finally:
-                self.edit_ends()
+        def edit_function():
+            dialog = PreferencesDialog(self, self.config)
+            dialog.ShowModal()
+            dialog.Destroy()
+        safe_locking(self, edit_function)
 
     def _create_view_menu(self, main_menu_bar):
         view_menu = wx.Menu()
@@ -521,13 +518,9 @@ class MainFrame(wx.Frame):
         self.menu_controller.add_menu_requiring_writable_timeline(edit_categories_item)
 
     def _mnu_timeline_edit_categories_on_click(self, evt):
-        if self.ok_to_edit():
-            try:
-                self.edit_categories()
-            except:
-                raise
-            finally:
-                self.edit_ends()
+        def edit_function():
+            self.edit_categories()
+        safe_locking(self, edit_function)
 
     def _create_timeline_set_readonly(self, timeline_menu):
         item = timeline_menu.Append(

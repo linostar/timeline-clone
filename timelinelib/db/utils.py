@@ -89,3 +89,17 @@ def _create_non_exising_path(base, suffix):
             i += 1
         else:
             return new_path
+        
+        
+def safe_locking(controller, edit_function, exception_handler=None):
+    if controller.ok_to_edit():
+        try:
+            edit_function()
+        except Exception, e:
+            if exception_handler is not None:
+                controller.edit_ends()        
+                exception_handler(e)
+            else:
+                raise
+        finally:
+            controller.edit_ends()        

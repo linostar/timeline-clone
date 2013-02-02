@@ -22,6 +22,7 @@ import wx
 import webbrowser
 
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.db.utils import safe_locking
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 from timelinelib.wxgui.components.categorychoice import CategoryChoice
@@ -723,23 +724,15 @@ def open_event_editor_for(parent, config, db, handle_db_error, event):
         else:
             return EventEditorDialog(
                 parent, config, _("Edit Event"), db, event=event)
-    if parent.ok_to_edit():
-        try:
-            gui_utils.show_modal(create_event_editor, handle_db_error)
-        except:
-            raise
-        finally:
-            parent.edit_ends()
+    def edit_function():
+        gui_utils.show_modal(create_event_editor, handle_db_error)
+    safe_locking(parent, edit_function)
 
 
 def open_create_event_editor(parent, config, db, handle_db_error, start=None, end=None):
     def create_event_editor():
         label = _("Create Event")
         return EventEditorDialog(parent, config, label, db, start, end)
-    if parent.ok_to_edit():
-        try:
-            gui_utils.show_modal(create_event_editor, handle_db_error)
-        except:
-            raise
-        finally:
-            parent.edit_ends()
+    def edit_function():
+        gui_utils.show_modal(create_event_editor, handle_db_error)
+    safe_locking(parent, edit_function)
