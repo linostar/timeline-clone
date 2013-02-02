@@ -375,10 +375,14 @@ class MainFrame(wx.Frame):
 
     def _mnu_edit_preferences_on_click(self, evt):
         if self.ok_to_edit():
-            dialog = PreferencesDialog(self, self.config)
-            dialog.ShowModal()
-            dialog.Destroy()
-            self.edit_ends()
+            try:
+                dialog = PreferencesDialog(self, self.config)
+                dialog.ShowModal()
+                dialog.Destroy()
+            except:
+                raise
+            finally:
+                self.edit_ends()
 
     def _create_view_menu(self, main_menu_bar):
         view_menu = wx.Menu()
