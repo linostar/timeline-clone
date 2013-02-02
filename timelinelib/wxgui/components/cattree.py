@@ -20,6 +20,7 @@ import wx
 import wx.lib.agw.customtreectrl as customtreectrl
 
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.db.utils import safe_locking
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
 from timelinelib.wxgui.utils import _ask_question
@@ -109,22 +110,21 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
             self._update_categories_from_tree(subtree, item, view_properties)
 
     def _on_right_down(self, e):
-        if self.parent.ok_to_edit():
+        def edit_function():
             (item, flags) = self.HitTest(e.GetPosition())
             if item is not None:
                 self.SelectItem(item, True)
             self._update_menu_enableness()
             self.PopupMenu(self.mnu)
-            self.parent.edit_ends()
-
+        safe_locking(self.parent, edit_function)
+        
     def _on_key_down(self, e):
+        def edit_function():
+            self.controller.delete_selected_category()
         if self.GetFirstVisibleItem() is None:
             return
-        keycode = e.GetKeyCode()
-        if keycode == wx.WXK_DELETE:
-            if self.parent.ok_to_edit():
-                self.controller.delete_selected_category()
-                self.parent.edit_ends()
+        if e.GetKeyCode() == wx.WXK_DELETE:
+            safe_locking(self.parent, edit_function)
         e.Skip()
 
     def _mnu_add_on_click(self, e):
