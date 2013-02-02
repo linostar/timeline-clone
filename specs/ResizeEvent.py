@@ -64,6 +64,7 @@ class ResizeEventSpec(unittest.TestCase):
     def setUp(self):
         self.drawer = Mock()
         self.controller = Mock(DrawingArea)
+        self.controller.timeline = None
         self.controller.view = Mock(DrawingAreaPanel)
         self.controller.get_drawer.return_value = self.drawer
         self.status_bar = Mock(StatusBarAdapter)

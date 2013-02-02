@@ -98,6 +98,7 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
         self.snap_times = {}
         self.selected_events = []
         self.drawing_area = Mock(DrawingArea)
+        self.drawing_area.timeline = None
         self.drawing_area.view = Mock()
         self.drawing_area.get_time.side_effect = lambda x: self.times_at[x]
         self.drawing_area.event_is_period.side_effect = lambda event: event in self.period_events
