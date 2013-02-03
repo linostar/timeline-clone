@@ -222,15 +222,14 @@ class MainFrame(wx.Frame):
     
     def _get_new_timeline_path_from_user(self):
         defaultDir = os.path.dirname(self.timeline.path)
-        timeline_wildcard_helper = WildcardHelper(_("Timeline files"), 
-                                                  ["timeline"])
-        wildcard = timeline_wildcard_helper.wildcard_string()
+        wildcard_helper = WildcardHelper(_("Timeline files"), ["timeline"])
+        wildcard = wildcard_helper.wildcard_string()
         style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT
         message = _("Save Timeline As")
         dialog = wx.FileDialog(self, message=message, defaultDir=defaultDir,
                                wildcard=wildcard, style=style)
         if dialog.ShowModal() == wx.ID_OK:
-            new_timeline_path = dialog.GetPath()
+            new_timeline_path = wildcard_helper.get_path(dialog)
         else:
             new_timeline_path = None
         dialog.Destroy()
