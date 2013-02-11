@@ -8,6 +8,7 @@ New features, enhancements:
   * The timeline view regains focus when the event editor is closed.
   * Enter-key works in date and time fields of the event editor
   * Some help texts updated
+  * New version of icalender to cope with years before 1900
   
 Bug fixes:
 
