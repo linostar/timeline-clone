@@ -31,8 +31,10 @@ if platform.system() != "Windows":
 sys.path.insert(0, os.path.dirname(__file__))
 # Make sure that we can import pysvg
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "pysvg-0.2.1"))
+# Make sure that we can import pytz which icalendar is dependant on
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "pytz-2012j"))
 # Make sure that we can import icalendar
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "icalendar-2.1"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "icalendar-3.2"))
 # Make sure that we can import markdown
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "markdown-2.0.3"))
 
