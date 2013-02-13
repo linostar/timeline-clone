@@ -210,7 +210,6 @@ class EventEditorDialog(wx.Dialog):
 
     def _create_text_field(self, grid):
         self.txt_text = wx.TextCtrl(self, wx.ID_ANY, name="text")
-        self.txt_text.SetName("Event name")
         grid.Add(wx.StaticText(self, label=_("Text:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.txt_text, flag=wx.EXPAND)
