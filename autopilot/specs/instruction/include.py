@@ -17,44 +17,37 @@
 
 
 import unittest
+
 from mock import Mock
 
 from autopilotlib.instructions.factory import create_instruction 
 from autopilotlib.manuscript.manuscript import Manuscript 
 
 
-EXIT_APP_INSTRUCTION = 'Exit App(X)'
-EXIT_APP_INSTRUCTION_2 = 'Exit App("X")'
+INCLUDE_INSTRUCTION = 'Include(file.txt)'
 
 
-class InstructionSpecification(unittest.TestCase):
+class IncludeInstructionSpecification(unittest.TestCase):
     
-    def test_instruction_has_a_text_description(self):
-        self.assert_text_description(EXIT_APP_INSTRUCTION)
+    def test_include_instruction_has_include_flag(self):
+        self.assertTrue(self.instruction.include)
         
-    def test_arg_can_be_text(self):
-        self.assert_arg("X")
+    def test_include_instruction_has_a_filename(self):
+        self.assertEqual("file.txt", self.instruction.get_filename())
         
-    def test_arg_can_be_string(self):
-        self.given_an_instruction(EXIT_APP_INSTRUCTION_2)
-        self.assert_arg("X")
+    def test_include_instruction_can_execute(self):
+        self.when_execute_called()
+        self.manuscript.execute_next_instruction.assert_called()
         
-        
+
     def setUp(self):
-        self.instruction = create_instruction(EXIT_APP_INSTRUCTION)
+        self.instruction = create_instruction(INCLUDE_INSTRUCTION)
         self.manuscript = Mock(Manuscript)
     
     def tearDown(self):
         pass
 
-    
-    def given_an_instruction(self, text_description):
-        self.instruction = create_instruction(text_description)
-
         
-    def assert_text_description(self, text_description):
-        self.assertEqual("exit application(X)", str(self.instruction))
-
-    def assert_arg(self, arg):
-        self.assertEqual(arg, self.instruction.arg(3))
+    def when_execute_called(self):
+        self.instruction.execute(self.manuscript)
         
