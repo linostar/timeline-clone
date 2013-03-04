@@ -70,7 +70,7 @@ ID_MOUSE          = 116
 # reserved words
 #
 #-----------------------------------------------------------------------
-INSTRUCTION_KEYWORDS = (
+INSTRUCTION_KEYWORDS = [
     "include",
     "start",
     "application",
@@ -88,7 +88,7 @@ INSTRUCTION_KEYWORDS = (
     "text",
     "customtreecontrol"
     "mouse"
-)
+]
 
 INSTRUCTION_ALIASES = {
     "app"   : "application",

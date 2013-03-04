@@ -88,7 +88,7 @@ class ApplicationArguments(object):
             
     def validate_program(self):
         filename = self.arguments[0]
-        self.valisdate_file_existance(filename, "Can't find the manuscript %s" % filename)
+        self.valisdate_file_existance(filename, "Can't find the program %s" % filename)
 
     def valisdate_file_existance(self, filename, error_text):
         path = self._get_file_path(filename)
@@ -121,16 +121,18 @@ class ApplicationArguments(object):
         if os.path.exists(filename):
             return filename
         else:
-            for path in self.paths():
-                pgmpath = os.path.join(path, filename)
-                if os.path.exists(pgmpath):
-                    return pgmpath
+            if self.paths() is not None:
+                for path in self.paths():
+                    pgmpath = os.path.join(path, filename)
+                    if os.path.exists(pgmpath):
+                        return pgmpath
         return None
     
     def paths(self):
-        path_string = self.options.path.strip()
-        if path_string.endswith(";"):
-            path_string = path_string[:-1]
-        paths = path_string.split(";")
-        return paths
+        if self.options.path is not None:
+            path_string = self.options.path.strip()
+            if path_string.endswith(";"):
+                path_string = path_string[:-1]
+            paths = path_string.split(";")
+            return paths
     
