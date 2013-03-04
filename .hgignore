@@ -17,3 +17,4 @@ api/
 .settings/org.eclipse*
 Thumbs.db
 codemonitor.errors
+*.log
