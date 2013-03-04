@@ -16,10 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
-
 import autopilotlib.manuscript.scanner as scanner
-from autopilotlib.app.constants import TIME_TO_WAIT_BEFORE_CONTINUING_IN_MILLISECONDS
 
 
 class Instruction():
@@ -54,5 +51,4 @@ class Instruction():
             return token.lexeme
 
     def execute(self, manuscript, win=None):
-        wx.CallLater(TIME_TO_WAIT_BEFORE_CONTINUING_IN_MILLISECONDS, 
-                     manuscript.execute_next_instruction)
+        manuscript.execute_next_instruction()
