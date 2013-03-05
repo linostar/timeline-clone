@@ -55,9 +55,9 @@ class Wrapper(object):
         try:
             hwnd = self._get_button(label)
             self._send_click_message_to_button(hwnd)
-            Logger.add_result("Button clicked")
+            Logger.add_result("Button(%s) clicked" % label)
         except ControlNotFoundException:
-            Logger.add_error("Button not found")
+            Logger.add_error("Button(%s) not found" % label)
 
     def click_mouse(self, position):
         try:

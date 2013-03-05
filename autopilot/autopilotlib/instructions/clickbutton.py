@@ -38,6 +38,6 @@ class ClickButtonInstruction(Instruction):
     def label(self):
         return self.arg(ClickButtonInstruction.TARGET)
     
-    def execute(self, manuscript, dialog):
-        Instruction.execute(self, manuscript, dialog)
-        dialog.click_button(self.label())
+    def execute(self, manuscript, win):
+        Instruction.execute(self, manuscript, win)
+        win.click_button(self.label())
