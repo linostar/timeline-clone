@@ -64,9 +64,7 @@ class Manuscript():
     def execute_next_instruction(self):
         try:
             instruction = self._next_instruction()
-            if self.popup == None:
-                self.popup = InstructionPopup(self.windows[0])
-            self.popup.SetText("%s" % instruction)
+            self._display_instruction_in_popup_window(instruction)
             if instruction.comment:
                 delay = 0
             else:
@@ -77,6 +75,15 @@ class Manuscript():
         except NoMoreInstructionsException:
             Logger.add("INSTRUCTION: None")
                 
+    def _display_instruction_in_popup_window(self, instruction):
+        try:
+            if self.popup == None:
+                self.popup = InstructionPopup(self.windows[0])
+            self.popup.SetText("%s" % instruction)
+        except:
+            # We can end up here if we have issued an 'exit' instruction
+            pass
+        
     def _next_instruction(self):
         try:
             instruction = self.instructions[0]

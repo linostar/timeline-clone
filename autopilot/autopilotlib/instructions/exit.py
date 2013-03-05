@@ -24,5 +24,6 @@ class ExitInstruction(Instruction):
     def __init__(self, tokens):
         Instruction.__init__(self, tokens)
         
-    def execute(self, manuscript, frame):
-        frame.Destroy()
+    def execute(self, manuscript, win):
+        Instruction.execute(self, manuscript, win)
+        win.Destroy()
