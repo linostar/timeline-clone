@@ -76,24 +76,20 @@ class Manuscript():
             Logger.add("INSTRUCTION: None")
                 
     def _display_instruction_in_popup_window(self, instruction):
-        try:
-            if self.popup == None:
-                self.popup = InstructionPopup(self.windows[0])
-            self.popup.SetText("%s" % instruction)
-        except:
-            # We can end up here if we have issued an 'exit' instruction
-            pass
+        if self.popup == None:
+            self.popup = InstructionPopup(self.windows[0])
+        self.popup.SetText("%s" % instruction)
         
     def _next_instruction(self):
         try:
             instruction = self.instructions[0]
             self.instructions = self.instructions[1:]
-            Logger.add_instruction(instruction)
             return instruction
         except:
             raise NoMoreInstructionsException()
 
     def _execute_instruction(self, instruction):
+        Logger.add_instruction(instruction)
         current_window = self._get_current_window()
         instruction.execute(self, current_window)
 
@@ -164,6 +160,9 @@ class Manuscript():
             self.missing_scripts.append(manuscript)
             return []
         
+    def get_application_frame(self):
+        return self.windows[0]
+    
     def _get_current_window(self):
         self._validate_windows()
         try:

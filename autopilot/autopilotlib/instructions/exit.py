@@ -17,6 +17,7 @@
 
 
 from autopilotlib.instructions.instruction import Instruction
+from autopilotlib.app.logger import Logger
 
 
 class ExitInstruction(Instruction):
@@ -25,5 +26,6 @@ class ExitInstruction(Instruction):
         Instruction.__init__(self, tokens)
         
     def execute(self, manuscript, win):
-        Instruction.execute(self, manuscript, win)
-        win.Destroy()
+        # Everything ends here so we don't bother to call Instruction.execute
+        manuscript.get_application_frame().Destroy()
+        Logger.add_result("Application destroyed")
