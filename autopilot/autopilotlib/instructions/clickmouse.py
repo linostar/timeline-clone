@@ -39,6 +39,6 @@ class ClickMouseInstruction(Instruction):
         return (x + int(self.tokens[ClickMouseInstruction.TARGET_X].lexeme),
                 y + int(self.tokens[ClickMouseInstruction.TARGET_Y].lexeme))
 
-    def execute(self, manuscript, dialog):
-        Instruction.execute(self, manuscript, dialog)
-        dialog.click_mouse(self.position(dialog))
+    def execute(self, manuscript, win):
+        Instruction.execute(self, manuscript, win)
+        win.click_mouse(self.position(win))

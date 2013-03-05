@@ -62,7 +62,7 @@ class Wrapper(object):
     def click_mouse(self, position):
         try:
             self._send_lbutton_click_to_window(position)
-            Logger.add_result("Mouse clicked")
+            Logger.add_result("Mouse clicked at (%d, %d)" % (position[0], position[1]))
         except ControlNotFoundException:
             Logger.add_error("Mouse click failed")
 
