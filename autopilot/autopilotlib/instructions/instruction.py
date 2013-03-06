@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import wx
+
 import autopilotlib.manuscript.scanner as scanner
 
 
@@ -43,6 +45,9 @@ class Instruction():
             text.append(token.lexeme)
         return "".join(text).strip()
 
+    def execute(self, manuscript, win=None):
+        manuscript.execute_next_instruction()
+
     def arg(self, index):
         token = self.tokens[index]
         if token.id == scanner.STRING:
@@ -59,5 +64,22 @@ class Instruction():
                 args.append(token.lexeme[1:-1])
         return args
             
-    def execute(self, manuscript, win=None):
-        manuscript.execute_next_instruction()
+    def find_win(self, win, classname, label=None):
+        if label == None:
+            name = win.GetLabel()
+            win  = self._find_win_from_input(win, classname)
+        else:
+            name = label
+            win = self._find_win_by_name(name, classname)
+        return win, name
+    
+    def _find_win_from_input(self, win, classname):
+        if win.ClassName == classname:
+            return win
+        
+    def _find_win_by_name(self, name, classname):
+        wins = wx.GetTopLevelWindows()
+        for win in wins:
+            if win.ClassName == classname and win.GetLabel() == name:
+                return win
+
