@@ -47,14 +47,11 @@ class CloseFrameInstruction(Instruction):
         self._close(win, name)
         
     def _get_name(self):
-        try:
-            return self.arg(CloseFrameInstruction.TARGET)
-        except:
-            return None
+        return self.arg(CloseFrameInstruction.TARGET)
     
-    def _close(self, frame, name):
+    def _close(self, win, name):
         try:
-            frame.Destroy()
+            win.Destroy()
             Logger.add_result("Frame(%s) closed" % name)
         except:
             Logger.add_error("Frame(%s) not found" % name)        
