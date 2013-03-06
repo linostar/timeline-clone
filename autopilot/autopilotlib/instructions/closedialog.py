@@ -31,9 +31,11 @@ class CloseDialogInstruction(Instruction):
         object  ::=  Dialog
         target  ::=  STRING | TEXT
         
-        Closes a modal dialog
+        Closes a modal dialog. If no target name is given the dialog to close
+        is assumed to be the current window.
         
-        Example 1:   Close Dialog(100,200)
+        Example 1:   Close Dialog("Create Event")
+        Example 2:   Close Dialog
     """    
 
     TARGET = 3
