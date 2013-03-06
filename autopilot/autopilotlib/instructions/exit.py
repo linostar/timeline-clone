@@ -22,9 +22,6 @@ from autopilotlib.app.logger import Logger
 
 class ExitInstruction(Instruction):
     
-    def __init__(self, tokens):
-        Instruction.__init__(self, tokens)
-        
     def execute(self, manuscript, win):
         # Everything ends here so we don't bother to call Instruction.execute
         manuscript.get_application_frame().Destroy()
