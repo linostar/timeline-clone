@@ -26,7 +26,10 @@ class ClickMouseInstruction(Instruction):
         
         command ::=  Click
         object  ::=  Mouse
-        target  ::=  STRING | TEXT | NUM
+        x, y    ::=  NUM
+        
+        X, y is measured relative the position of the active window and are
+        expressed in pixels.s
         
         Example 1:   Click Mouse (100,200)
     """    
