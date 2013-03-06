@@ -19,24 +19,59 @@
 import wx
 
 from autopilotlib.instructions.instruction import Instruction
-import autopilotlib.manuscript.scanner as scanner
 from autopilotlib.app.logger import Logger
 
 
 class CloseDialogInstruction(Instruction):
-    
-    def __init__(self, tokens):
-        Instruction.__init__(self, tokens)
+    """
+        0        1          2  3       4
+        command  object  [  (  target  )  ]?
         
-    def label(self):
-        for token in self.tokens:
-            if token.id == scanner.ID:
-                return token.lexeme
-        return ""
-    
-    def execute(self, manuscript, dialog):
-        wx.CallLater(500, manuscript.execute_next_instruction)
-        #dialog.Destroy()
-        dialog.click_button("OK")
+        command ::=  Close
+        object  ::=  Dialog
+        target  ::=  STRING | TEXT
         
+        Closes a modal dialog
+        
+        Example 1:   Close Dialog(100,200)
+    """    
+
+    TARGET = 3
+    
+    def execute(self, manuscript, win):
+        Instruction.execute(self, manuscript, win)
+        self._close_dialog(win)
+    
+    def _get_name_of_dialog(self):
+        return self.arg(CloseDialogInstruction.TARGET)
+    
+    def _close_dialog(self, win):
+        dialog, dialog_name = self._find_dialog(win)
+        self._close(dialog, dialog_name)
+        
+    def _find_dialog(self, win):
+        try:
+            dialog_name = self._get_name_of_dialog()
+            dialog = self._find_dialog_by_name(dialog_name)
+        except:
+            dialog_name = win.GetLabel()
+            dialog = self._find_dialog_from_input(win)
+        return dialog, dialog_name
+    
+    def _find_dialog_by_name(self, dialog_name):
+        wins = wx.GetTopLevelWindows()
+        for dialog in wins:
+            if dialog.ClassName == "wxDialog" and dialog.GetLabel() == dialog_name:
+                return dialog
+
+    def _find_dialog_from_input(self, win):
+        if win.ClassName == "wxDialog":
+            return win
+        
+    def _close(self, dialog, dialog_name):
+        try:
+            dialog.EndModal(wx.ID_CANCEL)
+            Logger.add_result("Dialog(%s) closed" % dialog_name)
+        except:
+            Logger.add_error("Dialog(%s) not found" % dialog_name)        
 

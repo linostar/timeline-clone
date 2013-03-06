@@ -37,7 +37,6 @@ class Dialog(wxDialog, Wrapper):
         super(Dialog, self).ShowModal()
     
     def Destroy(self, *args, **kw):
-        Logger.add_result("Dialog closed")
         wxDialog.Destroy(self, *args, **kw)
         
     @classmethod
