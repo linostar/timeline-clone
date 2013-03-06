@@ -49,8 +49,8 @@ class SelectMenuInstruction(Instruction):
     def _select_menu(self, win):
         try:
             item_id = self._find_menu_item_id(win)
-            win.click_menu_item(item_id)   
             Logger.add_result("Menu selected")
+            win.click_menu_item(item_id)   
         except MenuNotFoundException:
             Logger.add_error("Menu not found")
             
