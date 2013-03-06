@@ -16,10 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
-
 from autopilotlib.instructions.instruction import Instruction
-import autopilotlib.manuscript.scanner as scanner
 from autopilotlib.app.logger import Logger
 
 
@@ -44,42 +41,20 @@ class CloseFrameInstruction(Instruction):
     def execute(self, manuscript, win=None):
         Instruction.execute(self, manuscript, win)
         self._close_frame(win)
-
-    def label(self):
-        for token in self.tokens:
-            if token.id == scanner.ID:
-                return token.lexeme
-        return ""
-    
-    def _get_name_of_frame(self):
-        return self.arg(CloseFrameInstruction.TARGET)
-    
+            
     def _close_frame(self, win):
-        frame, frame_name = self._find_frame(win)
-        self._close(frame, frame_name)
+        win, name = self.find_win(win, "wxFrame", self._get_name())
+        self._close(win, name)
         
-    def _find_frame(self, win):
+    def _get_name(self):
         try:
-            frame_name = self._get_name_of_frame()
-            frame = self._find_frame_by_name(frame_name)
+            return self.arg(CloseFrameInstruction.TARGET)
         except:
-            frame_name = win.GetLabel()
-            frame = self._find_frame_from_input(win)
-        return frame, frame_name
+            return None
     
-    def _find_frame_by_name(self, frame_name):
-        wins = wx.GetTopLevelWindows()
-        for frame in wins:
-            if frame.ClassName == "wxFrame" and frame.GetLabel() == frame_name:
-                return frame
-
-    def _find_frame_from_input(self, win):
-        if win.ClassName == "wxFrame":
-            return win
-        
-    def _close(self, frame, frame_name):
+    def _close(self, frame, name):
         try:
             frame.Destroy()
-            Logger.add_result("Frame(%s) closed" % frame_name)
+            Logger.add_result("Frame(%s) closed" % name)
         except:
-            Logger.add_error("Frame(%s) not found" % frame_name)        
+            Logger.add_error("Frame(%s) not found" % name)        
