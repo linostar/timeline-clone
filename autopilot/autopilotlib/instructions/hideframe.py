@@ -41,20 +41,20 @@ class HideFrameInstruction(Instruction):
         Instruction.execute(self, manuscript, win)
         self._hide_frame(win)
         
-    def _get_name_of_frame(self):
+    def _get_name_of_dialog(self):
         return self.arg(HideFrameInstruction.TARGET)
     
     def _hide_frame(self, win):
-        frame, frame_name = self._find_frame(win)
+        frame, frame_name = self._find_dialog(win)
         self._hide(frame, frame_name)
         
-    def _find_frame(self, win):
+    def _find_dialog(self, win):
         try:
-            frame_name = self._get_name_of_frame()
+            frame_name = self._get_name_of_dialog()
             frame = self._find_frame_by_name(frame_name)
         except:
             frame_name = win.GetLabel()
-            frame = self._find_frame_from_input(win)
+            frame = self._find_dialog_from_input(win)
         return frame, frame_name
     
     def _find_frame_by_name(self, frame_name):
@@ -63,7 +63,7 @@ class HideFrameInstruction(Instruction):
             if frame.ClassName == "wxFrame" and frame.GetLabel() == frame_name:
                 return frame
 
-    def _find_frame_from_input(self, win):
+    def _find_dialog_from_input(self, win):
         if win.ClassName == "wxFrame":
             return win
         
