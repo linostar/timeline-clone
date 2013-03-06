@@ -37,12 +37,16 @@ class SelectMenuInstruction(Instruction):
         
         Example 1:   Select menu (Show, Sidebar)
         Example 2:   Select menu (Show, "Balloons on hover")
+        Example 3:   Select Menu(File, New, "File Timeline...") 
         
         At least 2 targets must be present.
     """    
         
     def execute(self, manuscript, win=None):
         Instruction.execute(self, manuscript, win)
+        self._select_menu(win)
+        
+    def _select_menu(self, win):
         try:
             item_id = self._find_menu_item_id(win)
             win.click_menu_item(item_id)   
@@ -51,53 +55,44 @@ class SelectMenuInstruction(Instruction):
             Logger.add_error("Menu not found")
             
     def _find_menu_item_id(self, win):
-        labels = self.get_all_args()
+        labels   = self.get_all_args()
         menu_bar = self._get_menu_bar(win)
-        item_id = self.get_item_id(menu_bar, labels[0], labels[1])
-        labels = labels [2:]
+        inx = menu_bar.FindMenu(labels[0])
+        menu = menu_bar.GetMenu(inx)
+        labels = labels [1:]
         while len(labels) > 0:
-            menu_item = menu_bar.FindItemById(item_id)
-            submenu = menu_item.GetSubMenu()
-            item_id = submenu.FindItem(labels[0])
-            if item_id == wx.NOT_FOUND:
-                raise MenuNotFoundException()
+            item_id = self._get_menu_item_id(menu, labels[0])
+            if len(labels) > 1:
+                menu_item = menu_bar.FindItemById(item_id)
+                menu = menu_item.GetSubMenu()
             labels = labels [1:]
         return item_id
 
-    def get_item_id(self, menu_bar, label1, label2):
-        item_id = menu_bar.FindMenuItem(label1, label2)
-        if item_id == wx.NOT_FOUND:
-            # Try with elipses
-            item_id = menu_bar.FindMenuItem(label1, label2 + "...")
-        if item_id == wx.NOT_FOUND:
-            # Try with accelerator
-            for i in range(len(label2)):
-                label = label2[0:i] + "&" + label2[i:]
-                item_id = menu_bar.FindMenuItem(label1, label)
-                if item_id != wx.NOT_FOUND:
-                    break;
-        if item_id == wx.NOT_FOUND:
-            raise MenuNotFoundException()
-        return item_id
-
-    def get_submenuitem_id(self, submenu, label):
-        item_id = submenu.FindMenuItem(label)
-        if item_id == wx.NOT_FOUND:
-            # Try with elipses
-            item_id = submenu.FindMenuItem(label + "...")
-        if item_id == wx.NOT_FOUND:
-            # Try with accelerator
-            for i in range(len(label)):
-                lbl = label[0:i] + "&" + label[i:]
-                item_id = submenu.FindMenuItem(lbl)
-                if item_id != wx.NOT_FOUND:
-                    break;
-        if item_id == wx.NOT_FOUND:
-            raise MenuNotFoundException()
-        return item_id
-        
     def _get_menu_bar(self, win):
         menu_bar = win.GetMenuBar()
         if menu_bar is None:
             raise MenuNotFoundException()
         return menu_bar
+
+    def _get_menu_item_id(self, menu, label):
+        valid_labels = self._get_valid_labels(label)
+        for label in valid_labels:
+            item_id = menu.FindItem(label)
+            if item_id != wx.NOT_FOUND:
+                return item_id
+        return wx.NOT_FOUND
+        
+    def _get_valid_labels(self, label):
+        valid_labels = [label]
+        self._get_elipsis_label(label, valid_labels)
+        self._get_accelerator_labels(label, valid_labels)
+        return valid_labels 
+        
+    def _get_elipsis_label(self, label, alternative_labels):
+        alternative_labels.append(label + "...")
+         
+    def _get_accelerator_labels(self, label, alternative_labels):
+        for i in range(len(label)):
+            alternative_label = label[0:i] + "&" + label[i:]
+            alternative_labels.append(alternative_label)
+        return alternative_labels
