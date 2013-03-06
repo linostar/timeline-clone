@@ -46,8 +46,5 @@ class EnterTextInstruction(Instruction):
         return int(self.tokens[EnterTextInstruction.POS_TARGET].lexeme)
 
     def _text(self):
-        text = self.tokens[EnterTextInstruction.TXT_TARGET].lexeme
-        if text.startswith('"'):
-            text = text[1:-1]
-        return text
+        return self.arg(EnterTextInstruction.TXT_TARGET)
     
