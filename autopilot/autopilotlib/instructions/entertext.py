@@ -16,25 +16,38 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
-
 from autopilotlib.instructions.instruction import Instruction
 
 
 class EnterTextInstruction(Instruction):
-    
-    def __init__(self, tokens):
-        Instruction.__init__(self, tokens)
+    """
+        0        1       2  3  4  5    6
+        command  object  (  n  ,  text )
         
-    def index(self):
-        return int(self.tokens[3].lexeme)
+        command ::=  Enter
+        object  ::=  Text
+        pos     ::=  NUM
+        text    ::=  STRING | TEXT
+        
+        n     Indicates the n:th text field in the dialog. n starts with 1.
+        
+        Example 1:   Enter text(1, "2013-10-12")
+        Example 2:   Enter text(2, myname)
+    """    
 
-    def text(self):
-        text = self.tokens[5].lexeme
+    POS_TARGET = 3    
+    TXT_TARGET = 5
+    
+    def execute(self, manuscript, win):
+        Instruction.execute(self, manuscript, win)
+        win.enter_text(self._pos(), self._text())
+
+    def _pos(self):
+        return int(self.tokens[EnterTextInstruction.POS_TARGET].lexeme)
+
+    def _text(self):
+        text = self.tokens[EnterTextInstruction.TXT_TARGET].lexeme
         if text.startswith('"'):
             text = text[1:-1]
         return text
     
-    def execute(self, manuscript, dialog):
-        wx.CallLater(500, manuscript.execute_next_instruction)
-        dialog.enter_text(self.index(), self.text())

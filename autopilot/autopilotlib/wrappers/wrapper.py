@@ -70,7 +70,7 @@ class Wrapper(object):
         try:
             hwnd = self._get_text_control(position)
             self._send_text_to_text_control(hwnd, new_text)
-            Logger.add_result("Text entered")
+            Logger.add_result("Text entered: '%s'" % new_text)
         except ControlNotFoundException:
             Logger.add_error("Text control not found")
 

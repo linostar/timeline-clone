@@ -179,6 +179,7 @@ SUBID_NAMES = {
 # Global variables
 #
 #-----------------------------------------------------------------------
+ID_SPECIAL_CHARS = ('_', '-', '.','å','ä','ö','Å','Ä','Ö', '&')
 _line = 1
 _col  = 0
 _tab_count = 0
@@ -284,7 +285,7 @@ def scan_instruction(text):
             typename = "String"
             _col = i + 1
 
-        elif text[i] in ('_','.')  or text[i].isalnum() or text[i] in ('ö', 'ä', 'ö', 'Å', 'Ä', 'Ö', '&'):
+        elif text[i].isalnum() or text[i] in ID_SPECIAL_CHARS:
             lexeme, token, subid, i = _parse_identifier(text, i)
             typename = "Identifier"
             _col = i + 1
@@ -330,7 +331,7 @@ def _parse_identifier(text, i):
     collector = []
     maxlength = len(text)
     # Parse
-    while i < maxlength and (text[i].isalnum() or text[i] in ('_', '.','å','ä','ö','Å','Ä','Ö', '&')):
+    while i < maxlength and (text[i].isalnum() or text[i] in ID_SPECIAL_CHARS):
         collector.append((text[i]))
         i += 1
 
