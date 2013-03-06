@@ -16,8 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
-
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
 
@@ -41,36 +39,17 @@ class HideFrameInstruction(Instruction):
         Instruction.execute(self, manuscript, win)
         self._hide_frame(win)
         
-    def _get_name_of_dialog(self):
+    def _hide_frame(self, win):
+        win, name = self.find_win(win, "wxFrame", self._get_name())
+        self._hide(win, name)
+        
+    def _get_name(self):
         return self.arg(HideFrameInstruction.TARGET)
     
-    def _hide_frame(self, win):
-        frame, frame_name = self._find_dialog(win)
-        self._hide(frame, frame_name)
-        
-    def _find_dialog(self, win):
+    def _hide(self, win, name):
         try:
-            frame_name = self._get_name_of_dialog()
-            frame = self._find_frame_by_name(frame_name)
+            win.Hide()
+            Logger.add_result("Frame(%s) hidden" % name)
         except:
-            frame_name = win.GetLabel()
-            frame = self._find_dialog_from_input(win)
-        return frame, frame_name
-    
-    def _find_frame_by_name(self, frame_name):
-        wins = wx.GetTopLevelWindows()
-        for frame in wins:
-            if frame.ClassName == "wxFrame" and frame.GetLabel() == frame_name:
-                return frame
-
-    def _find_dialog_from_input(self, win):
-        if win.ClassName == "wxFrame":
-            return win
-        
-    def _hide(self, frame, frame_name):
-        try:
-            frame.Hide()
-            Logger.add_result("Frame(%s) hidden" % frame_name)
-        except:
-            Logger.add_error("Frame(%s) not found" % frame_name)
+            Logger.add_error("Frame(%s) not found" % name)
         
