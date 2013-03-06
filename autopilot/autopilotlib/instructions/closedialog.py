@@ -44,20 +44,17 @@ class CloseDialogInstruction(Instruction):
         Instruction.execute(self, manuscript, win)
         self._close_dialog(win)
     
-    def _get_name_of_dialog(self):
-        try:
-            return self.arg(CloseDialogInstruction.TARGET)
-        except:
-            return None
-    
     def _close_dialog(self, win):
-        dialog, dialog_name = self.find_win(win, "wxDialog", self._get_name_of_dialog())
-        self._close(dialog, dialog_name)
+        win, name = self.find_win(win, "wxDialog", self._get_name())
+        self._close(win, name)
         
-    def _close(self, dialog, dialog_name):
+    def _get_name(self):
+        return self.arg(CloseDialogInstruction.TARGET)
+    
+    def _close(self, win, name):
         try:
-            Logger.add_result("Dialog(%s) closed" % dialog_name)
-            dialog.EndModal(wx.ID_CANCEL)
+            win.EndModal(wx.ID_CANCEL)
+            Logger.add_result("Dialog(%s) closed" % name)
         except:
-            Logger.add_error("Dialog(%s) not found" % dialog_name)        
+            Logger.add_error("Dialog(%s) not found" % name)        
 

@@ -49,12 +49,15 @@ class Instruction():
         manuscript.execute_next_instruction()
 
     def arg(self, index):
-        token = self.tokens[index]
-        if token.id == scanner.STRING:
-            return token.lexeme[1:-1]
-        else:
-            return token.lexeme
-
+        try:
+            token = self.tokens[index]
+            if token.id == scanner.STRING:
+                return token.lexeme[1:-1]
+            else:
+                return token.lexeme
+        except:
+            return None
+        
     def get_all_args(self):
         args = []
         for token in self.tokens:
