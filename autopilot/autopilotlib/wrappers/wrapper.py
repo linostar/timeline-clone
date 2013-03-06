@@ -84,7 +84,8 @@ class Wrapper(object):
                 return
         Logger.add_error("Item not found")
 
-
+    def click_menu_item(self, item_id):
+        self.ProcessCommand(item_id)
     #
     # Internals
     #

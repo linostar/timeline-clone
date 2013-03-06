@@ -50,5 +50,14 @@ class Instruction():
         else:
             return token.lexeme
 
+    def get_all_args(self):
+        args = []
+        for token in self.tokens:
+            if token.id == scanner.ID:
+                args.append(token.lexeme)
+            elif token.id == scanner.STRING:
+                args.append(token.lexeme[1:-1])
+        return args
+            
     def execute(self, manuscript, win=None):
         manuscript.execute_next_instruction()
