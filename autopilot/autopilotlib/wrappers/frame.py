@@ -32,7 +32,7 @@ class Frame(wxFrame, Wrapper):
         wxFrame.__init__(self, *args, **kw)
         
     def Show(self, state=True):
-        Logger.add_result("Dialog opened")
+        Logger.add_result("Frame opened")
         wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, Frame.listener)
         super(wxFrame, self).Show(state)
         
