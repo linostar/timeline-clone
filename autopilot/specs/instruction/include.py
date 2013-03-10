@@ -33,7 +33,7 @@ class IncludeInstructionSpecification(unittest.TestCase):
         self.assertTrue(self.instruction.include)
         
     def test_include_instruction_has_a_filename(self):
-        self.assertEqual("file.txt", self.instruction.get_filename())
+        self.assertEqual("file.txt", self.instruction.filename())
         
     def test_include_instruction_can_execute(self):
         self.when_execute_called()

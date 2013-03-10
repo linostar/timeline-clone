@@ -33,11 +33,11 @@ class InstructionSpecification(unittest.TestCase):
         self.assert_text_description(EXIT_APP_INSTRUCTION)
         
     def test_arg_can_be_text(self):
-        self.assert_arg("X")
+        self.assert_symbol("X")
         
     def test_arg_can_be_string(self):
         self.given_an_instruction(EXIT_APP_INSTRUCTION_2)
-        self.assert_arg("X")
+        self.assert_symbol("X")
         
         
     def setUp(self):
@@ -55,6 +55,6 @@ class InstructionSpecification(unittest.TestCase):
     def assert_text_description(self, text_description):
         self.assertEqual("exit application(X)", str(self.instruction))
 
-    def assert_arg(self, arg):
-        self.assertEqual(arg, self.instruction.arg(3))
+    def assert_symbol(self, arg):
+        self.assertEqual(arg, self.instruction.symbol(3))
         

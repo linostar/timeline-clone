@@ -21,6 +21,18 @@ from autopilotlib.app.logger import Logger
 
 
 class ExitInstruction(Instruction):
+    """
+        0        1       
+        command  object  
+        
+        command ::=  Exit
+        object  ::=  Application | App
+        
+        Destroys the application by destroying the application main window.
+        
+        Example 1:   Exit Application
+        Example 2:   exit app
+    """        
     
     def execute(self, manuscript, win):
         # Everything ends here so we don't bother to call Instruction.execute

@@ -17,6 +17,8 @@
 
 
 from autopilotlib.instructions.instruction import Instruction
+from autopilotlib.app.exceptions import NotFoundException
+from autopilotlib.app.logger import Logger
 
 
 class ClickMouseInstruction(Instruction):
@@ -29,19 +31,24 @@ class ClickMouseInstruction(Instruction):
         x, y    ::=  NUM
         
         X, y is measured relative the position of the active window and are
-        expressed in pixels.s
+        expressed in pixels.
         
         Example 1:   Click Mouse (100,200)
     """    
     
-    TARGET_X = 3
-    TARGET_Y = 5
-    
-    def position(self, dialog):
-        x, y = dialog.GetPosition()
-        return (x + int(self.tokens[ClickMouseInstruction.TARGET_X].lexeme),
-                y + int(self.tokens[ClickMouseInstruction.TARGET_Y].lexeme))
-
     def execute(self, manuscript, win):
         Instruction.execute(self, manuscript, win)
-        win.click_mouse(self.position(win))
+        self._clik_mouse(win)
+        
+    def _clik_mouse(self, win):
+        pos = self._position(win)
+        try:
+            win.click_mouse(pos)
+        except NotFoundException:
+            Logger.add_error("Mouse click at (%d, %d) failed" % (pos[0], pos[1]))
+        else:
+            Logger.add_result("Mouse clicked at (%d, %d)" % (pos[0], pos[1]))
+
+    def _position(self, win):
+        x, y = win.GetPosition()
+        return (x + int(self.arg(1)), y + int(self.arg(2)))

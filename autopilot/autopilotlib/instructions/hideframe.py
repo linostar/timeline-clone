@@ -18,38 +18,35 @@
 
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
+from autopilotlib.app.exceptions import NotFoundException
 
 
 class HideFrameInstruction(Instruction):
     """
-        0        1         2  3       4
-        command  object [  (  target  )   ]?
+        0        1         2  3    4
+        command  object [  (  arg  )  ]?
         
         command ::=  Hide
         object  ::=  Frame
-        target  ::=  STRING | TEXT 
+        arg     ::=  STRING | TEXT 
+        
+        Hide a frame window. If no arg is given, the frame to hide is 
+        assumed to be the current window.
         
         Example 1:   Hide Frame(Help)
         Example 2:   Hide Frame
     """       
     
-    TARGET = 3
     
     def execute(self, manuscript, win=None):
         Instruction.execute(self, manuscript, win)
         self._hide_frame(win)
         
     def _hide_frame(self, win):
-        win, name = self.find_win(win, "wxFrame", self._get_name())
-        self._hide(win, name)
-        
-    def _get_name(self):
-        return self.arg(HideFrameInstruction.TARGET)
-    
-    def _hide(self, win, name):
         try:
+            win, name = self.find_win(win, "wxFrame", self.arg(1))
             win.Hide()
-            Logger.add_result("Frame(%s) hidden" % name)
-        except:
+        except NotFoundException:
             Logger.add_error("Frame(%s) not found" % name)
-        
+        else:
+            Logger.add_result("Frame(%s) hidden" % name)

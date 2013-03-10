@@ -17,6 +17,8 @@
 
 
 from autopilotlib.instructions.instruction import Instruction
+from autopilotlib.app.logger import Logger
+from autopilotlib.app.exceptions import NotFoundException
 
 
 class EnterTextInstruction(Instruction):
@@ -26,25 +28,26 @@ class EnterTextInstruction(Instruction):
         
         command ::=  Enter
         object  ::=  Text
-        pos     ::=  NUM
+        n       ::=  NUM
         text    ::=  STRING | TEXT
         
+        Enter the given text into a Text Control field.
         n     Indicates the n:th text field in the dialog. n starts with 1.
         
         Example 1:   Enter text(1, "2013-10-12")
         Example 2:   Enter text(2, myname)
     """    
 
-    POS_TARGET = 3    
-    TXT_TARGET = 5
-    
     def execute(self, manuscript, win):
         Instruction.execute(self, manuscript, win)
-        win.enter_text(self._pos(), self._text())
-
-    def _pos(self):
-        return int(self.tokens[EnterTextInstruction.POS_TARGET].lexeme)
-
-    def _text(self):
-        return self.arg(EnterTextInstruction.TXT_TARGET)
-    
+        self._enter_text(win)
+        
+    def _enter_text(self, win):
+        pos = int(self.arg(1))
+        text = self.arg(2)
+        try:
+            win.enter_text(pos, text)
+        except NotFoundException:
+            Logger.add_error("Text control #%d not found" % pos)
+        else:
+            Logger.add_result("Text entered in field #%d: '%s'" % (pos, text))

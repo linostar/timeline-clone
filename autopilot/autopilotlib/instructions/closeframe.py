@@ -18,40 +18,34 @@
 
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
+from autopilotlib.app.exceptions import NotFoundException
 
 
 class CloseFrameInstruction(Instruction):
     """
-        0        1          2  3       4
-        command  object  [  (  target  )  ]?
+        0        1          2  3    4
+        command  object  [  (  arg  )  ]?
         
         command ::=  Close
         object  ::=  Frame
-        target  ::=  STRING | TEXT
+        arg     ::=  STRING | TEXT
         
-        Closes a frame window. If no target name is given the frame to close
-        is assumed to be the current window.
+        Closes a frame window. If no arg is given, the frame to close is 
+        assumed to be the current window.
         
         Example 1:   Close Frame
         Example 2:   Close Frame(Help)
     """    
 
-    TARGET = 3    
-        
     def execute(self, manuscript, win=None):
         Instruction.execute(self, manuscript, win)
         self._close_frame(win)
             
     def _close_frame(self, win):
-        win, name = self.find_win(win, "wxFrame", self._get_name())
-        self._close(win, name)
-        
-    def _get_name(self):
-        return self.arg(CloseFrameInstruction.TARGET)
-    
-    def _close(self, win, name):
+        win, name = self.find_win(win, "wxFrame", self.arg(1))
         try:
             win.Destroy()
-            Logger.add_result("Frame(%s) closed" % name)
-        except:
+        except NotFoundException:
             Logger.add_error("Frame(%s) not found" % name)        
+        else:
+            Logger.add_result("Frame(%s) closed" % name)

@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 
+import os
+
+import unittest
 from mock import Mock
 
 from autopilotlib.instructions.factory import create_instruction 
 from autopilotlib.manuscript.manuscript import Manuscript 
-
+from autopilotlib.app.logger import Logger
 
 EXIT_INSTRUCTION = "Exit Application"
 
@@ -43,9 +45,11 @@ class ExitInstructionSpecification(unittest.TestCase):
         
 
     def setUp(self):
+        Logger.set_path(os.path.join(os.path.dirname(__file__), "test.log"))
         self.instruction = create_instruction(EXIT_INSTRUCTION)
         self.win = WinMock()
         self.manuscript = Mock(Manuscript)
+        self.manuscript.get_application_frame.return_value = self.win
         
     def tearDown(self):
         pass

@@ -20,26 +20,24 @@ import wx
 
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
-
-
-class MenuNotFoundException():
-    pass
+from autopilotlib.app.exceptions import NotFoundException
 
 
 class SelectMenuInstruction(Instruction):
     """
-        0        1       2  3        4  5        6  7
-        command  object  (  target1  ,  target2  ,  target3  )
+        0        1       2  3     4  5       6  7
+        command  object  (  arg1  ,  arg2  [ ,  arg]*  )
         
         command ::=  Select
         object  ::=  Menu | Mnu
-        target  ::=  STRING | TEXT 
+        arg     ::=  STRING | TEXT 
+        
+        Select a menu in the the menu hierarchy, given by the args.
+        At least 2 targets must be present.
         
         Example 1:   Select menu (Show, Sidebar)
         Example 2:   Select menu (Show, "Balloons on hover")
         Example 3:   Select Menu(File, New, "File Timeline...") 
-        
-        At least 2 targets must be present.
     """    
         
     def execute(self, manuscript, win=None):
@@ -49,10 +47,11 @@ class SelectMenuInstruction(Instruction):
     def _select_menu(self, win):
         try:
             item_id = self._find_menu_item_id(win)
-            Logger.add_result("Menu selected")
             win.click_menu_item(item_id)   
-        except MenuNotFoundException:
+        except NotFoundException:
             Logger.add_error("Menu not found")
+        else:
+            Logger.add_result("Menu selected")
             
     def _find_menu_item_id(self, win):
         labels   = self.get_all_args()
@@ -71,7 +70,7 @@ class SelectMenuInstruction(Instruction):
     def _get_menu_bar(self, win):
         menu_bar = win.GetMenuBar()
         if menu_bar is None:
-            raise MenuNotFoundException()
+            raise NotFoundException()
         return menu_bar
 
     def _get_menu_item_id(self, menu, label):

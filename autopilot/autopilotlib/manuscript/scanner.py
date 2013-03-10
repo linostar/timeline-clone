@@ -95,7 +95,7 @@ INSTRUCTION_ALIASES = {
     "mnu"   : "menu",
     "btn"   : "button",
     "txt"   : "text",
-    "ctctl" : "customtreecontrol",
+    "ctctrl": "customtreecontrol",
 }
 
 #-----------------------------------------------------------------------

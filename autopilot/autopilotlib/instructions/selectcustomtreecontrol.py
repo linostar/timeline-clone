@@ -16,26 +16,36 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
-
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
+from autopilotlib.app.exceptions import NotFoundException
 
 
 class SelectCustomTreeControlInstruction(Instruction):
-  
-    def __init__(self, tokens):
-        Instruction.__init__(self, tokens)
+    """
+        0        1       2  3  4  5    6
+        command  object  (  n  ,  text )
         
-    def index(self):
-        return int(self.tokens[3].lexeme)
-
-    def text(self):
-        text = self.tokens[5].lexeme
-        if text.startswith('"'):
-            text = text[1:-1]
-        return text
-    
-    def execute(self, manuscript, dialog):
-        wx.CallLater(500, manuscript.execute_next_instruction)
-        dialog.select_custom_tree_control_item(self.index(), self.text())
+        command ::=  Select
+        object  ::=  customtreecontrol | ctctrl
+        arg     ::=  STRING | TEXT
+        
+        Select an item in th n:th custom tree control. The item to selected is '
+        identified by text. 
+        
+        Example 1:   Select customtreecontrol(1, "Private")
+    """    
+      
+    def execute(self, manuscript, win):
+        Instruction.execute(self, manuscript, win)
+        self._select_custom_tree_control_item(win)
+        
+    def _select_custom_tree_control_item(self, win):
+        try:
+            pos = int(self.arg(1))
+            text = self.arg(2)
+            win.select_custom_tree_control_item(pos, text)
+        except NotFoundException:
+            Logger.add_error("Custom tree control #%d item %s not found" % (pos, text))
+        else:
+            Logger.add_result("Custom tree control #%d item %s selected" % (pos, text))

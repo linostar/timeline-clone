@@ -18,15 +18,12 @@
 
 from autopilotlib.describers.window import WindowDescriber
 from autopilotlib.app.logger import Logger
+from autopilotlib.app.exceptions import NotFoundException
 import autopilotlib.guinatives.facade as win
 
 
 BUTTON = "Button"
 EDIT = "Edit"
-
-
-class ControlNotFoundException():
-    pass
 
 
 class Wrapper(object):
@@ -52,27 +49,19 @@ class Wrapper(object):
     # Public methods
     #    
     def click_button(self, label):
-        try:
-            hwnd = self._get_button(label)
-            self._send_click_message_to_button(hwnd)
-            Logger.add_result("Button(%s) clicked" % label)
-        except ControlNotFoundException:
-            Logger.add_error("Button(%s) not found" % label)
+        hwnd = self._get_button(label)
+        self._send_click_message_to_button(hwnd)
 
     def click_mouse(self, position):
         try:
             self._send_lbutton_click_to_window(position)
             Logger.add_result("Mouse clicked at (%d, %d)" % (position[0], position[1]))
-        except ControlNotFoundException:
+        except NotFoundException:
             Logger.add_error("Mouse click failed")
 
     def enter_text(self, position, new_text):
-        try:
-            hwnd = self._get_text_control(position)
-            self._send_text_to_text_control(hwnd, new_text)
-            Logger.add_result("Text entered: '%s'" % new_text)
-        except ControlNotFoundException:
-            Logger.add_error("Text control not found")
+        hwnd = self._get_text_control(position)
+        self._send_text_to_text_control(hwnd, new_text)
 
     def select_custom_tree_control_item(self, nbr, label):
         position = 1
@@ -80,10 +69,9 @@ class Wrapper(object):
             if child.GetLabel() == "CustomTreeCtrl" and position == nbr:
                 item = child.FindItem(child.GetRootItem(), label)
                 child.SelectItem(item)
-                Logger.add_result("Item selected")
                 return
-        Logger.add_error("Item not found")
-
+        raise NotFoundException()
+    
     def click_menu_item(self, item_id):
         self.ProcessCommand(item_id)
     #
@@ -130,7 +118,7 @@ class Wrapper(object):
                 if position == count:
                     return hwnd
                 count += 1
-        raise ControlNotFoundException()                
+        raise NotFoundException()                
             
     def _get_control_by_label(self, label, control_class):
         for hwnd, class_name, text in self.children:
@@ -146,4 +134,4 @@ class Wrapper(object):
                         lbl = label[0:i] + "&" + label[i:]
                         if text == lbl:
                             return hwnd   
-        raise ControlNotFoundException()
+        raise NotFoundException()

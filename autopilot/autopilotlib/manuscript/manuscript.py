@@ -131,7 +131,7 @@ class Manuscript():
             pos += 1
     
     def _load_included_manuscript(self, include_instruction, pos):
-        filename = include_instruction.get_filename()
+        filename = include_instruction.filename()
         instructions = self._read_manuscript(filename)
         instructions.insert(0, create_instruction("#---- Included from %s ----" % filename))
         instructions.append(create_instruction("#---- End Included from %s ----" % filename))

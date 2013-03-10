@@ -30,7 +30,7 @@ class AboutBox(Wrapper):
     
     def __init__(self, *args, **kw):
         wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, AboutBox.listener)
-        Logger.add("   AboutBox opened")
+        Logger.add_result("AboutBox opened")
         wxAboutBox(*args, **kw)
         
     @classmethod

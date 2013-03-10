@@ -20,7 +20,19 @@ from autopilotlib.instructions.instruction import Instruction
 
 
 class CommentInstruction(Instruction):
-    
+    """
+        0        1   
+        command  arg
+        
+        command ::=  #
+        arg     ::=  TEXT
+        
+        This is a comment that has no function other then to doucment the 
+        manuscript.
+        
+        Example 1:   # This part tests the File menu
+    """  
+        
     def __init__(self, tokens):
         Instruction.__init__(self, tokens)
         self.comment = True

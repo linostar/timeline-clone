@@ -19,8 +19,9 @@
 import wx
 
 import autopilotlib.manuscript.scanner as scanner
+from autopilotlib.app.exceptions import NotFoundException
 
-
+ 
 class Instruction():
     """
     The base class for all types of instructions.
@@ -48,7 +49,20 @@ class Instruction():
     def execute(self, manuscript, win=None):
         manuscript.execute_next_instruction()
 
-    def arg(self, index):
+    
+    def arg(self, pos):
+        try:
+            offset = 0
+            for token in self.tokens:
+                offset += 1
+                if token.id == scanner.LP:
+                    break
+            inx = offset + 2 * (pos - 1)
+            return self.symbol(inx)
+        except:
+            return None
+    
+    def symbol(self, index):
         try:
             token = self.tokens[index]
             if token.id == scanner.STRING:
@@ -57,7 +71,7 @@ class Instruction():
                 return token.lexeme
         except:
             return None
-        
+  
     def get_all_args(self):
         args = []
         for token in self.tokens:
@@ -85,4 +99,4 @@ class Instruction():
         for win in wins:
             if win.ClassName == classname and win.GetLabel() == name:
                 return win
-
+        raise NotFoundException()

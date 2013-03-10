@@ -16,26 +16,5 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from autopilotlib.instructions.instruction import Instruction
-
-
-class IncludeInstruction(Instruction):
-    """
-        0        1  2    3 
-        command  (  arg  )
-        
-        command ::=  Include
-        arg     ::=  STRING | TEXT
-        
-        Include a named manuscript into the current manuscript at the position
-        of the include instruction.
-        
-        Example 1:   include(release_validation.txt)
-    """        
-
-    def __init__(self, tokens):
-        Instruction.__init__(self, tokens)
-        self.include = True
-        
-    def filename(self):
-        return self.arg(1)
+class NotFoundException(Exception):
+    pass
