@@ -18,25 +18,30 @@
 
 import wx
 from autopilotlib.app.logger import Logger
+from autopilotlib.wrappers.wrapper import Wrapper
 import autopilotlib.guinatives.facade as win
 from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
+from autopilotlib.guinatives.facade import get_window_text
 
 
 wxMessageBox = wx.MessageBox
 
 
-class MessageBox():
-    
-    def __init__(self, *args, **kw):
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._save_hwnd)
-        wxMessageBox(self, *args, **kw)
-        pass
+def MessageBox(*args, **kw):
+    Logger.add_result("MessageBox '%s' opened" % args[1])
+    wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, _save_hwnd)
+    rv =  wxMessageBox(*args, **kw)
+    Logger.add_result("MessageBox '%s' closed" % args[1])
+    return rv
         
-    def _save_hwnd(self):
-        self.hwnd = win.get_active_window()
-        wx.CallLater(50, MessageBox.listener)
+def _save_hwnd():
+    hwnd = win.get_active_window()
+    wrapper = Wrapper()
+    wrapper.hwnd = win.get_active_window()
+    wrapper._explore(None)
+    wrapper.messagebox = True
+    MessageBox.listener(wrapper)
         
-    @classmethod
-    def wrap(self, listener):
-        wx.MessageBox = MessageBox
-        MessageBox.listener = listener
+def wrap(listener):
+    wx.MessageBox = MessageBox
+    MessageBox.listener = listener

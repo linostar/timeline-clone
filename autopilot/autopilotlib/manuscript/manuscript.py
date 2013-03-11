@@ -30,6 +30,7 @@ from autopilotlib.guinatives.facade import get_foreground_window
 from autopilotlib.guinatives.facade import get_active_window
 from autopilotlib.guinatives.facade import get_window_text
 
+
 class NoMoreInstructionsException(Exception):
     pass
 
@@ -170,6 +171,12 @@ class Manuscript():
             current_window = self.windows[-1]
         except:
             current_window = None
+        # MessageBox windows seems to to return ok on get_window_text(win.hwnd)
+        # even though the dialog is closed!
+        # So we remove it here because the only thing you can do is clicking a
+        # a button and thereafter the dialog is closed.
+        if current_window.messagebox:
+            del(self.windows[-1])
         return current_window
             
     def _validate_windows(self):
@@ -192,6 +199,8 @@ class Manuscript():
         return True
         
     def register_dialog(self, win=None):
+        if win is None:
+            return
         self.windows.append(win)
         if not self.execution_started:
             Logger.add_instruction("Execution of instructions start")

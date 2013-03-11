@@ -62,7 +62,7 @@ def wrap_wx_classes():
     dirdialog.DirDialog.wrap(manuscript.register_dialog)
     filedialog.FileDialog.wrap(manuscript.register_dialog)
     messagedialog.MessageDialog.wrap(manuscript.register_dialog)
-    messagebox.MessageBox.wrap(manuscript.register_dialog)
+    messagebox.wrap(manuscript.register_dialog)
     pagesetup.PageSetupDialog.wrap(manuscript.register_dialog)
     printer.Printer.wrap(manuscript.register_dialog)
     printer.Printer.wrap(manuscript.register_dialog)
