@@ -68,10 +68,23 @@ class Wrapper(object):
         position = 1
         for child in self.Children:
             if child.GetLabel() == "CustomTreeCtrl" and position == nbr:
-                item = child.FindItem(child.GetRootItem(), label)
-                child.SelectItem(item)
+                tree = child
+                item = self.get_item_by_label(tree, label, tree.GetRootItem())
+                tree.SelectItem(item)
                 return
         raise NotFoundException()
+    
+    def get_item_by_label(self, tree, search_text, root_item):
+        item, cookie = tree.GetFirstChild(root_item)
+        while item.IsOk():
+            text = tree.GetItemText(item)
+            if text.lower() == search_text.lower():
+                return item
+            if tree.ItemHasChildren(item):
+                match = self.get_item_by_label(tree, search_text, item)
+                if match.IsOk():
+                    return match
+            item, cookie = tree.GetNextChild(root_item, cookie)
     
     def click_menu_item(self, item_id):
         self.ProcessCommand(item_id)
@@ -79,6 +92,7 @@ class Wrapper(object):
     # Internals
     #
     def _explore(self, listener=None):
+        self.messagebox = False
         self.hwnd = win.get_active_window()
         self.children = win.get_children(self.hwnd)
         WindowDescriber.describe(self)
