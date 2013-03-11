@@ -19,6 +19,7 @@
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
 from autopilotlib.app.exceptions import NotFoundException
+from autopilotlib.app.decorators import Overrides
 
 
 class EnterTextInstruction(Instruction):
@@ -38,8 +39,9 @@ class EnterTextInstruction(Instruction):
         Example 2:   Enter text(2, myname)
     """    
 
+    @Overrides(Instruction)    
     def execute(self, manuscript, win):
-        Instruction.execute(self, manuscript, win)
+        manuscript.execute_next_instruction()
         self._enter_text(win)
         
     def _enter_text(self, win):

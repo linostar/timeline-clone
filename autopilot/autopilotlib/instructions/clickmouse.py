@@ -19,6 +19,7 @@
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.exceptions import NotFoundException
 from autopilotlib.app.logger import Logger
+from autopilotlib.app.decorators import Overrides
 
 
 class ClickMouseInstruction(Instruction):
@@ -36,8 +37,9 @@ class ClickMouseInstruction(Instruction):
         Example 1:   Click Mouse (100,200)
     """    
     
+    @Overrides(Instruction)    
     def execute(self, manuscript, win):
-        Instruction.execute(self, manuscript, win)
+        manuscript.execute_next_instruction()
         self._clik_mouse(win)
         
     def _clik_mouse(self, win):

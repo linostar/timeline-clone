@@ -21,6 +21,7 @@ import wx
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
 from autopilotlib.app.exceptions import NotFoundException
+from autopilotlib.app.decorators import Overrides
 
 
 class SelectMenuInstruction(Instruction):
@@ -40,8 +41,9 @@ class SelectMenuInstruction(Instruction):
         Example 3:   Select Menu(File, New, "File Timeline...") 
     """    
         
-    def execute(self, manuscript, win=None):
-        Instruction.execute(self, manuscript, win)
+    @Overrides(Instruction)    
+    def execute(self, manuscript, win):
+        manuscript.execute_next_instruction()
         self._select_menu(win)
         
     def _select_menu(self, win):

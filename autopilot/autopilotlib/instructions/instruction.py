@@ -36,7 +36,6 @@ class Instruction():
         self.tokens = tokens
         self.include = False
         self.comment = False
-        self.start = False
         
     def __str__(self):
         text = []
@@ -48,7 +47,6 @@ class Instruction():
 
     def execute(self, manuscript, win=None):
         manuscript.execute_next_instruction()
-
     
     def arg(self, pos):
         try:

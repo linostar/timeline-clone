@@ -20,6 +20,7 @@ import wx
 
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
+from autopilotlib.app.decorators import Overrides
 
 
 class CloseDialogInstruction(Instruction):
@@ -38,8 +39,9 @@ class CloseDialogInstruction(Instruction):
         Example 2:   Close Dialog
     """    
 
+    @Overrides(Instruction)  
     def execute(self, manuscript, win):
-        Instruction.execute(self, manuscript, win)
+        manuscript.execute_next_instruction()
         self._close_dialog(win)
     
     def _close_dialog(self, win):

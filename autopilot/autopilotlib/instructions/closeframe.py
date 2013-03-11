@@ -19,6 +19,7 @@
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
 from autopilotlib.app.exceptions import NotFoundException
+from autopilotlib.app.decorators import Overrides
 
 
 class CloseFrameInstruction(Instruction):
@@ -37,8 +38,9 @@ class CloseFrameInstruction(Instruction):
         Example 2:   Close Frame(Help)
     """    
 
+    @Overrides(Instruction)    
     def execute(self, manuscript, win=None):
-        Instruction.execute(self, manuscript, win)
+        manuscript.execute_next_instruction()
         self._close_frame(win)
             
     def _close_frame(self, win):

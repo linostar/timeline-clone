@@ -19,6 +19,7 @@
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.exceptions import NotFoundException
 from autopilotlib.app.logger import Logger
+from autopilotlib.app.decorators import Overrides
 
 
 class ClickButtonInstruction(Instruction):
@@ -37,9 +38,10 @@ class ClickButtonInstruction(Instruction):
         Example 2:   Click Btn ("Save as...")
         Example 3:   Click Button(2)   
     """    
-    
+
+    @Overrides(Instruction)    
     def execute(self, manuscript, win):
-        Instruction.execute(self, manuscript, win)
+        manuscript.execute_next_instruction()
         self._click_button(win)
 
     def _click_button(self, win):

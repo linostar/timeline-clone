@@ -19,6 +19,7 @@
 from autopilotlib.instructions.instruction import Instruction
 from autopilotlib.app.logger import Logger
 from autopilotlib.app.exceptions import NotFoundException
+from autopilotlib.app.decorators import Overrides
 
 
 class HideFrameInstruction(Instruction):
@@ -37,9 +38,9 @@ class HideFrameInstruction(Instruction):
         Example 2:   Hide Frame
     """       
     
-    
+    @Overrides(Instruction)    
     def execute(self, manuscript, win=None):
-        Instruction.execute(self, manuscript, win)
+        manuscript.execute_next_instruction()
         self._hide_frame(win)
         
     def _hide_frame(self, win):
