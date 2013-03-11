@@ -64,6 +64,7 @@ ID_ENTER          = 113
 ID_TEXT           = 114
 ID_CUSTOMTREECTRL = 115
 ID_MOUSE          = 116
+ID_COMBOBOX       = 117
 
 #-----------------------------------------------------------------------
 #
@@ -86,8 +87,9 @@ INSTRUCTION_KEYWORDS = [
     "dialog",
     "enter",
     "text",
-    "customtreecontrol"
-    "mouse"
+    "customtreecontrol",
+    "mouse",
+    "combobox",
 ]
 
 INSTRUCTION_ALIASES = {
@@ -172,6 +174,7 @@ SUBID_NAMES = {
     ID_TEXT           : "TEXT",
     ID_CUSTOMTREECTRL : "CUTSOMTREECTRL",
     ID_MOUSE          : "MOUSE",
+    ID_COMBOBOX       : "COMBOBOX",
 }
 
 #-----------------------------------------------------------------------

@@ -79,4 +79,9 @@ def send_text_to_text_control(hwnd, text):
 def send_click_message_to_button(hwnd):
     if isWindows():
         win32gui.SendMessage(hwnd, win32con.BM_CLICK)
-                
+
+
+def send_select_combobox_item(hwnd, text):
+    if isWindows():
+        return win32gui.SendMessage(hwnd, win32con.CB_SELECTSTRING, -1, text)
+                                

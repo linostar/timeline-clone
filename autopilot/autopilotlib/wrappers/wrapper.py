@@ -24,6 +24,7 @@ import autopilotlib.guinatives.facade as win
 
 BUTTON = "Button"
 EDIT = "Edit"
+COMBOBOX = "ComboBox"
 
 
 class Wrapper(object):
@@ -83,7 +84,13 @@ class Wrapper(object):
         WindowDescriber.describe(self)
         if listener is not None:
             listener(self)
-        
+
+    def select_combobox_item(self, pos, label):
+        ctrl = self._get_combobox_control_by_position(pos)
+        rv =  win.send_select_combobox_item(ctrl, label)
+        if rv is not None and rv < 0:
+            raise NotFoundException()
+    
     def _send_click_message_to_button(self, hwnd):
         win.send_click_message_to_button(hwnd)
         
@@ -102,6 +109,9 @@ class Wrapper(object):
     def _get_text_control(self, position):     
         return self._get_text_control_by_position(position)
  
+    def _get_combobox_control_by_position(self, position):     
+        return  self._get_control_by_position(position, COMBOBOX)
+    
     def _get_text_control_by_position(self, position):     
         return  self._get_control_by_position(position, EDIT)
         

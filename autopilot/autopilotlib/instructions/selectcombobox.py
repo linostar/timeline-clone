@@ -21,17 +21,17 @@ from autopilotlib.app.logger import Logger
 from autopilotlib.app.exceptions import NotFoundException
 
 
-class SelectCustomTreeControlInstruction(Instruction):
+class SelectComboboxInstruction(Instruction):
     """
         0        1       2  3  4  5    6
         command  object  (  n  ,  text )
         
         command ::=  Select
-        object  ::=  customtreecontrol | ctctrl
+        object  ::=  combobox
         n       ::=  position of control starting with 1
         text    ::=  STRING | TEXT
         
-        Select an item in th n:th custom tree control. The item to selected is
+        Select an item in th n:th combobox control. The item to selected is 
         identified by text. 
         
         Example 1:   Select customtreecontrol(1, "Private")
@@ -39,14 +39,14 @@ class SelectCustomTreeControlInstruction(Instruction):
       
     def execute(self, manuscript, win):
         Instruction.execute(self, manuscript, win)
-        self._select_custom_tree_control_item(win)
+        self._select_combobox_item(win)
         
-    def _select_custom_tree_control_item(self, win):
+    def _select_combobox_item(self, win):
         try:
             pos = int(self.arg(1))
             text = self.arg(2)
-            win.select_custom_tree_control_item(pos, text)
+            win.select_combobox_item(pos, text)
         except NotFoundException:
-            Logger.add_error("Custom tree control #%d item %s not found" % (pos, text))
+            Logger.add_error("ComboBox control #%d item %s not found" % (pos, text))
         else:
-            Logger.add_result("Custom tree control #%d item %s selected" % (pos, text))
+            Logger.add_result("ComboBox control #%d item %s selected" % (pos, text))

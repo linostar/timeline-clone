@@ -27,7 +27,8 @@ from autopilotlib.instructions.factory import create_instruction
 from autopilotlib.app.constants import TIME_TO_WAIT_BEFORE_CONTINUING_IN_MILLISECONDS
 from autopilotlib.manuscript.instructionpopup import InstructionPopup
 from autopilotlib.guinatives.facade import get_foreground_window
-
+from autopilotlib.guinatives.facade import get_active_window
+from autopilotlib.guinatives.facade import get_window_text
 
 class NoMoreInstructionsException(Exception):
     pass
@@ -180,11 +181,9 @@ class Manuscript():
         while len(self.windows) > 1:
             win = self.windows[0]
             try:
-                if get_foreground_window() != win.hwnd:
-                    self.windows = self.windows[1:]
-                else:
-                    break
-            except wx.PyDeadObjectError:
+                get_window_text(win.hwnd)
+                break
+            except:
                 self.windows = self.windows[1:]
         self.windows.reverse()
                 

@@ -29,6 +29,7 @@ from autopilotlib.instructions.closedialog import CloseDialogInstruction
 from autopilotlib.instructions.hideframe import HideFrameInstruction
 from autopilotlib.instructions.entertext import EnterTextInstruction
 from autopilotlib.instructions.selectcustomtreecontrol import SelectCustomTreeControlInstruction
+from autopilotlib.instructions.selectcombobox import SelectComboboxInstruction
 
 
 class InstructionSyntaxException():
@@ -59,6 +60,8 @@ def create_instruction(text):
             return SelectMenuInstruction(tokens) 
         elif tokens[1].lexeme.lower() == "customtreecontrol":
             return SelectCustomTreeControlInstruction(tokens) 
+        elif tokens[1].lexeme.lower() == "combobox":
+            return SelectComboboxInstruction(tokens) 
         else:
             raise InstructionSyntaxException()
 
