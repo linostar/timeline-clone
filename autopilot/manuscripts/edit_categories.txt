@@ -19,10 +19,13 @@ Click button(OK)
 # Select Font Color
 Click Button(2)
 Click button(OK)
-
 Select Combobox(1, "Intro")
 Click button(OK)
-select ctctrl(1, "Intro")
+
+# Delete the activity created
+select ctctrl(1, "Test activities")
+Click button("Ta bort")
+Click button(Ja)
 
 Click button(Stäng)
-#Exit App 
+Exit App 
