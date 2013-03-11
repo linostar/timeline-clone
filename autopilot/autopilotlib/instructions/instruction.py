@@ -48,19 +48,26 @@ class Instruction():
     def execute(self, manuscript, win):
         manuscript.execute_next_instruction()
     
-    def arg(self, pos):
+    def arg(self, n):
+        """
+        Return the n:th argument, where n = 1,2,....
+        """
         try:
-            offset = 0
-            for token in self.tokens:
-                offset += 1
-                if token.id == scanner.LP:
-                    break
-            inx = offset + 2 * (pos - 1)
-            return self.symbol(inx)
+            offset = self._find_index_to_first_token_after_parenthesis()
+            inx = offset + 2 * (n - 1)
+            return self._symbol(inx)
         except:
             return None
     
-    def symbol(self, index):
+    def _find_index_to_first_token_after_parenthesis(self):
+        inx = 0
+        for token in self.tokens:
+            inx += 1
+            if token.id == scanner.LP:
+                break
+        return inx
+    
+    def _symbol(self, index):
         try:
             token = self.tokens[index]
             if token.id == scanner.STRING:
@@ -91,6 +98,7 @@ class Instruction():
     def _find_win_from_input(self, win, classname):
         if win.ClassName == classname:
             return win
+        raise NotFoundException()
         
     def _find_win_by_name(self, name, classname):
         wins = wx.GetTopLevelWindows()
