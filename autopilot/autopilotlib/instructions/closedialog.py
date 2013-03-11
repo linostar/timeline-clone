@@ -48,5 +48,3 @@ class CloseDialogInstruction(Instruction):
             win.EndModal(wx.ID_CANCEL)
         except:
             Logger.add_error("Dialog(%s) not found" % name)        
-        else:
-            Logger.add_result("Dialog(%s) closed" % name)

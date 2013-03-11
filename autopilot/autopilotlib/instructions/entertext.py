@@ -49,5 +49,3 @@ class EnterTextInstruction(Instruction):
             win.enter_text(pos, text)
         except NotFoundException:
             Logger.add_error("Text control #%d not found" % pos)
-        else:
-            Logger.add_result("Text entered in field #%d: '%s'" % (pos, text))

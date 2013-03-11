@@ -46,8 +46,6 @@ class ClickMouseInstruction(Instruction):
             win.click_mouse(pos)
         except NotFoundException:
             Logger.add_error("Mouse click at (%d, %d) failed" % (pos[0], pos[1]))
-        else:
-            Logger.add_result("Mouse clicked at (%d, %d)" % (pos[0], pos[1]))
 
     def _position(self, win):
         x, y = win.GetPosition()

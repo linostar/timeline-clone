@@ -50,8 +50,6 @@ class SelectMenuInstruction(Instruction):
             win.click_menu_item(item_id)   
         except NotFoundException:
             Logger.add_error("Menu not found")
-        else:
-            Logger.add_result("Menu selected")
             
     def _find_menu_item_id(self, win):
         labels   = self.get_all_args()

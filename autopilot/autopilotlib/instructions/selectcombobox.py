@@ -48,5 +48,3 @@ class SelectComboboxInstruction(Instruction):
             win.select_combobox_item(pos, text)
         except NotFoundException:
             Logger.add_error("ComboBox control #%d item %s not found" % (pos, text))
-        else:
-            Logger.add_result("ComboBox control #%d item %s selected" % (pos, text))

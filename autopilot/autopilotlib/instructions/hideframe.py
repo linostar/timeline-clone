@@ -48,5 +48,3 @@ class HideFrameInstruction(Instruction):
             win.Hide()
         except NotFoundException:
             Logger.add_error("Frame(%s) not found" % name)
-        else:
-            Logger.add_result("Frame(%s) hidden" % name)

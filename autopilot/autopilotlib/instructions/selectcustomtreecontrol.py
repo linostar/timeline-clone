@@ -48,5 +48,3 @@ class SelectCustomTreeControlInstruction(Instruction):
             win.select_custom_tree_control_item(pos, text)
         except NotFoundException:
             Logger.add_error("Custom tree control #%d item %s not found" % (pos, text))
-        else:
-            Logger.add_result("Custom tree control #%d item %s selected" % (pos, text))

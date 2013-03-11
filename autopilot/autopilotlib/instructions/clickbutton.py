@@ -48,5 +48,3 @@ class ClickButtonInstruction(Instruction):
             win.click_button(name)
         except NotFoundException:
             Logger.add_error("Button(%s) not found" % name)
-        else:
-            Logger.add_result("Button(%s) clicked" % name)

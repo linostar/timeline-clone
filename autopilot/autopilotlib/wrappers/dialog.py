@@ -32,11 +32,12 @@ class Dialog(wxDialog, Wrapper):
         wxDialog.__init__(self, *args, **kw)
         
     def ShowModal(self):
-        Logger.add_result("Dialog opened")
+        Logger.add_result("Dialog '%s' opened" % self.GetLabel())
         wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, Dialog.listener)
         super(Dialog, self).ShowModal()
     
     def Destroy(self, *args, **kw):
+        Logger.add_result("Dialog '%s' closed" % self.GetLabel())
         wxDialog.Destroy(self, *args, **kw)
         
     @classmethod
