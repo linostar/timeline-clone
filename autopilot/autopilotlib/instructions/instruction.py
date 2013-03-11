@@ -45,7 +45,7 @@ class Instruction():
             text.append(token.lexeme)
         return "".join(text).strip()
 
-    def execute(self, manuscript, win=None):
+    def execute(self, manuscript, win):
         manuscript.execute_next_instruction()
     
     def arg(self, pos):

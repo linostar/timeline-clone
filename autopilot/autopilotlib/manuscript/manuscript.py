@@ -154,7 +154,8 @@ class Manuscript():
                     if instruction is not None:
                         instructions.append(instruction)
                 except InstructionSyntaxException:
-                    self.syntax_errors.append(line)
+                    if len(line.strip()) > 0:
+                        self.syntax_errors.append(line)
             fp.close()
             self.filepaths.append(filepath)
             return instructions

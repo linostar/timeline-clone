@@ -38,6 +38,7 @@ KEYWORD         = 7    # Reserved word
 SPACE           = 8    # Space character ' '
 COMMENT         = 9    # character '#'
 STRING          = 10
+NUM             = 11
 TAB             = 58   # Tab character '\t'
 UNKNOWN         = 98
 NA              = 99
@@ -119,6 +120,7 @@ TOKENID_MAP = {
     TAB             : "Tab",
     KEYWORD         : "Keyword",
     STRING          : "String",
+    NUM             : "Number",
     UNKNOWN         : "Unknown",
     NA              : "",
     ID_INCLUDE      : INSTRUCTION_KEYWORDS[ID_INCLUDE - ID_INCLUDE],
@@ -147,6 +149,7 @@ ID_NAMES = {
     TAB             : "TAB",
     KEYWORD         : "KEYWORD",
     STRING          : "STRING",
+    NUM             : "NUM",
     UNKNOWN         : "UNKNOWN",
     NA              : "NA",
 }
@@ -349,13 +352,22 @@ def _parse_identifier(text, i):
         token = KEYWORD
         subid = ID_INCLUDE + INSTRUCTION_KEYWORDS.index(identifier)
     else:
-        token = ID
+        if is_number(identifier):
+            token = NUM
+        else:
+            token = ID
         subid = None
 
     # Return string and index of last character in identifier
     return identifier, token, subid, i - 1
 
-
+def is_number(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+    
 def _parse_string(text, i):
     inx = text.find('"', i + 1)
     if inx < 0:
