@@ -20,6 +20,7 @@ import wx
 from autopilotlib.app.logger import Logger
 from autopilotlib.wrappers.wrapper import Wrapper
 from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
+from autopilotlib.app.decorators import Overrides
 
 
 wxColourDialog = wx.ColourDialog
@@ -31,12 +32,25 @@ class ColourDialog(wx.ColourDialog, Wrapper):
         wxColourDialog.__init__(self, *args, **kw)
        
     def ShowModal(self, *args, **kw):
+        self.shown = True
         Logger.add_result("Dialog opened")
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, ColourDialog.listener)
+        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._register_and_explore)
         super(ColourDialog, self).ShowModal(*args, **kw)
     
+    def IsShown(self):
+        return self.shown
     
+    @Overrides(wxColourDialog)
+    def Destroy(self, *args, **kw):
+        self.shown = False
+        Logger.add_result("Dialog '%s' closed" % self.GetLabel())
+        wxColourDialog.Destroy(self, *args, **kw)
+    
+    def _register_and_explore(self):
+        ColourDialog.register_win(self)
+        self._explore()
+            
     @classmethod
-    def wrap(self, listener):
+    def wrap(self, register_win):
         wx.ColourDialog = ColourDialog
-        ColourDialog.listener = listener
+        ColourDialog.register_win = register_win

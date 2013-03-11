@@ -29,11 +29,15 @@ wxAboutBox = wx.AboutBox
 class AboutBox(Wrapper):
     
     def __init__(self, *args, **kw):
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, AboutBox.listener)
         Logger.add_result("AboutBox opened")
+        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._register_and_explore)
         wxAboutBox(*args, **kw)
         
+    def _register_and_explore(self):
+        self._explore()
+        AboutBox.register_win(self)
+                
     @classmethod
-    def wrap(self, listener):
+    def wrap(self, register_win):
         wx.AboutBox = AboutBox
-        AboutBox.listener = listener
+        AboutBox.register_win = register_win

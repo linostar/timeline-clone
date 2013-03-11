@@ -21,6 +21,7 @@ import wx
 from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
 from autopilotlib.app.logger import Logger
 from autopilotlib.wrappers.wrapper import Wrapper
+from autopilotlib.app.decorators import Overrides
 
 
 wxDialog = wx.Dialog
@@ -31,16 +32,22 @@ class Dialog(wxDialog, Wrapper):
     def __init__(self, *args, **kw):
         wxDialog.__init__(self, *args, **kw)
         
+    @Overrides(wxDialog)
     def ShowModal(self):
         Logger.add_result("Dialog '%s' opened" % self.GetLabel())
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, Dialog.listener)
+        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._register_and_explore)
         super(Dialog, self).ShowModal()
     
+    @Overrides(wxDialog)
     def Destroy(self, *args, **kw):
         Logger.add_result("Dialog '%s' closed" % self.GetLabel())
         wxDialog.Destroy(self, *args, **kw)
+    
+    def _register_and_explore(self):
+        Dialog.register_win(self)
+        self._explore()
         
     @classmethod
-    def wrap(self, listener):
+    def wrap(self, register_win):
         wx.Dialog = Dialog
-        Dialog.listener = listener
+        Dialog.register_win = register_win

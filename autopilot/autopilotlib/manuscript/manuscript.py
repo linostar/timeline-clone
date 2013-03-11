@@ -29,6 +29,7 @@ from autopilotlib.manuscript.instructionpopup import InstructionPopup
 from autopilotlib.guinatives.facade import get_foreground_window
 from autopilotlib.guinatives.facade import get_active_window
 from autopilotlib.guinatives.facade import get_window_text
+import autopilotlib.guinatives.facade as win
 
 
 class NoMoreInstructionsException(Exception):
@@ -190,7 +191,13 @@ class Manuscript():
             win = self.windows[0]
             try:
                 get_window_text(win.hwnd)
-                break
+                try:
+                    if not win.IsShown():
+                        self.windows = self.windows[1:]
+                    else:
+                        break
+                except:
+                    break
             except:
                 self.windows = self.windows[1:]
         self.windows.reverse()

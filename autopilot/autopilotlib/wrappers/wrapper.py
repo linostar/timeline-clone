@@ -88,16 +88,17 @@ class Wrapper(object):
     
     def click_menu_item(self, item_id):
         self.ProcessCommand(item_id)
+
     #
     # Internals
     #
-    def _explore(self, listener=None):
+    def _explore(self, register_win=None):
         self.messagebox = False
         self.hwnd = win.get_active_window()
         self.children = win.get_children(self.hwnd)
         WindowDescriber.describe(self)
-        if listener is not None:
-            listener(self)
+        if register_win is not None:
+            register_win(self)
 
     def select_combobox_item(self, pos, label):
         ctrl = self._get_combobox_control_by_position(pos)

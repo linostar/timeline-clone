@@ -34,7 +34,7 @@ class WindowDescriber():
     def describe_window(self, hwnd):
         if hwnd == None:
             hwnd = win.get_active_window()
-        Logger.header(" Window Description Classname: '%s' Label: '%s'" % (win.get_classname(hwnd), win.get_window_text))
+        Logger.header(" Window Description hwnd: %d Classname: '%s' Label: '%s'" % (hwnd, win.get_classname(hwnd), win.get_window_text))
         Logger.header2("Native Description")
         self.describe_children(hwnd)
         
