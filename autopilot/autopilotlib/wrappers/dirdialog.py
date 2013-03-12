@@ -18,10 +18,9 @@
 
 import wx
 
+from autopilotlib.app.decorators import Overrides
 from autopilotlib.app.logger import Logger
 from autopilotlib.wrappers.wrapper import Wrapper
-from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
-from autopilotlib.app.decorators import Overrides
 
 
 wxDirDialog = wx.DirDialog
@@ -30,24 +29,38 @@ wxDirDialog = wx.DirDialog
 class DirDialog(wx.DirDialog, Wrapper):
     
     def __init__(self, *args, **kw):
+        self.set_active_window()
         wxDirDialog.__init__(self, *args, **kw)
+        self._shown = False
+       
+    def name(self):
+        return self.GetMessage()
+    
+    def classname(self):
+        return self.GetClassName()
        
     @Overrides(wxDirDialog)
+    def IsShown(self):
+        return self.shown
+            
+    @Overrides(wxDirDialog)
     def ShowModal(self):
-        Logger.add_result("DirDialog '%s' opened" % self.GetMessage())
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._register_and_explore)
+        self._shown = True
+        Logger.add_open(self)
+        self.call_when_win_shows(self._explore_and_register)
         super(DirDialog, self).ShowModal()
     
+    def _explore_and_register(self):
+        self._explore()
+        DirDialog.register(self)
+        
     @Overrides(wxDirDialog)
     def Destroy(self, *args, **kw):
-        Logger.add_result("DirDialog '%s' closed" % self.GetMessage())
+        self._shown = False
+        Logger.add_close(self)
         wxDirDialog.Destroy(self, *args, **kw)
     
-    def _register_and_explore(self):
-        DirDialog.register_win(self)
-        self._explore()
-        
     @classmethod
-    def wrap(self, register_win):
+    def wrap(self, register):
         wx.DirDialog = DirDialog
-        DirDialog.register_win = register_win
+        DirDialog.register = register

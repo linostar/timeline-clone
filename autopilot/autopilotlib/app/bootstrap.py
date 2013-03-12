@@ -66,7 +66,7 @@ def wrap_wx_classes():
     pagesetup.PageSetupDialog.wrap(manuscript.register_dialog)
     printer.Printer.wrap(manuscript.register_dialog)
     printer.Printer.wrap(manuscript.register_dialog)
-    printpreview.PrintPreview.wrap(manuscript.register_dialog)
+    printpreview.PreviewFrame.wrap(manuscript.register_dialog)
     
 
 # Must be included after run_manuscript but before run_python_file()-call

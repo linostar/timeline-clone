@@ -16,9 +16,12 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from autopilotlib.describers.window import WindowDescriber
-from autopilotlib.app.logger import Logger
+import wx
+
+from autopilotlib.app.constants import MILLISECONDS_TO_WAIT_FOR_DIALOG_TO_SHOW
 from autopilotlib.app.exceptions import NotFoundException
+from autopilotlib.app.logger import Logger
+from autopilotlib.describers.window import WindowDescriber
 import autopilotlib.guinatives.facade as win
 
 
@@ -160,3 +163,22 @@ class Wrapper(object):
                         if text == lbl:
                             return hwnd   
         raise NotFoundException()
+
+    def set_active_window(self):
+        self._active_window = win.get_active_window()
+        
+    def call_when_win_shows(self, method):
+        self._prev_win = None
+        try:
+            self._prev_win = self._active_window
+        except:
+            pass    
+        if self._prev_win == None:
+            self._prev_win = win.get_active_window()
+        wx.CallLater(MILLISECONDS_TO_WAIT_FOR_DIALOG_TO_SHOW, self._wait_for_win_to_show, method)
+        
+    def _wait_for_win_to_show(self, method):
+        if self._prev_win == win.get_active_window():
+            wx.CallLater(MILLISECONDS_TO_WAIT_FOR_DIALOG_TO_SHOW, self._wait_for_win_to_show, method)
+        else:
+            method()

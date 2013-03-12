@@ -17,9 +17,10 @@
 
 
 import wx
+
+from autopilotlib.app.decorators import Overrides
 from autopilotlib.app.logger import Logger
 from autopilotlib.wrappers.wrapper import Wrapper
-from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
 
 
 wxFileDialog = wx.FileDialog
@@ -28,14 +29,38 @@ wxFileDialog = wx.FileDialog
 class FileDialog(wx.FileDialog, Wrapper):
     
     def __init__(self, *args, **kw):
+        self.set_active_window()
         wxFileDialog.__init__(self, *args, **kw)
-       
+        self._shown = False
+    
+    def name(self):
+        return self.GetMessage()
+    
+    def classname(self):
+        return self.GetClassName()
+
+    @Overrides(wxFileDialog)
+    def IsShown(self):
+        return self._shown
+            
+    @Overrides(wxFileDialog)
     def ShowModal(self):
-        Logger.add_result("Dialog opened")
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, FileDialog.listener)
+        self._shown = True
+        Logger.add_open(self)
+        self.call_when_win_shows(self._explore_and_register)
         super(FileDialog, self).ShowModal()
     
+    def _explore_and_register(self):
+        self._explore()
+        FileDialog.register(self)
+        
+    @Overrides(wxFileDialog)
+    def Destroy(self, *args, **kw):
+        self._shown = False
+        Logger.add_close(self)
+        wxFileDialog.Destroy(self, *args, **kw)
+
     @classmethod
-    def wrap(self, listener):
+    def wrap(self, register):
         wx.FileDialog = FileDialog
-        FileDialog.listener = listener
+        FileDialog.register = register

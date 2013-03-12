@@ -17,22 +17,50 @@
 
 
 import wx
+
+from autopilotlib.app.decorators import Overrides
 from autopilotlib.app.logger import Logger
 from autopilotlib.wrappers.wrapper import Wrapper
-from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
 
 
-wxPrintPreview = wx.PrintPreview
+wxPreviewFrame = wx.PreviewFrame
 
 
-class PrintPreview(wxPrintPreview, Wrapper):
+class PreviewFrame(wxPreviewFrame, Wrapper):
     
     def __init__(self, *args, **kw):
-        Logger.add_result("Dialog opened")
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, PrintPreview.listener)
-        wxPrintPreview.__init__(self, *args, **kw)
+        self.set_active_window()
+        wxPreviewFrame.__init__(self, *args, **kw)
+        self._shown = False
+        
+    @Overrides(wxPreviewFrame)
+    def Show(self, *args, **kw):
+        self._shown = True
+        Logger.add_open(self)
+        self.call_when_win_shows(self._explore_and_register)
+        super(PreviewFrame, self).Show(*args, **kw)
+        
+    def _explore_and_register(self):
+        self._explore()
+        PreviewFrame.register(self)
+        
+    def name(self):
+        return self.GetLabel()
+    
+    def classname(self):
+        return self.GetClassName()
+        
+    @Overrides(wxPreviewFrame)
+    def IsShown(self):
+        return self._shown
+        
+    @Overrides(wxPreviewFrame)
+    def Destroy(self, *args, **kw):
+        self._shown = False
+        Logger.add_close(self)
+        wxPreviewFrame.Destroy(self, *args, **kw)
         
     @classmethod
-    def wrap(self, listener):
-        wx.PrintPreview = PrintPreview
-        PrintPreview.listener = listener
+    def wrap(self, register):
+        wx.PreviewFrame = PreviewFrame
+        PreviewFrame.register = register

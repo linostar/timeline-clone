@@ -17,9 +17,10 @@
 
 
 import wx
-from autopilotlib.wrappers.wrapper import Wrapper
+
+from autopilotlib.app.decorators import Overrides
 from autopilotlib.app.logger import Logger
-from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
+from autopilotlib.wrappers.wrapper import Wrapper
 
 
 wxPrinter = wx.Printer
@@ -29,12 +30,30 @@ class Printer(wx.Printer, Wrapper):
     
     def __init__(self, *args, **kw):
         wxPrinter.__init__(self, *args, **kw)
+        self._shown = False
         
+    def name(self):
+        return "Print"
+    
+    def classname(self):
+        return self.GetClassName()
+
+    def IsShown(self):
+        return self._shown
+
+    @Overrides(wxPrinter)
     def Print(self, *args, **kw):
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, Printer.listener)
+        self._shown = True
+        Logger.add_open(self)
+        self.call_when_win_shows(self._explore_and_register)
         super(Printer, self).Print(*args, **kw)
+        self._shown = False
             
+    def _explore_and_register(self):
+        self._explore()
+        Printer.register(self)
+               
     @classmethod
-    def wrap(self, listener):
+    def wrap(self, register):
         wx.Printer = Printer
-        Printer.listener = listener
+        Printer.register = register

@@ -82,7 +82,15 @@ class Logger():
     @classmethod
     def add_result(self, result):
         self._add_log(RESULT, result)
+
+    @classmethod
+    def add_open(self, win):
+        self._add_log(RESULT, "%s '%s' opened" % (win.classname(), win.name()))
           
+    @classmethod
+    def add_close(self, win):
+        self._add_log(RESULT, "%s '%s' closed" % (win.classname(), win.name()))
+        
     @classmethod
     def add_error(self, result):
         self._add_log(ERROR, result)

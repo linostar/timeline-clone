@@ -17,9 +17,10 @@
 
 
 import wx
+
+from autopilotlib.app.decorators import Overrides
 from autopilotlib.app.logger import Logger
 from autopilotlib.wrappers.wrapper import Wrapper
-from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
 
 
 wxPageSetupDialog = wx.PageSetupDialog
@@ -29,13 +30,34 @@ class PageSetupDialog(wx.PageSetupDialog, Wrapper):
     
     def __init__(self, *args, **kw):
         wxPageSetupDialog.__init__(self, *args, **kw)
+        self.shown = False
        
+    def name(self):
+        return "Page Setup"
+    
+    def classname(self):
+        return self.GetClassName()
+
+    def IsShown(self):
+        return self.shown
+
     def ShowModal(self):
-        Logger.add_result("Dialog opened")
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, PageSetupDialog.listener)
+        self.shown = True
+        Logger.add_open(self)
+        self.call_when_win_shows(self._explore_and_register)
         super(PageSetupDialog, self).ShowModal()
     
+    def _explore_and_register(self):
+        self._explore()
+        PageSetupDialog.register(self)
+        
+    @Overrides(wxPageSetupDialog)
+    def Destroy(self, *args, **kw):
+        self.shown = False
+        Logger.add_close(self)
+        wxPageSetupDialog.Destroy(self, *args, **kw)
+    
     @classmethod
-    def wrap(self, listener):
+    def wrap(self, register):
         wx.PageSetupDialog = PageSetupDialog
-        PageSetupDialog.listener = listener
+        PageSetupDialog.register = register

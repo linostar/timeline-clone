@@ -18,9 +18,9 @@
 
 import wx
 
-from autopilotlib.wrappers.wrapper import Wrapper
-from autopilotlib.app.constants import TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS
+from autopilotlib.app.decorators import Overrides
 from autopilotlib.app.logger import Logger
+from autopilotlib.wrappers.wrapper import Wrapper
 
 
 wxFrame = wx.Frame
@@ -29,20 +29,43 @@ wxFrame = wx.Frame
 class Frame(wxFrame, Wrapper):
     
     def __init__(self, *args, **kw):
+        self.set_active_window()
         wxFrame.__init__(self, *args, **kw)
+        self._shown = False
+
+    def name(self):
+        return self.GetLabel()
+    
+    def classname(self):
+        return self.GetClassName()
         
-    def Show(self, state=True):
-        Logger.add_result("Frame opened")
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._explore, Frame.listener)
-        super(wxFrame, self).Show(state)
+    @Overrides(wxFrame)
+    def Show(self, *args, **kw):
+        self._shown = True
+        Logger.add_open(self)
+        self.call_when_win_shows(self._explore_and_register)
+        super(wxFrame, self).Show(*args, **kw)
         
-    def Destroy(self):
-        super(Frame, self).Destroy()
+    def _explore_and_register(self):
+        self._explore()
+        Frame.register(self)
+        
+    @Overrides(wxFrame)
+    def IsShown(self):
+        return self._shown
+        
+    @Overrides(wxFrame)
+    def Destroy(self, *args, **kw):
+        self._shown = False
+        Logger.add_close(self)
+        wxFrame.Destroy(self, *args, **kw)
  
     def Hide(self):
+        self._shown = False
+        Logger.add_close(self)
         super(Frame, self).Hide()
         
     @classmethod
-    def wrap(self, listener):
+    def wrap(self, register):
         wx.Frame = Frame
-        Frame.listener = listener
+        Frame.register = register

@@ -24,11 +24,11 @@ import autopilotlib.guinatives.facade as win
 class WindowDescriber():
     
     @classmethod
-    def describe(self, dlg):
+    def describe(self, win):
         if Logger.log_dialog_descriptions:
-            self.describe_window(dlg.hwnd)
-            self.describe_wxdialog(dlg)
-            MenuBarDescriber.describe(dlg)
+            self.describe_window(win.hwnd)
+            self.describe_wxdialog(win)
+            MenuBarDescriber.describe(win)
                 
     @classmethod
     def describe_window(self, hwnd):

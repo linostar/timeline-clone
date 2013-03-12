@@ -37,6 +37,7 @@ class ColourDialog(wx.ColourDialog, Wrapper):
         wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, self._register_and_explore)
         super(ColourDialog, self).ShowModal(*args, **kw)
     
+    @Overrides(wxColourDialog)
     def IsShown(self):
         return self.shown
     
