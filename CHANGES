@@ -9,6 +9,7 @@ New features, enhancements:
   * Enter-key works in date and time fields of the event editor
   * Some help texts updated
   * New version of icalender to cope with years before 1900
+  * TimelineComponent can explicitly clear the drawing area
   
 Bug fixes:
 
