@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Timeline 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-29 13:22+0200\n"
+"POT-Creation-Date: 2012-12-30 12:30+0100\n"
 "PO-Revision-Date: 2010-05-17 00:14+0000\n"
 "Last-Translator: Leandro Pavón Serrano <Unknown>\n"
 "Language-Team: native-languaje <elproferoman@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-12-30 10:52+0000\n"
-"X-Generator: Launchpad (build 16378)\n"
+"X-Launchpad-Export-Date: 2013-03-30 07:48+0000\n"
+"X-Generator: Launchpad (build 16546)\n"
 "X-Poedit-Language: Spanish\n"
 "X-Poedit-Basepath: /home/roman/traducciones\n"
 
@@ -225,7 +225,7 @@ msgid ""
 "Hold down Shift while dragging with the mouse."
 msgstr ""
 
-#: timelinelib\db\backends\tutorial.py:58 timelinelib\help\pages.py:126
+#: timelinelib\db\backends\tutorial.py:58 timelinelib\help\pages.py:127
 msgid "Create event"
 msgstr "Crear evento"
 
@@ -236,7 +236,7 @@ msgid ""
 "Hold down Ctrl while dragging the mouse to select a period."
 msgstr ""
 
-#: timelinelib\db\backends\tutorial.py:65 timelinelib\help\pages.py:143
+#: timelinelib\db\backends\tutorial.py:65 timelinelib\help\pages.py:144
 msgid "Edit event"
 msgstr "Editar evento"
 
@@ -255,7 +255,7 @@ msgid ""
 "Hold down Ctrl while clicking events to select multiple."
 msgstr ""
 
-#: timelinelib\db\backends\tutorial.py:77 timelinelib\help\pages.py:168
+#: timelinelib\db\backends\tutorial.py:77 timelinelib\help\pages.py:182
 msgid "Delete event"
 msgstr "Eliminar evento"
 
@@ -329,7 +329,7 @@ msgstr "Archivos de imagen"
 msgid "Export to Image"
 msgstr "Exportar a imagen"
 
-#: timelinelib\export\bitmap.py:35 timelinelib\wxgui\dialogs\mainframe.py:273
+#: timelinelib\export\bitmap.py:35 timelinelib\wxgui\dialogs\mainframe.py:276
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "El archivo '%s' existe ¿Sobreescribir?"
@@ -338,19 +338,19 @@ msgstr "El archivo '%s' existe ¿Sobreescribir?"
 msgid "Help contents"
 msgstr "Contenidos de ayuda"
 
-#: timelinelib\help\pages.py:54
+#: timelinelib\help\pages.py:55
 msgid "Questions and answers"
 msgstr "Preguntas y respuestas"
 
-#: timelinelib\help\pages.py:54
+#: timelinelib\help\pages.py:55
 msgid "Concepts"
 msgstr "Conceptos"
 
-#: timelinelib\help\pages.py:54
+#: timelinelib\help\pages.py:55
 msgid "Tasks"
 msgstr "Tareas"
 
-#: timelinelib\help\pages.py:59
+#: timelinelib\help\pages.py:60
 msgid "Where is the save button?"
 msgstr "¿Dónde está el botón Guardar?"
 
@@ -359,7 +359,7 @@ msgstr "¿Dónde está el botón Guardar?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:65
+#: timelinelib\help\pages.py:66
 msgid ""
 "\n"
 "There is no save button. Timeline will automatically save your data whenever "
@@ -369,7 +369,7 @@ msgstr ""
 "No hay botón Guardar. Timeline guardará automáticamente los datos cada vez "
 "que lo necesite.\n"
 
-#: timelinelib\help\pages.py:72
+#: timelinelib\help\pages.py:73
 msgid "Where do the week numbers go if I start my weeks on Sunday?"
 msgstr "¿Dónde van los números de semana si la mía comienza en Domingo?"
 
@@ -378,7 +378,7 @@ msgstr "¿Dónde van los números de semana si la mía comienza en Domingo?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:78
+#: timelinelib\help\pages.py:79
 msgid ""
 "\n"
 "The date data object used does not support week numbers for weeks that start "
@@ -390,7 +390,7 @@ msgstr ""
 "en Domingo. Planeamos usar un objeto de datos diferente para soportarlo en "
 "el futuro.\n"
 
-#: timelinelib\help\pages.py:85
+#: timelinelib\help\pages.py:86
 msgid "Timeline"
 msgstr "Timeline"
 
@@ -399,7 +399,7 @@ msgstr "Timeline"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:92
+#: timelinelib\help\pages.py:93
 msgid ""
 "\n"
 "The timeline shows dates according to the Gregorian calendar on the x-axis. "
@@ -410,7 +410,7 @@ msgid ""
 "If you are interested in such a feature, please get in touch.\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:100
+#: timelinelib\help\pages.py:101
 msgid "Events"
 msgstr "Eventos"
 
@@ -419,7 +419,7 @@ msgstr "Eventos"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:107
+#: timelinelib\help\pages.py:108
 msgid ""
 "\n"
 "An event is the basic data type for representing information on the "
@@ -432,7 +432,7 @@ msgstr ""
 "Timeline. Se debe especificar donde será puesto dicho evento. También se "
 "puede especificar si se trata de un evento o un período.\n"
 
-#: timelinelib\help\pages.py:113
+#: timelinelib\help\pages.py:114
 msgid "Categories"
 msgstr "Categorías"
 
@@ -441,7 +441,7 @@ msgstr "Categorías"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:120
+#: timelinelib\help\pages.py:121
 msgid ""
 "\n"
 "Categories are used to group events. An event can only belong to one "
@@ -458,7 +458,7 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:133
+#: timelinelib\help\pages.py:134
 msgid ""
 "\n"
 "The *Create Event* dialog can be opened in the following ways:\n"
@@ -481,7 +481,7 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:150
+#: timelinelib\help\pages.py:151
 msgid ""
 "\n"
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
@@ -489,7 +489,23 @@ msgstr ""
 "\n"
 "El diálogo *Editar Evento* puede ser abierto con doble clic en el evento.\n"
 
-#: timelinelib\help\pages.py:156
+#: timelinelib\help\pages.py:157
+msgid "Move event vertically"
+msgstr ""
+
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: timelinelib\help\pages.py:164
+msgid ""
+"\n"
+"An event can be moved vertically. This is done by first selecting the event "
+"and therefter using the Alt+Up or Alt+Down keys.\n"
+msgstr ""
+
+#: timelinelib\help\pages.py:170
 msgid "Selecting events"
 msgstr "Seleccionar evento"
 
@@ -498,7 +514,7 @@ msgstr "Seleccionar evento"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:162
+#: timelinelib\help\pages.py:176
 msgid ""
 "\n"
 "To select an event, click on it. To select multiple events, hold down the "
@@ -510,7 +526,7 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:175
+#: timelinelib\help\pages.py:189
 msgid ""
 "\n"
 "To delete an event, select it and press the *Del* key. Multiple events can "
@@ -520,7 +536,7 @@ msgstr ""
 "Para eliminar un evento, seleccionelo y presione la tecla *Supr*. Puede "
 "borrar múltiples eventos al mismo tiempo.\n"
 
-#: timelinelib\help\pages.py:181
+#: timelinelib\help\pages.py:195
 msgid "Will associated events be deleted when I delete a category?"
 msgstr ""
 "¿Se pueden eliminar múltiples eventos si elimino la categoría a la que "
@@ -531,7 +547,7 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:187
+#: timelinelib\help\pages.py:201
 msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
@@ -539,9 +555,9 @@ msgstr ""
 "\n"
 "No. Los eventos seguirán ahí, solo que no pertenecerán a ninguna categoría.\n"
 
-#: timelinelib\help\pages.py:193
+#: timelinelib\help\pages.py:207
 #: timelinelib\wxgui\components\categorychoice.py:53
-#: timelinelib\wxgui\dialogs\mainframe.py:459
+#: timelinelib\wxgui\dialogs\mainframe.py:462
 msgid "Edit categories"
 msgstr "Editar categorías"
 
@@ -550,7 +566,7 @@ msgstr "Editar categorías"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:200
+#: timelinelib\help\pages.py:214
 msgid ""
 "\n"
 "Categories can be managed in the *Edit Categories* dialog (*Timeline* > "
@@ -567,8 +583,8 @@ msgstr ""
 "Las categorías pueden también editarse desde la barra lateral (*Ver* > "
 "*Barra lateral*).\n"
 
-#: timelinelib\help\pages.py:208 timelinelib\wxgui\dialogs\mainframe.py:583
-#: timelinelib\wxgui\dialogs\mainframe.py:1062
+#: timelinelib\help\pages.py:222 timelinelib\wxgui\dialogs\mainframe.py:586
+#: timelinelib\wxgui\dialogs\mainframe.py:1065
 msgid "Contact"
 msgstr "Contacto"
 
@@ -577,7 +593,7 @@ msgstr "Contacto"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:214
+#: timelinelib\help\pages.py:228
 msgid ""
 "\n"
 "If you have more questions about Timeline, or if you want to get in contact "
@@ -590,7 +606,7 @@ msgstr ""
 "de usuarios: <thetimelineproj-user@lists.sourceforge.net>. Por favor escriba "
 "en inglés.\n"
 
-#: timelinelib\help\pages.py:220
+#: timelinelib\help\pages.py:234
 msgid "Why is Timeline not available in my language?"
 msgstr "¿Por qué Timeline no está disponible en mi idioma?"
 
@@ -599,7 +615,7 @@ msgstr "¿Por qué Timeline no está disponible en mi idioma?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:227
+#: timelinelib\help\pages.py:241
 msgid ""
 "\n"
 "Timeline is developed and translated by volunteers. If you would like to "
@@ -714,124 +730,132 @@ msgid "Fit Month"
 msgstr "Fijar Mes"
 
 #: timelinelib\time\pytime.py:88 timelinelib\time\wxtime.py:83
+msgid "Fit Week"
+msgstr ""
+
+#: timelinelib\time\pytime.py:89 timelinelib\time\wxtime.py:84
 msgid "Fit Day"
 msgstr "Fijar Día"
 
-#: timelinelib\time\pytime.py:122 timelinelib\time\wxtime.py:120
+#: timelinelib\time\pytime.py:123 timelinelib\time\wxtime.py:121
 msgid "day"
 msgstr ""
 
-#: timelinelib\time\pytime.py:124 timelinelib\time\wxtime.py:122
+#: timelinelib\time\pytime.py:125 timelinelib\time\wxtime.py:123
 msgid "days"
 msgstr ""
 
-#: timelinelib\time\pytime.py:126 timelinelib\time\wxtime.py:124
+#: timelinelib\time\pytime.py:127 timelinelib\time\wxtime.py:125
 msgid "hour"
 msgstr ""
 
-#: timelinelib\time\pytime.py:128 timelinelib\time\wxtime.py:126
+#: timelinelib\time\pytime.py:129 timelinelib\time\wxtime.py:127
 msgid "hours"
 msgstr ""
 
-#: timelinelib\time\pytime.py:130 timelinelib\time\wxtime.py:128
+#: timelinelib\time\pytime.py:131 timelinelib\time\wxtime.py:129
 msgid "minute"
 msgstr ""
 
-#: timelinelib\time\pytime.py:132 timelinelib\time\wxtime.py:130
+#: timelinelib\time\pytime.py:133 timelinelib\time\wxtime.py:131
 msgid "minutes"
 msgstr ""
 
-#: timelinelib\time\pytime.py:140
+#: timelinelib\time\pytime.py:141
 msgid "can't be before year 10"
 msgstr ""
 
-#: timelinelib\time\pytime.py:144
+#: timelinelib\time\pytime.py:145
 msgid "can't be after year 9989"
 msgstr ""
 
-#: timelinelib\time\pytime.py:201 timelinelib\time\wxtime.py:198
+#: timelinelib\time\pytime.py:202 timelinelib\time\wxtime.py:199
 msgid "Can't zoom wider than 1200 years"
 msgstr ""
 
-#: timelinelib\time\pytime.py:204 timelinelib\time\wxtime.py:201
+#: timelinelib\time\pytime.py:205 timelinelib\time\wxtime.py:202
 msgid "Can't zoom deeper than 1 hour"
 msgstr "No se puede hacer zoom a menos de 1 hora"
 
-#: timelinelib\time\pytime.py:219 timelinelib\time\wxtime.py:216
+#: timelinelib\time\pytime.py:220 timelinelib\time\wxtime.py:217
 msgid "Day"
 msgstr "Día"
 
-#: timelinelib\time\pytime.py:220 timelinelib\time\pytime.py:558
-#: timelinelib\time\wxtime.py:217 timelinelib\time\wxtime.py:544
+#: timelinelib\time\pytime.py:221 timelinelib\time\pytime.py:583
+#: timelinelib\time\wxtime.py:218 timelinelib\time\wxtime.py:561
 msgid "Week"
 msgstr "Semana"
 
-#: timelinelib\time\pytime.py:221 timelinelib\time\wxtime.py:218
+#: timelinelib\time\pytime.py:222 timelinelib\time\wxtime.py:219
 msgid "Month"
 msgstr "Mes"
 
-#: timelinelib\time\pytime.py:222 timelinelib\time\wxtime.py:219
+#: timelinelib\time\pytime.py:223 timelinelib\time\wxtime.py:220
 msgid "Year"
 msgstr "Año"
 
-#: timelinelib\time\pytime.py:256 timelinelib\time\wxtime.py:255
+#: timelinelib\time\pytime.py:259 timelinelib\time\wxtime.py:262
 msgid "Go to Date"
 msgstr "Ir al día"
 
-#: timelinelib\time\wxtime.py:138
+#: timelinelib\time\wxtime.py:139
 #, python-format
 msgid "can't be before year %d"
 msgstr ""
 
-#: timelinelib\time\wxtime.py:142
+#: timelinelib\time\wxtime.py:143
 #, python-format
 msgid "can't be after year %d"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:144 timelinelib\view\drawingarea.py:162
+#: timelinelib\view\drawingarea.py:145 timelinelib\view\drawingarea.py:163
 msgid "No timeline set"
 msgstr "No hay una línea de tiempo seleccionada"
 
-#: timelinelib\view\drawingarea.py:168
+#: timelinelib\view\drawingarea.py:169
 msgid "Can't scroll more to the left"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:170
+#: timelinelib\view\drawingarea.py:171
 msgid "Can't scroll more to the right"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:196
+#: timelinelib\view\drawingarea.py:197
 msgid "Edit"
 msgstr "Editar"
 
-#: timelinelib\view\drawingarea.py:197
+#: timelinelib\view\drawingarea.py:198
 msgid "Duplicate..."
 msgstr "Duplicar..."
 
-#: timelinelib\view\drawingarea.py:198
+#: timelinelib\view\drawingarea.py:199
 #: timelinelib\wxgui\components\cattree.py:80
 msgid "Delete"
 msgstr "Suprimir"
 
-#: timelinelib\view\drawingarea.py:201
+#: timelinelib\view\drawingarea.py:202
 msgid "Sticky Balloon"
 msgstr "Globo pegajoso"
 
-#: timelinelib\view\drawingarea.py:352
+#: timelinelib\view\drawingarea.py:205
+msgid "Goto URL"
+msgstr ""
+
+#: timelinelib\view\drawingarea.py:362
 msgid "Center"
 msgstr "Centrar"
 
-#: timelinelib\view\drawingarea.py:400
+#: timelinelib\view\drawingarea.py:410
 #, python-format
 msgid "%s events hidden"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:468
+#: timelinelib\view\drawingarea.py:478
 #, python-format
 msgid "Are you sure you want to delete %d events?"
 msgstr "¿Está seguro de querer borrar %d los eventos?"
 
-#: timelinelib\view\drawingarea.py:471
+#: timelinelib\view\drawingarea.py:481
 msgid "Are you sure you want to delete this event?"
 msgstr "¿Está seguro de querer borrar este evento?"
 
@@ -864,7 +888,7 @@ msgid "Question"
 msgstr "Pregunta"
 
 #: timelinelib\wxgui\components\categorychoice.py:52
-#: timelinelib\wxgui\dialogs\eventeditor.py:302
+#: timelinelib\wxgui\dialogs\eventeditor.py:304
 msgid "Add new"
 msgstr "Añadir nueva"
 
@@ -949,7 +973,7 @@ msgid "Container Properties"
 msgstr ""
 
 #: timelinelib\wxgui\dialogs\containereditor.py:65
-#: timelinelib\wxgui\dialogs\eventeditor.py:217
+#: timelinelib\wxgui\dialogs\eventeditor.py:218
 msgid "Category:"
 msgstr "Categoría:"
 
@@ -967,7 +991,7 @@ msgid "Number of duplicates:"
 msgstr "Número de duplicados:"
 
 #: timelinelib\wxgui\dialogs\duplicateevent.py:98
-#: timelinelib\wxgui\dialogs\eventeditor.py:174
+#: timelinelib\wxgui\dialogs\eventeditor.py:175
 msgid "Period"
 msgstr "Período"
 
@@ -991,83 +1015,95 @@ msgstr ""
 msgid "Direction"
 msgstr "Dirección"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:62
+#: timelinelib\wxgui\dialogs\eventeditor.py:63
 msgid "Event Properties"
 msgstr "Propiedades del evento"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:85
-#: timelinelib\wxgui\dialogs\eventeditor.py:571
+#: timelinelib\wxgui\dialogs\eventeditor.py:86
+#: timelinelib\wxgui\dialogs\eventeditor.py:574
 msgid "When:"
 msgstr "Cuando:"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:88
+#: timelinelib\wxgui\dialogs\eventeditor.py:89
 msgid "to"
 msgstr "a"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:123
+#: timelinelib\wxgui\dialogs\eventeditor.py:124
 msgid "Container:"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:161
+#: timelinelib\wxgui\dialogs\eventeditor.py:162
 msgid "Add Container"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:181
+#: timelinelib\wxgui\dialogs\eventeditor.py:182
 #: timelinelib\wxgui\dialogs\timeeditor.py:47
 msgid "Show time"
 msgstr "Ver hora"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:189
+#: timelinelib\wxgui\dialogs\eventeditor.py:190
 msgid "Fuzzy"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:193
+#: timelinelib\wxgui\dialogs\eventeditor.py:194
 msgid "Locked"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:200
+#: timelinelib\wxgui\dialogs\eventeditor.py:201
 msgid "Ends today"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:211
-#: timelinelib\wxgui\dialogs\eventeditor.py:572
+#: timelinelib\wxgui\dialogs\eventeditor.py:212
+#: timelinelib\wxgui\dialogs\eventeditor.py:575
 msgid "Text:"
 msgstr "Texto:"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:242
+#: timelinelib\wxgui\dialogs\eventeditor.py:243
 msgid "Description"
 msgstr "Descripción"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:243
+#: timelinelib\wxgui\dialogs\eventeditor.py:244
 msgid "Alert"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:244
+#: timelinelib\wxgui\dialogs\eventeditor.py:245
 msgid "Icon"
 msgstr "Icono"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:261
+#: timelinelib\wxgui\dialogs\eventeditor.py:246
+msgid "Hyperlink"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\eventeditor.py:263
 msgid "Add more events after this one"
 msgstr "Agregar eventos después de este"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:449
+#: timelinelib\wxgui\dialogs\eventeditor.py:452
 #, python-format
 msgid "Images will be scaled to fit inside a %ix%i box."
 msgstr "Las imágenes se escalarán para entrar en %ix%i."
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:486
+#: timelinelib\wxgui\dialogs\eventeditor.py:489
 msgid "Select Icon"
 msgstr "Seleccionar icono"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:619
+#: timelinelib\wxgui\dialogs\eventeditor.py:664
+msgid "Test"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\eventeditor.py:674
+msgid "URL:"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\eventeditor.py:718
 msgid "Edit Container"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:623
+#: timelinelib\wxgui\dialogs\eventeditor.py:722
 msgid "Edit Event"
 msgstr "Editar Evento"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:630
+#: timelinelib\wxgui\dialogs\eventeditor.py:729
 msgid "Create Event"
 msgstr "Crear Evento"
 
@@ -1106,228 +1142,228 @@ msgstr "Página no encontrada"
 msgid "Could not find page '%s'."
 msgstr "No se puede encontrar la página '%s'."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:92
+#: timelinelib\wxgui\dialogs\mainframe.py:95
 msgid "Timeline files"
 msgstr "Archivos de Timeline"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:94
+#: timelinelib\wxgui\dialogs\mainframe.py:97
 msgid "SVG files"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:142
+#: timelinelib\wxgui\dialogs\mainframe.py:145
 msgid "&File"
 msgstr "&Archivo"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:148
+#: timelinelib\wxgui\dialogs\mainframe.py:151
 msgid "New"
 msgstr "Nuevo"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:148
+#: timelinelib\wxgui\dialogs\mainframe.py:151
 msgid "Create a new timeline"
 msgstr "Crear nueva línea de tiempo"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:154
+#: timelinelib\wxgui\dialogs\mainframe.py:157
 msgid "File Timeline..."
 msgstr "Archivo Timeline..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:162
-#: timelinelib\wxgui\dialogs\mainframe.py:185
+#: timelinelib\wxgui\dialogs\mainframe.py:165
+#: timelinelib\wxgui\dialogs\mainframe.py:188
 msgid "Create Timeline"
 msgstr "Crear Línea de Tiempo"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:168
+#: timelinelib\wxgui\dialogs\mainframe.py:171
 msgid "The specified timeline already exists."
 msgstr "Esta línea de tiempo ya existe."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:169
+#: timelinelib\wxgui\dialogs\mainframe.py:172
 msgid "Opening timeline instead of creating new."
 msgstr "Abriendo una línea de tiempo en lugar de crear una nueva."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:171
+#: timelinelib\wxgui\dialogs\mainframe.py:174
 msgid "Information"
 msgstr "Información"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:178
+#: timelinelib\wxgui\dialogs\mainframe.py:181
 msgid "Directory Timeline..."
 msgstr "Carpeta Timeline..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:194
+#: timelinelib\wxgui\dialogs\mainframe.py:197
 msgid "Open an existing timeline"
 msgstr "Abrir una línea de tiempo"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:205
+#: timelinelib\wxgui\dialogs\mainframe.py:208
 msgid "Open Timeline"
 msgstr "Abrir Línea de tiempo"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:215
+#: timelinelib\wxgui\dialogs\mainframe.py:218
 msgid "Open &Recent"
 msgstr "Abrir &Reciente"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:220
+#: timelinelib\wxgui\dialogs\mainframe.py:223
 msgid "Page Set&up..."
 msgstr "Config&uración de Página..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:220
+#: timelinelib\wxgui\dialogs\mainframe.py:223
 msgid "Setup page for printing"
 msgstr "Configuración de impresión"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:229
+#: timelinelib\wxgui\dialogs\mainframe.py:232
 msgid "Print Preview"
 msgstr "Vista preliminar"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:238
+#: timelinelib\wxgui\dialogs\mainframe.py:241
 msgid "Print"
 msgstr "Imprimir"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:247
+#: timelinelib\wxgui\dialogs\mainframe.py:250
 msgid "&Export to Image..."
 msgstr "&Exportar como imagen..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:247
+#: timelinelib\wxgui\dialogs\mainframe.py:250
 msgid "Export the current view to a PNG image"
 msgstr "Exportar a imagen PNG"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:256
+#: timelinelib\wxgui\dialogs\mainframe.py:259
 msgid "&Export to SVG..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:256
+#: timelinelib\wxgui\dialogs\mainframe.py:259
 msgid "Export the current view to a SVG image"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:265
+#: timelinelib\wxgui\dialogs\mainframe.py:268
 msgid ""
 "Could not find pysvg Python package. It is needed to export to SVG. See the "
 "Timeline website or the INSTALL file for instructions how to install it."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:269
+#: timelinelib\wxgui\dialogs\mainframe.py:272
 msgid "Export to SVG"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:291
+#: timelinelib\wxgui\dialogs\mainframe.py:294
 msgid "Play timeline"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:291
+#: timelinelib\wxgui\dialogs\mainframe.py:294
 msgid "Play timeline as movie"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:299
+#: timelinelib\wxgui\dialogs\mainframe.py:302
 msgid "Exit the program"
 msgstr "Salir del programa"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:310
+#: timelinelib\wxgui\dialogs\mainframe.py:313
 msgid "&Edit"
 msgstr "&Editar"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:335
+#: timelinelib\wxgui\dialogs\mainframe.py:338
 msgid "&View"
 msgstr "&Ver"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:339
+#: timelinelib\wxgui\dialogs\mainframe.py:342
 msgid "&Sidebar\tCtrl+I"
 msgstr "&Barra lateral\tCtrl+l"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:353
+#: timelinelib\wxgui\dialogs\mainframe.py:356
 msgid "&Legend"
 msgstr "&Leyenda"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:364
+#: timelinelib\wxgui\dialogs\mainframe.py:367
 msgid "&Balloons on hover"
 msgstr "&Imagenes en globos"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:378
+#: timelinelib\wxgui\dialogs\mainframe.py:381
 msgid "&Timeline"
 msgstr "&Línea de tiempo"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:382
+#: timelinelib\wxgui\dialogs\mainframe.py:385
 msgid "Create &Event..."
 msgstr "Crear &Evento..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:382
+#: timelinelib\wxgui\dialogs\mainframe.py:385
 msgid "Create a new event"
 msgstr "Crear nuevo evento"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:392
+#: timelinelib\wxgui\dialogs\mainframe.py:395
 msgid "&Duplicate Selected Event..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:392
+#: timelinelib\wxgui\dialogs\mainframe.py:395
 msgid "Duplicate the Selected Event"
 msgstr "Duplicar el Evento Seleccionado"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:413
+#: timelinelib\wxgui\dialogs\mainframe.py:416
 msgid "&Measure Distance between two Events..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:414
+#: timelinelib\wxgui\dialogs\mainframe.py:417
 msgid "Measure the Distance between two Events"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:445
+#: timelinelib\wxgui\dialogs\mainframe.py:448
 msgid "Distance between selected events"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:448
+#: timelinelib\wxgui\dialogs\mainframe.py:451
 msgid "Events are overlapping or distance is 0"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:459
+#: timelinelib\wxgui\dialogs\mainframe.py:462
 msgid "Edit &Categories"
 msgstr "Editar &Categorías"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:481
+#: timelinelib\wxgui\dialogs\mainframe.py:484
 msgid "&Navigate"
 msgstr "&Navegar"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:485
+#: timelinelib\wxgui\dialogs\mainframe.py:488
 msgid "Find First Event"
 msgstr "Buscar Primer Evento"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:499
+#: timelinelib\wxgui\dialogs\mainframe.py:502
 msgid "Find Last Event"
 msgstr "Buscar Ultimo Evento"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:513
+#: timelinelib\wxgui\dialogs\mainframe.py:516
 msgid "Fit All Events"
 msgstr "Fijar Todos los Eventos"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:566
+#: timelinelib\wxgui\dialogs\mainframe.py:569
 msgid "&Help"
 msgstr "&Ayuda"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:569
+#: timelinelib\wxgui\dialogs\mainframe.py:572
 msgid "&Contents\tF1"
 msgstr "&Contenidos\tF1"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:576
-#: timelinelib\wxgui\dialogs\mainframe.py:957
+#: timelinelib\wxgui\dialogs\mainframe.py:579
+#: timelinelib\wxgui\dialogs\mainframe.py:960
 msgid "Getting started tutorial"
 msgstr "Bienvenido al tutorial"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:612
+#: timelinelib\wxgui\dialogs\mainframe.py:615
 msgid "Unable to write configuration file."
 msgstr "No se puede escribir el archivo de configuración."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:652
+#: timelinelib\wxgui\dialogs\mainframe.py:655
 msgid "read-only"
 msgstr "sólo lectura"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:713
+#: timelinelib\wxgui\dialogs\mainframe.py:716
 #, python-format
 msgid "File '%s' does not exist."
 msgstr "El archivo '%s' no existe"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:949
+#: timelinelib\wxgui\dialogs\mainframe.py:952
 msgid "No timeline opened."
 msgstr "No hay línea de tiempo abierta."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:954
+#: timelinelib\wxgui\dialogs\mainframe.py:957
 msgid "First time using Timeline?"
 msgstr "¿Su primera vez usando Timeline?"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:1059
+#: timelinelib\wxgui\dialogs\mainframe.py:1062
 msgid "Relevant help topics:"
 msgstr "Temas importantes de la ayuda:"
 
