@@ -4,17 +4,30 @@ rem for the Windows target os.
 
 set TIMELINE_DIR=..\..\..\
 set PACKAGE_DIR=..
-set ICALENDAR_DIR=%TIMELINE_DIR%\libs\dependencies\icalendar-2.1\icalendar
+set ICALENDAR_DIR=%TIMELINE_DIR%\libs\dependencies\icalendar-3.2\icalendar
+set PYTZ_DIR=%TIMELINE_DIR%\libs\dependencies\pytz-2012j\pytz
 set PYSVG_DIR=%TIMELINE_DIR%\libs\dependencies\pysvg-0.2.1\pysvg
+set MARKDOWN_DIR=%TIMELINE_DIR%\libs\dependencies\markdown-2.0.3\markdown
+
 
 echo ***. Copying icalendar package to timeline directory.
 mkdir %TIMELINE_DIR%\icalendar
 copy %ICALENDAR_DIR%\*.*  %TIMELINE_DIR%\icalendar\*.*
 pause
 
+echo ***. Copying pytz package to timeline directory.
+mkdir %TIMELINE_DIR%\pytz
+copy %PYTZ_DIR%\*.*  %TIMELINE_DIR%\pytz\*.*
+pause
+
 echo ***. Copying pysvg package to timeline directory.
 mkdir %TIMELINE_DIR%\pysvg
 copy %PYSVG_DIR%\*.*  %TIMELINE_DIR%\pysvg\*.*
+pause
+
+echo ***. Copying markdown package to timeline directory.
+mkdir %TIMELINE_DIR%\markdown
+copy %MARKDOWN_DIR%\*.*  %TIMELINE_DIR%\markdown\*.*
 pause
 
 echo *** Copying setup.py to timeline directory
