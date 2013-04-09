@@ -68,6 +68,9 @@ class DummyMainFrame(object):
     def enable_disable_menus(self):
         pass
 
+    def edit_ends(self):
+        pass
+
 
 class TimelineComponent(TimelinePanel):
 
