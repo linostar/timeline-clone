@@ -250,7 +250,40 @@ class WxTimeType(TimeType):
         else:
             return time
 
+    def get_milliseconds_delta(self, dt1, dt2):
+        milliseconds = 0
+        start, end = self._smallest_date_first(dt1, dt2)
+        subend = self._clone(start)
+        subend, substart = self._increment_subperiod(subend)
+        while subend.GetYear() < end.GetYear():
+            milliseconds += self._get_subdiff_milliseconds(substart, subend)
+            subend, substart = self._increment_subperiod(subend)
+        milliseconds += self._get_subdiff_milliseconds(substart, end)
+        return milliseconds
 
+    def _clone(self, dt):
+        dtclone = wx.DateTime()
+        dtclone.Set(dt.GetDay(), dt.GetMonth(), dt.GetYear(), dt.GetHour(), 
+                    dt.GetMinute(), dt.GetSecond(), dt.GetMillisecond())
+        return dtclone
+
+    def _increment_subperiod(self, subend):
+        week_increment = 5000
+        substart = self._clone(subend)
+        subend += wx.TimeSpan.Weeks(week_increment)
+        return subend, substart
+        
+    def _get_subdiff_milliseconds(self, start, end):
+        delta = end - start
+        return delta.GetSeconds() * 1000
+        
+    def _smallest_date_first(self, dt1, dt2):
+        if dt2 < dt1:
+            return dt2, dt1
+        else:
+            return dt1, dt2
+        
+        
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(wx.DateTime.Now()))
 

@@ -248,6 +248,31 @@ class PyTimeType(TimeType):
     def adjust_for_bc_years(self, time):
         return time
 
+    def clone(self, dt):
+        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+
+    def get_milliseconds_delta(self, dt1, dt2):
+        days_increment = 365
+        result = 0
+        if dt2 < dt1:
+            start = dt2
+            end = dt1
+        else:
+            start = dt1
+            end = dt2
+        temp1 = self.clone(start)
+        temp2 = self.clone(temp1)
+        temp1 += timedelta(days_increment)
+        while temp1.year < end.year:
+            diff = temp1 - temp2
+            result += (diff.days * 24 * 60 * 60 + diff.seconds) * 1000
+            temp2 = self.clone(temp1)
+            temp1 += timedelta(days_increment)
+        diff = end - temp2
+        result += (diff.days * 24 * 60 * 60 + diff.seconds) * 1000
+        return result
+    
+    
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))
 
