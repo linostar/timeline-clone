@@ -76,6 +76,8 @@ class TimelineApplication(object):
             pass
         
     def ok_to_edit(self):
+        if self.timeline is None:
+            return True
         if self.timeline.is_read_only():
             return False
         if self._locked():
