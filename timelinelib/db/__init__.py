@@ -25,9 +25,11 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.wxgui.utils import display_warning_message
 
+current_timeline = None
 
-def db_open(path, use_wide_date_range=False):
+def db_open(path, use_wide_date_range=False, import_timeline=False):
     """
     Create timeline database that can read and write timeline data from and to
     persistent storage identified by path.
@@ -47,31 +49,60 @@ def db_open(path, use_wide_date_range=False):
         from timelinelib.db.backends.dir import DirTimeline
         return DirTimeline(path)
     elif path.endswith(".timeline"):
-        if (os.path.exists(path) and
-            file_starts_with(path, "# Written by Timeline ")):
-            # Convert file db to xml db
-            from timelinelib.db.backends.file import FileTimeline
-            from timelinelib.db.backends.xmlfile import XmlTimeline
-            file_db = FileTimeline(path)
-            xml_db = XmlTimeline(path, load=False,
-                                 use_wide_date_range=use_wide_date_range)
-            copy_db(file_db, xml_db)
-            return xml_db
-        else:
-            from timelinelib.db.backends.xmlfile import XmlTimeline
-            return XmlTimeline(path, use_wide_date_range=use_wide_date_range)
+        return db_open_timeline(path, use_wide_date_range, import_timeline)
     elif path.endswith(".ics"):
-        try:
-            import icalendar
-        except ImportError:
-            raise TimelineIOError(_("Could not find iCalendar Python package. It is required for working with ICS files. See the Timeline website or the INSTALL file for instructions how to install it."))
-        else:
-            from timelinelib.db.backends.ics import IcsTimeline
-            return IcsTimeline(path)
+        return db_open_ics(path, use_wide_date_range, import_timeline)
     else:
         msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
                         _("Unknown format."))
         raise TimelineIOError(msg_template % path)
+
+
+def db_open_timeline(path, use_wide_date_range=False, import_timeline=False):
+    global current_timeline
+    if import_timeline and current_timeline:
+        extension = current_timeline.path.rsplit(".", 1)[1]
+        if extension != "timeline":
+            display_warning_message(_("Only %s files can be imported") % extension)
+            return current_timeline 
+        current_timeline.import_timeline(path)
+        return current_timeline 
+    elif (os.path.exists(path) and
+        file_starts_with(path, "# Written by Timeline ")):
+        # Convert file db to xml db
+        from timelinelib.db.backends.file import FileTimeline
+        from timelinelib.db.backends.xmlfile import XmlTimeline
+        file_db = FileTimeline(path)
+        current_timeline = XmlTimeline(path, load=False,
+                             use_wide_date_range=use_wide_date_range, 
+                             import_timeline=import_timeline)
+        copy_db(file_db, current_timeline)
+        return current_timeline
+    else:
+        from timelinelib.db.backends.xmlfile import XmlTimeline
+        current_timeline = XmlTimeline(path, 
+                                       use_wide_date_range=use_wide_date_range, 
+                                       import_timeline=import_timeline) 
+        return current_timeline 
+    
+
+def db_open_ics(path, use_wide_date_range=False, import_timeline=False):
+    global current_timeline
+    try:
+        import icalendar
+    except ImportError:
+        raise TimelineIOError(_("Could not find iCalendar Python package. It is required for working with ICS files. See the Timeline website or the INSTALL file for instructions how to install it."))
+    else:
+        from timelinelib.db.backends.ics import IcsTimeline
+        if import_timeline and current_timeline:
+            extension = current_timeline.path.rsplit(".", 1)[1]
+            if extension != "ics":
+                display_warning_message(_("Only %s files can be imported") % extension)
+                return current_timeline 
+            current_timeline.import_timeline(path)
+        else:
+            current_timeline = IcsTimeline(path) 
+        return current_timeline 
 
 
 def file_starts_with(path, start):

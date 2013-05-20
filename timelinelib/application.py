@@ -48,9 +48,11 @@ class TimelineApplication(object):
             for input_file in input_files:
                 self.main_frame.open_timeline(input_file)
 
-    def open_timeline(self, path):
+    def open_timeline(self, path, import_timeline=False):
         try:
-            self.timeline = self.db_open_fn(path, self.config.get_use_wide_date_range())
+            self.timeline = self.db_open_fn(path, 
+                                            self.config.get_use_wide_date_range(), 
+                                            import_timeline)
         except TimelineIOError, e:
             self.main_frame.handle_db_error(e)
             self.timelinepath = None

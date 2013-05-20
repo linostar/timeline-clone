@@ -147,6 +147,8 @@ class MainFrame(wx.Frame):
         self._create_file_print_preview_menu_item(file_menu)
         self._create_file_print_menu_item(file_menu)
         file_menu.AppendSeparator()
+        self._create_import_menu_item(file_menu)
+        file_menu.AppendSeparator()
         self._create_file_export_to_image_menu_item(file_menu)
         self._create_file_export_to_svg_menu_item(file_menu)
         file_menu.AppendSeparator()
@@ -209,6 +211,14 @@ class MainFrame(wx.Frame):
             _("Open an existing timeline"))
         self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
 
+    def _create_import_menu_item(self, file_menu):
+        mnu_file_import = file_menu.Append(
+            wx.ID_ANY, _("Import timeline..."), _("Import timeline..."))
+        self.Bind(wx.EVT_MENU, self._mnu_file_import_on_click, mnu_file_import)
+
+    def _mnu_file_import_on_click(self, menu):
+        self._open_existing_timeline(True)
+                
     def _mnu_file_open_on_click(self, event):
         self._open_existing_timeline()
 
@@ -245,7 +255,7 @@ class MainFrame(wx.Frame):
             self._save_current_timeline_data()
             self.open_timeline(self.timeline.path)
         
-    def _open_existing_timeline(self):
+    def _open_existing_timeline(self, import_timeline=False):
         dir = ""
         if self.timeline is not None:
             dir = os.path.dirname(self.timeline.path)
@@ -255,7 +265,7 @@ class MainFrame(wx.Frame):
                                wildcard=wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
-            self.open_timeline(dialog.GetPath())
+            self.open_timeline(dialog.GetPath(), import_timeline)
         dialog.Destroy()
 
     def _create_file_open_recent_menu(self, file_menu):
@@ -683,8 +693,8 @@ class MainFrame(wx.Frame):
             msg = "%s\n\n%s" % (friendly, ex_msg(ex))
             _display_error_message(msg, self)
 
-    def open_timeline(self, input_file):
-        self.controller.open_timeline(input_file)
+    def open_timeline(self, input_file, import_timeline=False):
+        self.controller.open_timeline(input_file, import_timeline)
         self._update_navigation_menu_items()
         self.enable_disable_menus()
 

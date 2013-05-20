@@ -38,7 +38,8 @@ class IcsTimeline(Observable):
         Observable.__init__(self)
         self.path = path
         self.event_id_counter = IdCounter()
-        self._load_data()
+        self.cals = []
+        self.import_timeline(self.path)
 
     def get_time_type(self):
         return PyTimeType()
@@ -106,31 +107,32 @@ class IcsTimeline(Observable):
 
     def _get_events(self, decider_fn=None):
         self.events = []
-        for event in self.cal.walk("VEVENT"):
-            start, end = extract_start_end(event)
-            txt = ""
-            if event.has_key("summary"):
-                txt = event["summary"]
-            e = Event(self.get_time_type(), start, end, txt)
-            e.set_id(event["timeline_id"])
-            if decider_fn is None or decider_fn(e):
-                self.events.append(e)
+        for cal in self.cals:
+            for event in cal.walk("VEVENT"):
+                start, end = extract_start_end(event)
+                txt = ""
+                if event.has_key("summary"):
+                    txt = event["summary"]
+                e = Event(self.get_time_type(), start, end, txt)
+                e.set_id(event["timeline_id"])
+                if decider_fn is None or decider_fn(e):
+                    self.events.append(e)
         return self.events
 
-    def _load_data(self):
-        self.cal = Calendar()
+    def import_timeline(self, path):
         try:
-            ics_file = open(self.path, "rb")
+            ics_file = open(path, "rb")
             try:
                 file_contents = ics_file.read()
                 try:
-                    self.cal = Calendar.from_ical(file_contents)
-                    for event in self.cal.walk("VEVENT"):
+                    cal = Calendar.from_ical(file_contents)
+                    for event in cal.walk("VEVENT"):
                         event["timeline_id"] = self.event_id_counter.get_next()
+                    self.cals.append(cal)
                 except Exception, pe:
                     msg1 = _("Unable to read timeline data from '%s'.")
                     msg2 = "\n\n" + ex_msg(pe)
-                    raise TimelineIOError((msg1 % abspath(self.path)) + msg2)
+                    raise TimelineIOError((msg1 % abspath(path)) + msg2)
             finally:
                 ics_file.close()
         except IOError, e:
