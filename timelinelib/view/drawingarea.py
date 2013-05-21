@@ -500,6 +500,7 @@ class DrawingArea(object):
             if user_ack():
                 for event_id in selected_event_ids:
                     self.timeline.delete_event(event_id)
+            self.view_properties.clear_selected()
         safe_locking(self.view, edit_function, exception_handler)
             
     def balloon_visibility_changed(self, visible):

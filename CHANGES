@@ -7,6 +7,7 @@ New features, enhancements:
 Bug fixes:
 
   * Bug fix. Allow Preferences setting when no timeline exists
+  * Bug fix. Reset selected events list when selected events are deleted
 
 
 Timeline 0.20.0, released on 30 March 2013
