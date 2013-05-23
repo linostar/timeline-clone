@@ -222,8 +222,12 @@ class XmlTimeline(MemoryDB):
         else:
             parent = None
         category = Category(name, color, font_color, True, parent=parent)
-        tmp_dict["category_map"][name] = category
-        self.save_category(category)
+        old_category = self._get_category_by_name(category)
+        if old_category is not None:
+            category = old_category     
+        if not tmp_dict["category_map"].has_key(name):
+            tmp_dict["category_map"][name] = category
+            self.save_category(category)
 
     def _parse_event(self, text, tmp_dict):
         start = self._parse_time(tmp_dict.pop("tmp_start"))

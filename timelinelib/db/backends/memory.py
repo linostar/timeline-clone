@@ -184,13 +184,19 @@ class MemoryDB(Observable):
             raise TimelineIOError("Parent category not in db.")
         self._ensure_no_circular_parent(category)
         if not category in self.categories:
-            if category.has_id():
-                raise TimelineIOError("Category with id %s not found in db." %
-                                      category.id)
-            self.categories.append(category)
-            category.set_id(self.event_id_counter.get_next())
+            if self._get_category_by_name(category) is None:
+                if category.has_id():
+                    raise TimelineIOError("Category with id %s not found in db." %
+                                          category.id)
+                self.categories.append(category)
+                category.set_id(self.event_id_counter.get_next())
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_CATEGORY)
+
+    def _get_category_by_name(self, category):
+        for cat in self.categories:
+            if cat.name == category.name:
+                return cat
 
     def delete_category(self, category_or_id):
         if isinstance(category_or_id, Category):
