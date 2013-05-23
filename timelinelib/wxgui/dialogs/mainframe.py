@@ -436,6 +436,7 @@ class MainFrame(wx.Frame):
     def _create_timeline_menu(self, main_menu_bar):
         timeline_menu = wx.Menu()
         self._create_timeline_create_event_menu_item(timeline_menu)
+        self._create_timeline_edit_event_menu_item(timeline_menu)
         self._create_timeline_duplicate_event_menu_item(timeline_menu)
         self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
         self._create_timeline_edit_categories(timeline_menu)
@@ -472,6 +473,23 @@ class MainFrame(wx.Frame):
             self.timeline,
             self.handle_db_error,
             event)
+
+    def _create_timeline_edit_event_menu_item(self, timeline_menu):
+        self.mnu_timeline_edit_event = timeline_menu.Append(
+            wx.ID_ANY, _("&Edit Selected Event..."), _("Edit the Selected Event"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_event_on_click,
+                  self.mnu_timeline_edit_event)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_edit_event)
+
+    def _mnu_timeline_edit_event_on_click(self, evt):
+        try:
+            drawing_area = self.main_panel.drawing_area
+            id = drawing_area.get_view_properties().get_selected_event_ids()[0]
+            event = self.timeline.find_event_with_id(id)
+        except IndexError, e:
+            # No event selected so do nothing!
+            return
+        drawing_area.open_event_editor_for(event)
 
     def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
         self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
@@ -795,13 +813,14 @@ class MainFrame(wx.Frame):
 
     def enable_disable_menus(self):
         self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())
-        self._enable_disable_duplicate_event_menu()
+        self._enable_disable_one_selected_event_menus()
         self._enable_disable_measure_distance_between_two_events_menu()
         self._enable_disable_searchbar()
 
-    def _enable_disable_duplicate_event_menu(self):
+    def _enable_disable_one_selected_event_menus(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
         one_event_selected = len(view_properties.selected_event_ids) == 1
+        self.mnu_timeline_edit_event.Enable(one_event_selected)
         self.mnu_timeline_duplicate_event.Enable(one_event_selected)
 
     def _enable_disable_measure_distance_between_two_events_menu(self):
