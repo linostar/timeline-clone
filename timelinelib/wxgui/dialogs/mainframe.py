@@ -39,6 +39,7 @@ from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
+from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
@@ -438,8 +439,12 @@ class MainFrame(wx.Frame):
         self._create_timeline_create_event_menu_item(timeline_menu)
         self._create_timeline_edit_event_menu_item(timeline_menu)
         self._create_timeline_duplicate_event_menu_item(timeline_menu)
+        timeline_menu.AppendSeparator()
         self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
+        timeline_menu.AppendSeparator()
+        self._create_timeline_set_category(timeline_menu)
         self._create_timeline_edit_categories(timeline_menu)
+        timeline_menu.AppendSeparator()
         self._create_timeline_set_readonly(timeline_menu)
         main_menu_bar.Append(timeline_menu, _("&Timeline"))
 
@@ -549,6 +554,19 @@ class MainFrame(wx.Frame):
             self.edit_categories()
         safe_locking(self, edit_function)
 
+    def _create_timeline_set_category(self, timeline_menu):
+        set_category_item = timeline_menu.Append(
+            wx.ID_ANY, _("Set Category on events without category..."), 
+            _("Set Category on events without category..."))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_on_click,
+                  set_category_item)
+        self.menu_controller.add_menu_requiring_writable_timeline(set_category_item)
+
+    def _mnu_timeline_set_category_on_click(self, evt):
+        def edit_function():
+            self.set_category()
+        safe_locking(self, edit_function)
+
     def _create_timeline_set_readonly(self, timeline_menu):
         item = timeline_menu.Append(
             wx.ID_ANY, _("Read Only"), _("Read Only"))
@@ -566,6 +584,12 @@ class MainFrame(wx.Frame):
         def create_categories_editor():
             return CategoriesEditor(self, self.timeline)
         gui_utils.show_modal(create_categories_editor, self.handle_db_error)
+
+    def set_category(self):
+        def create_set_category_editor():
+            return SetCategoryEditorDialog(self, self.timeline)
+        gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
+        self.main_panel.timeline_panel.drawing_area.redraw_timeline()
 
     def _create_navigate_menu(self, main_menu_bar):
         navigate_menu = wx.Menu()
