@@ -69,13 +69,13 @@ class CategoryEditorGuiCreator(object):
 class SetCategoryEditorDialog(wx.Dialog, CategoryEditorGuiCreator):
 
     
-    def __init__(self, parent, timeline):
+    def __init__(self, parent, timeline, view_properties=None):
         TITLE = _("Set Category on events without category")
         wx.Dialog.__init__(self, parent, title=TITLE, name="set_category_editor",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self._create_gui()
-        self.controller = SetCategoryEditor(self, timeline)
+        self.controller = SetCategoryEditor(self, timeline, view_properties)
 
     def get_category(self):
         return self.lst_category.get()

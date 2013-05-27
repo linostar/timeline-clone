@@ -21,10 +21,11 @@ from timelinelib.wxgui.utils import _display_error_message
  
 class SetCategoryEditor(object):
     
-    def __init__(self, view, timeline):
+    def __init__(self, view, timeline, view_properties=None):
         self.view = view
         self.timeline = timeline
-
+        self.view_properties = view_properties
+        
     def save(self):
         category = self.view.get_category()
         if self._category_is_given(category):
@@ -37,6 +38,17 @@ class SetCategoryEditor(object):
         return category != None
     
     def _save_category_in_events(self, category):
+        if self.view_properties is not None:
+            self._save_category_in_events_for_selected_events(category)
+        else:
+            self._save_category_in_events_for_events_without_category(category)
+
+    def _save_category_in_events_for_selected_events(self, category):
+        for event_id in self.view_properties.selected_event_ids:
+            event = self.timeline.find_event_with_id(event_id)
+            event.category = category
+
+    def _save_category_in_events_for_events_without_category(self, category):
         for event in self.timeline.events:
             if event.category == None:
                 event.category = category

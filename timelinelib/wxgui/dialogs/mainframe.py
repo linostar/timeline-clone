@@ -439,6 +439,7 @@ class MainFrame(wx.Frame):
         self._create_timeline_create_event_menu_item(timeline_menu)
         self._create_timeline_edit_event_menu_item(timeline_menu)
         self._create_timeline_duplicate_event_menu_item(timeline_menu)
+        self._create_timeline_set_category_menu_item(timeline_menu)
         timeline_menu.AppendSeparator()
         self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
         timeline_menu.AppendSeparator()
@@ -478,6 +479,18 @@ class MainFrame(wx.Frame):
             self.timeline,
             self.handle_db_error,
             event)
+
+    def _create_timeline_set_category_menu_item(self, timeline_menu):
+        self.mnu_timeline_set_event_category = timeline_menu.Append(
+            wx.ID_ANY, _("Set Category on Selected Events..."), _("Set Category on Selected Events..."))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_to_selected_evets_on_click,
+                  self.mnu_timeline_set_event_category)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_set_event_category)
+
+    def _mnu_timeline_set_category_to_selected_evets_on_click(self, evt):
+        def edit_function():
+                self.set_category_to_selected_events()
+        safe_locking(self, edit_function)
 
     def _create_timeline_edit_event_menu_item(self, timeline_menu):
         self.mnu_timeline_edit_event = timeline_menu.Append(
@@ -588,6 +601,13 @@ class MainFrame(wx.Frame):
     def set_category(self):
         def create_set_category_editor():
             return SetCategoryEditorDialog(self, self.timeline)
+        gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
+        self.main_panel.timeline_panel.drawing_area.redraw_timeline()
+
+    def set_category_to_selected_events(self):
+        view_properties = self.main_panel.drawing_area.get_view_properties()
+        def create_set_category_editor():
+            return SetCategoryEditorDialog(self, self.timeline, view_properties)
         gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
         self.main_panel.timeline_panel.drawing_area.redraw_timeline()
 
@@ -844,8 +864,10 @@ class MainFrame(wx.Frame):
     def _enable_disable_one_selected_event_menus(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
         one_event_selected = len(view_properties.selected_event_ids) == 1
+        some_event_selected = len(view_properties.selected_event_ids) > 0
         self.mnu_timeline_edit_event.Enable(one_event_selected)
         self.mnu_timeline_duplicate_event.Enable(one_event_selected)
+        self.mnu_timeline_set_event_category.Enable(some_event_selected)
 
     def _enable_disable_measure_distance_between_two_events_menu(self):
         view_properties = self.main_panel.drawing_area.get_view_properties()
