@@ -9,7 +9,6 @@ po/timeline.pot
 tags
 *.swp
 *.mo
-HACKING.html
 api/
 *.orig
 .project
