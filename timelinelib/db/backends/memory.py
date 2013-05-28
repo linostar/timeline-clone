@@ -55,6 +55,7 @@ class MemoryDB(Observable):
         from timelinelib.time.pytime import PyTimeType
         self.time_type = PyTimeType()
         self.readonly = False
+        self.importing = False
 
     def get_time_type(self):
         return self.time_type
@@ -184,15 +185,24 @@ class MemoryDB(Observable):
             raise TimelineIOError("Parent category not in db.")
         self._ensure_no_circular_parent(category)
         if not category in self.categories:
-            if self._get_category_by_name(category) is None:
-                if category.has_id():
-                    raise TimelineIOError("Category with id %s not found in db." %
-                                          category.id)
-                self.categories.append(category)
-                category.set_id(self.event_id_counter.get_next())
+            if self.importing:
+                if not self._category_name_exists(category):
+                    self._append_category(category)
+            else:
+                self._append_category(category)
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_CATEGORY)
 
+    def _category_name_exists(self, category):
+        return self._get_category_by_name(category) is not None
+        
+    def _append_category(self, category):
+        if category.has_id():
+            raise TimelineIOError("Category with id %s not found in db." %
+                                  category.id)
+        self.categories.append(category)
+        category.set_id(self.event_id_counter.get_next())
+        
     def _get_category_by_name(self, category):
         for cat in self.categories:
             if cat.name == category.name:

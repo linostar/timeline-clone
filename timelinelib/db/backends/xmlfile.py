@@ -144,12 +144,16 @@ class XmlTimeline(MemoryDB):
             raise TimelineIOError(whole_msg)
 
     def import_timeline(self, path):
-        p = self.path
-        self.path = path
-        self._load()
-        self._fill_containers()
-        self.path = p
-    
+        try:
+            self.importing = True
+            p = self.path
+            self.path = path
+            self._load()
+            self._fill_containers()
+            self.path = p
+        finally:
+            self.importing = False
+            
     def _parse_version(self, text, tmp_dict):
         match = re.search(r"^(\d+).(\d+).(\d+)(dev.*)?$", text)
         if match:

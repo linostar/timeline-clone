@@ -30,7 +30,7 @@ class MainFrameSpec(unittest.TestCase):
 
     def test_used_db_open_factory_method_to_create_timeline(self):
         self.when_timeline_is_opened("foo.timeline")
-        self.db_open.assert_called_with("foo.timeline", self.USE_WIDE_DATE_RANGE)
+        self.db_open.assert_called_with("foo.timeline", self.USE_WIDE_DATE_RANGE, False)
 
     def test_create_empty_timeline(self):
         self.controller.set_no_timeline()
