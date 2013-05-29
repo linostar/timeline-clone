@@ -26,57 +26,60 @@ from timelinelib.wxgui.utils import BORDER
 class CategoryEditorGuiCreator(object):
     
     def _create_gui(self):
-        properties_box = self._create_properties_box()
-        self._create_buttons(properties_box)
-        self.SetSizerAndFit(properties_box)
-        self.lst_category.select(None)
-
-    def _create_properties_box(self):
         properties_box = wx.BoxSizer(wx.VERTICAL)
-        self._create_propeties_controls(properties_box)
-        return properties_box
+        self._add_input_controls(properties_box)
+        self._add_buttons(properties_box)
+        self._make_sure_title_is_visible(properties_box)
+        self.SetSizerAndFit(properties_box)
+        self._bind_handlers()
 
-    def _create_propeties_controls(self, sizer):
-        main_box_content = wx.BoxSizer(wx.VERTICAL)
-        self._create_detail_content(main_box_content)
-        sizer.Add(main_box_content, flag=wx.EXPAND|wx.ALL,
-                           border=BORDER, proportion=1)
+    def _add_input_controls(self, sizer):
+        category_selector = self._create_category_selector()
+        sizer.Add(category_selector, flag=wx.EXPAND|wx.ALL, border=BORDER, proportion=1)
 
-    def _create_detail_content(self, properties_box_content):
-        details = self._create_details()
-        properties_box_content.Add(details, flag=wx.ALL|wx.EXPAND,
-                                   border=BORDER)
+    def _add_buttons(self, properties_box):
+        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        properties_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
 
-    def _create_details(self):
-        grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
-        grid.AddGrowableCol(1)
-        self._create_categories_listbox(grid)
-        return grid
+    def _make_sure_title_is_visible(self, sizer):
+        sizer.SetMinSize((270,-1))
+        
+    def _bind_handlers(self):
+        self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, self.lst_category)
+        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
 
-    def _create_categories_listbox(self, grid):
+    def _create_category_selector(self):
+        ROWS = 4
+        COLS = 2
+        VGAP = BORDER
+        HGAP = BORDER
+        GROWABLE_COL_INDEX = 1
+        grid = wx.FlexGridSizer(ROWS, COLS, VGAP, HGAP)
+        grid.AddGrowableCol(GROWABLE_COL_INDEX)
         self.lst_category = CategoryChoice(self, self.timeline)
+        self.lst_category.select(None)
         label = wx.StaticText(self, label=_("Select a Category:"))
         grid.Add(label, flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.lst_category)
-        self.Bind(wx.EVT_CHOICE, self.lst_category.on_choice, self.lst_category)
-
-    def _create_buttons(self, properties_box):
-        button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
-        self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
-        properties_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
-
+        return grid
+        
     
 class SetCategoryEditorDialog(wx.Dialog, CategoryEditorGuiCreator):
-
     
     def __init__(self, parent, timeline, view_properties=None):
-        TITLE = _("Set Category on events without category")
-        wx.Dialog.__init__(self, parent, title=TITLE, name="set_category_editor",
+        title = self._get_title(view_properties)
+        wx.Dialog.__init__(self, parent, title=title, name="set_category_editor",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self._create_gui()
         self.controller = SetCategoryEditor(self, timeline, view_properties)
 
+    def _get_title(self, view_properties):
+        if view_properties is None:
+            return _("Set Category on events without category")
+        else:
+            return _("Set Category on selected events")
+    
     def get_category(self):
         return self.lst_category.get()
         
