@@ -63,22 +63,8 @@ class CategoryEditorGuiCreator(object):
         grid.Add(self.lst_category)
         return grid
         
-    
-class SetCategoryEditorDialog(wx.Dialog, CategoryEditorGuiCreator):
-    
-    def __init__(self, parent, timeline, view_properties=None):
-        title = self._get_title(view_properties)
-        wx.Dialog.__init__(self, parent, title=title, name="set_category_editor",
-                           style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
-        self.timeline = timeline
-        self._create_gui()
-        self.controller = SetCategoryEditor(self, timeline, view_properties)
-
-    def _get_title(self, view_properties):
-        if view_properties is None:
-            return _("Set Category on events without category")
-        else:
-            return _("Set Category on selected events")
+        
+class ApiUsedByController(object):
     
     def get_category(self):
         return self.lst_category.get()
@@ -88,6 +74,24 @@ class SetCategoryEditorDialog(wx.Dialog, CategoryEditorGuiCreator):
 
     def cancel(self):
         self.EndModal(wx.ID_CANCEL)
+            
+    
+class SetCategoryEditorDialog(wx.Dialog, CategoryEditorGuiCreator, ApiUsedByController):
+    
+    def __init__(self, parent, timeline, view_properties=None):
+        title = self._get_title(view_properties)
+        wx.Dialog.__init__(self, parent, title=title, name="set_category_editor",
+                           style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+        self.timeline = timeline
+        self._create_gui()
+        self.controller = SetCategoryEditor(self, timeline, view_properties)
 
     def _btn_ok_on_click(self, evt):
         self.controller.save()
+
+    def _get_title(self, view_properties):
+        if view_properties is None:
+            return _("Set Category on events without category")
+        else:
+            return _("Set Category on selected events")
+    
