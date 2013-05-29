@@ -28,11 +28,11 @@ class SetCategoryEditor(object):
         
     def save(self):
         category = self.view.get_category()
-        if self._category_is_given(category):
+        if not self._category_is_given(category) and self.view_properties == None:
+            _display_error_message(_("You must select a category!"))
+        else:
             self._save_category_in_events(category)
             self.view.close()
-        else:
-            _display_error_message(_("You must select a category!"))
 
     def _category_is_given(self, category):
         return category != None
