@@ -58,7 +58,7 @@ class set_category_editor_spec_base(unittest.TestCase):
 class a_newly_initialized_dialog(set_category_editor_spec_base):
 
     def setUp(self):
-        set_category_editor_spec_base.setUp(self, None)
+        set_category_editor_spec_base.setUp(self, [])
 
     def test_category_can_be_set_on_all_events_without_category(self):
         self.controller.save()

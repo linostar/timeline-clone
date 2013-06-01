@@ -327,7 +327,6 @@ class MainFrame(wx.Frame):
         if not self._has_pysvg_module():
             _display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
             return
-        import timelinelib.export.svg as svgexport
         wildcard = self.images_svg_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Export to SVG"),
                                wildcard=wildcard, style=wx.FD_SAVE)
@@ -336,10 +335,7 @@ class MainFrame(wx.Frame):
             overwrite_question = _("File '%s' exists. Overwrite?") % path
             if (not os.path.exists(path) or
                 _ask_question(overwrite_question, self) == wx.YES):
-                svgexport.export(
-                    path,
-                    self.main_panel.get_scene(),
-                    self.main_panel.get_view_properties())
+                self.main_panel.svgexport(path)
         dialog.Destroy()
 
     def _has_pysvg_module(self):
@@ -524,9 +520,7 @@ class MainFrame(wx.Frame):
         self._display_distance(distance)
 
     def _get_selected_events(self):
-        view_properties = self.main_panel.get_view_properties()
-        event_id_1 = view_properties.selected_event_ids[0]
-        event_id_2 = view_properties.selected_event_ids[1]
+        event_id_1, event_id_2 = self.main_panel.get_ids_of_two_first_selected_events()
         event1 = self.timeline.find_event_with_id(event_id_1)
         event2 = self.timeline.find_event_with_id(event_id_2)
         return event1, event2
@@ -603,9 +597,9 @@ class MainFrame(wx.Frame):
         self.main_panel.redraw_timeline()
 
     def set_category_to_selected_events(self):
-        view_properties = self.main_panel.get_view_properties()
+        selected_event_ids = self.main_panel.get_selected_event_ids()
         def create_set_category_editor():
-            return SetCategoryEditorDialog(self, self.timeline, view_properties)
+            return SetCategoryEditorDialog(self, self.timeline, selected_event_ids)
         gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
         self.main_panel.redraw_timeline()
 
@@ -682,10 +676,8 @@ class MainFrame(wx.Frame):
         return None
 
     def _all_visible_events(self):
-        view_properties = self.main_panel.get_view_properties()
         all_events = self.timeline.get_all_events()
-        visible_events = view_properties.filter_events(all_events)
-        return visible_events
+        return self.main_panel.get_visible_events(all_events)
 
     def _first_time(self, events):
         start_time = lambda event: event.time_period.start_time
@@ -860,16 +852,15 @@ class MainFrame(wx.Frame):
         self._enable_disable_searchbar()
 
     def _enable_disable_one_selected_event_menus(self):
-        view_properties = self.main_panel.get_view_properties()
-        one_event_selected = len(view_properties.selected_event_ids) == 1
-        some_event_selected = len(view_properties.selected_event_ids) > 0
+        nbr_of_selected_events = self.main_panel.get_nbr_of_selected_events()
+        one_event_selected = nbr_of_selected_events == 1
+        some_event_selected = nbr_of_selected_events > 0
         self.mnu_timeline_edit_event.Enable(one_event_selected)
         self.mnu_timeline_duplicate_event.Enable(one_event_selected)
         self.mnu_timeline_set_event_category.Enable(some_event_selected)
 
     def _enable_disable_measure_distance_between_two_events_menu(self):
-        view_properties = self.main_panel.get_view_properties()
-        two_events_selected = len(view_properties.selected_event_ids) == 2
+        two_events_selected = self.main_panel.get_nbr_of_selected_events() == 2
         self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
 
     def _enable_disable_searchbar(self):
@@ -879,7 +870,7 @@ class MainFrame(wx.Frame):
     def _save_current_timeline_data(self):
         if self.timeline:
             try:
-                self.timeline.save_view_properties(self.main_panel.get_view_properties())
+                self.main_panel.save_view_properties(self.timeline)
             except TimelineIOError, e:
                 self.handle_db_error(e)
 
@@ -1062,21 +1053,32 @@ class MainPanel(wx.Panel):
     def get_scene(self):
         return self.drawing_area.get_drawer().scene
         
-    def get_view_properties(self):
-        return self.drawing_area.get_view_properties()
-    
+    def save_view_properties(self, timeline):
+        timeline.save_view_properties(self._get_view_properties())
+
     def get_displayed_period_delta(self):
-        return self.get_view_properties().displayed_period.delta()
+        return self._get_view_properties().displayed_period.delta()
     
     def get_time_period(self):
         return self.get_time_period()
+        
+    def get_ids_of_two_first_selected_events(self):
+        view_properties = self._get_view_properties()
+        return (view_properties.selected_event_ids[0],
+                view_properties.selected_event_ids[1])
+                
+    def get_selected_event_ids(self):
+        return self._get_view_properties().get_selected_event_ids()
         
     def show_hide_legend(self, checked):    
         self.drawing_area.show_hide_legend(checked)
     
     def get_id_of_first_selected_event(self):
-        return self.get_view_properties().get_selected_event_ids()[0]
+        return self._get_view_properties().get_selected_event_ids()[0]
             
+    def get_nbr_of_selected_events(self):
+        return len(self._get_view_properties().get_selected_event_ids())
+                
     def balloon_visibility_changed(self, checked):
         self.drawing_area.balloon_visibility_changed(checked)
     
@@ -1089,6 +1091,21 @@ class MainPanel(wx.Panel):
     def navigate_timeline(self, navigation_fn):
         return self.drawing_area.navigate_timeline(navigation_fn)
             
+    def get_visible_events(self, all_events):
+        view_properties = self._get_view_properties()
+        visible_events = view_properties.filter_events(all_events)
+        return visible_events  
+          
+    def svgexport(self, path):
+        import timelinelib.export.svg as svgexport
+        svgexport.export(
+                    path,
+                    self.get_scene(),
+                    self._get_view_properties())
+                
+    def _get_view_properties(self):
+        return self.drawing_area.get_view_properties()
+    
     def _create_gui(self):
         # Search bar
         def search_close():

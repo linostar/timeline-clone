@@ -78,19 +78,19 @@ class ApiUsedByController(object):
     
 class SetCategoryEditorDialog(wx.Dialog, CategoryEditorGuiCreator, ApiUsedByController):
     
-    def __init__(self, parent, timeline, view_properties=None):
-        title = self._get_title(view_properties)
+    def __init__(self, parent, timeline, selected_event_ids=[]):
+        title = self._get_title(selected_event_ids)
         wx.Dialog.__init__(self, parent, title=title, name="set_category_editor",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.timeline = timeline
         self._create_gui()
-        self.controller = SetCategoryEditor(self, timeline, view_properties)
+        self.controller = SetCategoryEditor(self, timeline, selected_event_ids)
 
     def _btn_ok_on_click(self, evt):
         self.controller.save()
 
-    def _get_title(self, view_properties):
-        if view_properties is None:
+    def _get_title(self, selected_event_ids):
+        if selected_event_ids == []:
             return _("Set Category on events without category")
         else:
             return _("Set Category on selected events")
