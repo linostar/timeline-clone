@@ -338,8 +338,8 @@ class MainFrame(wx.Frame):
                 _ask_question(overwrite_question, self) == wx.YES):
                 svgexport.export(
                     path,
-                    self.main_panel.drawing_area.get_drawer().scene,
-                    self.main_panel.drawing_area.get_view_properties())
+                    self.main_panel.get_scene(),
+                    self.main_panel.get_view_properties())
         dialog.Destroy()
 
     def _has_pysvg_module(self):
@@ -422,7 +422,7 @@ class MainFrame(wx.Frame):
 
     def _mnu_view_legend_on_click(self, evt):
         self.config.set_show_legend(evt.IsChecked())
-        self.main_panel.drawing_area.show_hide_legend(evt.IsChecked())
+        self.main_panel.show_hide_legend(evt.IsChecked())
 
     def _create_view_balloons_menu_item(self, view_menu):
         view_balloons_item = view_menu.Append(
@@ -432,7 +432,7 @@ class MainFrame(wx.Frame):
 
     def _mnu_view_balloons_on_click(self, evt):
         self.config.set_balloon_on_hover(evt.IsChecked())
-        self.main_panel.drawing_area.balloon_visibility_changed(evt.IsChecked())
+        self.main_panel.balloon_visibility_changed(evt.IsChecked())
 
     def _create_timeline_menu(self, main_menu_bar):
         timeline_menu = wx.Menu()
@@ -468,10 +468,9 @@ class MainFrame(wx.Frame):
 
     def _mnu_timeline_duplicate_event_on_click(self, evt):
         try:
-            drawing_area = self.main_panel.drawing_area
-            id = drawing_area.get_view_properties().get_selected_event_ids()[0]
-            event = self.timeline.find_event_with_id(id)
-        except IndexError, e:
+            event_id = self.main_panel.get_id_of_first_selected_event()
+            event = self.timeline.find_event_with_id(event_id)
+        except IndexError:
             # No event selected so do nothing!
             return
         open_duplicate_event_dialog_for_event(
@@ -501,13 +500,12 @@ class MainFrame(wx.Frame):
 
     def _mnu_timeline_edit_event_on_click(self, evt):
         try:
-            drawing_area = self.main_panel.drawing_area
-            id = drawing_area.get_view_properties().get_selected_event_ids()[0]
-            event = self.timeline.find_event_with_id(id)
-        except IndexError, e:
+            event_id = self.main_panel.get_id_of_first_selected_event()
+            event = self.timeline.find_event_with_id(event_id)
+        except IndexError:
             # No event selected so do nothing!
             return
-        drawing_area.open_event_editor_for(event)
+        self.main_panel.open_event_editor(event)
 
     def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
         self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
@@ -526,7 +524,7 @@ class MainFrame(wx.Frame):
         self._display_distance(distance)
 
     def _get_selected_events(self):
-        view_properties = self.main_panel.drawing_area.get_view_properties()
+        view_properties = self.main_panel.get_view_properties()
         event_id_1 = view_properties.selected_event_ids[0]
         event_id_2 = view_properties.selected_event_ids[1]
         event1 = self.timeline.find_event_with_id(event_id_1)
@@ -602,14 +600,14 @@ class MainFrame(wx.Frame):
         def create_set_category_editor():
             return SetCategoryEditorDialog(self, self.timeline)
         gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
-        self.main_panel.timeline_panel.drawing_area.redraw_timeline()
+        self.main_panel.redraw_timeline()
 
     def set_category_to_selected_events(self):
-        view_properties = self.main_panel.drawing_area.get_view_properties()
+        view_properties = self.main_panel.get_view_properties()
         def create_set_category_editor():
             return SetCategoryEditorDialog(self, self.timeline, view_properties)
         gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
-        self.main_panel.timeline_panel.drawing_area.redraw_timeline()
+        self.main_panel.redraw_timeline()
 
     def _create_navigate_menu(self, main_menu_bar):
         navigate_menu = wx.Menu()
@@ -632,7 +630,7 @@ class MainFrame(wx.Frame):
         event = self.timeline.get_first_event()
         if event:
             start = event.time_period.start_time
-            delta = self.main_panel.drawing_area.get_view_properties().displayed_period.delta()
+            delta = self.main_panel.get_displayed_period_delta()
             end   = start + delta
             margin_delta = self.timeline.get_time_type().margin_delta(delta)
             self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
@@ -646,7 +644,7 @@ class MainFrame(wx.Frame):
         event = self.timeline.get_last_event()
         if event:
             end = event.time_period.end_time
-            delta = self.main_panel.drawing_area.get_view_properties().displayed_period.delta()
+            delta = self.main_panel.get_displayed_period_delta()
             start = end - delta
             margin_delta = self.timeline.get_time_type().margin_delta(delta)
             self._navigate_timeline(lambda tp: tp.update(start, end, end_delta=margin_delta))
@@ -684,7 +682,7 @@ class MainFrame(wx.Frame):
         return None
 
     def _all_visible_events(self):
-        view_properties = self.main_panel.drawing_area.get_view_properties()
+        view_properties = self.main_panel.get_view_properties()
         all_events = self.timeline.get_all_events()
         visible_events = view_properties.filter_events(all_events)
         return visible_events
@@ -778,14 +776,14 @@ class MainFrame(wx.Frame):
             # unregister
             self.main_panel.cattree.initialize_from_timeline_view(None)
             self.main_panel.searchbar.set_view(None)
-        self.main_panel.drawing_area.set_timeline(self.timeline)
+        self.main_panel.set_timeline(self.timeline)
         self.status_bar_adapter.set_read_only_text("")
         if timeline == None:
             self.main_panel.show_welcome_panel()
             self.SetTitle(APPLICATION_NAME)
         else:
-            self.main_panel.cattree.initialize_from_timeline_view(self.main_panel.drawing_area)
-            self.main_panel.searchbar.set_view(self.main_panel.drawing_area)
+            self.main_panel.cattree.initialize_from_timeline_view(self.main_panel.get_drawing_area())
+            self.main_panel.searchbar.set_view(self.main_panel.get_drawing_area())
             self.main_panel.show_timeline_panel()
             self.SetTitle("%s (%s) - %s" % (
                 os.path.basename(self.timeline.path),
@@ -862,7 +860,7 @@ class MainFrame(wx.Frame):
         self._enable_disable_searchbar()
 
     def _enable_disable_one_selected_event_menus(self):
-        view_properties = self.main_panel.drawing_area.get_view_properties()
+        view_properties = self.main_panel.get_view_properties()
         one_event_selected = len(view_properties.selected_event_ids) == 1
         some_event_selected = len(view_properties.selected_event_ids) > 0
         self.mnu_timeline_edit_event.Enable(one_event_selected)
@@ -870,7 +868,7 @@ class MainFrame(wx.Frame):
         self.mnu_timeline_set_event_category.Enable(some_event_selected)
 
     def _enable_disable_measure_distance_between_two_events_menu(self):
-        view_properties = self.main_panel.drawing_area.get_view_properties()
+        view_properties = self.main_panel.get_view_properties()
         two_events_selected = len(view_properties.selected_event_ids) == 2
         self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
 
@@ -881,7 +879,7 @@ class MainFrame(wx.Frame):
     def _save_current_timeline_data(self):
         if self.timeline:
             try:
-                self.timeline.save_view_properties(self.main_panel.drawing_area.get_view_properties())
+                self.timeline.save_view_properties(self.main_panel.get_view_properties())
             except TimelineIOError, e:
                 self.handle_db_error(e)
 
@@ -894,10 +892,10 @@ class MainFrame(wx.Frame):
         return bundle
 
     def _navigate_timeline(self, navigation_fn):
-        return self.main_panel.drawing_area.navigate_timeline(navigation_fn)
+        return self.main_panel.navigate_timeline(navigation_fn)
 
     def _get_time_period(self):
-        return self.main_panel.drawing_area.get_time_period()
+        return self.main_panel.get_time_period()
 
     def display_time_editor_dialog(self, time_type, initial_time,
                                    handle_new_time_fn, title):
@@ -1055,6 +1053,42 @@ class MainPanel(wx.Panel):
             self.searchbar.search.SetFocus()
         self.GetSizer().Layout()
 
+    def set_timeline(self, timeline):
+        self.drawing_area.set_timeline(timeline)
+    
+    def get_drawing_area(self):
+        return self.drawing_area
+        
+    def get_scene(self):
+        return self.drawing_area.get_drawer().scene
+        
+    def get_view_properties(self):
+        return self.drawing_area.get_view_properties()
+    
+    def get_displayed_period_delta(self):
+        return self.get_view_properties().displayed_period.delta()
+    
+    def get_time_period(self):
+        return self.get_time_period()
+        
+    def show_hide_legend(self, checked):    
+        self.drawing_area.show_hide_legend(checked)
+    
+    def get_id_of_first_selected_event(self):
+        return self.get_view_properties().get_selected_event_ids()[0]
+            
+    def balloon_visibility_changed(self, checked):
+        self.drawing_area.balloon_visibility_changed(checked)
+    
+    def open_event_editor(self, event):
+        self.drawing_area.open_event_editor_for(event)
+
+    def redraw_timeline(self):
+        self.drawing_area.redraw_timeline()
+        
+    def navigate_timeline(self, navigation_fn):
+        return self.drawing_area.navigate_timeline(navigation_fn)
+            
     def _create_gui(self):
         # Search bar
         def search_close():
