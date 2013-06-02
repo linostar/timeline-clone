@@ -69,7 +69,7 @@ class TimelineApplication(object):
             self.main_frame.display_timeline(self.timeline)
             self.timelinepath = path
             self.last_changed = self._get_modification_date()
-            self.main_frame._update_navigation_menu_items()
+            self.main_frame.update_navigation_menu_items()
             self.main_frame.enable_disable_menus()
 
     def set_no_timeline(self):

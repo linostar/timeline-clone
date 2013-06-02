@@ -607,7 +607,7 @@ class MainFrame(wx.Frame):
         navigate_menu = wx.Menu()
         self._navigation_menu_items = []
         self._navigation_functions_by_menu_item_id = {}
-        self._update_navigation_menu_items()
+        self.update_navigation_menu_items()
         navigate_menu.AppendSeparator()
         self._create_navigate_find_first_event_menu_item(navigate_menu)
         self._create_navigate_find_last_event_menu_item(navigate_menu)
@@ -791,7 +791,7 @@ class MainFrame(wx.Frame):
             return plain[:tab_index] + "..." + plain[tab_index:]
         return plain + "..."
 
-    def _update_navigation_menu_items(self):
+    def update_navigation_menu_items(self):
         self._clear_navigation_menu_items()
         if self.timeline:
             self._create_navigation_menu_items()
