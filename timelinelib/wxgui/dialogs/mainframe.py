@@ -272,7 +272,7 @@ class MainFrame(wx.Frame):
     def _create_file_open_recent_menu(self, file_menu):
         self.mnu_file_open_recent_submenu = wx.Menu()
         file_menu.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
-        self._update_open_recent_submenu()
+        self.update_open_recent_submenu()
 
     def _create_file_save_as_menu(self, file_menu):
         menu = file_menu.Append(wx.ID_SAVEAS, "", _("Save As..."))
@@ -818,7 +818,7 @@ class MainFrame(wx.Frame):
         fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
         fn(self, self._get_time_period(), self._navigate_timeline)
 
-    def _update_open_recent_submenu(self):
+    def update_open_recent_submenu(self):
         # Clear items
         for item in self.mnu_file_open_recent_submenu.GetMenuItems():
             self.mnu_file_open_recent_submenu.DeleteItem(item)

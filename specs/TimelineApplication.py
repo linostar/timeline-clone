@@ -39,7 +39,7 @@ class MainFrameSpec(unittest.TestCase):
     def test_adds_opened_timeline_to_recently_opened_list(self):
         self.when_timeline_is_opened("foo.timeline")
         self.config.append_recently_opened.assert_called_with("foo.timeline")
-        self.main_frame._update_open_recent_submenu.assert_called_with()
+        self.main_frame.update_open_recent_submenu.assert_called_with()
 
     def test_displays_opened_timeline(self):
         opened_timeline = Mock()
