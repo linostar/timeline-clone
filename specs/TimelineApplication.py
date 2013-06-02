@@ -34,7 +34,7 @@ class MainFrameSpec(unittest.TestCase):
 
     def test_create_empty_timeline(self):
         self.controller.set_no_timeline()
-        self.main_frame._display_timeline.assert_called_with(None)
+        self.main_frame.display_timeline.assert_called_with(None)
 
     def test_adds_opened_timeline_to_recently_opened_list(self):
         self.when_timeline_is_opened("foo.timeline")
@@ -45,7 +45,7 @@ class MainFrameSpec(unittest.TestCase):
         opened_timeline = Mock()
         self.given_opening_returns(opened_timeline)
         self.when_timeline_is_opened()
-        self.main_frame._display_timeline.assert_called_with(opened_timeline)
+        self.main_frame.display_timeline.assert_called_with(opened_timeline)
 
     def test_handles_open_timeline_failure(self):
         error = TimelineIOError("")

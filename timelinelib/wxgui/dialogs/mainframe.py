@@ -758,7 +758,7 @@ class MainFrame(wx.Frame):
         self.main_panel.show_error_panel()
         self.enable_disable_menus()
 
-    def _display_timeline(self, timeline):
+    def display_timeline(self, timeline):
         self.timeline = timeline
         self.menu_controller.on_timeline_change(timeline)
         if timeline == None:

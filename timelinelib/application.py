@@ -66,7 +66,7 @@ class TimelineApplication(object):
         else:
             self.config.append_recently_opened(path)
             self.main_frame._update_open_recent_submenu()
-            self.main_frame._display_timeline(self.timeline)
+            self.main_frame.display_timeline(self.timeline)
             self.timelinepath = path
             self.last_changed = self._get_modification_date()
             self.main_frame._update_navigation_menu_items()
@@ -74,7 +74,7 @@ class TimelineApplication(object):
 
     def set_no_timeline(self):
         self.timeline = None
-        self.main_frame._display_timeline(None)
+        self.main_frame.display_timeline(None)
 
     def on_play_clicked(self):
         self.main_frame.open_play_frame(self.timeline)
