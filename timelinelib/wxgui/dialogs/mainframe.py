@@ -188,7 +188,7 @@ class MainFrame(wx.Frame):
                 wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
                               _("Information"),
                               wx.OK|wx.ICON_INFORMATION, self)
-            self.open_timeline(path)
+            self.controller.open_timeline(path)
         dialog.Destroy()
 
     def _create_file_new_dir_timeline_menu_item(self, file_new_menu):
@@ -203,7 +203,7 @@ class MainFrame(wx.Frame):
         dialog = wx.DirDialog(self, message=_("Create Timeline"))
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
-            self.open_timeline(dialog.GetPath())
+            self.controller.open_timeline(dialog.GetPath())
         dialog.Destroy()
 
     def _create_file_open_menu_item(self, file_menu):
@@ -254,7 +254,7 @@ class MainFrame(wx.Frame):
                 self.timeline =  transform_to_xml_timeline(new_timeline_path, 
                                                            self.timeline)
             self._save_current_timeline_data()
-            self.open_timeline(self.timeline.path)
+            self.controller.open_timeline(self.timeline.path)
         
     def _open_existing_timeline(self, import_timeline=False):
         dir = ""
@@ -266,7 +266,7 @@ class MainFrame(wx.Frame):
                                wildcard=wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
-            self.open_timeline(dialog.GetPath(), import_timeline)
+            self.controller.open_timeline(dialog.GetPath(), import_timeline)
         dialog.Destroy()
 
     def _create_file_open_recent_menu(self, file_menu):
@@ -709,7 +709,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, tutorial_item)
 
     def _mnu_help_tutorial_on_click(self, e):
-        self.open_timeline(":tutorial:")
+        self.controller.open_timeline(":tutorial:")
 
     def _create_help_contact_menu_item(self, help_menu):
         contact_item = help_menu.Append(wx.ID_ANY, _("Contact"))
@@ -747,8 +747,6 @@ class MainFrame(wx.Frame):
 
     def open_timeline(self, input_file, import_timeline=False):
         self.controller.open_timeline(input_file, import_timeline)
-        self._update_navigation_menu_items()
-        self.enable_disable_menus()
 
     def handle_db_error(self, error):
         _display_error_message(ex_msg(error), self)
@@ -837,13 +835,7 @@ class MainFrame(wx.Frame):
 
     def _mnu_file_open_recent_item_on_click(self, event):
         path = self.open_recent_map[event.GetId()]
-        self.open_timeline_if_exists(path)
-
-    def open_timeline_if_exists(self, path):
-        if os.path.exists(path):
-            self.open_timeline(path)
-        else:
-            _display_error_message(_("File '%s' does not exist.") % path, self)
+        self.controller.open_timeline_if_exists(path)
 
     def enable_disable_menus(self):
         self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())
