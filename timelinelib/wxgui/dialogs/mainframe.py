@@ -1037,7 +1037,7 @@ class MainPanel(wx.Panel):
         self.GetSizer().Layout()
 
     def set_timeline(self, timeline):
-        self.drawing_area.set_timeline(timeline)
+        self.timeline_panel.set_timeline(timeline)
     
     def get_drawing_area(self):
         return self.drawing_area
@@ -1176,6 +1176,9 @@ class TimelinePanel(wx.Panel):
         self.sidebar_width = self.config.get_sidebar_width()
         self._create_gui()
 
+    def set_timeline(self, timeline):
+        self.drawing_area.set_timeline(timeline)
+        
     def _create_gui(self):
         self._create_divider_line_slider()
         self._create_splitter()
