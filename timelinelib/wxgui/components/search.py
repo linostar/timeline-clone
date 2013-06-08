@@ -26,42 +26,53 @@ from timelinelib.config.paths import ICONS_DIR
 class GuiCreator(object):
     
     def _create_gui(self):
-        icon_size = (16, 16)
-        # Close button
-        if 'wxMSW' in wx.PlatformInfo:
-            close_bmp = wx.Bitmap(os.path.join(ICONS_DIR, "close.png"))
-        else:
-            close_bmp = wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, wx.ART_TOOLBAR,
-                                             icon_size)
-        self.AddLabelTool(wx.ID_CLOSE, "", close_bmp, shortHelp="")
-        self.Bind(wx.EVT_TOOL, self._btn_close_on_click, id=wx.ID_CLOSE)
-        # Search box
+        self.icon_size = (16, 16)
+        self._create_close_button()
+        self._create_search_box()
+        self._create_prev_button()
+        self._create_next_button()
+        self._create_no_match_label()
+        self._create_single_match_label()
+        self.Realize()
+        
+    def _create_search_box(self):
         self.search = wx.SearchCtrl(self, size=(150, -1),
                                     style=wx.TE_PROCESS_ENTER)
         self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN,
                   self._search_on_search_btn, self.search)
         self.Bind(wx.EVT_TEXT_ENTER, self._search_on_text_enter, self.search)
         self.AddControl(self.search)
-        # Prev button
+
+    def _create_close_button(self):
+        if 'wxMSW' in wx.PlatformInfo:
+            close_bmp = wx.Bitmap(os.path.join(ICONS_DIR, "close.png"))
+        else:
+            close_bmp = wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, wx.ART_TOOLBAR,
+                                             self.icon_size)
+        self.AddLabelTool(wx.ID_CLOSE, "", close_bmp, shortHelp="")
+        self.Bind(wx.EVT_TOOL, self._btn_close_on_click, id=wx.ID_CLOSE)
+        
+    def _create_prev_button(self):
         prev_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR,
-                                            icon_size)
+                                            self.icon_size)
         self.AddLabelTool(wx.ID_BACKWARD, "", prev_bmp, shortHelp="")
         self.Bind(wx.EVT_TOOL, self._btn_prev_on_click, id=wx.ID_BACKWARD)
-        # Next button
+        
+    def _create_next_button(self):
         next_bmp = wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR,
-                                            icon_size)
+                                            self.icon_size)
         self.AddLabelTool(wx.ID_FORWARD, "", next_bmp, shortHelp="")
         self.Bind(wx.EVT_TOOL, self._btn_next_on_click, id=wx.ID_FORWARD)
-        # No match label
+
+    def _create_no_match_label(self):
         self.lbl_no_match = wx.StaticText(self, label=_("No match"))
         self.lbl_no_match.Show(False)
         self.AddControl(self.lbl_no_match)
-        # Single match label
+        
+    def _create_single_match_label(self):
         self.lbl_single_match = wx.StaticText(self, label=_("Only one match"))
         self.lbl_single_match.Show(False)
         self.AddControl(self.lbl_single_match)
-        # Finish it up
-        self.Realize()
 
     def _btn_close_on_click(self, e):
         self.Show(False)
@@ -108,13 +119,13 @@ class SearchBarController(object):
         self.view.update_buttons()
         
     def next(self):
-        if self.result > 0 and self.result_index < (len(self.result) - 1):
+        if not self._on_last_match():
             self.result_index += 1
             self.navigate_to_match()
             self.view.update_buttons()
 
     def prev(self):
-        if self.result > 0 and self.result_index > 0:
+        if not self._on_first_match():
             self.result_index -= 1
             self.navigate_to_match()
             self.view.update_buttons()
@@ -130,8 +141,14 @@ class SearchBarController(object):
     
     def enable_forward(self):                  
         return bool(self.result and self.result_index < (len(self.result) - 1))
+
+    def _on_first_match(self):
+        return self.result > 0 and self.result_index == 0
+
+    def _on_last_match(self):
+        return self.result > 0 and self.result_index ==  (len(self.result) - 1)
+
         
-                        
 class SearchBar(wx.ToolBar, GuiCreator):
 
     def __init__(self, parent):
