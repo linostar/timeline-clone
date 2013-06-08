@@ -52,6 +52,10 @@ class DrawingAreaPanel(wx.Panel):
     def get_current_image(self):
         return self.surface_bitmap
 
+    def get_filtered_events(self, search_target):
+        events = self.get_timeline().search(search_target)
+        return self.get_view_properties().filter_events(events)
+        
     def set_timeline(self, timeline):
         self.controller.set_timeline(timeline)
 

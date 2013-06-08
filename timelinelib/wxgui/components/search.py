@@ -87,9 +87,9 @@ class SearchBarController(object):
         self.result_index = 0
         self.last_search = None
     
-    def set_timeline_view(self, timeline_view):
-        self.timeline_view = timeline_view
-        self.view.Enable(timeline_view is not None)
+    def set_drawing_area_panel(self, drawing_area_panel):
+        self.drawing_area_panel = drawing_area_panel
+        self.view.Enable(drawing_area_panel is not None)
 
     def search(self):
         new_search = self.view.get_value()
@@ -97,10 +97,8 @@ class SearchBarController(object):
             self._next()
         else:
             self.last_search = new_search
-            if self.timeline_view is not None:
-                events = self.timeline_view.get_timeline().search(self.last_search)
-                filtered_events = self.timeline_view.get_view_properties().filter_events(events)
-                self.result = filtered_events
+            if self.drawing_area_panel is not None:
+                self.result = self.drawing_area_panel.get_filtered_events(new_search)
             else:
                 self.result = []
             self.result_index = 0
@@ -122,10 +120,10 @@ class SearchBarController(object):
             self.view.update_buttons()
 
     def navigate_to_match(self):
-        if (self.timeline_view is not None and
+        if (self.drawing_area_panel is not None and 
             self.result_index in range(len(self.result))):
             event = self.result[self.result_index]
-            self.timeline_view.navigate_timeline(lambda tp: tp.center(event.mean_time()))
+            self.drawing_area_panel.navigate_timeline(lambda tp: tp.center(event.mean_time()))
       
     def enable_backward(self):                  
         return bool(self.result and self.result_index > 0)
@@ -142,8 +140,8 @@ class SearchBar(wx.ToolBar, GuiCreator):
         self._create_gui()
         self.update_buttons()
 
-    def set_view(self, view):
-        self.controller.set_timeline_view(view)
+    def set_drawing_area_panel(self, view):
+        self.controller.set_drawing_area_panel(view)
 
     def get_value(self):
         return self.search.GetValue()
