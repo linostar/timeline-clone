@@ -1099,9 +1099,7 @@ class MainPanel(wx.Panel):
     
     def _create_gui(self):
         # Search bar
-        def search_close():
-            self.show_searchbar(False)
-        self.searchbar = SearchBar(self, search_close)
+        self.searchbar = SearchBar(self)
         self.searchbar.Show(False)
         # Panels
         self.welcome_panel = WelcomePanel(self, self.main_frame)

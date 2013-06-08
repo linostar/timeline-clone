@@ -25,13 +25,12 @@ from timelinelib.config.paths import ICONS_DIR
 
 class SearchBar(wx.ToolBar):
 
-    def __init__(self, parent, close_fn):
+    def __init__(self, parent):
         wx.ToolBar.__init__(self, parent, style=wx.TB_HORIZONTAL|wx.TB_BOTTOM)
         self.last_search = None
         self.result = []
         self.result_index = 0
         self.view = None
-        self.close_fn = close_fn
         self._create_gui()
         self._update_buttons()
 
@@ -78,7 +77,7 @@ class SearchBar(wx.ToolBar):
         self.Realize()
 
     def _btn_close_on_click(self, e):
-        self.close_fn()
+        self.Show(False)
 
     def _search_on_search_btn(self, e):
         self._search()
