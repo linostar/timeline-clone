@@ -77,63 +77,95 @@ class GuiCreator(object):
 
     def _btn_next_on_click(self, e):
         self._next()
+    
         
-        
-class SearchBar(wx.ToolBar, GuiCreator):
-
-    def __init__(self, parent):
-        wx.ToolBar.__init__(self, parent, style=wx.TB_HORIZONTAL|wx.TB_BOTTOM)
-        self.last_search = None
+class SearchBarController(object):
+    
+    def __init__(self, view):
+        self.view = view
         self.result = []
         self.result_index = 0
-        self.view = None
-        self._create_gui()
-        self._update_buttons()
+        self.last_search = None
+    
+    def set_timeline_view(self, timeline_view):
+        self.timeline_view = timeline_view
+        self.view.Enable(timeline_view is not None)
 
-    def set_view(self, view):
-        self.view = view
-        self.Enable(view is not None)
-
-
-    def _search(self):
-        new_search = self.search.GetValue()
+    def search(self):
+        new_search = self.view.get_value()
         if self.last_search is not None and self.last_search == new_search:
             self._next()
         else:
             self.last_search = new_search
-            if self.view is not None:
-                events = self.view.get_timeline().search(self.last_search)
-                filtered_events = self.view.get_view_properties().filter_events(events)
+            if self.timeline_view is not None:
+                events = self.timeline_view.get_timeline().search(self.last_search)
+                filtered_events = self.timeline_view.get_view_properties().filter_events(events)
                 self.result = filtered_events
             else:
                 self.result = []
             self.result_index = 0
-            self._navigate_to_match()
-            self.lbl_no_match.Show(len(self.result) == 0)
-            self.lbl_single_match.Show(len(self.result) == 1)
-        self._update_buttons()
-
-    def _update_buttons(self):
-        enable_backward = bool(self.result and self.result_index > 0)
-        self.EnableTool(wx.ID_BACKWARD, enable_backward)
-        enable_forward = bool(self.result and
-                              self.result_index < (len(self.result) - 1))
-        self.EnableTool(wx.ID_FORWARD, enable_forward)
-
-    def _next(self):
+            self.navigate_to_match()
+            self.view.update_nomatch_labels(len(self.result) == 0)
+            self.view.update_singlematch_label(len(self.result) == 1)
+        self.view.update_buttons()
+        
+    def next(self):
         if self.result > 0 and self.result_index < (len(self.result) - 1):
             self.result_index += 1
-            self._navigate_to_match()
-            self._update_buttons()
+            self.navigate_to_match()
+            self.view.update_buttons()
 
-    def _prev(self):
+    def prev(self):
         if self.result > 0 and self.result_index > 0:
             self.result_index -= 1
-            self._navigate_to_match()
-            self._update_buttons()
+            self.navigate_to_match()
+            self.view.update_buttons()
 
-    def _navigate_to_match(self):
-        if (self.view is not None and
+    def navigate_to_match(self):
+        if (self.timeline_view is not None and
             self.result_index in range(len(self.result))):
             event = self.result[self.result_index]
-            self.view.navigate_timeline(lambda tp: tp.center(event.mean_time()))
+            self.timeline_view.navigate_timeline(lambda tp: tp.center(event.mean_time()))
+      
+    def enable_backward(self):                  
+        return bool(self.result and self.result_index > 0)
+    
+    def enable_forward(self):                  
+        return bool(self.result and self.result_index < (len(self.result) - 1))
+        
+                        
+class SearchBar(wx.ToolBar, GuiCreator):
+
+    def __init__(self, parent):
+        wx.ToolBar.__init__(self, parent, style=wx.TB_HORIZONTAL|wx.TB_BOTTOM)
+        self.controller = SearchBarController(self)
+        self._create_gui()
+        self.update_buttons()
+
+    def set_view(self, view):
+        self.controller.set_timeline_view(view)
+
+    def get_value(self):
+        return self.search.GetValue()
+    
+    def update_nomatch_labels(self, nomatch):
+        self.lbl_no_match.Show(nomatch)
+        
+    def update_singlematch_label(self, singlematch):
+        self.lbl_single_match.Show(singlematch)
+        
+    def _search(self):
+        self.controller.search()
+
+    def update_buttons(self):
+        self.EnableTool(wx.ID_BACKWARD, self.controller.enable_backward())
+        self.EnableTool(wx.ID_FORWARD, self.controller.enable_forward())
+
+    def _next(self):
+        self.controller.next()
+
+    def _prev(self):
+        self.controller.prev()
+
+    def _navigate_to_match(self):
+        self.controller.navigate_to_match()
