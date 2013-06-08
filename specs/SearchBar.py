@@ -78,6 +78,10 @@ class SearchBarTestCase(unittest.TestCase):
         self.controller.prev()
         self.assertTrue(self.controller.result_index == 0)
         
+    def test_no_drawing_area_panel_hides_search_bar(self):
+        self.controller.set_drawing_area_panel(None)
+        self.view.Enable.assert_called_with(False)
+        
     def setUp(self):
         self.view = Mock(SearchBar)
         self.drawing_area_panel = DrawingAreaPanel()
