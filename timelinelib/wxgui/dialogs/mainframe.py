@@ -1013,7 +1013,6 @@ class MainPanel(wx.Panel):
         self._create_gui()
         # Install variables for backwards compatibility
         self.cattree = self.timeline_panel.sidebar.cattree
-        self.drawing_area = self.timeline_panel.drawing_area
         self.show_sidebar = self.timeline_panel.show_sidebar
         self.hide_sidebar = self.timeline_panel.hide_sidebar
         self.get_sidebar_width = self.timeline_panel.get_sidebar_width
@@ -1040,10 +1039,10 @@ class MainPanel(wx.Panel):
         self.timeline_panel.set_timeline(timeline)
     
     def get_drawing_area(self):
-        return self.drawing_area
+        return self.timeline_panel.get_drawing_area()
         
     def get_scene(self):
-        return self.drawing_area.get_drawer().scene
+        return self.timeline_panel.get_scene()
         
     def save_view_properties(self, timeline):
         timeline.save_view_properties(self._get_view_properties())
@@ -1063,7 +1062,7 @@ class MainPanel(wx.Panel):
         return self._get_view_properties().get_selected_event_ids()
         
     def show_hide_legend(self, checked):    
-        self.drawing_area.show_hide_legend(checked)
+        self.timeline_panel.show_hide_legend(checked)
     
     def get_id_of_first_selected_event(self):
         return self._get_view_properties().get_selected_event_ids()[0]
@@ -1072,16 +1071,16 @@ class MainPanel(wx.Panel):
         return len(self._get_view_properties().get_selected_event_ids())
                 
     def balloon_visibility_changed(self, checked):
-        self.drawing_area.balloon_visibility_changed(checked)
+        self.timeline_panel.balloon_visibility_changed(checked)
     
     def open_event_editor(self, event):
-        self.drawing_area.open_event_editor_for(event)
+        self.timeline_panel.open_event_editor_for(event)
 
     def redraw_timeline(self):
-        self.drawing_area.redraw_timeline()
+        self.timeline_panel.redraw_timeline()
         
     def navigate_timeline(self, navigation_fn):
-        return self.drawing_area.navigate_timeline(navigation_fn)
+        return self.timeline_panel.navigate_timeline(navigation_fn)
             
     def get_visible_events(self, all_events):
         view_properties = self._get_view_properties()
@@ -1096,7 +1095,7 @@ class MainPanel(wx.Panel):
                     self._get_view_properties())
                 
     def _get_view_properties(self):
-        return self.drawing_area.get_view_properties()
+        return self.timeline_panel.get_view_properties()
     
     def _create_gui(self):
         # Search bar
@@ -1178,7 +1177,31 @@ class TimelinePanel(wx.Panel):
 
     def set_timeline(self, timeline):
         self.drawing_area.set_timeline(timeline)
+
+    def get_drawing_area(self):
+        return self.drawing_area
+            
+    def get_scene(self):
+        return self.drawing_area.get_drawer().scene
+            
+    def show_hide_legend(self, checked):    
+        self.drawing_area.show_hide_legend(checked)
+    
+    def balloon_visibility_changed(self, checked):
+        self.drawing_area.balloon_visibility_changed(checked)
+    
+    def open_event_editor(self, event):
+        self.drawing_area.open_event_editor_for(event)
+
+    def redraw_timeline(self):
+        self.drawing_area.redraw_timeline()
         
+    def navigate_timeline(self, navigation_fn):
+        return self.drawing_area.navigate_timeline(navigation_fn)
+    
+    def get_view_properties(self):
+        return self.drawing_area.get_view_properties()
+                
     def _create_gui(self):
         self._create_divider_line_slider()
         self._create_splitter()
