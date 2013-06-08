@@ -765,7 +765,7 @@ class MainFrame(wx.Frame):
             # Do this before the next line so that we still have a timeline to
             # unregister
             self.main_panel.cattree.initialize_from_timeline_view(None)
-            self.main_panel.searchbar.set_drawing_area_panel(None)
+            self.main_panel.set_searchbar_drawing_area_panel(None)
         self.main_panel.set_timeline(self.timeline)
         self.status_bar_adapter.set_read_only_text("")
         if timeline == None:
@@ -773,7 +773,7 @@ class MainFrame(wx.Frame):
             self.SetTitle(APPLICATION_NAME)
         else:
             self.main_panel.cattree.initialize_from_timeline_view(self.main_panel.get_drawing_area())
-            self.main_panel.searchbar.set_drawing_area_panel(self.main_panel.get_drawing_area())
+            self.main_panel.set_searchbar_drawing_area_panel(self.main_panel.get_drawing_area())
             self.main_panel.show_timeline_panel()
             self.SetTitle("%s (%s) - %s" % (
                 os.path.basename(self.timeline.path),
@@ -1087,6 +1087,9 @@ class MainPanel(wx.Panel):
         visible_events = view_properties.filter_events(all_events)
         return visible_events  
           
+    def set_searchbar_drawing_area_panel(self, drawing_area_panel):
+        self.searchbar.set_drawing_area_panel(drawing_area_panel)
+        
     def svgexport(self, path):
         import timelinelib.export.svg as svgexport
         svgexport.export(
