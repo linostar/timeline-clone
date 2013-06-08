@@ -23,21 +23,8 @@ import wx
 from timelinelib.config.paths import ICONS_DIR
 
 
-class SearchBar(wx.ToolBar):
-
-    def __init__(self, parent):
-        wx.ToolBar.__init__(self, parent, style=wx.TB_HORIZONTAL|wx.TB_BOTTOM)
-        self.last_search = None
-        self.result = []
-        self.result_index = 0
-        self.view = None
-        self._create_gui()
-        self._update_buttons()
-
-    def set_view(self, view):
-        self.view = view
-        self.Enable(view is not None)
-
+class GuiCreator(object):
+    
     def _create_gui(self):
         icon_size = (16, 16)
         # Close button
@@ -90,6 +77,23 @@ class SearchBar(wx.ToolBar):
 
     def _btn_next_on_click(self, e):
         self._next()
+        
+        
+class SearchBar(wx.ToolBar, GuiCreator):
+
+    def __init__(self, parent):
+        wx.ToolBar.__init__(self, parent, style=wx.TB_HORIZONTAL|wx.TB_BOTTOM)
+        self.last_search = None
+        self.result = []
+        self.result_index = 0
+        self.view = None
+        self._create_gui()
+        self._update_buttons()
+
+    def set_view(self, view):
+        self.view = view
+        self.Enable(view is not None)
+
 
     def _search(self):
         new_search = self.search.GetValue()
