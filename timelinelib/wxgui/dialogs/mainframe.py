@@ -761,7 +761,7 @@ class MainFrame(wx.Frame):
     def display_timeline(self, timeline):
         self.timeline = timeline
         self.menu_controller.on_timeline_change(timeline)
-        self.main_panel.show_new_timeline(timeline)
+        self.main_panel.display_timeline(timeline)
         self._set_title()
         self._set_readonly_text()
 
@@ -1038,7 +1038,7 @@ class MainPanel(wx.Panel):
         self.set_timeline(None)
         self.show_welcome_panel()
         
-    def show_new_timeline(self, timeline):
+    def display_timeline(self, timeline):
         if timeline == None:
             # Do we ever end up here with the welcome panel displayed?
             self._remove_timeline_and_show_welcome_panel()
