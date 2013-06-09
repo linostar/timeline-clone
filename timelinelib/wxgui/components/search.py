@@ -81,13 +81,13 @@ class GuiCreator(object):
         self._search()
 
     def _search_on_text_enter(self, e):
-        self._search()
+        self.controller.search()
 
     def _btn_prev_on_click(self, e):
-        self._prev()
+        self.controller.prev()
 
     def _btn_next_on_click(self, e):
-        self._next()
+        self.controller.next()
     
         
 class SearchBarController(object):
@@ -172,13 +172,3 @@ class SearchBar(wx.ToolBar, GuiCreator):
     def update_buttons(self):
         self.EnableTool(wx.ID_BACKWARD, self.controller.enable_backward())
         self.EnableTool(wx.ID_FORWARD, self.controller.enable_forward())
-
-    def _search(self):
-        self.controller.search()
-
-    def _next(self):
-        self.controller.next()
-
-    def _prev(self):
-        self.controller.prev()
-
