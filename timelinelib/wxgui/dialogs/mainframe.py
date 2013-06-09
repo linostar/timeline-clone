@@ -776,8 +776,9 @@ class MainFrame(wx.Frame):
         
     def _set_readonly_text(self):
         self.status_bar_adapter.set_read_only_text("")
-        if self.timeline.is_read_only():
-            self.status_bar_adapter.set_read_only_text(_("read-only"))
+        if self.timeline is not None:
+            if self.timeline.is_read_only():
+                self.status_bar_adapter.set_read_only_text(_("read-only"))
         
     def _add_ellipses_to_menuitem(self, id):
         plain = wx.GetStockLabel(id,
