@@ -1032,7 +1032,7 @@ class MainPanel(wx.Panel):
     def show_searchbar(self, show=True):
         self.searchbar.Show(show)
         if show == True:
-            self.searchbar.search.SetFocus()
+            self.searchbar.set_focus()
         self.GetSizer().Layout()
 
     def set_timeline(self, timeline):

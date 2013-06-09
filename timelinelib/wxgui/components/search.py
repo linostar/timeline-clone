@@ -35,6 +35,9 @@ class GuiCreator(object):
         self._create_single_match_label()
         self.Realize()
         
+    def set_focus(self):
+        self.search.SetFocus()
+        
     def _create_search_box(self):
         self.search = wx.SearchCtrl(self, size=(150, -1),
                                     style=wx.TE_PROCESS_ENTER)
