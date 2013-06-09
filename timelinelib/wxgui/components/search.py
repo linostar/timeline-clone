@@ -157,8 +157,8 @@ class SearchBar(wx.ToolBar, GuiCreator):
         self._create_gui()
         self.update_buttons()
 
-    def set_drawing_area_panel(self, view):
-        self.controller.set_drawing_area_panel(view)
+    def set_drawing_area_panel(self, drawing_area_panel):
+        self.controller.set_drawing_area_panel(drawing_area_panel)
 
     def get_value(self):
         return self.search.GetValue()
