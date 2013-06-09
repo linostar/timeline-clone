@@ -761,27 +761,24 @@ class MainFrame(wx.Frame):
     def display_timeline(self, timeline):
         self.timeline = timeline
         self.menu_controller.on_timeline_change(timeline)
-        if timeline == None:
-            # Do this before the next line so that we still have a timeline to
-            # unregister
-            self.main_panel.cattree.initialize_from_timeline_view(None)
-            self.main_panel.set_searchbar_drawing_area_panel(None)
-        self.main_panel.set_timeline(self.timeline)
-        self.status_bar_adapter.set_read_only_text("")
-        if timeline == None:
-            self.main_panel.show_welcome_panel()
+        self.main_panel.show_new_timeline(timeline)
+        self._set_title()
+        self._set_readonly_text()
+
+    def _set_title(self):
+        if self.timeline == None:
             self.SetTitle(APPLICATION_NAME)
         else:
-            self.main_panel.cattree.initialize_from_timeline_view(self.main_panel.get_drawing_area())
-            self.main_panel.set_searchbar_drawing_area_panel(self.main_panel.get_drawing_area())
-            self.main_panel.show_timeline_panel()
             self.SetTitle("%s (%s) - %s" % (
                 os.path.basename(self.timeline.path),
                 os.path.dirname(os.path.abspath(self.timeline.path)),
                 APPLICATION_NAME))
-            if timeline.is_read_only():
-                self.status_bar_adapter.set_read_only_text(_("read-only"))
-
+        
+    def _set_readonly_text(self):
+        self.status_bar_adapter.set_read_only_text("")
+        if self.timeline.is_read_only():
+            self.status_bar_adapter.set_read_only_text(_("read-only"))
+        
     def _add_ellipses_to_menuitem(self, id):
         plain = wx.GetStockLabel(id,
                 wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
@@ -1035,6 +1032,25 @@ class MainPanel(wx.Panel):
             self.searchbar.set_focus()
         self.GetSizer().Layout()
 
+    def _remove_timeline_and_show_welcome_panel(self):
+        self.cattree.initialize_from_timeline_view(None)
+        self.set_searchbar_drawing_area_panel(None)
+        self.set_timeline(None)
+        self.show_welcome_panel()
+        
+    def show_new_timeline(self, timeline):
+        if timeline == None:
+            # Do we ever end up here with the welcome panel displayed?
+            self._remove_timeline_and_show_welcome_panel()
+        else:
+            self._show_new_timeline(timeline)
+        
+    def _show_new_timeline(self, timeline):
+        self.set_timeline(timeline)
+        self.cattree.initialize_from_timeline_view(self.get_drawing_area())
+        self.set_searchbar_drawing_area_panel(self.get_drawing_area())
+        self.show_timeline_panel()
+        
     def set_timeline(self, timeline):
         self.timeline_panel.set_timeline(timeline)
     
