@@ -169,12 +169,12 @@ class SearchBar(wx.ToolBar, GuiCreator):
     def update_singlematch_label(self, singlematch):
         self.lbl_single_match.Show(singlematch)
         
-    def _search(self):
-        self.controller.search()
-
     def update_buttons(self):
         self.EnableTool(wx.ID_BACKWARD, self.controller.enable_backward())
         self.EnableTool(wx.ID_FORWARD, self.controller.enable_forward())
+
+    def _search(self):
+        self.controller.search()
 
     def _next(self):
         self.controller.next()
@@ -182,5 +182,3 @@ class SearchBar(wx.ToolBar, GuiCreator):
     def _prev(self):
         self.controller.prev()
 
-    def _navigate_to_match(self):
-        self.controller.navigate_to_match()
