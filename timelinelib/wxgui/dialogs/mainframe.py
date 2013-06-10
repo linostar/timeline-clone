@@ -327,31 +327,39 @@ class GuiCreator(object):
         self.menu_controller.add_menu_requiring_timeline(fit_all_events)
 
     def _create_help_menu(self, main_menu_bar):
+        def contents(e):
+            self.help_browser.show_page("contents")
+        def tutorial(e):
+            self.controller.open_timeline(":tutorial:")
+        def contact(e):
+            self.help_browser.show_page("contact")
+        def about(e):
+            display_about_dialog()
+        items = ((wx.ID_HELP, contents, _("&Contents\tF1")),
+                 None,
+                 (wx.ID_ANY, tutorial, _("Getting started tutorial")),
+                 (wx.ID_ANY, contact, _("Contact")),
+                 None,
+                 (wx.ID_ABOUT, about, None))
         help_menu = wx.Menu()
-        self._create_help_contents_menu_item(help_menu)
-        help_menu.AppendSeparator()
-        self._create_help_tutorial_menu_item(help_menu)
-        self._create_help_contact_menu_item(help_menu)
-        help_menu.AppendSeparator()
-        self._create_help_about_menu_item(help_menu)
+        self._create_menu_items(help_menu, items)
         main_menu_bar.Append(help_menu, _("&Help"))
 
-    def _create_help_contents_menu_item(self, help_menu):
-        contents_item = help_menu.Append(wx.ID_HELP, _("&Contents\tF1"))
-        self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, contents_item)
-
-    def _create_help_tutorial_menu_item(self, help_menu):
-        tutorial_item = help_menu.Append(wx.ID_ANY, _("Getting started tutorial"))
-        self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, tutorial_item)
-
-    def _create_help_contact_menu_item(self, help_menu):
-        contact_item = help_menu.Append(wx.ID_ANY, _("Contact"))
-        self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, contact_item)
-
-    def _create_help_about_menu_item(self, help_menu):
-        about_item = help_menu.Append(wx.ID_ABOUT)
-        self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, about_item)
-
+    def _create_menu_items(self, menu, items):
+        for item in items:
+            if item is not None:
+                self._create_menu_item(menu, item)
+            else:
+                menu.AppendSeparator()
+                
+    def _create_menu_item(self, menu, item):
+        item_id, handler, label = item
+        if label is not None:
+            item = menu.Append(item_id, label)
+        else:
+            item = menu.Append(item_id)
+        self.Bind(wx.EVT_MENU, handler, item)
+        
     def _mnu_file_new_on_click(self, event):
         self._create_new_timeline()
 
@@ -482,17 +490,6 @@ class GuiCreator(object):
     def _mnu_navigate_fit_all_events_on_click(self, evt):
         self._fit_all_events()
 
-    def _mnu_help_contents_on_click(self, e):
-        self.help_browser.show_page("contents")
-
-    def _mnu_help_tutorial_on_click(self, e):
-        self.controller.open_timeline(":tutorial:")
-
-    def _mnu_help_contact_on_click(self, e):
-        self.help_browser.show_page("contact")
-
-    def _mnu_help_about_on_click(self, e):
-        display_about_dialog()
 
        
 class MainFrame(wx.Frame, GuiCreator):
