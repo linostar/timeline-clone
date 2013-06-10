@@ -55,7 +55,447 @@ import timelinelib.printing as printing
 import timelinelib.wxgui.utils as gui_utils
 
 
-class MainFrame(wx.Frame):
+class GuiCreator(object):
+    
+    def _create_gui(self):
+        self._create_status_bar()
+        self._create_main_panel()
+        self._create_main_menu_bar()
+        self._bind_frame_events()
+    
+    def _create_status_bar(self):
+        self.CreateStatusBar()
+        self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
+
+    def _create_main_panel(self):
+        self.main_panel = MainPanel(self, self.config, self)
+
+    def _create_main_menu_bar(self):
+        main_menu_bar = wx.MenuBar()
+        self._create_file_menu(main_menu_bar)
+        self._create_edit_menu(main_menu_bar)
+        self._create_view_menu(main_menu_bar)
+        self._create_timeline_menu(main_menu_bar)
+        self._create_navigate_menu(main_menu_bar)
+        self._create_help_menu(main_menu_bar)
+        self.SetMenuBar(main_menu_bar)
+
+    def _bind_frame_events(self):
+        self.Bind(wx.EVT_CLOSE, self._window_on_close)
+
+    def _create_file_menu(self, main_menu_bar):
+        file_menu = wx.Menu()
+        self._create_file_new_menu(file_menu)
+        self._create_file_open_menu_item(file_menu)
+        self._create_file_open_recent_menu(file_menu)
+        file_menu.AppendSeparator()
+        self._create_file_save_as_menu(file_menu)
+        file_menu.AppendSeparator()
+        self._create_file_page_setup_menu_item(file_menu)
+        self._create_file_print_preview_menu_item(file_menu)
+        self._create_file_print_menu_item(file_menu)
+        file_menu.AppendSeparator()
+        self._create_import_menu_item(file_menu)
+        file_menu.AppendSeparator()
+        self._create_file_export_to_image_menu_item(file_menu)
+        self._create_file_export_to_svg_menu_item(file_menu)
+        file_menu.AppendSeparator()
+        if DEV:
+            self._create_file_play(file_menu)
+            file_menu.AppendSeparator()
+        self._create_file_exit_menu_item(file_menu)
+        main_menu_bar.Append(file_menu, _("&File"))
+
+    def _create_file_new_menu(self, file_menu):
+        file_new_menu = wx.Menu()
+        self._create_file_new_timeline_menu_item(file_new_menu)
+        self._create_file_new_dir_timeline_menu_item(file_new_menu)
+        file_menu.AppendMenu(wx.ID_ANY, _("New"), file_new_menu, _("Create a new timeline"))
+
+    def _create_file_new_timeline_menu_item(self, file_new_menu):
+        accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
+        accel = accel.split("\t", 1)[1]
+        file_new_menu.Append(
+            wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
+        
+    def _create_file_new_dir_timeline_menu_item(self, file_new_menu):
+        mnu_file_new_dir = file_new_menu.Append(
+            wx.ID_ANY, _("Directory Timeline..."), _("Directory Timeline..."))
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, mnu_file_new_dir)
+
+    def _create_file_open_menu_item(self, file_menu):
+        file_menu.Append(
+            wx.ID_OPEN, self._add_ellipses_to_menuitem(wx.ID_OPEN),
+            _("Open an existing timeline"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
+
+    def _create_file_open_recent_menu(self, file_menu):
+        self.mnu_file_open_recent_submenu = wx.Menu()
+        file_menu.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
+        self.update_open_recent_submenu()
+
+    def _create_file_save_as_menu(self, file_menu):
+        menu = file_menu.Append(wx.ID_SAVEAS, "", _("Save As..."))
+        self.Bind(wx.EVT_MENU, self.mnu_file_save_as_on_click, id=wx.ID_SAVEAS)
+
+    def _create_import_menu_item(self, file_menu):
+        mnu_file_import = file_menu.Append(
+            wx.ID_ANY, _("Import timeline..."), _("Import timeline..."))
+        self.Bind(wx.EVT_MENU, self._mnu_file_import_on_click, mnu_file_import)
+
+    def _create_file_page_setup_menu_item(self, file_menu):
+        mnu_file_print_setup = file_menu.Append(
+            wx.ID_PRINT_SETUP, _("Page Set&up..."), _("Setup page for printing"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_setup)
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
+
+    def _create_file_print_preview_menu_item(self, file_menu):
+        mnu_file_print_preview = file_menu.Append(
+            wx.ID_PREVIEW, "", _("Print Preview"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_preview)
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
+
+    def _create_file_print_menu_item(self, file_menu):
+        mnu_file_print = file_menu.Append(
+            wx.ID_PRINT, self._add_ellipses_to_menuitem(wx.ID_PRINT), _("Print"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_print)
+        self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
+
+    def _create_file_export_to_image_menu_item(self, file_menu):
+        mnu_file_export = file_menu.Append(
+            wx.ID_ANY, _("&Export to Image..."), _("Export the current view to a PNG image"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_export)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click, mnu_file_export)
+
+    def _create_file_export_to_svg_menu_item(self, file_menu):
+        mnu_file_export_svg = file_menu.Append(
+            wx.ID_ANY, _("&Export to SVG..."), _("Export the current view to a SVG image"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_svg)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, mnu_file_export_svg)
+
+    def _create_file_play(self, file_menu):
+        mnu_play = file_menu.Append(
+            wx.ID_ANY, _("Play timeline"), _("Play timeline as movie"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_play)
+        self.Bind(wx.EVT_MENU, self._mnu_play_on_click, mnu_play)
+
+    def _create_file_exit_menu_item(self, file_menu):
+        file_menu.Append(wx.ID_EXIT, "", _("Exit the program"))
+        self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
+
+    def _create_edit_menu(self, main_menu_bar):
+        edit_menu = wx.Menu()
+        self._create_edit_find_menu_item(edit_menu)
+        edit_menu.AppendSeparator()
+        self._create_edit_preferences_menu_item(edit_menu)
+        main_menu_bar.Append(edit_menu, _("&Edit"))
+
+    def _create_edit_find_menu_item(self, edit_menu):
+        find_menu_item = edit_menu.Append(wx.ID_FIND)
+        self.Bind(wx.EVT_MENU, self._mnu_edit_find_on_click, find_menu_item)
+        self.menu_controller.add_menu_requiring_timeline(find_menu_item)
+
+    def _create_edit_preferences_menu_item(self, edit_menu):
+        preferences_item = edit_menu.Append(wx.ID_PREFERENCES)
+        self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click, preferences_item)
+
+    def _create_view_menu(self, main_menu_bar):
+        view_menu = wx.Menu()
+        self._create_view_sidebar_menu_item(view_menu)
+        self._create_view_legend_menu_item(view_menu)
+        view_menu.AppendSeparator()
+        self._create_view_balloons_menu_item(view_menu)
+        main_menu_bar.Append(view_menu, _("&View"))
+
+    def _create_view_sidebar_menu_item(self, view_menu):
+        view_sidebar_item = view_menu.Append(
+            wx.ID_ANY, _("&Sidebar\tCtrl+I"), kind=wx.ITEM_CHECK)
+        self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click, view_sidebar_item)
+        self.menu_controller.add_menu_requiring_visible_timeline_view(view_sidebar_item)
+        view_sidebar_item.Check(self.config.get_show_sidebar())
+
+    def _create_view_legend_menu_item(self, view_menu):
+        view_legend_item = view_menu.Append(
+            wx.ID_ANY, _("&Legend"), kind=wx.ITEM_CHECK)
+        self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click, view_legend_item)
+        self.menu_controller.add_menu_requiring_timeline(view_legend_item)
+        view_legend_item.Check(self.config.get_show_legend())
+
+    def _create_view_balloons_menu_item(self, view_menu):
+        view_balloons_item = view_menu.Append(
+            wx.ID_ANY, _("&Balloons on hover"), kind=wx.ITEM_CHECK)
+        self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click, view_balloons_item)
+        view_balloons_item.Check(self.config.get_balloon_on_hover())
+
+    def _create_timeline_menu(self, main_menu_bar):
+        timeline_menu = wx.Menu()
+        self._create_timeline_create_event_menu_item(timeline_menu)
+        self._create_timeline_edit_event_menu_item(timeline_menu)
+        self._create_timeline_duplicate_event_menu_item(timeline_menu)
+        self._create_timeline_set_category_menu_item(timeline_menu)
+        timeline_menu.AppendSeparator()
+        self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
+        timeline_menu.AppendSeparator()
+        self._create_timeline_set_category(timeline_menu)
+        self._create_timeline_edit_categories(timeline_menu)
+        timeline_menu.AppendSeparator()
+        self._create_timeline_set_readonly(timeline_menu)
+        main_menu_bar.Append(timeline_menu, _("&Timeline"))
+
+    def _create_timeline_create_event_menu_item(self, timeline_menu):
+        create_event_item = timeline_menu.Append(
+            wx.ID_ANY, _("Create &Event..."), _("Create a new event"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click, create_event_item)
+        self.menu_controller.add_menu_requiring_writable_timeline(create_event_item)
+
+    def _create_timeline_edit_event_menu_item(self, timeline_menu):
+        self.mnu_timeline_edit_event = timeline_menu.Append(
+            wx.ID_ANY, _("&Edit Selected Event..."), _("Edit the Selected Event"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_event_on_click,
+                  self.mnu_timeline_edit_event)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_edit_event)
+
+    def _create_timeline_duplicate_event_menu_item(self, timeline_menu):
+        self.mnu_timeline_duplicate_event = timeline_menu.Append(
+            wx.ID_ANY, _("&Duplicate Selected Event..."), _("Duplicate the Selected Event"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_duplicate_event_on_click,
+                  self.mnu_timeline_duplicate_event)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_duplicate_event)
+
+    def _create_timeline_set_category_menu_item(self, timeline_menu):
+        self.mnu_timeline_set_event_category = timeline_menu.Append(
+            wx.ID_ANY, _("Set Category on Selected Events..."), _("Set Category on Selected Events..."))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_to_selected_evets_on_click,
+                  self.mnu_timeline_set_event_category)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_set_event_category)
+
+    def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
+        self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
+            wx.ID_ANY, _("&Measure Distance between two Events..."),
+            _("Measure the Distance between two Events"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_measure_distance_between_events_on_click,
+                  self.mnu_timeline_measure_distance_between_events)
+        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_measure_distance_between_events)
+
+    def _create_timeline_set_category(self, timeline_menu):
+        set_category_item = timeline_menu.Append(
+            wx.ID_ANY, _("Set Category on events without category..."), 
+            _("Set Category on events without category..."))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_on_click,
+                  set_category_item)
+        self.menu_controller.add_menu_requiring_writable_timeline(set_category_item)
+
+    def _create_timeline_edit_categories(self, timeline_menu):
+        edit_categories_item = timeline_menu.Append(
+            wx.ID_ANY, _("Edit &Categories"), _("Edit categories"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
+                  edit_categories_item)
+        self.menu_controller.add_menu_requiring_writable_timeline(edit_categories_item)
+
+    def _create_timeline_set_readonly(self, timeline_menu):
+        item = timeline_menu.Append(
+            wx.ID_ANY, _("Read Only"), _("Read Only"))
+        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_readonly_on_click, item)
+        self.menu_controller.add_menu_requiring_writable_timeline(item)
+
+    def _create_navigate_menu(self, main_menu_bar):
+        navigate_menu = wx.Menu()
+        self._navigation_menu_items = []
+        self._navigation_functions_by_menu_item_id = {}
+        self.update_navigation_menu_items()
+        navigate_menu.AppendSeparator()
+        self._create_navigate_find_first_event_menu_item(navigate_menu)
+        self._create_navigate_find_last_event_menu_item(navigate_menu)
+        self._create_navigate_fit_all_events_menu_item(navigate_menu)
+        main_menu_bar.Append(navigate_menu, _("&Navigate"))
+        self.mnu_navigate = navigate_menu
+
+    def _create_navigate_find_first_event_menu_item(self, navigate_menu):
+        find_first = navigate_menu.Append(wx.ID_ANY, _("Find First Event"))
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_first_on_click, find_first)
+        self.menu_controller.add_menu_requiring_timeline(find_first)
+
+    def _create_navigate_find_last_event_menu_item(self, navigate_menu):
+        find_last = navigate_menu.Append(wx.ID_ANY, _("Find Last Event"))
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_last_on_click, find_last)
+        self.menu_controller.add_menu_requiring_timeline(find_last)
+
+    def _create_navigate_fit_all_events_menu_item(self, navigate_menu):
+        fit_all_events = navigate_menu.Append(wx.ID_ANY, _("Fit All Events"))
+        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_all_events_on_click, fit_all_events)
+        self.menu_controller.add_menu_requiring_timeline(fit_all_events)
+
+    def _create_help_menu(self, main_menu_bar):
+        help_menu = wx.Menu()
+        self._create_help_contents_menu_item(help_menu)
+        help_menu.AppendSeparator()
+        self._create_help_tutorial_menu_item(help_menu)
+        self._create_help_contact_menu_item(help_menu)
+        help_menu.AppendSeparator()
+        self._create_help_about_menu_item(help_menu)
+        main_menu_bar.Append(help_menu, _("&Help"))
+
+    def _create_help_contents_menu_item(self, help_menu):
+        contents_item = help_menu.Append(wx.ID_HELP, _("&Contents\tF1"))
+        self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, contents_item)
+
+    def _create_help_tutorial_menu_item(self, help_menu):
+        tutorial_item = help_menu.Append(wx.ID_ANY, _("Getting started tutorial"))
+        self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, tutorial_item)
+
+    def _create_help_contact_menu_item(self, help_menu):
+        contact_item = help_menu.Append(wx.ID_ANY, _("Contact"))
+        self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, contact_item)
+
+    def _create_help_about_menu_item(self, help_menu):
+        about_item = help_menu.Append(wx.ID_ABOUT)
+        self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, about_item)
+
+    def _mnu_file_new_on_click(self, event):
+        self._create_new_timeline()
+
+    def _mnu_file_new_dir_on_click(self, event):
+        self._create_new_dir_timeline()
+
+    def _mnu_file_open_on_click(self, event):
+        self._open_existing_timeline()
+
+    def mnu_file_save_as_on_click(self, event):
+        if self.timeline is not None:
+            self._save_as()
+
+    def _mnu_file_import_on_click(self, menu):
+        self._open_existing_timeline(True)
+                
+    def _mnu_file_print_setup_on_click(self, event):
+        printing.print_setup(self)
+
+    def _mnu_file_print_preview_on_click(self, event):
+        printing.print_preview(self)
+
+    def _mnu_file_print_on_click(self, event):
+        printing.print_timeline(self)
+
+    def _mnu_file_export_on_click(self, evt):
+        export_to_image(self)
+
+    def _mnu_file_export_svg_on_click(self, evt):
+        self._export_to_svg_image()
+
+    def _mnu_play_on_click(self, file_menu):
+        self.controller.on_play_clicked()
+
+    def _mnu_file_exit_on_click(self, evt):
+        self.Close()
+
+    def _mnu_edit_find_on_click(self, evt):
+        self.main_panel.show_searchbar(True)
+
+    def _mnu_edit_preferences_on_click(self, evt):
+        def edit_function():
+            dialog = PreferencesDialog(self, self.config)
+            dialog.ShowModal()
+            dialog.Destroy()
+        safe_locking(self, edit_function)
+
+    def _mnu_view_sidebar_on_click(self, evt):
+        self.config.set_show_sidebar(evt.IsChecked())
+        if evt.IsChecked():
+            self.main_panel.show_sidebar()
+        else:
+            self.main_panel.hide_sidebar()
+
+    def _mnu_view_legend_on_click(self, evt):
+        self.config.set_show_legend(evt.IsChecked())
+        self.main_panel.show_hide_legend(evt.IsChecked())
+
+    def _mnu_view_balloons_on_click(self, evt):
+        self.config.set_balloon_on_hover(evt.IsChecked())
+        self.main_panel.balloon_visibility_changed(evt.IsChecked())
+
+    def _mnu_timeline_create_event_on_click(self, evt):
+        open_create_event_editor(self, self.config, self.timeline, 
+                                 self.handle_db_error)
+
+    def _mnu_timeline_edit_event_on_click(self, evt):
+        try:
+            event_id = self.main_panel.get_id_of_first_selected_event()
+            event = self.timeline.find_event_with_id(event_id)
+        except IndexError:
+            # No event selected so do nothing!
+            return
+        self.main_panel.open_event_editor(event)
+
+    def _mnu_timeline_duplicate_event_on_click(self, evt):
+        try:
+            event_id = self.main_panel.get_id_of_first_selected_event()
+            event = self.timeline.find_event_with_id(event_id)
+        except IndexError:
+            # No event selected so do nothing!
+            return
+        open_duplicate_event_dialog_for_event(
+            self,
+            self.timeline,
+            self.handle_db_error,
+            event)
+
+    def _mnu_timeline_set_category_to_selected_evets_on_click(self, evt):
+        def edit_function():
+                self.set_category_to_selected_events()
+        safe_locking(self, edit_function)
+
+    def _mnu_timeline_measure_distance_between_events_on_click(self, evt):
+        self._measure_distance_between_events()
+
+    def _mnu_timeline_set_category_on_click(self, evt):
+        def edit_function():
+            self.set_category()
+        safe_locking(self, edit_function)
+
+    def _mnu_timeline_edit_categories_on_click(self, evt):
+        def edit_function():
+            self.edit_categories()
+        safe_locking(self, edit_function)
+
+    def _mnu_timeline_set_readonly_on_click(self, evt):
+        self.controller.set_timeline_in_readonly_mode()
+        
+    def _mnu_navigate_find_first_on_click(self, evt):
+        event = self.timeline.get_first_event()
+        if event:
+            start = event.time_period.start_time
+            delta = self.main_panel.get_displayed_period_delta()
+            end   = start + delta
+            margin_delta = self.timeline.get_time_type().margin_delta(delta)
+            self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
+
+    def _mnu_navigate_find_last_on_click(self, evt):
+        event = self.timeline.get_last_event()
+        if event:
+            end = event.time_period.end_time
+            delta = self.main_panel.get_displayed_period_delta()
+            start = end - delta
+            margin_delta = self.timeline.get_time_type().margin_delta(delta)
+            self._navigate_timeline(lambda tp: tp.update(start, end, end_delta=margin_delta))
+
+    def _mnu_navigate_fit_all_events_on_click(self, evt):
+        self._fit_all_events()
+
+    def _mnu_help_contents_on_click(self, e):
+        self.help_browser.show_page("contents")
+
+    def _mnu_help_tutorial_on_click(self, e):
+        self.controller.open_timeline(":tutorial:")
+
+    def _mnu_help_contact_on_click(self, e):
+        self.help_browser.show_page("contact")
+
+    def _mnu_help_about_on_click(self, e):
+        display_about_dialog()
+
+       
+class MainFrame(wx.Frame, GuiCreator):
 
     def __init__(self, application_arguments):
         self.config = read_config(application_arguments.get_config_file_path())
@@ -113,67 +553,6 @@ class MainFrame(wx.Frame):
         self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
         self.printData.SetOrientation(wx.LANDSCAPE)
 
-    def _create_gui(self):
-        self._create_status_bar()
-        self._create_main_panel()
-        self._create_main_menu_bar()
-        self._bind_frame_events()
-
-    def _create_status_bar(self):
-        self.CreateStatusBar()
-        self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
-
-    def _create_main_panel(self):
-        self.main_panel = MainPanel(self, self.config, self)
-
-    def _create_main_menu_bar(self):
-        main_menu_bar = wx.MenuBar()
-        self._create_file_menu(main_menu_bar)
-        self._create_edit_menu(main_menu_bar)
-        self._create_view_menu(main_menu_bar)
-        self._create_timeline_menu(main_menu_bar)
-        self._create_navigate_menu(main_menu_bar)
-        self._create_help_menu(main_menu_bar)
-        self.SetMenuBar(main_menu_bar)
-
-    def _create_file_menu(self, main_menu_bar):
-        file_menu = wx.Menu()
-        self._create_file_new_menu(file_menu)
-        self._create_file_open_menu_item(file_menu)
-        self._create_file_open_recent_menu(file_menu)
-        file_menu.AppendSeparator()
-        self._create_file_save_as_menu(file_menu)
-        file_menu.AppendSeparator()
-        self._create_file_page_setup_menu_item(file_menu)
-        self._create_file_print_preview_menu_item(file_menu)
-        self._create_file_print_menu_item(file_menu)
-        file_menu.AppendSeparator()
-        self._create_import_menu_item(file_menu)
-        file_menu.AppendSeparator()
-        self._create_file_export_to_image_menu_item(file_menu)
-        self._create_file_export_to_svg_menu_item(file_menu)
-        file_menu.AppendSeparator()
-        if DEV:
-            self._create_file_play(file_menu)
-            file_menu.AppendSeparator()
-        self._create_file_exit_menu_item(file_menu)
-        main_menu_bar.Append(file_menu, _("&File"))
-
-    def _create_file_new_menu(self, file_menu):
-        file_new_menu = wx.Menu()
-        self._create_file_new_timeline_menu_item(file_new_menu)
-        self._create_file_new_dir_timeline_menu_item(file_new_menu)
-        file_menu.AppendMenu(wx.ID_ANY, _("New"), file_new_menu, _("Create a new timeline"))
-
-    def _create_file_new_timeline_menu_item(self, file_new_menu):
-        accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
-        accel = accel.split("\t", 1)[1]
-        file_new_menu.Append(
-            wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
-        self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
-
-    def _mnu_file_new_on_click(self, event):
-        self._create_new_timeline()
 
     def _create_new_timeline(self):
         wildcard = self.timeline_wildcard_helper.wildcard_string()
@@ -191,41 +570,12 @@ class MainFrame(wx.Frame):
             self.controller.open_timeline(path)
         dialog.Destroy()
 
-    def _create_file_new_dir_timeline_menu_item(self, file_new_menu):
-        mnu_file_new_dir = file_new_menu.Append(
-            wx.ID_ANY, _("Directory Timeline..."), _("Directory Timeline..."))
-        self.Bind(wx.EVT_MENU, self._mnu_file_new_dir_on_click, mnu_file_new_dir)
-
-    def _mnu_file_new_dir_on_click(self, event):
-        self._create_new_dir_timeline()
-
     def _create_new_dir_timeline(self):
         dialog = wx.DirDialog(self, message=_("Create Timeline"))
         if dialog.ShowModal() == wx.ID_OK:
             self._save_current_timeline_data()
             self.controller.open_timeline(dialog.GetPath())
         dialog.Destroy()
-
-    def _create_file_open_menu_item(self, file_menu):
-        file_menu.Append(
-            wx.ID_OPEN, self._add_ellipses_to_menuitem(wx.ID_OPEN),
-            _("Open an existing timeline"))
-        self.Bind(wx.EVT_MENU, self._mnu_file_open_on_click, id=wx.ID_OPEN)
-
-    def _create_import_menu_item(self, file_menu):
-        mnu_file_import = file_menu.Append(
-            wx.ID_ANY, _("Import timeline..."), _("Import timeline..."))
-        self.Bind(wx.EVT_MENU, self._mnu_file_import_on_click, mnu_file_import)
-
-    def _mnu_file_import_on_click(self, menu):
-        self._open_existing_timeline(True)
-                
-    def _mnu_file_open_on_click(self, event):
-        self._open_existing_timeline()
-
-    def mnu_file_save_as_on_click(self, event):
-        if self.timeline is not None:
-            self._save_as()
 
     def _save_as(self):
         new_timeline_path = self._get_new_timeline_path_from_user()
@@ -269,60 +619,6 @@ class MainFrame(wx.Frame):
             self.controller.open_timeline(dialog.GetPath(), import_timeline)
         dialog.Destroy()
 
-    def _create_file_open_recent_menu(self, file_menu):
-        self.mnu_file_open_recent_submenu = wx.Menu()
-        file_menu.AppendMenu(wx.ID_ANY, _("Open &Recent"), self.mnu_file_open_recent_submenu)
-        self.update_open_recent_submenu()
-
-    def _create_file_save_as_menu(self, file_menu):
-        menu = file_menu.Append(wx.ID_SAVEAS, "", _("Save As..."))
-        self.Bind(wx.EVT_MENU, self.mnu_file_save_as_on_click, id=wx.ID_SAVEAS)
-
-    def _create_file_page_setup_menu_item(self, file_menu):
-        mnu_file_print_setup = file_menu.Append(
-            wx.ID_PRINT_SETUP, _("Page Set&up..."), _("Setup page for printing"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_setup)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
-
-    def _mnu_file_print_setup_on_click(self, event):
-        printing.print_setup(self)
-
-    def _create_file_print_preview_menu_item(self, file_menu):
-        mnu_file_print_preview = file_menu.Append(
-            wx.ID_PREVIEW, "", _("Print Preview"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_preview)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
-
-    def _mnu_file_print_preview_on_click(self, event):
-        printing.print_preview(self)
-
-    def _create_file_print_menu_item(self, file_menu):
-        mnu_file_print = file_menu.Append(
-            wx.ID_PRINT, self._add_ellipses_to_menuitem(wx.ID_PRINT), _("Print"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_print)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
-
-    def _mnu_file_print_on_click(self, event):
-        printing.print_timeline(self)
-
-    def _create_file_export_to_image_menu_item(self, file_menu):
-        mnu_file_export = file_menu.Append(
-            wx.ID_ANY, _("&Export to Image..."), _("Export the current view to a PNG image"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_export)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click, mnu_file_export)
-
-    def _mnu_file_export_on_click(self, evt):
-        export_to_image(self)
-
-    def _create_file_export_to_svg_menu_item(self, file_menu):
-        mnu_file_export_svg = file_menu.Append(
-            wx.ID_ANY, _("&Export to SVG..."), _("Export the current view to a SVG image"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_svg)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, mnu_file_export_svg)
-
-    def _mnu_file_export_svg_on_click(self, evt):
-        self._export_to_svg_image()
-
     def _export_to_svg_image(self):
         if not self._has_pysvg_module():
             _display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
@@ -344,175 +640,6 @@ class MainFrame(wx.Frame):
             return True
         except ImportError:
             return False
-
-    def _create_file_play(self, file_menu):
-        mnu_play = file_menu.Append(
-            wx.ID_ANY, _("Play timeline"), _("Play timeline as movie"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_play)
-        self.Bind(wx.EVT_MENU, self._mnu_play_on_click, mnu_play)
-
-    def _mnu_play_on_click(self, file_menu):
-        self.controller.on_play_clicked()
-
-    def _create_file_exit_menu_item(self, file_menu):
-        file_menu.Append(wx.ID_EXIT, "", _("Exit the program"))
-        self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
-
-    def _mnu_file_exit_on_click(self, evt):
-        self.Close()
-
-    def _create_edit_menu(self, main_menu_bar):
-        edit_menu = wx.Menu()
-        self._create_edit_find_menu_item(edit_menu)
-        edit_menu.AppendSeparator()
-        self._create_edit_preferences_menu_item(edit_menu)
-        main_menu_bar.Append(edit_menu, _("&Edit"))
-
-    def _create_edit_find_menu_item(self, edit_menu):
-        find_menu_item = edit_menu.Append(wx.ID_FIND)
-        self.Bind(wx.EVT_MENU, self._mnu_edit_find_on_click, find_menu_item)
-        self.menu_controller.add_menu_requiring_timeline(find_menu_item)
-
-    def _mnu_edit_find_on_click(self, evt):
-        self.main_panel.show_searchbar(True)
-
-    def _create_edit_preferences_menu_item(self, edit_menu):
-        preferences_item = edit_menu.Append(wx.ID_PREFERENCES)
-        self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click, preferences_item)
-
-    def _mnu_edit_preferences_on_click(self, evt):
-        def edit_function():
-            dialog = PreferencesDialog(self, self.config)
-            dialog.ShowModal()
-            dialog.Destroy()
-        safe_locking(self, edit_function)
-
-    def _create_view_menu(self, main_menu_bar):
-        view_menu = wx.Menu()
-        self._create_view_sidebar_menu_item(view_menu)
-        self._create_view_legend_menu_item(view_menu)
-        view_menu.AppendSeparator()
-        self._create_view_balloons_menu_item(view_menu)
-        main_menu_bar.Append(view_menu, _("&View"))
-
-    def _create_view_sidebar_menu_item(self, view_menu):
-        view_sidebar_item = view_menu.Append(
-            wx.ID_ANY, _("&Sidebar\tCtrl+I"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click, view_sidebar_item)
-        self.menu_controller.add_menu_requiring_visible_timeline_view(view_sidebar_item)
-        view_sidebar_item.Check(self.config.get_show_sidebar())
-
-    def _mnu_view_sidebar_on_click(self, evt):
-        self.config.set_show_sidebar(evt.IsChecked())
-        if evt.IsChecked():
-            self.main_panel.show_sidebar()
-        else:
-            self.main_panel.hide_sidebar()
-
-    def _create_view_legend_menu_item(self, view_menu):
-        view_legend_item = view_menu.Append(
-            wx.ID_ANY, _("&Legend"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click, view_legend_item)
-        self.menu_controller.add_menu_requiring_timeline(view_legend_item)
-        view_legend_item.Check(self.config.get_show_legend())
-
-    def _mnu_view_legend_on_click(self, evt):
-        self.config.set_show_legend(evt.IsChecked())
-        self.main_panel.show_hide_legend(evt.IsChecked())
-
-    def _create_view_balloons_menu_item(self, view_menu):
-        view_balloons_item = view_menu.Append(
-            wx.ID_ANY, _("&Balloons on hover"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click, view_balloons_item)
-        view_balloons_item.Check(self.config.get_balloon_on_hover())
-
-    def _mnu_view_balloons_on_click(self, evt):
-        self.config.set_balloon_on_hover(evt.IsChecked())
-        self.main_panel.balloon_visibility_changed(evt.IsChecked())
-
-    def _create_timeline_menu(self, main_menu_bar):
-        timeline_menu = wx.Menu()
-        self._create_timeline_create_event_menu_item(timeline_menu)
-        self._create_timeline_edit_event_menu_item(timeline_menu)
-        self._create_timeline_duplicate_event_menu_item(timeline_menu)
-        self._create_timeline_set_category_menu_item(timeline_menu)
-        timeline_menu.AppendSeparator()
-        self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
-        timeline_menu.AppendSeparator()
-        self._create_timeline_set_category(timeline_menu)
-        self._create_timeline_edit_categories(timeline_menu)
-        timeline_menu.AppendSeparator()
-        self._create_timeline_set_readonly(timeline_menu)
-        main_menu_bar.Append(timeline_menu, _("&Timeline"))
-
-    def _create_timeline_create_event_menu_item(self, timeline_menu):
-        create_event_item = timeline_menu.Append(
-            wx.ID_ANY, _("Create &Event..."), _("Create a new event"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click, create_event_item)
-        self.menu_controller.add_menu_requiring_writable_timeline(create_event_item)
-
-    def _mnu_timeline_create_event_on_click(self, evt):
-        open_create_event_editor(self, self.config, self.timeline, 
-                                 self.handle_db_error)
-
-    def _create_timeline_duplicate_event_menu_item(self, timeline_menu):
-        self.mnu_timeline_duplicate_event = timeline_menu.Append(
-            wx.ID_ANY, _("&Duplicate Selected Event..."), _("Duplicate the Selected Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_duplicate_event_on_click,
-                  self.mnu_timeline_duplicate_event)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_duplicate_event)
-
-    def _mnu_timeline_duplicate_event_on_click(self, evt):
-        try:
-            event_id = self.main_panel.get_id_of_first_selected_event()
-            event = self.timeline.find_event_with_id(event_id)
-        except IndexError:
-            # No event selected so do nothing!
-            return
-        open_duplicate_event_dialog_for_event(
-            self,
-            self.timeline,
-            self.handle_db_error,
-            event)
-
-    def _create_timeline_set_category_menu_item(self, timeline_menu):
-        self.mnu_timeline_set_event_category = timeline_menu.Append(
-            wx.ID_ANY, _("Set Category on Selected Events..."), _("Set Category on Selected Events..."))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_to_selected_evets_on_click,
-                  self.mnu_timeline_set_event_category)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_set_event_category)
-
-    def _mnu_timeline_set_category_to_selected_evets_on_click(self, evt):
-        def edit_function():
-                self.set_category_to_selected_events()
-        safe_locking(self, edit_function)
-
-    def _create_timeline_edit_event_menu_item(self, timeline_menu):
-        self.mnu_timeline_edit_event = timeline_menu.Append(
-            wx.ID_ANY, _("&Edit Selected Event..."), _("Edit the Selected Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_event_on_click,
-                  self.mnu_timeline_edit_event)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_edit_event)
-
-    def _mnu_timeline_edit_event_on_click(self, evt):
-        try:
-            event_id = self.main_panel.get_id_of_first_selected_event()
-            event = self.timeline.find_event_with_id(event_id)
-        except IndexError:
-            # No event selected so do nothing!
-            return
-        self.main_panel.open_event_editor(event)
-
-    def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
-        self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
-            wx.ID_ANY, _("&Measure Distance between two Events..."),
-            _("Measure the Distance between two Events"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_measure_distance_between_events_on_click,
-                  self.mnu_timeline_measure_distance_between_events)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_measure_distance_between_events)
-
-    def _mnu_timeline_measure_distance_between_events_on_click(self, evt):
-        self._measure_distance_between_events()
 
     def _measure_distance_between_events(self):
         event1, event2 = self._get_selected_events()
@@ -547,40 +674,6 @@ class MainFrame(wx.Frame):
         dialog.ShowModal()
         dialog.Destroy()
 
-    def _create_timeline_edit_categories(self, timeline_menu):
-        edit_categories_item = timeline_menu.Append(
-            wx.ID_ANY, _("Edit &Categories"), _("Edit categories"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
-                  edit_categories_item)
-        self.menu_controller.add_menu_requiring_writable_timeline(edit_categories_item)
-
-    def _mnu_timeline_edit_categories_on_click(self, evt):
-        def edit_function():
-            self.edit_categories()
-        safe_locking(self, edit_function)
-
-    def _create_timeline_set_category(self, timeline_menu):
-        set_category_item = timeline_menu.Append(
-            wx.ID_ANY, _("Set Category on events without category..."), 
-            _("Set Category on events without category..."))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_on_click,
-                  set_category_item)
-        self.menu_controller.add_menu_requiring_writable_timeline(set_category_item)
-
-    def _mnu_timeline_set_category_on_click(self, evt):
-        def edit_function():
-            self.set_category()
-        safe_locking(self, edit_function)
-
-    def _create_timeline_set_readonly(self, timeline_menu):
-        item = timeline_menu.Append(
-            wx.ID_ANY, _("Read Only"), _("Read Only"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_readonly_on_click, item)
-        self.menu_controller.add_menu_requiring_writable_timeline(item)
-
-    def _mnu_timeline_set_readonly_on_click(self, evt):
-        self.controller.set_timeline_in_readonly_mode()
-        
     def timeline_is_readonly(self):
         self.status_bar_adapter.set_read_only_text(_("read-only"))
         self.enable_disable_menus()
@@ -602,54 +695,6 @@ class MainFrame(wx.Frame):
             return SetCategoryEditorDialog(self, self.timeline, selected_event_ids)
         gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
         self.main_panel.redraw_timeline()
-
-    def _create_navigate_menu(self, main_menu_bar):
-        navigate_menu = wx.Menu()
-        self._navigation_menu_items = []
-        self._navigation_functions_by_menu_item_id = {}
-        self.update_navigation_menu_items()
-        navigate_menu.AppendSeparator()
-        self._create_navigate_find_first_event_menu_item(navigate_menu)
-        self._create_navigate_find_last_event_menu_item(navigate_menu)
-        self._create_navigate_fit_all_events_menu_item(navigate_menu)
-        main_menu_bar.Append(navigate_menu, _("&Navigate"))
-        self.mnu_navigate = navigate_menu
-
-    def _create_navigate_find_first_event_menu_item(self, navigate_menu):
-        find_first = navigate_menu.Append(wx.ID_ANY, _("Find First Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_first_on_click, find_first)
-        self.menu_controller.add_menu_requiring_timeline(find_first)
-
-    def _mnu_navigate_find_first_on_click(self, evt):
-        event = self.timeline.get_first_event()
-        if event:
-            start = event.time_period.start_time
-            delta = self.main_panel.get_displayed_period_delta()
-            end   = start + delta
-            margin_delta = self.timeline.get_time_type().margin_delta(delta)
-            self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
-
-    def _create_navigate_find_last_event_menu_item(self, navigate_menu):
-        find_last = navigate_menu.Append(wx.ID_ANY, _("Find Last Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_last_on_click, find_last)
-        self.menu_controller.add_menu_requiring_timeline(find_last)
-
-    def _mnu_navigate_find_last_on_click(self, evt):
-        event = self.timeline.get_last_event()
-        if event:
-            end = event.time_period.end_time
-            delta = self.main_panel.get_displayed_period_delta()
-            start = end - delta
-            margin_delta = self.timeline.get_time_type().margin_delta(delta)
-            self._navigate_timeline(lambda tp: tp.update(start, end, end_delta=margin_delta))
-
-    def _create_navigate_fit_all_events_menu_item(self, navigate_menu):
-        fit_all_events = navigate_menu.Append(wx.ID_ANY, _("Fit All Events"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_all_events_on_click, fit_all_events)
-        self.menu_controller.add_menu_requiring_timeline(fit_all_events)
-
-    def _mnu_navigate_fit_all_events_on_click(self, evt):
-        self._fit_all_events()
 
     def _fit_all_events(self):
         all_period = self._period_for_all_visible_events()
@@ -686,47 +731,6 @@ class MainFrame(wx.Frame):
     def _last_time(self, events):
         end_time = lambda event: event.time_period.end_time
         return end_time(max(events, key=end_time))
-
-    def _create_help_menu(self, main_menu_bar):
-        help_menu = wx.Menu()
-        self._create_help_contents_menu_item(help_menu)
-        help_menu.AppendSeparator()
-        self._create_help_tutorial_menu_item(help_menu)
-        self._create_help_contact_menu_item(help_menu)
-        help_menu.AppendSeparator()
-        self._create_help_about_menu_item(help_menu)
-        main_menu_bar.Append(help_menu, _("&Help"))
-
-    def _create_help_contents_menu_item(self, help_menu):
-        contents_item = help_menu.Append(wx.ID_HELP, _("&Contents\tF1"))
-        self.Bind(wx.EVT_MENU, self._mnu_help_contents_on_click, contents_item)
-
-    def _mnu_help_contents_on_click(self, e):
-        self.help_browser.show_page("contents")
-
-    def _create_help_tutorial_menu_item(self, help_menu):
-        tutorial_item = help_menu.Append(wx.ID_ANY, _("Getting started tutorial"))
-        self.Bind(wx.EVT_MENU, self._mnu_help_tutorial_on_click, tutorial_item)
-
-    def _mnu_help_tutorial_on_click(self, e):
-        self.controller.open_timeline(":tutorial:")
-
-    def _create_help_contact_menu_item(self, help_menu):
-        contact_item = help_menu.Append(wx.ID_ANY, _("Contact"))
-        self.Bind(wx.EVT_MENU, self._mnu_help_contact_on_click, contact_item)
-
-    def _mnu_help_contact_on_click(self, e):
-        self.help_browser.show_page("contact")
-
-    def _create_help_about_menu_item(self, help_menu):
-        about_item = help_menu.Append(wx.ID_ABOUT)
-        self.Bind(wx.EVT_MENU, self._mnu_help_about_on_click, about_item)
-
-    def _mnu_help_about_on_click(self, e):
-        display_about_dialog()
-
-    def _bind_frame_events(self):
-        self.Bind(wx.EVT_CLOSE, self._window_on_close)
 
     def _window_on_close(self, event):
         self._save_current_timeline_data()
