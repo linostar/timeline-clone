@@ -55,6 +55,11 @@ import timelinelib.printing as printing
 import timelinelib.wxgui.utils as gui_utils
 
 
+ID_SIDEBAR = wx.NewId()
+ID_LEGEND = wx.NewId()
+ID_BALLOONS = wx.NewId()
+
+
 class GuiCreator(object):
     
     def _create_gui(self):
@@ -201,32 +206,44 @@ class GuiCreator(object):
         self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click, preferences_item)
 
     def _create_view_menu(self, main_menu_bar):
+        def sidebar(evt):
+            self.config.set_show_sidebar(evt.IsChecked())
+            if evt.IsChecked():
+                self.main_panel.show_sidebar()
+            else:
+                self.main_panel.hide_sidebar()
+        def legend(evt):
+            self.config.set_show_legend(evt.IsChecked())
+            self.main_panel.show_hide_legend(evt.IsChecked())
+        def balloons(evt):
+            self.config.set_balloon_on_hover(evt.IsChecked())
+            self.main_panel.balloon_visibility_changed(evt.IsChecked())
+        cbx = True
+        items = ((ID_SIDEBAR, sidebar, _("&Sidebar\tCtrl+I"), cbx),
+                 (ID_LEGEND, legend, _("&Legend"), cbx),
+                 None,
+                 (ID_BALLOONS, balloons, _("&Balloons on hover"), cbx))
         view_menu = wx.Menu()
-        self._create_view_sidebar_menu_item(view_menu)
-        self._create_view_legend_menu_item(view_menu)
-        view_menu.AppendSeparator()
-        self._create_view_balloons_menu_item(view_menu)
+        self._create_menu_items(view_menu, items)
+        self._check_view_menu_items(view_menu)
+        self._add_view_menu_items_to_controller(view_menu)
         main_menu_bar.Append(view_menu, _("&View"))
 
-    def _create_view_sidebar_menu_item(self, view_menu):
-        view_sidebar_item = view_menu.Append(
-            wx.ID_ANY, _("&Sidebar\tCtrl+I"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_sidebar_on_click, view_sidebar_item)
-        self.menu_controller.add_menu_requiring_visible_timeline_view(view_sidebar_item)
-        view_sidebar_item.Check(self.config.get_show_sidebar())
+    def _check_view_menu_items(self, view_menu):
+        sidebar_item = view_menu.FindItemById(ID_SIDEBAR)
+        legend_item = view_menu.FindItemById(ID_LEGEND)
+        balloons_item = view_menu.FindItemById(ID_BALLOONS)
+        sidebar_item.Check(self.config.get_show_sidebar())
+        legend_item.Check(self.config.get_show_legend())
+        balloons_item.Check(self.config.get_balloon_on_hover())
 
-    def _create_view_legend_menu_item(self, view_menu):
-        view_legend_item = view_menu.Append(
-            wx.ID_ANY, _("&Legend"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_legend_on_click, view_legend_item)
-        self.menu_controller.add_menu_requiring_timeline(view_legend_item)
-        view_legend_item.Check(self.config.get_show_legend())
-
-    def _create_view_balloons_menu_item(self, view_menu):
-        view_balloons_item = view_menu.Append(
-            wx.ID_ANY, _("&Balloons on hover"), kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self._mnu_view_balloons_on_click, view_balloons_item)
-        view_balloons_item.Check(self.config.get_balloon_on_hover())
+    def _add_view_menu_items_to_controller(self, view_menu):
+        sidebar_item = view_menu.FindItemById(ID_SIDEBAR)
+        legend_item = view_menu.FindItemById(ID_LEGEND)
+        balloons_item = view_menu.FindItemById(ID_BALLOONS)
+        self.menu_controller.add_menu_requiring_visible_timeline_view(sidebar_item)
+        self.menu_controller.add_menu_requiring_timeline(legend_item)
+        self.menu_controller.add_menu_requiring_timeline(balloons_item)
 
     def _create_timeline_menu(self, main_menu_bar):
         timeline_menu = wx.Menu()
@@ -335,30 +352,38 @@ class GuiCreator(object):
             self.help_browser.show_page("contact")
         def about(e):
             display_about_dialog()
-        items = ((wx.ID_HELP, contents, _("&Contents\tF1")),
+        cbx = False
+        items = ((wx.ID_HELP, contents, _("&Contents\tF1"), cbx),
                  None,
-                 (wx.ID_ANY, tutorial, _("Getting started tutorial")),
-                 (wx.ID_ANY, contact, _("Contact")),
+                 (wx.ID_ANY, tutorial, _("Getting started tutorial"), cbx),
+                 (wx.ID_ANY, contact, _("Contact"), cbx),
                  None,
-                 (wx.ID_ABOUT, about, None))
+                 (wx.ID_ABOUT, about, None, cbx))
         help_menu = wx.Menu()
         self._create_menu_items(help_menu, items)
         main_menu_bar.Append(help_menu, _("&Help"))
 
     def _create_menu_items(self, menu, items):
+        menu_items = []
         for item in items:
             if item is not None:
-                self._create_menu_item(menu, item)
+                menu_item = self._create_menu_item(menu, item)
+                menu_items.append(menu_item)
             else:
                 menu.AppendSeparator()
-                
-    def _create_menu_item(self, menu, item):
-        item_id, handler, label = item
+        return menu_items
+    
+    def _create_menu_item(self, menu, item_spec):
+        item_id, handler, label, checkbox = item_spec
         if label is not None:
-            item = menu.Append(item_id, label)
+            if checkbox:
+                item = menu.Append(item_id, label, kind=wx.ITEM_CHECK)
+            else:
+                item = menu.Append(item_id, label)
         else:
             item = menu.Append(item_id)
         self.Bind(wx.EVT_MENU, handler, item)
+        return item
         
     def _mnu_file_new_on_click(self, event):
         self._create_new_timeline()
@@ -406,21 +431,6 @@ class GuiCreator(object):
             dialog.ShowModal()
             dialog.Destroy()
         safe_locking(self, edit_function)
-
-    def _mnu_view_sidebar_on_click(self, evt):
-        self.config.set_show_sidebar(evt.IsChecked())
-        if evt.IsChecked():
-            self.main_panel.show_sidebar()
-        else:
-            self.main_panel.hide_sidebar()
-
-    def _mnu_view_legend_on_click(self, evt):
-        self.config.set_show_legend(evt.IsChecked())
-        self.main_panel.show_hide_legend(evt.IsChecked())
-
-    def _mnu_view_balloons_on_click(self, evt):
-        self.config.set_balloon_on_hover(evt.IsChecked())
-        self.main_panel.balloon_visibility_changed(evt.IsChecked())
 
     def _mnu_timeline_create_event_on_click(self, evt):
         open_create_event_editor(self, self.config, self.timeline, 
