@@ -811,7 +811,8 @@ class MainFrame(wx.Frame, GuiCreator):
 
     def _navigation_menu_item_on_click(self, evt):
         fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
-        fn(self, self._get_time_period(), self._navigate_timeline)
+        time_period = self.main_panel.get_time_period()
+        fn(self, time_period, self._navigate_timeline)
 
     def update_open_recent_submenu(self):
         # Clear items
@@ -871,9 +872,6 @@ class MainFrame(wx.Frame, GuiCreator):
 
     def _navigate_timeline(self, navigation_fn):
         return self.main_panel.navigate_timeline(navigation_fn)
-
-    def _get_time_period(self):
-        return self.main_panel.get_time_period()
 
     def display_time_editor_dialog(self, time_type, initial_time,
                                    handle_new_time_fn, title):
