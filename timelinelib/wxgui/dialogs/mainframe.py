@@ -650,7 +650,7 @@ class MainFrame(wx.Frame, GuiCreator):
 
     def _measure_distance_between_events(self):
         event1, event2 = self._get_selected_events()
-        distance = self._calc_events_distance(event1, event2)
+        distance = self.controller.calc_events_distance(event1, event2)
         self._display_distance(distance)
 
     def _get_selected_events(self):
@@ -658,15 +658,6 @@ class MainFrame(wx.Frame, GuiCreator):
         event1 = self.timeline.find_event_with_id(event_id_1)
         event2 = self.timeline.find_event_with_id(event_id_2)
         return event1, event2
-
-    def _calc_events_distance(self,event1, event2):
-        if event1.time_period.start_time <= event2.time_period.start_time:
-            distance = (event2.time_period.start_time -
-                        event1.time_period.end_time)
-        else:
-            distance = (event1.time_period.start_time -
-                        event2.time_period.end_time)
-        return distance
 
     def _display_distance(self, distance):
         header = _("Distance between selected events")

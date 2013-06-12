@@ -112,6 +112,15 @@ class TimelineApplication(object):
             self._lock()
         return True
     
+    def calc_events_distance(self, event1, event2):
+        if event1.time_period.start_time <= event2.time_period.start_time:
+            distance = (event2.time_period.start_time -
+                        event1.time_period.end_time)
+        else:
+            distance = (event1.time_period.start_time -
+                        event2.time_period.end_time)
+        return distance
+        
     def _timeline_path_doesnt_exists_yet(self):
         return not os.path.exists(self.timelinepath)
         
