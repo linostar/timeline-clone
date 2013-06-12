@@ -1065,7 +1065,7 @@ class MainPanel(wx.Panel):
         return self._get_view_properties().displayed_period.delta()
     
     def get_time_period(self):
-        return self.get_time_period()
+        return self.timeline_panel.get_time_period()
         
     def get_ids_of_two_first_selected_events(self):
         view_properties = self._get_view_properties()
@@ -1199,6 +1199,9 @@ class TimelinePanel(wx.Panel):
     def get_scene(self):
         return self.drawing_area.get_drawer().scene
             
+    def get_time_period(self):
+        return self.drawing_area.get_time_period()
+                
     def show_hide_legend(self, checked):    
         self.drawing_area.show_hide_legend(checked)
     
