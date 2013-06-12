@@ -815,20 +815,26 @@ class MainFrame(wx.Frame, GuiCreator):
         fn(self, time_period, self._navigate_timeline)
 
     def update_open_recent_submenu(self):
-        # Clear items
+        self._clear_recent_menu_items()
+        self._create_recent_menu_items()
+
+    def _clear_recent_menu_items(self):
         for item in self.mnu_file_open_recent_submenu.GetMenuItems():
             self.mnu_file_open_recent_submenu.DeleteItem(item)
-        # Create new items and map (item id > path)
+        
+    def _create_recent_menu_items(self):
         self.open_recent_map = {}
         for path in self.config.get_recently_opened():
-            name = "%s (%s)" % (
-                os.path.basename(path),
-                os.path.dirname(os.path.abspath(path)))
-            item = self.mnu_file_open_recent_submenu.Append(wx.ID_ANY, name)
-            self.open_recent_map[item.GetId()] = path
-            self.Bind(wx.EVT_MENU, self._mnu_file_open_recent_item_on_click,
-                      item)
+            self._map_path_to_recent_menu_item(path)
 
+    def _map_path_to_recent_menu_item(self, path):
+        name = "%s (%s)" % (
+            os.path.basename(path),
+            os.path.dirname(os.path.abspath(path)))
+        item = self.mnu_file_open_recent_submenu.Append(wx.ID_ANY, name)
+        self.open_recent_map[item.GetId()] = path
+        self.Bind(wx.EVT_MENU, self._mnu_file_open_recent_item_on_click, item)
+                
     def _mnu_file_open_recent_item_on_click(self, event):
         path = self.open_recent_map[event.GetId()]
         self.controller.open_timeline_if_exists(path)
