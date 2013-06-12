@@ -533,7 +533,7 @@ class MainFrame(wx.Frame, GuiCreator):
         self._create_and_start_timer()
 
     def week_starts_on_monday(self):
-        return self.config.week_start == "monday"
+        self.controller.week_starts_on_monday()
 
     def ok_to_edit(self):
         return self.controller.ok_to_edit()

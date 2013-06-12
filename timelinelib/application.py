@@ -85,7 +85,10 @@ class TimelineApplication(object):
             self.main_frame.timeline_is_readonly()
         except:
             pass
-        
+    
+    def week_starts_on_monday(self):
+        return self.config.week_start == "monday"
+    
     def ok_to_edit(self):
         if self.timeline is None:
             return True
