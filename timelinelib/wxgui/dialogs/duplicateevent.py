@@ -20,7 +20,7 @@ import wx
 
 from timelinelib.editors.duplicateevent import DuplicateEventEditor
 from timelinelib.wxgui.utils import BORDER
-from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 import timelinelib.wxgui.utils as gui_utils
 from timelinelib.db.utils import safe_locking
@@ -65,7 +65,7 @@ class DuplicateEventDialog(wx.Dialog):
         gui_utils.handle_db_error_in_dialog(self, e)
 
     def handle_date_errors(self, error_count):
-       _display_error_message(
+       display_error_message(
             _("%d Events not duplicated due to missing dates.")
             % error_count)
 

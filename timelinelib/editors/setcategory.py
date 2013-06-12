@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_error_message
 
  
 class SetCategoryEditor(object):
@@ -29,7 +29,7 @@ class SetCategoryEditor(object):
     def save(self):
         category = self.view.get_category()
         if not self._category_is_given(category) and self.selected_event_ids == []:
-            _display_error_message(_("You must select a category!"))
+            display_error_message(_("You must select a category!"))
         else:
             self._save_category_in_events(category)
             self.view.close()

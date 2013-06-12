@@ -24,7 +24,7 @@ from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.wxgui.utils import get_user_ack
 from timelinelib.wxgui.utils import display_warning_message
-from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_error_message
 
 
 class LockedException(Exception):
@@ -53,7 +53,7 @@ class TimelineApplication(object):
         if os.path.exists(path):
             self.open_timeline(path)
         else:
-            _display_error_message(_("File '%s' does not exist.") % path, self.main_frame)
+            display_error_message(_("File '%s' does not exist.") % path, self.main_frame)
             
     def open_timeline(self, path, import_timeline=False):
         try:

@@ -19,7 +19,7 @@
 import wx
 
 from timelinelib.wxgui.utils import BORDER
-from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import time_picker_for
 from timelinelib.utils import ex_msg
 
@@ -65,7 +65,7 @@ class TimeEditorDialog(wx.Dialog):
         try:
             self.time = self.time_picker.get_value()
         except ValueError, ex:
-            _display_error_message(ex_msg(ex))
+            display_error_message(ex_msg(ex))
         else:
             self.EndModal(wx.ID_OK)
         

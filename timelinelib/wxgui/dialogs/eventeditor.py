@@ -28,7 +28,7 @@ from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 from timelinelib.wxgui.components.categorychoice import CategoryChoice
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.utils import BORDER
-from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import _set_focus_and_select
 from timelinelib.wxgui.utils import time_picker_for
 import timelinelib.wxgui.utils as gui_utils
@@ -409,14 +409,14 @@ class EventEditorDialog(wx.Dialog):
         self._display_invalid_input(message, self.txt_text)
 
     def _display_invalid_input(self, message, control):
-        _display_error_message(message, self)
+        display_error_message(message, self)
         _set_focus_and_select(control)
 
     def display_db_exception(self, e):
         gui_utils.handle_db_error_in_dialog(self, e)
 
     def display_error_message(self, message):
-        _display_error_message(message, self)
+        display_error_message(message, self)
 
     def clear_dialog(self):
         self.controller.clear()

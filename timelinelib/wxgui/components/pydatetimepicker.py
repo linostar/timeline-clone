@@ -23,7 +23,7 @@ import wx.calendar
 
 from timelinelib.config.paths import ICONS_DIR
 from timelinelib.time import PyTimeType
-from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_error_message
 
 
 class PyDateTimePicker(wx.Panel):
@@ -81,7 +81,7 @@ class PyDateTimePicker(wx.Panel):
             calendar_popup.Popup()
             self.calendar_popup = calendar_popup
         except ValueError:
-             _display_error_message(_("Invalid date"))
+             display_error_message(_("Invalid date"))
 
 
     def _calendar_on_date_changed(self, evt):

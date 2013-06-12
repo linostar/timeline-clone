@@ -48,7 +48,7 @@ from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.wxgui.utils import _ask_question
-from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 from timelinelib.wxgui.timer import TimelineTimer
@@ -629,7 +629,7 @@ class MainFrame(wx.Frame, GuiCreator):
 
     def _export_to_svg_image(self):
         if not self._has_pysvg_module():
-            _display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
+            display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
             return
         wildcard = self.images_svg_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Export to SVG"),
@@ -710,7 +710,7 @@ class MainFrame(wx.Frame, GuiCreator):
             else:
                 return None
         except ValueError, ex:
-            _display_error_message(ex.message)
+            display_error_message(ex.message)
         return None
 
     def _all_visible_events(self):
@@ -740,13 +740,13 @@ class MainFrame(wx.Frame, GuiCreator):
         except IOError, ex:
             friendly = _("Unable to write configuration file.")
             msg = "%s\n\n%s" % (friendly, ex_msg(ex))
-            _display_error_message(msg, self)
+            display_error_message(msg, self)
 
     def open_timeline(self, input_file, import_timeline=False):
         self.controller.open_timeline(input_file, import_timeline)
 
     def handle_db_error(self, error):
-        _display_error_message(ex_msg(error), self)
+        display_error_message(ex_msg(error), self)
         self._switch_to_error_view(error)
 
     def _switch_to_error_view(self, error):
