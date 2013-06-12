@@ -49,6 +49,7 @@ from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import _display_error_message
+from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 from timelinelib.wxgui.timer import TimelineTimer
 import timelinelib.printing as printing
@@ -660,17 +661,11 @@ class MainFrame(wx.Frame, GuiCreator):
         return event1, event2
 
     def _display_distance(self, distance):
-        header = _("Distance between selected events")
+        caption = _("Distance between selected events")
         distance_text = self.timeline.get_time_type().format_delta(distance)
         if distance_text == "0":
             distance_text = _("Events are overlapping or distance is 0")
-        self._display_text(header, distance_text)
-
-    def _display_text(self, header, text):
-        dialog = wx.MessageDialog(self, text, header,
-                                  wx.OK | wx.ICON_INFORMATION)
-        dialog.ShowModal()
-        dialog.Destroy()
+        display_information_message(caption, distance_text)
 
     def timeline_is_readonly(self):
         self.status_bar_adapter.set_read_only_text(_("read-only"))

@@ -139,6 +139,11 @@ def display_warning_message(message, parent=None):
     dial = wx.MessageDialog(parent, message, _("Warning"), wx.OK | wx.ICON_WARNING)
     dial.ShowModal()
 
+def display_information_message(caption, message, parent=None):
+    dialog = wx.MessageDialog(parent, message, caption, 
+                              wx.OK | wx.ICON_INFORMATION)
+    dialog.ShowModal()
+    dialog.Destroy()
 
 def get_user_ack(question, parent=None):
     return wx.MessageBox(question, _("Question"),
