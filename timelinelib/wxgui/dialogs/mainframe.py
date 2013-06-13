@@ -760,7 +760,7 @@ class MainFrame(wx.Frame, GuiCreator):
         self.menu_controller.on_timeline_change(timeline)
         self.main_panel.display_timeline(timeline)
         self._set_title()
-        self._set_readonly_text()
+        self._set_readonly_text_in_status_bar()
 
     def _set_title(self):
         if self.timeline == None:
@@ -771,11 +771,12 @@ class MainFrame(wx.Frame, GuiCreator):
                 os.path.dirname(os.path.abspath(self.timeline.path)),
                 APPLICATION_NAME))
         
-    def _set_readonly_text(self):
-        self.status_bar_adapter.set_read_only_text("")
-        if self.timeline is not None:
-            if self.timeline.is_read_only():
-                self.status_bar_adapter.set_read_only_text(_("read-only"))
+    def _set_readonly_text_in_status_bar(self):
+        if self.controller.timeline_is_readonly():
+            text = _("read-only")
+        else:
+            text = ""
+        self.status_bar_adapter.set_read_only_text(text)
         
     def _add_ellipses_to_menuitem(self, id):
         plain = wx.GetStockLabel(id,

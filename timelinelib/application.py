@@ -130,6 +130,9 @@ class TimelineApplication(object):
                 self.last_changed = self._get_modification_date()
                 self._unlock()
         
+    def timeline_is_readonly(self):
+        return self.timeline is not None and self.timeline.is_read_only()
+    
     def _get_modification_date(self):
         try:
             return os.path.getmtime(self.timelinepath)
