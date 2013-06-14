@@ -82,7 +82,7 @@ class TimelineApplication(object):
     def set_timeline_in_readonly_mode(self):
         try:
             self.timeline.set_readonly()
-            self.main_frame.timeline_is_readonly()
+            self.main_frame.set_timeline_readonly()
         except:
             pass
     

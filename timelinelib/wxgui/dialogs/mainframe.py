@@ -502,8 +502,37 @@ class GuiCreator(object):
         self._fit_all_events()
 
 
+class MainFrameApiUSedByController(object):
+    
+    def open_timeline(self, input_file, import_timeline=False):
+        self.controller.open_timeline(input_file, import_timeline)
+
+    def set_timeline_readonly(self):
+        self._set_readonly_text_in_status_bar()
+        self.enable_disable_menus()
+
+    def handle_db_error(self, error):
+        display_error_message(ex_msg(error), self)
+        self._switch_to_error_view(error)
+
+    def update_open_recent_submenu(self):
+        self._clear_recent_menu_items()
+        self._create_recent_menu_items()
+
+    def display_timeline(self, timeline):
+        self.timeline = timeline
+        self.menu_controller.on_timeline_change(timeline)
+        self.main_panel.display_timeline(timeline)
+        self._set_title()
+        self._set_readonly_text_in_status_bar()
+
+    def open_play_frame(self, timeline):
+        dialog = PlayFrame(timeline, self.config)
+        dialog.ShowModal()
+        dialog.Destroy()
+
        
-class MainFrame(wx.Frame, GuiCreator):
+class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
 
     def __init__(self, application_arguments):
         self.config = read_config(application_arguments.get_config_file_path())
@@ -667,10 +696,6 @@ class MainFrame(wx.Frame, GuiCreator):
             distance_text = _("Events are overlapping or distance is 0")
         display_information_message(caption, distance_text)
 
-    def timeline_is_readonly(self):
-        self.status_bar_adapter.set_read_only_text(_("read-only"))
-        self.enable_disable_menus()
-
     def edit_categories(self):
         def create_categories_editor():
             return CategoriesEditor(self, self.timeline)
@@ -742,25 +767,11 @@ class MainFrame(wx.Frame, GuiCreator):
             msg = "%s\n\n%s" % (friendly, ex_msg(ex))
             display_error_message(msg, self)
 
-    def open_timeline(self, input_file, import_timeline=False):
-        self.controller.open_timeline(input_file, import_timeline)
-
-    def handle_db_error(self, error):
-        display_error_message(ex_msg(error), self)
-        self._switch_to_error_view(error)
-
     def _switch_to_error_view(self, error):
         self.controller.set_no_timeline()
         self.main_panel.error_panel.populate(error)
         self.main_panel.show_error_panel()
         self.enable_disable_menus()
-
-    def display_timeline(self, timeline):
-        self.timeline = timeline
-        self.menu_controller.on_timeline_change(timeline)
-        self.main_panel.display_timeline(timeline)
-        self._set_title()
-        self._set_readonly_text_in_status_bar()
 
     def _set_title(self):
         if self.timeline == None:
@@ -814,10 +825,6 @@ class MainFrame(wx.Frame, GuiCreator):
         fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
         time_period = self.main_panel.get_time_period()
         fn(self, time_period, self._navigate_timeline)
-
-    def update_open_recent_submenu(self):
-        self._clear_recent_menu_items()
-        self._create_recent_menu_items()
 
     def _clear_recent_menu_items(self):
         for item in self.mnu_file_open_recent_submenu.GetMenuItems():
@@ -885,11 +892,6 @@ class MainFrame(wx.Frame, GuiCreator):
         dialog = TimeEditorDialog(self, self.config, time_type, initial_time, title)
         if dialog.ShowModal() == wx.ID_OK:
             handle_new_time_fn(dialog.time)
-        dialog.Destroy()
-
-    def open_play_frame(self, timeline):
-        dialog = PlayFrame(timeline, self.config)
-        dialog.ShowModal()
         dialog.Destroy()
 
     def _timer_tick(self, evt):
