@@ -461,7 +461,7 @@ class GuiCreator(object):
 
     def _mnu_timeline_set_category_to_selected_evets_on_click(self, evt):
         def edit_function():
-                self.set_category_to_selected_events()
+                self._set_category_to_selected_events()
         safe_locking(self, edit_function)
 
     def _mnu_timeline_measure_distance_between_events_on_click(self, evt):
@@ -469,12 +469,12 @@ class GuiCreator(object):
 
     def _mnu_timeline_set_category_on_click(self, evt):
         def edit_function():
-            self.set_category()
+            self._set_category()
         safe_locking(self, edit_function)
 
     def _mnu_timeline_edit_categories_on_click(self, evt):
         def edit_function():
-            self.edit_categories()
+            self._edit_categories()
         safe_locking(self, edit_function)
 
     def _mnu_timeline_set_readonly_on_click(self, evt):
@@ -500,6 +500,15 @@ class GuiCreator(object):
 
     def _mnu_navigate_fit_all_events_on_click(self, evt):
         self._fit_all_events()
+
+    def _add_ellipses_to_menuitem(self, id):
+        plain = wx.GetStockLabel(id,
+                wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
+        # format of plain 'xxx[\tyyy]', example '&New\tCtrl+N'
+        tab_index = plain.find("\t")
+        if tab_index != -1:
+            return plain[:tab_index] + "..." + plain[tab_index:]
+        return plain + "..."
 
 
 class MainFrameApiUSedByController(object):
@@ -531,247 +540,17 @@ class MainFrameApiUSedByController(object):
         dialog.ShowModal()
         dialog.Destroy()
 
-       
-class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
+    def update_navigation_menu_items(self):
+        self._clear_navigation_menu_items()
+        if self.timeline:
+            self._create_navigation_menu_items()
 
-    def __init__(self, application_arguments):
-        self.config = read_config(application_arguments.get_config_file_path())
-
-        wx.Frame.__init__(self, None, size=self.config.get_window_size(),
-                          pos=self.config.get_window_pos(),
-                          style=wx.DEFAULT_FRAME_STYLE, name="main_frame")
-
-        # To enable translations of wx stock items.
-        self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-
-        self.help_browser = HelpBrowser(self)
-        self.controller = TimelineApplication(self, db_open, self.config)
-        self.menu_controller = MenuController()
-
-        self._set_initial_values_to_member_variables()
-        self._create_print_data()
-        self._create_gui()
-
-        self.Maximize(self.config.get_window_maximized())
-        self.SetTitle(APPLICATION_NAME)
-        self.SetIcons(self._load_icon_bundle())
-
-        self.main_panel.show_welcome_panel()
-        self.enable_disable_menus()
-
-        self.controller.on_started(application_arguments)
-        self._create_and_start_timer()
-
-    def week_starts_on_monday(self):
-        self.controller.week_starts_on_monday()
-
-    def ok_to_edit(self):
-        return self.controller.ok_to_edit()
-        
-    def edit_ends(self):
-        self.controller.edit_ends()
-        
-    def _create_and_start_timer(self):
-        self.alert_dialog_open = False
-        self.timer = TimelineTimer(self)
-        self.timer.register(self._timer_tick)
-        self.timer.start(10000)
-
-    def _set_initial_values_to_member_variables(self):
-        self.timeline = None
-        self.timeline_wildcard_helper = WildcardHelper(
-            _("Timeline files"), ["timeline", "ics"])
-        self.images_svg_wildcard_helper = WildcardHelper(
-            _("SVG files"), ["svg"])
-
-    def _create_print_data(self):
-        self.printData = wx.PrintData()
-        self.printData.SetPaperId(wx.PAPER_A4)
-        self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
-        self.printData.SetOrientation(wx.LANDSCAPE)
-
-
-    def _create_new_timeline(self):
-        wildcard = self.timeline_wildcard_helper.wildcard_string()
-        dialog = wx.FileDialog(self, message=_("Create Timeline"),
-                               wildcard=wildcard, style=wx.FD_SAVE)
-        if dialog.ShowModal() == wx.ID_OK:
-            self._save_current_timeline_data()
-            path = self.timeline_wildcard_helper.get_path(dialog)
-            if os.path.exists(path):
-                msg_first_part = _("The specified timeline already exists.")
-                msg_second_part = _("Opening timeline instead of creating new.")
-                wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
-                              _("Information"),
-                              wx.OK|wx.ICON_INFORMATION, self)
-            self.controller.open_timeline(path)
-        dialog.Destroy()
-
-    def _create_new_dir_timeline(self):
-        dialog = wx.DirDialog(self, message=_("Create Timeline"))
-        if dialog.ShowModal() == wx.ID_OK:
-            self._save_current_timeline_data()
-            self.controller.open_timeline(dialog.GetPath())
-        dialog.Destroy()
-
-    def _save_as(self):
-        new_timeline_path = self._get_new_timeline_path_from_user()
-        self._save_timeline_to_new_path(new_timeline_path)
-    
-    def _get_new_timeline_path_from_user(self):
-        defaultDir = os.path.dirname(self.timeline.path)
-        wildcard_helper = WildcardHelper(_("Timeline files"), ["timeline"])
-        wildcard = wildcard_helper.wildcard_string()
-        style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT
-        message = _("Save Timeline As")
-        dialog = wx.FileDialog(self, message=message, defaultDir=defaultDir,
-                               wildcard=wildcard, style=style)
-        if dialog.ShowModal() == wx.ID_OK:
-            new_timeline_path = wildcard_helper.get_path(dialog)
-        else:
-            new_timeline_path = None
-        dialog.Destroy()
-        return new_timeline_path
-
-    def _save_timeline_to_new_path(self, new_timeline_path):
-        if new_timeline_path is not None:
-            if isinstance(self.timeline, XmlTimeline):
-                self.timeline.path = new_timeline_path
-            else:
-                self.timeline =  transform_to_xml_timeline(new_timeline_path, 
-                                                           self.timeline)
-            self._save_current_timeline_data()
-            self.controller.open_timeline(self.timeline.path)
-        
-    def _open_existing_timeline(self, import_timeline=False):
-        dir = ""
-        if self.timeline is not None:
-            dir = os.path.dirname(self.timeline.path)
-        wildcard = self.timeline_wildcard_helper.wildcard_string()
-        dialog = wx.FileDialog(self, message=_("Open Timeline"),
-                               defaultDir=dir,
-                               wildcard=wildcard, style=wx.FD_OPEN)
-        if dialog.ShowModal() == wx.ID_OK:
-            self._save_current_timeline_data()
-            self.controller.open_timeline(dialog.GetPath(), import_timeline)
-        dialog.Destroy()
-
-    def _export_to_svg_image(self):
-        if not self._has_pysvg_module():
-            display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
-            return
-        wildcard = self.images_svg_wildcard_helper.wildcard_string()
-        dialog = wx.FileDialog(self, message=_("Export to SVG"),
-                               wildcard=wildcard, style=wx.FD_SAVE)
-        if dialog.ShowModal() == wx.ID_OK:
-            path = self.images_svg_wildcard_helper.get_path(dialog)
-            overwrite_question = _("File '%s' exists. Overwrite?") % path
-            if (not os.path.exists(path) or
-                _ask_question(overwrite_question, self) == wx.YES):
-                self.main_panel.svgexport(path)
-        dialog.Destroy()
-
-    def _has_pysvg_module(self):
-        try:
-            import pysvg
-            return True
-        except ImportError:
-            return False
-
-    def _measure_distance_between_events(self):
-        event1, event2 = self._get_selected_events()
-        distance = self.controller.calc_events_distance(event1, event2)
-        self._display_distance(distance)
-
-    def _get_selected_events(self):
-        event_id_1, event_id_2 = self.main_panel.get_ids_of_two_first_selected_events()
-        event1 = self.timeline.find_event_with_id(event_id_1)
-        event2 = self.timeline.find_event_with_id(event_id_2)
-        return event1, event2
-
-    def _display_distance(self, distance):
-        caption = _("Distance between selected events")
-        distance_text = self.timeline.get_time_type().format_delta(distance)
-        if distance_text == "0":
-            distance_text = _("Events are overlapping or distance is 0")
-        display_information_message(caption, distance_text)
-
-    def edit_categories(self):
-        def create_categories_editor():
-            return CategoriesEditor(self, self.timeline)
-        gui_utils.show_modal(create_categories_editor, self.handle_db_error)
-
-    def set_category(self):
-        def create_set_category_editor():
-            return SetCategoryEditorDialog(self, self.timeline)
-        gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
-        self.main_panel.redraw_timeline()
-
-    def set_category_to_selected_events(self):
-        selected_event_ids = self.main_panel.get_selected_event_ids()
-        def create_set_category_editor():
-            return SetCategoryEditorDialog(self, self.timeline, selected_event_ids)
-        gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
-        self.main_panel.redraw_timeline()
-
-    def _fit_all_events(self):
-        all_period = self._period_for_all_visible_events()
-        if all_period == None:
-            return
-        if all_period.is_period():
-            all_period = all_period.zoom(-1)
-            self._navigate_timeline(lambda tp: tp.update(all_period.start_time, all_period.end_time))
-        else:
-            self._navigate_timeline(lambda tp: tp.center(all_period.mean_time()))
-
-    def _period_for_all_visible_events(self):
-        try:
-            visible_events = self._all_visible_events()
-            if len(visible_events) > 0:
-                time_type = self.timeline.get_time_type()
-                start = self._first_time(visible_events)
-                end = self._last_time(visible_events)
-                return TimePeriod(time_type, start, end)
-            else:
-                return None
-        except ValueError, ex:
-            display_error_message(ex.message)
-        return None
-
-    def _all_visible_events(self):
-        all_events = self.timeline.get_all_events()
-        return self.main_panel.get_visible_events(all_events)
-
-    def _first_time(self, events):
-        start_time = lambda event: event.time_period.start_time
-        return start_time(min(events, key=start_time))
-
-    def _last_time(self, events):
-        end_time = lambda event: event.time_period.end_time
-        return end_time(max(events, key=end_time))
-
-    def _window_on_close(self, event):
-        self._save_current_timeline_data()
-        self._save_application_config()
-        self.Destroy()
-
-    def _save_application_config(self):
-        self.config.set_window_size(self.GetSize())
-        self.config.set_window_pos(self.GetPosition())
-        self.config.set_window_maximized(self.IsMaximized())
-        self.config.set_sidebar_width(self.main_panel.get_sidebar_width())
-        try:
-            self.config.write()
-        except IOError, ex:
-            friendly = _("Unable to write configuration file.")
-            msg = "%s\n\n%s" % (friendly, ex_msg(ex))
-            display_error_message(msg, self)
-
-    def _switch_to_error_view(self, error):
-        self.controller.set_no_timeline()
-        self.main_panel.error_panel.populate(error)
-        self.main_panel.show_error_panel()
-        self.enable_disable_menus()
+    # Also used by TinmelineView
+    def enable_disable_menus(self):
+        self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())
+        self._enable_disable_one_selected_event_menus()
+        self._enable_disable_measure_distance_between_two_events_menu()
+        self._enable_disable_searchbar()
 
     def _set_title(self):
         if self.timeline == None:
@@ -781,7 +560,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
                 os.path.basename(self.timeline.path),
                 os.path.dirname(os.path.abspath(self.timeline.path)),
                 APPLICATION_NAME))
-        
+
     def _set_readonly_text_in_status_bar(self):
         if self.controller.timeline_is_readonly():
             text = _("read-only")
@@ -789,20 +568,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
             text = ""
         self.status_bar_adapter.set_read_only_text(text)
         
-    def _add_ellipses_to_menuitem(self, id):
-        plain = wx.GetStockLabel(id,
-                wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
-        # format of plain 'xxx[\tyyy]', example '&New\tCtrl+N'
-        tab_index = plain.find("\t")
-        if tab_index != -1:
-            return plain[:tab_index] + "..." + plain[tab_index:]
-        return plain + "..."
-
-    def update_navigation_menu_items(self):
-        self._clear_navigation_menu_items()
-        if self.timeline:
-            self._create_navigation_menu_items()
-
     def _clear_navigation_menu_items(self):
         while self._navigation_menu_items:
             self.mnu_navigate.RemoveItem(self._navigation_menu_items.pop())
@@ -847,12 +612,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
         path = self.open_recent_map[event.GetId()]
         self.controller.open_timeline_if_exists(path)
 
-    def enable_disable_menus(self):
-        self.menu_controller.enable_disable_menus(self.main_panel.timeline_panel_visible())
-        self._enable_disable_one_selected_event_menus()
-        self._enable_disable_measure_distance_between_two_events_menu()
-        self._enable_disable_searchbar()
-
     def _enable_disable_one_selected_event_menus(self):
         nbr_of_selected_events = self.main_panel.get_nbr_of_selected_events()
         one_event_selected = nbr_of_selected_events == 1
@@ -869,12 +628,73 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
         if self.timeline == None:
             self.main_panel.show_searchbar(False)
 
-    def _save_current_timeline_data(self):
-        if self.timeline:
-            try:
-                self.main_panel.save_view_properties(self.timeline)
-            except TimelineIOError, e:
-                self.handle_db_error(e)
+       
+class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
+
+    def __init__(self, application_arguments):
+        self.config = read_config(application_arguments.get_config_file_path())
+
+        wx.Frame.__init__(self, None, size=self.config.get_window_size(),
+                          pos=self.config.get_window_pos(),
+                          style=wx.DEFAULT_FRAME_STYLE, name="main_frame")
+
+        # To enable translations of wx stock items.
+        self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
+
+        self.help_browser = HelpBrowser(self)
+        self.controller = TimelineApplication(self, db_open, self.config)
+        self.menu_controller = MenuController()
+        self._set_initial_values_to_member_variables()
+        self._create_print_data()
+        self._create_gui()
+        self.Maximize(self.config.get_window_maximized())
+        self.SetTitle(APPLICATION_NAME)
+        self.SetIcons(self._load_icon_bundle())
+        self.main_panel.show_welcome_panel()
+        self.enable_disable_menus()
+        self.controller.on_started(application_arguments)
+        self._create_and_start_timer()
+
+    # API:s used by time types
+    def week_starts_on_monday(self):
+        self.controller.week_starts_on_monday()
+
+    def display_time_editor_dialog(self, time_type, initial_time,
+                                   handle_new_time_fn, title):
+        dialog = TimeEditorDialog(self, self.config, time_type, initial_time, title)
+        if dialog.ShowModal() == wx.ID_OK:
+            handle_new_time_fn(dialog.time)
+        dialog.Destroy()
+
+    # Concurrent editing
+    def ok_to_edit(self):
+        return self.controller.ok_to_edit()
+        
+    def edit_ends(self):
+        self.controller.edit_ends()
+        
+    # Creation process methods
+    def _set_initial_values_to_member_variables(self):
+        self.timeline = None
+        self.timeline_wildcard_helper = WildcardHelper(
+            _("Timeline files"), ["timeline", "ics"])
+        self.images_svg_wildcard_helper = WildcardHelper(
+            _("SVG files"), ["svg"])
+
+    def _create_print_data(self):
+        self.printData = wx.PrintData()
+        self.printData.SetPaperId(wx.PAPER_A4)
+        self.printData.SetPrintMode(wx.PRINT_MODE_PRINTER)
+        self.printData.SetOrientation(wx.LANDSCAPE)
+
+    def _create_and_start_timer(self):
+        self.alert_dialog_open = False
+        self.timer = TimelineTimer(self)
+        self.timer.register(self._timer_tick)
+        self.timer.start(10000)
+
+    def _timer_tick(self, evt):
+        self._handle_event_alerts()
 
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()
@@ -884,19 +704,203 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
             bundle.AddIcon(icon)
         return bundle
 
+    # File Menu action handlers
+    def _create_new_timeline(self):
+        wildcard = self.timeline_wildcard_helper.wildcard_string()
+        dialog = wx.FileDialog(self, message=_("Create Timeline"),
+                               wildcard=wildcard, style=wx.FD_SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            self._save_current_timeline_data()
+            path = self.timeline_wildcard_helper.get_path(dialog)
+            if os.path.exists(path):
+                msg_first_part = _("The specified timeline already exists.")
+                msg_second_part = _("Opening timeline instead of creating new.")
+                wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
+                              _("Information"),
+                              wx.OK|wx.ICON_INFORMATION, self)
+            self.controller.open_timeline(path)
+        dialog.Destroy()
+
+    def _create_new_dir_timeline(self):
+        dialog = wx.DirDialog(self, message=_("Create Timeline"))
+        if dialog.ShowModal() == wx.ID_OK:
+            self._save_current_timeline_data()
+            self.controller.open_timeline(dialog.GetPath())
+        dialog.Destroy()
+
+    def _open_existing_timeline(self, import_timeline=False):
+        dir = ""
+        if self.timeline is not None:
+            dir = os.path.dirname(self.timeline.path)
+        wildcard = self.timeline_wildcard_helper.wildcard_string()
+        dialog = wx.FileDialog(self, message=_("Open Timeline"),
+                               defaultDir=dir,
+                               wildcard=wildcard, style=wx.FD_OPEN)
+        if dialog.ShowModal() == wx.ID_OK:
+            self._save_current_timeline_data()
+            self.controller.open_timeline(dialog.GetPath(), import_timeline)
+        dialog.Destroy()
+
+    def _save_as(self):
+        new_timeline_path = self._get_new_timeline_path_from_user()
+        self._save_timeline_to_new_path(new_timeline_path)
+    
+    def _get_new_timeline_path_from_user(self):
+        defaultDir = os.path.dirname(self.timeline.path)
+        wildcard_helper = WildcardHelper(_("Timeline files"), ["timeline"])
+        wildcard = wildcard_helper.wildcard_string()
+        style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT
+        message = _("Save Timeline As")
+        dialog = wx.FileDialog(self, message=message, defaultDir=defaultDir,
+                               wildcard=wildcard, style=style)
+        if dialog.ShowModal() == wx.ID_OK:
+            new_timeline_path = wildcard_helper.get_path(dialog)
+        else:
+            new_timeline_path = None
+        dialog.Destroy()
+        return new_timeline_path
+
+    def _save_timeline_to_new_path(self, new_timeline_path):
+        if new_timeline_path is not None:
+            if isinstance(self.timeline, XmlTimeline):
+                self.timeline.path = new_timeline_path
+            else:
+                self.timeline =  transform_to_xml_timeline(new_timeline_path, 
+                                                           self.timeline)
+            self._save_current_timeline_data()
+            self.controller.open_timeline(self.timeline.path)
+        
+    def _export_to_svg_image(self):
+        if not self._has_pysvg_module():
+            display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
+            return
+        wildcard = self.images_svg_wildcard_helper.wildcard_string()
+        dialog = wx.FileDialog(self, message=_("Export to SVG"),
+                               wildcard=wildcard, style=wx.FD_SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            path = self.images_svg_wildcard_helper.get_path(dialog)
+            overwrite_question = _("File '%s' exists. Overwrite?") % path
+            if (not os.path.exists(path) or
+                _ask_question(overwrite_question, self) == wx.YES):
+                self.main_panel.svgexport(path)
+        dialog.Destroy()
+
+    def _has_pysvg_module(self):
+        try:
+            import pysvg
+            return True
+        except ImportError:
+            return False
+
+    def _window_on_close(self, event):
+        self._save_current_timeline_data()
+        self._save_application_config()
+        self.Destroy()
+
+    def _save_application_config(self):
+        self.config.set_window_size(self.GetSize())
+        self.config.set_window_pos(self.GetPosition())
+        self.config.set_window_maximized(self.IsMaximized())
+        self.config.set_sidebar_width(self.main_panel.get_sidebar_width())
+        try:
+            self.config.write()
+        except IOError, ex:
+            friendly = _("Unable to write configuration file.")
+            msg = "%s\n\n%s" % (friendly, ex_msg(ex))
+            display_error_message(msg, self)
+
+    def _save_current_timeline_data(self):
+        if self.timeline:
+            try:
+                self.main_panel.save_view_properties(self.timeline)
+            except TimelineIOError, e:
+                self.handle_db_error(e)
+
+    # Timeline Menu action handlers
+    def _measure_distance_between_events(self):
+        event1, event2 = self._get_selected_events()
+        distance = self.controller.calc_events_distance(event1, event2)
+        self._display_distance(distance)
+
+    def _get_selected_events(self):
+        event_id_1, event_id_2 = self.main_panel.get_ids_of_two_first_selected_events()
+        event1 = self.timeline.find_event_with_id(event_id_1)
+        event2 = self.timeline.find_event_with_id(event_id_2)
+        return event1, event2
+
+    def _display_distance(self, distance):
+        caption = _("Distance between selected events")
+        distance_text = self.timeline.get_time_type().format_delta(distance)
+        if distance_text == "0":
+            distance_text = _("Events are overlapping or distance is 0")
+        display_information_message(caption, distance_text)
+
+    def _set_category(self):
+        def create_set_category_editor():
+            return SetCategoryEditorDialog(self, self.timeline)
+        gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
+        self.main_panel.redraw_timeline()
+
+    def _set_category_to_selected_events(self):
+        selected_event_ids = self.main_panel.get_selected_event_ids()
+        def create_set_category_editor():
+            return SetCategoryEditorDialog(self, self.timeline, selected_event_ids)
+        gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
+        self.main_panel.redraw_timeline()
+
+    def _edit_categories(self):
+        def create_categories_editor():
+            return CategoriesEditor(self, self.timeline)
+        gui_utils.show_modal(create_categories_editor, self.handle_db_error)
+
+    # Navigate Menu action handlers
     def _navigate_timeline(self, navigation_fn):
         return self.main_panel.navigate_timeline(navigation_fn)
 
-    def display_time_editor_dialog(self, time_type, initial_time,
-                                   handle_new_time_fn, title):
-        dialog = TimeEditorDialog(self, self.config, time_type, initial_time, title)
-        if dialog.ShowModal() == wx.ID_OK:
-            handle_new_time_fn(dialog.time)
-        dialog.Destroy()
+    def _fit_all_events(self):
+        all_period = self._period_for_all_visible_events()
+        if all_period == None:
+            return
+        if all_period.is_period():
+            all_period = all_period.zoom(-1)
+            self._navigate_timeline(lambda tp: tp.update(all_period.start_time, all_period.end_time))
+        else:
+            self._navigate_timeline(lambda tp: tp.center(all_period.mean_time()))
 
-    def _timer_tick(self, evt):
-        self._handle_event_alerts()
+    def _period_for_all_visible_events(self):
+        try:
+            visible_events = self._all_visible_events()
+            if len(visible_events) > 0:
+                time_type = self.timeline.get_time_type()
+                start = self._first_time(visible_events)
+                end = self._last_time(visible_events)
+                return TimePeriod(time_type, start, end)
+            else:
+                return None
+        except ValueError, ex:
+            display_error_message(ex.message)
+        return None
 
+    def _all_visible_events(self):
+        all_events = self.timeline.get_all_events()
+        return self.main_panel.get_visible_events(all_events)
+
+    def _first_time(self, events):
+        start_time = lambda event: event.time_period.start_time
+        return start_time(min(events, key=start_time))
+
+    def _last_time(self, events):
+        end_time = lambda event: event.time_period.end_time
+        return end_time(max(events, key=end_time))
+
+    # Error handling
+    def _switch_to_error_view(self, error):
+        self.controller.set_no_timeline()
+        self.main_panel.error_panel.populate(error)
+        self.main_panel.show_error_panel()
+        self.enable_disable_menus()
+
+    # Timer event handlers
     def _handle_event_alerts(self):
         if self.timeline is None:
             return
