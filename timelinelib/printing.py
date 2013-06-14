@@ -93,7 +93,7 @@ def print_timeline(main_frame):
     pdd = wx.PrintDialogData(main_frame.printData)
     pdd.SetToPage(1)
     printer = wx.Printer(pdd)
-    printout = TimelinePrintout(main_frame.main_panel.drawing_area, False)
+    printout = TimelinePrintout(main_frame.main_panel.get_drawing_area(), False)
     frame = wx.GetApp().GetTopWindow()
     if not printer.Print(frame, printout, True):
         if printer.GetLastError() == wx.PRINTER_ERROR:
@@ -105,8 +105,8 @@ def print_timeline(main_frame):
 
 def print_preview(main_frame):
     data = wx.PrintDialogData(main_frame.printData)
-    printout_preview  = TimelinePrintout(main_frame.main_panel.drawing_area, True)
-    printout = TimelinePrintout(main_frame.main_panel.drawing_area, False)
+    printout_preview  = TimelinePrintout(main_frame.main_panel.get_drawing_area(), True)
+    printout = TimelinePrintout(main_frame.main_panel.get_drawing_area(), False)
     preview = wx.PrintPreview(printout_preview, printout, data)
     if not preview.Ok():
         return
@@ -121,7 +121,7 @@ def print_preview(main_frame):
 def print_setup(main_frame):
     psdd = wx.PageSetupDialogData(main_frame.printData)
     psdd.CalculatePaperSizeFromId()
-    dlg = wx.PageSetupDialog(main_frame.main_panel.drawing_area, psdd)
+    dlg = wx.PageSetupDialog(main_frame.main_panel.get_drawing_area(), psdd)
     dlg.ShowModal()
     # this makes a copy of the wx.PrintData instead of just saving
     # a reference to the one inside the PrintDialogData that will
