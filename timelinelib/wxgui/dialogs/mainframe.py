@@ -657,7 +657,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
 
     # API:s used by time types
     def week_starts_on_monday(self):
-        self.controller.week_starts_on_monday()
+        return self.controller.week_starts_on_monday()
 
     def display_time_editor_dialog(self, time_type, initial_time,
                                    handle_new_time_fn, title):
