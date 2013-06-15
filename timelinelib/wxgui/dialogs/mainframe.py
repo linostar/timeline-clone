@@ -59,6 +59,15 @@ import timelinelib.wxgui.utils as gui_utils
 ID_SIDEBAR = wx.NewId()
 ID_LEGEND = wx.NewId()
 ID_BALLOONS = wx.NewId()
+ID_CREATE_EVENT = wx.NewId()
+ID_EDIT_EVENT = wx.NewId()
+ID_DUPLICATE_EVENT = wx.NewId()
+ID_SET_CATEGORY_ON_SELECTED = wx.NewId()
+ID_MEASURE_DISTANCE = wx.NewId()
+ID_SET_CATEGORY_ON_WITHOUT = wx.NewId()
+ID_EDIT_CATEGORIES = wx.NewId()
+ID_SET_READONLY = wx.NewId()
+REQUIREMENT_WRITEABLE_TIMELINE = 0
 
 
 class GuiCreator(object):
@@ -191,20 +200,21 @@ class GuiCreator(object):
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
 
     def _create_edit_menu(self, main_menu_bar):
+        def find(evt):
+            self.main_panel.show_searchbar(True)
+        def preferences(evt):
+            def edit_function():
+                dialog = PreferencesDialog(self, self.config)
+                dialog.ShowModal()
+                dialog.Destroy()
+            safe_locking(self, edit_function)
+        cbx = False
+        items = ((wx.ID_FIND, find, None, cbx),
+                 None,
+                 (wx.ID_PREFERENCES, preferences, None, cbx))
         edit_menu = wx.Menu()
-        self._create_edit_find_menu_item(edit_menu)
-        edit_menu.AppendSeparator()
-        self._create_edit_preferences_menu_item(edit_menu)
+        self._create_menu_items(edit_menu, items)
         main_menu_bar.Append(edit_menu, _("&Edit"))
-
-    def _create_edit_find_menu_item(self, edit_menu):
-        find_menu_item = edit_menu.Append(wx.ID_FIND)
-        self.Bind(wx.EVT_MENU, self._mnu_edit_find_on_click, find_menu_item)
-        self.menu_controller.add_menu_requiring_timeline(find_menu_item)
-
-    def _create_edit_preferences_menu_item(self, edit_menu):
-        preferences_item = edit_menu.Append(wx.ID_PREFERENCES)
-        self.Bind(wx.EVT_MENU, self._mnu_edit_preferences_on_click, preferences_item)
 
     def _create_view_menu(self, main_menu_bar):
         def sidebar(evt):
@@ -247,75 +257,72 @@ class GuiCreator(object):
         self.menu_controller.add_menu_requiring_timeline(balloons_item)
 
     def _create_timeline_menu(self, main_menu_bar):
-        timeline_menu = wx.Menu()
-        self._create_timeline_create_event_menu_item(timeline_menu)
-        self._create_timeline_edit_event_menu_item(timeline_menu)
-        self._create_timeline_duplicate_event_menu_item(timeline_menu)
-        self._create_timeline_set_category_menu_item(timeline_menu)
-        timeline_menu.AppendSeparator()
-        self._create_timeline_measure_distance_between_events_menu_item(timeline_menu)
-        timeline_menu.AppendSeparator()
-        self._create_timeline_set_category(timeline_menu)
-        self._create_timeline_edit_categories(timeline_menu)
-        timeline_menu.AppendSeparator()
-        self._create_timeline_set_readonly(timeline_menu)
-        main_menu_bar.Append(timeline_menu, _("&Timeline"))
+        def create_event(evt):
+            open_create_event_editor(self, self.config, self.timeline, 
+                                     self.handle_db_error)
+        def edit_event(evt):
+            try:
+                event_id = self.main_panel.get_id_of_first_selected_event()
+                event = self.timeline.find_event_with_id(event_id)
+            except IndexError:
+                # No event selected so do nothing!
+                return
+            self.main_panel.open_event_editor(event)
+        def duplicate_event(evt):
+            try:
+                event_id = self.main_panel.get_id_of_first_selected_event()
+                event = self.timeline.find_event_with_id(event_id)
+            except IndexError:
+                # No event selected so do nothing!
+                return
+            open_duplicate_event_dialog_for_event(self, self.timeline, 
+                                                  self.handle_db_error, event)
+        def set_categoryon_selected(evt):
+            def edit_function():
+                    self._set_category_to_selected_events()
+            safe_locking(self, edit_function)
+        def measure_distance(evt):
+            self._measure_distance_between_events()
+        def set_category_on_without(evt):
+            def edit_function():
+                self._set_category()
+            safe_locking(self, edit_function)
+        def edit_categories(evt):
+            def edit_function():
+                self._edit_categories()
+            safe_locking(self, edit_function)
+        def set_readonly(evt):
+            self.controller.set_timeline_in_readonly_mode()
+        cbx = False
+        items = ((ID_CREATE_EVENT, create_event, _("Create &Event..."), cbx),
+                 (ID_EDIT_EVENT, edit_event, _("&Edit Selected Event..."), cbx),
+                 (ID_DUPLICATE_EVENT, duplicate_event, _("&Duplicate Selected Event..."), cbx),
+                 (ID_SET_CATEGORY_ON_SELECTED, set_categoryon_selected, _("Set Category on Selected Events..."), cbx),
+                 None,
+                 (ID_MEASURE_DISTANCE, measure_distance, _("&Measure Distance between two Events..."), cbx),
+                 None,
+                 (ID_SET_CATEGORY_ON_WITHOUT, set_category_on_without, _("Set Category on events without category..."), cbx),
+                 (ID_EDIT_CATEGORIES, edit_categories, _("Edit &Categories"), cbx),
+                 None,
+                 (ID_SET_READONLY, set_readonly, _("Read Only"), cbx))
+        self.timeline_menu = wx.Menu()
+        self._create_menu_items(self.timeline_menu, items)
+        self._add_timeline_menu_items_to_controller(self.timeline_menu)
+        main_menu_bar.Append(self.timeline_menu, _("&Timeline"))
 
-    def _create_timeline_create_event_menu_item(self, timeline_menu):
-        create_event_item = timeline_menu.Append(
-            wx.ID_ANY, _("Create &Event..."), _("Create a new event"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_create_event_on_click, create_event_item)
-        self.menu_controller.add_menu_requiring_writable_timeline(create_event_item)
+    def _add_timeline_menu_items_to_controller(self, menu):
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_CREATE_EVENT)
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_EDIT_EVENT)
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_DUPLICATE_EVENT)
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_SET_CATEGORY_ON_SELECTED)
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_MEASURE_DISTANCE)
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_SET_CATEGORY_ON_WITHOUT)
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_EDIT_CATEGORIES)
+        self._add_to_controller_requiring_writeable_timeline(menu, ID_SET_READONLY)
 
-    def _create_timeline_edit_event_menu_item(self, timeline_menu):
-        self.mnu_timeline_edit_event = timeline_menu.Append(
-            wx.ID_ANY, _("&Edit Selected Event..."), _("Edit the Selected Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_event_on_click,
-                  self.mnu_timeline_edit_event)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_edit_event)
-
-    def _create_timeline_duplicate_event_menu_item(self, timeline_menu):
-        self.mnu_timeline_duplicate_event = timeline_menu.Append(
-            wx.ID_ANY, _("&Duplicate Selected Event..."), _("Duplicate the Selected Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_duplicate_event_on_click,
-                  self.mnu_timeline_duplicate_event)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_duplicate_event)
-
-    def _create_timeline_set_category_menu_item(self, timeline_menu):
-        self.mnu_timeline_set_event_category = timeline_menu.Append(
-            wx.ID_ANY, _("Set Category on Selected Events..."), _("Set Category on Selected Events..."))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_to_selected_evets_on_click,
-                  self.mnu_timeline_set_event_category)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_set_event_category)
-
-    def _create_timeline_measure_distance_between_events_menu_item(self, timeline_menu):
-        self.mnu_timeline_measure_distance_between_events = timeline_menu.Append(
-            wx.ID_ANY, _("&Measure Distance between two Events..."),
-            _("Measure the Distance between two Events"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_measure_distance_between_events_on_click,
-                  self.mnu_timeline_measure_distance_between_events)
-        self.menu_controller.add_menu_requiring_writable_timeline(self.mnu_timeline_measure_distance_between_events)
-
-    def _create_timeline_set_category(self, timeline_menu):
-        set_category_item = timeline_menu.Append(
-            wx.ID_ANY, _("Set Category on events without category..."), 
-            _("Set Category on events without category..."))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_category_on_click,
-                  set_category_item)
-        self.menu_controller.add_menu_requiring_writable_timeline(set_category_item)
-
-    def _create_timeline_edit_categories(self, timeline_menu):
-        edit_categories_item = timeline_menu.Append(
-            wx.ID_ANY, _("Edit &Categories"), _("Edit categories"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_edit_categories_on_click,
-                  edit_categories_item)
-        self.menu_controller.add_menu_requiring_writable_timeline(edit_categories_item)
-
-    def _create_timeline_set_readonly(self, timeline_menu):
-        item = timeline_menu.Append(
-            wx.ID_ANY, _("Read Only"), _("Read Only"))
-        self.Bind(wx.EVT_MENU, self._mnu_timeline_set_readonly_on_click, item)
-        self.menu_controller.add_menu_requiring_writable_timeline(item)
+    def _add_to_controller_requiring_writeable_timeline(self, menu, item_id):
+        mnu_item = menu.FindItemById(item_id)
+        self.menu_controller.add_menu_requiring_writable_timeline(mnu_item)
 
     def _create_navigate_menu(self, main_menu_bar):
         navigate_menu = wx.Menu()
@@ -380,7 +387,10 @@ class GuiCreator(object):
             if checkbox:
                 item = menu.Append(item_id, label, kind=wx.ITEM_CHECK)
             else:
-                item = menu.Append(item_id, label)
+                if label is not None:
+                    item = menu.Append(item_id, label)
+                else:
+                    item = menu.Append(item_id)
         else:
             item = menu.Append(item_id)
         self.Bind(wx.EVT_MENU, handler, item)
@@ -423,63 +433,6 @@ class GuiCreator(object):
     def _mnu_file_exit_on_click(self, evt):
         self.Close()
 
-    def _mnu_edit_find_on_click(self, evt):
-        self.main_panel.show_searchbar(True)
-
-    def _mnu_edit_preferences_on_click(self, evt):
-        def edit_function():
-            dialog = PreferencesDialog(self, self.config)
-            dialog.ShowModal()
-            dialog.Destroy()
-        safe_locking(self, edit_function)
-
-    def _mnu_timeline_create_event_on_click(self, evt):
-        open_create_event_editor(self, self.config, self.timeline, 
-                                 self.handle_db_error)
-
-    def _mnu_timeline_edit_event_on_click(self, evt):
-        try:
-            event_id = self.main_panel.get_id_of_first_selected_event()
-            event = self.timeline.find_event_with_id(event_id)
-        except IndexError:
-            # No event selected so do nothing!
-            return
-        self.main_panel.open_event_editor(event)
-
-    def _mnu_timeline_duplicate_event_on_click(self, evt):
-        try:
-            event_id = self.main_panel.get_id_of_first_selected_event()
-            event = self.timeline.find_event_with_id(event_id)
-        except IndexError:
-            # No event selected so do nothing!
-            return
-        open_duplicate_event_dialog_for_event(
-            self,
-            self.timeline,
-            self.handle_db_error,
-            event)
-
-    def _mnu_timeline_set_category_to_selected_evets_on_click(self, evt):
-        def edit_function():
-                self._set_category_to_selected_events()
-        safe_locking(self, edit_function)
-
-    def _mnu_timeline_measure_distance_between_events_on_click(self, evt):
-        self._measure_distance_between_events()
-
-    def _mnu_timeline_set_category_on_click(self, evt):
-        def edit_function():
-            self._set_category()
-        safe_locking(self, edit_function)
-
-    def _mnu_timeline_edit_categories_on_click(self, evt):
-        def edit_function():
-            self._edit_categories()
-        safe_locking(self, edit_function)
-
-    def _mnu_timeline_set_readonly_on_click(self, evt):
-        self.controller.set_timeline_in_readonly_mode()
-        
     def _mnu_navigate_find_first_on_click(self, evt):
         event = self.timeline.get_first_event()
         if event:
@@ -616,13 +569,21 @@ class MainFrameApiUSedByController(object):
         nbr_of_selected_events = self.main_panel.get_nbr_of_selected_events()
         one_event_selected = nbr_of_selected_events == 1
         some_event_selected = nbr_of_selected_events > 0
-        self.mnu_timeline_edit_event.Enable(one_event_selected)
-        self.mnu_timeline_duplicate_event.Enable(one_event_selected)
-        self.mnu_timeline_set_event_category.Enable(some_event_selected)
+        mnu_edit_event = self. timeline_menu.FindItemById(ID_EDIT_EVENT)
+        mnu_duplicate_event = self. timeline_menu.FindItemById(ID_DUPLICATE_EVENT)
+        mnu_set_category = self. timeline_menu.FindItemById(ID_SET_CATEGORY_ON_SELECTED)
+        mnu_edit_event.Enable(one_event_selected)
+        mnu_duplicate_event.Enable(one_event_selected)
+        mnu_set_category.Enable(some_event_selected)
+        #self.mnu_timeline_edit_event.Enable(one_event_selected)
+        #self.mnu_timeline_duplicate_event.Enable(one_event_selected)
+        #self.mnu_timeline_set_event_category.Enable(some_event_selected)
 
     def _enable_disable_measure_distance_between_two_events_menu(self):
         two_events_selected = self.main_panel.get_nbr_of_selected_events() == 2
-        self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
+        mnu_measure_distance = self.timeline_menu.FindItemById(ID_MEASURE_DISTANCE)
+        mnu_measure_distance.Enable(two_events_selected)
+        #self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
 
     def _enable_disable_searchbar(self):
         if self.timeline == None:
@@ -1099,7 +1060,7 @@ class MainPanel(wx.Panel):
         self.timeline_panel.balloon_visibility_changed(checked)
     
     def open_event_editor(self, event):
-        self.timeline_panel.open_event_editor_for(event)
+        self.timeline_panel.open_event_editor(event)
 
     def redraw_timeline(self):
         self.timeline_panel.redraw_timeline()
