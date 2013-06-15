@@ -42,7 +42,13 @@ The program searches for the program to test in the following ways:
  %USER_HOME%/autopilot/autopilot.manuscript.txt. Scriptfiles are
  searched for in the same order as for the program to test as described
  above.
-  
+
+ options:  
+    -p     extra path for search of files
+    -m     start manuscript file(s)
+    -d     log dialog descriptions or not
+    -t     time delay between instructions in seconds
+    -i     don't run test just display effective paths to program, script and log files",
 """
 
 
