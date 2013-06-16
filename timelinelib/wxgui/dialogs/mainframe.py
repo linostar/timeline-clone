@@ -67,6 +67,9 @@ ID_MEASURE_DISTANCE = wx.NewId()
 ID_SET_CATEGORY_ON_WITHOUT = wx.NewId()
 ID_EDIT_CATEGORIES = wx.NewId()
 ID_SET_READONLY = wx.NewId()
+ID_FIND_FIRST = wx.NewId()
+ID_FIND_LAST = wx.NewId()
+ID_FIT_ALL = wx.NewId()
 
 
 class GuiCreator(object):
@@ -324,31 +327,47 @@ class GuiCreator(object):
         self.menu_controller.add_menu_requiring_writable_timeline(mnu_item)
 
     def _create_navigate_menu(self, main_menu_bar):
+        def find_first(evt):
+            event = self.timeline.get_first_event()
+            if event:
+                start = event.time_period.start_time
+                delta = self.main_panel.get_displayed_period_delta()
+                end   = start + delta
+                margin_delta = self.timeline.get_time_type().margin_delta(delta)
+                self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
+        def find_last(evt):
+            event = self.timeline.get_last_event()
+            if event:
+                end = event.time_period.end_time
+                delta = self.main_panel.get_displayed_period_delta()
+                start = end - delta
+                margin_delta = self.timeline.get_time_type().margin_delta(delta)
+                self._navigate_timeline(lambda tp: tp.update(start, end, end_delta=margin_delta))
+        def fit_all(evt):
+            self._fit_all_events()
+    
+        cbx = False
+        items = ((ID_FIND_FIRST, find_first, _("Find First Event"), cbx),
+                 (ID_FIND_LAST, find_last, _("Find Last Event"), cbx),
+                 (ID_FIT_ALL, fit_all, _("Fit All Events"), cbx))
         navigate_menu = wx.Menu()
         self._navigation_menu_items = []
         self._navigation_functions_by_menu_item_id = {}
         self.update_navigation_menu_items()
         navigate_menu.AppendSeparator()
-        self._create_navigate_find_first_event_menu_item(navigate_menu)
-        self._create_navigate_find_last_event_menu_item(navigate_menu)
-        self._create_navigate_fit_all_events_menu_item(navigate_menu)
+        self._create_menu_items(navigate_menu, items)
+        self._add_navigate_menu_items_to_controller(navigate_menu)
         main_menu_bar.Append(navigate_menu, _("&Navigate"))
         self.mnu_navigate = navigate_menu
 
-    def _create_navigate_find_first_event_menu_item(self, navigate_menu):
-        find_first = navigate_menu.Append(wx.ID_ANY, _("Find First Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_first_on_click, find_first)
-        self.menu_controller.add_menu_requiring_timeline(find_first)
+    def _add_navigate_menu_items_to_controller(self, menu):
+        self._add_to_controller_requiring_timeline(menu, ID_FIND_FIRST)
+        self._add_to_controller_requiring_timeline(menu, ID_FIND_LAST)
+        self._add_to_controller_requiring_timeline(menu, ID_FIT_ALL)
 
-    def _create_navigate_find_last_event_menu_item(self, navigate_menu):
-        find_last = navigate_menu.Append(wx.ID_ANY, _("Find Last Event"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_find_last_on_click, find_last)
-        self.menu_controller.add_menu_requiring_timeline(find_last)
-
-    def _create_navigate_fit_all_events_menu_item(self, navigate_menu):
-        fit_all_events = navigate_menu.Append(wx.ID_ANY, _("Fit All Events"))
-        self.Bind(wx.EVT_MENU, self._mnu_navigate_fit_all_events_on_click, fit_all_events)
-        self.menu_controller.add_menu_requiring_timeline(fit_all_events)
+    def _add_to_controller_requiring_timeline(self, menu, item_id):
+        mnu_item = menu.FindItemById(item_id)
+        self.menu_controller.add_menu_requiring_timeline(mnu_item)
 
     def _create_help_menu(self, main_menu_bar):
         def contents(e):
@@ -431,27 +450,6 @@ class GuiCreator(object):
 
     def _mnu_file_exit_on_click(self, evt):
         self.Close()
-
-    def _mnu_navigate_find_first_on_click(self, evt):
-        event = self.timeline.get_first_event()
-        if event:
-            start = event.time_period.start_time
-            delta = self.main_panel.get_displayed_period_delta()
-            end   = start + delta
-            margin_delta = self.timeline.get_time_type().margin_delta(delta)
-            self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
-
-    def _mnu_navigate_find_last_on_click(self, evt):
-        event = self.timeline.get_last_event()
-        if event:
-            end = event.time_period.end_time
-            delta = self.main_panel.get_displayed_period_delta()
-            start = end - delta
-            margin_delta = self.timeline.get_time_type().margin_delta(delta)
-            self._navigate_timeline(lambda tp: tp.update(start, end, end_delta=margin_delta))
-
-    def _mnu_navigate_fit_all_events_on_click(self, evt):
-        self._fit_all_events()
 
     def _add_ellipses_to_menuitem(self, id):
         plain = wx.GetStockLabel(id,
