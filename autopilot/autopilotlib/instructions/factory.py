@@ -282,9 +282,9 @@ def syntaxcheck_click_mouse_instruction(tokens):
       (0,   scanner.KEYWORD,   scanner.ID_CLICK,          1),
       (1,   scanner.KEYWORD,   scanner.ID_MOUSE,          2),
       (2,   scanner.LP,        None,                      3),
-      (3,   scanner.ID,        None,                      4),
+      (3,   scanner.NUM,       None,                      4),
       (4,   scanner.COMMA,     None,                      5),
-      (5,   scanner.ID,        None,                      6),
+      (5,   scanner.NUM,       None,                      6),
       (6,   scanner.RP,        None,                     -1),
     )
     validate(tokens, STATES)
