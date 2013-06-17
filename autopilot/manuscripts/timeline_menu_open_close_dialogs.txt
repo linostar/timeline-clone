@@ -1,13 +1,25 @@
 # Timeline menu
 
+# Open a well known Timeline
 Select Menu(Help, "Getting started tutorial") 
 
 Select Menu(Timeline, "Create Event...") 
 Click Button(Avbryt)
 
-Select Menu(Navigate, "Go to Today") 
-Select Menu(Navigate, "Forward One Week") 
-Select Menu(Navigate, "Forward One Week") 
+# Make sure an event is selected with this command
+click mouse(605,484)
+
+Select Menu(Timeline, "Edit Selected Event...") 
+Click Button(Avbryt)
+
+Select Menu(Timeline, "Duplicate Selected Event...") 
+Click Button(Avbryt)
+
+Select Menu(Timeline, "Set Category on Selected Events...") 
+Click Button(Avbryt)
+
+Select Menu(Timeline, "Set Category on events without category...") 
+Click Button(Avbryt)
 
 Select Menu(Timeline, "Edit Categories") 
 Click Button(Stäng)
