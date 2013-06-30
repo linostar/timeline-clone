@@ -53,20 +53,20 @@ class DefaultDrawingAlgorithm(Drawer):
         self.small_text_font_bold = get_default_font(8, True)
 
     def _create_pens(self):
-        self.red_solid_pen = wx.Pen(wx.Color(255,0, 0), 1, wx.SOLID)
-        self.black_solid_pen = wx.Pen(wx.Color(0, 0, 0), 1, wx.SOLID)
-        self.darkred_solid_pen = wx.Pen(wx.Color(200, 0, 0), 1, wx.SOLID)
-        self.black_dashed_pen = wx.Pen(wx.Color(200, 200, 200), 1, wx.USER_DASH)
+        self.red_solid_pen = wx.Pen(wx.Colour(255,0, 0), 1, wx.SOLID)
+        self.black_solid_pen = wx.Pen(wx.Colour(0, 0, 0), 1, wx.SOLID)
+        self.darkred_solid_pen = wx.Pen(wx.Colour(200, 0, 0), 1, wx.SOLID)
+        self.black_dashed_pen = wx.Pen(wx.Colour(200, 200, 200), 1, wx.USER_DASH)
         self.black_dashed_pen.SetDashes([2, 2])
         self.black_dashed_pen.SetCap(wx.CAP_BUTT)
-        self.grey_solid_pen = wx.Pen(wx.Color(200, 200, 200), 1, wx.SOLID)
-        self.red_solid_pen = wx.Pen(wx.Color(255, 0, 0), 1, wx.SOLID)
+        self.grey_solid_pen = wx.Pen(wx.Colour(200, 200, 200), 1, wx.SOLID)
+        self.red_solid_pen = wx.Pen(wx.Colour(255, 0, 0), 1, wx.SOLID)
 
     def _create_brushes(self):
-        self.white_solid_brush = wx.Brush(wx.Color(255, 255, 255), wx.SOLID)
-        self.black_solid_brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
-        self.red_solid_brush = wx.Brush(wx.Color(255, 0, 0), wx.SOLID)
-        self.lightgrey_solid_brush = wx.Brush(wx.Color(230, 230, 230), wx.SOLID)
+        self.white_solid_brush = wx.Brush(wx.Colour(255, 255, 255), wx.SOLID)
+        self.black_solid_brush = wx.Brush(wx.Colour(0, 0, 0), wx.SOLID)
+        self.red_solid_brush = wx.Brush(wx.Colour(255, 0, 0), wx.SOLID)
+        self.lightgrey_solid_brush = wx.Brush(wx.Colour(230, 230, 230), wx.SOLID)
 
     def event_is_period(self, time_period):
         period_width_in_pixels = self.scene.width_of_period(time_period)
@@ -576,7 +576,7 @@ class DefaultDrawingAlgorithm(Drawer):
             fg_color = BLACK
         else:
             font_color = event.category.font_color
-            fg_color = wx.Color(font_color[0], font_color[1], font_color[2])
+            fg_color = wx.Colour(font_color[0], font_color[1], font_color[2])
         self.dc.SetTextForeground(fg_color)
 
     def _draw_contents_indicator(self, event, rect):
@@ -815,8 +815,8 @@ class DefaultDrawingAlgorithm(Drawer):
         # See: http://www.cairographics.org/FAQ/#sharp_lines
         gc.Translate(0.5, 0.5)
         # Draw the ballon
-        BORDER_COLOR = wx.Color(127, 127, 127)
-        BG_COLOR = wx.Color(255, 255, 231)
+        BORDER_COLOR = wx.Colour(127, 127, 127)
+        BG_COLOR = wx.Colour(255, 255, 231)
         PEN = wx.Pen(BORDER_COLOR, 1, wx.SOLID)
         BRUSH = wx.Brush(BG_COLOR, wx.SOLID)
         gc.SetPen(PEN)
