@@ -7,15 +7,25 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2012-12-30 12:30+0100\n"
+"POT-Creation-Date: 2013-03-30 11:06+0100\n"
 "PO-Revision-Date: 2010-03-15 11:46+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-03-30 07:48+0000\n"
-"X-Generator: Launchpad (build 16546)\n"
+"X-Launchpad-Export-Date: 2013-06-30 15:28+0000\n"
+"X-Generator: Launchpad (build 16692)\n"
+
+#: timelinelib\application.py:89
+msgid ""
+"Someoneelse has changed the Timeline.\n"
+"You have two choices!\n"
+"  1. Set Timeline in Read-Only mode.\n"
+"  2. Synchronize Timeline.\n"
+"\n"
+"Do you want to Synchronize?"
+msgstr ""
 
 #: timelinelib\printing.py:100
 msgid ""
@@ -168,7 +178,7 @@ msgstr "לא ניתן לקרוא מהקובץ '%s'."
 msgid "Unable to read timeline data from '%s'."
 msgstr "לא ניתן לקרוא את נתוני ציר הזמן מ־'%s'."
 
-#: timelinelib\db\backends\memory.py:223
+#: timelinelib\db\backends\memory.py:227
 msgid "Displayed period must be > 0."
 msgstr ""
 
@@ -220,7 +230,7 @@ msgid ""
 "Hold down Shift while dragging with the mouse."
 msgstr ""
 
-#: timelinelib\db\backends\tutorial.py:58 timelinelib\help\pages.py:127
+#: timelinelib\db\backends\tutorial.py:58 timelinelib\help\pages.py:148
 msgid "Create event"
 msgstr "יצירת אירוע"
 
@@ -231,7 +241,7 @@ msgid ""
 "Hold down Ctrl while dragging the mouse to select a period."
 msgstr ""
 
-#: timelinelib\db\backends\tutorial.py:65 timelinelib\help\pages.py:144
+#: timelinelib\db\backends\tutorial.py:65 timelinelib\help\pages.py:165
 msgid "Edit event"
 msgstr "עריכת אירוע"
 
@@ -250,7 +260,7 @@ msgid ""
 "Hold down Ctrl while clicking events to select multiple."
 msgstr ""
 
-#: timelinelib\db\backends\tutorial.py:77 timelinelib\help\pages.py:182
+#: timelinelib\db\backends\tutorial.py:77 timelinelib\help\pages.py:203
 msgid "Delete event"
 msgstr "מחיקת אירוע"
 
@@ -324,7 +334,7 @@ msgstr "קובצי תמונה"
 msgid "Export to Image"
 msgstr "ייצוא לתמונה"
 
-#: timelinelib\export\bitmap.py:35 timelinelib\wxgui\dialogs\mainframe.py:276
+#: timelinelib\export\bitmap.py:35 timelinelib\wxgui\dialogs\mainframe.py:325
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "הקובץ '%s' קיים. לשכתב?"
@@ -333,19 +343,19 @@ msgstr "הקובץ '%s' קיים. לשכתב?"
 msgid "Help contents"
 msgstr "תכני העזרה"
 
-#: timelinelib\help\pages.py:55
+#: timelinelib\help\pages.py:56
 msgid "Questions and answers"
 msgstr "שאלות ותשובות"
 
-#: timelinelib\help\pages.py:55
+#: timelinelib\help\pages.py:56
 msgid "Concepts"
 msgstr "רעיונות"
 
-#: timelinelib\help\pages.py:55
+#: timelinelib\help\pages.py:56
 msgid "Tasks"
 msgstr "משימות"
 
-#: timelinelib\help\pages.py:60
+#: timelinelib\help\pages.py:61
 msgid "Where is the save button?"
 msgstr "איפה לחצן השמירה?"
 
@@ -354,7 +364,7 @@ msgstr "איפה לחצן השמירה?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:66
+#: timelinelib\help\pages.py:67
 msgid ""
 "\n"
 "There is no save button. Timeline will automatically save your data whenever "
@@ -364,7 +374,7 @@ msgstr ""
 "אין לחצן שמירה. התוכנה תשמור את השינויים שלך אוטומטית בכל פעם שיהיה בכך "
 "צורך.\n"
 
-#: timelinelib\help\pages.py:73
+#: timelinelib\help\pages.py:74
 msgid "Where do the week numbers go if I start my weeks on Sunday?"
 msgstr "היכן מופיעים מספקי הימים אם השבועות שלי מתחילים ביום ראשון?"
 
@@ -373,7 +383,7 @@ msgstr "היכן מופיעים מספקי הימים אם השבועות שלי
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:79
+#: timelinelib\help\pages.py:80
 msgid ""
 "\n"
 "The date data object used does not support week numbers for weeks that start "
@@ -382,6 +392,32 @@ msgid ""
 msgstr ""
 
 #: timelinelib\help\pages.py:86
+msgid "Can multiple users work with the same timeline?"
+msgstr ""
+
+#. TRANSLATORS: This text uses special markup.
+#. DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+#. Just write them as they are.
+#. Stars produce emphasized text. DON'T remove them.
+#. Dashes produce bullet lists. DON'T remove them.
+#: timelinelib\help\pages.py:92
+msgid ""
+"\n"
+"There are some support for multiple users to work on the same timeline "
+"file.\n"
+"\n"
+"When you try to make a change and someone else has made a change you will be "
+"asked to make one of two choices:\n"
+"\n"
+"- Set timeline in read-only mode.\n"
+"- Synchronize the timeline.\n"
+" \n"
+"During the your edit action the timeline is locked for changes by others. If "
+"you try to edit a timeline when it is locked by someone else you will be "
+"notified about this situation.\n"
+msgstr ""
+
+#: timelinelib\help\pages.py:105
 msgid "Timeline"
 msgstr "ציר הזמן"
 
@@ -390,7 +426,7 @@ msgstr "ציר הזמן"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:93
+#: timelinelib\help\pages.py:112
 msgid ""
 "\n"
 "The timeline shows dates according to the Gregorian calendar on the x-axis. "
@@ -399,9 +435,13 @@ msgid ""
 "Future versions might support various kinds of timelines so that you for "
 "example can specify a time in terms of number of minutes since a start time. "
 "If you are interested in such a feature, please get in touch.\n"
+"\n"
+"The timeline is divided in two areas with a horizontal adjustable divider "
+"line. Period events are displayed below the line and point events are "
+"displayed above the line.\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:101
+#: timelinelib\help\pages.py:122
 msgid "Events"
 msgstr "אירועים"
 
@@ -410,7 +450,7 @@ msgstr "אירועים"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:108
+#: timelinelib\help\pages.py:129
 msgid ""
 "\n"
 "An event is the basic data type for representing information on the "
@@ -419,7 +459,7 @@ msgid ""
 "period.\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:114
+#: timelinelib\help\pages.py:135
 msgid "Categories"
 msgstr "קטגוריות"
 
@@ -428,7 +468,7 @@ msgstr "קטגוריות"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:121
+#: timelinelib\help\pages.py:142
 msgid ""
 "\n"
 "Categories are used to group events. An event can only belong to one "
@@ -441,7 +481,7 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:134
+#: timelinelib\help\pages.py:155
 msgid ""
 "\n"
 "The *Create Event* dialog can be opened in the following ways:\n"
@@ -457,13 +497,13 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:151
+#: timelinelib\help\pages.py:172
 msgid ""
 "\n"
 "The *Edit Event* dialog can be opened by double clicking on an event.\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:157
+#: timelinelib\help\pages.py:178
 msgid "Move event vertically"
 msgstr ""
 
@@ -472,14 +512,14 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:164
+#: timelinelib\help\pages.py:185
 msgid ""
 "\n"
 "An event can be moved vertically. This is done by first selecting the event "
 "and therefter using the Alt+Up or Alt+Down keys.\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:170
+#: timelinelib\help\pages.py:191
 msgid "Selecting events"
 msgstr "בחירת אירועים"
 
@@ -488,7 +528,7 @@ msgstr "בחירת אירועים"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:176
+#: timelinelib\help\pages.py:197
 msgid ""
 "\n"
 "To select an event, click on it. To select multiple events, hold down the "
@@ -500,14 +540,14 @@ msgstr ""
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:189
+#: timelinelib\help\pages.py:210
 msgid ""
 "\n"
 "To delete an event, select it and press the *Del* key. Multiple events can "
 "be deleted at the same time.\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:195
+#: timelinelib\help\pages.py:216
 msgid "Will associated events be deleted when I delete a category?"
 msgstr "האם אירועים הקשורים ימחקו כאשר אמחק קטגוריה?"
 
@@ -516,15 +556,15 @@ msgstr "האם אירועים הקשורים ימחקו כאשר אמחק קטג
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:201
+#: timelinelib\help\pages.py:222
 msgid ""
 "\n"
 "No. The events will still be there but they will not belong to a category.\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:207
+#: timelinelib\help\pages.py:228
 #: timelinelib\wxgui\components\categorychoice.py:53
-#: timelinelib\wxgui\dialogs\mainframe.py:462
+#: timelinelib\wxgui\dialogs\mainframe.py:514
 msgid "Edit categories"
 msgstr "עריכת קטגוריות"
 
@@ -533,7 +573,7 @@ msgstr "עריכת קטגוריות"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:214
+#: timelinelib\help\pages.py:235
 msgid ""
 "\n"
 "Categories can be managed in the *Edit Categories* dialog (*Timeline* > "
@@ -543,8 +583,8 @@ msgid ""
 "*Sidebar*).\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:222 timelinelib\wxgui\dialogs\mainframe.py:586
-#: timelinelib\wxgui\dialogs\mainframe.py:1065
+#: timelinelib\help\pages.py:243 timelinelib\wxgui\dialogs\mainframe.py:653
+#: timelinelib\wxgui\dialogs\mainframe.py:1139
 msgid "Contact"
 msgstr "יצירת קשר"
 
@@ -553,7 +593,7 @@ msgstr "יצירת קשר"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:228
+#: timelinelib\help\pages.py:249
 msgid ""
 "\n"
 "If you have more questions about Timeline, or if you want to get in contact "
@@ -561,7 +601,7 @@ msgid ""
 "list: <thetimelineproj-user@lists.sourceforge.net>. (Please use English.)\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:234
+#: timelinelib\help\pages.py:255
 msgid "Why is Timeline not available in my language?"
 msgstr "למה ציר הזמן אינו זמין בשפה שלי?"
 
@@ -570,7 +610,7 @@ msgstr "למה ציר הזמן אינו זמין בשפה שלי?"
 #. Just write them as they are.
 #. Stars produce emphasized text. DON'T remove them.
 #. Dashes produce bullet lists. DON'T remove them.
-#: timelinelib\help\pages.py:241
+#: timelinelib\help\pages.py:262
 msgid ""
 "\n"
 "Timeline is developed and translated by volunteers. If you would like to "
@@ -759,62 +799,62 @@ msgstr ""
 msgid "can't be after year %d"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:145 timelinelib\view\drawingarea.py:163
+#: timelinelib\view\drawingarea.py:148 timelinelib\view\drawingarea.py:166
 msgid "No timeline set"
 msgstr "לא הוגדר ציר זמן"
 
-#: timelinelib\view\drawingarea.py:169
+#: timelinelib\view\drawingarea.py:172
 msgid "Can't scroll more to the left"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:171
+#: timelinelib\view\drawingarea.py:174
 msgid "Can't scroll more to the right"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:197
+#: timelinelib\view\drawingarea.py:201
 msgid "Edit"
 msgstr "עריכה"
 
-#: timelinelib\view\drawingarea.py:198
+#: timelinelib\view\drawingarea.py:202
 msgid "Duplicate..."
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:199
-#: timelinelib\wxgui\components\cattree.py:80
+#: timelinelib\view\drawingarea.py:203
+#: timelinelib\wxgui\components\cattree.py:82
 msgid "Delete"
 msgstr "מחיקה"
 
-#: timelinelib\view\drawingarea.py:202
+#: timelinelib\view\drawingarea.py:206
 msgid "Sticky Balloon"
 msgstr "בלון דביק"
 
-#: timelinelib\view\drawingarea.py:205
+#: timelinelib\view\drawingarea.py:209
 msgid "Goto URL"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:362
+#: timelinelib\view\drawingarea.py:372
 msgid "Center"
 msgstr "מרכז"
 
-#: timelinelib\view\drawingarea.py:410
+#: timelinelib\view\drawingarea.py:420
 #, python-format
 msgid "%s events hidden"
 msgstr ""
 
-#: timelinelib\view\drawingarea.py:478
+#: timelinelib\view\drawingarea.py:489
 #, python-format
 msgid "Are you sure you want to delete %d events?"
 msgstr "האם ברצונך למחוק %d אירועים?"
 
-#: timelinelib\view\drawingarea.py:481
+#: timelinelib\view\drawingarea.py:492
 msgid "Are you sure you want to delete this event?"
 msgstr "האם ברצונך למחוק את האירוע?"
 
-#: timelinelib\view\move.py:64
+#: timelinelib\view\move.py:66
 msgid "Can't move locked event"
 msgstr ""
 
-#: timelinelib\view\resize.py:65
+#: timelinelib\view\resize.py:67
 msgid "Period is too long"
 msgstr ""
 
@@ -834,49 +874,53 @@ msgstr ""
 msgid "Error"
 msgstr "שגיאה"
 
-#: timelinelib\wxgui\utils.py:140
+#: timelinelib\wxgui\utils.py:139
+msgid "Warning"
+msgstr ""
+
+#: timelinelib\wxgui\utils.py:144 timelinelib\wxgui\utils.py:150
 msgid "Question"
 msgstr "שאלה"
 
 #: timelinelib\wxgui\components\categorychoice.py:52
-#: timelinelib\wxgui\dialogs\eventeditor.py:304
+#: timelinelib\wxgui\dialogs\eventeditor.py:308
 msgid "Add new"
 msgstr "הוספת חדש"
 
 #: timelinelib\wxgui\components\categorychoice.py:76
-#: timelinelib\wxgui\components\cattree.py:223
+#: timelinelib\wxgui\components\cattree.py:228
 msgid "Add Category"
 msgstr "הוספת קטגוריה"
 
-#: timelinelib\wxgui\components\cattree.py:74
+#: timelinelib\wxgui\components\cattree.py:76
 msgid "Edit..."
 msgstr ""
 
-#: timelinelib\wxgui\components\cattree.py:77
+#: timelinelib\wxgui\components\cattree.py:79
 msgid "Add..."
 msgstr ""
 
-#: timelinelib\wxgui\components\cattree.py:217
+#: timelinelib\wxgui\components\cattree.py:222
 msgid "Edit Category"
 msgstr "עריכת קטגוריה"
 
-#: timelinelib\wxgui\components\cattree.py:228
+#: timelinelib\wxgui\components\cattree.py:233
 #, python-format
 msgid "Are you sure you want to delete category '%s'?"
 msgstr ""
 
-#: timelinelib\wxgui\components\cattree.py:231
+#: timelinelib\wxgui\components\cattree.py:236
 #, python-format
 msgid "Events belonging to '%s' will no longer belong to a category."
 msgstr ""
 
-#: timelinelib\wxgui\components\cattree.py:234
+#: timelinelib\wxgui\components\cattree.py:239
 #, python-format
 msgid "Events belonging to '%s' will now belong to '%s'."
 msgstr ""
 
-#: timelinelib\wxgui\components\pydatetimepicker.py:80
-#: timelinelib\wxgui\components\wxdatetimepicker.py:75
+#: timelinelib\wxgui\components\pydatetimepicker.py:84
+#: timelinelib\wxgui\components\wxdatetimepicker.py:79
 msgid "Invalid date"
 msgstr ""
 
@@ -924,137 +968,137 @@ msgid "Container Properties"
 msgstr ""
 
 #: timelinelib\wxgui\dialogs\containereditor.py:65
-#: timelinelib\wxgui\dialogs\eventeditor.py:218
+#: timelinelib\wxgui\dialogs\eventeditor.py:219
 msgid "Category:"
 msgstr "קטגוריה:"
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:31
+#: timelinelib\wxgui\dialogs\duplicateevent.py:32
 msgid "Duplicate Event"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:68
+#: timelinelib\wxgui\dialogs\duplicateevent.py:69
 #, python-format
 msgid "%d Events not duplicated due to missing dates."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:88
+#: timelinelib\wxgui\dialogs\duplicateevent.py:89
 msgid "Number of duplicates:"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:98
-#: timelinelib\wxgui\dialogs\eventeditor.py:175
+#: timelinelib\wxgui\dialogs\duplicateevent.py:99
+#: timelinelib\wxgui\dialogs\eventeditor.py:176
 msgid "Period"
 msgstr "תקופה"
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:108
+#: timelinelib\wxgui\dialogs\duplicateevent.py:109
 msgid "Frequency:"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:118
+#: timelinelib\wxgui\dialogs\duplicateevent.py:119
 msgid "Forward"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:118
+#: timelinelib\wxgui\dialogs\duplicateevent.py:119
 msgid "Backward"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:118
+#: timelinelib\wxgui\dialogs\duplicateevent.py:119
 msgid "Both"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\duplicateevent.py:119
+#: timelinelib\wxgui\dialogs\duplicateevent.py:120
 msgid "Direction"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:63
+#: timelinelib\wxgui\dialogs\eventeditor.py:64
 msgid "Event Properties"
 msgstr "מאפייני האירוע"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:86
-#: timelinelib\wxgui\dialogs\eventeditor.py:574
+#: timelinelib\wxgui\dialogs\eventeditor.py:87
+#: timelinelib\wxgui\dialogs\eventeditor.py:578
 msgid "When:"
 msgstr "מתי:"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:89
+#: timelinelib\wxgui\dialogs\eventeditor.py:90
 msgid "to"
 msgstr "אל"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:124
+#: timelinelib\wxgui\dialogs\eventeditor.py:125
 msgid "Container:"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:162
+#: timelinelib\wxgui\dialogs\eventeditor.py:163
 msgid "Add Container"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:182
+#: timelinelib\wxgui\dialogs\eventeditor.py:183
 #: timelinelib\wxgui\dialogs\timeeditor.py:47
 msgid "Show time"
 msgstr "הצגת הזמן"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:190
+#: timelinelib\wxgui\dialogs\eventeditor.py:191
 msgid "Fuzzy"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:194
+#: timelinelib\wxgui\dialogs\eventeditor.py:195
 msgid "Locked"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:201
+#: timelinelib\wxgui\dialogs\eventeditor.py:202
 msgid "Ends today"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:212
-#: timelinelib\wxgui\dialogs\eventeditor.py:575
+#: timelinelib\wxgui\dialogs\eventeditor.py:213
+#: timelinelib\wxgui\dialogs\eventeditor.py:579
 msgid "Text:"
 msgstr "טקסט:"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:243
+#: timelinelib\wxgui\dialogs\eventeditor.py:244
 msgid "Description"
 msgstr "תיאור"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:244
+#: timelinelib\wxgui\dialogs\eventeditor.py:245
 msgid "Alert"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:245
+#: timelinelib\wxgui\dialogs\eventeditor.py:246
 msgid "Icon"
 msgstr "סמל"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:246
+#: timelinelib\wxgui\dialogs\eventeditor.py:247
 msgid "Hyperlink"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:263
+#: timelinelib\wxgui\dialogs\eventeditor.py:264
 msgid "Add more events after this one"
 msgstr "הוספת אירועים נוספים לאחר זה"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:452
+#: timelinelib\wxgui\dialogs\eventeditor.py:456
 #, python-format
 msgid "Images will be scaled to fit inside a %ix%i box."
 msgstr "גודל התמונות ישתנה כך שיתאימו לתיבה בגודל %ix%i."
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:489
+#: timelinelib\wxgui\dialogs\eventeditor.py:493
 msgid "Select Icon"
 msgstr "בחירת סמל"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:664
+#: timelinelib\wxgui\dialogs\eventeditor.py:668
 msgid "Test"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:674
+#: timelinelib\wxgui\dialogs\eventeditor.py:678
 msgid "URL:"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:718
+#: timelinelib\wxgui\dialogs\eventeditor.py:722
 msgid "Edit Container"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:722
+#: timelinelib\wxgui\dialogs\eventeditor.py:726
 msgid "Edit Event"
 msgstr "עריכת אירוע"
 
-#: timelinelib\wxgui\dialogs\eventeditor.py:729
+#: timelinelib\wxgui\dialogs\eventeditor.py:734
 msgid "Create Event"
 msgstr "יצירת אירוע"
 
@@ -1090,228 +1134,242 @@ msgstr "העמוד לא נמצא"
 msgid "Could not find page '%s'."
 msgstr "לא ניתן למצוא את העמוד '%s'."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:95
+#: timelinelib\wxgui\dialogs\mainframe.py:105
+#: timelinelib\wxgui\dialogs\mainframe.py:225
 msgid "Timeline files"
 msgstr "קובץ ציר זמן"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:97
+#: timelinelib\wxgui\dialogs\mainframe.py:107
 msgid "SVG files"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:145
+#: timelinelib\wxgui\dialogs\mainframe.py:157
 msgid "&File"
 msgstr "&קובץ"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:151
+#: timelinelib\wxgui\dialogs\mainframe.py:163
 msgid "New"
 msgstr "חדש"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:151
+#: timelinelib\wxgui\dialogs\mainframe.py:163
 msgid "Create a new timeline"
 msgstr "יצירת ציר זמן חדש"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:157
+#: timelinelib\wxgui\dialogs\mainframe.py:169
 msgid "File Timeline..."
 msgstr "קובץ ציר זמן..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:165
-#: timelinelib\wxgui\dialogs\mainframe.py:188
+#: timelinelib\wxgui\dialogs\mainframe.py:177
+#: timelinelib\wxgui\dialogs\mainframe.py:200
 msgid "Create Timeline"
 msgstr "יצירת ציר זמן"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:171
+#: timelinelib\wxgui\dialogs\mainframe.py:183
 msgid "The specified timeline already exists."
 msgstr "ציר הזמן שצוין כבר קיים."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:172
+#: timelinelib\wxgui\dialogs\mainframe.py:184
 msgid "Opening timeline instead of creating new."
 msgstr "פתיחת ציר הזמן הקיים במקום יצירת אחד חדש."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:174
+#: timelinelib\wxgui\dialogs\mainframe.py:186
 msgid "Information"
 msgstr "מידע"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:181
+#: timelinelib\wxgui\dialogs\mainframe.py:193
 msgid "Directory Timeline..."
 msgstr "תיקיית ציר זמן..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:197
+#: timelinelib\wxgui\dialogs\mainframe.py:209
 msgid "Open an existing timeline"
 msgstr "פתיחת ציר זמן קיים"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:208
+#: timelinelib\wxgui\dialogs\mainframe.py:228
+msgid "Save Timeline As"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:253
 msgid "Open Timeline"
 msgstr "פתיחת ציר זמן"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:218
+#: timelinelib\wxgui\dialogs\mainframe.py:263
 msgid "Open &Recent"
 msgstr "פתיחת ה&אחרונים"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:223
+#: timelinelib\wxgui\dialogs\mainframe.py:267
+msgid "Save As..."
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:272
 msgid "Page Set&up..."
 msgstr "הגדרת &עמוד..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:223
+#: timelinelib\wxgui\dialogs\mainframe.py:272
 msgid "Setup page for printing"
 msgstr "הגדרת עמוד להדפסה"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:232
+#: timelinelib\wxgui\dialogs\mainframe.py:281
 msgid "Print Preview"
 msgstr "תצוגה לפני הדפסה"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:241
+#: timelinelib\wxgui\dialogs\mainframe.py:290
 msgid "Print"
 msgstr "הדפסה"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:250
+#: timelinelib\wxgui\dialogs\mainframe.py:299
 msgid "&Export to Image..."
 msgstr "יי&צוא לתמונה..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:250
+#: timelinelib\wxgui\dialogs\mainframe.py:299
 msgid "Export the current view to a PNG image"
 msgstr "יצוא התצוגה הנוכחית לתמונת PNG"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:259
+#: timelinelib\wxgui\dialogs\mainframe.py:308
 msgid "&Export to SVG..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:259
+#: timelinelib\wxgui\dialogs\mainframe.py:308
 msgid "Export the current view to a SVG image"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:268
+#: timelinelib\wxgui\dialogs\mainframe.py:317
 msgid ""
 "Could not find pysvg Python package. It is needed to export to SVG. See the "
 "Timeline website or the INSTALL file for instructions how to install it."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:272
+#: timelinelib\wxgui\dialogs\mainframe.py:321
 msgid "Export to SVG"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:294
+#: timelinelib\wxgui\dialogs\mainframe.py:343
 msgid "Play timeline"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:294
+#: timelinelib\wxgui\dialogs\mainframe.py:343
 msgid "Play timeline as movie"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:302
+#: timelinelib\wxgui\dialogs\mainframe.py:351
 msgid "Exit the program"
 msgstr "יציאה מהתוכנה"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:313
+#: timelinelib\wxgui\dialogs\mainframe.py:362
 msgid "&Edit"
 msgstr "&עריכה"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:338
+#: timelinelib\wxgui\dialogs\mainframe.py:389
 msgid "&View"
 msgstr "&תצוגה"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:342
+#: timelinelib\wxgui\dialogs\mainframe.py:393
 msgid "&Sidebar\tCtrl+I"
 msgstr "סרגל הצד\tCtrl+I"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:356
+#: timelinelib\wxgui\dialogs\mainframe.py:407
 msgid "&Legend"
 msgstr "&מקרא"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:367
+#: timelinelib\wxgui\dialogs\mainframe.py:418
 msgid "&Balloons on hover"
 msgstr "&בלוני מידע צפים"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:381
+#: timelinelib\wxgui\dialogs\mainframe.py:433
 msgid "&Timeline"
 msgstr "&ציר הזמן"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:385
+#: timelinelib\wxgui\dialogs\mainframe.py:437
 msgid "Create &Event..."
 msgstr "יצירת &אירוע..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:385
+#: timelinelib\wxgui\dialogs\mainframe.py:437
 msgid "Create a new event"
 msgstr "יצירת אירוע חדש"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:395
+#: timelinelib\wxgui\dialogs\mainframe.py:447
 msgid "&Duplicate Selected Event..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:395
+#: timelinelib\wxgui\dialogs\mainframe.py:447
 msgid "Duplicate the Selected Event"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:416
+#: timelinelib\wxgui\dialogs\mainframe.py:468
 msgid "&Measure Distance between two Events..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:417
+#: timelinelib\wxgui\dialogs\mainframe.py:469
 msgid "Measure the Distance between two Events"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:448
+#: timelinelib\wxgui\dialogs\mainframe.py:500
 msgid "Distance between selected events"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:451
+#: timelinelib\wxgui\dialogs\mainframe.py:503
 msgid "Events are overlapping or distance is 0"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:462
+#: timelinelib\wxgui\dialogs\mainframe.py:514
 msgid "Edit &Categories"
 msgstr "&עריכת הקטגוריות"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:484
-msgid "&Navigate"
-msgstr "&ניווט"
+#: timelinelib\wxgui\dialogs\mainframe.py:526
+msgid "Read Only"
+msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:488
-msgid "Find First Event"
-msgstr "מציאת האירוע הראשון"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:502
-msgid "Find Last Event"
-msgstr "מציאת האירוע האחרון"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:516
-msgid "Fit All Events"
-msgstr "התאמת כל האירועים"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:569
-msgid "&Help"
-msgstr "ע&זרה"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:572
-msgid "&Contents\tF1"
-msgstr "&תכנים\tF1"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:579
-#: timelinelib\wxgui\dialogs\mainframe.py:960
-msgid "Getting started tutorial"
-msgstr "המדריך למתחילים"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:615
-msgid "Unable to write configuration file."
-msgstr "לא ניתן לכתוב את קובץ התצורה."
-
-#: timelinelib\wxgui\dialogs\mainframe.py:655
+#: timelinelib\wxgui\dialogs\mainframe.py:534
+#: timelinelib\wxgui\dialogs\mainframe.py:723
 msgid "read-only"
 msgstr "קריאה בלבד"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:716
+#: timelinelib\wxgui\dialogs\mainframe.py:551
+msgid "&Navigate"
+msgstr "&ניווט"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:555
+msgid "Find First Event"
+msgstr "מציאת האירוע הראשון"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:569
+msgid "Find Last Event"
+msgstr "מציאת האירוע האחרון"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:583
+msgid "Fit All Events"
+msgstr "התאמת כל האירועים"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:636
+msgid "&Help"
+msgstr "ע&זרה"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:639
+msgid "&Contents\tF1"
+msgstr "&תכנים\tF1"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:646
+#: timelinelib\wxgui\dialogs\mainframe.py:1034
+msgid "Getting started tutorial"
+msgstr "המדריך למתחילים"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:682
+msgid "Unable to write configuration file."
+msgstr "לא ניתן לכתוב את קובץ התצורה."
+
+#: timelinelib\wxgui\dialogs\mainframe.py:784
 #, python-format
 msgid "File '%s' does not exist."
 msgstr "הקובץ '%s' אינו קיים."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:952
+#: timelinelib\wxgui\dialogs\mainframe.py:1026
 msgid "No timeline opened."
 msgstr "לא נפתח ציר זמן."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:957
+#: timelinelib\wxgui\dialogs\mainframe.py:1031
 msgid "First time using Timeline?"
 msgstr "הפעם הראשונה שלך עם Timeline?"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:1062
+#: timelinelib\wxgui\dialogs\mainframe.py:1136
 msgid "Relevant help topics:"
 msgstr "נושאי עזרה רלוונטיים:"
 
