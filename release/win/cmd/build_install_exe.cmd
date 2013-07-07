@@ -64,7 +64,7 @@ pause
 
 echo *** Running py2exe
 pushd %TIMELINE_DIR%
-setup.py py2exe
+python setup.py py2exe
 popd
 pause
 
