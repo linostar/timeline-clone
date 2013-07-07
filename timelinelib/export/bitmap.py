@@ -35,7 +35,7 @@ def export_to_image(main_frame):
         overwrite_question = _("File '%s' exists. Overwrite?") % path
         if (not os.path.exists(path) or
             _ask_question(overwrite_question, main_frame) == wx.YES):
-            bitmap = main_frame.main_panel.drawing_area.get_current_image()
+            bitmap = main_frame.main_panel.get_current_image()
             image = wx.ImageFromBitmap(bitmap)
             type = images_wildcard_helper.get_extension_data(path)
             image.SaveFile(path, type)
