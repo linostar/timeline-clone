@@ -999,6 +999,9 @@ class MainPanel(wx.Panel):
             self.searchbar.set_focus()
         self.GetSizer().Layout()
 
+    def get_current_image(self):
+        return self.timeline_panel.get_current_image()
+    
     def _remove_timeline_and_show_welcome_panel(self):
         self.cattree.initialize_from_timeline_view(None)
         self.set_searchbar_drawing_area_panel(None)
@@ -1188,7 +1191,10 @@ class TimelinePanel(wx.Panel):
     
     def get_view_properties(self):
         return self.drawing_area.get_view_properties()
-                
+              
+    def get_current_image(self):
+        return self.drawing_area.get_current_image()
+      
     def _create_gui(self):
         self._create_divider_line_slider()
         self._create_splitter()
