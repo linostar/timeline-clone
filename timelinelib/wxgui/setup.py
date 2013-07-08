@@ -29,7 +29,7 @@ from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 
 
 def start_wx_application(application_arguments, before_main_loop_hook=None):
-    app = wx.PySimpleApp()
+    app = wx.App(False)
     main_frame = MainFrame(application_arguments)
     main_frame.Show()
     sys.excepthook = unhandled_exception_hook

@@ -45,6 +45,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
             customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style|agwStyle)
         else:
             customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style, agwStyle=agwStyle)
+        self.SetBackgroundColour('WHITE')    
         self._create_gui()
         self.controller = CategoriesTreeController(self, fn_handle_db_error)
 
