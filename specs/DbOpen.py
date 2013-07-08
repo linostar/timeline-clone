@@ -141,7 +141,7 @@ class DbOpenSpec(TmpDirTestCase):
 
     def testRead090File(self):
         self.writeContentToTmpFile(CONTENT_090)
-        app = wx.PySimpleApp() # Needed for graphics functions to parse icon
+        app = wx.App(False) # Needed for graphics functions to parse icon
         db = db_open(self.tmp_path)
         # Assert converted to xml db
         self.assertTrue(isinstance(db, XmlTimeline))
