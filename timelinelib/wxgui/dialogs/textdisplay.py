@@ -93,5 +93,6 @@ class TextDisplayDialog(TextDisplayDialogGui):
         obj = wx.TextDataObject(self.controller.get_text())
         wx.TheClipboard.SetData(obj)
         wx.TheClipboard.Close()
+        
     def _btn_close_on_click(self, evt):
-        self.Close()
+        self.EndModal(wx.ID_OK)

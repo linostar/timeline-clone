@@ -74,7 +74,7 @@ class EventEditorDialog(wx.Dialog):
                                    border=BORDER)
 
     def _create_details(self):
-        grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
+        grid = wx.FlexGridSizer(6, 2, BORDER, BORDER)
         grid.AddGrowableCol(1)
         self._create_time_details(grid)
         self._create_checkboxes(grid)
