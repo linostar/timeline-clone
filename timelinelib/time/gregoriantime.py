@@ -130,9 +130,9 @@ class GregorianTimeType(TimeType):
         return label
 
     def format_delta(self, delta):
-        days = delta.days
-        hours = delta.seconds / 3600
-        minutes = (delta.seconds - hours * 3600) / 60
+        days = delta.get_days()
+        hours = delta.get_hours() 
+        minutes = delta.get_minutes() 
         collector = []
         if days == 1:
             collector.append(u"1 %s" % _("day"))
@@ -220,7 +220,7 @@ class GregorianTimeType(TimeType):
 
     def get_max_zoom_delta(self):
         # TODO: NEW-TIME: int (days) -> int (seconds) -> timeline-delta
-        return (TimelineDelta(0),
+        return (TimelineDelta(1200 * 365 * 24 * 60 * 60),
                 _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):

@@ -29,7 +29,7 @@ class TimelineDateTime(object):
         return self
     
     def __sub__(self, dt):
-        return TimelineDelta(0)
+        return TimelineDelta((self.julian_day - dt.julian_day) * 60 * 60 * 24)
     
     def __gt__(self, dt):
         return (self.julian_day, self.seconds) > (dt.julian_day, dt.seconds)
@@ -63,3 +63,12 @@ class TimelineDelta(object):
 
     def __lt__(self, d):
         return self.seconds < d.seconds
+    
+    def get_days(self):
+        return self.seconds / (60 * 60 * 24)
+    
+    def get_hours(self):
+        return (self.seconds / (60 * 60)) % 24
+    
+    def get_minutes(self):
+        return (self.seconds / 60) % 60

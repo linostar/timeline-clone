@@ -84,31 +84,31 @@ class GregorianTimeTypeSpec(unittest.TestCase):
             "13:44",
             self.time_type.event_time_string(self.time_type.parse_time("2010-08-01 13:44:22")))
 
-#    def test_eventtimes_equals_method_when_equals(self):
-#        self.assertTrue(
-#            self.time_type.eventtimes_equals(datetime.datetime(2010, 8, 01, 13, 44, 22),
-#                                             datetime.datetime(2010, 8, 01, 13, 44, 00)))
-#
-#    def test_eventtimes_equals_method_when_not_equals(self):
-#        self.assertFalse(
-#            self.time_type.eventtimes_equals(datetime.datetime(2010, 8, 01, 13, 44, 22),
-#                                             datetime.datetime(2010, 7, 01, 13, 44, 22)))
-#
-#class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
-#
-#    def setUp(self):
-#        self.time_type = GregorianTimeType()
-#
-#    def test_format_delta_method(self):
-#        time_period1 = TimePeriod(self.time_type,
-#                                  datetime.datetime(2010, 8, 01, 13, 44),
-#                                  datetime.datetime(2010, 8, 01, 13, 44))
-#        time_period2 = TimePeriod(self.time_type,
-#                                  datetime.datetime(2010, 8, 02, 13, 44),
-#                                  datetime.datetime(2010, 8, 02, 13, 44))
-#        delta = time_period2.start_time - time_period1.start_time
-#        self.assertEquals(u"1 %s" % _("day"), self.time_type.format_delta(delta))
-#
+    def test_eventtimes_equals_method_when_equals(self):
+        self.assertTrue(
+            self.time_type.eventtimes_equals(self.time_type.parse_time("2010-08-01 13:44:22"),
+                                             self.time_type.parse_time("2010-08-01 13:44:00")))
+
+    def test_eventtimes_equals_method_when_not_equals(self):
+        self.assertFalse(
+            self.time_type.eventtimes_equals(self.time_type.parse_time("2010-08-01 13:44:22"),
+                                             self.time_type.parse_time("2010-07-01 13:44:22")))
+
+class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
+
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+
+    def test_format_delta_method(self):
+        time_period1 = TimePeriod(self.time_type,
+                                  self.time_type.parse_time("2010-08-01 13:44:00"),
+                                  self.time_type.parse_time("2010-08-01 13:44:00"))
+        time_period2 = TimePeriod(self.time_type,
+                                  self.time_type.parse_time("2010-08-02 13:44:00"),
+                                  self.time_type.parse_time("2010-08-02 13:44:00"))
+        delta = time_period2.start_time - time_period1.start_time
+        self.assertEquals(u"1 %s" % _("day"), self.time_type.format_delta(delta))
+
 #    def test_format_one_minute_delta(self):
 #        delta = self.get_days_delta(days=0, hours=0, minutes=1)
 #        self.assertEquals(u"1 %s" % _("minute"), self.time_type.format_delta(delta))
