@@ -256,7 +256,8 @@ class GregorianTimeType(TimeType):
         return delta / 24
 
     def event_date_string(self, time):
-        return "%04d-%02d-%02d" % (time.year, time.month, time.day)
+        gregorian_time = timeline_date_time_to_gregorian(time)
+        return "%04d-%02d-%02d" % (gregorian_time.year, gregorian_time.month, gregorian_time.day)
 
     def event_time_string(self, time):
         return "%02d:%02d" % (time.hour, time.minute)

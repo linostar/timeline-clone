@@ -69,16 +69,16 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         half_delta = self.time_type.half_delta(delta)
         self.assertEquals(TimelineDelta(2), half_delta)
 
-#    def test_returns_margin_delta(self):
-#        delta = datetime.timedelta(days=48)
-#        margin_delta = self.time_type.margin_delta(delta)
-#        self.assertEquals(datetime.timedelta(days=2), margin_delta)
-#
-#    def test_event_date_string_method(self):
-#        self.assertEquals(
-#            "2010-08-01",
-#            self.time_type.event_date_string(datetime.datetime(2010, 8, 1, 13, 44, 22)))
-#
+    def test_returns_margin_delta(self):
+        delta = TimelineDelta(48)
+        margin_delta = self.time_type.margin_delta(delta)
+        self.assertEquals(TimelineDelta(2), margin_delta)
+
+    def test_event_date_string_method(self):
+        self.assertEquals(
+            "2010-08-01",
+            self.time_type.event_date_string(self.time_type.parse_time("2010-08-01 13:44:22")))
+
 #    def test_event_time_string_method(self):
 #        self.assertEquals(
 #            "13:44",
