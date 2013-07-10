@@ -22,7 +22,8 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.time import GregorianTimeType
 from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
-
+from timelinelib.time.gregorian import Gregorian
+from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 
 class GregorianTimeTypeSpec(unittest.TestCase):
 
@@ -109,103 +110,82 @@ class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
         delta = time_period2.start_time - time_period1.start_time
         self.assertEquals(u"1 %s" % _("day"), self.time_type.format_delta(delta))
 
-#    def test_format_one_minute_delta(self):
-#        delta = self.get_days_delta(days=0, hours=0, minutes=1)
-#        self.assertEquals(u"1 %s" % _("minute"), self.time_type.format_delta(delta))
-#
-#    def test_format_two_minutes_delta(self):
-#        delta = self.get_days_delta(days=0, hours=0, minutes=2)
-#        self.assertEquals(u"2 %s" % _("minutes"), self.time_type.format_delta(delta))
-#
-#    def test_format_one_hour_delta(self):
-#        delta = self.get_days_delta(days=0, hours=1, minutes=0)
-#        self.assertEquals(u"1 %s" % _("hour"), self.time_type.format_delta(delta))
-#
-#    def test_format_two_hour_delta(self):
-#        delta = self.get_days_delta(days=0, hours=2, minutes=0)
-#        self.assertEquals(u"2 %s" % _("hours"), self.time_type.format_delta(delta))
-#
-#    def test_format_one_day_delta(self):
-#        delta = self.get_days_delta(days=1, hours=0, minutes=0)
-#        self.assertEquals(u"1 %s" % _("day"), self.time_type.format_delta(delta))
-#
-#    def test_format_two_days_delta(self):
-#        delta = self.get_days_delta(days=2, hours=0, minutes=0)
-#        self.assertEquals(u"2 %s" % _("days"), self.time_type.format_delta(delta))
-#
-#    def test_format_one_hour_one_minute_delta(self):
-#        delta = self.get_days_delta(days=0, hours=1, minutes=1)
-#        self.assertEquals(u"1 %s 1 %s" % (_("hour"), _("minute")), self.time_type.format_delta(delta))
-#
-#    def test_format_one_hour_two_minutes_delta(self):
-#        delta = self.get_days_delta(days=0, hours=1, minutes=2)
-#        self.assertEquals(u"1 %s 2 %s" % (_("hour"), _("minutes")), self.time_type.format_delta(delta))
-#
-#    def test_format_one_day_one_hour_delta(self):
-#        delta = self.get_days_delta(days=1, hours=1, minutes=0)
-#        self.assertEquals(u"1 %s 1 %s" % (_("day"), _("hour")), self.time_type.format_delta(delta))
-#
-#    def test_format_one_day_two_hour_delta(self):
-#        delta = self.get_days_delta(days=1, hours=2, minutes=0)
-#        self.assertEquals(u"1 %s 2 %s" % (_("day"), _("hours")), self.time_type.format_delta(delta))
-#
-#    def test_format_two_days_two_hour_delta(self):
-#        delta = self.get_days_delta(days=2, hours=2, minutes=0)
-#        self.assertEquals(u"2 %s 2 %s" % (_("days"), _("hours")), self.time_type.format_delta(delta))
-#
-#    def test_format_two_days_two_hour_one_minute_delta(self):
-#        delta = self.get_days_delta(days=2, hours=2, minutes=1)
-#        self.assertEquals(u"2 %s 2 %s 1 %s" % (_("days"), _("hours"), _("minute")), self.time_type.format_delta(delta))
-#
-#    def test_format_two_days_two_hour_two_minutes_delta(self):
-#        delta = self.get_days_delta(days=2, hours=2, minutes=2)
-#        self.assertEquals(u"2 %s 2 %s 2 %s" % (_("days"), _("hours"), _("minutes")), self.time_type.format_delta(delta))
-#
-#    def test_format_hundred_days_one_minute_delta(self):
-#        delta = self.get_days_delta(days=100, hours=0, minutes=0)
-#        self.assertEquals(u"100 %s" % _("days"), self.time_type.format_delta(delta))
-#
-#    def test_format_2_years_2_months(self):
-#        time_period1 = self.create_point_period(1, 1, 1999, 0, 0)
-#        time_period2 = self.create_point_period(1, 3, 2001, 0, 0)
-#        delta = time_period2.start_time - time_period1.start_time
-#        self.assertEquals(u"790 %s" % _("days"), self.time_type.format_delta(delta))
-#
-#    def test_format_overlapping_events(self):
-#        time_period1 = TimePeriod(self.time_type,
-#                                  datetime.datetime(2010, 8, 01, 13, 44),
-#                                  datetime.datetime(2010, 8, 03, 13, 44))
-#        time_period2 = TimePeriod(self.time_type,
-#                                  datetime.datetime(2010, 8, 01, 13, 44),
-#                                  datetime.datetime(2010, 8, 03, 13, 44))
-#        delta = time_period2.start_time - time_period1.end_time
-#        self.assertEquals("0", self.time_type.format_delta(delta))
-#
-#    def  get_days_delta(self, days=0, hours=0, minutes=0):
-#        def add_mars(month, days):
-#            if days >= 31:
-#                month = 4
-#                days = days - 31
-#                month, days = add_mars(month,days)
-#            return month, days
-#        def add_february(month, days):
-#            if days >= 28:
-#                month = 3
-#                days = days - 28
-#                month, days = add_mars(month,days)
-#            return month, days
-#        def add_january(month, days):
-#            if days >= 31:
-#                month = 2
-#                days = days - 31
-#                month, days = add_february(month, days)
-#            return month, days
-#        month = 1
-#        month, days = add_january(month, days)
-#        time_period1 = self.create_point_period(1, 1, 1999, 0, 0)
-#        time_period2 = self.create_point_period(1 + days, month, 1999, hours, minutes)
-#        return time_period2.start_time - time_period1.start_time
-#
-#    def create_point_period(self, day, month, year, hour, minute):
-#        dt = datetime.datetime(year, month, day, hour, minute)
-#        return TimePeriod(self.time_type, dt, dt)
+    def test_format_one_minute_delta(self):
+        delta = self.get_days_delta(days=0, hours=0, minutes=1)
+        self.assertEquals(u"1 %s" % _("minute"), self.time_type.format_delta(delta))
+
+    def test_format_two_minutes_delta(self):
+        delta = self.get_days_delta(days=0, hours=0, minutes=2)
+        self.assertEquals(u"2 %s" % _("minutes"), self.time_type.format_delta(delta))
+
+    def test_format_one_hour_delta(self):
+        delta = self.get_days_delta(days=0, hours=1, minutes=0)
+        self.assertEquals(u"1 %s" % _("hour"), self.time_type.format_delta(delta))
+
+    def test_format_two_hour_delta(self):
+        delta = self.get_days_delta(days=0, hours=2, minutes=0)
+        self.assertEquals(u"2 %s" % _("hours"), self.time_type.format_delta(delta))
+
+    def test_format_one_day_delta(self):
+        delta = self.get_days_delta(days=1, hours=0, minutes=0)
+        self.assertEquals(u"1 %s" % _("day"), self.time_type.format_delta(delta))
+
+    def test_format_two_days_delta(self):
+        delta = self.get_days_delta(days=2, hours=0, minutes=0)
+        self.assertEquals(u"2 %s" % _("days"), self.time_type.format_delta(delta))
+
+    def test_format_one_hour_one_minute_delta(self):
+        delta = self.get_days_delta(days=0, hours=1, minutes=1)
+        self.assertEquals(u"1 %s 1 %s" % (_("hour"), _("minute")), self.time_type.format_delta(delta))
+
+    def test_format_one_hour_two_minutes_delta(self):
+        delta = self.get_days_delta(days=0, hours=1, minutes=2)
+        self.assertEquals(u"1 %s 2 %s" % (_("hour"), _("minutes")), self.time_type.format_delta(delta))
+
+    def test_format_one_day_one_hour_delta(self):
+        delta = self.get_days_delta(days=1, hours=1, minutes=0)
+        self.assertEquals(u"1 %s 1 %s" % (_("day"), _("hour")), self.time_type.format_delta(delta))
+
+    def test_format_one_day_two_hour_delta(self):
+        delta = self.get_days_delta(days=1, hours=2, minutes=0)
+        self.assertEquals(u"1 %s 2 %s" % (_("day"), _("hours")), self.time_type.format_delta(delta))
+
+    def test_format_two_days_two_hour_delta(self):
+        delta = self.get_days_delta(days=2, hours=2, minutes=0)
+        self.assertEquals(u"2 %s 2 %s" % (_("days"), _("hours")), self.time_type.format_delta(delta))
+
+    def test_format_two_days_two_hour_one_minute_delta(self):
+        delta = self.get_days_delta(days=2, hours=2, minutes=1)
+        self.assertEquals(u"2 %s 2 %s 1 %s" % (_("days"), _("hours"), _("minute")), self.time_type.format_delta(delta))
+
+    def test_format_two_days_two_hour_two_minutes_delta(self):
+        delta = self.get_days_delta(days=2, hours=2, minutes=2)
+        self.assertEquals(u"2 %s 2 %s 2 %s" % (_("days"), _("hours"), _("minutes")), self.time_type.format_delta(delta))
+
+    def test_format_hundred_days_one_minute_delta(self):
+        delta = self.get_days_delta(days=100, hours=0, minutes=0)
+        self.assertEquals(u"100 %s" % _("days"), self.time_type.format_delta(delta))
+
+    def test_format_2_years_2_months(self):
+        time_period1 = self.create_point_period(1, 1, 1999, 0, 0)
+        time_period2 = self.create_point_period(1, 3, 2001, 0, 0)
+        delta = time_period2.start_time - time_period1.start_time
+        self.assertEquals(u"790 %s" % _("days"), self.time_type.format_delta(delta))
+
+    def test_format_overlapping_events(self):
+        time_period1 = TimePeriod(self.time_type,
+                                  self.time_type.parse_time("2010-08-01 13:44:00"),
+                                  self.time_type.parse_time("2010-08-03 13:44:00"))
+        time_period2 = TimePeriod(self.time_type,
+                                  self.time_type.parse_time("2010-08-01 13:44:00"),
+                                  self.time_type.parse_time("2010-08-03 13:44:00"))
+        delta = time_period2.start_time - time_period1.end_time
+        self.assertEquals("0", self.time_type.format_delta(delta))
+
+    def create_point_period(self, day, month, year, hour, minute):
+        dt = gregorian_to_timeline_date_time(Gregorian(year, month, day, hour, minute, 0))
+        return TimePeriod(self.time_type, dt, dt)
+    
+    def get_days_delta(self, days=0, hours=0, minutes=0):
+        return TimelineDelta(days * 24 * 60 *60 + hours * 60 * 60 + minutes * 60)
+    
