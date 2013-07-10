@@ -18,23 +18,61 @@
 
 import unittest
 
-from timelinelib.time.timeline import TimelineDateTime
+import datetime
+
 from timelinelib.time.gregorian import timeline_date_time_to_gregorian
+from timelinelib.time.timeline import TimelineDateTime
 import timelinelib.time.gregorian as gregorian
 
 
 class GregorianSpec(unittest.TestCase):
 
+    def test_rejects_invalid_dates(self):
+        self.assertRaises(ValueError, gregorian.Gregorian, 2013, 0, 1, 0, 0, 0)
+
+
+class GregorianConversionsSpec(unittest.TestCase):
+
     def test_can_convert_from_timeline_date_time_to_gregorian(self):
-        timeline_date_time = TimelineDateTime(julian_day=0, seconds=0)
-        gregorian = timeline_date_time_to_gregorian(timeline_date_time)
-        self.assertEquals(gregorian.to_tuple(), (-4713, 11, 24, 0, 0, 0))
+        self.assertEquals(
+            timeline_date_time_to_gregorian(
+                TimelineDateTime(julian_day=0, seconds=0)).to_tuple(),
+            (-4713, 11, 24, 0, 0, 0))
+        self.assertEquals(
+            timeline_date_time_to_gregorian(
+                TimelineDateTime(julian_day=1, seconds=0)).to_tuple(),
+            (-4713, 11, 25, 0, 0, 0))
 
-        timeline_date_time = TimelineDateTime(julian_day=1, seconds=0)
-        gregorian = timeline_date_time_to_gregorian(timeline_date_time)
-        self.assertEquals(gregorian.to_tuple(), (-4713, 11, 25, 0, 0, 0))
+    def test_roundtrip_julian_day_conversions(self):
+        for julian_day in range(100):
+            (year, month, day) = gregorian.from_julian_day(julian_day)
+            roundtrip = gregorian.to_julian_day(year, month, day)
+            self.assertEquals(roundtrip, julian_day)
 
-    def test_gregorian_valid(self):
+    def test_roundtrip_gregorian_dates_conversions(self):
+        dates = [
+            (2013, 1, 1),
+            (2013, 1, 31),
+        ]
+        for gregorian_date in dates:
+            (year, month, day) = gregorian_date
+            julian_day = gregorian.to_julian_day(year, month, day)
+            roundtrip = gregorian.from_julian_day(julian_day)
+            self.assertEquals(roundtrip, gregorian_date)
+
+    def test_works_same_as_python_date(self):
+        py_date = datetime.date(1900, 1, 1)
+        jd = gregorian.to_julian_day(1900, 1, 1)
+        for i in range(365*200):
+            (y, m, d) = gregorian.from_julian_day(jd)
+            self.assertEquals(py_date, datetime.date(y, m, d))
+            py_date += datetime.timedelta(days=1)
+            jd += 1
+
+
+class GregorianPrimitivesSpec(unittest.TestCase):
+
+    def test_is_valid(self):
         self.assertTrue(gregorian.is_valid(2013, 1, 1))
         self.assertFalse(gregorian.is_valid(2013, 0, 1))
         self.assertFalse(gregorian.is_valid(2013, 13, 1))
@@ -57,10 +95,8 @@ class GregorianSpec(unittest.TestCase):
         self.assertEqual(31, gregorian.days_in_month(2013, 12))
         self.assertEqual(29, gregorian.days_in_month(2016, 2))
 
-    def test_leap_year(self):
+    def test_is_leap_year(self):
         self.assertFalse(gregorian.is_leap_year(2013))
         self.assertFalse(gregorian.is_leap_year(1900))
         self.assertTrue(gregorian.is_leap_year(2016))
         self.assertTrue(gregorian.is_leap_year(2000))
-        
-        
