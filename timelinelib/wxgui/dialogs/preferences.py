@@ -155,4 +155,4 @@ class PreferencesDialog(wx.Dialog):
         self._controller.on_week_start_changed(evt.IsChecked())
 
     def _btn_close_on_click(self, e):
-        self.Close()
+        self.EndModal(wx.ID_OK)
