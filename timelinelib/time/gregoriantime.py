@@ -38,10 +38,10 @@ US_PER_SEC = 1000000
 US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
 
 
-class PyTimeType(TimeType):
+class GregorianTimeType(TimeType):
 
     def __eq__(self, other):
-        return isinstance(other, PyTimeType)
+        return isinstance(other, GregorianTimeType)
 
     def __ne__(self, other):
         return not (self == other)
@@ -281,7 +281,7 @@ def go_to_date_fn(main_frame, current_period, navigation_fn):
     def navigate_to(time):
         navigation_fn(lambda tp: tp.center(time))
     main_frame.display_time_editor_dialog(
-        PyTimeType(), current_period.mean_time(), navigate_to, _("Go to Date"))
+        GregorianTimeType(), current_period.mean_time(), navigate_to, _("Go to Date"))
 
 
 def backward_fn(main_frame, current_period, navigation_fn):
@@ -430,15 +430,15 @@ def fit_millennium_fn(main_frame, current_period, navigation_fn):
 
 
 def get_min_year():
-    return PyTimeType().get_min_time()[0].year
+    return GregorianTimeType().get_min_time()[0].year
 
 
 def get_millenium_max_year():
-    return PyTimeType().get_max_time()[0].year - 1000
+    return GregorianTimeType().get_max_time()[0].year - 1000
 
     
 def get_century_max_year():
-    return PyTimeType().get_max_time()[0].year - 100
+    return GregorianTimeType().get_max_time()[0].year - 100
 
 
 def fit_century_fn(main_frame, current_period, navigation_fn):
