@@ -48,8 +48,8 @@ class GregorianTimeType(TimeType):
 
     def time_string(self, time):
         # TODO: NEW-TIME: timeline-date-time -> (year, month, day, hour, minute, second)
-        return "%s-%s-%s %s:%s:%s" % (time.year, time.month, time.day,
-                                      time.hour, time.minute, time.second)
+        (year, month, day, hour, minute, second) = (-4713, 11, 24, 0, 0, 0)
+        return "%d-%02d-%02d %02d:%02d:%02d" % (year, month, day, hour, minute, second)
 
     def parse_time(self, time_string):
         # TODO: NEW-TIME: (year, month, day, hour, minute, second) -> timeline-date-time

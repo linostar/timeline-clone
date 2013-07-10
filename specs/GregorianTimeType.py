@@ -16,11 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
 import unittest
 
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time import GregorianTimeType
+from timelinelib.time.timeline import TimelineDateTime
 
 
 class GregorianTimeTypeSpec(unittest.TestCase):
@@ -30,8 +30,8 @@ class GregorianTimeTypeSpec(unittest.TestCase):
 
     def test_converts_time_to_string(self):
         self.assertEquals(
-            "2010-8-31 13:44:0",
-            self.time_type.time_string(datetime.datetime(2010, 8, 31, 13, 44)))
+            "-4713-11-24 00:00:00",
+            self.time_type.time_string(TimelineDateTime(julian_day=0, seconds=0)))
 
 #    def test_parses_time_from_string(self):
 #        self.assertEquals(
