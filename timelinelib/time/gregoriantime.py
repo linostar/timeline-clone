@@ -260,7 +260,8 @@ class GregorianTimeType(TimeType):
         return "%04d-%02d-%02d" % (gregorian_time.year, gregorian_time.month, gregorian_time.day)
 
     def event_time_string(self, time):
-        return "%02d:%02d" % (time.hour, time.minute)
+        gregorian_time = timeline_date_time_to_gregorian(time)
+        return "%02d:%02d" % (gregorian_time.hour, gregorian_time.minute)
 
     def eventtimes_equals(self, time1, time2):
         s1 = "%s %s" % (self.event_date_string(time1),

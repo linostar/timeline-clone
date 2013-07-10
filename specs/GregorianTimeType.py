@@ -79,11 +79,11 @@ class GregorianTimeTypeSpec(unittest.TestCase):
             "2010-08-01",
             self.time_type.event_date_string(self.time_type.parse_time("2010-08-01 13:44:22")))
 
-#    def test_event_time_string_method(self):
-#        self.assertEquals(
-#            "13:44",
-#            self.time_type.event_time_string(datetime.datetime(2010, 8, 01, 13, 44,22)))
-#
+    def test_event_time_string_method(self):
+        self.assertEquals(
+            "13:44",
+            self.time_type.event_time_string(self.time_type.parse_time("2010-08-01 13:44:22")))
+
 #    def test_eventtimes_equals_method_when_equals(self):
 #        self.assertTrue(
 #            self.time_type.eventtimes_equals(datetime.datetime(2010, 8, 01, 13, 44, 22),
