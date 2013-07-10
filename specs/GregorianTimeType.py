@@ -38,11 +38,11 @@ class GregorianTimeTypeSpec(unittest.TestCase):
             TimelineDateTime(julian_day=0, seconds=0),
             self.time_type.parse_time("-4713-11-24 00:00:00"))
 
-#    def test_raises_ValueError_when_parsing_invalid_time(self):
-#        self.assertRaises(
-#            ValueError,
-#            self.time_type.parse_time, "2010-31-31 0:0:0")
-#
+    def test_raises_ValueError_when_parsing_invalid_time(self):
+        self.assertRaises(
+            ValueError,
+            self.time_type.parse_time, "2010-31-31 0:0:0")
+
 #    def test_raises_ValueError_when_parsing_badly_formatted_time(self):
 #        self.assertRaises(
 #            ValueError,

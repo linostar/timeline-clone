@@ -22,6 +22,8 @@ from timelinelib.time.timeline import TimelineDateTime
 class Gregorian(object):
 
     def __init__(self, year, month, day, hour, minute, second):
+        if not is_valid(year, month, day):
+            raise ValueError("Invalid gregorian date %s-%s-%s" % (year, month, day))
         self.year = year
         self.month = month
         self.day = day
@@ -32,6 +34,26 @@ class Gregorian(object):
     def to_tuple(self):
         return (self.year, self.month, self.day, self.hour, self.minute,
                 self.second)
+
+def is_valid(year, month, day):
+    return (month >= 1
+       and  month <= 12
+       and  day >= 1
+       and  day <= days_in_month(year, month))
+
+
+def days_in_month(year, month):
+    if month in [4, 6, 9, 11]:
+        return 30
+    if month in [1, 3, 5, 7, 8, 10, 12]:
+        return 31
+    if is_leap_year(year):
+        return 29
+    return 28
+
+
+def is_leap_year(year):
+    return year % 4 == 0 and (year % 400 == 0 or not year % 100 == 0)
 
 
 def timeline_date_time_to_gregorian(timeline_date_time):
