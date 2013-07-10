@@ -37,6 +37,9 @@ class TimelineDateTime(object):
     def __lt__(self, dt):
         return (self.julian_day, self.seconds) < (dt.julian_day, dt.seconds)
 
+    def __repr__(self):
+        return "TimelineDateTime[%s, %s]" % (self.julian_day, self.seconds)
+    
     def get_time_of_day(self):
         hours = self.seconds / 3600
         minutes = (self.seconds / 60) % 60 

@@ -55,15 +55,14 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         self.assertEquals(
             u"1 %s 2010 13:44 to 2 %s 2010 13:30" % (_("Aug"), _("Aug")),
             self.time_type.format_period(time_period))
-#
-#    def test_returns_min_time(self):
-#        self.assertEquals(datetime.datetime(10, 1, 1),
-#                          self.time_type.get_min_time()[0])
-#
-#    def test_returns_max_time(self):
-#        self.assertEquals(datetime.datetime(9990, 1, 1),
-#                          self.time_type.get_max_time()[0])
-#
+
+    def test_returns_min_time(self):
+        self.assertEquals(TimelineDateTime(0, 0), self.time_type.get_min_time()[0])
+
+    def test_returns_max_time(self):
+        self.assertEquals(self.time_type.parse_time("9990-01-01 00:00:00"),
+                          self.time_type.get_max_time()[0])
+
 #    def test_returns_half_delta(self):
 #        delta = datetime.timedelta(days=4)
 #        half_delta = self.time_type.half_delta(delta)

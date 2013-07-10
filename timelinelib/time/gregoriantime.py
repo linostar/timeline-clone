@@ -156,7 +156,7 @@ class GregorianTimeType(TimeType):
         return (min_time, _("can't be before year 10"))
 
     def get_max_time(self):
-        max_time = TimelineDateTime(99999999999999, 0)
+        max_time = TimelineDateTime(5369833, 0)
         return (max_time, _("can't be after year 9989"))
 
     def choose_strip(self, metrics, config):
