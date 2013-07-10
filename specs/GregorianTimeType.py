@@ -17,6 +17,7 @@
 
 
 import unittest
+import mock
 
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time import GregorianTimeType
@@ -24,6 +25,7 @@ from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
 from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.gregorian import gregorian_to_timeline_date_time
+from timelinelib.time.gregoriantime import StripWeek
 
 class GregorianTimeTypeSpec(unittest.TestCase):
 
@@ -106,7 +108,23 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         dt = self.time_type.get_time_at_x(time_period, 0.5)
         self.assertEqual(dt, self.time_type.parse_time("2010-08-01 12:00:00"))
         
+    def test_get_weekday(self):
+        dt = self.time_type.parse_time("2013-07-10 00:00:00")
+        self.assertEqual(3, dt.get_day_of_week())
+    
         
+        
+class GregorianStripWeekSpec(unittest.TestCase):
+    
+    def test_start(self):
+        dt = self.strip.start(self.time_type.parse_time("2013-07-10 00:00:00"))
+        self.assertEqual(self.time_type.parse_time("2013-07-07 00:00:00"), dt)
+    
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+        self.strip = StripWeek(mock.Mock())
+
+
 class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
 
     def setUp(self):

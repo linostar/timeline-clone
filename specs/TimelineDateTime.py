@@ -38,10 +38,14 @@ class TimelineDateTimeSpec(unittest.TestCase):
         self.assertEqual(dt.get_time_of_day(), (2, 3, 5))
 
     def test_add(self):
-        self.assertEqual(TimelineDateTime(10, 61) + TimelineDelta(9), TimelineDateTime(10,70))
-        self.assertEqual(TimelineDateTime(10, 61) + TimelineDelta(24 * 60 * 60), TimelineDateTime(11,61))
+        self.assertEqual(TimelineDateTime(10, 61) + TimelineDelta(9), TimelineDateTime(10, 70))
+        self.assertEqual(TimelineDateTime(10, 61) + TimelineDelta(24 * 60 * 60), TimelineDateTime(11, 61))
+
+    def test_sub(self):
+        self.assertEqual(TimelineDateTime(10, 61) - TimelineDelta(1), TimelineDateTime(10, 60))
+        self.assertEqual(TimelineDateTime(10, 0) - TimelineDelta(1), TimelineDateTime(9, 24 * 60 *60 - 1))
         
-        
+   
 class TimelineDeltaSpec(unittest.TestCase):
 
     def test_div(self):

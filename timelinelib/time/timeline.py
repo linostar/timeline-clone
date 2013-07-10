@@ -33,7 +33,20 @@ class TimelineDateTime(object):
         return TimelineDateTime(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
     
     def __sub__(self, dt):
-        return TimelineDelta((self.julian_day - dt.julian_day) * SECONDS_IN_DAY)
+        if isinstance(dt, TimelineDelta):
+            seconds = self.seconds - dt.seconds
+            if seconds < 0:
+                if seconds % SECONDS_IN_DAY  == 0:
+                    days = abs(seconds) / SECONDS_IN_DAY
+                    seconds = 0
+                else:
+                    days = abs(seconds) / SECONDS_IN_DAY + 1
+                    seconds = SECONDS_IN_DAY - abs(seconds) % SECONDS_IN_DAY
+                return TimelineDateTime(self.julian_day - days, seconds)
+            else:
+                return TimelineDateTime(self.julian_day, seconds)
+        else:
+            return TimelineDelta((self.julian_day - dt.julian_day) * SECONDS_IN_DAY)
     
     def __gt__(self, dt):
         return (self.julian_day, self.seconds) > (dt.julian_day, dt.seconds)
@@ -50,7 +63,10 @@ class TimelineDateTime(object):
         seconds = self.seconds % 60
         return (hours, minutes, seconds)
 
-
+    def get_day_of_week(self):
+        return  (self.julian_day + 1) %  7 
+    
+    
 class TimelineDelta(object):
     
     def __init__(self, seconds):

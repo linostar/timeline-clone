@@ -155,9 +155,7 @@ class GregorianTimeType(TimeType):
         Return a tuple (major_strip, minor_strip) for current time period and
         window size.
         """
-        today = datetime.now()
-        tomorrow = today + timedelta(days=1)
-        day_period = TimePeriod(self, today, tomorrow)
+        day_period = TimePeriod(self, TimelineDateTime(0, 0), TimelineDateTime(1, 0))
         one_day_width = metrics.calc_exact_width(day_period)
         if one_day_width > 600:
             return (StripDay(), StripHour())
@@ -618,13 +616,12 @@ class StripWeek(Strip):
         return ""
 
     def start(self, time):
-        stripped_date = datetime(time.year, time.month, time.day)
         if self.config.week_start == "monday":
             days_to_subtract = stripped_date.weekday()
         else:
             # It is sunday
-            days_to_subtract = (stripped_date.weekday() + 1) % 7
-        return stripped_date - timedelta(days=days_to_subtract)
+            days_to_subtract = time.get_day_of_week()
+        return time - TimelineDelta(days_to_subtract * 24 * 60 * 60)
 
     def increment(self, time):
         return time + timedelta(7)
