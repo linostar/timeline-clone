@@ -32,6 +32,8 @@ from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.typeinterface import TimeType
 from timelinelib.time.gregorian import timeline_date_time_to_gregorian
+from timelinelib.time.gregorian import gregorian_to_timeline_date_time
+from timelinelib.time.gregorian import Gregorian
 
 
 # To save computation power (used by `delta_to_microseconds`)
@@ -60,7 +62,7 @@ class GregorianTimeType(TimeType):
 
     def parse_time(self, time_string):
         # TODO: NEW-TIME: (year, month, day, hour, minute, second) -> timeline-date-time
-        match = re.search(r"^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$", time_string)
+        match = re.search(r"^(-?\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$", time_string)
         if match:
             year = int(match.group(1))
             month = int(match.group(2))
@@ -69,7 +71,7 @@ class GregorianTimeType(TimeType):
             minute = int(match.group(5))
             second = int(match.group(6))
             try:
-                return datetime(year, month, day, hour, minute, second)
+                return gregorian_to_timeline_date_time(Gregorian(year, month, day, hour, minute, second))
             except ValueError:
                 raise ValueError("Invalid time, time string = '%s'" % time_string)
         else:

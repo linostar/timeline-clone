@@ -22,8 +22,12 @@ class TimelineDateTime(object):
         self.julian_day = julian_day
         self.seconds = seconds
 
+    def __eq__(self, dt):
+        return self.julian_day == dt.julian_day and self.seconds == dt.seconds
+    
     def get_time_of_day(self):
         hours = self.seconds / 3600
         minutes = (self.seconds / 60) % 60 
         seconds = self.seconds % 60
         return (hours, minutes, seconds)
+

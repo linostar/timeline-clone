@@ -16,6 +16,9 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from timelinelib.time.timeline import TimelineDateTime
+
+
 class Gregorian(object):
 
     def __init__(self, year, month, day, hour, minute, second):
@@ -37,6 +40,12 @@ def timeline_date_time_to_gregorian(timeline_date_time):
     return Gregorian(year, month, day, hour, minute, second)
 
 
+def gregorian_to_timeline_date_time(gregorian):
+    days = to_julian_day(gregorian.year, gregorian.month, gregorian.day)
+    seconds = gregorian.hour * 60 * 60 + gregorian.minute * 60 + gregorian.second
+    return TimelineDateTime(days, seconds)
+
+
 def from_julian_day(julian_day):
     a = julian_day + 32044
     b = (4*a+3)/146097
@@ -48,3 +57,10 @@ def from_julian_day(julian_day):
     month = m + 3 - 12*(m/10)
     year  = b*100 + d - 4800 + m/10
     return (year, month, day)
+
+
+def to_julian_day(year, month, day):
+    a = (14-month)/12
+    y = year+4800-a
+    m = month + 12*a - 3
+    return day + (153*m+2)/5 + y*365 + y/4 - y/100 + y/400 - 32045
