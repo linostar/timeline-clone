@@ -50,4 +50,16 @@ class TimelineDateTime(object):
 class TimelineDelta(object):
     
     def __init__(self, seconds):
-        pass
+        self.seconds = seconds
+        
+    def __div__(self, value):
+        return TimelineDelta(self.seconds / value)
+
+    def __eq__(self, d):
+        return self.seconds == d.seconds
+    
+    def __gt__(self, d):
+        return self.seconds > d.seconds
+
+    def __lt__(self, d):
+        return self.seconds < d.seconds

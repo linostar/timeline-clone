@@ -21,6 +21,7 @@ import unittest
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time import GregorianTimeType
 from timelinelib.time.timeline import TimelineDateTime
+from timelinelib.time.timeline import TimelineDelta
 
 
 class GregorianTimeTypeSpec(unittest.TestCase):
@@ -63,11 +64,11 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         self.assertEquals(self.time_type.parse_time("9990-01-01 00:00:00"),
                           self.time_type.get_max_time()[0])
 
-#    def test_returns_half_delta(self):
-#        delta = datetime.timedelta(days=4)
-#        half_delta = self.time_type.half_delta(delta)
-#        self.assertEquals(datetime.timedelta(days=2), half_delta)
-#
+    def test_returns_half_delta(self):
+        delta = TimelineDelta(4)
+        half_delta = self.time_type.half_delta(delta)
+        self.assertEquals(TimelineDelta(2), half_delta)
+
 #    def test_returns_margin_delta(self):
 #        delta = datetime.timedelta(days=48)
 #        margin_delta = self.time_type.margin_delta(delta)
