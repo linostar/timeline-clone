@@ -17,7 +17,6 @@
 
 
 from datetime import datetime
-from datetime import time
 from datetime import timedelta
 import calendar
 import re
@@ -52,7 +51,6 @@ class GregorianTimeType(TimeType):
         return not (self == other)
 
     def time_string(self, time):
-        # TODO: NEW-TIME: timeline-date-time -> (year, month, day, hour, minute, second)
         gregorian = timeline_date_time_to_gregorian(time)
         return "%d-%02d-%02d %02d:%02d:%02d" % (
             gregorian.year,
@@ -63,7 +61,6 @@ class GregorianTimeType(TimeType):
             gregorian.second)
 
     def parse_time(self, time_string):
-        # TODO: NEW-TIME: (year, month, day, hour, minute, second) -> timeline-date-time
         match = re.search(r"^(-?\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$", time_string)
         if match:
             year = int(match.group(1))
@@ -107,7 +104,6 @@ class GregorianTimeType(TimeType):
 
     def format_period(self, time_period):
         """Returns a unicode string describing the time period."""
-        # TODO: Local: (hour, minute) -> "HH:MM"
         def label_with_time(time):
             return u"%s %s" % (label_without_time(time), time_label(time))
         def label_without_time(time):
@@ -219,7 +215,6 @@ class GregorianTimeType(TimeType):
         return total_us1 / float(total_us2)
 
     def get_max_zoom_delta(self):
-        # TODO: NEW-TIME: int (days) -> int (seconds) -> timeline-delta
         return (TimelineDelta(1200 * 365 * 24 * 60 * 60),
                 _("Can't zoom wider than 1200 years"))
 
@@ -249,7 +244,6 @@ class GregorianTimeType(TimeType):
         return (delta.seconds > 3600) or (delta.days > 0)
 
     def half_delta(self, delta):
-        # TODO: NEW-TIME: timeline-delta -> int (div) -> timeline-delta
         return delta / 2
 
     def margin_delta(self, delta):
