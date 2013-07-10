@@ -37,11 +37,6 @@ from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
 
 
-# To save computation power (used by `delta_to_microseconds`)
-US_PER_SEC = 1000000
-US_PER_DAY = 24 * 60 * 60 * US_PER_SEC
-
-
 class GregorianTimeType(TimeType):
 
     def __eq__(self, other):
@@ -197,22 +192,10 @@ class GregorianTimeType(TimeType):
 
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
-        # TODO: NEW-TIME: timeline-delta -> float -> timeline-delta
-        # TODO: NEW-TIME: timeline-delta -> timeline-date-time -> timeline-date-time (plus)
-        microsecs = delta_to_microseconds(time_period.delta())
-        microsecs = microsecs * x_percent_of_width
-        return time_period.start_time + microseconds_to_delta(microsecs)
+        return time_period.start_time + time_period.delta() * x_percent_of_width
 
     def div_timedeltas(self, delta1, delta2):
-        """Return how many times delta2 fit in delta1."""
-        # TODO: NEW-TIME: timeline-delta -> timeline-delta -> float (div)
-        # Since Python can handle infinitely large numbers, this solution works. It
-        # might however not be optimal. If you are clever, you should be able to
-        # treat the different parts individually. But this is simple.
-        total_us1 = delta_to_microseconds(delta1)
-        total_us2 = delta_to_microseconds(delta2)
-        # Make sure that the result is a floating point number
-        return total_us1 / float(total_us2)
+        return delta1 / delta2
 
     def get_max_zoom_delta(self):
         return (TimelineDelta(1200 * 365 * 24 * 60 * 60),
@@ -711,18 +694,6 @@ class StripHour(Strip):
 
     def get_font(self, time_period):
         return get_default_font(8)
-
-
-def microseconds_to_delta(microsecs):
-    """Return a timedelta representing the given number of microseconds."""
-    return timedelta(microseconds=microsecs)
-
-
-def delta_to_microseconds(delta):
-    """Return the number of microseconds that the timedelta represents."""
-    return (delta.days * US_PER_DAY +
-            delta.seconds * US_PER_SEC +
-            delta.microseconds)
 
 
 def move_period_num_days(period, num):

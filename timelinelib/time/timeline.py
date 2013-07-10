@@ -16,6 +16,9 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+SECONDS_IN_DAY = 24 * 60 * 60
+
+
 class TimelineDateTime(object):
 
     def __init__(self, julian_day, seconds):
@@ -26,10 +29,11 @@ class TimelineDateTime(object):
         return self.julian_day == dt.julian_day and self.seconds == dt.seconds
     
     def __add__(self, delta):
-        return self
+        seconds = self.seconds + delta.seconds
+        return TimelineDateTime(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
     
     def __sub__(self, dt):
-        return TimelineDelta((self.julian_day - dt.julian_day) * 60 * 60 * 24)
+        return TimelineDelta((self.julian_day - dt.julian_day) * SECONDS_IN_DAY)
     
     def __gt__(self, dt):
         return (self.julian_day, self.seconds) > (dt.julian_day, dt.seconds)
@@ -53,7 +57,13 @@ class TimelineDelta(object):
         self.seconds = seconds
         
     def __div__(self, value):
-        return TimelineDelta(self.seconds / value)
+        if isinstance(value, TimelineDelta):
+            return float(self.seconds) / float(value.seconds)
+        else:
+            return TimelineDelta(self.seconds / value)
+
+    def __mul__(self, value):
+        return TimelineDelta(int(self.seconds * value))
 
     def __eq__(self, d):
         return self.seconds == d.seconds
@@ -65,7 +75,7 @@ class TimelineDelta(object):
         return self.seconds < d.seconds
     
     def get_days(self):
-        return self.seconds / (60 * 60 * 24)
+        return self.seconds / SECONDS_IN_DAY
     
     def get_hours(self):
         return (self.seconds / (60 * 60)) % 24

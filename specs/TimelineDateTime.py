@@ -19,6 +19,7 @@
 import unittest
 
 from timelinelib.time.timeline import TimelineDateTime
+from timelinelib.time.timeline import TimelineDelta
 
 
 class TimelineDateTimeSpec(unittest.TestCase):
@@ -35,3 +36,17 @@ class TimelineDateTimeSpec(unittest.TestCase):
 
         dt = TimelineDateTime(0, 60 * 60 * 2 + 60 * 3 + 5)
         self.assertEqual(dt.get_time_of_day(), (2, 3, 5))
+
+    def test_add(self):
+        self.assertEqual(TimelineDateTime(10, 61) + TimelineDelta(9), TimelineDateTime(10,70))
+        self.assertEqual(TimelineDateTime(10, 61) + TimelineDelta(24 * 60 * 60), TimelineDateTime(11,61))
+        
+        
+class TimelineDeltaSpec(unittest.TestCase):
+
+    def test_div(self):
+        self.assertEqual(2.5, TimelineDelta(5) / TimelineDelta(2))
+
+    def test_mul(self):
+        self.assertEqual(TimelineDelta(2), TimelineDelta(5) * 0.5)
+        

@@ -95,6 +95,18 @@ class GregorianTimeTypeSpec(unittest.TestCase):
             self.time_type.eventtimes_equals(self.time_type.parse_time("2010-08-01 13:44:22"),
                                              self.time_type.parse_time("2010-07-01 13:44:22")))
 
+    def test_div_deltas(self):
+        result = self.time_type.div_timedeltas(TimelineDelta(5), TimelineDelta(2))
+        self.assertEqual(2.5, result)
+        
+    def test_get_time_at_x(self):
+        time_period = TimePeriod(self.time_type,
+                                 self.time_type.parse_time("2010-08-01 00:00:00"),
+                                 self.time_type.parse_time("2010-08-02 00:00:00"))
+        dt = self.time_type.get_time_at_x(time_period, 0.5)
+        self.assertEqual(dt, self.time_type.parse_time("2010-08-01 12:00:00"))
+        
+        
 class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
 
     def setUp(self):
