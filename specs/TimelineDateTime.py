@@ -16,14 +16,22 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class TimelineDateTime(object):
+import unittest
 
-    def __init__(self, julian_day, seconds):
-        self.julian_day = julian_day
-        self.seconds = seconds
+from timelinelib.time.timeline import TimelineDateTime
 
-    def get_time_of_day(self):
-        hours = self.seconds / 3600
-        minutes = (self.seconds / 60) % 60 
-        seconds = self.seconds % 60
-        return (hours, minutes, seconds)
+
+class TimelineDateTimeSpec(unittest.TestCase):
+
+    def test_can_return_time_of_day(self):
+        dt = TimelineDateTime(0, 0)
+        self.assertEqual(dt.get_time_of_day(), (0, 0, 0))
+        
+        dt = TimelineDateTime(0, 1)
+        self.assertEqual(dt.get_time_of_day(), (0, 0, 1))
+
+        dt = TimelineDateTime(0, 61)
+        self.assertEqual(dt.get_time_of_day(), (0, 1, 1))
+
+        dt = TimelineDateTime(0, 60 * 60 * 2 + 60 * 3 + 5)
+        self.assertEqual(dt.get_time_of_day(), (2, 3, 5))

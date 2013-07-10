@@ -33,7 +33,7 @@ class Gregorian(object):
 
 def timeline_date_time_to_gregorian(timeline_date_time):
     (year, month, day) = from_julian_day(timeline_date_time.julian_day)
-    (hour, minute, second) = (0, 0, 0)
+    (hour, minute, second) = timeline_date_time.get_time_of_day()
     return Gregorian(year, month, day, hour, minute, second)
 
 
