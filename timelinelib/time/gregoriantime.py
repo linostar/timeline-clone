@@ -31,6 +31,7 @@ from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.typeinterface import TimeType
+from timelinelib.time.gregorian import timeline_date_time_to_gregorian
 
 
 # To save computation power (used by `delta_to_microseconds`)
@@ -48,8 +49,14 @@ class GregorianTimeType(TimeType):
 
     def time_string(self, time):
         # TODO: NEW-TIME: timeline-date-time -> (year, month, day, hour, minute, second)
-        (year, month, day, hour, minute, second) = (-4713, 11, 24, 0, 0, 0)
-        return "%d-%02d-%02d %02d:%02d:%02d" % (year, month, day, hour, minute, second)
+        gregorian = timeline_date_time_to_gregorian(time)
+        return "%d-%02d-%02d %02d:%02d:%02d" % (
+            gregorian.year,
+            gregorian.month,
+            gregorian.day,
+            gregorian.hour,
+            gregorian.minute,
+            gregorian.second)
 
     def parse_time(self, time_string):
         # TODO: NEW-TIME: (year, month, day, hour, minute, second) -> timeline-date-time

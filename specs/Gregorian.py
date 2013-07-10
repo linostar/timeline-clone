@@ -16,7 +16,19 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class TimelineDateTime(object):
+import unittest
 
-    def __init__(self, julian_day, seconds):
-        self.julian_day = julian_day
+from timelinelib.time.timeline import TimelineDateTime
+from timelinelib.time.gregorian import timeline_date_time_to_gregorian
+
+
+class GregorianSpec(unittest.TestCase):
+
+    def test_can_convert_from_timeline_date_time_to_gregorian(self):
+        timeline_date_time = TimelineDateTime(julian_day=0, seconds=0)
+        gregorian = timeline_date_time_to_gregorian(timeline_date_time)
+        self.assertEquals(gregorian.to_tuple(), (-4713, 11, 24, 0, 0, 0))
+
+        timeline_date_time = TimelineDateTime(julian_day=1, seconds=0)
+        gregorian = timeline_date_time_to_gregorian(timeline_date_time)
+        self.assertEquals(gregorian.to_tuple(), (-4713, 11, 25, 0, 0, 0))
