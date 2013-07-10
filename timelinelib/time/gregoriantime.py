@@ -34,6 +34,8 @@ from timelinelib.time.typeinterface import TimeType
 from timelinelib.time.gregorian import timeline_date_time_to_gregorian
 from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.time.gregorian import Gregorian
+from timelinelib.time.timeline import TimelineDateTime
+from timelinelib.time.timeline import TimelineDelta
 
 
 # To save computation power (used by `delta_to_microseconds`)
@@ -109,9 +111,10 @@ class GregorianTimeType(TimeType):
         def label_with_time(time):
             return u"%s %s" % (label_without_time(time), time_label(time))
         def label_without_time(time):
-            return u"%s %s %s" % (time.day, abbreviated_name_of_month(time.month), time.year)
+            gregorian_datetime = timeline_date_time_to_gregorian(time)
+            return u"%s %s %s" % (gregorian_datetime.day, abbreviated_name_of_month(gregorian_datetime.month), gregorian_datetime.year)
         def time_label(time):
-            return time.time().isoformat()[0:5]
+            return "%02d:%02d" % time.get_time_of_day()[:-1]
         if time_period.is_period():
             if time_period.has_nonzero_time():
                 label = u"%s to %s" % (label_with_time(time_period.start_time),
@@ -149,11 +152,11 @@ class GregorianTimeType(TimeType):
         return delta_string
 
     def get_min_time(self):
-        min_time = datetime(10, 1, 1)
+        min_time = TimelineDateTime(0,0)
         return (min_time, _("can't be before year 10"))
 
     def get_max_time(self):
-        max_time = datetime(9990, 1, 1)
+        max_time = TimelineDateTime(99999999999999, 0)
         return (max_time, _("can't be after year 9989"))
 
     def choose_strip(self, metrics, config):
@@ -217,18 +220,18 @@ class GregorianTimeType(TimeType):
 
     def get_max_zoom_delta(self):
         # TODO: NEW-TIME: int (days) -> int (seconds) -> timeline-delta
-        return (timedelta(days=1200*365),
+        return (TimelineDelta(0),
                 _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):
         return (timedelta(hours=1), _("Can't zoom deeper than 1 hour"))
 
     def get_zero_delta(self):
-        return timedelta(0)
+        return TimelineDelta(0)
 
     def time_period_has_nonzero_time(self, time_period):
-        nonzero_time = (time_period.start_time.time() != time(0, 0, 0) or
-                        time_period.end_time.time()   != time(0, 0, 0))
+        nonzero_time = (time_period.start_time.seconds != 0 or
+                        time_period.end_time.seconds  != 0)
         return nonzero_time
 
     def get_name(self):

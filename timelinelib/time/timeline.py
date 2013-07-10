@@ -25,9 +25,26 @@ class TimelineDateTime(object):
     def __eq__(self, dt):
         return self.julian_day == dt.julian_day and self.seconds == dt.seconds
     
+    def __add__(self, delta):
+        return self
+    
+    def __sub__(self, dt):
+        return TimelineDelta(0)
+    
+    def __gt__(self, dt):
+        return (self.julian_day, self.seconds) > (dt.julian_day, dt.seconds)
+        
+    def __lt__(self, dt):
+        return (self.julian_day, self.seconds) < (dt.julian_day, dt.seconds)
+
     def get_time_of_day(self):
         hours = self.seconds / 3600
         minutes = (self.seconds / 60) % 60 
         seconds = self.seconds % 60
         return (hours, minutes, seconds)
 
+
+class TimelineDelta(object):
+    
+    def __init__(self, seconds):
+        pass
