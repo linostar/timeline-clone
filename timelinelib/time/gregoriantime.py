@@ -174,12 +174,7 @@ class GregorianTimeType(TimeType):
             return (StripCentury(), StripCentury())
 
     def mult_timedelta(self, delta, num):
-        """Return a new timedelta that is `num` times larger than `delta`."""
-        # TODO: NEW-TIME: timeline-delta -> int -> timeline-delta
-        days = delta.days * num
-        seconds = delta.seconds * num
-        microseconds = delta.microseconds * num
-        return timedelta(days, seconds, microseconds)
+        return delta * num
 
     def get_default_time_period(self):
         return time_period_center(self, datetime.now(), timedelta(days=30))
