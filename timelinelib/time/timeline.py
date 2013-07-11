@@ -80,11 +80,14 @@ class TimelineDelta(object):
         else:
             return TimelineDelta(self.seconds / value)
 
+    def __neg__(self):
+        return TimelineDelta(-self.seconds)
+
     def __mul__(self, value):
         return TimelineDelta(int(self.seconds * value))
 
     def __eq__(self, d):
-        return self.seconds == d.seconds
+        return isinstance(d, TimelineDelta) and self.seconds == d.seconds
 
     def __gt__(self, d):
         return self.seconds > d.seconds
