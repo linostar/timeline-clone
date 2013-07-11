@@ -587,7 +587,9 @@ class StripDay(Strip):
         return str(time.day)
 
     def start(self, time):
-        return datetime(time.year, time.month, time.day)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(gregorian.year, gregorian.month, gregorian.day, 0, 0, 0)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
         return time + timedelta(1)
