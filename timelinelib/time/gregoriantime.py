@@ -498,25 +498,29 @@ class StripCentury(Strip):
     def label(self, time, major=False):
         if major:
             # TODO: This only works for English. Possible to localize?
+            time = timeline_date_time_to_gregorian(time)
             start_year = self._century_start_year(time.year)
             next_start_year = start_year + 100
             return str(next_start_year / 100) + " century"
         return ""
 
     def start(self, time):
-        return datetime(max(self._century_start_year(time.year), 10), 1, 1)
+        time = timeline_date_time_to_gregorian(time)
+        return gregorian_to_timeline_date_time(Gregorian(max(self._century_start_year(time.year), 10), 1, 1, 0, 0, 0))
 
     def increment(self, time):
-        return time.replace(year=time.year + 100)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(
+            gregorian.year + 100, gregorian.month, gregorian.day,
+            gregorian.hour, gregorian.minute, gregorian.second)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def get_font(self, time_period):
         return get_default_font(8)
 
     def _century_start_year(self, year):
         year = (int(year) / 100) * 100
-        #if year > get_century_max_year():
-        #    year = get_century_max_year
-        return year 
+        return year
 
 
 class StripDecade(Strip):
@@ -702,16 +706,18 @@ class StripWeekday(Strip):
 class StripHour(Strip):
 
     def label(self, time, major=False):
+        time = timeline_date_time_to_gregorian(time)
         if major:
             return "%s %s %s %s" % (time.day, abbreviated_name_of_month(time.month),
                                     time.year, time.hour)
         return str(time.hour)
 
     def start(self, time):
-        return datetime(time.year, time.month, time.day, time.hour)
+        (hours, minutes, seconds) = time.get_time_of_day()
+        return TimelineDateTime(time.julian_day, hours * 60 * 60)
 
     def increment(self, time):
-        return time + timedelta(hours=1)
+        return time + TimelineDelta(60 * 60)
 
     def get_font(self, time_period):
         return get_default_font(8)
