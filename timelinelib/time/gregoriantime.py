@@ -639,7 +639,7 @@ class StripWeek(Strip):
         else:
             # It is sunday
             days_to_subtract = (time.get_day_of_week() + 1) % 7
-        return time - TimelineDelta(days_to_subtract * 24 * 60 * 60)
+        return TimelineDateTime(time.julian_day - days_to_subtract, 0)
 
     def increment(self, time):
         return time + TimelineDelta(7*24*60*60)
@@ -679,17 +679,21 @@ class StripWeekday(Strip):
 
     def label(self, time, major=False):
         if major:
-            return "%s %s %s %s" % (abbreviated_name_of_weekday(time.weekday()),
+            day_of_week = time.get_day_of_week()
+            time = timeline_date_time_to_gregorian(time)
+            return "%s %s %s %s" % (abbreviated_name_of_weekday(day_of_week),
                                     time.day,
                                     abbreviated_name_of_month(time.month),
                                     time.year)
-        return abbreviated_name_of_weekday(time.weekday())
+        return abbreviated_name_of_weekday(time.get_day_of_week())
 
     def start(self, time):
-        return datetime(time.year, time.month, time.day)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(gregorian.year, gregorian.month, gregorian.day, 0, 0, 0)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
-        return time + timedelta(1)
+        return time + TimelineDelta(24 * 60 * 60)
 
     def get_font(self, time_period):
         return get_default_font(8)
