@@ -184,9 +184,10 @@ class GregorianTimeType(TimeType):
         return time_period_center(self, datetime.now(), timedelta(days=30))
 
     def now(self):
-        # TODO: Local: None -> timeline-date-time (now)
-        # python.now -> (year, month, day, ....) -> timeline-date-time
-        return datetime.now()
+        py = datetime.now()
+        gregorian = Gregorian(py.year, py.month, py.day,
+                              py.hour, py.minute, py.second)
+        return gregorian_to_timeline_date_time(gregorian)
 
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
