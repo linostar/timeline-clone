@@ -272,7 +272,7 @@ class GregorianTimeType(TimeType):
 
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
-    navigation_fn(lambda tp: tp.center(datetime.now()))
+    navigation_fn(lambda tp: tp.center(current_period.time_type.now()))
 
 
 def go_to_date_fn(main_frame, current_period, navigation_fn):
@@ -426,12 +426,12 @@ def backward_one_month_fn(main_frame, current_period, navigation_fn):
 
 
 def forward_one_year_fn(main_frame, current_period, navigation_fn):
-    yr = timedelta(days=365)
+    yr = delta_from_days(365)
     navigation_fn(lambda tp: tp.move_delta(yr))
 
 
 def backward_one_year_fn(main_frame, current_period, navigation_fn):
-    yr = timedelta(days=365)
+    yr = delta_from_days(365)
     navigation_fn(lambda tp: tp.move_delta(-1*yr))
 
 
