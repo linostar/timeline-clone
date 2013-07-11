@@ -40,7 +40,7 @@ def create_in_memory_tutorial_db():
     tutcreator.add_event(
         _("Hover me!"),
         _("Hovering events with a triangle shows the event description."),
-        timedelta(days=5))
+        tutcreator.get_days_delta(5))
     tutcreator.add_category(_("Features"), (100, 100, 250), (250, 250, 20))
     tutcreator.add_event(
         _("Scroll"),
@@ -133,15 +133,13 @@ class TutorialTimelineCreator(object):
         return self.db
 
     def get_days_delta(self, days):
-        if self.db.get_time_type().get_name() == u"pytime": 
+        if self.db.get_time_type().get_name() == u"pytime":
             return timedelta(days=days)
-        if self.db.get_time_type().get_name() == u"gregoriantime": 
+        if self.db.get_time_type().get_name() == u"gregoriantime":
             return TimelineDelta(days * 24 * 60 * 60)
-    
+
     def get_time(self, year, month, day):
-        if self.db.get_time_type().get_name() == u"pytime": 
+        if self.db.get_time_type().get_name() == u"pytime":
             return datetime(year, month, day, 0, 0, 0)
-        if self.db.get_time_type().get_name() == u"gregoriantime": 
+        if self.db.get_time_type().get_name() == u"gregoriantime":
             return gregorian_to_timeline_date_time(Gregorian(year, month, day, 0, 0, 0))
-        
-    
