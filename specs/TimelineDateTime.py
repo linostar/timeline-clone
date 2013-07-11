@@ -64,8 +64,12 @@ class TimelineDeltaSpec(unittest.TestCase):
     def test_div(self):
         self.assertEqual(2.5, TimelineDelta(5) / TimelineDelta(2))
 
+    def test_sub(self):
+        self.assertEqual(TimelineDelta(2) - TimelineDelta(1), TimelineDelta(1))
+
     def test_mul(self):
         self.assertEqual(TimelineDelta(2), TimelineDelta(5) * 0.5)
+        self.assertEqual(TimelineDelta(2), 0.5 * TimelineDelta(5))
 
     def test_negate(self):
         self.assertEqual(TimelineDelta(-2), -TimelineDelta(2))
