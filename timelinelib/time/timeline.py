@@ -118,3 +118,7 @@ class TimelineDelta(object):
 
     def __repr__(self):
         return "TimelineDelta[%s]" % self.seconds
+
+
+def delta_from_days(days):
+    return TimelineDelta(SECONDS_IN_DAY * days)

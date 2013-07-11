@@ -36,6 +36,9 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.wxtime import WxTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
+from timelinelib.time.gregorian import Gregorian
+from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.wxgui.setup import start_wx_application
 
 
@@ -50,6 +53,10 @@ def wx_period(start, end):
     return TimePeriod(WxTimeType(), human_time_to_wx(start), human_time_to_wx(end))
 
 
+def gregorian_period(start, end):
+    return TimePeriod(GregorianTimeType(), human_time_to_gregorian(start), human_time_to_gregorian(end))
+
+
 def human_time_to_py(human_time):
     (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
     return py_time(year, month, day, hour, minute)
@@ -58,6 +65,12 @@ def human_time_to_py(human_time):
 def human_time_to_wx(human_time):
     (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
     return wx_time(year, month, day, hour, minute)
+
+
+def human_time_to_gregorian(human_time):
+    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
+    gregorian = Gregorian(year, month, day, hour, minute, 0)
+    return gregorian_to_timeline_date_time(gregorian)
 
 
 def human_time_to_ymdhm(human_time):

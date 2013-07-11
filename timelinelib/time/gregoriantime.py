@@ -37,6 +37,7 @@ from timelinelib.time.gregorian import gregorian_week
 from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
+from timelinelib.time.timeline import delta_from_days
 
 
 class GregorianTimeType(TimeType):
@@ -269,8 +270,8 @@ class GregorianTimeType(TimeType):
         diff = end - temp2
         result += (diff.days * 24 * 60 * 60 + diff.seconds) * 1000
         return result
-    
-    
+
+
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(datetime.now()))
 
@@ -302,7 +303,15 @@ def _move_page_smart(current_period, navigation_fn, direction):
 def _whole_number_of_years(period):
     start, end = period.start_time, period.end_time
     year_diff = _calculate_year_diff(period)
-    whole_years = start.replace(year=start.year+year_diff) == end
+    old_start = timeline_date_time_to_gregorian(start)
+    new_start = gregorian_to_timeline_date_time(Gregorian(
+        old_start.year+year_diff,
+        old_start.month,
+        old_start.day,
+        old_start.hour,
+        old_start.minute,
+        old_start.second))
+    whole_years = new_start == end
     return whole_years and year_diff > 0
 
 
@@ -324,11 +333,11 @@ def _move_page_years(curret_period, navigation_fn, direction):
 
 
 def _calculate_year_diff(period):
-    return period.end_time.year - period.start_time.year
+    return timeline_date_time_to_gregorian(period.end_time).year - timeline_date_time_to_gregorian(period.start_time).year
 
 
 def _whole_number_of_months(period):
-    start, end = period.start_time, period.end_time
+    start, end = timeline_date_time_to_gregorian(period.start_time), timeline_date_time_to_gregorian(period.end_time)
     start_months = start.year * 12 + start.month
     end_months = end.year * 12 + end.month
     month_diff = end_months - start_months
@@ -338,21 +347,25 @@ def _whole_number_of_months(period):
 
 def _move_page_months(curret_period, navigation_fn, direction):
     def navigate(tp):
-        start_months = curret_period.start_time.year * 12 + curret_period.start_time.month
-        end_months = curret_period.end_time.year * 12 + curret_period.end_time.month
+        start = timeline_date_time_to_gregorian(curret_period.start_time)
+        end = timeline_date_time_to_gregorian(curret_period.end_time)
+        start_months = start.year * 12 + start.month
+        end_months = end.year * 12 + end.month
         month_diff = end_months - start_months
         month_delta = month_diff * direction
         new_start_year, new_start_month = _months_to_year_and_month(start_months + month_delta)
         new_end_year, new_end_month = _months_to_year_and_month(end_months + month_delta)
         try:
-            new_start = curret_period.start_time.replace(year=new_start_year, month=new_start_month)
-            new_end = curret_period.end_time.replace(year=new_end_year, month=new_end_month)
+            new_start = Gregorian(new_start_year, new_start_month, start.day,
+                                  start.hour, start.minute, start.second)
+            new_end = Gregorian(new_end_year, new_end_month, end.day,
+                                  end.hour, end.minute, end.second)
         except ValueError:
             if direction < 0:
                 raise TimeOutOfRangeLeftError()
             else:
                 raise TimeOutOfRangeRightError()
-        return tp.update(new_start, new_end)
+        return tp.update(gregorian_to_timeline_date_time(new_start), gregorian_to_timeline_date_time(new_end))
     navigation_fn(navigate)
 
 
@@ -418,78 +431,78 @@ def backward_one_year_fn(main_frame, current_period, navigation_fn):
 
 
 def fit_millennium_fn(main_frame, current_period, navigation_fn):
-    mean = current_period.mean_time()
+    mean = timeline_date_time_to_gregorian(current_period.mean_time())
     if mean.year > get_millenium_max_year():
         year = get_millenium_max_year()
     else:
         year = max(get_min_year(), int(mean.year/1000)*1000)
-    start = datetime(year, 1, 1)
-    end = datetime(year + 1000, 1, 1)
+    start = gregorian_to_timeline_date_time(Gregorian(year, 1, 1, 0, 0, 0))
+    end = gregorian_to_timeline_date_time(Gregorian(year + 1000, 1, 1, 0, 0, 0))
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def get_min_year():
-    return GregorianTimeType().get_min_time()[0].year
+    return timeline_date_time_to_gregorian(GregorianTimeType().get_min_time()[0]).year
 
 
 def get_millenium_max_year():
-    return GregorianTimeType().get_max_time()[0].year - 1000
+    return timeline_date_time_to_gregorian(GregorianTimeType().get_max_time()[0]).year - 1000
 
-    
+
 def get_century_max_year():
-    return GregorianTimeType().get_max_time()[0].year - 100
+    return timeline_date_time_to_gregorian(GregorianTimeType().get_max_time()[0]).year - 100
 
 
 def fit_century_fn(main_frame, current_period, navigation_fn):
-    mean = current_period.mean_time()
+    mean = timeline_date_time_to_gregorian(current_period.mean_time())
     if mean.year > get_century_max_year():
         year = get_century_max_year()
     else:
         year = max(get_min_year(), int(mean.year/100)*100)
-    start = datetime(year, 1, 1)
-    end = datetime(year + 100, 1, 1)
+    start = gregorian_to_timeline_date_time(Gregorian(year, 1, 1, 0, 0, 0))
+    end = gregorian_to_timeline_date_time(Gregorian(year + 100, 1, 1, 0, 0, 0))
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_decade_fn(main_frame, current_period, navigation_fn):
-    mean = current_period.mean_time()
-    start = datetime(int(mean.year/10)*10, 1, 1)
-    end = datetime(int(mean.year/10)*10+10, 1, 1)
+    mean = timeline_date_time_to_gregorian(current_period.mean_time())
+    start = gregorian_to_timeline_date_time(Gregorian(int(mean.year/10)*10, 1, 1, 0, 0, 0))
+    end = gregorian_to_timeline_date_time(Gregorian(int(mean.year/10)*10+10, 1, 1, 0, 0, 0))
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_year_fn(main_frame, current_period, navigation_fn):
-    mean = current_period.mean_time()
-    start = datetime(mean.year, 1, 1)
-    end = datetime(mean.year + 1, 1, 1)
+    mean = timeline_date_time_to_gregorian(current_period.mean_time())
+    start = gregorian_to_timeline_date_time(Gregorian(mean.year, 1, 1, 0, 0, 0))
+    end = gregorian_to_timeline_date_time(Gregorian(mean.year + 1, 1, 1, 0, 0, 0))
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_month_fn(main_frame, current_period, navigation_fn):
-    mean = current_period.mean_time()
-    start = datetime(mean.year, mean.month, 1)
+    mean = timeline_date_time_to_gregorian(current_period.mean_time())
+    start = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month, 1, 0, 0, 0))
     if mean.month == 12:
-        end = datetime(mean.year + 1, 1, 1)
+        end = gregorian_to_timeline_date_time(Gregorian(mean.year + 1, 1, 1, 0, 0, 0))
     else:
-        end = datetime(mean.year, mean.month + 1, 1)
+        end = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month + 1, 1, 0, 0, 0))
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_day_fn(main_frame, current_period, navigation_fn):
-    mean = current_period.mean_time()
-    start = datetime(mean.year, mean.month, mean.day)
-    end = start + timedelta(days=1)
+    mean = timeline_date_time_to_gregorian(current_period.mean_time())
+    start = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month, mean.day, 0, 0, 0))
+    end = start + delta_from_days(1)
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_week_fn(main_frame, current_period, navigation_fn):
-    mean = current_period.mean_time()
-    start = datetime(mean.year, mean.month, mean.day)
-    weekday = datetime.weekday(start)
-    start = start - timedelta(days=weekday)
+    mean = timeline_date_time_to_gregorian(current_period.mean_time())
+    start = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month, mean.day, 0, 0, 0))
+    weekday = start.get_day_of_week()
+    start = start - delta_from_days(weekday)
     if not main_frame.week_starts_on_monday():
-        start = start - timedelta(days=1)
-    end = start + timedelta(days=7)
+        start = start - delta_from_days(1)
+    end = start + delta_from_days(7)
     navigation_fn(lambda tp: tp.update(start, end))
 
 
