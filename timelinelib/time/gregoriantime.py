@@ -32,6 +32,7 @@ from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.typeinterface import TimeType
 from timelinelib.time.gregorian import timeline_date_time_to_gregorian
 from timelinelib.time.gregorian import gregorian_to_timeline_date_time
+from timelinelib.time.gregorian import days_in_month
 from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
@@ -534,7 +535,11 @@ class StripDecade(Strip):
         return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
-        return time.replace(year=time.year+10)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(
+            gregorian.year + 10, gregorian.month, gregorian.day,
+            gregorian.hour, gregorian.minute, gregorian.second)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def _decade_start_year(self, year):
         return (int(year) / 10) * 10
@@ -554,7 +559,11 @@ class StripYear(Strip):
         return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
-        return time.replace(year=time.year+1)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(
+            gregorian.year + 1, gregorian.month, gregorian.day,
+            gregorian.hour, gregorian.minute, gregorian.second)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -573,7 +582,8 @@ class StripMonth(Strip):
         return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
-        return time + timedelta(calendar.monthrange(time.year, time.month)[1])
+        gregorian = timeline_date_time_to_gregorian(time)
+        return time + TimelineDelta(24*60*60*days_in_month(gregorian.year, gregorian.month))
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -592,7 +602,7 @@ class StripDay(Strip):
         return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
-        return time + timedelta(1)
+        return time + TimelineDelta(24*60*60)
 
     def get_font(self, time_period):
         # TODO: NEW-TIME: timeline-date-time -> int (weekday)
@@ -633,7 +643,7 @@ class StripWeek(Strip):
         return time - TimelineDelta(days_to_subtract * 24 * 60 * 60)
 
     def increment(self, time):
-        return time + timedelta(7)
+        return time + TimelineDelta(7*24*60*60)
 
     def get_font(self, time_period):
         return get_default_font(8)

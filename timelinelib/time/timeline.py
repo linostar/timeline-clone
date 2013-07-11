@@ -27,11 +27,13 @@ class TimelineDateTime(object):
 
     def __eq__(self, dt):
         return self.julian_day == dt.julian_day and self.seconds == dt.seconds
-    
+
     def __add__(self, delta):
-        seconds = self.seconds + delta.seconds
-        return TimelineDateTime(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
-    
+        if isinstance(delta, TimelineDelta):
+            seconds = self.seconds + delta.seconds
+            return TimelineDateTime(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
+        raise TypeError("TimelineDateTime + %s not supported" % type(delta))
+
     def __sub__(self, dt):
         if isinstance(dt, TimelineDelta):
             seconds = self.seconds - dt.seconds
@@ -47,31 +49,31 @@ class TimelineDateTime(object):
                 return TimelineDateTime(self.julian_day, seconds)
         else:
             return TimelineDelta((self.julian_day - dt.julian_day) * SECONDS_IN_DAY)
-    
+
     def __gt__(self, dt):
         return (self.julian_day, self.seconds) > (dt.julian_day, dt.seconds)
-        
+
     def __lt__(self, dt):
         return (self.julian_day, self.seconds) < (dt.julian_day, dt.seconds)
 
     def __repr__(self):
         return "TimelineDateTime[%s, %s]" % (self.julian_day, self.seconds)
-    
+
     def get_time_of_day(self):
         hours = self.seconds / 3600
-        minutes = (self.seconds / 60) % 60 
+        minutes = (self.seconds / 60) % 60
         seconds = self.seconds % 60
         return (hours, minutes, seconds)
 
     def get_day_of_week(self):
-        return  (self.julian_day + 1) %  7 
-    
-    
+        return  (self.julian_day + 1) %  7
+
+
 class TimelineDelta(object):
-    
+
     def __init__(self, seconds):
         self.seconds = seconds
-        
+
     def __div__(self, value):
         if isinstance(value, TimelineDelta):
             return float(self.seconds) / float(value.seconds)
@@ -83,18 +85,18 @@ class TimelineDelta(object):
 
     def __eq__(self, d):
         return self.seconds == d.seconds
-    
+
     def __gt__(self, d):
         return self.seconds > d.seconds
 
     def __lt__(self, d):
         return self.seconds < d.seconds
-    
+
     def get_days(self):
         return self.seconds / SECONDS_IN_DAY
-    
+
     def get_hours(self):
         return (self.seconds / (60 * 60)) % 24
-    
+
     def get_minutes(self):
         return (self.seconds / 60) % 60
