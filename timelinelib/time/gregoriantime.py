@@ -609,9 +609,8 @@ class StripDay(Strip):
         return time + TimelineDelta(24*60*60)
 
     def get_font(self, time_period):
-        # TODO: NEW-TIME: timeline-date-time -> int (weekday)
-        if (time_period.start_time.weekday() in (5, 6)):
-                return get_default_font(8, True)
+        if (time_period.start_time.get_day_of_week() in (5, 6)):
+            return get_default_font(8, True)
         else:
             return get_default_font(8)
 
