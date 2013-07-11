@@ -26,6 +26,8 @@ from timelinelib.time.timeline import TimelineDelta
 from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.time.gregoriantime import StripWeek
+from timelinelib.time.gregoriantime import StripDecade
+
 
 class GregorianTimeTypeSpec(unittest.TestCase):
 
@@ -100,29 +102,40 @@ class GregorianTimeTypeSpec(unittest.TestCase):
     def test_div_deltas(self):
         result = self.time_type.div_timedeltas(TimelineDelta(5), TimelineDelta(2))
         self.assertEqual(2.5, result)
-        
+
     def test_get_time_at_x(self):
         time_period = TimePeriod(self.time_type,
                                  self.time_type.parse_time("2010-08-01 00:00:00"),
                                  self.time_type.parse_time("2010-08-02 00:00:00"))
         dt = self.time_type.get_time_at_x(time_period, 0.5)
         self.assertEqual(dt, self.time_type.parse_time("2010-08-01 12:00:00"))
-        
+
     def test_get_weekday(self):
         dt = self.time_type.parse_time("2013-07-10 00:00:00")
         self.assertEqual(3, dt.get_day_of_week())
-    
-        
-        
+
+
 class GregorianStripWeekSpec(unittest.TestCase):
-    
-    def test_start(self):
-        dt = self.strip.start(self.time_type.parse_time("2013-07-10 00:00:00"))
-        self.assertEqual(self.time_type.parse_time("2013-07-07 00:00:00"), dt)
-    
+
     def setUp(self):
         self.time_type = GregorianTimeType()
         self.strip = StripWeek(mock.Mock())
+
+    def test_start(self):
+        dt = self.strip.start(self.time_type.parse_time("2013-07-10 00:00:00"))
+        self.assertEqual(self.time_type.parse_time("2013-07-07 00:00:00"), dt)
+
+
+class GregorianStripDecadeSpec(unittest.TestCase):
+
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+        self.strip = StripDecade()
+
+    def test_start(self):
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("2013-07-10 12:33:15")),
+            self.time_type.parse_time("2010-01-01 00:00:00"))
 
 
 class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
@@ -215,7 +228,6 @@ class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
     def create_point_period(self, day, month, year, hour, minute):
         dt = gregorian_to_timeline_date_time(Gregorian(year, month, day, hour, minute, 0))
         return TimePeriod(self.time_type, dt, dt)
-    
+
     def get_days_delta(self, days=0, hours=0, minutes=0):
         return TimelineDelta(days * 24 * 60 *60 + hours * 60 * 60 + minutes * 60)
-    

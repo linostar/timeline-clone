@@ -528,7 +528,9 @@ class StripDecade(Strip):
         return str(self._decade_start_year(time.year)) + "s"
 
     def start(self, time):
-        return datetime(self._decade_start_year(time.year), 1, 1)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(self._decade_start_year(gregorian.year), 1, 1, 0, 0, 0)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
         return time.replace(year=time.year+10)
