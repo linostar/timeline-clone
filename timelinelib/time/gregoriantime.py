@@ -568,7 +568,9 @@ class StripMonth(Strip):
         return abbreviated_name_of_month(time.month)
 
     def start(self, time):
-        return datetime(time.year, time.month, 1)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(gregorian.year, gregorian.month, 1, 0, 0, 0)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
         return time + timedelta(calendar.monthrange(time.year, time.month)[1])

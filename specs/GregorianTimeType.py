@@ -28,6 +28,7 @@ from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.time.gregoriantime import StripWeek
 from timelinelib.time.gregoriantime import StripYear
 from timelinelib.time.gregoriantime import StripDecade
+from timelinelib.time.gregoriantime import StripMonth
 
 
 class GregorianTimeTypeSpec(unittest.TestCase):
@@ -125,6 +126,18 @@ class GregorianStripWeekSpec(unittest.TestCase):
     def test_start(self):
         dt = self.strip.start(self.time_type.parse_time("2013-07-10 00:00:00"))
         self.assertEqual(self.time_type.parse_time("2013-07-07 00:00:00"), dt)
+
+
+class GregorianStripMonthSpec(unittest.TestCase):
+
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+        self.strip = StripMonth()
+
+    def test_start(self):
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("2013-07-10 12:33:15")),
+            self.time_type.parse_time("2013-07-01 00:00:00"))
 
 
 class GregorianStripYearSpec(unittest.TestCase):
