@@ -318,11 +318,17 @@ def _whole_number_of_years(period):
 def _move_page_years(curret_period, navigation_fn, direction):
     def navigate(tp):
         year_delta = direction * _calculate_year_diff(curret_period)
-        new_start_year = curret_period.start_time.year + year_delta
-        new_end_year = curret_period.end_time.year + year_delta
+        new_start_year = timeline_date_time_to_gregorian(curret_period.start_time).year + year_delta
+        new_end_year = timeline_date_time_to_gregorian(curret_period.end_time).year + year_delta
         try:
-            new_start = curret_period.start_time.replace(year=new_start_year)
-            new_end = curret_period.end_time.replace(year=new_end_year)
+            new_start = timeline_date_time_to_gregorian(curret_period.start_time).replace_year(new_start_year)
+            new_end = timeline_date_time_to_gregorian(curret_period.end_time).replace_year(new_end_year)
+            new_start = gregorian_to_timeline_date_time(new_start)    
+            new_end = gregorian_to_timeline_date_time(new_end)    
+            if new_end > curret_period.time_type.get_max_time()[0]:
+                raise ValueError()
+            if new_start < curret_period.time_type.get_min_time()[0]:
+                raise ValueError()
         except ValueError:
             if direction < 0:
                 raise TimeOutOfRangeLeftError()
@@ -360,12 +366,18 @@ def _move_page_months(curret_period, navigation_fn, direction):
                                   start.hour, start.minute, start.second)
             new_end = Gregorian(new_end_year, new_end_month, end.day,
                                   end.hour, end.minute, end.second)
+            start = gregorian_to_timeline_date_time(new_start)
+            end = gregorian_to_timeline_date_time(new_end)
+            if end > curret_period.time_type.get_max_time()[0]:
+                raise ValueError()
+            if start < curret_period.time_type.get_min_time()[0]:
+                raise ValueError()
         except ValueError:
             if direction < 0:
                 raise TimeOutOfRangeLeftError()
             else:
                 raise TimeOutOfRangeRightError()
-        return tp.update(gregorian_to_timeline_date_time(new_start), gregorian_to_timeline_date_time(new_end))
+        return tp.update(start, end)
     navigation_fn(navigate)
 
 

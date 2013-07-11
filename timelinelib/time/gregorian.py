@@ -35,7 +35,10 @@ class Gregorian(object):
         return (self.year, self.month, self.day, self.hour, self.minute,
                 self.second)
 
-
+    def replace_year(self, year):
+        return Gregorian(year, self.month, self.day, self.hour, self.minute, self.second)
+    
+    
 def is_valid(year, month, day):
     return (month >= 1
        and  month <= 12
