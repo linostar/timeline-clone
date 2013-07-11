@@ -548,7 +548,9 @@ class StripYear(Strip):
         return str(time.year)
 
     def start(self, time):
-        return datetime(time.year, 1, 1)
+        gregorian = timeline_date_time_to_gregorian(time)
+        new_gregorian = Gregorian(gregorian.year, 1, 1, 0, 0, 0)
+        return gregorian_to_timeline_date_time(new_gregorian)
 
     def increment(self, time):
         return time.replace(year=time.year+1)
