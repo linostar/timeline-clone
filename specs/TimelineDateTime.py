@@ -27,7 +27,7 @@ class TimelineDateTimeSpec(unittest.TestCase):
     def test_can_return_time_of_day(self):
         dt = TimelineDateTime(0, 0)
         self.assertEqual(dt.get_time_of_day(), (0, 0, 0))
-        
+
         dt = TimelineDateTime(0, 1)
         self.assertEqual(dt.get_time_of_day(), (0, 0, 1))
 
@@ -42,10 +42,23 @@ class TimelineDateTimeSpec(unittest.TestCase):
         self.assertEqual(TimelineDateTime(10, 61) + TimelineDelta(24 * 60 * 60), TimelineDateTime(11, 61))
 
     def test_sub(self):
-        self.assertEqual(TimelineDateTime(10, 61) - TimelineDelta(1), TimelineDateTime(10, 60))
-        self.assertEqual(TimelineDateTime(10, 0) - TimelineDelta(1), TimelineDateTime(9, 24 * 60 *60 - 1))
-        
-   
+        self.assertEqual(TimelineDateTime(10, 61) - TimelineDelta(1),
+                         TimelineDateTime(10, 60))
+        self.assertEqual(TimelineDateTime(10, 0) - TimelineDelta(1),
+                         TimelineDateTime(9, 24 * 60 * 60 - 1))
+        self.assertEqual(TimelineDateTime(10, 0) - TimelineDateTime(5, 0),
+                         TimelineDelta(5 * 24 * 60 * 60))
+        self.assertEqual(TimelineDateTime(10, 5) - TimelineDateTime(5, 0),
+                         TimelineDelta(5 * 24 * 60 * 60 + 5))
+        self.assertEqual(TimelineDateTime(10, 5) - TimelineDateTime(5, 10),
+                         TimelineDelta(4 * 24 * 60 * 60 + (24 * 60 * 60 - 5)))
+
+    def test_rejects_invalid_times(self):
+        self.assertRaises(ValueError, TimelineDateTime, -1, 0)
+        self.assertRaises(ValueError, TimelineDateTime, 0, -1)
+        self.assertRaises(ValueError, TimelineDateTime, 0, 24*60*60)
+
+
 class TimelineDeltaSpec(unittest.TestCase):
 
     def test_div(self):

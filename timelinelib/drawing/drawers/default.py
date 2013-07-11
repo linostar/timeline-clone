@@ -248,7 +248,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self._draw_major_strip_label(time_period)
 
     def _draw_major_strip_end_line(self, time_period):
-        end_time = self.time_type.adjust_for_bc_years(time_period.end_time) 
+        end_time = self.time_type.adjust_for_bc_years(time_period.end_time)
         x = self.scene.x_pos_for_time(end_time)
         self.dc.DrawLine(x, 0, x, self.scene.height)
 

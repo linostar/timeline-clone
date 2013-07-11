@@ -637,7 +637,7 @@ class StripWeek(Strip):
             days_to_subtract = stripped_date.weekday()
         else:
             # It is sunday
-            days_to_subtract = time.get_day_of_week()
+            days_to_subtract = (time.get_day_of_week() + 1) % 7
         return time - TimelineDelta(days_to_subtract * 24 * 60 * 60)
 
     def increment(self, time):

@@ -115,7 +115,7 @@ class GregorianTimeTypeSpec(unittest.TestCase):
 
     def test_get_weekday(self):
         dt = self.time_type.parse_time("2013-07-10 00:00:00")
-        self.assertEqual(3, dt.get_day_of_week())
+        self.assertEqual(2, dt.get_day_of_week())
 
 
 class GregorianStripWeekSpec(unittest.TestCase):
