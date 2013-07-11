@@ -134,6 +134,14 @@ class GregorianStripWeekSpec(unittest.TestCase):
             self.strip.increment(self.time_type.parse_time("2013-07-07 00:00:00")),
             self.time_type.parse_time("2013-07-14 00:00:00"))
 
+    def test_label(self):
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
+            "")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
+            "7-13 %s 2013" % _("Jul"))
+
 
 class GregorianStripDaySpec(unittest.TestCase):
 
@@ -150,6 +158,14 @@ class GregorianStripDaySpec(unittest.TestCase):
         self.assertEqual(
             self.strip.increment(self.time_type.parse_time("2013-07-10 00:00:00")),
             self.time_type.parse_time("2013-07-11 00:00:00"))
+
+    def test_label(self):
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
+            "7")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
+            "7 %s 2013" % _("Jul"))
 
 
 class GregorianStripMonthSpec(unittest.TestCase):
@@ -168,6 +184,14 @@ class GregorianStripMonthSpec(unittest.TestCase):
             self.strip.increment(self.time_type.parse_time("2013-07-01 00:00:00")),
             self.time_type.parse_time("2013-08-01 00:00:00"))
 
+    def test_label(self):
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
+            _("Jul"))
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
+            "%s 2013" % _("Jul"))
+
 
 class GregorianStripYearSpec(unittest.TestCase):
 
@@ -185,6 +209,14 @@ class GregorianStripYearSpec(unittest.TestCase):
             self.strip.increment(self.time_type.parse_time("2013-01-01 00:00:00")),
             self.time_type.parse_time("2014-01-01 00:00:00"))
 
+    def test_label(self):
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
+            "2013")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
+            "2013")
+
 
 class GregorianStripDecadeSpec(unittest.TestCase):
 
@@ -201,6 +233,11 @@ class GregorianStripDecadeSpec(unittest.TestCase):
         self.assertEqual(
             self.strip.increment(self.time_type.parse_time("2010-01-01 00:00:00")),
             self.time_type.parse_time("2020-01-01 00:00:00"))
+
+    def test_label(self):
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
+            "2010s")
 
 
 class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):

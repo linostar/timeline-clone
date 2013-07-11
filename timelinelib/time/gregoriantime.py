@@ -527,6 +527,7 @@ class StripDecade(Strip):
 
     def label(self, time, major=False):
         # TODO: This only works for English. Possible to localize?
+        time = timeline_date_time_to_gregorian(time)
         return str(self._decade_start_year(time.year)) + "s"
 
     def start(self, time):
@@ -551,6 +552,7 @@ class StripDecade(Strip):
 class StripYear(Strip):
 
     def label(self, time, major=False):
+        time = timeline_date_time_to_gregorian(time)
         return str(time.year)
 
     def start(self, time):
@@ -572,6 +574,7 @@ class StripYear(Strip):
 class StripMonth(Strip):
 
     def label(self, time, major=False):
+        time = timeline_date_time_to_gregorian(time)
         if major:
             return "%s %s" % (abbreviated_name_of_month(time.month), time.year)
         return abbreviated_name_of_month(time.month)
@@ -592,6 +595,7 @@ class StripMonth(Strip):
 class StripDay(Strip):
 
     def label(self, time, major=False):
+        time = timeline_date_time_to_gregorian(time)
         if major:
             return "%s %s %s" % (time.day, abbreviated_name_of_month(time.month), time.year)
         return str(time.day)
@@ -624,7 +628,7 @@ class StripWeek(Strip):
             # Example: Week 23 (1-7 Jan 2009)
             first_weekday = self.start(time)
             next_first_weekday = self.increment(first_weekday)
-            last_weekday = next_first_weekday - timedelta(days=1)
+            last_weekday = next_first_weekday - TimelineDelta(24*60*60)
             range_string = self._time_range_string(first_weekday, last_weekday)
             if self.config.week_start == "monday":
                 return (_("Week") + " %s (%s)") % (time.isocalendar()[1], range_string)
@@ -656,6 +660,8 @@ class StripWeek(Strip):
         * 28 Jun-3 Jul 2009
         * 28 Jun 08-3 Jul 2009
         """
+        time1 = timeline_date_time_to_gregorian(time1)
+        time2 = timeline_date_time_to_gregorian(time2)
         if time1.year == time2.year:
             if time1.month == time2.month:
                 return "%s-%s %s %s" % (time1.day, time2.day,
