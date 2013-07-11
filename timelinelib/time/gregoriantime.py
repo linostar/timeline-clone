@@ -31,7 +31,6 @@ from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.typeinterface import TimeType
 from timelinelib.time.gregorian import timeline_date_time_to_gregorian
-from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.time.gregorian import days_in_month
 from timelinelib.time.gregorian import gregorian_week
 from timelinelib.time.gregorian import Gregorian
@@ -68,7 +67,7 @@ class GregorianTimeType(TimeType):
             minute = int(match.group(5))
             second = int(match.group(6))
             try:
-                return gregorian_to_timeline_date_time(Gregorian(year, month, day, hour, minute, second))
+                return Gregorian(year, month, day, hour, minute, second).to_time()
             except ValueError:
                 raise ValueError("Invalid time, time string = '%s'" % time_string)
         else:
@@ -185,7 +184,7 @@ class GregorianTimeType(TimeType):
         py = datetime.now()
         gregorian = Gregorian(py.year, py.month, py.day,
                               py.hour, py.minute, py.second)
-        return gregorian_to_timeline_date_time(gregorian)
+        return gregorian.to_time()
 
     def get_time_at_x(self, time_period, x_percent_of_width):
         """Return the time at pixel `x`."""
@@ -304,13 +303,7 @@ def _whole_number_of_years(period):
     start, end = period.start_time, period.end_time
     year_diff = _calculate_year_diff(period)
     old_start = timeline_date_time_to_gregorian(start)
-    new_start = gregorian_to_timeline_date_time(Gregorian(
-        old_start.year+year_diff,
-        old_start.month,
-        old_start.day,
-        old_start.hour,
-        old_start.minute,
-        old_start.second))
+    new_start = old_start.replace_year(old_start.year + year_diff).to_time()
     whole_years = new_start == end
     return whole_years and year_diff > 0
 
@@ -318,13 +311,13 @@ def _whole_number_of_years(period):
 def _move_page_years(curret_period, navigation_fn, direction):
     def navigate(tp):
         year_delta = direction * _calculate_year_diff(curret_period)
-        new_start_year = timeline_date_time_to_gregorian(curret_period.start_time).year + year_delta
-        new_end_year = timeline_date_time_to_gregorian(curret_period.end_time).year + year_delta
+        gregorian_start = timeline_date_time_to_gregorian(curret_period.start_time)
+        gregorian_end = timeline_date_time_to_gregorian(curret_period.end_time)
+        new_start_year = gregorian_start.year + year_delta
+        new_end_year = gregorian_end.year + year_delta
         try:
-            new_start = timeline_date_time_to_gregorian(curret_period.start_time).replace_year(new_start_year)
-            new_end = timeline_date_time_to_gregorian(curret_period.end_time).replace_year(new_end_year)
-            new_start = gregorian_to_timeline_date_time(new_start)    
-            new_end = gregorian_to_timeline_date_time(new_end)    
+            new_start = gregorian_start.replace_year(new_start_year).to_time()
+            new_end = gregorian_end.replace_year(new_end_year).to_time()
             if new_end > curret_period.time_type.get_max_time()[0]:
                 raise ValueError()
             if new_start < curret_period.time_type.get_min_time()[0]:
@@ -366,8 +359,8 @@ def _move_page_months(curret_period, navigation_fn, direction):
                                   start.hour, start.minute, start.second)
             new_end = Gregorian(new_end_year, new_end_month, end.day,
                                   end.hour, end.minute, end.second)
-            start = gregorian_to_timeline_date_time(new_start)
-            end = gregorian_to_timeline_date_time(new_end)
+            start = new_start.to_time()
+            end = new_end.to_time()
             if end > curret_period.time_type.get_max_time()[0]:
                 raise ValueError()
             if start < curret_period.time_type.get_min_time()[0]:
@@ -448,8 +441,8 @@ def fit_millennium_fn(main_frame, current_period, navigation_fn):
         year = get_millenium_max_year()
     else:
         year = max(get_min_year(), int(mean.year/1000)*1000)
-    start = gregorian_to_timeline_date_time(Gregorian(year, 1, 1, 0, 0, 0))
-    end = gregorian_to_timeline_date_time(Gregorian(year + 1000, 1, 1, 0, 0, 0))
+    start = Gregorian(year, 1, 1, 0, 0, 0).to_time()
+    end = Gregorian(year + 1000, 1, 1, 0, 0, 0).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
 
 
@@ -471,45 +464,45 @@ def fit_century_fn(main_frame, current_period, navigation_fn):
         year = get_century_max_year()
     else:
         year = max(get_min_year(), int(mean.year/100)*100)
-    start = gregorian_to_timeline_date_time(Gregorian(year, 1, 1, 0, 0, 0))
-    end = gregorian_to_timeline_date_time(Gregorian(year + 100, 1, 1, 0, 0, 0))
+    start = Gregorian(year, 1, 1, 0, 0, 0).to_time()
+    end = Gregorian(year + 100, 1, 1, 0, 0, 0).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_decade_fn(main_frame, current_period, navigation_fn):
     mean = timeline_date_time_to_gregorian(current_period.mean_time())
-    start = gregorian_to_timeline_date_time(Gregorian(int(mean.year/10)*10, 1, 1, 0, 0, 0))
-    end = gregorian_to_timeline_date_time(Gregorian(int(mean.year/10)*10+10, 1, 1, 0, 0, 0))
+    start = Gregorian(int(mean.year/10)*10, 1, 1, 0, 0, 0).to_time()
+    end = Gregorian(int(mean.year/10)*10+10, 1, 1, 0, 0, 0).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_year_fn(main_frame, current_period, navigation_fn):
     mean = timeline_date_time_to_gregorian(current_period.mean_time())
-    start = gregorian_to_timeline_date_time(Gregorian(mean.year, 1, 1, 0, 0, 0))
-    end = gregorian_to_timeline_date_time(Gregorian(mean.year + 1, 1, 1, 0, 0, 0))
+    start = Gregorian(mean.year, 1, 1, 0, 0, 0).to_time()
+    end = Gregorian(mean.year + 1, 1, 1, 0, 0, 0).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_month_fn(main_frame, current_period, navigation_fn):
     mean = timeline_date_time_to_gregorian(current_period.mean_time())
-    start = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month, 1, 0, 0, 0))
+    start = Gregorian(mean.year, mean.month, 1, 0, 0, 0).to_time()
     if mean.month == 12:
-        end = gregorian_to_timeline_date_time(Gregorian(mean.year + 1, 1, 1, 0, 0, 0))
+        end = Gregorian(mean.year + 1, 1, 1, 0, 0, 0).to_time()
     else:
-        end = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month + 1, 1, 0, 0, 0))
+        end = Gregorian(mean.year, mean.month + 1, 1, 0, 0, 0).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_day_fn(main_frame, current_period, navigation_fn):
     mean = timeline_date_time_to_gregorian(current_period.mean_time())
-    start = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month, mean.day, 0, 0, 0))
+    start = Gregorian(mean.year, mean.month, mean.day, 0, 0, 0).to_time()
     end = start + delta_from_days(1)
     navigation_fn(lambda tp: tp.update(start, end))
 
 
 def fit_week_fn(main_frame, current_period, navigation_fn):
     mean = timeline_date_time_to_gregorian(current_period.mean_time())
-    start = gregorian_to_timeline_date_time(Gregorian(mean.year, mean.month, mean.day, 0, 0, 0))
+    start = Gregorian(mean.year, mean.month, mean.day, 0, 0, 0).to_time()
     weekday = start.get_day_of_week()
     start = start - delta_from_days(weekday)
     if not main_frame.week_starts_on_monday():
@@ -531,14 +524,14 @@ class StripCentury(Strip):
 
     def start(self, time):
         time = timeline_date_time_to_gregorian(time)
-        return gregorian_to_timeline_date_time(Gregorian(max(self._century_start_year(time.year), 10), 1, 1, 0, 0, 0))
+        return Gregorian(max(self._century_start_year(time.year), 10), 1, 1, 0, 0, 0).to_time()
 
     def increment(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
         new_gregorian = Gregorian(
             gregorian.year + 100, gregorian.month, gregorian.day,
             gregorian.hour, gregorian.minute, gregorian.second)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return new_gregorian.to_time()
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -558,14 +551,14 @@ class StripDecade(Strip):
     def start(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
         new_gregorian = Gregorian(self._decade_start_year(gregorian.year), 1, 1, 0, 0, 0)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return new_gregorian.to_time()
 
     def increment(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
         new_gregorian = Gregorian(
             gregorian.year + 10, gregorian.month, gregorian.day,
             gregorian.hour, gregorian.minute, gregorian.second)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return new_gregorian.to_time()
 
     def _decade_start_year(self, year):
         return (int(year) / 10) * 10
@@ -583,14 +576,11 @@ class StripYear(Strip):
     def start(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
         new_gregorian = Gregorian(gregorian.year, 1, 1, 0, 0, 0)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return new_gregorian.to_time()
 
     def increment(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
-        new_gregorian = Gregorian(
-            gregorian.year + 1, gregorian.month, gregorian.day,
-            gregorian.hour, gregorian.minute, gregorian.second)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return gregorian.replace_year(gregorian.year + 1).to_time()
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -607,7 +597,7 @@ class StripMonth(Strip):
     def start(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
         new_gregorian = Gregorian(gregorian.year, gregorian.month, 1, 0, 0, 0)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return new_gregorian.to_time()
 
     def increment(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
@@ -628,7 +618,7 @@ class StripDay(Strip):
     def start(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
         new_gregorian = Gregorian(gregorian.year, gregorian.month, gregorian.day, 0, 0, 0)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return new_gregorian.to_time()
 
     def increment(self, time):
         return time + TimelineDelta(24*60*60)
@@ -719,7 +709,7 @@ class StripWeekday(Strip):
     def start(self, time):
         gregorian = timeline_date_time_to_gregorian(time)
         new_gregorian = Gregorian(gregorian.year, gregorian.month, gregorian.day, 0, 0, 0)
-        return gregorian_to_timeline_date_time(new_gregorian)
+        return new_gregorian.to_time()
 
     def increment(self, time):
         return time + TimelineDelta(24 * 60 * 60)
