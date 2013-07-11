@@ -122,12 +122,18 @@ class GregorianStripWeekSpec(unittest.TestCase):
 
     def setUp(self):
         self.time_type = GregorianTimeType()
-        self.strip = StripWeek(mock.Mock())
+        self.config = mock.Mock()
+        self.strip = StripWeek(self.config)
 
     def test_start(self):
+        self.config.week_start = "sunday"
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 00:00:00")),
             self.time_type.parse_time("2013-07-07 00:00:00"))
+        self.config.week_start = "monday"
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("2013-07-10 00:00:00")),
+            self.time_type.parse_time("2013-07-08 00:00:00"))
 
     def test_increment(self):
         self.assertEqual(
@@ -135,12 +141,17 @@ class GregorianStripWeekSpec(unittest.TestCase):
             self.time_type.parse_time("2013-07-14 00:00:00"))
 
     def test_label(self):
+        self.config.week_start = "sunday"
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
             "")
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
             "7-13 %s 2013" % _("Jul"))
+        self.config.week_start = "monday"
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
+            "%s 27 (1-7 %s 2013)" % (_("Week"), _("Jul")))
 
 
 class GregorianStripDaySpec(unittest.TestCase):

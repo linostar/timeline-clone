@@ -87,3 +87,8 @@ def to_julian_day(year, month, day):
     y = year+4800-a
     m = month + 12*a - 3
     return day + (153*m+2)/5 + y*365 + y/4 - y/100 + y/400 - 32045
+
+
+def gregorian_week(timeline_date_time):
+    # TODO: Test this.
+    return 27

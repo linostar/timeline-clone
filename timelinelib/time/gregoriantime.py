@@ -33,6 +33,7 @@ from timelinelib.time.typeinterface import TimeType
 from timelinelib.time.gregorian import timeline_date_time_to_gregorian
 from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.time.gregorian import days_in_month
+from timelinelib.time.gregorian import gregorian_week
 from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
@@ -625,7 +626,7 @@ class StripWeek(Strip):
             last_weekday = next_first_weekday - TimelineDelta(24*60*60)
             range_string = self._time_range_string(first_weekday, last_weekday)
             if self.config.week_start == "monday":
-                return (_("Week") + " %s (%s)") % (time.isocalendar()[1], range_string)
+                return (_("Week") + " %s (%s)") % (gregorian_week(time), range_string)
             else:
                 # It is sunday (don't know what to do about week numbers here)
                 return range_string
@@ -634,7 +635,7 @@ class StripWeek(Strip):
 
     def start(self, time):
         if self.config.week_start == "monday":
-            days_to_subtract = stripped_date.weekday()
+            days_to_subtract = time.get_day_of_week()
         else:
             # It is sunday
             days_to_subtract = (time.get_day_of_week() + 1) % 7
