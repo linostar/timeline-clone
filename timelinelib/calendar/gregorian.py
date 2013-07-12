@@ -31,13 +31,6 @@ class Gregorian(object):
         self.minute = minute
         self.second = second
 
-    def days_in_month(self):
-        return days_in_month(self.year, self.month)
-
-    def to_tuple(self):
-        return (self.year, self.month, self.day, self.hour, self.minute,
-                self.second)
-
     def replace(self, year=None, month=None):
         if year is None:
             year = self.year
@@ -46,8 +39,17 @@ class Gregorian(object):
         return Gregorian(year, month, self.day,
                          self.hour, self.minute, self.second)
 
+    def days_in_month(self):
+        return days_in_month(self.year, self.month)
+
+    def to_tuple(self):
+        return (self.year, self.month, self.day, self.hour, self.minute,
+                self.second)
+
     def to_time(self):
-        return gregorian_to_timeline_date_time(self)
+        days = to_julian_day(self.year, self.month, self.day)
+        seconds = self.hour * 60 * 60 + self.minute * 60 + self.second
+        return TimelineDateTime(days, seconds)
 
     def __eq__(self, other):
         return (isinstance(other, Gregorian) and
@@ -76,12 +78,6 @@ def days_in_month(year, month):
 
 def is_leap_year(year):
     return year % 4 == 0 and (year % 400 == 0 or not year % 100 == 0)
-
-
-def gregorian_to_timeline_date_time(gregorian):
-    days = to_julian_day(gregorian.year, gregorian.month, gregorian.day)
-    seconds = gregorian.hour * 60 * 60 + gregorian.minute * 60 + gregorian.second
-    return TimelineDateTime(days, seconds)
 
 
 def from_julian_day(julian_day):

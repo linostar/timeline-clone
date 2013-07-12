@@ -28,7 +28,6 @@ import wx
 import wx.lib.inspection
 
 from timelinelib.calendar.gregorian import Gregorian
-from timelinelib.calendar.gregorian import gregorian_to_timeline_date_time
 from timelinelib.calendar.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.config.arguments import ApplicationArguments
 from timelinelib.config.dotfile import read_config
@@ -69,8 +68,7 @@ def human_time_to_wx(human_time):
 
 def human_time_to_gregorian(human_time):
     (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
-    gregorian = Gregorian(year, month, day, hour, minute, 0)
-    return gregorian_to_timeline_date_time(gregorian)
+    return Gregorian(year, month, day, hour, minute, 0).to_time()
 
 
 def human_time_to_ymdhm(human_time):

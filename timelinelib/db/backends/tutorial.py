@@ -20,7 +20,6 @@ from datetime import datetime
 from datetime import timedelta
 
 from timelinelib.calendar.gregorian import Gregorian
-from timelinelib.calendar.gregorian import gregorian_to_timeline_date_time
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
@@ -142,4 +141,4 @@ class TutorialTimelineCreator(object):
         if self.db.get_time_type().get_name() == u"pytime":
             return datetime(year, month, day, 0, 0, 0)
         if self.db.get_time_type().get_name() == u"gregoriantime":
-            return gregorian_to_timeline_date_time(Gregorian(year, month, day, 0, 0, 0))
+            return Gregorian(year, month, day, 0, 0, 0).to_time()

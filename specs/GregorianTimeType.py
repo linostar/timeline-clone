@@ -22,7 +22,6 @@ import mock
 
 from specs.utils import gregorian_period
 from timelinelib.calendar.gregorian import Gregorian
-from timelinelib.calendar.gregorian import gregorian_to_timeline_date_time
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.gregoriantime import backward_fn
 from timelinelib.time.gregoriantime import backward_one_month_fn
@@ -445,7 +444,7 @@ class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
         self.assertEquals("0", self.time_type.format_delta(delta))
 
     def create_point_period(self, day, month, year, hour, minute):
-        dt = gregorian_to_timeline_date_time(Gregorian(year, month, day, hour, minute, 0))
+        dt = Gregorian(year, month, day, hour, minute, 0).to_time()
         return TimePeriod(self.time_type, dt, dt)
 
     def get_days_delta(self, days=0, hours=0, minutes=0):
