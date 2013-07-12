@@ -31,6 +31,9 @@ class Gregorian(object):
         self.minute = minute
         self.second = second
 
+    def days_in_month(self):
+        return days_in_month(self.year, self.month)
+
     def to_tuple(self):
         return (self.year, self.month, self.day, self.hour, self.minute,
                 self.second)

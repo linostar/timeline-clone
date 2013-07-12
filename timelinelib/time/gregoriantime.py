@@ -28,7 +28,6 @@ from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.typeinterface import TimeType
-from timelinelib.time.gregorian import days_in_month
 from timelinelib.time.gregorian import gregorian_week
 from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.timeline import TimelineDateTime
@@ -571,8 +570,8 @@ class StripMonth(Strip):
         return new_gregorian.to_time()
 
     def increment(self, time):
-        gregorian_time = gregorian.from_time(time)
-        return time + TimelineDelta(24*60*60*days_in_month(gregorian_time.year, gregorian_time.month))
+        days_in_month = gregorian.from_time(time).days_in_month()
+        return time + delta_from_days(days_in_month)
 
     def get_font(self, time_period):
         return get_default_font(8)
