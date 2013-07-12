@@ -324,10 +324,8 @@ def _move_page_months(curret_period, navigation_fn, direction):
         new_start_year, new_start_month = _months_to_year_and_month(start_months + month_delta)
         new_end_year, new_end_month = _months_to_year_and_month(end_months + month_delta)
         try:
-            new_start = Gregorian(new_start_year, new_start_month, start.day,
-                                  start.hour, start.minute, start.second)
-            new_end = Gregorian(new_end_year, new_end_month, end.day,
-                                  end.hour, end.minute, end.second)
+            new_start = start.replace(year=new_start_year, month=new_start_month)
+            new_end = end.replace(year=new_end_year, month=new_end_month)
             start = new_start.to_time()
             end = new_end.to_time()
             if end > curret_period.time_type.get_max_time()[0]:
@@ -498,10 +496,7 @@ class StripCentury(Strip):
 
     def increment(self, time):
         gregorian_time = gregorian.from_time(time)
-        new_gregorian = Gregorian(
-            gregorian_time.year + 100, gregorian_time.month, gregorian_time.day,
-            gregorian_time.hour, gregorian_time.minute, gregorian_time.second)
-        return new_gregorian.to_time()
+        return gregorian_time.replace(year=gregorian_time.year+100).to_time()
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -525,10 +520,7 @@ class StripDecade(Strip):
 
     def increment(self, time):
         gregorian_time = gregorian.from_time(time)
-        new_gregorian = Gregorian(
-            gregorian_time.year + 10, gregorian_time.month, gregorian_time.day,
-            gregorian_time.hour, gregorian_time.minute, gregorian_time.second)
-        return new_gregorian.to_time()
+        return gregorian_time.replace(year=gregorian_time.year+10).to_time()
 
     def _decade_start_year(self, year):
         return (int(year) / 10) * 10
