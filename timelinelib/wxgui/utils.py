@@ -168,14 +168,18 @@ def time_picker_for(time_type):
     from timelinelib.wxgui.components.numtimepicker import NumTimePicker
     from timelinelib.wxgui.components.pydatetimepicker import PyDateTimePicker
     from timelinelib.wxgui.components.wxdatetimepicker import WxDateTimePicker
+    from timelinelib.wxgui.components.gregoriandatetimepicker import GregorianDateTimePicker
     from timelinelib.time.numtime import NumTimeType
     from timelinelib.time.pytime import PyTimeType
     from timelinelib.time.wxtime import WxTimeType
+    from timelinelib.time.gregoriantime import GregorianTimeType
     if isinstance(time_type, PyTimeType):
         return PyDateTimePicker
     elif isinstance(time_type, WxTimeType):
         return WxDateTimePicker
     elif isinstance(time_type, NumTimeType):
         return NumTimePicker
+    elif isinstance(time_type, GregorianTimeType):
+        return GregorianDateTimePicker
     else:
         raise ValueError("Unsupported time type: %s" % time_type)
