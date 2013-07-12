@@ -30,7 +30,6 @@ from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.timeline import delta_from_days
-from timelinelib.time.timeline import TimelineDelta
 from timelinelib.time.typeinterface import TimeType
 import timelinelib.calendar.gregorian as gregorian
 import timelinelib.time.timeline as timeline
@@ -182,14 +181,14 @@ class GregorianTimeType(TimeType):
         return delta1 / delta2
 
     def get_max_zoom_delta(self):
-        return (TimelineDelta(1200 * 365 * 24 * 60 * 60),
+        return (delta_from_days(1200 * 365),
                 _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):
-        return (TimelineDelta(60 * 60), _("Can't zoom deeper than 1 hour"))
+        return (timeline.delta_from_seconds(60 * 60), _("Can't zoom deeper than 1 hour"))
 
     def get_zero_delta(self):
-        return TimelineDelta(0)
+        return timeline.delta_from_seconds(0)
 
     def time_period_has_nonzero_time(self, time_period):
         nonzero_time = (time_period.start_time.seconds != 0 or
@@ -581,7 +580,7 @@ class StripDay(Strip):
         return new_gregorian.to_time()
 
     def increment(self, time):
-        return time + TimelineDelta(24*60*60)
+        return time + delta_from_days(1)
 
     def get_font(self, time_period):
         if (time_period.start_time.get_day_of_week() in (5, 6)):
@@ -602,7 +601,7 @@ class StripWeek(Strip):
             # Example: Week 23 (1-7 Jan 2009)
             first_weekday = self.start(time)
             next_first_weekday = self.increment(first_weekday)
-            last_weekday = next_first_weekday - TimelineDelta(24*60*60)
+            last_weekday = next_first_weekday - delta_from_days(1)
             range_string = self._time_range_string(first_weekday, last_weekday)
             if self.config.week_start == "monday":
                 return (_("Week") + " %s (%s)") % (gregorian_week(time), range_string)
@@ -621,7 +620,7 @@ class StripWeek(Strip):
         return timeline.Time(time.julian_day - days_to_subtract, 0)
 
     def increment(self, time):
-        return time + TimelineDelta(7*24*60*60)
+        return time + delta_from_days(7)
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -672,7 +671,7 @@ class StripWeekday(Strip):
         return new_gregorian.to_time()
 
     def increment(self, time):
-        return time + TimelineDelta(24 * 60 * 60)
+        return time + delta_from_days(1)
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -692,7 +691,7 @@ class StripHour(Strip):
         return timeline.Time(time.julian_day, hours * 60 * 60)
 
     def increment(self, time):
-        return time + TimelineDelta(60 * 60)
+        return time + timeline.delta_from_seconds(60 * 60)
 
     def get_font(self, time_period):
         return get_default_font(8)

@@ -53,7 +53,6 @@ from timelinelib.time.gregoriantime import StripWeekday
 from timelinelib.time.gregoriantime import StripYear
 from timelinelib.time.gregoriantime import TimeOutOfRangeLeftError
 from timelinelib.time.gregoriantime import TimeOutOfRangeRightError
-from timelinelib.time.timeline import TimelineDelta
 from timelinelib.wxgui.dialogs.mainframe import MainFrame
 import timelinelib.time.timeline as timeline
 
@@ -99,14 +98,14 @@ class GregorianTimeTypeSpec(unittest.TestCase):
                           self.time_type.get_max_time()[0])
 
     def test_returns_half_delta(self):
-        delta = TimelineDelta(4)
-        half_delta = self.time_type.half_delta(delta)
-        self.assertEquals(TimelineDelta(2), half_delta)
+        self.assertEquals(
+            self.time_type.half_delta(timeline.TimeDelta(4)),
+            timeline.TimeDelta(2))
 
     def test_returns_margin_delta(self):
-        delta = TimelineDelta(48)
-        margin_delta = self.time_type.margin_delta(delta)
-        self.assertEquals(TimelineDelta(2), margin_delta)
+        self.assertEquals(
+            self.time_type.margin_delta(timeline.TimeDelta(48)),
+            timeline.TimeDelta(2))
 
     def test_event_date_string_method(self):
         self.assertEquals(
@@ -129,8 +128,9 @@ class GregorianTimeTypeSpec(unittest.TestCase):
                                              self.time_type.parse_time("2010-07-01 13:44:22")))
 
     def test_div_deltas(self):
-        result = self.time_type.div_timedeltas(TimelineDelta(5), TimelineDelta(2))
-        self.assertEqual(2.5, result)
+        self.assertEqual(
+            self.time_type.div_timedeltas(timeline.TimeDelta(5), timeline.TimeDelta(2)),
+            2.5)
 
     def test_get_time_at_x(self):
         time_period = TimePeriod(self.time_type,
@@ -144,7 +144,7 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         self.assertEqual(2, dt.get_day_of_week())
 
     def test_get_min_zoom_delta(self):
-        self.assertEqual(TimelineDelta(60 * 60), self.time_type.get_min_zoom_delta()[0])
+        self.assertEqual(timeline.TimeDelta(60 * 60), self.time_type.get_min_zoom_delta()[0])
 
 
 class GregorianStripWeekSpec(unittest.TestCase):
@@ -447,7 +447,7 @@ class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
         return TimePeriod(self.time_type, dt, dt)
 
     def get_days_delta(self, days=0, hours=0, minutes=0):
-        return TimelineDelta(days * 24 * 60 *60 + hours * 60 * 60 + minutes * 60)
+        return timeline.TimeDelta(days * 24 * 60 *60 + hours * 60 * 60 + minutes * 60)
 
 
 class GregorianTimeNavigationFunctionsSpec(unittest.TestCase):

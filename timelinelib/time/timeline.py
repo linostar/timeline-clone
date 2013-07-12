@@ -33,13 +33,13 @@ class Time(object):
         return self.julian_day == dt.julian_day and self.seconds == dt.seconds
 
     def __add__(self, delta):
-        if isinstance(delta, TimelineDelta):
+        if isinstance(delta, TimeDelta):
             seconds = self.seconds + delta.seconds
             return Time(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
         raise TypeError("Time + %s not supported" % type(delta))
 
     def __sub__(self, dt):
-        if isinstance(dt, TimelineDelta):
+        if isinstance(dt, TimeDelta):
             seconds = self.seconds - dt.seconds
             if seconds < 0:
                 if seconds % SECONDS_IN_DAY  == 0:
@@ -54,7 +54,7 @@ class Time(object):
         else:
             days_diff = self.julian_day - dt.julian_day
             seconds_diff = self.seconds - dt.seconds
-            return TimelineDelta(days_diff * SECONDS_IN_DAY + seconds_diff)
+            return TimeDelta(days_diff * SECONDS_IN_DAY + seconds_diff)
 
     def __gt__(self, dt):
         return (self.julian_day, self.seconds) > (dt.julian_day, dt.seconds)
@@ -75,31 +75,31 @@ class Time(object):
         return self.julian_day % 7
 
 
-class TimelineDelta(object):
+class TimeDelta(object):
 
     def __init__(self, seconds):
         self.seconds = seconds
 
     def __div__(self, value):
-        if isinstance(value, TimelineDelta):
+        if isinstance(value, TimeDelta):
             return float(self.seconds) / float(value.seconds)
         else:
-            return TimelineDelta(self.seconds / value)
+            return TimeDelta(self.seconds / value)
 
     def __sub__(self, delta):
-        return TimelineDelta(self.seconds - delta.seconds)
+        return TimeDelta(self.seconds - delta.seconds)
 
     def __neg__(self):
-        return TimelineDelta(-self.seconds)
+        return TimeDelta(-self.seconds)
 
     def __mul__(self, value):
-        return TimelineDelta(int(self.seconds * value))
+        return TimeDelta(int(self.seconds * value))
 
     def __rmul__(self, value):
         return self * value
 
     def __eq__(self, d):
-        return isinstance(d, TimelineDelta) and self.seconds == d.seconds
+        return isinstance(d, TimeDelta) and self.seconds == d.seconds
 
     def __gt__(self, d):
         return self.seconds > d.seconds
@@ -117,8 +117,12 @@ class TimelineDelta(object):
         return (self.seconds / 60) % 60
 
     def __repr__(self):
-        return "TimelineDelta[%s]" % self.seconds
+        return "TimeDelta[%s]" % self.seconds
+
+
+def delta_from_seconds(seconds):
+    return TimeDelta(seconds)
 
 
 def delta_from_days(days):
-    return TimelineDelta(SECONDS_IN_DAY * days)
+    return TimeDelta(SECONDS_IN_DAY * days)

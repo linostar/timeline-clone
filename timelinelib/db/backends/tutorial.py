@@ -24,7 +24,7 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.time.timeline import TimelineDelta
+from timelinelib.time.timeline import delta_from_days
 
 
 def create_in_memory_tutorial_db():
@@ -135,7 +135,7 @@ class TutorialTimelineCreator(object):
         if self.db.get_time_type().get_name() == u"pytime":
             return timedelta(days=days)
         if self.db.get_time_type().get_name() == u"gregoriantime":
-            return TimelineDelta(days * 24 * 60 * 60)
+            return delta_from_days(days)
 
     def get_time(self, year, month, day):
         if self.db.get_time_type().get_name() == u"pytime":
