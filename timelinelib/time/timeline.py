@@ -29,8 +29,10 @@ class Time(object):
         self.julian_day = julian_day
         self.seconds = seconds
 
-    def __eq__(self, dt):
-        return self.julian_day == dt.julian_day and self.seconds == dt.seconds
+    def __eq__(self, time):
+        return (isinstance(time, Time) and
+                self.julian_day == time.julian_day and
+                self.seconds == time.seconds)
 
     def __add__(self, delta):
         if isinstance(delta, TimeDelta):
