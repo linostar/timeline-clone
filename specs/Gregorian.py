@@ -16,11 +16,9 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import datetime
 import unittest
 
-import datetime
-
-from timelinelib.calendar.gregorian import timeline_date_time_to_gregorian
 from timelinelib.time.timeline import TimelineDateTime
 import timelinelib.calendar.gregorian as gregorian
 
@@ -45,11 +43,11 @@ class GregorianConversionsSpec(unittest.TestCase):
 
     def test_can_convert_from_timeline_date_time_to_gregorian(self):
         self.assertEquals(
-            timeline_date_time_to_gregorian(
+            gregorian.from_time(
                 TimelineDateTime(julian_day=0, seconds=0)).to_tuple(),
             (-4713, 11, 24, 0, 0, 0))
         self.assertEquals(
-            timeline_date_time_to_gregorian(
+            gregorian.from_time(
                 TimelineDateTime(julian_day=1, seconds=0)).to_tuple(),
             (-4713, 11, 25, 0, 0, 0))
 

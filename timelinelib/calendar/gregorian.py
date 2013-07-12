@@ -78,12 +78,6 @@ def is_leap_year(year):
     return year % 4 == 0 and (year % 400 == 0 or not year % 100 == 0)
 
 
-def timeline_date_time_to_gregorian(timeline_date_time):
-    (year, month, day) = from_julian_day(timeline_date_time.julian_day)
-    (hour, minute, second) = timeline_date_time.get_time_of_day()
-    return Gregorian(year, month, day, hour, minute, second)
-
-
 def gregorian_to_timeline_date_time(gregorian):
     days = to_julian_day(gregorian.year, gregorian.month, gregorian.day)
     seconds = gregorian.hour * 60 * 60 + gregorian.minute * 60 + gregorian.second
@@ -114,8 +108,12 @@ def gregorian_week(timeline_date_time):
     # TODO: Test this.
     return 27
 
+
 def from_time(time):
-    return timeline_date_time_to_gregorian(time)
+    (year, month, day) = from_julian_day(time.julian_day)
+    (hour, minute, second) = time.get_time_of_day()
+    return Gregorian(year, month, day, hour, minute, second)
+
 
 def from_date(year, month, day):
     return Gregorian(year, month, day, 0, 0, 0)
