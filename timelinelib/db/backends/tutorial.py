@@ -26,7 +26,6 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.timeline import TimelineDelta
-from timelinelib.time.gregoriantime import GregorianTimeType
 
 
 def create_in_memory_tutorial_db():
@@ -103,6 +102,7 @@ class TutorialTimelineCreator(object):
 
     def __init__(self):
         self.db = MemoryDB()
+        from timelinelib.time.gregoriantime import GregorianTimeType
         #self.db.time_type = GregorianTimeType()
         now = datetime.now()
         self.start = self.get_time(now.year, now.month, 1)
