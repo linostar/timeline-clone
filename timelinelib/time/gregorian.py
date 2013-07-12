@@ -98,3 +98,10 @@ def to_julian_day(year, month, day):
 def gregorian_week(timeline_date_time):
     # TODO: Test this.
     return 27
+
+def from_time(time):
+    return timeline_date_time_to_gregorian(time)
+
+def from_date(year, month, day):
+    return Gregorian(year, month, day, 0, 0, 0)
+    

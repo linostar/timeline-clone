@@ -22,7 +22,7 @@ import mock
 
 from specs.utils import gregorian_period
 from timelinelib.db.objects import TimePeriod
-from timelinelib.time import GregorianTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
 from timelinelib.time.gregorian import Gregorian
