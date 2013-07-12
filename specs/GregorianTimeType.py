@@ -53,10 +53,9 @@ from timelinelib.time.gregoriantime import StripWeekday
 from timelinelib.time.gregoriantime import StripYear
 from timelinelib.time.gregoriantime import TimeOutOfRangeLeftError
 from timelinelib.time.gregoriantime import TimeOutOfRangeRightError
-from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
 from timelinelib.wxgui.dialogs.mainframe import MainFrame
-
+import timelinelib.time.timeline as timeline
 
 
 class GregorianTimeTypeSpec(unittest.TestCase):
@@ -67,11 +66,11 @@ class GregorianTimeTypeSpec(unittest.TestCase):
     def test_converts_time_to_string(self):
         self.assertEquals(
             "-4713-11-24 00:00:00",
-            self.time_type.time_string(TimelineDateTime(julian_day=0, seconds=0)))
+            self.time_type.time_string(timeline.Time(julian_day=0, seconds=0)))
 
     def test_parses_time_from_string(self):
         self.assertEquals(
-            TimelineDateTime(julian_day=0, seconds=0),
+            timeline.Time(julian_day=0, seconds=0),
             self.time_type.parse_time("-4713-11-24 00:00:00"))
 
     def test_raises_ValueError_when_parsing_invalid_time(self):
@@ -93,7 +92,7 @@ class GregorianTimeTypeSpec(unittest.TestCase):
             self.time_type.format_period(time_period))
 
     def test_returns_min_time(self):
-        self.assertEquals(TimelineDateTime(0, 0), self.time_type.get_min_time()[0])
+        self.assertEquals(timeline.Time(0, 0), self.time_type.get_min_time()[0])
 
     def test_returns_max_time(self):
         self.assertEquals(self.time_type.parse_time("9990-01-01 00:00:00"),

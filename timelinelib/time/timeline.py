@@ -19,7 +19,7 @@
 SECONDS_IN_DAY = 24 * 60 * 60
 
 
-class TimelineDateTime(object):
+class Time(object):
 
     def __init__(self, julian_day, seconds):
         if julian_day < 0:
@@ -35,8 +35,8 @@ class TimelineDateTime(object):
     def __add__(self, delta):
         if isinstance(delta, TimelineDelta):
             seconds = self.seconds + delta.seconds
-            return TimelineDateTime(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
-        raise TypeError("TimelineDateTime + %s not supported" % type(delta))
+            return Time(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
+        raise TypeError("Time + %s not supported" % type(delta))
 
     def __sub__(self, dt):
         if isinstance(dt, TimelineDelta):
@@ -48,9 +48,9 @@ class TimelineDateTime(object):
                 else:
                     days = abs(seconds) / SECONDS_IN_DAY + 1
                     seconds = SECONDS_IN_DAY - abs(seconds) % SECONDS_IN_DAY
-                return TimelineDateTime(self.julian_day - days, seconds)
+                return Time(self.julian_day - days, seconds)
             else:
-                return TimelineDateTime(self.julian_day, seconds)
+                return Time(self.julian_day, seconds)
         else:
             days_diff = self.julian_day - dt.julian_day
             seconds_diff = self.seconds - dt.seconds
@@ -63,7 +63,7 @@ class TimelineDateTime(object):
         return (self.julian_day, self.seconds) < (dt.julian_day, dt.seconds)
 
     def __repr__(self):
-        return "TimelineDateTime[%s, %s]" % (self.julian_day, self.seconds)
+        return "Time<%s, %s>" % (self.julian_day, self.seconds)
 
     def get_time_of_day(self):
         hours = self.seconds / 3600

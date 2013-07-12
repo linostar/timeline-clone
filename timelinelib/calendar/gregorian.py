@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.time.timeline import TimelineDateTime
+import timelinelib.time.timeline as timeline
 
 
 class Gregorian(object):
@@ -49,7 +49,7 @@ class Gregorian(object):
     def to_time(self):
         days = to_julian_day(self.year, self.month, self.day)
         seconds = self.hour * 60 * 60 + self.minute * 60 + self.second
-        return TimelineDateTime(days, seconds)
+        return timeline.Time(days, seconds)
 
     def __eq__(self, other):
         return (isinstance(other, Gregorian) and

@@ -30,10 +30,10 @@ from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.timeline import delta_from_days
-from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
 from timelinelib.time.typeinterface import TimeType
 import timelinelib.calendar.gregorian as gregorian
+import timelinelib.time.timeline as timeline
 
 
 class GregorianTimeType(TimeType):
@@ -135,19 +135,17 @@ class GregorianTimeType(TimeType):
         return delta_string
 
     def get_min_time(self):
-        min_time = TimelineDateTime(0,0)
-        return (min_time, _("can't be before year 10"))
+        return (timeline.Time(0, 0), _("can't be before year 10"))
 
     def get_max_time(self):
-        max_time = TimelineDateTime(5369833, 0)
-        return (max_time, _("can't be after year 9989"))
+        return (timeline.Time(5369833, 0), _("can't be after year 9989"))
 
     def choose_strip(self, metrics, config):
         """
         Return a tuple (major_strip, minor_strip) for current time period and
         window size.
         """
-        day_period = TimePeriod(self, TimelineDateTime(0, 0), TimelineDateTime(1, 0))
+        day_period = TimePeriod(self, timeline.Time(0, 0), timeline.Time(1, 0))
         one_day_width = metrics.calc_exact_width(day_period)
         if one_day_width > 600:
             return (StripDay(), StripHour())
@@ -620,7 +618,7 @@ class StripWeek(Strip):
         else:
             # It is sunday
             days_to_subtract = (time.get_day_of_week() + 1) % 7
-        return TimelineDateTime(time.julian_day - days_to_subtract, 0)
+        return timeline.Time(time.julian_day - days_to_subtract, 0)
 
     def increment(self, time):
         return time + TimelineDelta(7*24*60*60)
@@ -691,7 +689,7 @@ class StripHour(Strip):
 
     def start(self, time):
         (hours, minutes, seconds) = time.get_time_of_day()
-        return TimelineDateTime(time.julian_day, hours * 60 * 60)
+        return timeline.Time(time.julian_day, hours * 60 * 60)
 
     def increment(self, time):
         return time + TimelineDelta(60 * 60)
