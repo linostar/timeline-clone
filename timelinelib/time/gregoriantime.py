@@ -384,12 +384,12 @@ def _months_to_year_and_month(months):
 
 
 def forward_one_week_fn(main_frame, current_period, navigation_fn):
-    wk = timedelta(days=7)
+    wk = delta_from_days(7)
     navigation_fn(lambda tp: tp.move_delta(wk))
 
 
 def backward_one_week_fn(main_frame, current_period, navigation_fn):
-    wk = timedelta(days=7)
+    wk = delta_from_days(7)
     navigation_fn(lambda tp: tp.move_delta(-1*wk))
 
 
@@ -399,21 +399,22 @@ def navigate_month_step(current_period, navigation_fn, direction):
     """
     # TODO: NEW-TIME: (year, month, day, hour, minute, second) -> int (days in # month)
     tm = current_period.mean_time()
+    gt = timeline_date_time_to_gregorian(tm)
     if direction > 0:
-        if tm.month == 2:
+        if gt.month == 2:
             d = 28
-        elif tm.month in (4,6,9,11):
+        elif gt.month in (4,6,9,11):
             d = 30
         else:
             d = 31
     else:
-        if tm.month == 3:
+        if gt.month == 3:
             d = 28
-        elif tm.month in (5,7,10,12):
+        elif gt.month in (5,7,10,12):
             d = 30
         else:
             d = 31
-    mv = timedelta(days=d)
+    mv = delta_from_days(d)
     navigation_fn(lambda tp: tp.move_delta(direction*mv))
 
 

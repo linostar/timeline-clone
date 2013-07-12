@@ -46,6 +46,10 @@ from timelinelib.time.gregoriantime import forward_fn
 from timelinelib.time.gregoriantime import backward_fn
 from timelinelib.time.gregoriantime import forward_one_year_fn
 from timelinelib.time.gregoriantime import backward_one_year_fn
+from timelinelib.time.gregoriantime import forward_one_month_fn
+from timelinelib.time.gregoriantime import backward_one_month_fn
+from timelinelib.time.gregoriantime import forward_one_week_fn
+from timelinelib.time.gregoriantime import backward_one_week_fn
 from timelinelib.time.gregoriantime import TimeOutOfRangeRightError
 from timelinelib.time.gregoriantime import TimeOutOfRangeLeftError
 from timelinelib.wxgui.dialogs.mainframe import MainFrame
@@ -569,6 +573,22 @@ class GregorianTimeNavigationFunctionsSpec(unittest.TestCase):
     def test_move_year_backward(self):
         self.when_navigating(backward_one_year_fn, "1 Jan 2010", "1 Jan 2011")
         self.then_period_becomes("1 Jan 2009", "1 Jan 2010")
+
+    def test_move_month_forward(self):
+        self.when_navigating(forward_one_month_fn, "1 Jul 2009", "1 Aug 2009")
+        self.then_period_becomes("1 Aug 2009", "1 Sep 2009")
+
+    def test_move_month_backward(self):
+        self.when_navigating(backward_one_month_fn, "1 Aug 2009", "1 Sep 2009")
+        self.then_period_becomes("1 Jul 2009", "1 Aug 2009")
+
+    def test_move_week_forward(self):
+        self.when_navigating(forward_one_week_fn, "1 Jul 2009", "1 Aug 2009")
+        self.then_period_becomes("8 Jul 2009", "8 Aug 2009")
+
+    def test_move_week_backward(self):
+        self.when_navigating(backward_one_week_fn, "8 Jul 2009", "8 Aug 2009")
+        self.then_period_becomes("1 Jul 2009", "1 Aug 2009")
 
     def assert_navigation_raises(self, exception, fn, start, end):
         def navigation_fn(fn):
