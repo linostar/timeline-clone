@@ -38,6 +38,9 @@ class Gregorian(object):
     def replace_year(self, year):
         return Gregorian(year, self.month, self.day, self.hour, self.minute, self.second)
     
+    def replace_year_month(self, year, month):
+        return Gregorian(year, month, self.day, self.hour, self.minute, self.second)
+    
     def to_time(self):
         return gregorian_to_timeline_date_time(self)
     

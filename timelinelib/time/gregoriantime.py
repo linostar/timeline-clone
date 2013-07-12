@@ -17,7 +17,6 @@
 
 
 from datetime import datetime
-from datetime import timedelta
 import re
 
 from timelinelib.calendar.monthnames import abbreviated_name_of_month
@@ -170,7 +169,7 @@ class GregorianTimeType(TimeType):
         return delta * num
 
     def get_default_time_period(self):
-        return time_period_center(self, datetime.now(), timedelta(days=30))
+        return time_period_center(self, self.now(), delta_from_days(30))
 
     def now(self):
         py = datetime.now()
@@ -190,7 +189,7 @@ class GregorianTimeType(TimeType):
                 _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):
-        return (timedelta(hours=1), _("Can't zoom deeper than 1 hour"))
+        return (TimelineDelta(60 * 60), _("Can't zoom deeper than 1 hour"))
 
     def get_zero_delta(self):
         return TimelineDelta(0)
@@ -240,27 +239,6 @@ class GregorianTimeType(TimeType):
 
     def clone(self, dt):
         return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-
-    def get_milliseconds_delta(self, dt1, dt2):
-        days_increment = 365
-        result = 0
-        if dt2 < dt1:
-            start = dt2
-            end = dt1
-        else:
-            start = dt1
-            end = dt2
-        temp1 = self.clone(start)
-        temp2 = self.clone(temp1)
-        temp1 += timedelta(days_increment)
-        while temp1.year < end.year:
-            diff = temp1 - temp2
-            result += (diff.days * 24 * 60 * 60 + diff.seconds) * 1000
-            temp2 = self.clone(temp1)
-            temp1 += timedelta(days_increment)
-        diff = end - temp2
-        result += (diff.days * 24 * 60 * 60 + diff.seconds) * 1000
-        return result
 
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
@@ -732,14 +710,14 @@ class StripHour(Strip):
 
 
 def move_period_num_days(period, num):
-    delta = timedelta(days=1) * num
+    delta = delta_from_days(1) * num
     start_time = period.start_time + delta
     end_time = period.end_time + delta
     return TimePeriod(period.time_type, start_time, end_time)
 
 
 def move_period_num_weeks(period, num):
-    delta = timedelta(weeks=1) * num
+    delta = delta_from_days(7) * num
     start_time = period.start_time + delta
     end_time = period.end_time + delta
     return TimePeriod(period.time_type, start_time, end_time)
@@ -749,29 +727,31 @@ def move_period_num_months(period, num):
     try:
         delta = num
         years = abs(delta) / 12
+        gregorian_start = gregorian.from_time(period.start_time)
+        gregorian_end = gregorian.from_time(period.end_time)
         if num < 0:
             years = -years
         delta = delta - 12 * years
         if delta < 0:
-            start_month = period.start_time.month + 12 + delta
-            end_month = period.end_time.month + 12 + delta
+            start_month = gregorian_start.month + 12 + delta
+            end_month = gregorian_end.month + 12 + delta
             if start_month > 12:
                 start_month -=12
                 end_month -=12
-            if start_month > period.start_time.month:
+            if start_month > gregorian_start.month:
                 years -= 1
         else:
-            start_month = period.start_time.month + delta
-            end_month = period.start_time.month + delta
+            start_month = gregorian_start.month + delta
+            end_month = gregorian_start.month + delta
             if start_month > 12:
                 start_month -=12
                 end_month -=12
                 years += 1
-        start_year = period.start_time.year + years
-        end_year = period.start_time.year + years
-        start_time = period.start_time.replace(year=start_year, month=start_month)
-        end_time = period.end_time.replace(year=end_year, month=end_month)
-        return TimePeriod(period.time_type, start_time, end_time)
+        start_year = gregorian_start.year + years
+        end_year = gregorian_start.year + years
+        start_time = gregorian_start.replace_year_month(start_year, start_month)
+        end_time = gregorian_end.replace_year_month(end_year, end_month)
+        return TimePeriod(period.time_type, start_time.to_time(), end_time.to_time())
     except ValueError:
         return None
 
@@ -779,10 +759,10 @@ def move_period_num_months(period, num):
 def move_period_num_years(period, num):
     try:
         delta = num
-        start_year = period.start_time.year
-        end_year = period.end_time.year
-        start_time = period.start_time.replace(year=start_year + delta)
-        end_time = period.end_time.replace(year=end_year + delta)
-        return TimePeriod(period.time_type, start_time, end_time)
+        start_year = gregorian.from_time(period.start_time).year
+        end_year = gregorian.from_time(period.end_time).year
+        start_time = gregorian.from_time(period.start_time).replace_year(start_year + delta)
+        end_time = gregorian.from_time(period.end_time).replace_year(end_year + delta)
+        return TimePeriod(period.time_type, start_time.to_time(), end_time.to_time())
     except ValueError:
         return None

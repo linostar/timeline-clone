@@ -53,6 +53,11 @@ from timelinelib.time.gregoriantime import backward_one_week_fn
 from timelinelib.time.gregoriantime import TimeOutOfRangeRightError
 from timelinelib.time.gregoriantime import TimeOutOfRangeLeftError
 from timelinelib.wxgui.dialogs.mainframe import MainFrame
+from timelinelib.time.gregoriantime import move_period_num_days
+from timelinelib.time.gregoriantime import move_period_num_weeks
+from timelinelib.time.gregoriantime import move_period_num_months
+from timelinelib.time.gregoriantime import move_period_num_years
+
 
 
 class GregorianTimeTypeSpec(unittest.TestCase):
@@ -139,6 +144,9 @@ class GregorianTimeTypeSpec(unittest.TestCase):
     def test_get_weekday(self):
         dt = self.time_type.parse_time("2013-07-10 00:00:00")
         self.assertEqual(2, dt.get_day_of_week())
+
+    def test_get_min_zoom_delta(self):
+        self.assertEqual(TimelineDelta(60 * 60), self.time_type.get_min_zoom_delta()[0])
 
 
 class GregorianStripWeekSpec(unittest.TestCase):
@@ -606,3 +614,83 @@ class GregorianTimeNavigationFunctionsSpec(unittest.TestCase):
 
     def then_period_becomes(self, start, end):
         self.assertEquals(gregorian_period(start, end), self.new_period)
+
+
+class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
+
+    def test_move_period_num_days_adds_given_number_of_days(self):
+        new_period = move_period_num_days(self.period, 6)
+        self.assertEquals(
+            TimePeriod(
+                GregorianTimeType(),
+                Gregorian(2010, 1, 7, 12, 0, 0).to_time(),
+                Gregorian(2010, 1, 7, 13, 0, 0).to_time()),
+            new_period)
+
+    def test_move_period_num_weeks_adds_given_number_of_weeks(self):
+        new_period = move_period_num_weeks(self.period, -3)
+        self.assertEquals(
+            TimePeriod(
+                GregorianTimeType(),
+                Gregorian(2009, 12, 11, 12, 0, 0).to_time(),
+                Gregorian(2009, 12, 11, 13, 0, 0).to_time()),
+            new_period)
+
+    def test_move_period_num_months_adds_given_number_of_months(self):
+        new_period = move_period_num_months(self.period, 2)
+        self.assertEquals(
+            TimePeriod(
+                GregorianTimeType(),
+                Gregorian(2010, 3, 1, 12, 0, 0).to_time(),
+                Gregorian(2010, 3, 1, 13, 0, 0).to_time()),
+            new_period)
+
+    def test_move_period_num_months_can_handle_year_boundries_up(self):
+        new_period = move_period_num_months(self.period, 20)
+        self.assertEquals(
+            TimePeriod(
+                GregorianTimeType(),
+                Gregorian(2011, 9, 1, 12, 0, 0).to_time(),
+                Gregorian(2011, 9, 1, 13, 0, 0).to_time()),
+            new_period)
+
+    def test_move_period_num_months_can_handle_year_boundries_down(self):
+        new_period = move_period_num_months(self.period, -1)
+        self.assertEquals(
+            TimePeriod(
+                GregorianTimeType(),
+                Gregorian(2009, 12, 1, 12, 0, 0).to_time(),
+                Gregorian(2009, 12, 1, 13, 0, 0).to_time()),
+            new_period)
+
+    def test_move_period_num_months_returns_none_if_day_does_not_exist(self):
+        self.period = TimePeriod(
+            GregorianTimeType(),
+            Gregorian(2010, 1, 31, 12, 0, 0).to_time(),
+            Gregorian(2010, 1, 31, 13, 0, 0).to_time())
+        new_period = move_period_num_months(self.period, 1)
+        self.assertEquals(None, new_period)
+
+    def test_move_period_num_years_adds_given_number_of_years(self):
+        new_period = move_period_num_years(self.period, 1)
+        self.assertEquals(
+            TimePeriod(
+                GregorianTimeType(),
+                Gregorian(2011, 1, 1, 12, 0, 0).to_time(),
+                Gregorian(2011, 1, 1, 13, 0, 0).to_time()),
+            new_period)
+
+    def test_move_period_num_years_returns_none_if_year_does_not_exist(self):
+        self.period = TimePeriod(
+            GregorianTimeType(),
+            Gregorian(2012, 2, 29, 12, 0, 0).to_time(),
+            Gregorian(2012, 2, 29, 13, 0, 0).to_time())
+        new_period = move_period_num_years(self.period, 1)
+        self.assertEquals(None, new_period)
+        
+    def setUp(self):
+        self.period = TimePeriod(
+            GregorianTimeType(),
+            Gregorian(2010, 1, 1, 12, 0, 0).to_time(),
+            Gregorian(2010, 1, 1, 13, 0, 0).to_time())
+
