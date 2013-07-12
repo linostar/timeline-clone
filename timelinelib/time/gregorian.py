@@ -38,16 +38,25 @@ class Gregorian(object):
         return (self.year, self.month, self.day, self.hour, self.minute,
                 self.second)
 
-    def replace_year(self, year):
-        return Gregorian(year, self.month, self.day, self.hour, self.minute, self.second)
-    
-    def replace_year_month(self, year, month):
-        return Gregorian(year, month, self.day, self.hour, self.minute, self.second)
-    
+    def replace(self, year=None, month=None):
+        if year is None:
+            year = self.year
+        if month is None:
+            month = self.month
+        return Gregorian(year, month, self.day,
+                         self.hour, self.minute, self.second)
+
     def to_time(self):
         return gregorian_to_timeline_date_time(self)
-    
-    
+
+    def __eq__(self, other):
+        return (isinstance(other, Gregorian) and
+                self.to_tuple() == other.to_tuple())
+
+    def __repr__(self):
+        return "Gregorian<%d-%02d-%02d %02d:%02d:%02d>" % self.to_tuple()
+
+
 def is_valid(year, month, day):
     return (month >= 1
        and  month <= 12
@@ -110,4 +119,3 @@ def from_time(time):
 
 def from_date(year, month, day):
     return Gregorian(year, month, day, 0, 0, 0)
-    

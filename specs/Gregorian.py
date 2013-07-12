@@ -30,6 +30,16 @@ class GregorianSpec(unittest.TestCase):
     def test_rejects_invalid_dates(self):
         self.assertRaises(ValueError, gregorian.Gregorian, 2013, 0, 1, 0, 0, 0)
 
+    def test_can_replace(self):
+        g = gregorian.Gregorian(2013, 7, 12, 10, 16, 12)
+        self.assertEquals(g.replace(year=1990),
+                          gregorian.Gregorian(1990, 7, 12, 10, 16, 12))
+        self.assertEquals(g.replace(month=6),
+                          gregorian.Gregorian(2013, 6, 12, 10, 16, 12))
+        self.assertEquals(g.replace(year=1990, month=6),
+                          gregorian.Gregorian(1990, 6, 12, 10, 16, 12))
+        self.assertRaises(ValueError, g.replace, month=13)
+
 
 class GregorianConversionsSpec(unittest.TestCase):
 

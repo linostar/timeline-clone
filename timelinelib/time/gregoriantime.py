@@ -272,7 +272,7 @@ def _whole_number_of_years(period):
     start, end = period.start_time, period.end_time
     year_diff = _calculate_year_diff(period)
     old_start = gregorian.from_time(start)
-    new_start = old_start.replace_year(old_start.year + year_diff).to_time()
+    new_start = old_start.replace(year=old_start.year + year_diff).to_time()
     whole_years = new_start == end
     return whole_years and year_diff > 0
 
@@ -285,8 +285,8 @@ def _move_page_years(curret_period, navigation_fn, direction):
         new_start_year = gregorian_start.year + year_delta
         new_end_year = gregorian_end.year + year_delta
         try:
-            new_start = gregorian_start.replace_year(new_start_year).to_time()
-            new_end = gregorian_end.replace_year(new_end_year).to_time()
+            new_start = gregorian_start.replace(year=new_start_year).to_time()
+            new_end = gregorian_end.replace(year=new_end_year).to_time()
             if new_end > curret_period.time_type.get_max_time()[0]:
                 raise ValueError()
             if new_start < curret_period.time_type.get_min_time()[0]:
@@ -550,7 +550,7 @@ class StripYear(Strip):
 
     def increment(self, time):
         gregorian_time = gregorian.from_time(time)
-        return gregorian_time.replace_year(gregorian_time.year + 1).to_time()
+        return gregorian_time.replace(year=gregorian_time.year + 1).to_time()
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -748,8 +748,8 @@ def move_period_num_months(period, num):
                 years += 1
         start_year = gregorian_start.year + years
         end_year = gregorian_start.year + years
-        start_time = gregorian_start.replace_year_month(start_year, start_month)
-        end_time = gregorian_end.replace_year_month(end_year, end_month)
+        start_time = gregorian_start.replace(year=start_year, month=start_month)
+        end_time = gregorian_end.replace(year=end_year, month=end_month)
         return TimePeriod(period.time_type, start_time.to_time(), end_time.to_time())
     except ValueError:
         return None
@@ -760,8 +760,8 @@ def move_period_num_years(period, num):
         delta = num
         start_year = gregorian.from_time(period.start_time).year
         end_year = gregorian.from_time(period.end_time).year
-        start_time = gregorian.from_time(period.start_time).replace_year(start_year + delta)
-        end_time = gregorian.from_time(period.end_time).replace_year(end_year + delta)
+        start_time = gregorian.from_time(period.start_time).replace(year=start_year + delta)
+        end_time = gregorian.from_time(period.end_time).replace(year=end_year + delta)
         return TimePeriod(period.time_type, start_time.to_time(), end_time.to_time())
     except ValueError:
         return None
