@@ -19,6 +19,8 @@
 from datetime import datetime
 import re
 
+from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.calendar.gregorian import gregorian_week
 from timelinelib.calendar.monthnames import abbreviated_name_of_month
 from timelinelib.calendar.weekdaynames import abbreviated_name_of_weekday
 from timelinelib.db.objects import TimeOutOfRangeLeftError
@@ -27,13 +29,11 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.db.objects import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
-from timelinelib.time.typeinterface import TimeType
-from timelinelib.time.gregorian import gregorian_week
-from timelinelib.time.gregorian import Gregorian
+from timelinelib.time.timeline import delta_from_days
 from timelinelib.time.timeline import TimelineDateTime
 from timelinelib.time.timeline import TimelineDelta
-from timelinelib.time.timeline import delta_from_days
-import timelinelib.time.gregorian as gregorian
+from timelinelib.time.typeinterface import TimeType
+import timelinelib.calendar.gregorian as gregorian
 
 
 class GregorianTimeType(TimeType):

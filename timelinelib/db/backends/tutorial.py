@@ -19,12 +19,12 @@
 from datetime import datetime
 from datetime import timedelta
 
+from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.calendar.gregorian import gregorian_to_timeline_date_time
+from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.time.gregorian import gregorian_to_timeline_date_time
-from timelinelib.time.gregorian import Gregorian
 from timelinelib.time.timeline import TimelineDelta
 
 

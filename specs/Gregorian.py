@@ -20,9 +20,9 @@ import unittest
 
 import datetime
 
-from timelinelib.time.gregorian import timeline_date_time_to_gregorian
+from timelinelib.calendar.gregorian import timeline_date_time_to_gregorian
 from timelinelib.time.timeline import TimelineDateTime
-import timelinelib.time.gregorian as gregorian
+import timelinelib.calendar.gregorian as gregorian
 
 
 class GregorianSpec(unittest.TestCase):

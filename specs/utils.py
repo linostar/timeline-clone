@@ -27,6 +27,8 @@ import unittest
 import wx
 import wx.lib.inspection
 
+from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.calendar.gregorian import gregorian_to_timeline_date_time
 from timelinelib.calendar.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.config.arguments import ApplicationArguments
 from timelinelib.config.dotfile import read_config
@@ -34,11 +36,9 @@ from timelinelib.db import db_open
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.wxtime import WxTimeType
-from timelinelib.time.gregoriantime import GregorianTimeType
-from timelinelib.time.gregorian import Gregorian
-from timelinelib.time.gregorian import gregorian_to_timeline_date_time
 from timelinelib.wxgui.setup import start_wx_application
 
 
