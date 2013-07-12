@@ -27,7 +27,7 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 
 
 class MemoryDBSpec(unittest.TestCase):

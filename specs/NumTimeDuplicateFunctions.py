@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 
 from timelinelib.db.objects import TimePeriod
-from timelinelib.time import NumTimeType
+from timelinelib.time.numtime import NumTimeType
 from timelinelib.time.numtime import move_period
 
 

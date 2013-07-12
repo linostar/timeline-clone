@@ -27,7 +27,7 @@ from timelinelib.db.backends.file import split_on_semicolon
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 
 
 class FileTimelineSpec(TmpDirTestCase):

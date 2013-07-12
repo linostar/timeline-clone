@@ -168,9 +168,9 @@ def time_picker_for(time_type):
     from timelinelib.wxgui.components.numtimepicker import NumTimePicker
     from timelinelib.wxgui.components.pydatetimepicker import PyDateTimePicker
     from timelinelib.wxgui.components.wxdatetimepicker import WxDateTimePicker
-    from timelinelib.time import NumTimeType
-    from timelinelib.time import PyTimeType
-    from timelinelib.time import WxTimeType
+    from timelinelib.time.numtime import NumTimeType
+    from timelinelib.time.pytime import PyTimeType
+    from timelinelib.time.wxtime import WxTimeType
     if isinstance(time_type, PyTimeType):
         return PyDateTimePicker
     elif isinstance(time_type, WxTimeType):

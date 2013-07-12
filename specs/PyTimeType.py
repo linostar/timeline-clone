@@ -20,7 +20,7 @@ import datetime
 import unittest
 
 from timelinelib.db.objects import TimePeriod
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 
 
 class PyTimeTypeSpec(unittest.TestCase):

@@ -22,7 +22,7 @@ import datetime
 import wx.calendar
 
 from timelinelib.config.paths import ICONS_DIR
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 from timelinelib.wxgui.utils import display_error_message
 
 

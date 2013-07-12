@@ -30,7 +30,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.meta.version import get_version
-from timelinelib.time import WxTimeType
+from timelinelib.time.wxtime import WxTimeType
 
 
 class XmlTimelineSpec(TmpDirTestCase):

@@ -22,7 +22,7 @@ import datetime
 from mock import Mock
 
 from timelinelib.db.objects import TimePeriod
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 from timelinelib.time.pytime import move_period_num_days
 from timelinelib.time.pytime import move_period_num_weeks
 from timelinelib.time.pytime import move_period_num_months

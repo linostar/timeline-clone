@@ -22,8 +22,8 @@ import unittest
 
 import wx
 
-from timelinelib.time import WxTimeType
-from timelinelib.time import try_to_create_wx_date_time_from_dmy
+from timelinelib.time.wxtime import WxTimeType
+from timelinelib.time.wxtime import try_to_create_wx_date_time_from_dmy
 from timelinelib.db.objects import TimePeriod
 
 

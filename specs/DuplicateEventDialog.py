@@ -29,7 +29,7 @@ from timelinelib.editors.duplicateevent import BACKWARD
 from timelinelib.editors.duplicateevent import BOTH
 from timelinelib.editors.duplicateevent import DuplicateEventEditor
 from timelinelib.editors.duplicateevent import FORWARD
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 
 

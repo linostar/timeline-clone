@@ -28,7 +28,7 @@ from timelinelib.db.objects import Event
 from timelinelib.utilities.observer import Observable
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 from timelinelib.utils import ex_msg
 
 

@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.time import NumTimeType
+from timelinelib.time.numtime import NumTimeType
 from timelinelib.db.objects import TimePeriod
 
 

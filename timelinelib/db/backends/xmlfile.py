@@ -39,7 +39,7 @@ from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import safe_write
 from timelinelib.meta.version import get_version
-from timelinelib.time import WxTimeType
+from timelinelib.time.wxtime import WxTimeType
 from timelinelib.utils import ex_msg
 from timelinelib.xml.parser import ANY
 from timelinelib.xml.parser import OPTIONAL

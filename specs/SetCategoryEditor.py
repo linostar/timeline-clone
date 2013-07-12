@@ -6,7 +6,7 @@ from mock import Mock
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects.category import Category
 from timelinelib.db.objects.event import Event
-from timelinelib.time import PyTimeType
+from timelinelib.time.pytime import PyTimeType
 from timelinelib.editors.setcategory import SetCategoryEditor
 from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
 
