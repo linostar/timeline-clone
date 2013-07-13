@@ -46,6 +46,12 @@ class Gregorian(object):
         return (self.year, self.month, self.day, self.hour, self.minute,
                 self.second)
 
+    def to_date_tuple(self):
+        return (self.year, self.month, self.day)
+
+    def to_time_tuple(self):
+        return (self.hour, self.minute, self.second)
+
     def to_time(self):
         days = to_julian_day(self.year, self.month, self.day)
         seconds = self.hour * 60 * 60 + self.minute * 60 + self.second

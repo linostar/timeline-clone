@@ -21,6 +21,8 @@ import datetime
 
 import wx.calendar
 
+import timelinelib.calendar.gregorian as gregorian
+from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.config.paths import ICONS_DIR
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.wxgui.utils import display_error_message
@@ -106,16 +108,18 @@ class GregorianDateTimePickerController(object):
         self.now_fn = now_fn
 
     def get_value(self):
-        time = datetime.time(0, 0)
         if self.time_picker.IsShown():
-            time = self.time_picker.get_py_time()
-        return datetime.datetime.combine(self.date_picker.get_py_date(), time)
+            hour, minute, second = self.time_picker.get_value()
+        else:
+            hour, minute, second = (0, 0, 0)
+        year, month, day = self.date_picker.get_value()
+        return Gregorian(year, month, day, hour, minute, second).to_time()
 
-    def set_value(self, py_date_time):
-        if py_date_time == None:
-            py_date_time = self.now_fn()
-        self.date_picker.set_py_date(py_date_time.date())
-        self.time_picker.set_py_time(py_date_time.time())
+    def set_value(self, time):
+        if time == None:
+            time = self.now_fn()
+        self.date_picker.set_value(gregorian.from_time(time).to_date_tuple())
+        self.time_picker.set_value(gregorian.from_time(time).to_time_tuple())
 
 
 class CalendarPopup(wx.PopupTransientWindow):
@@ -203,11 +207,11 @@ class GregorianDatePicker(wx.TextCtrl):
         self._resize_to_fit_text()
         self.parent = parent
 
-    def get_py_date(self):
-        return self.controller.get_py_date()
+    def get_value(self):
+        return self.controller.get_value()
 
-    def set_py_date(self, py_date):
-        self.controller.set_py_date(py_date)
+    def set_value(self, py_date):
+        self.controller.set_value(py_date)
 
     def get_date_string(self):
         return self.GetValue()
@@ -275,7 +279,7 @@ class GregorianDatePickerController(object):
         self.save_preferred_day = True
         self.last_selection = None
 
-    def get_py_date(self):
+    def get_value(self):
         try:
             (year, month, day) = self._parse_year_month_day()
             py_date = datetime.date(year, month, day)
@@ -493,11 +497,11 @@ class GregorianTimePicker(wx.TextCtrl):
         self._resize_to_fit_text()
         self.parent = parent
 
-    def get_py_time(self):
-        return self.controller.get_py_time()
+    def get_value(self):
+        return self.controller.get_value()
 
-    def set_py_time(self, py_time):
-        self.controller.set_py_time(py_time)
+    def set_value(self, value):
+        self.controller.set_value(value)
 
     def get_time_string(self):
         return self.GetValue()
@@ -558,7 +562,7 @@ class GregorianTimePickerController(object):
         self.minute_part = 1
         self.last_selection = None
 
-    def get_py_time(self):
+    def get_value(self):
         try:
             split = self.py_time_picker.get_time_string().split(self.separator)
             if len(split) != 2:
@@ -570,8 +574,8 @@ class GregorianTimePickerController(object):
         except ValueError:
             raise ValueError("Invalid time.")
 
-    def set_py_time(self, py_time):
-        time_string = PyTimeType().event_time_string(py_time)
+    def set_value(self, value):
+        time_string = PyTimeType().event_time_string(value)
         self.py_time_picker.set_time_string(time_string)
 
     def on_set_focus(self):
