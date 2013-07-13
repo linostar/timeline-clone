@@ -554,9 +554,9 @@ class GregorianTimePicker(wx.TextCtrl):
 
 class GregorianTimePickerController(object):
 
-    def __init__(self, py_time_picker):
-        self.py_time_picker = py_time_picker
-        self.original_bg = self.py_time_picker.GetBackgroundColour()
+    def __init__(self, time_picker):
+        self.time_picker = time_picker
+        self.original_bg = self.time_picker.GetBackgroundColour()
         self.separator = PyTimeType().event_time_string(PyTimeType().now())[2]
         self.hour_part = 0
         self.minute_part = 1
@@ -564,29 +564,32 @@ class GregorianTimePickerController(object):
 
     def get_value(self):
         try:
-            split = self.py_time_picker.get_time_string().split(self.separator)
+            split = self.time_picker.get_time_string().split(self.separator)
             if len(split) != 2:
                 raise ValueError()
             hour_string, minute_string = split
             hour = int(hour_string)
             minute = int(minute_string)
-            return datetime.time(hour, minute)
+            # only for validation of time.
+            datetime.time(hour=hour, minute=minute)
+            return (hour, minute, 0)
         except ValueError:
             raise ValueError("Invalid time.")
 
     def set_value(self, value):
-        time_string = PyTimeType().event_time_string(value)
-        self.py_time_picker.set_time_string(time_string)
+        hour, minute, _ = value
+        time_string = "%02d:%02d" % (hour, minute)
+        self.time_picker.set_time_string(time_string)
 
     def on_set_focus(self):
         if self.last_selection:
             start, end = self.last_selection
-            self.py_time_picker.SetSelection(start, end)
+            self.time_picker.SetSelection(start, end)
         else:
             self._select_part(self.hour_part)
 
     def on_kill_focus(self):
-        self.last_selection = self.py_time_picker.GetSelection()
+        self.last_selection = self.time_picker.GetSelection()
 
     def on_tab(self):
         if self._in_minute_part():
@@ -602,31 +605,33 @@ class GregorianTimePickerController(object):
 
     def on_text_changed(self):
         try:
-            self.get_py_time()
-            self.py_time_picker.SetBackgroundColour(self.original_bg)
+            self.get_value()
+            self.time_picker.SetBackgroundColour(self.original_bg)
         except ValueError:
-            self.py_time_picker.SetBackgroundColour("pink")
-        self.py_time_picker.Refresh()
+            self.time_picker.SetBackgroundColour("pink")
+        self.time_picker.Refresh()
 
     def on_up(self):
         def increment_hour(time):
-            new_hour = time.hour + 1
+            hour, minute, second = time
+            new_hour = hour + 1
             if new_hour > 23:
                 new_hour = 0
-            return time.replace(hour=new_hour)
+            return (new_hour, minute, second)
         def increment_minutes(time):
-            new_hour = time.hour
-            new_minute = time.minute + 1
+            hour, minute, second = time
+            new_hour = hour
+            new_minute = minute + 1
             if new_minute > 59:
                 new_minute = 0
-                new_hour = time.hour + 1
+                new_hour = hour + 1
                 if new_hour > 23:
                     new_hour = 0
-            return time.replace(hour=new_hour, minute=new_minute)
+            return (new_hour, new_minute, second)
         if not self._time_is_valid():
             return
-        selection = self.py_time_picker.GetSelection()
-        current_time = self.get_py_time()
+        selection = self.time_picker.GetSelection()
+        current_time = self.get_value()
         if self._in_hour_part():
             new_time = increment_hour(current_time)
         else:
@@ -636,23 +641,25 @@ class GregorianTimePickerController(object):
 
     def on_down(self):
         def decrement_hour(time):
-            new_hour = time.hour - 1
+            hour, minute, second = time
+            new_hour = hour - 1
             if new_hour < 0:
                 new_hour = 23
-            return time.replace(hour=new_hour)
+            return (new_hour, minute, second)
         def decrement_minutes(time):
-            new_hour = time.hour
-            new_minute = time.minute - 1
+            hour, minute, second = time
+            new_hour = hour
+            new_minute = minute - 1
             if new_minute < 0:
                 new_minute = 59
-                new_hour = time.hour - 1
+                new_hour = hour - 1
                 if new_hour < 0:
                     new_hour = 23
-            return time.replace(hour=new_hour, minute=new_minute)
+            return (new_hour, new_minute, second)
         if not self._time_is_valid():
             return
-        selection = self.py_time_picker.GetSelection()
-        current_time = self.get_py_time()
+        selection = self.time_picker.GetSelection()
+        current_time = self.get_value()
         if self._in_hour_part():
             new_time = decrement_hour(current_time)
         else:
@@ -662,13 +669,13 @@ class GregorianTimePickerController(object):
 
     def _set_new_time_and_restore_selection(self, new_time, selection):
         def restore_selection(selection):
-            self.py_time_picker.SetSelection(selection[0], selection[1])
-        self.set_py_time(new_time)
+            self.time_picker.SetSelection(selection[0], selection[1])
+        self.set_value(new_time)
         restore_selection(selection)
 
     def _time_is_valid(self):
         try:
-            self.get_py_time()
+            self.get_value()
         except ValueError:
             return False
         return True
@@ -677,21 +684,21 @@ class GregorianTimePickerController(object):
         if self._separator_pos() == -1:
             return
         if part == self.hour_part:
-            self.py_time_picker.SetSelection(0, self._separator_pos())
+            self.time_picker.SetSelection(0, self._separator_pos())
         else:
-            time_string_len = len(self.py_time_picker.get_time_string())
-            self.py_time_picker.SetSelection(self._separator_pos() + 1, time_string_len)
+            time_string_len = len(self.time_picker.get_time_string())
+            self.time_picker.SetSelection(self._separator_pos() + 1, time_string_len)
         self.preferred_part = part
 
     def _in_hour_part(self):
         if self._separator_pos() == -1:
             return
-        return self.py_time_picker.GetInsertionPoint() <= self._separator_pos()
+        return self.time_picker.GetInsertionPoint() <= self._separator_pos()
 
     def _in_minute_part(self):
         if self._separator_pos() == -1:
             return
-        return self.py_time_picker.GetInsertionPoint() > self._separator_pos()
+        return self.time_picker.GetInsertionPoint() > self._separator_pos()
 
     def _separator_pos(self):
-        return self.py_time_picker.get_time_string().find(self.separator)
+        return self.time_picker.get_time_string().find(self.separator)

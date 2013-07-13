@@ -338,146 +338,150 @@ class AGregorianDateTimePicker(unittest.TestCase):
 #        self.simulate_change_date_string("2010-01-31")
 #        self.controller.on_up()
 #        self.py_date_picker.set_date_string.assert_called_with("2010-02-01")
-#
-#
-#class GregorianTimePickerBaseFixture(unittest.TestCase):
-#
-#    def setUp(self):
-#        self.py_time_picker = Mock(GregorianTimePicker)
-#        self.py_time_picker.get_time_string.return_value = "13:50"
-#        self.py_time_picker.GetBackgroundColour.return_value = (1, 2, 3)
-#        self.py_time_picker.SetSelection.side_effect = self._update_insertion_point_and_selection
-#        self.controller = GregorianTimePickerController(self.py_time_picker)
-#
-#    def assertBackgroundChangedTo(self, bg):
-#        self.py_time_picker.SetBackgroundColour.assert_called_with(bg)
-#        self.py_time_picker.Refresh.assert_called_with()
-#
-#    def simulate_change_time_string(self, new_time_string):
-#        self.py_time_picker.get_time_string.return_value = new_time_string
-#        self.controller.on_text_changed()
-#
-#    def simulate_change_insertion_point(self, new_insertion_point):
-#        self.py_time_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point)
-#        self.py_time_picker.GetInsertionPoint.return_value = new_insertion_point
-#
-#    def _update_insertion_point_and_selection(self, from_pos, to_pos):
-#        self.py_time_picker.GetInsertionPoint.return_value = from_pos
-#        self.py_time_picker.GetSelection.return_value = (from_pos, to_pos)
-#
-#
-#class AGregorianTimePicker(GregorianTimePickerBaseFixture):
-#
-#    def testSelectsHourPartWhenGivenFocus(self):
-#        self.controller.on_set_focus()
-#        self.py_time_picker.SetSelection.assert_called_with(0, 2)
-#
-#    def testSetsPinkBackgroundWhenIncorrectTimeIsEntered(self):
-#        self.simulate_change_time_string("foo")
-#        self.assertBackgroundChangedTo("pink")
-#
-#    def testResetsBackgroundWhenCorrectTimeIsEntered(self):
-#        self.simulate_change_time_string("11:20")
-#        self.assertBackgroundChangedTo((1, 2, 3))
-#
-#    def testPopulatesTimeFromPyTime(self):
-#        py_time = datetime.time(6, 9)
-#        self.controller.set_py_time(py_time)
-#        self.py_time_picker.set_time_string.assert_called_with("06:09")
-#
-#
-#class GregorianTimePickerWithFocusOnHour(GregorianTimePickerBaseFixture):
-#
-#    def setUp(self):
-#        GregorianTimePickerBaseFixture.setUp(self)
-#        self.simulate_change_insertion_point(0)
-#        self.controller.on_set_focus()
-#        self.py_time_picker.reset_mock()
-#
-#    def testReselectsHourWhenLosingAndRegainingFocus(self):
-#        self.controller.on_kill_focus()
-#        self.controller.on_set_focus()
-#        self.py_time_picker.SetSelection.assert_called_with(0, 2)
-#
-#    def testSelectsMinutePartOnTab(self):
-#        skip_event = self.controller.on_tab()
-#        self.assertFalse(skip_event)
-#        self.py_time_picker.SetSelection.assert_called_with(3, 5)
-#
-#    def testSkipsShiftTabEvent(self):
-#        skip_event = self.controller.on_shift_tab()
-#        self.assertTrue(skip_event)
-#
-#    def testIncreasesHourOnUp(self):
-#        self.simulate_change_time_string("04:04")
-#        self.controller.on_up()
-#        self.py_time_picker.set_time_string.assert_called_with("05:04")
-#
-#    def testMakesHourZeroOnUpWhenLastHour(self):
-#        self.simulate_change_time_string("23:04")
-#        self.controller.on_up()
-#        self.py_time_picker.set_time_string.assert_called_with("00:04")
-#
-#    def testNoChangeOnUpWhenInvalidTime(self):
-#        self.simulate_change_time_string("aa:bb")
-#        self.controller.on_up()
-#        self.assertFalse(self.py_time_picker.set_time_string.called)
-#
-#    def testDecreasesHourOnDown(self):
-#        self.simulate_change_time_string("04:04")
-#        self.controller.on_down()
-#        self.py_time_picker.set_time_string.assert_called_with("03:04")
-#
-#    def testSetLastHourOnDownWhenZeroHour(self):
-#        self.simulate_change_time_string("00:04")
-#        self.controller.on_down()
-#        self.py_time_picker.set_time_string.assert_called_with("23:04")
-#
-#
-#class PyTimeCtrlWithFocusOnMinute(GregorianTimePickerBaseFixture):
-#
-#    def setUp(self):
-#        GregorianTimePickerBaseFixture.setUp(self)
-#        self.simulate_change_insertion_point(3)
-#        self.controller.on_set_focus()
-#        self.controller.on_tab()
-#        self.py_time_picker.reset_mock()
-#
-#    def testReselectsMinuteWhenLosingAndRegainingFocus(self):
-#        self.controller.on_kill_focus()
-#        self.controller.on_set_focus()
-#        self.py_time_picker.SetSelection.assert_called_with(3, 5)
-#
-#    def testSkipsTabEvent(self):
-#        skip_event = self.controller.on_tab()
-#        self.assertTrue(skip_event)
-#
-#    def testSelectsMinutesPartOnShiftTab(self):
-#        skip_event = self.controller.on_shift_tab()
-#        self.assertFalse(skip_event)
-#        self.py_time_picker.SetSelection.assert_called_with(0, 2)
-#
-#    def testIncreasesMinutesOnUp(self):
-#        self.simulate_change_time_string("04:04")
-#        self.controller.on_up()
-#        self.py_time_picker.set_time_string.assert_called_with("04:05")
-#
-#    def testSetsMinutesToZeroAndIncrementsHourWhenUpOnLastMinute(self):
-#        self.simulate_change_time_string("04:59")
-#        self.controller.on_up()
-#        self.py_time_picker.set_time_string.assert_called_with("05:00")
-#
-#    def testDecreasesMinutesOnDown(self):
-#        self.simulate_change_time_string("04:04")
-#        self.controller.on_down()
-#        self.py_time_picker.set_time_string.assert_called_with("04:03")
-#
-#    def testLastTimeOnDownWhenZeroTime(self):
-#        self.simulate_change_time_string("00:00")
-#        self.controller.on_down()
-#        self.py_time_picker.set_time_string.assert_called_with("23:59")
-#
-#
+
+
+class GregorianTimePickerBaseFixture(unittest.TestCase):
+
+    def setUp(self):
+        self.time_picker = Mock(GregorianTimePicker)
+        self.time_picker.get_time_string.return_value = "13:50"
+        self.time_picker.GetBackgroundColour.return_value = (1, 2, 3)
+        self.time_picker.SetSelection.side_effect = self._update_insertion_point_and_selection
+        self.controller = GregorianTimePickerController(self.time_picker)
+
+    def assertBackgroundChangedTo(self, bg):
+        self.time_picker.SetBackgroundColour.assert_called_with(bg)
+        self.time_picker.Refresh.assert_called_with()
+
+    def simulate_change_time_string(self, new_time_string):
+        self.time_picker.get_time_string.return_value = new_time_string
+        self.controller.on_text_changed()
+
+    def simulate_change_insertion_point(self, new_insertion_point):
+        self.time_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point)
+        self.time_picker.GetInsertionPoint.return_value = new_insertion_point
+
+    def _update_insertion_point_and_selection(self, from_pos, to_pos):
+        self.time_picker.GetInsertionPoint.return_value = from_pos
+        self.time_picker.GetSelection.return_value = (from_pos, to_pos)
+
+
+class AGregorianTimePicker(GregorianTimePickerBaseFixture):
+
+    def testSelectsHourPartWhenGivenFocus(self):
+        self.controller.on_set_focus()
+        self.time_picker.SetSelection.assert_called_with(0, 2)
+
+    def testSetsPinkBackgroundWhenIncorrectTimeIsEntered(self):
+        self.simulate_change_time_string("foo")
+        self.assertBackgroundChangedTo("pink")
+
+    def testSetsPinkBackgroundWhenInvalidTimeIsEntered(self):
+        self.simulate_change_time_string("25:15")
+        self.assertBackgroundChangedTo("pink")
+
+    def testResetsBackgroundWhenCorrectTimeIsEntered(self):
+        self.simulate_change_time_string("11:20")
+        self.assertBackgroundChangedTo((1, 2, 3))
+
+    def testPopulatesTimeFromTimeTuple(self):
+        time = (6, 9, 0)
+        self.controller.set_value(time)
+        self.time_picker.set_time_string.assert_called_with("06:09")
+
+
+class GregorianTimePickerWithFocusOnHour(GregorianTimePickerBaseFixture):
+
+    def setUp(self):
+        GregorianTimePickerBaseFixture.setUp(self)
+        self.simulate_change_insertion_point(0)
+        self.controller.on_set_focus()
+        self.time_picker.reset_mock()
+
+    def testReselectsHourWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.time_picker.SetSelection.assert_called_with(0, 2)
+
+    def testSelectsMinutePartOnTab(self):
+        skip_event = self.controller.on_tab()
+        self.assertFalse(skip_event)
+        self.time_picker.SetSelection.assert_called_with(3, 5)
+
+    def testSkipsShiftTabEvent(self):
+        skip_event = self.controller.on_shift_tab()
+        self.assertTrue(skip_event)
+
+    def testIncreasesHourOnUp(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_up()
+        self.time_picker.set_time_string.assert_called_with("05:04")
+
+    def testMakesHourZeroOnUpWhenLastHour(self):
+        self.simulate_change_time_string("23:04")
+        self.controller.on_up()
+        self.time_picker.set_time_string.assert_called_with("00:04")
+
+    def testNoChangeOnUpWhenInvalidTime(self):
+        self.simulate_change_time_string("aa:bb")
+        self.controller.on_up()
+        self.assertFalse(self.time_picker.set_time_string.called)
+
+    def testDecreasesHourOnDown(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_down()
+        self.time_picker.set_time_string.assert_called_with("03:04")
+
+    def testSetLastHourOnDownWhenZeroHour(self):
+        self.simulate_change_time_string("00:04")
+        self.controller.on_down()
+        self.time_picker.set_time_string.assert_called_with("23:04")
+
+
+class PyTimeCtrlWithFocusOnMinute(GregorianTimePickerBaseFixture):
+
+    def setUp(self):
+        GregorianTimePickerBaseFixture.setUp(self)
+        self.simulate_change_insertion_point(3)
+        self.controller.on_set_focus()
+        self.controller.on_tab()
+        self.time_picker.reset_mock()
+
+    def testReselectsMinuteWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.time_picker.SetSelection.assert_called_with(3, 5)
+
+    def testSkipsTabEvent(self):
+        skip_event = self.controller.on_tab()
+        self.assertTrue(skip_event)
+
+    def testSelectsMinutesPartOnShiftTab(self):
+        skip_event = self.controller.on_shift_tab()
+        self.assertFalse(skip_event)
+        self.time_picker.SetSelection.assert_called_with(0, 2)
+
+    def testIncreasesMinutesOnUp(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_up()
+        self.time_picker.set_time_string.assert_called_with("04:05")
+
+    def testSetsMinutesToZeroAndIncrementsHourWhenUpOnLastMinute(self):
+        self.simulate_change_time_string("04:59")
+        self.controller.on_up()
+        self.time_picker.set_time_string.assert_called_with("05:00")
+
+    def testDecreasesMinutesOnDown(self):
+        self.simulate_change_time_string("04:04")
+        self.controller.on_down()
+        self.time_picker.set_time_string.assert_called_with("04:03")
+
+    def testLastTimeOnDownWhenZeroTime(self):
+        self.simulate_change_time_string("00:00")
+        self.controller.on_down()
+        self.time_picker.set_time_string.assert_called_with("23:59")
+
+
 #class ACalendarPopup(unittest.TestCase):
 #
 #    def setUp(self):
