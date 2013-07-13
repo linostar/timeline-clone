@@ -250,17 +250,6 @@ class WxTimeType(TimeType):
         else:
             return time
 
-    def get_milliseconds_delta(self, dt1, dt2):
-        milliseconds = 0
-        start, end = self._smallest_date_first(dt1, dt2)
-        subend = self._clone(start)
-        subend, substart = self._increment_subperiod(subend)
-        while subend.GetYear() < end.GetYear():
-            milliseconds += self._get_subdiff_milliseconds(substart, subend)
-            subend, substart = self._increment_subperiod(subend)
-        milliseconds += self._get_subdiff_milliseconds(substart, end)
-        return milliseconds
-
     def _clone(self, dt):
         dtclone = wx.DateTime()
         dtclone.Set(dt.GetDay(), dt.GetMonth(), dt.GetYear(), dt.GetHour(), 

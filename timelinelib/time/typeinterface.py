@@ -96,6 +96,3 @@ class TimeType(object):
 
     def adjust_for_bc_years(self, time):
         raise NotImplementedError("adjust_for_zero_year not implemented.")
-
-    def get_milliseconds_delta(self, time1, time2):
-        raise NotImplementedError("get_milliseconds_delta not implemented.")
