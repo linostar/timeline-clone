@@ -22,6 +22,9 @@ import datetime
 from mock import Mock
 
 from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.time.gregoriantime import GregorianTimeType
+from timelinelib.time.timeline import delta_from_days
+import timelinelib.calendar.gregorian as gregorian 
 from timelinelib.wxgui.components.gregoriandatetimepicker import GregorianDateTimePickerController
 from timelinelib.wxgui.components.gregoriandatetimepicker import GregorianDatePicker
 from timelinelib.wxgui.components.gregoriandatetimepicker import GregorianDatePickerController
@@ -100,83 +103,94 @@ class GregorianDatePickerBaseFixture(unittest.TestCase):
         self.date_picker.GetSelection.return_value = (from_pos, to_pos)
 
 
-#class AGregorianDatePicker(GregorianDatePickerBaseFixture):
-#
-#    def testSelectsYearPartWhenGivenFocus(self):
-#        self.controller.on_set_focus()
-#        self.py_date_picker.SetSelection.assert_called_with(0, 4)
-#
-#    def testChangesToErrorBackgroundWhenIncorrectDateIsEntered(self):
-#        self.simulate_change_date_string("foo")
-#        self.assertBackgroundChangedTo("pink")
-#
-#    def testResetsBackgroundWhenCorrectDateIsEntered(self):
-#        self.simulate_change_date_string("2007-02-13")
-#        self.assertBackgroundChangedTo((1, 2, 3))
-#
-#    def testPopulatesDateFromGregorianDate(self):
-#        self.controller.set_py_date(datetime.date(2009, 11, 5))
-#        self.py_date_picker.set_date_string.assert_called_with("2009-11-05")
-#
-#    def testParsesEnteredDateAsGregorianDate(self):
-#        self.simulate_change_date_string("2008-05-03")
-#        self.assertEquals(datetime.date(2008, 5, 3),
-#                          self.controller.get_py_date())
-#
-#    def testThrowsValueErrorWhenParsingInvalidDate(self):
-#        self.simulate_change_date_string("2008-05-xx")
-#        self.assertRaises(ValueError, self.controller.get_py_date)
-#
-#    def testThrowsValueErrorWhenParsingDateOutsideValidRange(self):
-#        self.simulate_change_date_string("9-9-9")
-#        self.assertRaises(ValueError, self.controller.get_py_date)
-#
-#    def testChangesToErrorBackgroundWhenTooSmallDateIsEntered(self):
-#        self.simulate_change_date_string("9-12-31")
-#        self.assertBackgroundChangedTo("pink")
-#
-#    def testHasOriginalBackgroundWhenSmallestValidDateIsEntered(self):
-#        self.simulate_change_date_string("10-01-01")
-#        self.assertBackgroundChangedTo((1, 2, 3))
-#
-#    def testChangesToErrorBackgroundWhenTooLargeDateIsEntered(self):
-#        self.simulate_change_date_string("9990-01-01")
-#        self.assertBackgroundChangedTo("pink")
-#
-#    def testHasOriginalBackgroundWhenLargestValidDateIsEntered(self):
-#        self.simulate_change_date_string("9989-12-31")
-#        self.assertBackgroundChangedTo((1, 2, 3))
-#
-#    def testShowsPreferredDayOnUpWhenMonthIsIncremented(self):
-#        # Make preferred day = 30
-#        self.simulate_change_date_string("2010-01-29")
-#        self.simulate_change_insertion_point(10)
-#        self.controller.on_up()
-#        self.assertEqual(self.controller.preferred_day, 30)
-#        # Change month
-#        self.simulate_change_insertion_point(7)
-#        self.controller.on_up()
-#        self.py_date_picker.set_date_string.assert_called_with("2010-02-28")
-#        self.simulate_change_date_string("2010-02-28")
-#        self.controller.preferred_day = 30
-#        self.controller.on_up()
-#        self.py_date_picker.set_date_string.assert_called_with("2010-03-30")
-#
-#    def testShowsPreferredDayOnDownWhenMonthIsDecremented(self):
-#        # Make preferred day = 30
-#        self.simulate_change_date_string("2010-04-01")
-#        self.simulate_change_insertion_point(10)
-#        self.controller.on_down()
-#        self.assertEqual(self.controller.preferred_day, 31)
-#        # Change month
-#        self.simulate_change_insertion_point(7)
-#        self.controller.on_down()
-#        self.py_date_picker.set_date_string.assert_called_with("2010-03-31")
-#        self.simulate_change_date_string("2010-03-31")
-#        self.controller.on_down()
-#        self.py_date_picker.set_date_string.assert_called_with("2010-02-28")
-#
-#
+class AGregorianDatePicker(GregorianDatePickerBaseFixture):
+
+    def testSelectsYearPartWhenGivenFocus(self):
+        self.controller.on_set_focus()
+        self.date_picker.SetSelection.assert_called_with(0, 4)
+
+    def testChangesToErrorBackgroundWhenNoDateTextIsEntered(self):
+        self.simulate_change_date_string("foo")
+        self.assertBackgroundChangedTo("pink")
+
+    def testChangesToErrorBackgroundWhenIncorrectDateIsEntered(self):
+        self.simulate_change_date_string("2013-13-01")
+        self.assertBackgroundChangedTo("pink")
+
+    def testResetsBackgroundWhenCorrectDateIsEntered(self):
+        self.simulate_change_date_string("2007-02-13")
+        self.assertBackgroundChangedTo((1, 2, 3))
+
+    def testPopulatesDateFromGregorianDate(self):
+        self.controller.set_value((2009, 11, 5))
+        self.date_picker.set_date_string.assert_called_with("2009-11-05")
+
+    def testPopulatesDateFromGregorianLargeDate(self):
+        self.controller.set_value((9009, 11, 5))
+        self.date_picker.set_date_string.assert_called_with("9009-11-05")
+
+    def testParsesEnteredDateAsGregorianDate(self):
+        self.simulate_change_date_string("2008-05-03")
+        self.assertEquals((2008, 5, 3), self.controller.get_value())
+
+    def testParsesEnteredDateAsGregorianLargeDate(self):
+        self.simulate_change_date_string("9008-05-03")
+        self.assertEquals((9008, 5, 3), self.controller.get_value())
+
+    def testThrowsValueErrorWhenParsingInvalidDate(self):
+        self.simulate_change_date_string("2008-05-xx")
+        self.assertRaises(ValueError, self.controller.get_value)
+
+    def testChangesToErrorBackgroundWhenTooSmallDateIsEntered(self):
+        year, month, day = gregorian.from_time(GregorianTimeType().get_min_time()[0]).to_date_tuple()
+        self.simulate_change_date_string("%d-%02d-%02d" % (year - 1, month, day))
+        self.assertBackgroundChangedTo("pink")
+
+    def testHasOriginalBackgroundWhenSmallestValidDateIsEntered(self):
+        year, month, day = gregorian.from_time(GregorianTimeType().get_min_time()[0]).to_date_tuple()
+        self.simulate_change_date_string("%d-%02d-%02d" % (year, month, day))
+        self.assertBackgroundChangedTo((1, 2, 3))
+
+    def testChangesToErrorBackgroundWhenTooLargeDateIsEntered(self):
+        year, month, day = gregorian.from_time(GregorianTimeType().get_max_time()[0]).to_date_tuple()
+        self.simulate_change_date_string("%d-%02d-%02d" % (year + 1, month, day))
+        self.assertBackgroundChangedTo("pink")
+
+    def testHasOriginalBackgroundWhenLargestValidDateIsEntered(self):
+        year, month, day = gregorian.from_time(GregorianTimeType().get_max_time()[0] - delta_from_days(1)).to_date_tuple()
+        self.simulate_change_date_string("%d-%02d-%02d" % (year, month, day))
+        self.assertBackgroundChangedTo((1, 2, 3))
+
+    def testShowsPreferredDayOnUpWhenMonthIsIncremented(self):
+        # Make preferred day = 30
+        self.simulate_change_date_string("2010-01-29")
+        self.simulate_change_insertion_point(10)
+        self.controller.on_up()
+        self.assertEqual(self.controller.preferred_day, 30)
+        # Change month
+        self.simulate_change_insertion_point(7)
+        self.controller.on_up()
+        self.date_picker.set_date_string.assert_called_with("2010-02-28")
+        self.simulate_change_date_string("2010-02-28")
+        self.controller.preferred_day = 30
+        self.controller.on_up()
+        self.date_picker.set_date_string.assert_called_with("2010-03-30")
+
+    def testShowsPreferredDayOnDownWhenMonthIsDecremented(self):
+        # Make preferred day = 30
+        self.simulate_change_date_string("2010-04-01")
+        self.simulate_change_insertion_point(10)
+        self.controller.on_down()
+        self.assertEqual(self.controller.preferred_day, 31)
+        # Change month
+        self.simulate_change_insertion_point(7)
+        self.controller.on_down()
+        self.date_picker.set_date_string.assert_called_with("2010-03-31")
+        self.simulate_change_date_string("2010-03-31")
+        self.controller.on_down()
+        self.date_picker.set_date_string.assert_called_with("2010-02-28")
+
+
 #class GregorianDatePickerWithFocusOnYear(GregorianDatePickerBaseFixture):
 #
 #    def setUp(self):

@@ -61,6 +61,9 @@ class Time(object):
     def __gt__(self, dt):
         return (self.julian_day, self.seconds) > (dt.julian_day, dt.seconds)
 
+    def __ge__(self, dt):
+        return self == dt or self > dt
+
     def __lt__(self, dt):
         return (self.julian_day, self.seconds) < (dt.julian_day, dt.seconds)
 

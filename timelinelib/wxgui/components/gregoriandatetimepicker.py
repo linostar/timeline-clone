@@ -23,9 +23,11 @@ import wx.calendar
 
 import timelinelib.calendar.gregorian as gregorian
 from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.config.paths import ICONS_DIR
 from timelinelib.time.pytime import PyTimeType
 from timelinelib.wxgui.utils import display_error_message
+from timelinelib.time.timeline import delta_from_days
 
 
 class GregorianDateTimePicker(wx.Panel):
@@ -282,14 +284,14 @@ class GregorianDatePickerController(object):
     def get_value(self):
         try:
             (year, month, day) = self._parse_year_month_day()
-            py_date = datetime.date(year, month, day)
-            self._ensure_within_allowed_period(py_date)
-            return py_date
+            self._ensure_within_allowed_period((year, month, day))
+            return (year, month, day)
         except ValueError:
             raise ValueError("Invalid date.")
 
-    def set_py_date(self, py_date):
-        date_string = PyTimeType().event_date_string(py_date)
+    def set_value(self, value):
+        year, month, day = value
+        date_string = "%04d-%02d-%02d" % (year, month, day)
         self.py_date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
@@ -321,7 +323,7 @@ class GregorianDatePickerController(object):
     def on_text_changed(self):
         self._change_background_depending_on_date_validity()
         if self._current_date_is_valid():
-            current_date = self.get_py_date()
+            current_date = self.get_value()
             # To prevent saving of preferred day when year or month is changed
             # in on_up() and on_down()...
             # Save preferred day only when text is entered in the date text
@@ -337,20 +339,22 @@ class GregorianDatePickerController(object):
                 return self._set_valid_day(date.year + 1, date.month, date.day)
             return date
         def increment_month(date):
-            if date.month < 12:
-                return self._set_valid_day(date.year, date.month + 1,
-                                           date.day)
-            elif date.year < PyTimeType().get_max_time()[0].year - 1:
-                return self._set_valid_day(date.year + 1, 1, date.day)
+            year, month, day = date
+            if month < 12:
+                return self._set_valid_day(year, month + 1, day)
+            elif date.year < GregorianTimeType().get_max_time()[0].year - 1:
+                return self._set_valid_day(year + 1, 1, day)
             return date
         def increment_day(date):
-            if date <  PyTimeType().get_max_time()[0].date() - datetime.timedelta(days=1):
-                return date + datetime.timedelta(days=1)
+            year, month, day = date
+            time = gregorian.from_date(year, month, day).to_time()
+            if time <  GregorianTimeType().get_max_time()[0] - delta_from_days(1):
+                return gregorian.from_time(time + delta_from_days(1)).to_date_tuple()
             return date
         if not self._current_date_is_valid():
             return
         selection = self.py_date_picker.GetSelection()
-        current_date = self.get_py_date()
+        current_date = self.get_value()
         if self._insertion_point_in_region(self.region_year):
             new_date = increment_year(current_date)
         elif self._insertion_point_in_region(self.region_month):
@@ -367,23 +371,25 @@ class GregorianDatePickerController(object):
                 return self._set_valid_day(date.year - 1, date.month, date.day)
             return date
         def decrement_month(date):
-            if date.month > 1:
-                return self._set_valid_day(date.year, date.month - 1, date.day)
-            elif date.year > PyTimeType().get_min_time()[0].year:
-                return self._set_valid_day(date.year - 1, 12, date.day)
+            year, month, day = date
+            if month > 1:
+                return self._set_valid_day(year, month - 1, day)
+            elif year > GregorianTimeType().get_min_time()[0].year:
+                return self._set_valid_day(year - 1, 12, day)
             return date
         def decrement_day(date):
-            if date.day > 1:
-                return date.replace(day=date.day - 1)
-            elif date.month > 1:
-                return self._set_valid_day(date.year, date.month - 1, 31)
-            elif date.year > PyTimeType().get_min_time()[0].year:
-                return self._set_valid_day(date.year - 1, 12, 31)
+            year, month, day = date
+            if day > 1:
+                return (year, month, day - 1)
+            elif month > 1:
+                return self._set_valid_day(year, month - 1, 31)
+            elif year > GregorianTimeType().get_min_time()[0].year:
+                return self._set_valid_day(year - 1, 12, 31)
             return date
         if not self._current_date_is_valid():
             return
         selection = self.py_date_picker.GetSelection()
-        current_date = self.get_py_date()
+        current_date = self.get_value()
         if self._insertion_point_in_region(self.region_year):
             new_date = decrement_year(current_date)
         elif self._insertion_point_in_region(self.region_month):
@@ -403,7 +409,7 @@ class GregorianDatePickerController(object):
         self.py_date_picker.Refresh()
 
     def _parse_year_month_day(self):
-        components = self.py_date_picker.get_date_string().split(self.separator)
+        components = self.py_date_picker.get_date_string().rsplit(self.separator, 2)
         if len(components) != 3:
             raise ValueError()
         year  = int(components[self.region_year])
@@ -411,10 +417,13 @@ class GregorianDatePickerController(object):
         day   = int(components[self.region_day])
         return (year, month, day)
 
-    def _ensure_within_allowed_period(self, py_date):
-        py_date_time = datetime.datetime(py_date.year, py_date.month, py_date.day)
-        if (py_date_time >= PyTimeType().get_max_time()[0] or
-            py_date_time <  PyTimeType().get_min_time()[0]):
+    def _ensure_within_allowed_period(self, date):
+        year, month, day = date
+        time = Gregorian(year, month, day, 0, 0, 0).to_time()
+        max_time = GregorianTimeType().get_max_time()[0]
+        min_time = GregorianTimeType().get_min_time()[0]
+        if (time >= GregorianTimeType().get_max_time()[0] or
+            time <  GregorianTimeType().get_min_time()[0]):
             raise ValueError()
 
     def _set_new_date_and_restore_selection(self, new_date, selection):
@@ -422,9 +431,9 @@ class GregorianDatePickerController(object):
             self.py_date_picker.SetSelection(selection[0], selection[1])
         self.save_preferred_day = False
         if self.preferred_day != None:
-            new_date = self._set_valid_day(new_date.year, new_date.month,
-                                           self.preferred_day)
-        self.set_py_date(new_date)
+            year, month, _ = new_date
+            new_date = self._set_valid_day(year, month, self.preferred_day)
+        self.set_value(new_date)
         restore_selection(selection)
         self.save_preferred_day = True
 
@@ -432,21 +441,22 @@ class GregorianDatePickerController(object):
         done = False
         while not done:
             try:
-                date = datetime.date(year=new_year, month=new_month, day=new_day)
+                date = gregorian.from_date(new_year, new_month, new_day)
                 done = True
             except Exception, ex:
                 new_day -= 1
-        return date
+        return date.to_date_tuple()
 
     def _save_preferred_day(self, date):
-        if date.day > 28:
-            self.preferred_day = date.day
+        _, _, day = date
+        if day > 28:
+            self.preferred_day = day
         else:
             self.preferred_day = None
 
     def _current_date_is_valid(self):
         try:
-            self.get_py_date()
+            self.get_value()
         except ValueError:
             return False
         return True
