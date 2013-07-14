@@ -73,33 +73,33 @@ class AGregorianDateTimePicker(unittest.TestCase):
         self.assertEquals(Gregorian(2010, 8, 31, 0, 0, 0).to_time(), self.controller.get_value())
 
 
-#class GregorianDatePickerBaseFixture(unittest.TestCase):
-#
-#    def setUp(self):
-#        self.py_date_picker = Mock(GregorianDatePicker)
-#        self.py_date_picker.get_date_string.return_value = "2010-08-31"
-#        self.py_date_picker.GetBackgroundColour.return_value = (1, 2, 3)
-#        self.py_date_picker.SetSelection.side_effect = self._update_insertion_point_and_selection
-#        self.simulate_change_insertion_point(0)
-#        self.controller = GregorianDatePickerController(self.py_date_picker, error_bg="pink")
-#
-#    def assertBackgroundChangedTo(self, bg):
-#        self.py_date_picker.SetBackgroundColour.assert_called_with(bg)
-#        self.py_date_picker.Refresh.assert_called_with()
-#
-#    def simulate_change_date_string(self, new_date_string):
-#        self.py_date_picker.get_date_string.return_value = new_date_string
-#        self.controller.on_text_changed()
-#
-#    def simulate_change_insertion_point(self, new_insertion_point):
-#        self.py_date_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point)
-#        self.py_date_picker.GetInsertionPoint.return_value = new_insertion_point
-#
-#    def _update_insertion_point_and_selection(self, from_pos, to_pos):
-#        self.py_date_picker.GetInsertionPoint.return_value = to_pos
-#        self.py_date_picker.GetSelection.return_value = (from_pos, to_pos)
-#
-#
+class GregorianDatePickerBaseFixture(unittest.TestCase):
+
+    def setUp(self):
+        self.date_picker = Mock(GregorianDatePicker)
+        self.date_picker.get_date_string.return_value = "2010-08-31"
+        self.date_picker.GetBackgroundColour.return_value = (1, 2, 3)
+        self.date_picker.SetSelection.side_effect = self._update_insertion_point_and_selection
+        self.simulate_change_insertion_point(0)
+        self.controller = GregorianDatePickerController(self.date_picker, error_bg="pink")
+
+    def assertBackgroundChangedTo(self, bg):
+        self.date_picker.SetBackgroundColour.assert_called_with(bg)
+        self.date_picker.Refresh.assert_called_with()
+
+    def simulate_change_date_string(self, new_date_string):
+        self.date_picker.get_date_string.return_value = new_date_string
+        self.controller.on_text_changed()
+
+    def simulate_change_insertion_point(self, new_insertion_point):
+        self.date_picker.GetSelection.return_value = (new_insertion_point, new_insertion_point)
+        self.date_picker.GetInsertionPoint.return_value = new_insertion_point
+
+    def _update_insertion_point_and_selection(self, from_pos, to_pos):
+        self.date_picker.GetInsertionPoint.return_value = to_pos
+        self.date_picker.GetSelection.return_value = (from_pos, to_pos)
+
+
 #class AGregorianDatePicker(GregorianDatePickerBaseFixture):
 #
 #    def testSelectsYearPartWhenGivenFocus(self):
