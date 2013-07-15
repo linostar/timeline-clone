@@ -267,10 +267,10 @@ class GregorianDatePicker(wx.TextCtrl):
 
 class GregorianDatePickerController(object):
 
-    def __init__(self, py_date_picker, error_bg="pink"):
-        self.py_date_picker = py_date_picker
+    def __init__(self, date_picker, error_bg="pink"):
+        self.date_picker = date_picker
         self.error_bg = error_bg
-        self.original_bg = self.py_date_picker.GetBackgroundColour()
+        self.original_bg = self.date_picker.GetBackgroundColour()
         self.separator = PyTimeType().event_date_string(PyTimeType().now())[4]
         self.region_year = 0
         self.region_month = 1
@@ -292,19 +292,19 @@ class GregorianDatePickerController(object):
     def set_value(self, value):
         year, month, day = value
         date_string = "%04d-%02d-%02d" % (year, month, day)
-        self.py_date_picker.set_date_string(date_string)
+        self.date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
         if self.last_selection:
             start, end = self.last_selection
-            self.py_date_picker.SetSelection(start, end)
+            self.date_picker.SetSelection(start, end)
         else:
             self._select_region_if_possible(self.region_year)
-            self.last_selection = self.py_date_picker.GetSelection()
+            self.last_selection = self.date_picker.GetSelection()
 
     def on_kill_focus(self):
         if self.last_selection:
-            self.last_selection = self.py_date_picker.GetSelection()
+            self.last_selection = self.date_picker.GetSelection()
 
     def on_tab(self):
         for (left_region, right_region) in self.region_siblings:
@@ -354,7 +354,7 @@ class GregorianDatePickerController(object):
             return date
         if not self._current_date_is_valid():
             return
-        selection = self.py_date_picker.GetSelection()
+        selection = self.date_picker.GetSelection()
         current_date = self.get_value()
         if self._insertion_point_in_region(self.region_year):
             new_date = increment_year(current_date)
@@ -390,7 +390,7 @@ class GregorianDatePickerController(object):
             return date
         if not self._current_date_is_valid():
             return
-        selection = self.py_date_picker.GetSelection()
+        selection = self.date_picker.GetSelection()
         current_date = self.get_value()
         if self._insertion_point_in_region(self.region_year):
             new_date = decrement_year(current_date)
@@ -408,14 +408,14 @@ class GregorianDatePickerController(object):
 
     def _change_background_depending_on_date_validity(self):
         if self._current_date_is_valid():
-            self.py_date_picker.SetBackgroundColour(self.original_bg)
+            self.date_picker.SetBackgroundColour(self.original_bg)
         else:
-            self.py_date_picker.SetBackgroundColour(self.error_bg)
-        self.py_date_picker.SetFocus()
-        self.py_date_picker.Refresh()
+            self.date_picker.SetBackgroundColour(self.error_bg)
+        self.date_picker.SetFocus()
+        self.date_picker.Refresh()
 
     def _parse_year_month_day(self):
-        components = self.py_date_picker.get_date_string().rsplit(self.separator, 2)
+        components = self.date_picker.get_date_string().rsplit(self.separator, 2)
         if len(components) != 3:
             raise ValueError()
         year  = int(components[self.region_year])
@@ -434,7 +434,7 @@ class GregorianDatePickerController(object):
 
     def _set_new_date_and_restore_selection(self, new_date, selection):
         def restore_selection(selection):
-            self.py_date_picker.SetSelection(selection[0], selection[1])
+            self.date_picker.SetSelection(selection[0], selection[1])
         self.save_preferred_day = False
         if self.preferred_day != None:
             year, month, _ = new_date
@@ -470,12 +470,12 @@ class GregorianDatePickerController(object):
     def _select_region_if_possible(self, region):
         region_range = self._get_region_range(region)
         if region_range:
-            self.py_date_picker.SetSelection(region_range[0], region_range[-1])
+            self.date_picker.SetSelection(region_range[0], region_range[-1])
 
     def _insertion_point_in_region(self, n):
         region_range = self._get_region_range(n)
         if region_range:
-            return self.py_date_picker.GetInsertionPoint() in region_range
+            return self.date_picker.GetInsertionPoint() in region_range
 
     def _get_region_range(self, n):
         # Returns a range of valid cursor positions for a valid region year,
@@ -497,7 +497,7 @@ class GregorianDatePickerController(object):
                 return range(pos_of_separator2 + 1, len(datestring) + 1)
         if region_is_not_valid(n):
             return None
-        date = self.py_date_picker.get_date_string()
+        date = self.date_picker.get_date_string()
         if not date_has_exactly_two_seperators(date):
             return None
         pos_range = calculate_pos_range(n, date)
