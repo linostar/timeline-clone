@@ -191,71 +191,72 @@ class AGregorianDatePicker(GregorianDatePickerBaseFixture):
         self.date_picker.set_date_string.assert_called_with("2010-02-28")
 
 
-#class GregorianDatePickerWithFocusOnYear(GregorianDatePickerBaseFixture):
-#
-#    def setUp(self):
-#        GregorianDatePickerBaseFixture.setUp(self)
-#        self.controller.on_set_focus()
-#        self.py_date_picker.reset_mock()
-#
-#    def testReselectsYearWhenLosingAndRegainingFocus(self):
-#        self.controller.on_kill_focus()
-#        self.controller.on_set_focus()
-#        self.py_date_picker.SetSelection.assert_called_with(0, 4)
-#
-#    def testSelectsMonthPartOnTab(self):
-#        skip_event = self.controller.on_tab()
-#        self.assertFalse(skip_event)
-#        self.py_date_picker.SetSelection.assert_called_with(5, 7)
-#
-#    def testSkipsShiftTabEvents(self):
-#        skip_event = self.controller.on_shift_tab()
-#        self.assertTrue(skip_event)
-#
-#    def testKeepsSelectionOnUp(self):
-#        self.controller.on_up()
-#        self.py_date_picker.SetSelection.assert_called_with(0, 4)
-#
-#    def testKeepsSelectionOnDown(self):
-#        self.controller.on_up()
-#        self.py_date_picker.SetSelection.assert_called_with(0, 4)
-#
-#    def testIncreasesYearOnUp(self):
-#        self.simulate_change_date_string("2010-01-01")
-#        self.controller.on_up()
-#        self.py_date_picker.set_date_string.assert_called_with("2011-01-01")
-#
-#    def testDecreasesYearOnDown(self):
-#        self.simulate_change_date_string("2010-01-01")
-#        self.controller.on_down()
-#        self.py_date_picker.set_date_string.assert_called_with("2009-01-01")
-#
-#    def testDontIncreaseYearOnUpWhenTooLargeDate(self):
-#        self.simulate_change_date_string("9989-01-01")
-#        self.controller.on_up()
-#        self.assertFalse(self.py_date_picker.set_date_string.called)
-#
-#    def testDontDecreaseYearOnDownWhenTooSmallDate(self):
-#        self.simulate_change_date_string("10-01-01")
-#        self.controller.on_down()
-#        self.assertFalse(self.py_date_picker.set_date_string.called)
-#
-#    def testChangesDayOnDownWhenLeapYeer(self):
-#        self.simulate_change_date_string("2012-02-29")
-#        self.controller.on_down()
-#        self.py_date_picker.set_date_string.assert_called_with("2011-02-28")
-#
-#    def testKeepsInsertionPointOnUp(self):
-#        self.simulate_change_date_string("2010-01-01")
-#        self.controller.on_up()
-#        self.py_date_picker.SetSelection.assert_called_with(0, 4)
-#
-#    def testKeepsInsertionPointOnDown(self):
-#        self.simulate_change_date_string("2010-01-01")
-#        self.controller.on_down()
-#        self.py_date_picker.SetSelection.assert_called_with(0, 4)
-#
-#
+class GregorianDatePickerWithFocusOnYear(GregorianDatePickerBaseFixture):
+
+    def setUp(self):
+        GregorianDatePickerBaseFixture.setUp(self)
+        self.controller.on_set_focus()
+        self.date_picker.reset_mock()
+
+    def testReselectsYearWhenLosingAndRegainingFocus(self):
+        self.controller.on_kill_focus()
+        self.controller.on_set_focus()
+        self.date_picker.SetSelection.assert_called_with(0, 4)
+
+    def testSelectsMonthPartOnTab(self):
+        skip_event = self.controller.on_tab()
+        self.assertFalse(skip_event)
+        self.date_picker.SetSelection.assert_called_with(5, 7)
+
+    def testSkipsShiftTabEvents(self):
+        skip_event = self.controller.on_shift_tab()
+        self.assertTrue(skip_event)
+
+    def testKeepsSelectionOnUp(self):
+        self.controller.on_up()
+        self.date_picker.SetSelection.assert_called_with(0, 4)
+
+    def testKeepsSelectionOnDown(self):
+        self.controller.on_up()
+        self.date_picker.SetSelection.assert_called_with(0, 4)
+
+    def testIncreasesYearOnUp(self):
+        self.simulate_change_date_string("2010-01-01")
+        self.controller.on_up()
+        self.date_picker.set_date_string.assert_called_with("2011-01-01")
+
+    def testDecreasesYearOnDown(self):
+        self.simulate_change_date_string("2010-01-01")
+        self.controller.on_down()
+        self.date_picker.set_date_string.assert_called_with("2009-01-01")
+
+    def testDontIncreaseYearOnUpWhenTooLargeDate(self):
+        self.simulate_change_date_string("9989-01-01")
+        self.controller.on_up()
+        self.assertFalse(self.date_picker.set_date_string.called)
+
+    def testDontDecreaseYearOnDownWhenTooSmallDate(self):
+        year, month, day = gregorian.from_time(GregorianTimeType().get_min_time()[0]).to_date_tuple()
+        self.simulate_change_date_string("%d-%02d-%02d" % (year, month, day))
+        self.controller.on_down()
+        self.assertFalse(self.date_picker.set_date_string.called)
+
+    def testChangesDayOnDownWhenLeapYeer(self):
+        self.simulate_change_date_string("2012-02-29")
+        self.controller.on_down()
+        self.date_picker.set_date_string.assert_called_with("2011-02-28")
+
+    def testKeepsInsertionPointOnUp(self):
+        self.simulate_change_date_string("2010-01-01")
+        self.controller.on_up()
+        self.date_picker.SetSelection.assert_called_with(0, 4)
+
+    def testKeepsInsertionPointOnDown(self):
+        self.simulate_change_date_string("2010-01-01")
+        self.controller.on_down()
+        self.date_picker.SetSelection.assert_called_with(0, 4)
+
+
 #class GregorianDatePickerWithFocusOnMonth(GregorianDatePickerBaseFixture):
 #
 #    def setUp(self):

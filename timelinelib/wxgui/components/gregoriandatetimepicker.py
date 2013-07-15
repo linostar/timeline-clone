@@ -335,8 +335,9 @@ class GregorianDatePickerController(object):
 
     def on_up(self):
         def increment_year(date):
-            if date.year < PyTimeType().get_max_time()[0].year - 1:
-                return self._set_valid_day(date.year + 1, date.month, date.day)
+            year, month, day = date
+            if year < gregorian.from_time(GregorianTimeType().get_max_time()[0]).year - 1:
+                return self._set_valid_day(year + 1, month, day)
             return date
         def increment_month(date):
             year, month, day = date
@@ -367,20 +368,21 @@ class GregorianDatePickerController(object):
 
     def on_down(self):
         def decrement_year(date):
-            if date.year > PyTimeType().get_min_time()[0].year:
-                return self._set_valid_day(date.year - 1, date.month, date.day)
+            year, month, day = date
+            if year > gregorian.from_time(GregorianTimeType().get_min_time()[0]).year:
+                return self._set_valid_day(year - 1, month, day)
             return date
         def decrement_month(date):
             year, month, day = date
             if month > 1:
                 return self._set_valid_day(year, month - 1, day)
-            elif year > GregorianTimeType().get_min_time()[0].year:
+            elif year > gregorian.from_time(GregorianTimeType().get_min_time()[0]).year:
                 return self._set_valid_day(year - 1, 12, day)
             return date
         def decrement_day(date):
             year, month, day = date
             if day > 1:
-                return (year, month, day - 1)
+                return self._set_valid_day(year, month, day - 1)
             elif month > 1:
                 return self._set_valid_day(year, month - 1, 31)
             elif year > GregorianTimeType().get_min_time()[0].year:
@@ -395,6 +397,10 @@ class GregorianDatePickerController(object):
         elif self._insertion_point_in_region(self.region_month):
             new_date = decrement_month(current_date)
         else:
+            year, month, day = current_date
+            gregorian.from_date(year, month, day)
+            if gregorian.from_date(year, month, day).to_time() == GregorianTimeType().get_min_time()[0]:
+                return 
             new_date = decrement_day(current_date)
             self._save_preferred_day(new_date)
         if current_date != new_date:
