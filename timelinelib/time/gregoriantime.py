@@ -530,7 +530,7 @@ class StripYear(Strip):
 
     def label(self, time, major=False):
         time = gregorian.from_time(time)
-        return str(time.year)
+        return self._convert_year_to_bc(time.year)
 
     def start(self, time):
         gregorian_time = gregorian.from_time(time)
@@ -544,7 +544,13 @@ class StripYear(Strip):
     def get_font(self, time_period):
         return get_default_font(8)
 
+    def _convert_year_to_bc(self, year):
+        if year <= 0:
+            return "%d BC" % (1 - year)
+        else:
+            return str(year)
 
+        
 class StripMonth(Strip):
 
     def label(self, time, major=False):
