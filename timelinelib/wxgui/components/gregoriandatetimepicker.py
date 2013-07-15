@@ -212,8 +212,8 @@ class GregorianDatePicker(wx.TextCtrl):
     def get_value(self):
         return self.controller.get_value()
 
-    def set_value(self, py_date):
-        self.controller.set_value(py_date)
+    def set_value(self, date):
+        self.controller.set_value(date)
 
     def get_date_string(self):
         return self.GetValue()
