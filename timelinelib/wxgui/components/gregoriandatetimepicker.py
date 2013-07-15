@@ -94,10 +94,6 @@ class GregorianDateTimePicker(wx.Panel):
         self.time_picker.SetFocus()
         self.calendar_popup.Dismiss()
 
-    def _py_date_to_wx_date(self, py_date):
-        return wx.DateTimeFromDMY(py_date.day, py_date.month-1, py_date.year,
-                                  0, 0, 0)
-
 
 class GregorianDateTimePickerController(object):
 
