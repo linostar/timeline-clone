@@ -385,7 +385,7 @@ class GregorianDatePickerController(object):
                 return self._set_valid_day(year, month, day - 1)
             elif month > 1:
                 return self._set_valid_day(year, month - 1, 31)
-            elif year > GregorianTimeType().get_min_time()[0].year:
+            elif year > gregorian.from_time(GregorianTimeType().get_min_time()[0]).year:
                 return self._set_valid_day(year - 1, 12, 31)
             return date
         if not self._current_date_is_valid():
