@@ -25,7 +25,6 @@ import timelinelib.calendar.gregorian as gregorian
 from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.config.paths import ICONS_DIR
-from timelinelib.time.pytime import PyTimeType
 from timelinelib.wxgui.utils import display_error_message
 from timelinelib.time.timeline import delta_from_days
 
@@ -277,7 +276,7 @@ class GregorianDatePickerController(object):
         self.date_picker = date_picker
         self.error_bg = error_bg
         self.original_bg = self.date_picker.GetBackgroundColour()
-        self.separator = PyTimeType().event_date_string(PyTimeType().now())[4]
+        self.separator = GregorianTimeType().event_date_string(GregorianTimeType().now())[4]
         self.region_year = 0
         self.region_month = 1
         self.region_day = 2
@@ -579,7 +578,7 @@ class GregorianTimePickerController(object):
     def __init__(self, time_picker):
         self.time_picker = time_picker
         self.original_bg = self.time_picker.GetBackgroundColour()
-        self.separator = PyTimeType().event_time_string(PyTimeType().now())[2]
+        self.separator = GregorianTimeType().event_time_string(GregorianTimeType().now())[2]
         self.hour_part = 0
         self.minute_part = 1
         self.last_selection = None
