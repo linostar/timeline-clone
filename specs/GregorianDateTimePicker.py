@@ -74,6 +74,15 @@ class AGregorianDateTimePicker(unittest.TestCase):
         self.date_picker.get_value.return_value = (2010, 8, 31)
         self.assertEquals(Gregorian(2010, 8, 31, 0, 0, 0).to_time(), self.controller.get_value())
 
+    def testControllerCanConverDateTupleToWxDate(self):
+        wx_date = self.controller.date_tuple_to_wx_date((2010, 8, 31))
+        self.assertEquals((2010, 8, 31), (wx_date.Year, wx_date.Month + 1, wx_date.Day))
+        
+    def testControllerCanConverWxdateToDateTuple(self):
+        wx_date = self.controller.date_tuple_to_wx_date((2010, 8, 31))
+        year, month, day = self.controller.wx_date_to_date_tuple(wx_date)
+        self.assertEquals((2010, 8, 31), (year, month, day))
+
 
 class GregorianDatePickerBaseFixture(unittest.TestCase):
 
@@ -187,7 +196,7 @@ class AGregorianDatePicker(GregorianDatePickerBaseFixture):
         self.controller.on_down()
         self.date_picker.set_date_string.assert_called_with("2010-02-28")
 
-
+        
 class GregorianDatePickerWithFocusOnYear(GregorianDatePickerBaseFixture):
 
     def setUp(self):

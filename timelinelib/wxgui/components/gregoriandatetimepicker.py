@@ -72,7 +72,7 @@ class GregorianDateTimePicker(wx.Panel):
 
     def _date_button_on_click(self, evt):
         try:
-            wx_date = self._py_date_to_wx_date(self.date_picker.get_py_date())
+            wx_date = self.controller.date_tuple_to_wx_date(self.date_picker.get_value())
             calendar_popup = CalendarPopup(self, wx_date, self.config)
             calendar_popup.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED,
                                 self._calendar_on_date_changed)
@@ -85,13 +85,12 @@ class GregorianDateTimePicker(wx.Panel):
             calendar_popup.Popup()
             self.calendar_popup = calendar_popup
         except ValueError:
-             display_error_message(_("Invalid date"))
-
+            display_error_message(_("Invalid date"))
 
     def _calendar_on_date_changed(self, evt):
         wx_date = evt.GetEventObject().GetDate()
-        py_date = datetime.datetime(wx_date.Year, wx_date.Month+1, wx_date.Day)
-        self.date_picker.set_py_date(py_date)
+        date = self.controller.wx_date_to_date_tuple(wx_date)
+        self.date_picker.set_value(date)
 
     def _calendar_on_date_changed_dclick(self, evt):
         self.time_picker.SetFocus()
@@ -123,7 +122,14 @@ class GregorianDateTimePickerController(object):
         self.date_picker.set_value(gregorian.from_time(time).to_date_tuple())
         self.time_picker.set_value(gregorian.from_time(time).to_time_tuple())
 
+    def date_tuple_to_wx_date(self, date):
+        year, month, day = date
+        return wx.DateTimeFromDMY(day, month - 1, year, 0, 0, 0)
 
+    def wx_date_to_date_tuple(self, wx_date):
+        return (wx_date.Year, wx_date.Month + 1, wx_date.Day)
+
+    
 class CalendarPopup(wx.PopupTransientWindow):
 
     def __init__(self, parent, wx_date, config):
@@ -156,15 +162,15 @@ class CalendarPopup(wx.PopupTransientWindow):
         return style
 
     def _set_cal_range(self, cal):
-        min_date, msg = PyTimeType().get_min_time()
-        max_date, msg = PyTimeType().get_max_time()
-        min_date = self._py_date_to_wx_date(min_date)
-        max_date = self._py_date_to_wx_date(max_date) - wx.DateSpan.Day()
+        min_date, _ = GregorianTimeType().get_min_time()
+        max_date, _ = GregorianTimeType().get_max_time()
+        min_date = self.time_to_wx_date(min_date)
+        max_date = self.time_to_wx_date(max_date) - wx.DateSpan.Day()
         cal.SetDateRange(min_date, max_date)
 
-    def _py_date_to_wx_date(self, py_date):
-        return wx.DateTimeFromDMY(py_date.day, py_date.month - 1, py_date.year,
-                                  0, 0, 0)
+    def time_to_wx_date(self, time):
+        year, month, day = gregorian.from_time(time).to_date_tuple()
+        return wx.DateTimeFromDMY(day, month - 1, year, 0, 0, 0)
 
     def _bind_events(self):
         def on_month(evt):
