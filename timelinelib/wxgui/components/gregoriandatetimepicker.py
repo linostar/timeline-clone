@@ -17,7 +17,6 @@
 
 
 import os.path
-import datetime
 
 import wx.calendar
 
@@ -36,7 +35,7 @@ class GregorianDateTimePicker(wx.Panel):
         self.config = config
         self._create_gui()
         self.controller = GregorianDateTimePickerController(
-            self.date_picker, self.time_picker, datetime.datetime.now)
+            self.date_picker, self.time_picker, GregorianTimeType().now)
         self.show_time(show_time)
         self.parent = parent
 
@@ -265,7 +264,7 @@ class GregorianDatePicker(wx.TextCtrl):
        
 
     def _resize_to_fit_text(self):
-        w, h = self.GetTextExtent("0000-00-00")
+        w, _ = self.GetTextExtent("0000-00-00")
         width = w + 20
         self.SetMinSize((width, -1))
 
@@ -431,8 +430,6 @@ class GregorianDatePickerController(object):
     def _ensure_within_allowed_period(self, date):
         year, month, day = date
         time = Gregorian(year, month, day, 0, 0, 0).to_time()
-        max_time = GregorianTimeType().get_max_time()[0]
-        min_time = GregorianTimeType().get_min_time()[0]
         if (time >= GregorianTimeType().get_max_time()[0] or
             time <  GregorianTimeType().get_min_time()[0]):
             raise ValueError()
@@ -454,7 +451,7 @@ class GregorianDatePickerController(object):
             try:
                 date = gregorian.from_date(new_year, new_month, new_day)
                 done = True
-            except Exception, ex:
+            except Exception:
                 new_day -= 1
         return date.to_date_tuple()
 
@@ -568,7 +565,7 @@ class GregorianTimePicker(wx.TextCtrl):
         self.Bind(wx.EVT_KEY_DOWN, on_key_down)
 
     def _resize_to_fit_text(self):
-        w, h = self.GetTextExtent("00:00")
+        w, _ = self.GetTextExtent("00:00")
         width = w + 20
         self.SetMinSize((width, -1))
 
@@ -591,8 +588,8 @@ class GregorianTimePickerController(object):
             hour_string, minute_string = split
             hour = int(hour_string)
             minute = int(minute_string)
-            # only for validation of time.
-            datetime.time(hour=hour, minute=minute)
+            if not gregorian.is_valid_time(hour, minute, 0):
+                raise ValueError()
             return (hour, minute, 0)
         except ValueError:
             raise ValueError("Invalid time.")
