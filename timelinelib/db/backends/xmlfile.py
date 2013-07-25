@@ -39,7 +39,7 @@ from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import safe_write
 from timelinelib.meta.version import get_version
-from timelinelib.time.wxtime import WxTimeType
+from timelinelib.time.pytime import PyTimeType
 from timelinelib.utils import ex_msg
 from timelinelib.xml.parser import ANY
 from timelinelib.xml.parser import OPTIONAL
@@ -88,7 +88,7 @@ class XmlTimeline(MemoryDB):
 
     def _set_time_type(self, use_wide_date_range):
         if use_wide_date_range == True:
-            self.time_type = WxTimeType()
+            self.time_type = PyTimeType()
 
     def _parse_time(self, time_string):
         return self.get_time_type().parse_time(time_string)
