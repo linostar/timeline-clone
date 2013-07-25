@@ -18,9 +18,8 @@
 
 import unittest
 
-from mock import Mock, sentinel
+from mock import Mock
 
-from specs.utils import an_event_with, human_time_to_py, ObjectWithTruthValue
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Container
 from timelinelib.editors.container import ContainerEditor

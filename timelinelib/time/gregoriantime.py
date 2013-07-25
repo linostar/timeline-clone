@@ -207,7 +207,7 @@ class GregorianTimeType(TimeType):
         ]
 
     def zoom_is_ok(self, delta):
-        return (delta.seconds > 3600) or (delta.days > 0)
+        return (delta.seconds > 3600) or (delta.get_days() > 0)
 
     def half_delta(self, delta):
         return delta / 2

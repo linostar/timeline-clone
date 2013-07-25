@@ -21,8 +21,8 @@ import unittest
 from mock import Mock
 import wx
 
-from specs.utils import human_time_to_py
-from specs.utils import py_period
+from specs.utils import human_time_to_gregorian
+from specs.utils import gregorian_period
 from timelinelib.config.dotfile import Config
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event
@@ -381,7 +381,7 @@ class TimelineViewSpec(unittest.TestCase):
     def given_event_with(self, start="4 Aug 2010", end="10 Aug 2010",
                          text="Text", description=None,
                          pos=(0, 0), size=(0, 0)):
-        event = Event(self.db.get_time_type(), human_time_to_py(start), human_time_to_py(end), text)
+        event = Event(self.db.get_time_type(), human_time_to_gregorian(start), human_time_to_gregorian(end), text)
         if description is not None:
             event.set_data("description", description)
         self.db.save_event(event)
@@ -389,10 +389,10 @@ class TimelineViewSpec(unittest.TestCase):
         return event
 
     def given_time_at_x_is(self, x, time):
-        self.mock_drawer.setup_get_time_call(x, human_time_to_py(time))
+        self.mock_drawer.setup_get_time_call(x, human_time_to_gregorian(time))
 
     def init_view_with_db_with_period(self, start, end):
-        self.db._set_displayed_period(py_period(start, end))
+        self.db._set_displayed_period(gregorian_period(start, end))
         self.init_view_with_db()
 
     def init_view_with_db(self):
@@ -447,7 +447,7 @@ class TimelineViewSpec(unittest.TestCase):
         return text
 
     def assert_event_has_period(self, event, start, end):
-        self.assertEquals(py_period(start, end), event.time_period)
+        self.assertEquals(gregorian_period(start, end), event.time_period)
 
     def assert_balloon_drawn_for_event(self, event):
         view_properties = self.get_view_properties_used_when_drawing()
@@ -455,21 +455,21 @@ class TimelineViewSpec(unittest.TestCase):
 
     def assert_highlights_region(self, start_end):
         if start_end is not None:
-            start_end = (human_time_to_py(start_end[0]), human_time_to_py(start_end[1]))
+            start_end = (human_time_to_gregorian(start_end[0]), human_time_to_gregorian(start_end[1]))
         view_properties = self.get_view_properties_used_when_drawing()
         self.assertEquals(start_end, view_properties.period_selection)
 
     def assert_displays_period(self, start, end):
         view_properties = self.get_view_properties_used_when_drawing()
         self.assertEquals(
-            py_period(start, end), view_properties.displayed_period)
+            gregorian_period(start, end), view_properties.displayed_period)
 
     def assert_timeline_redrawn(self):
         self.assertTrue(self.view.redraw_surface.called)
 
     def assert_created_event_with_period(self, start, end):
         self.view.open_create_event_editor.assert_called_with(
-            human_time_to_py(start), human_time_to_py(end))
+            human_time_to_gregorian(start), human_time_to_gregorian(end))
 
     def assert_is_selected(self, event):
         view_properties = self.get_view_properties_used_when_drawing()
@@ -504,7 +504,7 @@ class MockDrawer(object):
         self.get_time_calls[x] = time
 
     def setup_snap(self, time, snap_to):
-        self.snaps.append((human_time_to_py(time), human_time_to_py(snap_to)))
+        self.snaps.append((human_time_to_gregorian(time), human_time_to_gregorian(snap_to)))
 
     def snap(self, time):
         for (time_inner, snap_to) in self.snaps:
@@ -534,7 +534,7 @@ class MockDrawer(object):
         return (event, self.event_rect(event))
 
     def get_time(self, x):
-        any_time = human_time_to_py("19 Sep 1999")
+        any_time = human_time_to_gregorian("19 Sep 1999")
         return self.get_time_calls.get(x, any_time)
 
     def balloon_at(self, x, y):

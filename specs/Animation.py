@@ -20,7 +20,7 @@ import unittest
 
 from timelinelib.play.playcontroller import Animation
 from timelinelib.db.backends.memory import MemoryDB
-from specs.utils import py_period
+from specs.utils import gregorian_period
 
 
 class AnimationTest(unittest.TestCase):
@@ -30,8 +30,8 @@ class AnimationTest(unittest.TestCase):
 
     def test_can_move_period_without_zooming(self):
         a = Animation(self.timeline,
-                py_period("1 Jan 2010", "2 Jan 2010"),
+                gregorian_period("1 Jan 2010", "2 Jan 2010"),
                 2,
-                py_period("3 Jan 2010", "4 Jan 2010"))
+                gregorian_period("3 Jan 2010", "4 Jan 2010"))
         a.change_current_period(1)
-        self.assertEquals(a.current_period, py_period("2 Jan 2010", "3 Jan 2010"))
+        self.assertEquals(a.current_period, gregorian_period("2 Jan 2010", "3 Jan 2010"))

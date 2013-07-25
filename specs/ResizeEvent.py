@@ -23,8 +23,8 @@ import wx
 
 from specs.utils import an_event
 from specs.utils import an_event_with
-from specs.utils import human_time_to_py
-from specs.utils import py_period
+from specs.utils import human_time_to_gregorian
+from specs.utils import gregorian_period
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.components.timelineview import DrawingArea
@@ -70,8 +70,8 @@ class ResizeEventSpec(unittest.TestCase):
         self.status_bar = Mock(StatusBarAdapter)
 
     def given_time_at_x_is(self, x, time):
-        self.controller.get_time.return_value = human_time_to_py(time)
-        self.drawer.snap.return_value = human_time_to_py(time)
+        self.controller.get_time.return_value = human_time_to_gregorian(time)
+        self.drawer.snap.return_value = human_time_to_gregorian(time)
 
     def when_resizing(self, event, direction):
         self.event_being_resized = event
@@ -84,5 +84,5 @@ class ResizeEventSpec(unittest.TestCase):
 
     def then_event_gets_period(self, start, end):
         self.assertEquals(
-            py_period(start, end),
+            gregorian_period(start, end),
             self.event_being_resized.time_period)

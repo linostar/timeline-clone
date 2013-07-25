@@ -166,14 +166,10 @@ def set_default_cursor(parent):
 
 def time_picker_for(time_type):
     from timelinelib.wxgui.components.numtimepicker import NumTimePicker
-    from timelinelib.wxgui.components.pydatetimepicker import PyDateTimePicker
     from timelinelib.wxgui.components.gregoriandatetimepicker import GregorianDateTimePicker
     from timelinelib.time.numtime import NumTimeType
-    from timelinelib.time.pytime import PyTimeType
     from timelinelib.time.gregoriantime import GregorianTimeType
-    if isinstance(time_type, PyTimeType):
-        return PyDateTimePicker
-    elif isinstance(time_type, NumTimeType):
+    if isinstance(time_type, NumTimeType):
         return NumTimePicker
     elif isinstance(time_type, GregorianTimeType):
         return GregorianDateTimePicker

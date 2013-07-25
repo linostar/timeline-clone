@@ -16,7 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
 import unittest
 
 import wx
@@ -26,7 +25,8 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event, TimePeriod
 from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
+import timelinelib.calendar.gregorian as gregorian
 
 
 IMAGE_SIZE = (500, 200)
@@ -39,15 +39,15 @@ class DrawerSpec(unittest.TestCase):
 
     def test_draws_period_event_below_baseline(self):
         self.given_event(name="vacation",
-                         start=datetime.datetime(2010, 2, 1),
-                         end=datetime.datetime(2010, 8, 1))
+                         start=gregorian.from_date(2010, 2, 1).to_time(),
+                         end=gregorian.from_date(2010, 8, 1).to_time())
         self.when_timeline_is_drawn()
         self.assert_text_drawn_below("vacation", BASELINE_Y_POS)
 
     def test_draws_non_period_event_above_baseline(self):
         self.given_event(name="mike's birthday",
-                         start=datetime.datetime(2010, 2, 1),
-                         end=datetime.datetime(2010, 2, 1))
+                         start=gregorian.from_date(2010, 2, 1).to_time(),
+                         end=gregorian.from_date(2010, 2, 1).to_time())
         self.when_timeline_is_drawn()
         self.assert_text_drawn_above("mike's birthday", BASELINE_Y_POS)
 
@@ -81,6 +81,6 @@ class DrawerSpec(unittest.TestCase):
         self.timeline = MemoryDB()
         self.view_properties = ViewProperties()
         self.view_properties.displayed_period = TimePeriod(
-            PyTimeType(),
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2011, 1, 1))
+            GregorianTimeType(),
+            gregorian.from_date(2010, 1, 1).to_time(),
+            gregorian.from_date(2011, 1, 1).to_time())

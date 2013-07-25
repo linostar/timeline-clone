@@ -16,7 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
 import unittest
 
 from specs.utils import TmpDirTestCase
@@ -27,7 +26,7 @@ from timelinelib.db.backends.file import split_on_semicolon
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
 
 
 class FileTimelineSpec(TmpDirTestCase):
@@ -78,8 +77,8 @@ class FileTimelineSpec(TmpDirTestCase):
         Expected result: You should get an error.
         """
         timeline = FileTimeline(self.valid_file)
-        now = datetime.datetime.now()
-        zero_tp = TimePeriod(PyTimeType(), now, now)
+        now = GregorianTimeType().now()
+        zero_tp = TimePeriod(GregorianTimeType(), now, now)
         vp = ViewProperties()
         vp.displayed_period = zero_tp
         self.assertRaises(TimelineIOError, timeline.save_view_properties, vp)

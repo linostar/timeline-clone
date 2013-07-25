@@ -16,13 +16,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from datetime import datetime
 import codecs
 
 from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db import db_open
 from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.calendar.gregorian import Gregorian
 
 import wx
 
@@ -105,9 +105,9 @@ class DbOpenSpec(TmpDirTestCase):
         self.assertTrue(event.has_id())
         self.assertEquals(event.text, "Event 1")
         self.assertEquals(event.time_period.start_time,
-                          datetime(2009, 11, 4, 22, 52, 0))
+                          Gregorian(2009, 11, 4, 22, 52, 0).to_time())
         self.assertEquals(event.time_period.end_time,
-                          datetime(2009, 11, 11, 22, 52, 0))
+                          Gregorian(2009, 11, 11, 22, 52, 0).to_time())
         self.assertEquals(event.category.name, "Category 1")
         self.assertEquals(event.get_data("description"), None)
         self.assertEquals(event.get_data("icon"), None)
@@ -116,9 +116,9 @@ class DbOpenSpec(TmpDirTestCase):
         vp = ViewProperties()
         db.load_view_properties(vp)
         self.assertEquals(vp.displayed_period.start_time,
-                          datetime(2009, 10, 17, 22, 38, 32))
+                          Gregorian(2009, 10, 17, 22, 38, 32).to_time())
         self.assertEquals(vp.displayed_period.end_time,
-                          datetime(2009, 12, 2, 16, 22, 4))
+                          Gregorian(2009, 12, 2, 16, 22, 4).to_time())
         # Assert categories correctly loaded
         categories = db.get_categories()
         self.assertEquals(len(categories), 3)
@@ -152,17 +152,17 @@ class DbOpenSpec(TmpDirTestCase):
             self.assertTrue(event.has_id())
             if event.text == "Tennis":
                 self.assertEquals(event.time_period.start_time,
-                                  datetime(2010, 5, 2, 9, 0, 0))
+                                  Gregorian(2010, 5, 2, 9, 0, 0).to_time())
                 self.assertEquals(event.time_period.end_time,
-                                  datetime(2010, 5, 2, 9, 0, 0))
+                                  Gregorian(2010, 5, 2, 9, 0, 0).to_time())
                 self.assertEquals(event.category.name, "Private")
                 self.assertEquals(event.get_data("description"), "Med Kristoffer.")
                 self.assertEquals(event.get_data("icon"), None)
             elif event.text == "Konferens":
                 self.assertEquals(event.time_period.start_time,
-                                  datetime(2010, 5, 5, 0, 0, 0))
+                                  Gregorian(2010, 5, 5, 0, 0, 0).to_time())
                 self.assertEquals(event.time_period.end_time,
-                                  datetime(2010, 5, 8, 0, 0, 0))
+                                  Gregorian(2010, 5, 8, 0, 0, 0).to_time())
                 self.assertEquals(event.category.name, "Work")
                 self.assertEquals(event.get_data("description"), None)
                 self.assertFalse(event.get_data("icon") is None)
@@ -173,9 +173,9 @@ class DbOpenSpec(TmpDirTestCase):
         vp = ViewProperties()
         db.load_view_properties(vp)
         self.assertEquals(vp.displayed_period.start_time,
-                          datetime(2010, 4, 27, 21, 54, 54))
+                          Gregorian(2010, 4, 27, 21, 54, 54).to_time())
         self.assertEquals(vp.displayed_period.end_time,
-                          datetime(2010, 5, 13, 6, 33, 18))
+                          Gregorian(2010, 5, 13, 6, 33, 18).to_time())
         # Assert categories correctly loaded
         categories = db.get_categories()
         self.assertEquals(len(categories), 3)
@@ -206,9 +206,9 @@ class DbOpenSpec(TmpDirTestCase):
         self.assertTrue(event.has_id())
         self.assertEquals(event.text, "Event 1")
         self.assertEquals(event.time_period.start_time,
-                          datetime(2009, 11, 4, 22, 52, 0))
+                          Gregorian(2009, 11, 4, 22, 52, 0).to_time())
         self.assertEquals(event.time_period.end_time,
-                          datetime(2009, 11, 11, 22, 52, 0))
+                          Gregorian(2009, 11, 11, 22, 52, 0).to_time())
         self.assertEquals(event.category.name, "Category 1")
         self.assertEquals(event.get_data("description"), "The first event.")
         self.assertEquals(event.get_data("icon"), None)
@@ -217,9 +217,9 @@ class DbOpenSpec(TmpDirTestCase):
         vp = ViewProperties()
         db.load_view_properties(vp)
         self.assertEquals(vp.displayed_period.start_time,
-                          datetime(2009, 10, 17, 22, 38, 32))
+                          Gregorian(2009, 10, 17, 22, 38, 32).to_time())
         self.assertEquals(vp.displayed_period.end_time,
-                          datetime(2009, 12, 2, 16, 22, 4))
+                          Gregorian(2009, 12, 2, 16, 22, 4).to_time())
         # Assert categories correctly loaded
         categories = db.get_categories()
         self.assertEquals(len(categories), 3)

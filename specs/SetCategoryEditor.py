@@ -1,4 +1,3 @@
-import datetime
 import unittest
 
 from mock import Mock
@@ -6,15 +5,16 @@ from mock import Mock
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects.category import Category
 from timelinelib.db.objects.event import Event
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.editors.setcategory import SetCategoryEditor
 from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
+import timelinelib.calendar.gregorian as gregorian
 
 
 class set_category_editor_spec_base(unittest.TestCase):
 
     def setUp(self, view_properties):
-        self.time_type = PyTimeType()
+        self.time_type = GregorianTimeType()
         self._create_category1()
         self._create_category2()
         self._create_event1()
@@ -49,8 +49,8 @@ class set_category_editor_spec_base(unittest.TestCase):
     def _create_event(self, category):
         return Event(
             self.time_type,
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2010, 1, 1),
+            gregorian.from_date(2010, 1, 1).to_time(),
+            gregorian.from_date(2010, 1, 1).to_time(),
             "foo",
             category)
 

@@ -16,13 +16,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
 import unittest
 import wx
 
 from specs.utils import an_event
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.dialogs.mainframe import AlertController
+from timelinelib.time.timeline import delta_from_days
 
 class AlertControllerSpec(unittest.TestCase):
 
@@ -34,7 +34,7 @@ class AlertControllerSpec(unittest.TestCase):
 
     def test_pytime_has_expired(self):
         self.given_early_pytimes()
-        self.given_controller_time_type(PyTimeType())
+        self.given_controller_time_type(GregorianTimeType())
         time_as_text = "%s" % self.tm
         expired = self.controller._time_has_expired(self.tm)
         self.assertTrue(expired)
@@ -47,13 +47,13 @@ class AlertControllerSpec(unittest.TestCase):
     def given_early_pytimes(self):
         self.given_pytime_now()
         self.given_pytime_earlier()
-        self.given_controller_time_type(PyTimeType())
+        self.given_controller_time_type(GregorianTimeType())
         self.alert = (self.now, "Time to go")
 
     def given_late_pytimes(self):
         self.given_pytime_now()
         self.given_pytime_later()
-        self.given_controller_time_type(PyTimeType())
+        self.given_controller_time_type(GregorianTimeType())
         self.alert = (self.now, "Time to go")
 
     def given_wxtime_later(self):
@@ -63,19 +63,19 @@ class AlertControllerSpec(unittest.TestCase):
         self.tm = self.now - wx.TimeSpan(hours=12)
 
     def given_pytime_now(self):
-        self.now = PyTimeType().now()
+        self.now = GregorianTimeType().now()
 
     def given_pytime_later(self):
-        self.tm = self.now + datetime.timedelta(days=1)
+        self.tm = self.now + delta_from_days(1)
 
     def given_pytime_earlier(self):
-        self.tm = self.now + datetime.timedelta(days=-1)
+        self.tm = self.now + delta_from_days(-1)
 
     def given_controller_time_type(self, time_type):
         self.controller.time_type = time_type
 
     def setUp(self):
-        self.now = PyTimeType().now()
+        self.now = GregorianTimeType().now()
         self.alert = (self.now, "Time to go")
         self.event = an_event()
         self.controller = AlertController()

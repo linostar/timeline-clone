@@ -20,10 +20,10 @@ import unittest
 
 from mock import Mock, sentinel
 
-from specs.utils import an_event_with, human_time_to_py, ObjectWithTruthValue
+from specs.utils import an_event_with, human_time_to_gregorian, ObjectWithTruthValue
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.interface import EventRepository
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
 from timelinelib.db.backends.memory import MemoryDB
 
@@ -40,34 +40,34 @@ class EventEditorTestCase(unittest.TestCase):
 
     def when_editor_opened_with_time(self, time):
         self.when_editor_opened_with(
-            human_time_to_py(time), human_time_to_py(time), None)
+            human_time_to_gregorian(time), human_time_to_gregorian(time), None)
 
     def when_editor_opened_with_period(self, start, end):
         self.when_editor_opened_with(
-            human_time_to_py(start), human_time_to_py(end), None)
+            human_time_to_gregorian(start), human_time_to_gregorian(end), None)
 
     def when_editor_opened_with_event(self, event):
         self.when_editor_opened_with(None, None, event)
 
     def when_editor_opened_with(self, start, end, event):
         self.editor = EventEditor(self.view)
-        self.editor.edit(PyTimeType(), self.event_repository, self.timeline,
+        self.editor.edit(GregorianTimeType(), self.event_repository, self.timeline,
                          start, end, event)
 
     def simulate_user_enters_start_time(self, time):
-        self.view.get_start.return_value = human_time_to_py(time)
+        self.view.get_start.return_value = human_time_to_gregorian(time)
 
     def simulate_user_enters_end_time(self, time):
-        self.view.get_end.return_value = human_time_to_py(time)
+        self.view.get_end.return_value = human_time_to_gregorian(time)
 
     def simulate_user_clicks_ok(self):
         self.editor.create_or_update_event()
 
     def assert_start_time_set_to(self, time):
-        self.view.set_start.assert_called_with(human_time_to_py(time))
+        self.view.set_start.assert_called_with(human_time_to_gregorian(time))
 
     def assert_end_time_set_to(self, time):
-        self.view.set_end.assert_called_with(human_time_to_py(time))
+        self.view.set_end.assert_called_with(human_time_to_gregorian(time))
 
     def assert_no_event_saved(self):
         self.assertFalse(self.event_repository.save.called)
@@ -163,13 +163,13 @@ class describe_event_editor__locked_checkbox(EventEditorTestCase):
 
     def test_event_not_starting_in_history(self):
         event = Mock()
-        event.time_period.start_time = human_time_to_py("1 Jan 3010")
+        event.time_period.start_time = human_time_to_gregorian("1 Jan 3010")
         self.when_editor_opened_with_event(event)
         self.assertFalse(self.editor.start_is_in_history())
 
     def test_event_starting_in_history(self):
         event = Mock()
-        event.time_period.start_time = human_time_to_py("1 Jan 2010")
+        event.time_period.start_time = human_time_to_gregorian("1 Jan 2010")
         self.when_editor_opened_with_event(event)
         self.assertTrue(self.editor.start_is_in_history())
 
@@ -264,18 +264,18 @@ class describe_event_editor__saving(object):
     def test_saves_start_time(self):
         self.given_saving_valid_event()
         self.assertEquals(self.saved_event.time_period.start_time,
-                          human_time_to_py("1 Jan 2010"))
+                          human_time_to_gregorian("1 Jan 2010"))
 
     def test_saves_end_time(self):
         self.given_saving_valid_event()
         self.assertEquals(self.saved_event.time_period.end_time,
-                          human_time_to_py("2 Jan 2010"))
+                          human_time_to_gregorian("2 Jan 2010"))
 
     def test_saves_end_time_from_start_time(self):
         self.view.get_show_period.return_value = False
         self.given_saving_valid_event()
         self.assertEquals(self.saved_event.time_period.end_time,
-                          human_time_to_py("1 Jan 2010"))
+                          human_time_to_gregorian("1 Jan 2010"))
 
     def test_saves_text(self):
         self.given_saving_valid_event()

@@ -16,7 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
 import os.path
 import shutil
 import sys
@@ -24,7 +23,6 @@ import tempfile
 import traceback
 import unittest
 
-import wx
 import wx.lib.inspection
 
 from timelinelib.calendar.gregorian import Gregorian
@@ -36,29 +34,28 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.gregoriantime import GregorianTimeType
-from timelinelib.time.pytime import PyTimeType
 from timelinelib.wxgui.setup import start_wx_application
 
 
 ANY_TIME = "1 Jan 2010"
 
 
-def py_period(start, end):
-    return TimePeriod(PyTimeType(), human_time_to_py(start), human_time_to_py(end))
+#def py_period(start, end):
+#    return TimePeriod(GregorianTimeType(), human_time_to_py(start), human_time_to_py(end))
 
 
 def gregorian_period(start, end):
     return TimePeriod(GregorianTimeType(), human_time_to_gregorian(start), human_time_to_gregorian(end))
 
 
-def human_time_to_py(human_time):
-    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
-    return py_time(year, month, day, hour, minute)
+#def human_time_to_py(human_time):
+#    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
+#    return py_time(year, month, day, hour, minute)
 
 
-def human_time_to_wx(human_time):
-    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
-    return wx_time(year, month, day, hour, minute)
+#def human_time_to_wx(human_time):
+#    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
+#    return wx_time(year, month, day, hour, minute)
 
 
 def human_time_to_gregorian(human_time):
@@ -81,12 +78,12 @@ def human_time_to_ymdhm(human_time):
     return (year, month, day, hour, minute)
 
 
-def py_time(year, month, day, hour=0, minute=0, second=0):
-    return datetime.datetime(year, month, day, hour, minute, second)
+#def py_time(year, month, day, hour=0, minute=0, second=0):
+#    return datetime.datetime(year, month, day, hour, minute, second)
 
 
-def wx_time(year, month, day, hour=0, minute=0, second=0):
-    return wx.DateTimeFromDMY(day, month-1, year, hour, minute, second)
+#def wx_time(year, month, day, hour=0, minute=0, second=0):
+#    return wx.DateTimeFromDMY(day, month-1, year, hour, minute, second)
 
 
 def an_event():
@@ -96,13 +93,13 @@ def an_event():
 def an_event_with(start=None, end=None, time=ANY_TIME, text="foo", fuzzy=False,
                   locked=False, ends_today=False):
     if start and end:
-        start = human_time_to_py(start)
-        end = human_time_to_py(end)
+        start = human_time_to_gregorian(start)
+        end = human_time_to_gregorian(end)
     else:
-        start = human_time_to_py(time)
-        end = human_time_to_py(time)
+        start = human_time_to_gregorian(time)
+        end = human_time_to_gregorian(time)
     return Event(
-        PyTimeType(), start, end, text, Category("bar", None, None, True),
+        GregorianTimeType(), start, end, text, Category("bar", None, None, True),
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
