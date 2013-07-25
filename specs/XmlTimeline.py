@@ -35,13 +35,13 @@ class XmlTimelineSpec(TmpDirTestCase):
     IO = True
 
     def testAlertStringParsingGivesAlertData(self):
-        timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
+        timeline = XmlTimeline(None, load=False)
         time, text = timeline._parse_alert_string("2012-11-11 00:00:00;Now is the time")
         self.assertEqual("Now is the time", text)
         self.assertEqual("2012-11-11 00:00:00", "%s" % timeline.get_time_type().time_string(time))
 
     def testAlertDataConversionGivesAlertString(self):
-        timeline = XmlTimeline(None, load=False, use_wide_date_range=False)
+        timeline = XmlTimeline(None, load=False)
         alert = (gregorian.from_date(2010, 8, 31).to_time(), "Hoho")
         alert_text = timeline.alert_string(alert)
         self.assertEqual("2010-08-31 00:00:00;Hoho", alert_text)

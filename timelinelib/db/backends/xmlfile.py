@@ -78,17 +78,13 @@ class ParseException(Exception):
 
 class XmlTimeline(MemoryDB):
 
-    def __init__(self, path, load=True, use_wide_date_range=False, import_timeline=False):
+    def __init__(self, path, load=True, import_timeline=False):
         MemoryDB.__init__(self)
         self.path = path
-        self._set_time_type(use_wide_date_range)
+        self.time_type = GregorianTimeType()
         if load == True:
             self._load()
             self._fill_containers()
-
-    def _set_time_type(self, use_wide_date_range):
-        if use_wide_date_range == True:
-            self.time_type = GregorianTimeType()
 
     def _parse_time(self, time_string):
         return self.get_time_type().parse_time(time_string)

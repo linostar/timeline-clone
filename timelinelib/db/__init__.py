@@ -31,7 +31,7 @@ from timelinelib.wxgui.utils import display_warning_message
 current_timeline = None
 
 
-def db_open(path, use_wide_date_range=False, import_timeline=False):
+def db_open(path, import_timeline=False):
     """
     Create timeline database that can read and write timeline data from and to
     persistent storage identified by path.
@@ -50,9 +50,9 @@ def db_open(path, use_wide_date_range=False, import_timeline=False):
     elif os.path.isdir(path):
         return open_directory_timeline(path)
     elif path.endswith(".timeline"):
-        return db_open_timeline(path, use_wide_date_range, import_timeline)
+        return db_open_timeline(path, import_timeline)
     elif path.endswith(".ics"):
-        return db_open_ics(path, use_wide_date_range, import_timeline)
+        return db_open_ics(path, import_timeline)
     else:
         msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
                         _("Unknown format."))
@@ -74,11 +74,11 @@ def open_directory_timeline(path):
     return current_timeline
         
         
-def db_open_timeline(path, use_wide_date_range=False, import_timeline=False):
+def db_open_timeline(path, import_timeline=False):
     if import_timeline and current_timeline:
         return db_import_timeline(path)
     else:
-        return db_open_newtype_timeline(path, use_wide_date_range) 
+        return db_open_newtype_timeline(path) 
     
     
 def db_import_timeline(path):
@@ -97,15 +97,13 @@ def db_import_timeline(path):
     return current_timeline 
    
    
-def db_open_newtype_timeline(path, use_wide_date_range):
+def db_open_newtype_timeline(path):
     global current_timeline
     from timelinelib.db.backends.xmlfile import XmlTimeline
-    current_timeline = XmlTimeline(path, 
-                                   use_wide_date_range=use_wide_date_range, 
-                                   import_timeline=False) 
+    current_timeline = XmlTimeline(path, import_timeline=False) 
     return current_timeline 
         
-def db_open_ics(path, use_wide_date_range=False, import_timeline=False):
+def db_open_ics(path, import_timeline=False):
     global current_timeline
     try:
         import icalendar
