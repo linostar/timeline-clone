@@ -38,7 +38,7 @@ class XmlTimelineSpec(TmpDirTestCase):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=True)
         time, text = timeline._parse_alert_string("2012-11-11 00:00:00;Now is the time")
         self.assertEqual("Now is the time", text)
-        self.assertEqual("2012-11-11 0:0:0", "%s" % timeline.get_time_type().time_string(time))
+        self.assertEqual("2012-11-11 00:00:00", "%s" % timeline.get_time_type().time_string(time))
 
     def testAlertDataConversionGivesAlertString(self):
         timeline = XmlTimeline(None, load=False, use_wide_date_range=False)
