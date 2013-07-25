@@ -16,13 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
-
 import wx
 
 from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.play.playcontroller import PlayController
-
+from timelinelib.time.timeline import delta_from_days
 
 class PlayFrame(wx.Dialog):
 
@@ -59,7 +57,7 @@ class PlayFrame(wx.Dialog):
         self.EndModal(wx.ID_OK)
 
     def get_view_period_length(self):
-        return datetime.timedelta(days=10)
+        return delta_from_days(10)
 
 
 class OurTimer(wx.Timer):
