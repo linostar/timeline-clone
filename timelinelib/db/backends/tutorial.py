@@ -17,7 +17,6 @@
 
 
 from datetime import datetime
-from datetime import timedelta
 
 from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.db.backends.memory import MemoryDB
@@ -102,7 +101,7 @@ class TutorialTimelineCreator(object):
     def __init__(self):
         self.db = MemoryDB()
         from timelinelib.time.gregoriantime import GregorianTimeType
-        #self.db.time_type = GregorianTimeType()
+        self.db.time_type = GregorianTimeType()
         now = datetime.now()
         self.start = self.get_time(now.year, now.month, 1)
         self.end = self.start + self.get_days_delta(30)
@@ -132,13 +131,9 @@ class TutorialTimelineCreator(object):
         return self.db
 
     def get_days_delta(self, days):
-        if self.db.get_time_type().get_name() == u"pytime":
-            return timedelta(days=days)
         if self.db.get_time_type().get_name() == u"gregoriantime":
             return delta_from_days(days)
 
     def get_time(self, year, month, day):
-        if self.db.get_time_type().get_name() == u"pytime":
-            return datetime(year, month, day, 0, 0, 0)
         if self.db.get_time_type().get_name() == u"gregoriantime":
             return Gregorian(year, month, day, 0, 0, 0).to_time()
