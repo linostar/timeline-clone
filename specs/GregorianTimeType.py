@@ -614,7 +614,7 @@ class GregorianTimeNavigationFunctionsSpec(unittest.TestCase):
         self.assertEquals(gregorian_period(start, end), self.new_period)
 
 
-class PyTimeDuplicateFunctionsSpec(unittest.TestCase):
+class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
 
     def test_move_period_num_days_adds_given_number_of_days(self):
         new_period = move_period_num_days(self.period, 6)

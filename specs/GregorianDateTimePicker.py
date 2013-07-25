@@ -458,7 +458,7 @@ class GregorianTimePickerWithFocusOnHour(GregorianTimePickerBaseFixture):
         self.time_picker.set_time_string.assert_called_with("23:04")
 
 
-class PyTimeCtrlWithFocusOnMinute(GregorianTimePickerBaseFixture):
+class GregorianTimeCtrlWithFocusOnMinute(GregorianTimePickerBaseFixture):
 
     def setUp(self):
         GregorianTimePickerBaseFixture.setUp(self)
