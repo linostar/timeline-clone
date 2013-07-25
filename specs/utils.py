@@ -37,7 +37,6 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.pytime import PyTimeType
-from timelinelib.time.wxtime import WxTimeType
 from timelinelib.wxgui.setup import start_wx_application
 
 
@@ -46,10 +45,6 @@ ANY_TIME = "1 Jan 2010"
 
 def py_period(start, end):
     return TimePeriod(PyTimeType(), human_time_to_py(start), human_time_to_py(end))
-
-
-def wx_period(start, end):
-    return TimePeriod(WxTimeType(), human_time_to_wx(start), human_time_to_wx(end))
 
 
 def gregorian_period(start, end):

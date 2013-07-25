@@ -22,7 +22,6 @@ import wx
 
 from specs.utils import an_event
 from timelinelib.time.pytime import PyTimeType
-from timelinelib.time.wxtime import WxTimeType
 from timelinelib.wxgui.dialogs.mainframe import AlertController
 
 class AlertControllerSpec(unittest.TestCase):
@@ -45,18 +44,6 @@ class AlertControllerSpec(unittest.TestCase):
         expired = self.controller._time_has_expired(self.tm)
         self.assertFalse(expired)
 
-    def test_wxtime_has_expired(self):
-        self.given_early_wxtimes()
-        self.given_controller_time_type(WxTimeType())
-        expired = self.controller._time_has_expired(self.tm)
-        self.assertTrue(expired)
-
-    def test_wxtime_has_not_expired(self):
-        self.given_late_wxtimes()
-        self.given_controller_time_type(WxTimeType())
-        expired = self.controller._time_has_expired(self.tm)
-        self.assertFalse(expired)
-
     def given_early_pytimes(self):
         self.given_pytime_now()
         self.given_pytime_earlier()
@@ -68,21 +55,6 @@ class AlertControllerSpec(unittest.TestCase):
         self.given_pytime_later()
         self.given_controller_time_type(PyTimeType())
         self.alert = (self.now, "Time to go")
-
-    def given_early_wxtimes(self):
-        self.given_wxtime_now()
-        self.given_wxtime_earlier()
-        self.given_controller_time_type(WxTimeType())
-        self.alert = (self.now, "Time to go")
-
-    def given_late_wxtimes(self):
-        self.given_wxtime_now()
-        self.given_wxtime_later()
-        self.given_controller_time_type(WxTimeType())
-        self.alert = (self.now, "Time to go")
-
-    def given_wxtime_now(self):
-        self.now = WxTimeType().now()
 
     def given_wxtime_later(self):
         self.tm = self.now + wx.TimeSpan(hours=12)
