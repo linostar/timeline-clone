@@ -233,9 +233,6 @@ class GregorianTimeType(TimeType):
     def adjust_for_bc_years(self, time):
         return time
 
-    def clone(self, dt):
-        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):
     navigation_fn(lambda tp: tp.center(current_period.time_type.now()))
