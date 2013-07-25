@@ -77,8 +77,6 @@ def open_directory_timeline(path):
 def db_open_timeline(path, use_wide_date_range=False, import_timeline=False):
     if import_timeline and current_timeline:
         return db_import_timeline(path)
-    elif (os.path.exists(path) and file_starts_with(path, "# Written by Timeline ")):
-        return db_open_oldtype_timeline(path, use_wide_date_range)
     else:
         return db_open_newtype_timeline(path, use_wide_date_range) 
     
@@ -99,19 +97,6 @@ def db_import_timeline(path):
     return current_timeline 
    
    
-def db_open_oldtype_timeline(path, use_wide_date_range):
-    global current_timeline
-    # Convert file db to xml db
-    from timelinelib.db.backends.file import FileTimeline
-    from timelinelib.db.backends.xmlfile import XmlTimeline
-    file_db = FileTimeline(path)
-    current_timeline = XmlTimeline(path, load=False,
-                         use_wide_date_range=use_wide_date_range, 
-                         import_timeline=False)
-    copy_db(file_db, current_timeline)
-    return current_timeline
-    
-
 def db_open_newtype_timeline(path, use_wide_date_range):
     global current_timeline
     from timelinelib.db.backends.xmlfile import XmlTimeline
