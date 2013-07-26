@@ -53,13 +53,6 @@ class MainFrameSpec(unittest.TestCase):
         self.when_timeline_is_opened()
         self.main_frame.handle_db_error.assert_called_with(error)
 
-    def test_opens_play_window(self):
-        opened_timeline = Mock()
-        self.given_opening_returns(opened_timeline)
-        self.when_timeline_is_opened()
-        self.controller.on_play_clicked()
-        self.main_frame.open_play_frame.assert_called_with(opened_timeline)
-
     def setUp(self):
         self.main_frame = Mock(MainFrame)
         self.db_open = Mock()

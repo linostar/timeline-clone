@@ -74,9 +74,6 @@ class TimelineApplication(object):
         self.timeline = None
         self.main_frame.display_timeline(None)
 
-    def on_play_clicked(self):
-        self.main_frame.open_play_frame(self.timeline)
-        
     def set_timeline_in_readonly_mode(self):
         try:
             self.timeline.set_readonly()
