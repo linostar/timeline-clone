@@ -4,6 +4,10 @@
 // Henry F. Fliegel and Thomas C. Van Flandern
 // "Letters to the editor: a machine algorithm for processing calendar dates"
 // http://dx.doi.org/10.1145/364096.364097
+//
+// Also described here:
+//
+// http://aa.usno.navy.mil/faq/docs/JD_Formula.php
 
 void from_julian_day(int julian_day, int *year, int *month, int *day)
 {
