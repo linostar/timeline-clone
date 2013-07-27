@@ -19,7 +19,6 @@
 from datetime import date
 from datetime import datetime
 from os.path import abspath
-import os.path
 
 from icalendar import Calendar
 
@@ -28,9 +27,10 @@ from timelinelib.db.objects import Event
 from timelinelib.utilities.observer import Observable
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.utils import ex_msg
-
+from timelinelib.calendar.gregorian import Gregorian
+import timelinelib.calendar.gregorian as gregorian
 
 class IcsTimeline(Observable):
 
@@ -42,7 +42,7 @@ class IcsTimeline(Observable):
         self.import_timeline(self.path)
 
     def get_time_type(self):
-        return PyTimeType()
+        return GregorianTimeType()
 
     def is_read_only(self):
         return True
@@ -154,8 +154,8 @@ def extract_start_end(vevent):
 
 def convert_to_datetime(d):
     if isinstance(d, datetime):
-        return datetime(d.year, d.month, d.day, d.hour, d.minute, d.second)
+        return Gregorian(d.year, d.month, d.day, d.hour, d.minute, d.second).to_time()
     elif isinstance(d, date):
-        return datetime(d.year, d.month, d.day)
+        return gregorian.from_date(d.year, d.month, d.day).to_time()
     else:
         raise TimelineIOError("Unknown date.")

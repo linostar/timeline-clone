@@ -43,7 +43,6 @@ from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
-from timelinelib.wxgui.dialogs.playframe import PlayFrame
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
@@ -117,9 +116,6 @@ class GuiCreator(object):
         self._create_file_export_to_image_menu_item(file_menu)
         self._create_file_export_to_svg_menu_item(file_menu)
         file_menu.AppendSeparator()
-        if DEV:
-            self._create_file_play(file_menu)
-            file_menu.AppendSeparator()
         self._create_file_exit_menu_item(file_menu)
         main_menu_bar.Append(file_menu, _("&File"))
 
@@ -190,12 +186,6 @@ class GuiCreator(object):
             wx.ID_ANY, _("&Export to SVG..."), _("Export the current view to a SVG image"))
         self.menu_controller.add_menu_requiring_timeline(mnu_file_export_svg)
         self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, mnu_file_export_svg)
-
-    def _create_file_play(self, file_menu):
-        mnu_play = file_menu.Append(
-            wx.ID_ANY, _("Play timeline"), _("Play timeline as movie"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_play)
-        self.Bind(wx.EVT_MENU, self._mnu_play_on_click, mnu_play)
 
     def _create_file_exit_menu_item(self, file_menu):
         file_menu.Append(wx.ID_EXIT, "", _("Exit the program"))
@@ -445,9 +435,6 @@ class GuiCreator(object):
     def _mnu_file_export_svg_on_click(self, evt):
         self._export_to_svg_image()
 
-    def _mnu_play_on_click(self, file_menu):
-        self.controller.on_play_clicked()
-
     def _mnu_file_exit_on_click(self, evt):
         self.Close()
 
@@ -484,11 +471,6 @@ class MainFrameApiUSedByController(object):
         self.main_panel.display_timeline(timeline)
         self._set_title()
         self._set_readonly_text_in_status_bar()
-
-    def open_play_frame(self, timeline):
-        dialog = PlayFrame(timeline, self.config)
-        dialog.ShowModal()
-        dialog.Destroy()
 
     def update_navigation_menu_items(self):
         self._clear_navigation_menu_items()

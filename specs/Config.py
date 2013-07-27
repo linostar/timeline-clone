@@ -34,7 +34,6 @@ class ConfigSpec(unittest.TestCase):
         self.assertEquals(self.config.open_recent_at_startup, True)
         self.assertEquals(self.config.balloon_on_hover, True)
         self.assertEquals(self.config.week_start, "monday")
-        self.assertEquals(self.config.get_use_wide_date_range(), False)
         self.assertEquals(self.config.get_use_inertial_scrolling(), False)
 
     def test_window_size_can_be_read_after_stored(self):
@@ -77,14 +76,6 @@ class ConfigSpec(unittest.TestCase):
         self.config.use_inertial_scrolling = False
         self.assertEquals(self.config.use_inertial_scrolling, False)
 
-    def test_config_returns_wide_date_range_is_true_when_set_to_true(self):
-        self.config.set_use_wide_date_range(True)
-        self.assertTrue(self.config.get_use_wide_date_range())
-
-    def test_config_returns_wide_date_range_is_false_when_set_to_false(self):
-        self.config.set_use_wide_date_range(False)
-        self.assertFalse(self.config.get_use_wide_date_range())
-
     def test_config_returns_use_inertial_scrolling_is_true_when_set_to_true(self):
         self.config.set_use_inertial_scrolling(True)
         self.assertTrue(self.config.get_use_inertial_scrolling())
@@ -92,14 +83,6 @@ class ConfigSpec(unittest.TestCase):
     def test_config_returns_use_inertial_scrolling_is_false_when_set_to_false(self):
         self.config.set_use_inertial_scrolling(False)
         self.assertFalse(self.config.get_use_inertial_scrolling())
-
-    def test_config_returns_wide_date_range_is_false_when_set_to_false_as_propety(self):
-        self.config.use_wide_date_range = False
-        self.assertFalse(self.config.use_wide_date_range)
-
-    def test_config_returns_wide_date_range_is_true_when_set_to_true_as_propety(self):
-        self.config.use_wide_date_range = True
-        self.assertTrue(self.config.use_wide_date_range)
 
     def test_recently_opened_contains_last_5_entries(self):
         self.config.append_recently_opened("1")

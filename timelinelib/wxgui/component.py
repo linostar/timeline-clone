@@ -35,7 +35,6 @@ class DummyConfig(object):
         self.open_recent_at_startup = False
         self.balloon_on_hover = True
         self.week_start = "monaday"
-        self.use_wide_date_range = False
         self.use_inertial_scrolling = False
 
     def get_sidebar_width(self):

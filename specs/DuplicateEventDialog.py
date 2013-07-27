@@ -16,7 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
 import unittest
 
 from mock import Mock
@@ -29,9 +28,9 @@ from timelinelib.editors.duplicateevent import BACKWARD
 from timelinelib.editors.duplicateevent import BOTH
 from timelinelib.editors.duplicateevent import DuplicateEventEditor
 from timelinelib.editors.duplicateevent import FORWARD
-from timelinelib.time.pytime import PyTimeType
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
-
+import timelinelib.calendar.gregorian as gregorian
 
 class duplicate_event_dialog_spec_base(unittest.TestCase):
 
@@ -49,21 +48,21 @@ class duplicate_event_dialog_spec_base(unittest.TestCase):
     def _create_move_period_fn_mock(self):
         self.move_period_fn = Mock()
         self.move_period_fn.return_value = TimePeriod(
-            PyTimeType(),
-            datetime.datetime(2010, 8, 1),
-            datetime.datetime(2010, 8, 1))
+            GregorianTimeType(),
+            gregorian.from_date(2010, 8, 1).to_time(),
+            gregorian.from_date(2010, 8, 1).to_time())
         return self.move_period_fn
 
     def _create_db_mock(self):
         self.db = Mock(MemoryDB)
-        self.db.get_time_type.return_value = PyTimeType()
+        self.db.get_time_type.return_value = GregorianTimeType()
         return self.db
 
     def _create_event(self):
         self.event = Event(
             self.db.get_time_type(),
-            datetime.datetime(2010, 1, 1),
-            datetime.datetime(2010, 1, 1),
+            gregorian.from_date(2010, 1, 1).to_time(),
+            gregorian.from_date(2010, 1, 1).to_time(),
             "foo",
             category=None)
         return self.event
@@ -107,9 +106,9 @@ class when_duplicating_event_with_default_settings(duplicate_event_dialog_spec_b
         new_event = self.db.save_event.call_args[0][0]
         new_period = new_event.time_period
         expected_period = TimePeriod(
-            PyTimeType(),
-            datetime.datetime(2010, 8, 1),
-            datetime.datetime(2010, 8, 1))
+            GregorianTimeType(),
+            gregorian.from_date(2010, 8, 1).to_time(),
+            gregorian.from_date(2010, 8, 1).to_time())
         self.assertEquals(expected_period, new_period)
 
     def test_the_new_event_should_not_be_the_same_as_the_existing(self):

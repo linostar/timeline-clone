@@ -34,6 +34,9 @@ class Time(object):
                 self.julian_day == time.julian_day and
                 self.seconds == time.seconds)
 
+    def __ne__(self, time):
+        return not self.__eq__(time)
+
     def __add__(self, delta):
         if isinstance(delta, TimeDelta):
             seconds = self.seconds + delta.seconds

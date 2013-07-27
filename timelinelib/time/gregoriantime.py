@@ -207,7 +207,7 @@ class GregorianTimeType(TimeType):
         ]
 
     def zoom_is_ok(self, delta):
-        return (delta.seconds > 3600) or (delta.days > 0)
+        return (delta.seconds > 3600) or (delta.get_days() > 0)
 
     def half_delta(self, delta):
         return delta / 2
@@ -232,9 +232,6 @@ class GregorianTimeType(TimeType):
 
     def adjust_for_bc_years(self, time):
         return time
-
-    def clone(self, dt):
-        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
 
 def go_to_today_fn(main_frame, current_period, navigation_fn):

@@ -52,8 +52,8 @@ class MemoryDB(Observable):
         self.displayed_period = None
         self.hidden_categories = []
         self.save_disabled = False
-        from timelinelib.time.pytime import PyTimeType
-        self.time_type = PyTimeType()
+        from timelinelib.time.gregoriantime import GregorianTimeType
+        self.time_type = GregorianTimeType()
         self.readonly = False
         self.importing = False
 

@@ -57,9 +57,7 @@ class TimelineApplication(object):
             
     def open_timeline(self, path, import_timeline=False):
         try:
-            self.timeline = self.db_open_fn(path, 
-                                            self.config.get_use_wide_date_range(), 
-                                            import_timeline)
+            self.timeline = self.db_open_fn(path, import_timeline)
         except TimelineIOError, e:
             self.main_frame.handle_db_error(e)
             self.timelinepath = None
@@ -76,9 +74,6 @@ class TimelineApplication(object):
         self.timeline = None
         self.main_frame.display_timeline(None)
 
-    def on_play_clicked(self):
-        self.main_frame.open_play_frame(self.timeline)
-        
     def set_timeline_in_readonly_mode(self):
         try:
             self.timeline.set_readonly()

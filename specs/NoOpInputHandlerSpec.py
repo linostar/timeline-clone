@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 import wx
 
-from specs.utils import an_event, an_event_with, human_time_to_py
+from specs.utils import an_event, an_event_with, human_time_to_gregorian
 from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.view.noop import NoOpInputHandler
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
@@ -31,7 +31,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
 
     def test_changes_input_handler_to_move_when_pressing_move_handle(self):
         event = an_event()
-        time = human_time_to_py("1 Jan 2011")
+        time = human_time_to_gregorian("1 Jan 2011")
         self.given_time_at_x_is(10, time)
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)
@@ -40,7 +40,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
 
     def test_disables_move_handler_when_event_ends_today(self):
         event = an_event_with(ends_today=True)
-        time = human_time_to_py("1 Jan 2011")
+        time = human_time_to_gregorian("1 Jan 2011")
         self.given_time_at_x_is(10, time)
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)
@@ -49,7 +49,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
 
     def test_disables_mouse_cursor_when_event_ends_today(self):
         event = an_event_with(ends_today=True)
-        time = human_time_to_py("1 Jan 2011")
+        time = human_time_to_gregorian("1 Jan 2011")
         self.given_time_at_x_is(10, time)
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)

@@ -19,8 +19,8 @@
 import datetime
 import unittest
 
-from specs.utils import human_time_to_py
-from specs.utils import py_period
+from specs.utils import human_time_to_gregorian
+from specs.utils import gregorian_period
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
@@ -108,7 +108,7 @@ class SceneSpec(unittest.TestCase):
         self.baseline_padding = 0
 
     def given_displayed_period(self, start, end):
-        self.view_properties.displayed_period = py_period(start, end)
+        self.view_properties.displayed_period = gregorian_period(start, end)
 
     def given_visible_event_at(self, start_time, end_time=None):
         self.given_event_at(start_time, end_time, visible=True)
@@ -120,8 +120,8 @@ class SceneSpec(unittest.TestCase):
         category = Category("category", (0, 0, 0), None, visible)
         if end_time is None:
             end_time = start_time
-        event = Event(self.db.get_time_type(), human_time_to_py(start_time),
-                      human_time_to_py(end_time), "event-text", category)
+        event = Event(self.db.get_time_type(), human_time_to_gregorian(start_time),
+                      human_time_to_gregorian(end_time), "event-text", category)
         self.db.save_category(category)
         self.db.save_event(event)
         self.view_properties.set_category_visible(category, visible)

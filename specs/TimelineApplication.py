@@ -30,7 +30,7 @@ class MainFrameSpec(unittest.TestCase):
 
     def test_used_db_open_factory_method_to_create_timeline(self):
         self.when_timeline_is_opened("foo.timeline")
-        self.db_open.assert_called_with("foo.timeline", self.USE_WIDE_DATE_RANGE, False)
+        self.db_open.assert_called_with("foo.timeline", False)
 
     def test_create_empty_timeline(self):
         self.controller.set_no_timeline()
@@ -53,19 +53,10 @@ class MainFrameSpec(unittest.TestCase):
         self.when_timeline_is_opened()
         self.main_frame.handle_db_error.assert_called_with(error)
 
-    def test_opens_play_window(self):
-        opened_timeline = Mock()
-        self.given_opening_returns(opened_timeline)
-        self.when_timeline_is_opened()
-        self.controller.on_play_clicked()
-        self.main_frame.open_play_frame.assert_called_with(opened_timeline)
-
     def setUp(self):
-        self.USE_WIDE_DATE_RANGE = False
         self.main_frame = Mock(MainFrame)
         self.db_open = Mock()
         self.config = Mock(Config)
-        self.config.get_use_wide_date_range.return_value = self.USE_WIDE_DATE_RANGE
         self.controller = TimelineApplication(
             self.main_frame, self.db_open, self.config)
 
