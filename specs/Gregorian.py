@@ -41,15 +41,21 @@ class GregorianSpec(unittest.TestCase):
 
 class GregorianConversionsSpec(unittest.TestCase):
 
-    def test_can_convert_from_timeline_date_time_to_gregorian(self):
+    def test_can_convert_from_timeline_time_to_gregorian(self):
         self.assertEquals(
-            gregorian.from_time(
-                timeline.Time(julian_day=0, seconds=0)).to_tuple(),
-            (-4713, 11, 24, 0, 0, 0))
+            gregorian.from_time(timeline.Time(julian_day=0, seconds=0)),
+            gregorian.Gregorian(-4713, 11, 24, 0, 0, 0))
         self.assertEquals(
-            gregorian.from_time(
-                timeline.Time(julian_day=1, seconds=0)).to_tuple(),
-            (-4713, 11, 25, 0, 0, 0))
+            gregorian.from_time(timeline.Time(julian_day=1, seconds=0)),
+            gregorian.Gregorian(-4713, 11, 25, 0, 0, 0))
+
+    def test_can_convert_from_gregorian_to_timeline_time(self):
+        self.assertEquals(
+            gregorian.Gregorian(-4713, 11, 24, 0, 0, 0).to_time(),
+            timeline.Time(julian_day=0, seconds=0))
+        self.assertEquals(
+            gregorian.Gregorian(-4713, 11, 25, 0, 0, 0).to_time(),
+            timeline.Time(julian_day=1, seconds=0))
 
     def test_roundtrip_julian_day_conversions(self):
         for julian_day in range(100):
