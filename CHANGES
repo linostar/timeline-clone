@@ -8,6 +8,7 @@ New features, enhancements:
   * Removed File Timeline wich wasn't used anymore.
   * Implemented vertical zooming with Alt+Mousewheel
   * Printing removed 
+  * Implemented export to image for whole timeline
 
 Bug fixes:
 

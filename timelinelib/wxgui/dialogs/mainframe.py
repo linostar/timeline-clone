@@ -30,6 +30,7 @@ from timelinelib.db.objects import TimePeriod
 from timelinelib.db.transformers.toxmltimeline import transform_to_xml_timeline
 from timelinelib.db.utils import safe_locking
 from timelinelib.export.bitmap import export_to_image
+from timelinelib.export.bitmap import export_to_images
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
 from timelinelib.meta.version import DEV
@@ -51,7 +52,6 @@ from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 from timelinelib.wxgui.timer import TimelineTimer
-import timelinelib.printing as printing
 import timelinelib.wxgui.utils as gui_utils
 
 
@@ -107,13 +107,10 @@ class GuiCreator(object):
         file_menu.AppendSeparator()
         self._create_file_save_as_menu(file_menu)
         file_menu.AppendSeparator()
-        self._create_file_page_setup_menu_item(file_menu)
-        self._create_file_print_preview_menu_item(file_menu)
-        self._create_file_print_menu_item(file_menu)
-        file_menu.AppendSeparator()
         self._create_import_menu_item(file_menu)
         file_menu.AppendSeparator()
         self._create_file_export_to_image_menu_item(file_menu)
+        self._create_file_export_to_images_menu_item(file_menu)
         self._create_file_export_to_svg_menu_item(file_menu)
         file_menu.AppendSeparator()
         self._create_file_exit_menu_item(file_menu)
@@ -157,29 +154,17 @@ class GuiCreator(object):
             wx.ID_ANY, _("Import timeline..."), _("Import timeline..."))
         self.Bind(wx.EVT_MENU, self._mnu_file_import_on_click, mnu_file_import)
 
-    def _create_file_page_setup_menu_item(self, file_menu):
-        mnu_file_print_setup = file_menu.Append(
-            wx.ID_PRINT_SETUP, _("Page Set&up..."), _("Setup page for printing"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_setup)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_setup_on_click, id=wx.ID_PRINT_SETUP)
-
-    def _create_file_print_preview_menu_item(self, file_menu):
-        mnu_file_print_preview = file_menu.Append(
-            wx.ID_PREVIEW, "", _("Print Preview"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_print_preview)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_preview_on_click, id=wx.ID_PREVIEW)
-
-    def _create_file_print_menu_item(self, file_menu):
-        mnu_file_print = file_menu.Append(
-            wx.ID_PRINT, self._add_ellipses_to_menuitem(wx.ID_PRINT), _("Print"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_print)
-        self.Bind(wx.EVT_MENU, self._mnu_file_print_on_click, id=wx.ID_PRINT)
-
     def _create_file_export_to_image_menu_item(self, file_menu):
-        mnu_file_export = file_menu.Append(
-            wx.ID_ANY, _("&Export to Image..."), _("Export the current view to a PNG image"))
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_export)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_on_click, mnu_file_export)
+        mnu_file_export_view = file_menu.Append(
+            wx.ID_ANY, _("&Export Current view to Image..."), _("Export the current view to a PNG image"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_view)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_view_on_click, mnu_file_export_view)
+
+    def _create_file_export_to_images_menu_item(self, file_menu):
+        mnu_file_export_all = file_menu.Append(
+            wx.ID_ANY, _("&Export Whole Timeline to Images..."), _("Export whole Timeline to PNG images"))
+        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_all)
+        self.Bind(wx.EVT_MENU, self._mnu_file_export_all_on_click, mnu_file_export_all)
 
     def _create_file_export_to_svg_menu_item(self, file_menu):
         mnu_file_export_svg = file_menu.Append(
@@ -420,17 +405,11 @@ class GuiCreator(object):
     def _mnu_file_import_on_click(self, menu):
         self._open_existing_timeline(True)
                 
-    def _mnu_file_print_setup_on_click(self, event):
-        printing.print_setup(self)
-
-    def _mnu_file_print_preview_on_click(self, event):
-        printing.print_preview(self)
-
-    def _mnu_file_print_on_click(self, event):
-        printing.print_timeline(self)
-
-    def _mnu_file_export_on_click(self, evt):
+    def _mnu_file_export_view_on_click(self, evt):
         export_to_image(self)
+
+    def _mnu_file_export_all_on_click(self, evt):
+        export_to_images(self)
 
     def _mnu_file_export_svg_on_click(self, evt):
         self._export_to_svg_image()
@@ -833,6 +812,12 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
         end_time = lambda event: event.time_period.end_time
         return end_time(max(events, key=end_time))
 
+    def get_export_periods(self):
+        events = self._all_visible_events()
+        first_time = self._first_time(events)
+        last_time = self._last_time(events)
+        return self.main_panel.get_export_periods(first_time, last_time)
+    
     # Error handling
     def _switch_to_error_view(self, error):
         self.controller.set_no_timeline()
@@ -963,6 +948,30 @@ class MainPanel(wx.Panel):
         self.hide_sidebar = self.timeline_panel.hide_sidebar
         self.get_sidebar_width = self.timeline_panel.get_sidebar_width
 
+    def get_export_periods(self, first_time, last_time):
+        periods = []
+        current_period = None
+        if self.main_frame.timeline:
+            time_type = self.main_frame.timeline.get_time_type()
+            current_period = self._get_view_properties().displayed_period
+            period_delta = current_period.end_time - current_period.start_time
+            periods.append(current_period)
+            start_time = current_period.start_time
+            period = current_period
+            while first_time < start_time:
+                start_time = period.start_time - period_delta
+                end_time = period.start_time
+                period = TimePeriod(time_type, start_time, end_time)
+                periods.insert(0, period)
+            end_time = current_period.end_time
+            period = current_period
+            while last_time > end_time:
+                start_time = period.end_time
+                end_time = period.end_time + period_delta
+                period = TimePeriod(time_type, start_time, end_time)
+                periods.append(period)
+        return periods, current_period         
+        
     def timeline_panel_visible(self):
         return self.timeline_panel.IsShown()
 
