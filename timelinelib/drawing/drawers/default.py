@@ -56,8 +56,6 @@ class DefaultDrawingAlgorithm(Drawer):
         if self.font_size > step:
             self.font_size -= step
             self.small_text_font = get_default_font(self.font_size)
-            if self.font_size < 8:        
-                self.scene.set_baseline_padding(1)
         
     def _create_fonts(self):
         self.header_font = get_default_font(12, True)
