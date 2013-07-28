@@ -7,6 +7,7 @@ New features, enhancements:
   * Replaced WxTimeType and PyTimeType with GregorianTimeType
   * Removed File Timeline wich wasn't used anymore.
   * Implemented vertical zooming with Alt+Mousewheel
+  * Printing removed 
 
 Bug fixes:
 
