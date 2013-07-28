@@ -47,15 +47,24 @@ class DefaultDrawingAlgorithm(Drawer):
         self._create_pens()
         self._create_brushes()
         self.fast_draw = False
+        self.outer_padding = OUTER_PADDING
 
     def increment_font_size(self, step=2):
         self.font_size += step
         self.small_text_font = get_default_font(self.font_size)
+        self._adjust_outer_padding_to_font_size()
         
     def decrement_font_size(self, step=2):
         if self.font_size > step:
             self.font_size -= step
             self.small_text_font = get_default_font(self.font_size)
+            self._adjust_outer_padding_to_font_size()
+
+    def _adjust_outer_padding_to_font_size(self):
+        if self.font_size < 8:
+            self.outer_padding = OUTER_PADDING * self.font_size / 8
+        else:
+            self.outer_padding = OUTER_PADDING
         
     def _create_fonts(self):
         self.header_font = get_default_font(12, True)
@@ -101,7 +110,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _create_scene(self, size, db, view_properties, get_text_extent_fn):
         scene = TimelineScene(size, db, view_properties, get_text_extent_fn, self.config)
-        scene.set_outer_padding(OUTER_PADDING)
+        scene.set_outer_padding(self.outer_padding)
         scene.set_inner_padding(INNER_PADDING)
         scene.set_period_threshold(PERIOD_THRESHOLD)
         scene.set_data_indicator_size(DATA_INDICATOR_SIZE)
