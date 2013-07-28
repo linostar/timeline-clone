@@ -315,12 +315,18 @@ class DrawingArea(object):
     def mouse_moved(self, x, y, alt_down=False):
         self.input_handler.mouse_moved(x, y, alt_down)
 
-    def mouse_wheel_moved(self, rotation, ctrl_down, shift_down, x):
+    def mouse_wheel_moved(self, rotation, ctrl_down, shift_down, alt_down, x):
         direction = _step_function(rotation)
         if ctrl_down:
             self._zoom_timeline(direction, x)
         elif shift_down:
             self.divider_line_slider.SetValue(self.divider_line_slider.GetValue() + direction)
+            self._redraw_timeline()
+        elif alt_down:
+            if direction > 0:
+                self.drawing_algorithm.increment_font_size()
+            else:
+                self.drawing_algorithm.decrement_font_size()
             self._redraw_timeline()
         else:
             self._scroll_timeline_view(direction)

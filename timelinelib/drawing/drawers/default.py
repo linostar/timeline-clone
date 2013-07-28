@@ -42,14 +42,26 @@ BLACK = (0, 0, 0)
 class DefaultDrawingAlgorithm(Drawer):
 
     def __init__(self):
+        self.font_size = 8
         self._create_fonts()
         self._create_pens()
         self._create_brushes()
         self.fast_draw = False
 
+    def increment_font_size(self, step=2):
+        self.font_size += step
+        self.small_text_font = get_default_font(self.font_size)
+        
+    def decrement_font_size(self, step=2):
+        if self.font_size > step:
+            self.font_size -= step
+            self.small_text_font = get_default_font(self.font_size)
+            if self.font_size < 8:        
+                self.scene.set_baseline_padding(1)
+        
     def _create_fonts(self):
         self.header_font = get_default_font(12, True)
-        self.small_text_font = get_default_font(8)
+        self.small_text_font = get_default_font(self.font_size)
         self.small_text_font_bold = get_default_font(8, True)
 
     def _create_pens(self):

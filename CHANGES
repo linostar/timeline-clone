@@ -6,7 +6,7 @@ New features, enhancements:
   * Adjustments made to be able to use wxpython version 2.9
   * Replaced WxTimeType and PyTimeType with GregorianTimeType
   * Removed File Timeline wich wasn't used anymore.
-
+  * Implemented vertical zooming with Alt+Mousewheel
 
 Bug fixes:
 
