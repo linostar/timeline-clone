@@ -33,6 +33,7 @@ class ViewProperties(object):
         self.show_legend = True
         self.divider_position = 0.5
         self.displayed_period = None
+        self.hscroll_amount = 0
 
     def clear_db_specific(self):
         self.sticky_balloon_event_ids = []
