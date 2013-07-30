@@ -154,7 +154,7 @@ class FeedbackDialog(wx.Dialog):
         self.body_text.SetValue(text)
 
 
-def show_feedback_dialog(self, info, subject, body, parent=None):
+def show_feedback_dialog(info, subject, body, parent=None):
     dialog = FeedbackDialog(parent)
     dialog.controller.populate(info, subject, body)
     dialog.ShowModal()
