@@ -147,13 +147,13 @@ For an event the following properties can be defined.
  - Text - The label displayed for an event.
  - Category - A way to group events together.
  - Container - Another way to group events together.
- - Fuzzy - Indicates that Start- and End-points are not fixed.
+ - Fuzzy - Draw start and end of event fuzzy, to indicate that exact times are unknown.
  - Locked - Start- and End-points can't be changed.
  - Ends Today - The End-point is always set to current date.
  - Description - Event description that is shown i the balloon.
- - Icon - An image associated with the event.
+ - Icon - Image icon shown in balloon.
  - Alert - An alert dialog is opened at the specified alert time.
- - Hyperlink - A hyperlink associated with the event. Can be reached in the event context meny.
+ - Hyperlink - A hyperlink that can be reached in the event context menu.
 """))
 
     help_system.install_page(
