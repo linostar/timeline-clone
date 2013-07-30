@@ -41,7 +41,7 @@ from timelinelib.view.zoom import ZoomByDragInputHandler
 # timeline. The scroll zone areas are found at the beginning and at the
 # end of the timeline.
 SCROLL_ZONE_WIDTH = 20
-
+HSCROLL_STEP = 25
 LEFT_RIGHT_SCROLL_FACTOR = 1 / 200.0
 MOUSE_SCROLL_FACTOR = 1 / 10.0
 
@@ -128,6 +128,7 @@ class DrawingArea(object):
             if self.view_properties.displayed_period is None:
                 default_tp = self.time_type.get_default_time_period()
                 self.view_properties.displayed_period = default_tp
+            self.view_properties.hscroll_amount = 0
         except TimelineIOError, e:
             self.fn_handle_db_error(e)
             properties_loaded = False
@@ -246,8 +247,6 @@ class DrawingArea(object):
         hyperlink = self.context_menu_event.get_data("hyperlink")
         webbrowser.open(hyperlink)
 
-
-    
     def left_mouse_dclick(self, x, y, ctrl_down, alt_down=False):
         """
         Event handler used when the left mouse button has been double clicked.
@@ -318,7 +317,10 @@ class DrawingArea(object):
     def mouse_wheel_moved(self, rotation, ctrl_down, shift_down, alt_down, x):
         direction = _step_function(rotation)
         if ctrl_down:
-            self._zoom_timeline(direction, x)
+            if shift_down:
+                self._scroll_horizontal(direction)
+            else:
+                self._zoom_timeline(direction, x)
         elif shift_down:
             self.divider_line_slider.SetValue(self.divider_line_slider.GetValue() + direction)
             self._redraw_timeline()
@@ -331,6 +333,21 @@ class DrawingArea(object):
         else:
             self._scroll_timeline_view(direction)
 
+    def _scroll_horizontal(self, direction):
+        if direction > 0:
+            self._scroll_up()
+        else:
+            self._scroll_down()
+        self._redraw_timeline()
+        
+    def _scroll_up(self):
+        self.view_properties.hscroll_amount -= HSCROLL_STEP
+        if self.view_properties.hscroll_amount < 0:
+            self.view_properties.hscroll_amount = 0
+    
+    def _scroll_down(self):
+        self.view_properties.hscroll_amount += HSCROLL_STEP
+    
     def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()

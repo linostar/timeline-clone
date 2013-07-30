@@ -409,8 +409,29 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
             cur_y = cur_y + item_height + INNER_PADDING
 
+    def _scroll_events_vertically(self, view_properties):
+        collection = []
+        amount = view_properties.hscroll_amount
+        for (event, rect) in self.scene.event_data:
+            if rect.Y < self.scene.divider_y:
+                self._scroll_point_events(amount, event, rect, collection)
+            else:
+                self._scroll_period_events(amount, event, rect, collection)
+        self.scene.event_data = collection
+        
+    def _scroll_point_events(self, amount, event, rect, collection):
+        rect.Y += amount
+        if rect.Y < self.scene.divider_y - rect.height:
+            collection.append((event, rect))
+
+    def _scroll_period_events(self, amount, event, rect, collection):
+        rect.Y -= amount
+        if rect.Y > self.scene.divider_y + rect.height:
+            collection.append((event, rect))
+        
     def _draw_events(self, view_properties):
         """Draw all event boxes and the text inside them."""
+        self._scroll_events_vertically(view_properties)
         self.dc.SetFont(self.small_text_font)
         self.dc.DestroyClippingRegion()
         self._draw_lines_to_non_period_events(view_properties)
