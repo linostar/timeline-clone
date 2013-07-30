@@ -212,7 +212,10 @@ class DefaultDrawingAlgorithm(Drawer):
         return self.scene.get_time(x)
 
     def get_hidden_event_count(self):
-        return self.scene.get_hidden_event_count()
+        try:
+            return self.scene.get_hidden_event_count()
+        except AttributeError:
+            return 0
 
     def _draw_period_selection(self, view_properties):
         if not view_properties.period_selection:
