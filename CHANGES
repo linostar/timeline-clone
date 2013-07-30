@@ -11,6 +11,7 @@ New features, enhancements:
   * Implemented export to image for whole timeline
 
 Bug fixes:
+  * Fixed exception when right-clicking in CatergoriesEditor
 
 
 
