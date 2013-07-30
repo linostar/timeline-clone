@@ -69,7 +69,6 @@ class FeedbackDialog(wx.Dialog):
 
     def _create_to_text_field(self):
         self.to_text = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_READONLY)
-        self.to_text.SetValue("thetimelineproj-user@sourceforge.net")
 
     def _create_subject_text_field(self):
         self.subject_text = wx.TextCtrl(self, wx.ID_ANY)
@@ -146,6 +145,9 @@ class FeedbackDialog(wx.Dialog):
         self.info_label.SetLabel(text)
         self.info_label.Wrap(INFO_LABEL_WIDTH)
         self.Fit()
+
+    def set_to_text(self, text):
+        self.to_text.SetValue(text)
 
     def set_subject_text(self, text):
         self.subject_text.SetValue(text)

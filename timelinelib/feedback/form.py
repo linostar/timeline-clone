@@ -27,6 +27,7 @@ class FeedbackForm(object):
 
     def populate(self, info, subject, body):
         self.dialog.set_info_text(info)
+        self.dialog.set_to_text("thetimelineproj-user@lists.sourceforge.net")
         self.dialog.set_subject_text(subject)
         self.dialog.set_body_text(body)
 
