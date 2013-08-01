@@ -53,6 +53,9 @@ from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 from timelinelib.wxgui.timer import TimelineTimer
 import timelinelib.wxgui.utils as gui_utils
+from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
+from timelinelib.feedback.feature import show_feature_feedback_dialog
+from timelinelib.feedback.feature import FEATURES
 
 
 ID_SIDEBAR = wx.NewId()
@@ -349,21 +352,47 @@ class GuiCreator(object):
             self.help_browser.show_page("contents")
         def tutorial(e):
             self.controller.open_timeline(":tutorial:")
+        def feedback(e):
+            show_feedback_dialog(
+                parent=None,
+                info="",
+                subject=_("Feedback"),
+                body="")
+        def features(e):
+            print "features"
+            info = self.feedback_featues[e.Id]
+            show_feature_feedback_dialog( "x", info, "y")
         def contact(e):
             self.help_browser.show_page("contact")
         def about(e):
             display_about_dialog()
         cbx = False
-        items = ((wx.ID_HELP, contents, _("&Contents\tF1"), cbx),
+        items = [(wx.ID_HELP, contents, _("&Contents\tF1"), cbx),
                  None,
                  (wx.ID_ANY, tutorial, _("Getting started tutorial"), cbx),
+                 None,
+                 (wx.ID_ANY, feedback, _("Give Feedback..."), cbx),
                  (wx.ID_ANY, contact, _("Contact"), cbx),
                  None,
-                 (wx.ID_ABOUT, about, None, cbx))
+                 (wx.ID_ABOUT, about, None, cbx)]
         help_menu = wx.Menu()
         self._create_menu_items(help_menu, items)
+        self._create_menu_features_feedback(help_menu)
         main_menu_bar.Append(help_menu, _("&Help"))
 
+    def _create_menu_features_feedback(self, help_menu):
+        def features(e):
+            feature_name = self.feedback_featues[e.Id]
+            show_feature_feedback_dialog(feature_name)
+        self.feedback_featues = {}
+        if len(FEATURES) > 0:
+            menu = wx.Menu()
+            for item in FEATURES.keys():
+                mi = menu.Append(wx.ID_ANY, "%s..." % item)
+                self.feedback_featues[mi.GetId()] = item
+                self.Bind(wx.EVT_MENU, features, mi)
+        help_menu.InsertMenu(5, wx.ID_ANY, "Give Feedback on Features", menu)
+        
     def _create_menu_items(self, menu, items):
         menu_items = []
         for item in items:
