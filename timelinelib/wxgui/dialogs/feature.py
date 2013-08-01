@@ -17,6 +17,7 @@
 
 
 import wx
+import webbrowser
 
 from timelinelib.feedback.feature import FeatureForm
 from timelinelib.wxgui.utils import BORDER
@@ -50,8 +51,18 @@ class FeatureDialogGui(wx.Dialog):
         self.info_label.SetFont(font)
 
     def _create_feature_text_field(self):
-        style = wx.TE_MULTILINE | wx.TE_READONLY
+        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH | wx.TE_AUTO_URL
         self.body_text = wx.TextCtrl(self, size=(-1, BODY_TEXT_HEIGHT), style=style)
+        self.body_text.Bind(wx.EVT_TEXT_URL, self._on_text_url)
+        
+    def _on_text_url(self, evt):
+        if evt.MouseEvent.LeftUp(): 
+            start = evt.GetURLStart()
+            end = evt.GetURLEnd()
+            url = self.body_text.GetValue()[start:end]
+            webbrowser.open(url)
+        evt.Skip() 
+
 
     def _create_feedback_button(self):
         def on_click(event):

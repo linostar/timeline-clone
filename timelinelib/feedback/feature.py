@@ -45,7 +45,18 @@ FEATURES = { "Vertical Scrolling" :
              Select menu File -> Export Whole Timeline to Image.
              Each image will contain the timespan currently displayed in the Timeline view.
              """,
+             
+             "Containers" :
+             """
+             Containers are a way to group events together.
+             In a container events can not overlap, so if you add a new event to a container
+             all other events are moved to give room for the new event. The same thing happens
+             if you resize an event within the container.
+             
+             Have a look at this video for a demo. http://www.youtube.com/watch?v=dBwEQ3vqB_I
+             """,
                }
+
 
 class FeatureForm(object):
 
