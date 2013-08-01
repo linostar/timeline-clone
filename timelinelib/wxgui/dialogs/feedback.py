@@ -46,6 +46,7 @@ class FeedbackDialog(wx.Dialog):
         self._create_send_other_button()
         self._create_cancel_button()
         self._layout_components()
+        self._set_focus_component()
 
     def _create_title_label(self):
         self.title_label = wx.StaticText(self, label=_("Email Feedback"),
@@ -143,6 +144,9 @@ class FeedbackDialog(wx.Dialog):
         button_box.Add(self.btn_cancel, flag=wx.LEFT, border=BORDER)
         return button_box
 
+    def _set_focus_component(self):
+        self.body_text.SetFocus()
+
     def get_to_text(self):
         return self.to_text.GetValue()
 
@@ -165,6 +169,9 @@ class FeedbackDialog(wx.Dialog):
 
     def set_body_text(self, text):
         self.body_text.SetValue(text)
+
+    def set_body_selection(self, start, end):
+        self.body_text.SetSelection(start, end)
 
 
 def show_feedback_dialog(info, subject, body, parent=None):

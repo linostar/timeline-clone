@@ -19,6 +19,9 @@
 import urllib
 
 
+DESCRIBE_TEXT = "Describe what you did here..."
+
+
 class FeedbackForm(object):
 
     def __init__(self, dialog, webbrowser):
@@ -30,6 +33,8 @@ class FeedbackForm(object):
         self.dialog.set_to_text("thetimelineproj-user@lists.sourceforge.net")
         self.dialog.set_subject_text(subject)
         self.dialog.set_body_text(body)
+        if body.startswith(DESCRIBE_TEXT):
+            self.dialog.set_body_selection(0, len(DESCRIBE_TEXT))
 
     def send_with_default(self):
         self.webbrowser.open("mailto:%s?subject=%s&body=%s" % (
