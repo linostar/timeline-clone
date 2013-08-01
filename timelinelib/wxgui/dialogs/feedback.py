@@ -75,6 +75,17 @@ class FeedbackDialog(wx.Dialog):
 
     def _create_body_text_field(self):
         self.body_text = wx.TextCtrl(self, size=(-1, 200), style=wx.TE_MULTILINE)
+        self.body_text.Bind(wx.EVT_CHAR, self._on_char)
+
+    def _on_char(self, evt):
+        if self._ctrl_a(evt):
+            self.body_text.SelectAll()
+        else: 
+            evt.Skip()
+        
+    def _ctrl_a(self, evt):
+        KEY_CODE_A = 1
+        return evt.ControlDown() and evt.KeyCode == KEY_CODE_A
 
     def _create_send_default_button(self):
         def on_click(event):

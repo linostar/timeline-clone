@@ -432,6 +432,7 @@ class DescriptionEditor(wx.TextCtrl):
 
     def __init__(self, parent, editor):
         wx.TextCtrl.__init__(self, parent, style=wx.TE_MULTILINE)
+        self.Bind(wx.EVT_CHAR, self._on_char)
 
     def get_data(self):
         description = self.GetValue().strip()
@@ -445,6 +446,16 @@ class DescriptionEditor(wx.TextCtrl):
     def clear_data(self):
         self.SetValue("")
 
+    def _on_char(self, evt):
+        if self._ctrl_a(evt):
+            self.SelectAll()
+        else: 
+            evt.Skip()
+        
+    def _ctrl_a(self, evt):
+        KEY_CODE_A = 1
+        return evt.ControlDown() and evt.KeyCode == KEY_CODE_A
+        
 
 class IconEditor(wx.Panel):
 
