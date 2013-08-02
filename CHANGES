@@ -3,13 +3,18 @@ Timeline 1.0.0, released on 30 September 2013
 
 New features, enhancements:
 
+  * Implemented export to image for whole timeline
+  * Implemented vertical zooming with Alt+Mousewheel
+  * Implemented vertical scrolling of timeline events
+  * Select all, Ctrl-A implemented in event editor description.
+  * New entry in Help menu for feedback reporting
+  * New entry in Help menu for feature descriptions and feedback reporting
+  * Balloon size restricted to not expand over timeline border
+  * Help documentation updated
+  * Printing removed 
   * Adjustments made to be able to use wxpython version 2.9
   * Replaced WxTimeType and PyTimeType with GregorianTimeType
-  * Removed File Timeline wich wasn't used anymore.
-  * Implemented vertical zooming with Alt+Mousewheel
-  * Printing removed 
-  * Implemented export to image for whole timeline
-  * Implemented vertical scrolling of timeline events
+  * Removed File Timeline wich isn't used anymore.
 
 Bug fixes:
   * Fixed exception when right-clicking in CatergoriesEditor
