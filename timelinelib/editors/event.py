@@ -110,13 +110,14 @@ class EventEditor(object):
         if self._dialog_has_signalled_invalid_input(start):
             raise ValueError()
         end = self.get_end_from_view()
-        if self._dialog_has_signalled_invalid_input(end):
+        if self._dialog_has_signalled_invalid_input(end):rom_view())
+        self.end = self._validate_and_save_end(self.get_end_from_view())
+        self._validate_period()
+        self._validate_ends_today()
             raise ValueError()
         if self.event != None and self.locked:
             self._verify_that_time_has_not_been_changed(start, end)
-        self.start = self._validate_and_save_start(self.get_start_from_view())
-        self.end = self._validate_and_save_end(self.get_end_from_view())
-        self._validate_period()
+        self.start = self._validate_and_save_start(self.get_start_f
         self.container = self.view.get_container()
 
     def get_start_from_view(self):
@@ -243,6 +244,11 @@ class EventEditor(object):
             TimePeriod(self.time_type, self.start, self.end)
         except PeriodTooLongError:
             self.view.display_error_message(_("Entered period is too long."))
+            raise ValueError()
+
+    def _validate_ends_today(self):
+        if self.ends_today and self.start > self.time_type.now():
+            self.view.display_error_message(_("Start time > Now."))
             raise ValueError()
 
     def _get_name(self, name):
