@@ -120,7 +120,7 @@ The timeline is divided in two areas with a horizontal adjustable divider line. 
     help_system.install_page(
         id="events",
         header=_("Events"),
-        related_pages=["event_properties", "create_event", "select_events", "edit_event", "move_event_vertically", "categories"],
+        related_pages=["event_properties", "create_event", "select_events", "edit_event", "delete_event", "move_event_vertically", "duplicate_event", "categories"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
@@ -189,14 +189,14 @@ The *Create Event* dialog can be opened in the following ways:
     help_system.install_page(
         id="edit_event",
         header=_("Edit event"),
-        related_pages=["events", "delete_event"],
+        related_pages=["events", "select_events"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
         # Stars produce emphasized text. DON'T remove them.
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
-The *Edit Event* dialog can be opened by double clicking on an event.
+The *Edit Event* dialog can be opened by double clicking on an event or by selecting one event and select the 'Timeline -> Edit Selected Event...' menu.
 """))
 
     help_system.install_page(
@@ -210,6 +210,29 @@ The *Edit Event* dialog can be opened by double clicking on an event.
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 An event can be moved vertically. This is done by first selecting the event and therefter using the Alt+Up or Alt+Down keys.
+"""))
+
+    help_system.install_page(
+        id="duplicate_event",
+        header=_("Duplicate event"),
+        related_pages=["events", "select_events"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+An event can be duplicated. Select the event you want to duplicate and select the 'Timeline -> Duplicate Selected Event...' menu.
+Now a dialog appears in which you can define
+
+ - How many duplications to do
+ - The time period used
+ - The frequency of time periods
+ - The direction
+ 
+ If number of duplications = 3, time span = day and frequency = 2, you will get 3 new copies of the event spread out with the time span of 2 days between them.
+ 
+ You can also get to the duplication dialog from the event context menu, wich appears if you right-click an event with the mouse.
 """))
 
     help_system.install_page(
@@ -227,7 +250,7 @@ To select an event, click on it. To select multiple events, hold down the *Ctrl*
     help_system.install_page(
         id="delete_event",
         header=_("Delete event"),
-        related_pages=["select_events", "events"],
+        related_pages=["events", "select_events"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
