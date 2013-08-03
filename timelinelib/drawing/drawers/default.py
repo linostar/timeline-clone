@@ -753,7 +753,6 @@ class DefaultDrawingAlgorithm(Drawer):
         lines = None
         if description != None:
             max_text_width = max_text_width(iw)
-            print max_text_width 
             lines = break_text(description, self.dc, max_text_width)
             th = len(lines) * self.dc.GetCharHeight()
             for line in lines:

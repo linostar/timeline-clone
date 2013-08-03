@@ -359,7 +359,6 @@ class GuiCreator(object):
                 subject=_("Feedback"),
                 body="")
         def features(e):
-            print "features"
             info = self.feedback_featues[e.Id]
             show_feature_feedback_dialog( "x", info, "y")
         def contact(e):
