@@ -120,7 +120,7 @@ The timeline is divided in two areas with a horizontal adjustable divider line. 
     help_system.install_page(
         id="events",
         header=_("Events"),
-        related_pages=["event_properties", "categories"],
+        related_pages=["event_properties", "create_event", "select_events", "edit_event", "move_event_vertically", "categories"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
