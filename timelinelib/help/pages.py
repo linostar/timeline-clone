@@ -127,7 +127,7 @@ The timeline is divided in two areas with a horizontal adjustable divider line. 
         # Stars produce emphasized text. DON'T remove them.
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
-An event is the basic data type for representing information on the timeline.  It must specify where on the timeline is should be placed (when that event happened). This can be either a specific point in time or a period.
+An event is the basic data type for representing information on the timeline.  It must specify where on the timeline it should be placed (when that event happened). This can be either a specific point in time or a period.
 """))
 
     help_system.install_page(
