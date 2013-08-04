@@ -133,7 +133,7 @@ An event is the basic data type for representing information on the timeline.  I
     help_system.install_page(
         id="event_properties",
         header=_("Event Properties"),
-        related_pages=["events"],
+        related_pages=["events", "event_containers"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
@@ -245,6 +245,24 @@ Now a dialog appears in which you can define
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 To select an event, click on it. To select multiple events, hold down the *Ctrl* key while clicking events.
+"""))
+
+    help_system.install_page(
+        id="event_containers",
+        header=_("Event Containers"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+Containers are a way to group events together.
+In a container events can not overlap, so if you add a new event to a container
+all other events are moved to give room for the new event. The same thing happens
+if you resize an event within the container.
+             
+Have a look at this video for a demo. 
+    http://www.youtube.com/watch?v=dBwEQ3vqB_I
 """))
 
     help_system.install_page(
