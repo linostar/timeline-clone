@@ -46,7 +46,7 @@ def db_open(path, import_timeline=False):
       - string denoting a directory
     """
     if path == ":tutorial:":
-        return open_tutorial_timeline(path) 
+        return open_tutorial_timeline(path)
     elif os.path.isdir(path):
         return open_directory_timeline(path)
     elif path.endswith(".timeline"):
@@ -64,7 +64,7 @@ def open_tutorial_timeline(path):
     current_timeline = create_in_memory_tutorial_db()
     current_timeline.path = path
     return  current_timeline
-    
+
 
 def open_directory_timeline(path):
     from timelinelib.db.backends.dir import DirTimeline
@@ -72,37 +72,40 @@ def open_directory_timeline(path):
     current_timeline = DirTimeline(path)
     current_timeline.path = path
     return current_timeline
-        
-        
+
+
 def db_open_timeline(path, import_timeline=False):
     if import_timeline and current_timeline:
         return db_import_timeline(path)
+    elif (os.path.exists(path) and file_starts_with(path, "# Written by Timeline ")):
+        raise TimelineIOError(_("You are trying to open an old file with a new version of timeline. Please install version 0.21.1 of timeline to convert it to the new format."))
     else:
-        return db_open_newtype_timeline(path) 
-    
-    
+        return db_open_newtype_timeline(path)
+
+
 def db_import_timeline(path):
     global current_timeline
     if os.path.isdir(current_timeline.path):
         display_warning_message(_("Other timelines can't be imported to a directory timeline"))
-        return current_timeline 
-    if current_timeline.path == ":tutorial:": 
+        return current_timeline
+    if current_timeline.path == ":tutorial:":
         display_warning_message(_("Tutorial must be saved as a timeline to be able to import other timeline"))
-        return current_timeline 
+        return current_timeline
     extension = current_timeline.path.rsplit(".", 1)[1]
     if extension != "timeline":
         display_warning_message(_("Only %s files can be imported") % extension)
-        return current_timeline 
+        return current_timeline
     current_timeline.import_timeline(path)
-    return current_timeline 
-   
-   
+    return current_timeline
+
+
 def db_open_newtype_timeline(path):
     global current_timeline
     from timelinelib.db.backends.xmlfile import XmlTimeline
-    current_timeline = XmlTimeline(path, import_timeline=False) 
-    return current_timeline 
-        
+    current_timeline = XmlTimeline(path, import_timeline=False)
+    return current_timeline
+
+
 def db_open_ics(path, import_timeline=False):
     global current_timeline
     try:
@@ -115,11 +118,11 @@ def db_open_ics(path, import_timeline=False):
             extension = current_timeline.path.rsplit(".", 1)[1]
             if extension != "ics":
                 display_warning_message(_("Only %s files can be imported") % extension)
-                return current_timeline 
+                return current_timeline
             current_timeline.import_timeline(path)
         else:
-            current_timeline = IcsTimeline(path) 
-        return current_timeline 
+            current_timeline = IcsTimeline(path)
+        return current_timeline
 
 
 def file_starts_with(path, start):

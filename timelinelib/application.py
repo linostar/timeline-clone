@@ -54,7 +54,7 @@ class TimelineApplication(object):
             self.open_timeline(path)
         else:
             display_error_message(_("File '%s' does not exist.") % path, self.main_frame)
-            
+
     def open_timeline(self, path, import_timeline=False):
         try:
             self.timeline = self.db_open_fn(path, import_timeline)

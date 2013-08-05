@@ -19,13 +19,23 @@
 import codecs
 
 from specs.utils import TmpDirTestCase
+from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.db.backends.xmlfile import XmlTimeline
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.calendar.gregorian import Gregorian
 
 import wx
 
+
+CONTENT_010 = u"""
+# Written by Timeline 0.1.0 on 2009-11-15 19:28:7
+PREFERRED-PERIOD:2009-10-17 22:38:32;2009-12-2 16:22:4
+CATEGORY:Category 1;188,129,224;True
+CATEGORY:Category 2;255,165,0;True
+CATEGORY:Category 3;173,216,230;False
+EVENT:2009-11-4 22:52:0;2009-11-11 22:52:0;Event 1;Category 1
+""".strip()
 
 CONTENT_0100 = u"""
 <?xml version="1.0" encoding="utf-8"?>
@@ -72,7 +82,10 @@ CONTENT_0100 = u"""
 class DbOpenSpec(TmpDirTestCase):
 
     IO = True
-  
+
+    def test_raises_error_when_reading_non_xml_file(self):
+        self.writeContentToTmpFile(CONTENT_010)
+        self.assertRaises(TimelineIOError, db_open, self.tmp_path)
 
     def testRead0100File(self):
         self.writeContentToTmpFile(CONTENT_0100)

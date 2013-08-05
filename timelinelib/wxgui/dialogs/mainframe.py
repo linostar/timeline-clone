@@ -455,8 +455,8 @@ class GuiCreator(object):
         return plain + "..."
 
 
-class MainFrameApiUSedByController(object):
-    
+class MainFrameApiUsedByController(object):
+
     def open_timeline(self, input_file, import_timeline=False):
         self.controller.open_timeline(input_file, import_timeline)
 
@@ -506,7 +506,7 @@ class MainFrameApiUSedByController(object):
         else:
             text = ""
         self.status_bar_adapter.set_read_only_text(text)
-        
+
     def _clear_navigation_menu_items(self):
         while self._navigation_menu_items:
             self.mnu_navigate.RemoveItem(self._navigation_menu_items.pop())
@@ -575,8 +575,8 @@ class MainFrameApiUSedByController(object):
         if self.timeline == None:
             self.main_panel.show_searchbar(False)
 
-       
-class MainFrame(wx.Frame, GuiCreator, MainFrameApiUSedByController):
+
+class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
     def __init__(self, application_arguments):
         self.config = read_config(application_arguments.get_config_file_path())
