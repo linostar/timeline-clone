@@ -44,7 +44,7 @@ class FeedbackDialog(wx.Dialog):
         self._create_send_default_button()
         self._create_send_gmail_button()
         self._create_send_other_button()
-        self._create_cancel_button()
+        self._create_close_button()
         self._layout_components()
         self._set_focus_component()
 
@@ -109,11 +109,11 @@ class FeedbackDialog(wx.Dialog):
         self.btn_other = wx.Button(self, label=_("Other"))
         self.Bind(wx.EVT_BUTTON, on_click, self.btn_other)
 
-    def _create_cancel_button(self):
-        self.btn_cancel = wx.Button(self, wx.ID_CANCEL)
-        self.btn_cancel.SetDefault()
-        self.btn_cancel.SetFocus()
-        self.SetAffirmativeId(wx.ID_CANCEL)
+    def _create_close_button(self):
+        self.btn_close = wx.Button(self, wx.ID_CLOSE)
+        self.btn_close.SetDefault()
+        self.btn_close.SetFocus()
+        self.SetAffirmativeId(wx.ID_CLOSE)
 
     def _layout_components(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -141,7 +141,7 @@ class FeedbackDialog(wx.Dialog):
         button_box.Add(self.btn_gmail, flag=wx.RIGHT, border=BORDER)
         button_box.Add(self.btn_other, flag=wx.RIGHT, border=BORDER)
         button_box.AddStretchSpacer()
-        button_box.Add(self.btn_cancel, flag=wx.LEFT, border=BORDER)
+        button_box.Add(self.btn_close, flag=wx.LEFT, border=BORDER)
         return button_box
 
     def _set_focus_component(self):
