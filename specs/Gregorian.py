@@ -130,3 +130,28 @@ class GregorianPrimitivesSpec(unittest.TestCase):
         self.assertFalse(gregorian.is_leap_year(1900))
         self.assertTrue(gregorian.is_leap_year(2016))
         self.assertTrue(gregorian.is_leap_year(2000))
+
+    def test_week_number(self):
+        def assert_is_week(date_tuple, w):
+            (y, m, d) = date_tuple
+            date = gregorian.from_date(y, m, d).to_time()
+            self.assertEqual(gregorian.gregorian_week(date), w)
+        assert_is_week((2012, 12, 30), 52)
+        assert_is_week((2012, 12, 31), 1)
+        assert_is_week((2013, 1, 1), 1)
+        assert_is_week((2013, 1, 6), 1)
+        assert_is_week((2013, 1, 7), 2)
+        assert_is_week((2013, 7, 2), 27)
+
+    def test_week_number_against_python(self):
+        self.longMessage = True
+        time = datetime.date(1900, 1, 1)
+        for i in range(365*50):
+            y = time.year
+            m = time.month
+            d = time.day
+            self.assertEqual(
+                gregorian.gregorian_week(gregorian.from_date(y, m, d).to_time()),
+                time.isocalendar()[1],
+                "%s" % time)
+            time += datetime.timedelta(days=1)

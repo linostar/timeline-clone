@@ -260,9 +260,25 @@ def to_julian_day(year, month, day):
     return julian_day
 
 
-def gregorian_week(timeline_date_time):
-    # TODO: Test this.
-    return 27
+def gregorian_week(time):
+    def monday_week_1(year):
+        jan_4 = from_date(year, 1, 4).to_time()
+        return jan_4 - timeline.delta_from_days(jan_4.get_day_of_week())
+    def days_between(end, start):
+        return end.julian_day - start.julian_day
+    def days_since_monday_week_1(time):
+        year = from_time(time).year
+        diff = days_between(end=time, start=monday_week_1(year + 1))
+        if diff >= 0:
+            return diff
+        diff = days_between(end=time, start=monday_week_1(year))
+        if diff >= 0:
+            return diff
+        diff = days_between(end=time, start=monday_week_1(year - 1))
+        if diff >= 0:
+            return diff
+        raise ValueError("should not end up here")
+    return days_since_monday_week_1(time) / 7 + 1
 
 
 def from_time(time):
