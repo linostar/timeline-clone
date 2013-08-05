@@ -103,7 +103,7 @@ During the your edit action the timeline is locked for changes by others. If you
     help_system.install_page(
         id="timeline",
         header=_("Timeline"),
-        related_pages=["events", "categories", "contact"],
+        related_pages=["scrolling", "zooming", "events", "categories", "contact"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
@@ -115,6 +115,42 @@ The timeline shows dates according to the Gregorian calendar on the x-axis. Curr
 Future versions might support various kinds of timelines so that you for example can specify a time in terms of number of minutes since a start time. If you are interested in such a feature, please get in touch.
 
 The timeline is divided in two areas with a horizontal adjustable divider line. Period events are displayed below the line and point events are displayed above the line.
+"""))
+
+    help_system.install_page(
+        id="scrolling",
+        header=_("Scrolling Timeline"),
+        related_pages=["timeline"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+A Timeline can be scrolled both horizontal (along time axis) and vertically (along event axis)
+
+There are two ways to scroll horizontal. You can either use the different options in the Navigation menu or you can use the mouse. To use the mouse, hold down the left mouse button and drag the mouse horizontally.
+
+To scroll vertically, hold down the Shift- and Ctrl-keys and scroll the mouse wheel.
+Events are scrolled towards or away from the divider line separating point- and period-events.
+
+"""))
+
+    help_system.install_page(
+        id="zooming",
+        header=_("Zooming Timeline"),
+        related_pages=["timeline"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+A Timeline can be Zoomed both horizontal (along time axis) and vertically (along event axis)
+
+To zoom vertically, hold down the Ctrl-key and scroll the mouse wheel.
+
+To zoom vertically, hold down the Alt-key and scroll the mouse wheel.
 """))
 
     help_system.install_page(
