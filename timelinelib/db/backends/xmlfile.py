@@ -21,12 +21,13 @@ Implementation of timeline database with xml file storage.
 """
 
 
-import re
-import os.path
 from os.path import abspath
-import base64
-import StringIO
 from xml.sax.saxutils import escape as xmlescape
+import base64
+import os.path
+import re
+import shutil
+import StringIO
 
 import wx
 
@@ -37,7 +38,7 @@ from timelinelib.db.objects import Container
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.utils import safe_write
+from timelinelib.db.utils import safe_write, create_non_exising_path
 from timelinelib.meta.version import get_version
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.utils import ex_msg
@@ -149,17 +150,24 @@ class XmlTimeline(MemoryDB):
             self.path = p
         finally:
             self.importing = False
-            
+
     def _parse_version(self, text, tmp_dict):
         match = re.search(r"^(\d+).(\d+).(\d+)(dev.*)?$", text)
         if match:
             (x, y, z) = (int(match.group(1)), int(match.group(2)),
                          int(match.group(3)))
+            self._backup((x, y, z))
             tmp_dict["version"] = (x, y, z)
             self._create_rest_of_schema(tmp_dict)
         else:
             raise ParseException("Could not parse version number from '%s'."
                                  % text)
+
+    def _backup(self, current_version):
+        (x, y, z) = current_version
+        if x == 0:
+            shutil.copy(self.path,
+                        create_non_exising_path(self.path, "pre100bak"))
 
     def _create_rest_of_schema(self, tmp_dict):
         """

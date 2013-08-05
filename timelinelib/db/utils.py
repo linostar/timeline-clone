@@ -45,8 +45,8 @@ def safe_write(path, encoding, write_fn):
         err_general = _("Unable to save timeline data to '%s'. File left unmodified.") % path
         err_template = "%s\n\n%%s\n\n%%s" % err_general
         raise TimelineIOError(err_template % (specific_msg, cause_exception))
-    tmp_path = _create_non_exising_path(path, "tmp")
-    backup_path = _create_non_exising_path(path, "bak")
+    tmp_path = create_non_exising_path(path, "tmp")
+    backup_path = create_non_exising_path(path, "bak")
     # Write data to tmp file
     try:
         if encoding is None:
@@ -81,7 +81,7 @@ def safe_write(path, encoding, write_fn):
             raise_error(_("Unable to delete backup file '%s'.") % backup_path, e)
 
 
-def _create_non_exising_path(base, suffix):
+def create_non_exising_path(base, suffix):
     i = 1
     while True:
         new_path = "%s.%s%i" % (base, suffix, i)

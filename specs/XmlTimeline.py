@@ -18,6 +18,7 @@
 
 
 import codecs
+import os.path
 
 from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.xmlfile import XmlTimeline
@@ -33,6 +34,42 @@ import timelinelib.calendar.gregorian as gregorian
 class XmlTimelineSpec(TmpDirTestCase):
 
     IO = True
+
+    def test_backs_up_pre_1_0_0_files(self):
+        contents = """<?xml version="1.0" encoding="utf-8"?>
+<timeline>
+  <version>0.21.1</version>
+  <categories>
+  </categories>
+  <events>
+  </events>
+  <view>
+    <hidden_categories>
+    </hidden_categories>
+  </view>
+</timeline>
+"""
+        self.write(self.tmp_path, contents)
+        XmlTimeline(self.tmp_path)
+        self.assertEqual(self.read(self.tmp_path + ".pre100bak1"), contents)
+
+    def test_does_not_back_up_1_0_0_files(self):
+        contents = """<?xml version="1.0" encoding="utf-8"?>
+<timeline>
+  <version>1.0.0</version>
+  <categories>
+  </categories>
+  <events>
+  </events>
+  <view>
+    <hidden_categories>
+    </hidden_categories>
+  </view>
+</timeline>
+"""
+        self.write(self.tmp_path, contents)
+        XmlTimeline(self.tmp_path)
+        self.assertFalse(os.path.exists(self.tmp_path + ".pre100bak1"))
 
     def testAlertStringParsingGivesAlertData(self):
         timeline = XmlTimeline(None, load=False)
@@ -149,3 +186,14 @@ class XmlTimelineSpec(TmpDirTestCase):
     def setUp(self):
         TmpDirTestCase.setUp(self)
         self.tmp_path = self.get_tmp_path("test.timeline")
+
+    def read(self, path):
+        f = codecs.open(path, "r", "utf-8")
+        contents = f.read()
+        f.close()
+        return contents
+
+    def write(self, path, contents):
+        f = codecs.open(path, "w", "utf-8")
+        content = f.write(contents)
+        f.close()
