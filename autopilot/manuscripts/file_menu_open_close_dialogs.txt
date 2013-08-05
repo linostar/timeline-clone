@@ -14,16 +14,10 @@ Click Button(Avbryt)
 Select Menu(File, "Spara som") 
 Click Button(Avbryt)
 
-Select Menu(File, "Page Setup") 
+Select Menu(File, "Export Current view to Image...") 
 Click Button(Avbryt)
 
-Select Menu(File, "Förhandsgranska") 
-Click Button(Stäng)
-
-Select Menu(File, "Skriv ut") 
-Click Button(Avbryt)
-
-Select Menu(File, "Export to Image") 
+Select Menu(File, "Export Whole Timeline to Images...") 
 Click Button(Avbryt)
 
 Select Menu(File, "Export to SVG") 
