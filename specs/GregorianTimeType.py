@@ -63,12 +63,12 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         self.time_type = GregorianTimeType()
 
     def test_converts_time_to_string(self):
-        self.assertEquals(
+        self.assertEqual(
             "-4713-11-24 00:00:00",
             self.time_type.time_string(timeline.Time(julian_day=0, seconds=0)))
 
     def test_parses_time_from_string(self):
-        self.assertEquals(
+        self.assertEqual(
             timeline.Time(julian_day=0, seconds=0),
             self.time_type.parse_time("-4713-11-24 00:00:00"))
 
@@ -86,34 +86,34 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         time_period = TimePeriod(self.time_type,
                                  self.time_type.parse_time("2010-08-01 13:44:00"),
                                  self.time_type.parse_time("2010-08-02 13:30:00"))
-        self.assertEquals(
+        self.assertEqual(
             u"1 %s 2010 13:44 to 2 %s 2010 13:30" % (_("Aug"), _("Aug")),
             self.time_type.format_period(time_period))
 
     def test_returns_min_time(self):
-        self.assertEquals(timeline.Time(0, 0), self.time_type.get_min_time()[0])
+        self.assertEqual(timeline.Time(0, 0), self.time_type.get_min_time()[0])
 
     def test_returns_max_time(self):
-        self.assertEquals(self.time_type.parse_time("9990-01-01 00:00:00"),
+        self.assertEqual(self.time_type.parse_time("9990-01-01 00:00:00"),
                           self.time_type.get_max_time()[0])
 
     def test_returns_half_delta(self):
-        self.assertEquals(
+        self.assertEqual(
             self.time_type.half_delta(timeline.TimeDelta(4)),
             timeline.TimeDelta(2))
 
     def test_returns_margin_delta(self):
-        self.assertEquals(
+        self.assertEqual(
             self.time_type.margin_delta(timeline.TimeDelta(48)),
             timeline.TimeDelta(2))
 
     def test_event_date_string_method(self):
-        self.assertEquals(
+        self.assertEqual(
             "2010-08-01",
             self.time_type.event_date_string(self.time_type.parse_time("2010-08-01 13:44:22")))
 
     def test_event_time_string_method(self):
-        self.assertEquals(
+        self.assertEqual(
             "13:44",
             self.time_type.event_time_string(self.time_type.parse_time("2010-08-01 13:44:22")))
 
@@ -368,69 +368,69 @@ class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
                                   self.time_type.parse_time("2010-08-02 13:44:00"),
                                   self.time_type.parse_time("2010-08-02 13:44:00"))
         delta = time_period2.start_time - time_period1.start_time
-        self.assertEquals(u"1 %s" % _("day"), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s" % _("day"), self.time_type.format_delta(delta))
 
     def test_format_one_minute_delta(self):
         delta = self.get_days_delta(days=0, hours=0, minutes=1)
-        self.assertEquals(u"1 %s" % _("minute"), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s" % _("minute"), self.time_type.format_delta(delta))
 
     def test_format_two_minutes_delta(self):
         delta = self.get_days_delta(days=0, hours=0, minutes=2)
-        self.assertEquals(u"2 %s" % _("minutes"), self.time_type.format_delta(delta))
+        self.assertEqual(u"2 %s" % _("minutes"), self.time_type.format_delta(delta))
 
     def test_format_one_hour_delta(self):
         delta = self.get_days_delta(days=0, hours=1, minutes=0)
-        self.assertEquals(u"1 %s" % _("hour"), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s" % _("hour"), self.time_type.format_delta(delta))
 
     def test_format_two_hour_delta(self):
         delta = self.get_days_delta(days=0, hours=2, minutes=0)
-        self.assertEquals(u"2 %s" % _("hours"), self.time_type.format_delta(delta))
+        self.assertEqual(u"2 %s" % _("hours"), self.time_type.format_delta(delta))
 
     def test_format_one_day_delta(self):
         delta = self.get_days_delta(days=1, hours=0, minutes=0)
-        self.assertEquals(u"1 %s" % _("day"), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s" % _("day"), self.time_type.format_delta(delta))
 
     def test_format_two_days_delta(self):
         delta = self.get_days_delta(days=2, hours=0, minutes=0)
-        self.assertEquals(u"2 %s" % _("days"), self.time_type.format_delta(delta))
+        self.assertEqual(u"2 %s" % _("days"), self.time_type.format_delta(delta))
 
     def test_format_one_hour_one_minute_delta(self):
         delta = self.get_days_delta(days=0, hours=1, minutes=1)
-        self.assertEquals(u"1 %s 1 %s" % (_("hour"), _("minute")), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s 1 %s" % (_("hour"), _("minute")), self.time_type.format_delta(delta))
 
     def test_format_one_hour_two_minutes_delta(self):
         delta = self.get_days_delta(days=0, hours=1, minutes=2)
-        self.assertEquals(u"1 %s 2 %s" % (_("hour"), _("minutes")), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s 2 %s" % (_("hour"), _("minutes")), self.time_type.format_delta(delta))
 
     def test_format_one_day_one_hour_delta(self):
         delta = self.get_days_delta(days=1, hours=1, minutes=0)
-        self.assertEquals(u"1 %s 1 %s" % (_("day"), _("hour")), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s 1 %s" % (_("day"), _("hour")), self.time_type.format_delta(delta))
 
     def test_format_one_day_two_hour_delta(self):
         delta = self.get_days_delta(days=1, hours=2, minutes=0)
-        self.assertEquals(u"1 %s 2 %s" % (_("day"), _("hours")), self.time_type.format_delta(delta))
+        self.assertEqual(u"1 %s 2 %s" % (_("day"), _("hours")), self.time_type.format_delta(delta))
 
     def test_format_two_days_two_hour_delta(self):
         delta = self.get_days_delta(days=2, hours=2, minutes=0)
-        self.assertEquals(u"2 %s 2 %s" % (_("days"), _("hours")), self.time_type.format_delta(delta))
+        self.assertEqual(u"2 %s 2 %s" % (_("days"), _("hours")), self.time_type.format_delta(delta))
 
     def test_format_two_days_two_hour_one_minute_delta(self):
         delta = self.get_days_delta(days=2, hours=2, minutes=1)
-        self.assertEquals(u"2 %s 2 %s 1 %s" % (_("days"), _("hours"), _("minute")), self.time_type.format_delta(delta))
+        self.assertEqual(u"2 %s 2 %s 1 %s" % (_("days"), _("hours"), _("minute")), self.time_type.format_delta(delta))
 
     def test_format_two_days_two_hour_two_minutes_delta(self):
         delta = self.get_days_delta(days=2, hours=2, minutes=2)
-        self.assertEquals(u"2 %s 2 %s 2 %s" % (_("days"), _("hours"), _("minutes")), self.time_type.format_delta(delta))
+        self.assertEqual(u"2 %s 2 %s 2 %s" % (_("days"), _("hours"), _("minutes")), self.time_type.format_delta(delta))
 
     def test_format_hundred_days_one_minute_delta(self):
         delta = self.get_days_delta(days=100, hours=0, minutes=0)
-        self.assertEquals(u"100 %s" % _("days"), self.time_type.format_delta(delta))
+        self.assertEqual(u"100 %s" % _("days"), self.time_type.format_delta(delta))
 
     def test_format_2_years_2_months(self):
         time_period1 = self.create_point_period(1, 1, 1999, 0, 0)
         time_period2 = self.create_point_period(1, 3, 2001, 0, 0)
         delta = time_period2.start_time - time_period1.start_time
-        self.assertEquals(u"790 %s" % _("days"), self.time_type.format_delta(delta))
+        self.assertEqual(u"790 %s" % _("days"), self.time_type.format_delta(delta))
 
     def test_format_overlapping_events(self):
         time_period1 = TimePeriod(self.time_type,
@@ -440,7 +440,7 @@ class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):
                                   self.time_type.parse_time("2010-08-01 13:44:00"),
                                   self.time_type.parse_time("2010-08-03 13:44:00"))
         delta = time_period2.start_time - time_period1.end_time
-        self.assertEquals("0", self.time_type.format_delta(delta))
+        self.assertEqual("0", self.time_type.format_delta(delta))
 
     def create_point_period(self, day, month, year, hour, minute):
         dt = Gregorian(year, month, day, hour, minute, 0).to_time()
@@ -611,14 +611,14 @@ class GregorianTimeNavigationFunctionsSpec(unittest.TestCase):
         fn(main_frame, self.time_period, navigation_fn)
 
     def then_period_becomes(self, start, end):
-        self.assertEquals(gregorian_period(start, end), self.new_period)
+        self.assertEqual(gregorian_period(start, end), self.new_period)
 
 
 class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
 
     def test_move_period_num_days_adds_given_number_of_days(self):
         new_period = move_period_num_days(self.period, 6)
-        self.assertEquals(
+        self.assertEqual(
             TimePeriod(
                 GregorianTimeType(),
                 Gregorian(2010, 1, 7, 12, 0, 0).to_time(),
@@ -627,7 +627,7 @@ class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
 
     def test_move_period_num_weeks_adds_given_number_of_weeks(self):
         new_period = move_period_num_weeks(self.period, -3)
-        self.assertEquals(
+        self.assertEqual(
             TimePeriod(
                 GregorianTimeType(),
                 Gregorian(2009, 12, 11, 12, 0, 0).to_time(),
@@ -636,7 +636,7 @@ class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
 
     def test_move_period_num_months_adds_given_number_of_months(self):
         new_period = move_period_num_months(self.period, 2)
-        self.assertEquals(
+        self.assertEqual(
             TimePeriod(
                 GregorianTimeType(),
                 Gregorian(2010, 3, 1, 12, 0, 0).to_time(),
@@ -645,7 +645,7 @@ class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
 
     def test_move_period_num_months_can_handle_year_boundries_up(self):
         new_period = move_period_num_months(self.period, 20)
-        self.assertEquals(
+        self.assertEqual(
             TimePeriod(
                 GregorianTimeType(),
                 Gregorian(2011, 9, 1, 12, 0, 0).to_time(),
@@ -654,7 +654,7 @@ class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
 
     def test_move_period_num_months_can_handle_year_boundries_down(self):
         new_period = move_period_num_months(self.period, -1)
-        self.assertEquals(
+        self.assertEqual(
             TimePeriod(
                 GregorianTimeType(),
                 Gregorian(2009, 12, 1, 12, 0, 0).to_time(),
@@ -667,11 +667,11 @@ class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
             Gregorian(2010, 1, 31, 12, 0, 0).to_time(),
             Gregorian(2010, 1, 31, 13, 0, 0).to_time())
         new_period = move_period_num_months(self.period, 1)
-        self.assertEquals(None, new_period)
+        self.assertEqual(None, new_period)
 
     def test_move_period_num_years_adds_given_number_of_years(self):
         new_period = move_period_num_years(self.period, 1)
-        self.assertEquals(
+        self.assertEqual(
             TimePeriod(
                 GregorianTimeType(),
                 Gregorian(2011, 1, 1, 12, 0, 0).to_time(),
@@ -684,7 +684,7 @@ class GregorianTimeDuplicateFunctionsSpec(unittest.TestCase):
             Gregorian(2012, 2, 29, 12, 0, 0).to_time(),
             Gregorian(2012, 2, 29, 13, 0, 0).to_time())
         new_period = move_period_num_years(self.period, 1)
-        self.assertEquals(None, new_period)
+        self.assertEqual(None, new_period)
         
     def setUp(self):
         self.period = TimePeriod(

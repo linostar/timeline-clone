@@ -57,7 +57,7 @@ class XmlTimelineSpec(TmpDirTestCase):
         content = f.read()
         f.close()
         # Assert that displayed_period tag is not written
-        self.assertEquals(content, """<?xml version="1.0" encoding="utf-8"?>
+        self.assertEqual(content, """<?xml version="1.0" encoding="utf-8"?>
 <timeline>
   <version>%s</version>
   <categories>
@@ -110,39 +110,39 @@ class XmlTimelineSpec(TmpDirTestCase):
     def _assert_re_read_db_same(self, db):
         # Assert event correctly loaded
         events = db.get_all_events()
-        self.assertEquals(len(events), 1)
+        self.assertEqual(len(events), 1)
         event = events[0]
-        self.assertEquals(event.text, "Event 1")
-        self.assertEquals(event.time_period.start_time, gregorian.from_date(2010, 3, 3).to_time())
-        self.assertEquals(event.time_period.end_time, gregorian.from_date(2010, 3, 6).to_time())
-        self.assertEquals(event.category.name, "Category 1")
-        self.assertEquals(event.get_data("description"), u"The <b>first</b> event åäö.")
-        self.assertEquals(event.get_data("alert"), (gregorian.from_date(2012, 12, 31).to_time(), "Time to go"))
-        self.assertEquals(event.get_data("icon"), None)
+        self.assertEqual(event.text, "Event 1")
+        self.assertEqual(event.time_period.start_time, gregorian.from_date(2010, 3, 3).to_time())
+        self.assertEqual(event.time_period.end_time, gregorian.from_date(2010, 3, 6).to_time())
+        self.assertEqual(event.category.name, "Category 1")
+        self.assertEqual(event.get_data("description"), u"The <b>first</b> event åäö.")
+        self.assertEqual(event.get_data("alert"), (gregorian.from_date(2012, 12, 31).to_time(), "Time to go"))
+        self.assertEqual(event.get_data("icon"), None)
         # Assert that correct view properties are loaded (category visibility
         # checked later)
         vp = ViewProperties()
         db.load_view_properties(vp)
-        self.assertEquals(vp.displayed_period.start_time, gregorian.from_date(2010, 3, 1).to_time())
-        self.assertEquals(vp.displayed_period.end_time, gregorian.from_date(2010, 4, 1).to_time())
+        self.assertEqual(vp.displayed_period.start_time, gregorian.from_date(2010, 3, 1).to_time())
+        self.assertEqual(vp.displayed_period.end_time, gregorian.from_date(2010, 4, 1).to_time())
         # Assert categories correctly loaded
         categories = db.get_categories()
-        self.assertEquals(len(categories), 3)
+        self.assertEqual(len(categories), 3)
         for cat in categories:
             self.assertTrue(cat.has_id())
             if cat.name == "Category 1":
-                self.assertEquals(cat.color, (255, 0, 0))
-                self.assertEquals(cat.font_color, (0, 0, 255))
+                self.assertEqual(cat.color, (255, 0, 0))
+                self.assertEqual(cat.font_color, (0, 0, 255))
                 self.assertTrue(vp.category_visible(cat))
-                self.assertEquals(cat.parent, None)
+                self.assertEqual(cat.parent, None)
             elif cat.name == "Category 2":
-                self.assertEquals(cat.color, (0, 255, 0))
+                self.assertEqual(cat.color, (0, 255, 0))
                 self.assertTrue(vp.category_visible(cat))
-                self.assertEquals(cat.parent.name, "Category 1")
+                self.assertEqual(cat.parent.name, "Category 1")
             elif cat.name == "Category 3":
-                self.assertEquals(cat.color, (0, 0, 255))
+                self.assertEqual(cat.color, (0, 0, 255))
                 self.assertFalse(vp.category_visible(cat))
-                self.assertEquals(cat.parent.name, "Category 2")
+                self.assertEqual(cat.parent.name, "Category 2")
             else:
                 self.fail("Unknown category.")
 

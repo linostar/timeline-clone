@@ -100,7 +100,7 @@ class when_duplicating_event_with_default_settings(duplicate_event_dialog_spec_b
         self._duplicate_with(count=1, freq=1, direction=FORWARD)
 
     def test_one_new_event_is_saved(self):
-        self.assertEquals(1, self.db.save_event.call_count)
+        self.assertEqual(1, self.db.save_event.call_count)
 
     def test_the_new_event_gets_period_from_move_period_fn(self):
         new_event = self.db.save_event.call_args[0][0]
@@ -109,7 +109,7 @@ class when_duplicating_event_with_default_settings(duplicate_event_dialog_spec_b
             GregorianTimeType(),
             gregorian.from_date(2010, 8, 1).to_time(),
             gregorian.from_date(2010, 8, 1).to_time())
-        self.assertEquals(expected_period, new_period)
+        self.assertEqual(expected_period, new_period)
 
     def test_the_new_event_should_not_be_the_same_as_the_existing(self):
         new_event = self.db.save_event.call_args[0][0]
@@ -150,7 +150,7 @@ class when_event_can_not_be_duplicated(duplicate_event_dialog_spec_base):
 class a_diloag_with_different_settings(duplicate_event_dialog_spec_base):
 
     def _assert_move_period_called_with(self, num_list):
-        self.assertEquals(
+        self.assertEqual(
             [((self.event.time_period, num), {}) for num in num_list],
             self.move_period_fn.call_args_list)
 

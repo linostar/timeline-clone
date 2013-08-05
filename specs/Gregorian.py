@@ -32,11 +32,11 @@ class GregorianSpec(unittest.TestCase):
 
     def test_can_replace(self):
         g = gregorian.Gregorian(2013, 7, 12, 10, 16, 12)
-        self.assertEquals(g.replace(year=1990),
+        self.assertEqual(g.replace(year=1990),
                           gregorian.Gregorian(1990, 7, 12, 10, 16, 12))
-        self.assertEquals(g.replace(month=6),
+        self.assertEqual(g.replace(month=6),
                           gregorian.Gregorian(2013, 6, 12, 10, 16, 12))
-        self.assertEquals(g.replace(year=1990, month=6),
+        self.assertEqual(g.replace(year=1990, month=6),
                           gregorian.Gregorian(1990, 6, 12, 10, 16, 12))
         self.assertRaises(ValueError, g.replace, month=13)
 
@@ -44,18 +44,18 @@ class GregorianSpec(unittest.TestCase):
 class GregorianConversionsSpec(unittest.TestCase):
 
     def test_can_convert_from_timeline_time_to_gregorian(self):
-        self.assertEquals(
+        self.assertEqual(
             gregorian.from_time(timeline.Time(julian_day=0, seconds=0)),
             gregorian.Gregorian(-4713, 11, 24, 0, 0, 0))
-        self.assertEquals(
+        self.assertEqual(
             gregorian.from_time(timeline.Time(julian_day=1, seconds=0)),
             gregorian.Gregorian(-4713, 11, 25, 0, 0, 0))
 
     def test_can_convert_from_gregorian_to_timeline_time(self):
-        self.assertEquals(
+        self.assertEqual(
             gregorian.Gregorian(-4713, 11, 24, 0, 0, 0).to_time(),
             timeline.Time(julian_day=0, seconds=0))
-        self.assertEquals(
+        self.assertEqual(
             gregorian.Gregorian(-4713, 11, 25, 0, 0, 0).to_time(),
             timeline.Time(julian_day=1, seconds=0))
 
@@ -63,7 +63,7 @@ class GregorianConversionsSpec(unittest.TestCase):
         for julian_day in range(100):
             (year, month, day) = gregorian.from_julian_day(julian_day)
             roundtrip = gregorian.to_julian_day(year, month, day)
-            self.assertEquals(roundtrip, julian_day)
+            self.assertEqual(roundtrip, julian_day)
 
     def test_roundtrip_gregorian_dates_conversions(self):
         dates = [
@@ -74,14 +74,14 @@ class GregorianConversionsSpec(unittest.TestCase):
             (year, month, day) = gregorian_date
             julian_day = gregorian.to_julian_day(year, month, day)
             roundtrip = gregorian.from_julian_day(julian_day)
-            self.assertEquals(roundtrip, gregorian_date)
+            self.assertEqual(roundtrip, gregorian_date)
 
     def test_works_same_as_python_date(self):
         py_date = datetime.date(1900, 1, 1)
         jd = gregorian.to_julian_day(1900, 1, 1)
         for i in range(365*200):
             (y, m, d) = gregorian.from_julian_day(jd)
-            self.assertEquals(py_date, datetime.date(y, m, d))
+            self.assertEqual(py_date, datetime.date(y, m, d))
             py_date += datetime.timedelta(days=1)
             jd += 1
 

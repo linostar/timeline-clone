@@ -32,17 +32,17 @@ class NumTimeTypeSpec(unittest.TestCase):
     def test_returns_half_delta(self):
         delta = 126
         half_delta = self.time_type.half_delta(delta)
-        self.assertEquals(63, half_delta)
+        self.assertEqual(63, half_delta)
 
     def test_returns_margin_delta(self):
         delta = 24 * 12345
         margin_delta = self.time_type.margin_delta(delta)
-        self.assertEquals(12345, margin_delta)
+        self.assertEqual(12345, margin_delta)
 
     def test_format_delta_1(self):
         delta = 1
-        self.assertEquals("1", self.time_type.format_delta(delta))
+        self.assertEqual("1", self.time_type.format_delta(delta))
 
     def test_format_delta_2(self):
         delta = 2
-        self.assertEquals("2", self.time_type.format_delta(delta))
+        self.assertEqual("2", self.time_type.format_delta(delta))

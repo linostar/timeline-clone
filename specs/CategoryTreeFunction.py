@@ -26,15 +26,15 @@ class CategoryTreeFunctionSpec(unittest.TestCase):
 
     def testCreatesTreeOfCategories(self):
         tree = category_tree([self.c11, self.c1, self.c2])
-        self.assertEquals(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
+        self.assertEqual(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
 
     def testCreatesEmptyChildListForLeaves(self):
         tree = category_tree([self.c1, self.c2])
-        self.assertEquals(tree, [(self.c1, []), (self.c2, [])])
+        self.assertEqual(tree, [(self.c1, []), (self.c2, [])])
 
     def testSortsCategories(self):
         tree = category_tree([self.c11, self.c2, self.c1])
-        self.assertEquals(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
+        self.assertEqual(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
 
     def setUp(self):
         self.c1 = Category("c1", (255, 0, 0), None, True, parent=None)

@@ -263,43 +263,43 @@ class describe_event_editor__saving(object):
 
     def test_saves_start_time(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.time_period.start_time,
+        self.assertEqual(self.saved_event.time_period.start_time,
                           human_time_to_gregorian("1 Jan 2010"))
 
     def test_saves_end_time(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.time_period.end_time,
+        self.assertEqual(self.saved_event.time_period.end_time,
                           human_time_to_gregorian("2 Jan 2010"))
 
     def test_saves_end_time_from_start_time(self):
         self.view.get_show_period.return_value = False
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.time_period.end_time,
+        self.assertEqual(self.saved_event.time_period.end_time,
                           human_time_to_gregorian("1 Jan 2010"))
 
     def test_saves_text(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.text, "new event")
+        self.assertEqual(self.saved_event.text, "new event")
 
     def test_saves_category(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.category, sentinel.CATEGORY)
+        self.assertEqual(self.saved_event.category, sentinel.CATEGORY)
 
     def test_saves_fuzzy(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.fuzzy, sentinel.FUZZY)
+        self.assertEqual(self.saved_event.fuzzy, sentinel.FUZZY)
 
     def test_saves_locked(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.locked, self.locked_value)
+        self.assertEqual(self.saved_event.locked, self.locked_value)
 
     def test_saves_ends_today(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.ends_today, self.ends_today_value)
+        self.assertEqual(self.saved_event.ends_today, self.ends_today_value)
 
     def test_saves_data(self):
         self.given_saving_valid_event()
-        self.assertEquals(self.saved_event.data, sentinel.EVENT_DATA)
+        self.assertEqual(self.saved_event.data, sentinel.EVENT_DATA)
 
 
 class describe_event_editor__saving_new(
@@ -357,7 +357,7 @@ class describe_event_editor__validation(EventEditorTestCase):
         self.simulate_user_enters_start_time("1 Jan 2000")
         self.simulate_user_enters_end_time("1 Jan 5000")
         self.simulate_user_clicks_ok()
-        self.assertEquals(1, self.view.display_error_message.call_count)
+        self.assertEqual(1, self.view.display_error_message.call_count)
         self.assert_no_event_saved()
 
     def test_time_cant_change_when_event_is_locked(self):

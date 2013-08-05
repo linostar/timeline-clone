@@ -32,4 +32,4 @@ class NumTimeDuplicateFunctionsSpec(unittest.TestCase):
 
     def test_move_period_adds_given_number_of_delta(self):
         new_period = move_period(self.period, 6)
-        self.assertEquals(TimePeriod(NumTimeType(), 7, 8), new_period)
+        self.assertEqual(TimePeriod(NumTimeType(), 7, 8), new_period)

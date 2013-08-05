@@ -34,14 +34,14 @@ class SceneSpec(unittest.TestCase):
         self.given_displayed_period("1 Jan 2010", "10 Jan 2010")
         self.given_visible_event_at("5 Jan 2010")
         self.when_scene_is_created()
-        self.assertEquals(0, self.scene.get_hidden_event_count())
+        self.assertEqual(0, self.scene.get_hidden_event_count())
 
     def test_has_hidden_events_for_all_events_belonging_to_hidden_categories(self):
         self.given_displayed_period("1 Jan 2010", "10 Jan 2010")
         self.given_visible_event_at("5 Jan 2010")
         self.given_hidden_event_at("5 Jan 2010")
         self.when_scene_is_created()
-        self.assertEquals(1, self.scene.get_hidden_event_count())
+        self.assertEqual(1, self.scene.get_hidden_event_count())
 
     def test_considers_events_outside_screen_hidden(self):
         self.given_displayed_period("1 Jan 2010", "10 Jan 2010")
@@ -49,7 +49,7 @@ class SceneSpec(unittest.TestCase):
         for i in range(6):
             self.given_visible_event_at("5 Jan 2010")
         self.when_scene_is_created()
-        self.assertEquals(1, self.scene.get_hidden_event_count())
+        self.assertEqual(1, self.scene.get_hidden_event_count())
 
     def test_point_events_on_same_date_has_different_y_positions(self):
         self.given_displayed_period("1 Jan 2010", "10 Jan 2010")

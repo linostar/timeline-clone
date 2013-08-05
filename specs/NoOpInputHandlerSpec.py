@@ -45,7 +45,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)
         self.handler.left_mouse_down(10, 10, False, False)
-        self.assertEquals(0, self.drawing_area.change_input_handler_to_move_by_drag.call_count)
+        self.assertEqual(0, self.drawing_area.change_input_handler_to_move_by_drag.call_count)
 
     def test_disables_mouse_cursor_when_event_ends_today(self):
         event = an_event_with(ends_today=True)
@@ -54,7 +54,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)
         self.handler.mouse_moved(10, 10)
-        self.assertEquals(0, self.view.set_move_cursor.call_count)
+        self.assertEqual(0, self.view.set_move_cursor.call_count)
 
     def setUp(self):
         self.setup_drawing_area_mock()

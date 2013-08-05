@@ -43,7 +43,7 @@ class ResizeEventSpec(unittest.TestCase):
         self.given_time_at_x_is(50, "1 Jan 5000")
         self.when_resizing(an_event_with(time="1 Jan 2000"), wx.RIGHT)
         self.and_moving_mouse_to_x(50)
-        self.assertEquals(1, self.status_bar.set_text.call_count)
+        self.assertEqual(1, self.status_bar.set_text.call_count)
 
     def test_clears_status_message_if_resize_is_valid(self):
         self.given_time_at_x_is(50, "2 Jan 2000")
@@ -59,7 +59,7 @@ class ResizeEventSpec(unittest.TestCase):
     def test_changes_input_handler_when_resize_is_done(self):
         self.when_resizing(an_event(), wx.RIGHT)
         self.resizer.left_mouse_up()
-        self.assertEquals(1, self.controller.change_input_handler_to_no_op.call_count)
+        self.assertEqual(1, self.controller.change_input_handler_to_no_op.call_count)
 
     def setUp(self):
         self.drawer = Mock()
@@ -83,6 +83,6 @@ class ResizeEventSpec(unittest.TestCase):
         self.resizer.mouse_moved(x, any_y)
 
     def then_event_gets_period(self, start, end):
-        self.assertEquals(
+        self.assertEqual(
             gregorian_period(start, end),
             self.event_being_resized.time_period)

@@ -147,4 +147,4 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
     def assert_event_has_period(self, start, end, event=None):
         if event is None:
             event = self.selected_events[0]
-        self.assertEquals(event.time_period, gregorian_period(start, end))
+        self.assertEqual(event.time_period, gregorian_period(start, end))

@@ -28,37 +28,37 @@ class TestWildcardHelper(unittest.TestCase):
 
     def testGeneratesWildcardStringForUseInFileDialog(self):
         helper = WildcardHelper("Source code files", ["cpp", "py"])
-        self.assertEquals(
+        self.assertEqual(
             helper.wildcard_string(),
             "Source code files (*.cpp, *.py)|*.cpp;*.py")
 
     def testReturnsExtensionDataIfExtensionDataGivenAndPathMatch(self):
         helper = WildcardHelper("Image files", [("png", 1), ("bmp", 2)])
-        self.assertEquals(
+        self.assertEqual(
             helper.get_extension_data("bar.png"),
             1)
 
     def testReturnsNoExtensionDataIfPathDoesNotPathExtension(self):
         helper = WildcardHelper("Text files", [("txt", 4)])
-        self.assertEquals(
+        self.assertEqual(
             helper.get_extension_data("bar"),
             None)
 
     def testReturnsNoExtensionDataIfNoExtensionDataGiven(self):
         helper = WildcardHelper("Text files", ["txt"])
-        self.assertEquals(
+        self.assertEqual(
             helper.get_extension_data("foo.txt"),
             None)
 
     def testDoesNotAddExtensionIfExtensionAlreadyInPathFromDialog(self):
         helper = WildcardHelper("Image files", ["png", "bmp"])
-        self.assertEquals(
+        self.assertEqual(
             helper.get_path(self.aFileDialogReturningPath("bar.bmp")),
             "bar.bmp")
 
     def testAddsFirstExtensionIfNoExtensionInPathFromDialog(self):
         helper = WildcardHelper("Image files", ["png", "bmp"])
-        self.assertEquals(
+        self.assertEqual(
             helper.get_path(self.aFileDialogReturningPath("bar")),
             "bar.png")
 

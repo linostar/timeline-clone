@@ -34,16 +34,16 @@ class MemoryDBSpec(unittest.TestCase):
 
     def testInitialState(self):
         db = MemoryDB()
-        self.assertEquals(db.path, "")
-        self.assertEquals(db.displayed_period, None)
-        self.assertEquals(db.hidden_categories, [])
-        self.assertEquals(db.is_read_only(), False)
-        self.assertEquals(db.supported_event_data(), ["description", "icon", "alert", "hyperlink"])
-        self.assertEquals(db.search(""), [])
-        self.assertEquals(db.get_all_events(), [])
-        self.assertEquals(db.get_first_event(), None)
-        self.assertEquals(db.get_last_event(), None)
-        self.assertEquals(db.get_categories(), [])
+        self.assertEqual(db.path, "")
+        self.assertEqual(db.displayed_period, None)
+        self.assertEqual(db.hidden_categories, [])
+        self.assertEqual(db.is_read_only(), False)
+        self.assertEqual(db.supported_event_data(), ["description", "icon", "alert", "hyperlink"])
+        self.assertEqual(db.search(""), [])
+        self.assertEqual(db.get_all_events(), [])
+        self.assertEqual(db.get_first_event(), None)
+        self.assertEqual(db.get_last_event(), None)
+        self.assertEqual(db.get_categories(), [])
 
     def testLoadSaveViewProperties(self):
         # Make sure the database contains categories
@@ -60,18 +60,18 @@ class MemoryDBSpec(unittest.TestCase):
         # Save these properties and assert that the database fields are written
         # correctly
         self.db.save_view_properties(vp)
-        self.assertEquals(self.db.displayed_period, tp)
-        self.assertEquals(self.db.hidden_categories, [self.c1])
+        self.assertEqual(self.db.displayed_period, tp)
+        self.assertEqual(self.db.hidden_categories, [self.c1])
         # Load view properties from db simulating that this db was just loaded
         # into memory and the view is being configured
         new_vp = ViewProperties()
         self.db.load_view_properties(new_vp)
         self.assertFalse(new_vp.category_visible(self.c1))
         self.assertTrue(new_vp.category_visible(self.c2))
-        self.assertEquals(new_vp.displayed_period, self.db.displayed_period)
+        self.assertEqual(new_vp.displayed_period, self.db.displayed_period)
         # Assert virtual _save method called: 2 save categories, 1 save view
         # properties
-        self.assertEquals(self.db._save.call_count, 3)
+        self.assertEqual(self.db._save.call_count, 3)
 
     def testSaveInvalidDisplayedPeriod(self):
         # Assign a zero-period as displayed period
@@ -88,11 +88,11 @@ class MemoryDBSpec(unittest.TestCase):
                         gregorian.from_date(2010, 3, 24).to_time())
         self.db._set_displayed_period(tp)
         # Assert that we get back the same period
-        self.assertEquals(self.db._get_displayed_period(), tp)
+        self.assertEqual(self.db._get_displayed_period(), tp)
         # Assert that the period is correctly loaded into ViewProperties
         vp = ViewProperties()
         self.db.load_view_properties(vp)
-        self.assertEquals(vp.displayed_period, tp)
+        self.assertEqual(vp.displayed_period, tp)
 
     def testGetSetHiddenCategories(self):
         # Assert that we cannot include categories not in the db
@@ -102,7 +102,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.db.save_category(self.c2)
         self.db._set_hidden_categories([self.c1])
         # Assert that the returned list is the same
-        self.assertEquals(self.db._get_hidden_categories(), [self.c1])
+        self.assertEqual(self.db._get_hidden_categories(), [self.c1])
         # Assert that category visibility information is correctly written to
         # ViewProperties
         vp = ViewProperties()
@@ -116,7 +116,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 1)
         # Assert virtual _save method called: 1 save category
-        self.assertEquals(self.db._save.call_count, 1)
+        self.assertEqual(self.db._save.call_count, 1)
 
     def testSaveExistingCategory(self):
         self.db.save_category(self.c1)
@@ -127,7 +127,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 2) # 2 save
         # Assert virtual _save method called: 2 save category
-        self.assertEquals(self.db._save.call_count, 2)
+        self.assertEqual(self.db._save.call_count, 2)
 
     def testSaveNonExistingCategory(self):
         other_db = MemoryDB()
@@ -135,7 +135,7 @@ class MemoryDBSpec(unittest.TestCase):
         # It has id but is not in this db
         self.assertRaises(TimelineIOError, self.db.save_category, self.c1)
         # Assert virtual _save method not called
-        self.assertEquals(self.db._save.call_count, 0)
+        self.assertEqual(self.db._save.call_count, 0)
 
     def testSaveCategoryWithUnknownParent(self):
         self.c1.parent = self.c2
@@ -166,10 +166,10 @@ class MemoryDBSpec(unittest.TestCase):
         #       c111
         c11.parent = c12
         self.db.save_category(c11)
-        self.assertEquals(c1.parent, None)
-        self.assertEquals(c12.parent, c1)
-        self.assertEquals(c11.parent, c12)
-        self.assertEquals(c111.parent, c11)
+        self.assertEqual(c1.parent, None)
+        self.assertEqual(c12.parent, c1)
+        self.assertEqual(c11.parent, c12)
+        self.assertEqual(c111.parent, c11)
         # Changing c11's parent to c111 should raise exception since that would
         # create a circular parent link.
         c11.parent = c111
@@ -185,26 +185,26 @@ class MemoryDBSpec(unittest.TestCase):
         self.db.save_view_properties(vp)
         # Assert both categories in db
         categories = self.db.get_categories()
-        self.assertEquals(len(categories), 2)
+        self.assertEqual(len(categories), 2)
         self.assertTrue(self.c1 in categories)
         self.assertTrue(self.c2 in categories)
         # Remove first (by category)
         self.db.delete_category(self.c1)
         categories = self.db.get_categories()
-        self.assertEquals(len(categories), 1)
+        self.assertEqual(len(categories), 1)
         self.assertTrue(self.c2 in categories)
         self.assertFalse(self.c1.has_id())
         self.assertFalse(self.c1 in self.db.hidden_categories)
         # Remove second (by id)
         self.db.delete_category(self.c2.id)
         categories = self.db.get_categories()
-        self.assertEquals(len(categories), 0)
+        self.assertEqual(len(categories), 0)
         self.assertFalse(self.c2.has_id())
         # Check events
         self.assertEqual(self.db_listener.call_count, 4) # 2 save, 2 delete
         # Assert virtual _save method called: 2 save category, 1 save view
         # properties, 2 delete categories
-        self.assertEquals(self.db._save.call_count, 5)
+        self.assertEqual(self.db._save.call_count, 5)
 
     def testDeleteNonExistingCategory(self):
         self.assertRaises(TimelineIOError, self.db.delete_category, self.c1)
@@ -213,7 +213,7 @@ class MemoryDBSpec(unittest.TestCase):
         other_db.save_category(self.c2)
         self.assertRaises(TimelineIOError, self.db.delete_category, self.c2)
         # Assert virtual _save method not called
-        self.assertEquals(self.db._save.call_count, 0)
+        self.assertEqual(self.db._save.call_count, 0)
 
     def testDeleteCategoryWithParent(self):
         # Create hierarchy:
@@ -231,11 +231,11 @@ class MemoryDBSpec(unittest.TestCase):
         self.db.save_category(c121)
         # Delete c12 should cause c121 to get c1 as parent
         self.db.delete_category(c12)
-        self.assertEquals(c121.parent, c1)
+        self.assertEqual(c121.parent, c1)
         # Delete c1 should cause c11, and c121 to be parentless
         self.db.delete_category(c1)
-        self.assertEquals(c11.parent, None)
-        self.assertEquals(c121.parent, None)
+        self.assertEqual(c11.parent, None)
+        self.assertEqual(c121.parent, None)
 
     def testDelteCategoryWithEvent(self):
         # Create hierarchy:
@@ -250,10 +250,10 @@ class MemoryDBSpec(unittest.TestCase):
         self.db.save_event(self.e1)
         # Delete c11 should cause e1 to get c1 as category
         self.db.delete_category(c11)
-        self.assertEquals(self.e1.category, c1)
+        self.assertEqual(self.e1.category, c1)
         # Delete c1 should cause e1 to have no category
         self.db.delete_category(c1)
-        self.assertEquals(self.e1.category, None)
+        self.assertEqual(self.e1.category, None)
 
     def testSaveEventUnknownCategory(self):
         # A new
@@ -264,7 +264,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.e2.category = self.c1
         self.assertRaises(TimelineIOError, self.db.save_event, self.e2)
         # Assert virtual _save method not called
-        self.assertEquals(self.db._save.call_count, 1)
+        self.assertEqual(self.db._save.call_count, 1)
 
     def testSaveNewEvent(self):
         self.db.save_event(self.e1)
@@ -275,7 +275,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(self.db.get_all_events(), [self.e1])
         self.assertEqual(self.db_listener.call_count, 1) # 1 save
         # Assert virtual _save method called: 1 save event
-        self.assertEquals(self.db._save.call_count, 1)
+        self.assertEqual(self.db._save.call_count, 1)
 
     def testSaveExistingEvent(self):
         self.db.save_event(self.e1)
@@ -289,7 +289,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(self.db.get_all_events(), [self.e1])
         self.assertEqual(self.db_listener.call_count, 2) # 1 save
         # Assert virtual _save method called: 2 save event
-        self.assertEquals(self.db._save.call_count, 2)
+        self.assertEqual(self.db._save.call_count, 2)
 
     def testSaveNonExistingEvent(self):
         other_db = MemoryDB()
@@ -297,7 +297,7 @@ class MemoryDBSpec(unittest.TestCase):
         # It has id but is not in this db
         self.assertRaises(TimelineIOError, self.db.save_event, self.e1)
         # Assert virtual _save method not called
-        self.assertEquals(self.db._save.call_count, 0)
+        self.assertEqual(self.db._save.call_count, 0)
 
     def testDeleteExistingEvent(self):
         tp = TimePeriod(self.db.get_time_type(), gregorian.from_date(2010, 2, 12).to_time(),
@@ -305,22 +305,22 @@ class MemoryDBSpec(unittest.TestCase):
         self.db.save_event(self.e1)
         self.db.save_event(self.e2)
         # Assert both in db
-        self.assertEquals(len(self.db.get_events(tp)), 2)
+        self.assertEqual(len(self.db.get_events(tp)), 2)
         self.assertTrue(self.e1 in self.db.get_events(tp))
         self.assertTrue(self.e2 in self.db.get_events(tp))
         # Delete first (by event)
         self.db.delete_event(self.e1)
         self.assertFalse(self.e1.has_id())
-        self.assertEquals(len(self.db.get_events(tp)), 1)
+        self.assertEqual(len(self.db.get_events(tp)), 1)
         self.assertTrue(self.e2 in self.db.get_events(tp))
         # Delete second (by id)
         self.db.delete_event(self.e2.id)
         self.assertFalse(self.e2.has_id())
-        self.assertEquals(len(self.db.get_events(tp)), 0)
+        self.assertEqual(len(self.db.get_events(tp)), 0)
         # Check events
         self.assertEqual(self.db_listener.call_count, 4) # 2 save, 2 delete
         # Assert virtual _save method called: 2 save event, 2 delete event
-        self.assertEquals(self.db._save.call_count, 4)
+        self.assertEqual(self.db._save.call_count, 4)
 
     def testDeleteNonExistingEvent(self):
         self.assertRaises(TimelineIOError, self.db.delete_event, self.e1)
@@ -329,25 +329,25 @@ class MemoryDBSpec(unittest.TestCase):
         other_db.save_event(self.e2)
         self.assertRaises(TimelineIOError, self.db.delete_event, self.c2)
         # Assert virtual _save method not called
-        self.assertEquals(self.db._save.call_count, 0)
+        self.assertEqual(self.db._save.call_count, 0)
 
     def testDisableEnableSave(self):
         self.db.save_category(self.c1)
         # Assert virtual _save method called: save enabled by default
-        self.assertEquals(self.db._save.call_count, 1)
+        self.assertEqual(self.db._save.call_count, 1)
         self.db.disable_save()
         self.db.save_category(self.c1)
-        self.assertEquals(self.db._save.call_count, 1) # still 1
+        self.assertEqual(self.db._save.call_count, 1) # still 1
         self.db.enable_save()
-        self.assertEquals(self.db._save.call_count, 2)
+        self.assertEqual(self.db._save.call_count, 2)
         # Now do the same thing but tell enable not to call save
         self.db.disable_save()
         self.db.save_category(self.c1)
         self.db.enable_save(False)
-        self.assertEquals(self.db._save.call_count, 2)
+        self.assertEqual(self.db._save.call_count, 2)
         # Enabling when enabled should not have any effect
         self.db.enable_save()
-        self.assertEquals(self.db._save.call_count, 2)
+        self.assertEqual(self.db._save.call_count, 2)
 
     def testMoveEventForward(self):
         self.db.save_event(self.e1)

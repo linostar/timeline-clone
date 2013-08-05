@@ -176,7 +176,7 @@ class TimelineViewSpec(unittest.TestCase):
     def test_removes_event_info_from_status_bar_when_un_hovering_event(self):
         self.init_view_with_db()
         self.simulate_mouse_move(0, ANY_Y)
-        self.assertEquals("", self.get_status_text())
+        self.assertEqual("", self.get_status_text())
 
     def test_displays_hidden_event_count_in_status_bar(self):
         self.mock_drawer.hidden_event_count = 3
@@ -249,7 +249,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.simulate_mouse_click(50, 65)
         self.simulate_mouse_move(31, 65)
         self.simulate_mouse_move(89, 65)
-        self.assertEquals(2, self.view.set_size_cursor.call_count)
+        self.assertEqual(2, self.view.set_size_cursor.call_count)
 
     def test_resizes_event_when_dragging_right_drag_icon_on_event(self):
         event = self.given_event_with(start="4 Aug 2010", end="10 Aug 2010", pos=(30, 55), size=(60, 10))
@@ -335,7 +335,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.view.ask_question.return_value = wx.YES
         self.simulate_mouse_click(50, 60)
         self.controller.key_down(wx.WXK_DELETE, False)
-        self.assertEquals([point_event], self.db.get_all_events())
+        self.assertEqual([point_event], self.db.get_all_events())
 
     def test_deletes_no_selected_events_when_pressing_del_and_answering_no_in_dialog(self):
         period_event = self.given_event_with(start="4 Aug 2010", end="10 Aug 2010", pos=(30, 60-5), size=(60, 10))
@@ -447,21 +447,21 @@ class TimelineViewSpec(unittest.TestCase):
         return text
 
     def assert_event_has_period(self, event, start, end):
-        self.assertEquals(gregorian_period(start, end), event.time_period)
+        self.assertEqual(gregorian_period(start, end), event.time_period)
 
     def assert_balloon_drawn_for_event(self, event):
         view_properties = self.get_view_properties_used_when_drawing()
-        self.assertEquals(event, view_properties.hovered_event)
+        self.assertEqual(event, view_properties.hovered_event)
 
     def assert_highlights_region(self, start_end):
         if start_end is not None:
             start_end = (human_time_to_gregorian(start_end[0]), human_time_to_gregorian(start_end[1]))
         view_properties = self.get_view_properties_used_when_drawing()
-        self.assertEquals(start_end, view_properties.period_selection)
+        self.assertEqual(start_end, view_properties.period_selection)
 
     def assert_displays_period(self, start, end):
         view_properties = self.get_view_properties_used_when_drawing()
-        self.assertEquals(
+        self.assertEqual(
             gregorian_period(start, end), view_properties.displayed_period)
 
     def assert_timeline_redrawn(self):
@@ -480,7 +480,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.assertFalse(view_properties.is_selected(event))
 
     def assert_displays_status_text(self, text):
-        self.assertEquals(text, self.get_status_text())
+        self.assertEqual(text, self.get_status_text())
 
     def get_view_properties_used_when_drawing(self):
         self.assertTrue(self.view.redraw_surface.called)

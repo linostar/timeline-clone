@@ -146,16 +146,16 @@ class WhenSavingACategory(CategoryEditorBaseFixture):
         return self.category_repository.save.call_args_list[0][0][0]
 
     def test_saved_category_has_name_from_view(self):
-        self.assertEquals("new_cat", self._getSavedCategory().name)
+        self.assertEqual("new_cat", self._getSavedCategory().name)
 
     def test_saved_category_has_color_from_view(self):
-        self.assertEquals((255, 44, 0), self._getSavedCategory().color)
+        self.assertEqual((255, 44, 0), self._getSavedCategory().color)
 
     def test_saved_category_has_font_color_from_view(self):
-        self.assertEquals((0, 44, 255), self._getSavedCategory().font_color)
+        self.assertEqual((0, 44, 255), self._getSavedCategory().font_color)
 
     def test_saved_category_has_parent_from_view(self):
-        self.assertEquals(self.foo, self._getSavedCategory().parent)
+        self.assertEqual(self.foo, self._getSavedCategory().parent)
 
     def test_the_dialog_is_closed(self):
         self.assertTrue(self.view.close.called)

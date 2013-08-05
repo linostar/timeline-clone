@@ -66,22 +66,22 @@ class AGregorianDateTimePicker(unittest.TestCase):
         self.time_picker.IsShown.return_value = True
         self.time_picker.get_value.return_value = (14, 30, 0)
         self.date_picker.get_value.return_value = (2010, 8, 31)
-        self.assertEquals(Gregorian(2010, 8, 31, 14, 30, 0).to_time(), self.controller.get_value())
+        self.assertEqual(Gregorian(2010, 8, 31, 14, 30, 0).to_time(), self.controller.get_value())
 
     def testGetValueWhenTimeIsHiddenShouldReturnDateWithoutTime(self):
         self.time_picker.IsShown.return_value = False
         self.time_picker.get_value.return_value = (14, 30, 0)
         self.date_picker.get_value.return_value = (2010, 8, 31)
-        self.assertEquals(Gregorian(2010, 8, 31, 0, 0, 0).to_time(), self.controller.get_value())
+        self.assertEqual(Gregorian(2010, 8, 31, 0, 0, 0).to_time(), self.controller.get_value())
 
     def testControllerCanConverDateTupleToWxDate(self):
         wx_date = self.controller.date_tuple_to_wx_date((2010, 8, 31))
-        self.assertEquals((2010, 8, 31), (wx_date.Year, wx_date.Month + 1, wx_date.Day))
+        self.assertEqual((2010, 8, 31), (wx_date.Year, wx_date.Month + 1, wx_date.Day))
         
     def testControllerCanConverWxdateToDateTuple(self):
         wx_date = self.controller.date_tuple_to_wx_date((2010, 8, 31))
         year, month, day = self.controller.wx_date_to_date_tuple(wx_date)
-        self.assertEquals((2010, 8, 31), (year, month, day))
+        self.assertEqual((2010, 8, 31), (year, month, day))
 
 
 class GregorianDatePickerBaseFixture(unittest.TestCase):
@@ -139,11 +139,11 @@ class AGregorianDatePicker(GregorianDatePickerBaseFixture):
 
     def testParsesEnteredDateAsGregorianDate(self):
         self.simulate_change_date_string("2008-05-03")
-        self.assertEquals((2008, 5, 3), self.controller.get_value())
+        self.assertEqual((2008, 5, 3), self.controller.get_value())
 
     def testParsesEnteredDateAsGregorianLargeDate(self):
         self.simulate_change_date_string("9008-05-03")
-        self.assertEquals((9008, 5, 3), self.controller.get_value())
+        self.assertEqual((9008, 5, 3), self.controller.get_value())
 
     def testThrowsValueErrorWhenParsingInvalidDate(self):
         self.simulate_change_date_string("2008-05-xx")
