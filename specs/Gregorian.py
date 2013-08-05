@@ -19,6 +19,8 @@
 import datetime
 import unittest
 
+import wx
+
 import timelinelib.calendar.gregorian as gregorian
 import timelinelib.time.timeline as timeline
 
@@ -82,6 +84,20 @@ class GregorianConversionsSpec(unittest.TestCase):
             self.assertEquals(py_date, datetime.date(y, m, d))
             py_date += datetime.timedelta(days=1)
             jd += 1
+
+    def test_works_same_as_wx_date(self):
+        STEP = 10000
+        STOP = 10 * STEP
+        for i in range(0, STOP, STEP):
+            tm1 = timeline.Time(i, 0)
+            gt = gregorian.from_time(tm1)
+            wt = wx.DateTime()
+            wt.SetJDN(i)
+            ws = "%d-%02d-%02d" % (wt.Year, wt.Month + 1, wt.Day)
+            gs = "%d-%02d-%02d" % (gt.year, gt.month, gt.day)
+            self.assertEqual(ws, gs)
+            tm2 = gt.to_time()
+            self.assertEqual(tm1, tm2)
 
 
 class GregorianPrimitivesSpec(unittest.TestCase):
