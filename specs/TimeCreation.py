@@ -31,7 +31,8 @@ class MonthNamesSpec(unittest.TestCase):
         for i in range(0, STOP, STEP):
             tm1 = Time(i, 0)
             gt = gregorian.from_time(tm1)
-            wt = wx.DateTime().SetJDN(i) 
+            wt = wx.DateTime()
+            wt.SetJDN(i)
             ws = "%d-%02d-%02d" % (wt.Year, wt.Month + 1, wt.Day)
             gs = "%d-%02d-%02d" % (gt.year, gt.month, gt.day)
             self.assertEqual(ws, gs)
