@@ -21,6 +21,8 @@ import wx
 from autopilotlib.app.decorators import Overrides
 from autopilotlib.app.logger import Logger
 from autopilotlib.wrappers.wrapper import Wrapper
+from autopilotlib.app.constants import MILLISECONDS_TO_WAIT_FOR_DIALOG_TO_SHOW
+import autopilotlib.guinatives.facade as win
 
 
 wxFileDialog = wx.FileDialog
@@ -53,6 +55,13 @@ class FileDialog(wx.FileDialog, Wrapper):
     def _explore_and_register(self):
         self._explore()
         FileDialog.register(self)
+        wx.CallLater(MILLISECONDS_TO_WAIT_FOR_DIALOG_TO_SHOW, self._explore_subwindow) 
+
+    def _explore_subwindow(self):
+        if self is not win.get_active_window():
+            self._explore()
+        if self._shown:
+            wx.CallLater(MILLISECONDS_TO_WAIT_FOR_DIALOG_TO_SHOW, self._explore_subwindow) 
         
     @Overrides(wxFileDialog)
     def Destroy(self, *args, **kw):
@@ -60,6 +69,9 @@ class FileDialog(wx.FileDialog, Wrapper):
         Logger.add_close(self)
         wxFileDialog.Destroy(self, *args, **kw)
 
+    def GetMenuBar(self):
+        pass
+    
     @classmethod
     def wrap(self, register):
         wx.FileDialog = FileDialog
