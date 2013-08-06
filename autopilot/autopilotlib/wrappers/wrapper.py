@@ -42,7 +42,7 @@ class Wrapper(object):
     The childrens of a window/dialog are buttons edit fields etc.
     
     Internally this base class is used by all wrappers to explore and register
-    all the childrens of the window/dialog. The eplorer assumes that the 
+    all the childrens of the window/dialog. The explorer assumes that the 
     window to be explored is the 'active' window of the AUT.
     The explorer also uses a Describer class to log the description of the
     window/dialog.
