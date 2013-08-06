@@ -48,7 +48,7 @@ class FileDialog(wx.FileDialog, Wrapper):
         self._shown = True
         Logger.add_open(self)
         self.call_when_win_shows(self._explore_and_register)
-        super(FileDialog, self).ShowModal()
+        return super(FileDialog, self).ShowModal()
     
     def _explore_and_register(self):
         self._explore()
