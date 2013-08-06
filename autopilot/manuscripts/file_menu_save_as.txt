@@ -1,0 +1,8 @@
+Select Menu(Help, "Getting started tutorial") 
+Select Menu(File, "Spara som...") 
+Select Menu(File, "Save as") 
+Enter text(1, "abc")
+Click Button(Spara)
+
+# File already exists
+Click Button(Ja)

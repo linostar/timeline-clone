@@ -14,6 +14,9 @@ Click Button(Avbryt)
 Select Menu(File, "Spara som") 
 Click Button(Avbryt)
 
+Select Menu(File, "Import timeline...") 
+Click Button(Avbryt)
+
 Select Menu(File, "Export Current view to Image...") 
 Click Button(Avbryt)
 
