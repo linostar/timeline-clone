@@ -6,7 +6,7 @@
 #
 
 
-include(file_menu_open_close_dialogs.txt)
+include(file_menu.txt)
 include(edit_menu_open_close_dialogs.txt)
 include(view_menu_open_close_dialogs.txt)
 include(timeline_menu_open_close_dialogs.txt)
