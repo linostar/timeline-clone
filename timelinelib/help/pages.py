@@ -52,6 +52,7 @@ def install(help_system):
     - Help(delete_event)
     - Help(edit_categories)
     - Help(select_events)
+    - Help(import_timeline)
 - **Help(contact)**
 """ % (_("Questions and answers"), _("Concepts"), _("Tasks"))))
 
@@ -103,7 +104,7 @@ During the your edit action the timeline is locked for changes by others. If you
     help_system.install_page(
         id="timeline",
         header=_("Timeline"),
-        related_pages=["scrolling", "zooming", "events", "categories", "contact"],
+        related_pages=["scrolling", "zooming", "import_timeline", "events", "categories", "contact"],
         # TRANSLATORS: This text uses special markup.
         # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
         # Just write them as they are.
@@ -284,6 +285,21 @@ To select an event, click on it. To select multiple events, hold down the *Ctrl*
 """))
 
     help_system.install_page(
+        id="import_timeline",
+        header=_("Import timeline"),
+        related_pages=["timeline"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+This feature can be used to merge two timelines into one.
+
+First open a timeline and then select menu 'File -> Import timeline...' and select the timeline to be imported.
+"""))
+
+    help_system.install_page(
         id="event_containers",
         header=_("Event Containers"),
         # TRANSLATORS: This text uses special markup.
@@ -298,7 +314,7 @@ all other events are moved to give room for the new event. The same thing happen
 if you resize an event within the container.
              
 Have a look at this video for a demo. 
-    http://www.youtube.com/watch?v=dBwEQ3vqB_I
+    <http://www.youtube.com/watch?v=dBwEQ3vqB_I>
 """))
 
     help_system.install_page(
