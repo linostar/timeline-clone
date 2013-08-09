@@ -17,6 +17,7 @@
 
 
 import os.path
+import webbrowser
 
 import wx
 import wx.html
@@ -166,8 +167,7 @@ class HelpBrowser(wx.Frame):
         if url.startswith("page:"):
             self.show_page(url[5:])
         else:
-            pass
-            # open in broswer
+            webbrowser.open(url)
 
     def _go_home(self):
         self.show_page(self.help_system.home_page)
