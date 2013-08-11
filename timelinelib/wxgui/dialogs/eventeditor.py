@@ -26,6 +26,7 @@ from timelinelib.db.utils import safe_locking
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
 from timelinelib.wxgui.components.categorychoice import CategoryChoice
+from timelinelib.wxgui.components.feedbackbutton import FeedbackButton
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import display_error_message
@@ -267,12 +268,17 @@ class EventEditorDialog(wx.Dialog):
 
     def _create_buttons(self, properties_box):
         button_box = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        button_box.InsertStretchSpacer(0)
+        button_box.Insert(0, FeedbackButton(
+            self,
+            info="What would make the event editor dialog better for you?",
+            subject="Feedback on event editor dialog"))
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         properties_box.Add(button_box, flag=wx.EXPAND|wx.ALL, border=BORDER)
 
     def on_return(self):
         self._btn_ok_on_click(None)
-        
+
     def _btn_ok_on_click(self, evt):
         self.controller.create_or_update_event()
 
