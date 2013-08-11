@@ -72,7 +72,7 @@ class AGregorianDateTimePicker(unittest.TestCase):
         self.time_picker.IsShown.return_value = False
         self.time_picker.get_value.return_value = (14, 30, 0)
         self.date_picker.get_value.return_value = (2010, 8, 31)
-        self.assertEqual(Gregorian(2010, 8, 31, 12, 0, 0).to_time(), self.controller.get_value())
+        self.assertEqual(Gregorian(2010, 8, 31, 0, 0, 0).to_time(), self.controller.get_value())
 
     def testControllerCanConverDateTupleToWxDate(self):
         wx_date = self.controller.date_tuple_to_wx_date((2010, 8, 31))

@@ -106,7 +106,7 @@ class GregorianDateTimePickerController(object):
         if self.time_picker.IsShown():
             hour, minute, second = self.time_picker.get_value()
         else:
-            hour, minute, second = (12, 0, 0)
+            hour, minute, second = (0, 0, 0)
         year, month, day = self.date_picker.get_value()
         return Gregorian(year, month, day, hour, minute, second).to_time()
 
