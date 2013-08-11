@@ -137,7 +137,7 @@ def from_julian_day(julian_day):
     c = a - ((b * 146097) // 4)
       = a - (((((4 * a) + 3) // 146097) * 146097) // 4)
 
-    If c >= 0, then
+    For c to be >= 0, then
 
     (((((4 * a) + 3) // 146097) * 146097) // 4) <= a
 
