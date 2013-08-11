@@ -43,11 +43,11 @@ class Time(object):
             return Time(self.julian_day + seconds / SECONDS_IN_DAY, seconds % SECONDS_IN_DAY)
         raise TypeError("Time + %s not supported" % type(delta))
 
-    def __sub__(self, dt):
-        if isinstance(dt, TimeDelta):
-            seconds = self.seconds - dt.seconds
+    def __sub__(self, other):
+        if isinstance(other, TimeDelta):
+            seconds = self.seconds - other.seconds
             if seconds < 0:
-                if seconds % SECONDS_IN_DAY  == 0:
+                if seconds % SECONDS_IN_DAY == 0:
                     days = abs(seconds) / SECONDS_IN_DAY
                     seconds = 0
                 else:
@@ -57,8 +57,8 @@ class Time(object):
             else:
                 return Time(self.julian_day, seconds)
         else:
-            days_diff = self.julian_day - dt.julian_day
-            seconds_diff = self.seconds - dt.seconds
+            days_diff = self.julian_day - other.julian_day
+            seconds_diff = self.seconds - other.seconds
             return TimeDelta(days_diff * SECONDS_IN_DAY + seconds_diff)
 
     def __gt__(self, dt):

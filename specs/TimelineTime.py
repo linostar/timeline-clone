@@ -45,13 +45,15 @@ class TimeSpec(unittest.TestCase):
             Time(10, 61) + delta_from_days(1),
             Time(11, 61))
 
-    def test_sub(self):
+    def test_sub_delta(self):
         self.assertEqual(
             Time(10, 61) - delta_from_seconds(1),
             Time(10, 60))
         self.assertEqual(
             Time(10, 0) - delta_from_seconds(1),
             Time(9, 24 * 60 * 60 - 1))
+
+    def test_sub_time(self):
         self.assertEqual(
             Time(10, 0) - Time(5, 0),
             delta_from_seconds(5 * 24 * 60 * 60))
