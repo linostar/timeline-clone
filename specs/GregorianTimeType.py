@@ -206,10 +206,6 @@ class GregorianStripWeekSpec(unittest.TestCase):
 
 class GregorianStripWeekdaySpec(unittest.TestCase):
 
-    def setUp(self):
-        self.time_type = GregorianTimeType()
-        self.strip = StripWeekday()
-
     def test_start(self):
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 12:13:14")),
@@ -220,13 +216,22 @@ class GregorianStripWeekdaySpec(unittest.TestCase):
             self.strip.increment(self.time_type.parse_time("2013-07-07 00:00:00")),
             self.time_type.parse_time("2013-07-08 00:00:00"))
 
-    def test_label(self):
+    def test_label_minor(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
-            _("Sun"))
+            "#Sun#")
+
+    def test_label_major(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
-            "%s 7 %s 2013" % (_("Sun"), _("Jul")))
+            "#Sun# 7 #Jul# 2013")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("-5-07-07 00:00:00"), True),
+            "#Fri# 7 #Jul# 6 BC")
+
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+        self.strip = StripWeekday()
 
 
 class GregorianStripHourSpec(unittest.TestCase):

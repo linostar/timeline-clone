@@ -656,7 +656,7 @@ class StripWeekday(Strip):
             return "%s %s %s %s" % (abbreviated_name_of_weekday(day_of_week),
                                     time.day,
                                     abbreviated_name_of_month(time.month),
-                                    time.year)
+                                    format_year(time.year))
         return abbreviated_name_of_weekday(time.get_day_of_week())
 
     def start(self, time):
