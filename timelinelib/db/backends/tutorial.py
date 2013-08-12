@@ -20,6 +20,8 @@ from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
+from timelinelib.db.objects import Container
+from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.timeline import delta_from_days
 import timelinelib.calendar.gregorian as gregorian
@@ -92,6 +94,23 @@ def create_in_memory_tutorial_db():
           "Choose File/New/File Timeline to create a timeline that is saved on "
           "disk."),
         tutcreator.get_days_delta(23))
+    container = tutcreator.add_container(
+        _("Container"),
+        _("?"),
+        tutcreator.get_days_delta(5),
+        tutcreator.get_days_delta(10))
+    tutcreator.add_subevent(
+        container,
+        _("Resize me"),
+        _("Container Subevent 1"),
+        tutcreator.get_days_delta(5),
+        tutcreator.get_days_delta(10))
+    tutcreator.add_subevent(
+        container,
+        _("Drag me"),
+        _("Container Subevent 2"),
+        tutcreator.get_days_delta(12),
+        tutcreator.get_days_delta(18))
     return tutcreator.get_db()
 
 
@@ -113,19 +132,38 @@ class TutorialTimelineCreator(object):
             parent = self.last_cat
         else:
             parent = None
+        self.prev_cat = self.last_cat 
         self.last_cat = Category(name, color, font_color, True, parent)
         self.db.save_category(self.last_cat)
 
     def add_event(self, text, description, start_add, end_add=None):
-        start = self.start + start_add
-        end   = start
-        if end_add is not None:
-            end = self.start + end_add
+        start, end = self.calc_start_end(start_add, end_add)
         evt = Event(self.db.get_time_type(), start, end, text, self.last_cat)
         if description:
             evt.set_data("description", description)
         self.db.save_event(evt)
 
+    def add_container(self, text, description, start_add, end_add=None):
+        start, end = self.calc_start_end(start_add, end_add)
+        container = Container(self.db.get_time_type(), start, end, text, self.prev_cat)
+        self.db.save_event(container)
+        return container
+
+    def add_subevent(self, container, text, description, start_add, end_add=None):
+        start, end = self.calc_start_end(start_add, end_add)
+        evt = Subevent(self.db.get_time_type(), start, end, text, self.last_cat)
+        if description:
+            evt.set_data("description", description)
+        self.db.save_event(evt)
+        container.register_subevent(evt)
+        
+    def calc_start_end(self, start_add, end_add=None):
+        start = self.start + start_add
+        end = start
+        if end_add is not None:
+            end = self.start + end_add
+        return (start, end)
+    
     def get_db(self):
         return self.db
 
