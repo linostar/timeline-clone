@@ -547,7 +547,7 @@ class StripYear(Strip):
         else:
             return str(year)
 
-        
+
 class StripMonth(Strip):
 
     def label(self, time, major=False):
@@ -599,9 +599,7 @@ class StripWeek(Strip):
         self.config = config
 
     def label(self, time, major=False):
-        # TODO: Local: (year, month, ...) -> int (week number)
         if major:
-            # Example: Week 23 (1-7 Jan 2009)
             first_weekday = self.start(time)
             next_first_weekday = self.increment(first_weekday)
             last_weekday = next_first_weekday - delta_from_days(1)
@@ -613,6 +611,26 @@ class StripWeek(Strip):
                 return range_string
         # This strip should never be used as minor
         return ""
+
+    def _time_range_string(self, start, end):
+        start = gregorian.from_time(start)
+        end = gregorian.from_time(end)
+        if start.year == end.year:
+            if start.month == end.month:
+                return "%s-%s %s %s" % (start.day, end.day,
+                                        abbreviated_name_of_month(start.month),
+                                        format_year(start.year))
+            return "%s %s-%s %s %s" % (start.day,
+                                       abbreviated_name_of_month(start.month),
+                                       end.day,
+                                       abbreviated_name_of_month(end.month),
+                                       format_year(start.year))
+        return "%s %s %s-%s %s %s" % (start.day,
+                                      abbreviated_name_of_month(start.month),
+                                      format_year(start.year),
+                                      end.day,
+                                      abbreviated_name_of_month(end.month),
+                                      format_year(end.year))
 
     def start(self, time):
         if self.config.week_start == "monday":
@@ -627,33 +645,6 @@ class StripWeek(Strip):
 
     def get_font(self, time_period):
         return get_default_font(8)
-
-    def _time_range_string(self, time1, time2):
-        """
-        Examples:
-
-        * 1-7 Jun 2009
-        * 28 Jun-3 Jul 2009
-        * 28 Jun 08-3 Jul 2009
-        """
-        time1 = gregorian.from_time(time1)
-        time2 = gregorian.from_time(time2)
-        if time1.year == time2.year:
-            if time1.month == time2.month:
-                return "%s-%s %s %s" % (time1.day, time2.day,
-                                        abbreviated_name_of_month(time1.month),
-                                        time1.year)
-            return "%s %s-%s %s %s" % (time1.day,
-                                       abbreviated_name_of_month(time1.month),
-                                       time2.day,
-                                       abbreviated_name_of_month(time2.month),
-                                       time1.year)
-        return "%s %s %s-%s %s %s" % (time1.day,
-                                      abbreviated_name_of_month(time1.month),
-                                      time1.year,
-                                      time2.day,
-                                      abbreviated_name_of_month(time2.month),
-                                      time2.year)
 
 
 class StripWeekday(Strip):
@@ -698,6 +689,13 @@ class StripHour(Strip):
 
     def get_font(self, time_period):
         return get_default_font(8)
+
+
+def format_year(year):
+    if year <= 0:
+        return "%d BC" % (1 - year)
+    else:
+        return str(year)
 
 
 def move_period_num_days(period, num):

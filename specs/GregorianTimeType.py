@@ -149,38 +149,59 @@ class GregorianTimeTypeSpec(unittest.TestCase):
 
 class GregorianStripWeekSpec(unittest.TestCase):
 
-    def setUp(self):
-        self.time_type = GregorianTimeType()
-        self.config = mock.Mock()
-        self.strip = StripWeek(self.config)
-
-    def test_start(self):
+    def test_start_when_week_starts_on_sunday(self):
         self.config.week_start = "sunday"
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 11:00:00")),
             self.time_type.parse_time("2013-07-07 00:00:00"))
+
+    def test_start_when_week_starts_on_monday(self):
         self.config.week_start = "monday"
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 11:00:00")),
             self.time_type.parse_time("2013-07-08 00:00:00"))
 
-    def test_increment(self):
+    def test_increments_7_days(self):
         self.assertEqual(
             self.strip.increment(self.time_type.parse_time("2013-07-07 00:00:00")),
             self.time_type.parse_time("2013-07-14 00:00:00"))
 
-    def test_label(self):
-        self.config.week_start = "sunday"
+    def test_label_minor(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
             "")
+
+    def test_label_major_has_no_week_when_week_starts_on_sunday(self):
+        self.config.week_start = "sunday"
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
-            "7-13 %s 2013" % _("Jul"))
+            "7-13 #Jul# 2013")
+
+    def test_label_major_when_week_starts_on_monday(self):
         self.config.week_start = "monday"
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
-            "%s 27 (1-7 %s 2013)" % (_("Week"), _("Jul")))
+            "#Week# 27 (1-7 #Jul# 2013)")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("-4-07-07 00:00:00"), True),
+            "#Week# 27 (1-7 #Jul# 5 BC)")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-11-25 00:00:00"), True),
+            "#Week# 48 (25 #Nov#-1 #Dec# 2013)")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("-4-11-25 00:00:00"), True),
+            "#Week# 48 (25 #Nov#-1 #Dec# 5 BC)")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("2013-12-30 00:00:00"), True),
+            "#Week# 1 (30 #Dec# 2013-5 #Jan# 2014)")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("-4-12-30 00:00:00"), True),
+            "#Week# 1 (30 #Dec# 5 BC-5 #Jan# 4 BC)")
+
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+        self.config = mock.Mock()
+        self.strip = StripWeek(self.config)
 
 
 class GregorianStripWeekdaySpec(unittest.TestCase):
