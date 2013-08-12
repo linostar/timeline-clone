@@ -266,10 +266,6 @@ class GregorianStripHourSpec(unittest.TestCase):
 
 class GregorianStripCenturySpec(unittest.TestCase):
 
-    def setUp(self):
-        self.time_type = GregorianTimeType()
-        self.strip = StripCentury()
-
     def test_start(self):
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 12:33:15")),
@@ -280,20 +276,22 @@ class GregorianStripCenturySpec(unittest.TestCase):
             self.strip.increment(self.time_type.parse_time("2000-01-01 00:00:00")),
             self.time_type.parse_time("2100-01-01 00:00:00"))
 
-    def test_label(self):
+    def test_label_minor(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
             "")
+
+    def test_label_major(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
             "21 century")
 
-
-class GregorianStripDaySpec(unittest.TestCase):
-
     def setUp(self):
         self.time_type = GregorianTimeType()
-        self.strip = StripDay()
+        self.strip = StripCentury()
+
+
+class GregorianStripDaySpec(unittest.TestCase):
 
     def test_start(self):
         self.assertEqual(
@@ -305,13 +303,22 @@ class GregorianStripDaySpec(unittest.TestCase):
             self.strip.increment(self.time_type.parse_time("2013-07-10 00:00:00")),
             self.time_type.parse_time("2013-07-11 00:00:00"))
 
-    def test_label(self):
+    def test_label_minor(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
             "7")
+
+    def test_label_major(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00"), True),
-            "7 %s 2013" % _("Jul"))
+            "7 #Jul# 2013")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("-5-07-07 00:00:00"), True),
+            "7 #Jul# 6 BC")
+
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+        self.strip = StripDay()
 
 
 class GregorianStripMonthSpec(unittest.TestCase):

@@ -574,7 +574,9 @@ class StripDay(Strip):
     def label(self, time, major=False):
         time = gregorian.from_time(time)
         if major:
-            return "%s %s %s" % (time.day, abbreviated_name_of_month(time.month), time.year)
+            return "%s %s %s" % (time.day,
+                                 abbreviated_name_of_month(time.month),
+                                 format_year(time.year))
         return str(time.day)
 
     def start(self, time):
