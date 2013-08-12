@@ -553,7 +553,8 @@ class StripMonth(Strip):
     def label(self, time, major=False):
         time = gregorian.from_time(time)
         if major:
-            return "%s %s" % (abbreviated_name_of_month(time.month), time.year)
+            return "%s %s" % (abbreviated_name_of_month(time.month),
+                              format_year(time.year))
         return abbreviated_name_of_month(time.month)
 
     def start(self, time):
