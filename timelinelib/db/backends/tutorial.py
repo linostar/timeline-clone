@@ -49,6 +49,26 @@ def create_in_memory_tutorial_db():
           "You can also middle click with the mouse to center around that point."),
         tutcreator.get_days_delta(5),
         tutcreator.get_days_delta(10))
+    container = tutcreator.add_container(
+        _("Container"),
+        _("?"),
+        tutcreator.get_days_delta(5),
+        tutcreator.get_days_delta(10))
+    tutcreator.add_subevent(
+        container,
+        _("Resize me"),
+        _("Container Subevent 1\nClick on the event to get the resize handles"),
+        tutcreator.get_days_delta(5),
+        tutcreator.get_days_delta(10))
+    tutcreator.add_subevent(
+        container,
+        _("Drag me"),
+        _("Container Subevent 2\n\n"
+          "Click on the event to get the drag handle and drag it.\n\n"
+          "To drag the whole container, click on it while holding down the Alt key. "
+          "Keep the Alt key down and find the drag point at the center of the container and drag it."),
+        tutcreator.get_days_delta(12),
+        tutcreator.get_days_delta(18))
     tutcreator.add_event(
         _("Zoom"),
         _("Hold down Ctrl while scrolling the mouse wheel."
@@ -94,26 +114,6 @@ def create_in_memory_tutorial_db():
           "Choose File/New/File Timeline to create a timeline that is saved on "
           "disk."),
         tutcreator.get_days_delta(23))
-    container = tutcreator.add_container(
-        _("Container"),
-        _("?"),
-        tutcreator.get_days_delta(5),
-        tutcreator.get_days_delta(10))
-    tutcreator.add_subevent(
-        container,
-        _("Resize me"),
-        _("Container Subevent 1\nClick on the event to get the resize handles"),
-        tutcreator.get_days_delta(5),
-        tutcreator.get_days_delta(10))
-    tutcreator.add_subevent(
-        container,
-        _("Drag me"),
-        _("Container Subevent 2\n\n"
-          "Click on the event to get the drag handle and drag it.\n\n"
-          "To drag the whole container, click on it while holding down the Alt key. "
-          "Keep the Alt key down and find the drag point at the center of the container and drag it."),
-        tutcreator.get_days_delta(12),
-        tutcreator.get_days_delta(18))
     return tutcreator.get_db()
 
 
