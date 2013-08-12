@@ -102,13 +102,16 @@ def create_in_memory_tutorial_db():
     tutcreator.add_subevent(
         container,
         _("Resize me"),
-        _("Container Subevent 1"),
+        _("Container Subevent 1\nClick on the event to get the resize handles"),
         tutcreator.get_days_delta(5),
         tutcreator.get_days_delta(10))
     tutcreator.add_subevent(
         container,
         _("Drag me"),
-        _("Container Subevent 2"),
+        _("Container Subevent 2\n\n"
+          "Click on the event to get the drag handle and drag it.\n\n"
+          "To drag the whole container, click on it while holding down the Alt key. "
+          "Keep the Alt key down and find the drag point at the center of the container and drag it."),
         tutcreator.get_days_delta(12),
         tutcreator.get_days_delta(18))
     return tutcreator.get_db()
