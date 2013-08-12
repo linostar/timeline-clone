@@ -677,7 +677,7 @@ class StripHour(Strip):
         time = gregorian.from_time(time)
         if major:
             return "%s %s %s %s" % (time.day, abbreviated_name_of_month(time.month),
-                                    time.year, time.hour)
+                                    format_year(time.year), time.hour)
         return str(time.hour)
 
     def start(self, time):
