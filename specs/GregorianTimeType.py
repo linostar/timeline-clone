@@ -386,10 +386,6 @@ class GregorianStripYearSpec(unittest.TestCase):
 
 class GregorianStripDecadeSpec(unittest.TestCase):
 
-    def setUp(self):
-        self.time_type = GregorianTimeType()
-        self.strip = StripDecade()
-
     def test_start(self):
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 12:33:15")),
@@ -404,6 +400,13 @@ class GregorianStripDecadeSpec(unittest.TestCase):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
             "2010s")
+        self.assertEqual(
+            self.strip.label(self.time_type.parse_time("-5-07-07 00:00:00")),
+            "10s BC")
+
+    def setUp(self):
+        self.time_type = GregorianTimeType()
+        self.strip = StripDecade()
 
 
 class GregorianTimeTypeDeltaFormattingSpec(unittest.TestCase):

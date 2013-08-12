@@ -503,9 +503,8 @@ class StripCentury(Strip):
 class StripDecade(Strip):
 
     def label(self, time, major=False):
-        # TODO: This only works for English. Possible to localize?
         time = gregorian.from_time(time)
-        return str(self._decade_start_year(time.year)) + "s"
+        return format_decade(self._decade_start_year(time.year))
 
     def start(self, time):
         gregorian_time = gregorian.from_time(time)
@@ -692,6 +691,14 @@ def format_year(year):
         return "%d BC" % (1 - year)
     else:
         return str(year)
+
+
+def format_decade(start_year):
+    # TODO: This only works for English. Possible to localize?
+    if start_year <= 0:
+        return "%ds BC" % abs(start_year)
+    else:
+        return str(start_year) + "s"
 
 
 def move_period_num_days(period, num):
