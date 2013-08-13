@@ -18,6 +18,7 @@ Bug fixes:
 
   * Fixed exception when right-clicking in CatergoriesEditor
   * When 'ends today' start time can't be > now, anymore
+  * Search bar exception when clicking button, fixed.
 
 Removed features:
 

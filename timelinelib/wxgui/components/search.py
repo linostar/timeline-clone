@@ -81,7 +81,7 @@ class GuiCreator(object):
         self.Show(False)
 
     def _search_on_search_btn(self, e):
-        self._search()
+        self.controller.search()
 
     def _search_on_text_enter(self, e):
         self.controller.search()
@@ -108,7 +108,7 @@ class SearchBarController(object):
     def search(self):
         new_search = self.view.get_value()
         if self.last_search is not None and self.last_search == new_search:
-            self._next()
+            self.next()
         else:
             self.last_search = new_search
             if self.drawing_area_panel is not None:
