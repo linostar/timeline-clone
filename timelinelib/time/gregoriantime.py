@@ -486,7 +486,7 @@ class StripCentury(Strip):
 
     def start(self, time):
         time = gregorian.from_time(time)
-        return gregorian.from_date(max(self._century_start_year(time.year), 10), 1, 1).to_time()
+        return gregorian.from_date(self._century_start_year(time.year), 1, 1).to_time()
 
     def increment(self, time):
         gregorian_time = gregorian.from_time(time)
@@ -503,9 +503,8 @@ class StripCentury(Strip):
 class StripDecade(Strip):
 
     def label(self, time, major=False):
-        # TODO: This only works for English. Possible to localize?
         time = gregorian.from_time(time)
-        return str(self._decade_start_year(time.year)) + "s"
+        return format_decade(self._decade_start_year(time.year))
 
     def start(self, time):
         gregorian_time = gregorian.from_time(time)
@@ -526,8 +525,7 @@ class StripDecade(Strip):
 class StripYear(Strip):
 
     def label(self, time, major=False):
-        time = gregorian.from_time(time)
-        return self._convert_year_to_bc(time.year)
+        return format_year(gregorian.from_time(time).year)
 
     def start(self, time):
         gregorian_time = gregorian.from_time(time)
@@ -541,19 +539,14 @@ class StripYear(Strip):
     def get_font(self, time_period):
         return get_default_font(8)
 
-    def _convert_year_to_bc(self, year):
-        if year <= 0:
-            return "%d BC" % (1 - year)
-        else:
-            return str(year)
 
-        
 class StripMonth(Strip):
 
     def label(self, time, major=False):
         time = gregorian.from_time(time)
         if major:
-            return "%s %s" % (abbreviated_name_of_month(time.month), time.year)
+            return "%s %s" % (abbreviated_name_of_month(time.month),
+                              format_year(time.year))
         return abbreviated_name_of_month(time.month)
 
     def start(self, time):
@@ -574,7 +567,9 @@ class StripDay(Strip):
     def label(self, time, major=False):
         time = gregorian.from_time(time)
         if major:
-            return "%s %s %s" % (time.day, abbreviated_name_of_month(time.month), time.year)
+            return "%s %s %s" % (time.day,
+                                 abbreviated_name_of_month(time.month),
+                                 format_year(time.year))
         return str(time.day)
 
     def start(self, time):
@@ -599,9 +594,7 @@ class StripWeek(Strip):
         self.config = config
 
     def label(self, time, major=False):
-        # TODO: Local: (year, month, ...) -> int (week number)
         if major:
-            # Example: Week 23 (1-7 Jan 2009)
             first_weekday = self.start(time)
             next_first_weekday = self.increment(first_weekday)
             last_weekday = next_first_weekday - delta_from_days(1)
@@ -613,6 +606,26 @@ class StripWeek(Strip):
                 return range_string
         # This strip should never be used as minor
         return ""
+
+    def _time_range_string(self, start, end):
+        start = gregorian.from_time(start)
+        end = gregorian.from_time(end)
+        if start.year == end.year:
+            if start.month == end.month:
+                return "%s-%s %s %s" % (start.day, end.day,
+                                        abbreviated_name_of_month(start.month),
+                                        format_year(start.year))
+            return "%s %s-%s %s %s" % (start.day,
+                                       abbreviated_name_of_month(start.month),
+                                       end.day,
+                                       abbreviated_name_of_month(end.month),
+                                       format_year(start.year))
+        return "%s %s %s-%s %s %s" % (start.day,
+                                      abbreviated_name_of_month(start.month),
+                                      format_year(start.year),
+                                      end.day,
+                                      abbreviated_name_of_month(end.month),
+                                      format_year(end.year))
 
     def start(self, time):
         if self.config.week_start == "monday":
@@ -628,33 +641,6 @@ class StripWeek(Strip):
     def get_font(self, time_period):
         return get_default_font(8)
 
-    def _time_range_string(self, time1, time2):
-        """
-        Examples:
-
-        * 1-7 Jun 2009
-        * 28 Jun-3 Jul 2009
-        * 28 Jun 08-3 Jul 2009
-        """
-        time1 = gregorian.from_time(time1)
-        time2 = gregorian.from_time(time2)
-        if time1.year == time2.year:
-            if time1.month == time2.month:
-                return "%s-%s %s %s" % (time1.day, time2.day,
-                                        abbreviated_name_of_month(time1.month),
-                                        time1.year)
-            return "%s %s-%s %s %s" % (time1.day,
-                                       abbreviated_name_of_month(time1.month),
-                                       time2.day,
-                                       abbreviated_name_of_month(time2.month),
-                                       time1.year)
-        return "%s %s %s-%s %s %s" % (time1.day,
-                                      abbreviated_name_of_month(time1.month),
-                                      time1.year,
-                                      time2.day,
-                                      abbreviated_name_of_month(time2.month),
-                                      time2.year)
-
 
 class StripWeekday(Strip):
 
@@ -665,7 +651,7 @@ class StripWeekday(Strip):
             return "%s %s %s %s" % (abbreviated_name_of_weekday(day_of_week),
                                     time.day,
                                     abbreviated_name_of_month(time.month),
-                                    time.year)
+                                    format_year(time.year))
         return abbreviated_name_of_weekday(time.get_day_of_week())
 
     def start(self, time):
@@ -686,7 +672,7 @@ class StripHour(Strip):
         time = gregorian.from_time(time)
         if major:
             return "%s %s %s %s" % (time.day, abbreviated_name_of_month(time.month),
-                                    time.year, time.hour)
+                                    format_year(time.year), time.hour)
         return str(time.hour)
 
     def start(self, time):
@@ -698,6 +684,21 @@ class StripHour(Strip):
 
     def get_font(self, time_period):
         return get_default_font(8)
+
+
+def format_year(year):
+    if year <= 0:
+        return "%d BC" % (1 - year)
+    else:
+        return str(year)
+
+
+def format_decade(start_year):
+    # TODO: This only works for English. Possible to localize?
+    if start_year <= 0:
+        return "%ds BC" % abs(start_year)
+    else:
+        return str(start_year) + "s"
 
 
 def move_period_num_days(period, num):
