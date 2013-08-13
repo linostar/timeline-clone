@@ -4,6 +4,9 @@ Select Menu(Help, "Getting started tutorial")
 Select Menu(Help, Contents)
 Hide Frame(Help)
 
+Select Menu(Help, "Give Feedback...")
+Click Button("Stäng")
+
 Select Menu(Help, Contact )
 Hide Frame(Help)
 
