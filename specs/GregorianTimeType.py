@@ -270,6 +270,15 @@ class GregorianStripCenturySpec(unittest.TestCase):
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 12:33:15")),
             self.time_type.parse_time("2000-01-01 00:00:00"))
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("1013-07-10 12:33:15")),
+            self.time_type.parse_time("1000-01-01 00:00:00"))
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("13-07-10 12:33:15")),
+            self.time_type.parse_time("0-01-01 00:00:00"))
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("-33-07-10 12:33:15")),
+            self.time_type.parse_time("-100-01-01 00:00:00"))
 
     def test_increment(self):
         self.assertEqual(
@@ -390,6 +399,15 @@ class GregorianStripDecadeSpec(unittest.TestCase):
         self.assertEqual(
             self.strip.start(self.time_type.parse_time("2013-07-10 12:33:15")),
             self.time_type.parse_time("2010-01-01 00:00:00"))
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("5-07-10 12:33:15")),
+            self.time_type.parse_time("0-01-01 00:00:00"))
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("-5-07-10 12:33:15")),
+            self.time_type.parse_time("-10-01-01 00:00:00"))
+        self.assertEqual(
+            self.strip.start(self.time_type.parse_time("-11-07-10 12:33:15")),
+            self.time_type.parse_time("-20-01-01 00:00:00"))
 
     def test_increment(self):
         self.assertEqual(

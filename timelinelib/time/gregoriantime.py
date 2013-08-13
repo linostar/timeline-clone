@@ -486,7 +486,7 @@ class StripCentury(Strip):
 
     def start(self, time):
         time = gregorian.from_time(time)
-        return gregorian.from_date(max(self._century_start_year(time.year), 10), 1, 1).to_time()
+        return gregorian.from_date(self._century_start_year(time.year), 1, 1).to_time()
 
     def increment(self, time):
         gregorian_time = gregorian.from_time(time)
