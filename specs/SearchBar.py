@@ -78,6 +78,12 @@ class SearchBarTestCase(unittest.TestCase):
         self.controller.prev()
         self.assertTrue(self.controller.result_index == 0)
 
+    def test_searching_for_same_term_twice_goes_to_next_match(self):
+        self.view.get_value.return_value = "three"
+        self.controller.search()
+        self.controller.search()
+        self.assertEqual(self.controller.result_index, 1)
+
     def test_no_drawing_area_panel_hides_search_bar(self):
         self.controller.set_drawing_area_panel(None)
         self.view.Enable.assert_called_with(False)
