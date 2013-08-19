@@ -57,7 +57,6 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
         self.DeleteAllItems()
         self.root = self.AddRoot("") # Hidden because of TR_HIDE_ROOT
         self._update_categories_from_tree(tree, self.root, view_properties)
-        self.ExpandAll()
 
     def get_selected_category(self):
         item = self.GetSelection()
@@ -107,6 +106,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
                 visible = view_properties.category_visible(cat)
                 self.CheckItem2(item, visible)
             self._update_categories_from_tree(subtree, item, view_properties)
+            self.Expand(item)
 
     def _on_right_down(self, e):
         def edit_function():
