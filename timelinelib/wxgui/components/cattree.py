@@ -83,6 +83,27 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
         self.mnu_delete = wx.MenuItem(self.mnu, wx.ID_ANY, _("Delete"))
         self.Bind(wx.EVT_MENU, self._mnu_delete_on_click, self.mnu_delete)
         self.mnu.AppendItem(self.mnu_delete)
+        self.mnu.AppendSeparator()
+        self.mnu_check_children = wx.MenuItem(self.mnu, wx.ID_ANY, 
+                                              _("Check children"))
+        self.Bind(wx.EVT_MENU, self._mnu_check_children_on_click, 
+                  self.mnu_check_children)
+        self.mnu.AppendItem(self.mnu_check_children)
+        self.mnu_check_all_children = wx.MenuItem(self.mnu, wx.ID_ANY, 
+                                                  _("Check all children"))
+        self.Bind(wx.EVT_MENU, self._mnu_check_all_children_on_click, 
+                  self.mnu_check_all_children)
+        self.mnu.AppendItem(self.mnu_check_all_children)
+        self.mnu_uncheck_children = wx.MenuItem(self.mnu, wx.ID_ANY, 
+                                                _("Uncheck children"))
+        self.Bind(wx.EVT_MENU, self._mnu_uncheck_children_on_click, 
+                  self.mnu_uncheck_children)
+        self.mnu.AppendItem(self.mnu_uncheck_children)
+        self.mnu_uncheck_all_children = wx.MenuItem(self.mnu, wx.ID_ANY, 
+                                                    _("Uncheck all children"))
+        self.Bind(wx.EVT_MENU, self._mnu_uncheck_all_children_on_click, 
+                  self.mnu_uncheck_all_children)
+        self.mnu.AppendItem(self.mnu_uncheck_all_children)
         # Events on control
         self.Bind(customtreectrl.EVT_TREE_ITEM_CHECKED,
                   self._on_tree_item_checked, self)
@@ -94,6 +115,11 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
         enable = self.get_selected_category() is not None
         for menu_item in enable_if_item:
             menu_item.Enable(enable)
+        if self.controller.timeline_view is None:
+            self.mnu_check_children.Enable(False)
+            self.mnu_check_all_children.Enable(False)
+            self.mnu_uncheck_children.Enable(False)
+            self.mnu_uncheck_all_children.Enable(False)
 
     def _update_categories_from_tree(self, tree, root_item, view_properties):
         for (cat, subtree) in tree:
@@ -136,6 +162,22 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
 
     def _mnu_delete_on_click(self, e):
         self.controller.delete_selected_category()
+
+    def _mnu_check_children_on_click(self, e):
+        item = self.GetSelection()
+        self.controller.check_children(item, True, False)
+
+    def _mnu_check_all_children_on_click(self, e):
+        item = self.GetSelection()
+        self.controller.check_children(item, True, True)
+       
+    def _mnu_uncheck_children_on_click(self, e):
+        item = self.GetSelection()
+        self.controller.check_children(item, False, False)
+        
+    def _mnu_uncheck_all_children_on_click(self, e):
+        item = self.GetSelection()
+        self.controller.check_children(item, False, True)
 
     def _on_tree_item_checked(self, e):
         tree_item = e.GetItem()
@@ -185,6 +227,24 @@ class CategoriesTreeController(object):
                             "timeline view.")
         self.timeline_view.get_view_properties().set_category_visible(cat, checked)
         self.timeline_view.redraw_timeline()
+
+    def check_children(self, item, check, check_all):
+        if self.timeline_view is None:
+            raise Exception("Checking not allowed when there is no "
+                            "timeline view.")
+        if item is not None:
+            for child in item.GetChildren():
+                self._check_child(child, check, check_all)
+            self.view.RefreshSubtree(item)
+            self.timeline_view.redraw_timeline()
+
+    def _check_child(self, item, check, check_all):
+        item.Check(check)
+        cat = item.GetData()
+        self.timeline_view.get_view_properties().set_category_visible(cat, check)
+        if check_all:
+            for child in item.GetChildren():
+                self._check_child(child, check, check_all)
 
     def destroy(self):
         if self.db:

@@ -9,6 +9,7 @@ New features, enhancements:
   * Select all, Ctrl-A implemented in event editor description.
   * New entry in Help menu for feedback reporting
   * New entry in Help menu for feature descriptions and feedback reporting
+  * New entries in categories tree context menu allowing children check/uncheck
   * Balloon size restricted to not expand over timeline border
   * Help documentation updated
   * Adjustments made to be able to use wxpython version 2.9
