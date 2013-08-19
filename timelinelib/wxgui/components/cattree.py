@@ -23,8 +23,6 @@ from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.utils import safe_locking
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
-from timelinelib.wxgui.utils import _ask_question
-from timelinelib.wxgui.utils import category_tree
 import timelinelib.wxgui.utils as gui_utils
 
 
@@ -45,7 +43,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
             customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style|agwStyle)
         else:
             customtreectrl.CustomTreeCtrl.__init__(self, parent, style=style, agwStyle=agwStyle)
-        self.SetBackgroundColour('WHITE')    
+        self.SetBackgroundColour('WHITE')
         self._create_gui()
         self.controller = CategoriesTreeController(self, fn_handle_db_error)
 
@@ -118,7 +116,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
             self._update_menu_enableness()
             self.PopupMenu(self.mnu)
         safe_locking(self.parent, edit_function)
-        
+
     def _on_key_down(self, e):
         def edit_function():
             self.controller.delete_selected_category()
@@ -210,7 +208,7 @@ class CategoriesTreeController(object):
         except TimelineIOError, e:
             self.fn_handle_db_error(e)
         else:
-            tree = category_tree(categories)
+            tree = gui_utils.category_tree(categories)
             if self.timeline_view:
                 vp = self.timeline_view.get_view_properties()
             else:
@@ -240,7 +238,7 @@ def delete_category(parent_ctrl, db, cat, fn_handle_db_error):
         update_warning = _("Events belonging to '%s' will now belong "
                            "to '%s'.") % (cat.name, cat.parent.name)
     question = "%s\n\n%s" % (delete_warning, update_warning)
-    if _ask_question(question, parent_ctrl) == wx.YES:
+    if gui_utils._ask_question(question, parent_ctrl) == wx.YES:
         try:
             db.delete_category(cat)
         except TimelineIOError, e:
