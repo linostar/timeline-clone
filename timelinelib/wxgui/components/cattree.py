@@ -97,12 +97,12 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
                   self.mnu_check_all_children)
         self.mnu.AppendItem(self.mnu_check_all_children)
         self.mnu_check_parents = wx.MenuItem(self.mnu, wx.ID_ANY, 
-                                             _("Check parents"))
+                                             _("Check all parents"))
         self.Bind(wx.EVT_MENU, self._mnu_check_parents_on_click, 
                   self.mnu_check_parents)
         self.mnu.AppendItem(self.mnu_check_parents)
         self.mnu_check_all_parents = wx.MenuItem(self.mnu, wx.ID_ANY, 
-                                                _("Check all parents"))
+                                                _("Check all parents of all childs"))
         self.Bind(wx.EVT_MENU, self._mnu_check_all_parents_on_click, 
                   self.mnu_check_all_parents)
         self.mnu.AppendItem(self.mnu_check_all_parents)
@@ -123,7 +123,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
                   self.mnu_uncheck_all_children)
         self.mnu.AppendItem(self.mnu_uncheck_all_children)
         self.mnu_uncheck_parents = wx.MenuItem(self.mnu, wx.ID_ANY, 
-                                             _("Uncheck parents"))
+                                             _("Uncheck all parents"))
         self.Bind(wx.EVT_MENU, self._mnu_uncheck_parents_on_click, 
                   self.mnu_uncheck_parents)
         self.mnu.AppendItem(self.mnu_uncheck_parents)
