@@ -111,7 +111,7 @@ During the your edit action the timeline is locked for changes by others. If you
         # Stars produce emphasized text. DON'T remove them.
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
-The timeline shows dates according to the Gregorian calendar on the x-axis. Currently the dates are limited to dates between year 10 and year 9989.
+The timeline shows dates according to the Gregorian calendar on the x-axis. Currently the earliest date is limited to Julian day 0 (November 24, 4714 BC).
 
 Future versions might support various kinds of timelines so that you for example can specify a time in terms of number of minutes since a start time. If you are interested in such a feature, please get in touch.
 
