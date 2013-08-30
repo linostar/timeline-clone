@@ -652,7 +652,8 @@ class StripWeekday(Strip):
                                     time.day,
                                     abbreviated_name_of_month(time.month),
                                     format_year(time.year))
-        return abbreviated_name_of_weekday(time.get_day_of_week())
+        return (abbreviated_name_of_weekday(time.get_day_of_week()) + 
+                " %s" % gregorian.from_time(time).day) 
 
     def start(self, time):
         gregorian_time = gregorian.from_time(time)
