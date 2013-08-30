@@ -33,6 +33,7 @@ OUTER_PADDING = 5 # Space between event boxes (pixels)
 INNER_PADDING = 3 # Space inside event box to text (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 BALLOON_RADIUS = 12
+ARROW_OFFSET = BALLOON_RADIUS + 25
 DATA_INDICATOR_SIZE = 10
 CONTRAST_RATIO_THREASHOLD = 2250
 WHITE = (255, 255, 255)
@@ -726,10 +727,11 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_ballon(self, event, event_rect, sticky):
         """Draw one ballon on a selected event that has 'description' data."""
         def max_text_width(iw):
-            padding = 5 * BALLOON_RADIUS
+            padding = 2 * BALLOON_RADIUS
             if iw > 0:
-                padding += 2 * BALLOON_RADIUS
-            max_text_width = self.scene.width - SLIDER_WIDTH - event_rect.X - iw - padding
+                padding += BALLOON_RADIUS
+            max_text_width = (self.scene.width - SLIDER_WIDTH - event_rect.X - 
+                             event_rect.width / 2 - iw - padding + ARROW_OFFSET)
             return max(MIN_TEXT_WIDTH, max_text_width)        
         # Constants
         MIN_TEXT_WIDTH = 200
@@ -820,7 +822,6 @@ class DefaultDrawingAlgorithm(Drawer):
         H = 1 * R + inner_size[1]
         H_ARROW = 14
         W_ARROW = 15
-        W_ARROW_OFFSET = R + 25
         AA = 20
         # Starting point at the tip of the arrow
         (tipx, tipy) = tip_pos
@@ -831,7 +832,7 @@ class DefaultDrawingAlgorithm(Drawer):
                       p0.y - H_ARROW)
         path.AddLineToPoint(p1.x, p1.y)
         # Start of lower left rounded corner
-        p2 = wx.Point(p1.x - W_ARROW_OFFSET + R, p1.y)
+        p2 = wx.Point(p1.x - ARROW_OFFSET + R, p1.y)
         path.AddLineToPoint(p2.x, p2.y)
         # The lower left rounded corner. p3 is the center of the arc
         p3 = wx.Point(p2.x, p2.y - R)
@@ -857,7 +858,7 @@ class DefaultDrawingAlgorithm(Drawer):
         p9 = wx.Point(p8.x - R, p8.y)
         path.AddArc(p9.x, p9.y, R, math.radians(0), math.radians(90))
         # The lower side
-        p10 = wx.Point(p9.x - W + W_ARROW +  W_ARROW_OFFSET, p9.y + R)
+        p10 = wx.Point(p9.x - W + W_ARROW +  ARROW_OFFSET, p9.y + R)
         path.AddLineToPoint(p10.x, p10.y)
         path.CloseSubpath()
         # Draw sharp lines on GTK which uses Cairo
