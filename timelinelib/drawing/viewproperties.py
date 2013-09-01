@@ -47,6 +47,12 @@ class ViewProperties(object):
         return self.displayed_period
     
     def filter_events(self, events):
+        if self.view_cats_individually:
+            return self.filter_events_individually(events)
+        else:
+            return self.filter_events_with_all_parents_selected(events)
+
+    def filter_events_with_all_parents_selected(self, events):
         def category_visible(e, cat):
             if cat is None:
                 return True
@@ -62,6 +68,26 @@ class ViewProperties(object):
                     return False
             elif self.category_visible(cat) == True:
                 return category_visible(e, cat.parent)
+            else:
+                return False
+        return [e for e in events if category_visible(e, e.category)]
+
+    def filter_events_individually(self, events):
+        def category_visible(e, cat):
+            if cat is None:
+                return True
+            elif e.is_subevent():
+                container_visible = category_visible(e.container,
+                                                     e.container.category)
+                if container_visible:
+                    if self.category_visible(cat) == True:
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+            elif self.category_visible(cat) == True:
+                return True
             else:
                 return False
         return [e for e in events if category_visible(e, e.category)]

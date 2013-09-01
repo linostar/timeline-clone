@@ -19,6 +19,7 @@
 import os.path
 
 import wx
+import wx.lib.newevent
 
 from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import read_config
@@ -56,6 +57,9 @@ import timelinelib.wxgui.utils as gui_utils
 from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
 from timelinelib.feedback.feature import show_feature_feedback_dialog
 from timelinelib.feedback.feature import FEATURES
+
+
+CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 
 ID_SIDEBAR = wx.NewId()
@@ -585,9 +589,10 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
                           pos=self.config.get_window_pos(),
                           style=wx.DEFAULT_FRAME_STYLE, name="main_frame")
 
+        self.Bind(EVT_CATS_VIEW_CHANGED, self._on_cats_view_changed)
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-
+        self.view_cats_individually = False
         self.help_browser = HelpBrowser(self)
         self.controller = TimelineApplication(self, db_open, self.config)
         self.menu_controller = MenuController()
@@ -619,6 +624,13 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         
     def edit_ends(self):
         self.controller.edit_ends()
+        
+    def view_categories_individually(self):
+        return self.view_cats_individually
+        
+    def _on_cats_view_changed(self, evt):
+        self.view_cats_individually = evt.GetClientData()
+        self.main_panel.redraw_timeline()
         
     # Creation process methods
     def _set_initial_values_to_member_variables(self):
@@ -1321,10 +1333,16 @@ class Sidebar(wx.Panel):
 
     def _create_gui(self, handle_db_error):
         self.cattree = CategoriesTree(self, handle_db_error)
+        label = _("View Categories Individually")
+        self.cbx_toggle_cat_view = wx.CheckBox(self, -1, label)
         # Layout
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.cattree, flag=wx.GROW, proportion=1)
+        sizer = wx.GridBagSizer(vgap=0, hgap=0)
+        sizer.AddGrowableCol(0, proportion=0)
+        sizer.AddGrowableRow(0, proportion=0)
+        sizer.Add(self.cattree, (0,0), flag=wx.GROW)
+        sizer.Add(self.cbx_toggle_cat_view, (1,0), flag=wx.ALL, border=5)
         self.SetSizer(sizer)
+        self.Bind(wx.EVT_CHECKBOX, self._cbx_on_click, self.cbx_toggle_cat_view)
         
     def ok_to_edit(self):
         return self.main_frame.ok_to_edit()
@@ -1332,7 +1350,12 @@ class Sidebar(wx.Panel):
     def edit_ends(self):
         return self.main_frame.edit_ends()
 
-
+    def _cbx_on_click(self, evt):
+        event = CatsViewChangedEvent(self.GetId())
+        event.ClientData = evt.GetEventObject().IsChecked()
+        self.GetEventHandler().ProcessEvent(event)
+        
+    
 class StatusBarAdapter(object):
 
     HIDDEN_EVENT_COUNT_COLUMN = 1
