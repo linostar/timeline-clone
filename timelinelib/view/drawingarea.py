@@ -356,9 +356,9 @@ class DrawingArea(object):
                 self._try_move_event_vertically(True)
             elif keycode == wx.WXK_DOWN:
                 self._try_move_event_vertically(False)
-            elif keycode == wx.WXK_RIGHT:
+            elif keycode in (wx.WXK_RIGHT, wx.WXK_NUMPAD_RIGHT):
                 self._scroll_timeline_view_by_factor(LEFT_RIGHT_SCROLL_FACTOR)
-            elif keycode == wx.WXK_LEFT:
+            elif keycode in (wx.WXK_LEFT, wx.WXK_NUMPAD_LEFT):
                 self._scroll_timeline_view_by_factor(-LEFT_RIGHT_SCROLL_FACTOR)
 
     def _try_move_event_vertically(self, up=True):
