@@ -448,8 +448,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_container(self, event, rect, view_properties):
         box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
         self._draw_box(box_rect, event)
-        if self._event_displayed_as_point_event(rect):
-            self._draw_text(rect, event)
+        self._draw_text(rect, event)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
