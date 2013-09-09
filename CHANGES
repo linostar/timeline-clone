@@ -9,6 +9,7 @@ New features, enhancements:
   * Select all, Ctrl-A implemented in event editor description.
   * New entry in Help menu for feedback reporting
   * New entry in Help menu for feature descriptions and feedback reporting
+  * Feedback button in event editor dialog.
   * New entries in categories tree context menu allowing parent/children check/uncheck
   * New checkbox under categories tree, used to view categories individually 
     independant on parent checked-status.
