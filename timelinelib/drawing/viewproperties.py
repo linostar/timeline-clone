@@ -34,6 +34,7 @@ class ViewProperties(object):
         self.divider_position = 0.5
         self.displayed_period = None
         self.hscroll_amount = 0
+        self.view_cats_individually = False
 
     def clear_db_specific(self):
         self.sticky_balloon_event_ids = []
