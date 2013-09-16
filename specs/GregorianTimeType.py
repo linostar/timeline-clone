@@ -219,7 +219,7 @@ class GregorianStripWeekdaySpec(unittest.TestCase):
     def test_label_minor(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 00:00:00")),
-            "#Sun#")
+            "#Sun# 7")
 
     def test_label_major(self):
         self.assertEqual(
