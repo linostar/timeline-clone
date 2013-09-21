@@ -50,3 +50,4 @@ Timeline Documentation
    :maxdepth: 2
 
    dev/release-instructions
+   dev/class-descriptions
