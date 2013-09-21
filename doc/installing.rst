@@ -25,9 +25,7 @@ We provide a binary installer for Windows. It installs an executable version of
 timeline built with `py2exe <http://www.py2exe.org/>`_. It is a self contained
 executable that doesn't need any other dependencies.
 
-Download `SetupTimeline0211Py2Exe.exe
-<http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/0.21.1/SetupTimeline0211Py2Exe.exe>`_
-and execute it.
+Download |latest_exe|_ and execute it.
 
 Fedora
 ^^^^^^
@@ -47,8 +45,7 @@ Installing from source
 .. image:: /images/logo-source.png
     :align: right
 
-Get the source code here: `timeline-0.21.1.zip
-<http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/0.21.1/timeline-0.21.1.zip/download>`_.
+Get the source code here: |latest_zip|_.
 
 Prerequisites
 ^^^^^^^^^^^^^
