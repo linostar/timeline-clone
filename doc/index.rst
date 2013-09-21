@@ -21,6 +21,15 @@ Timeline is `free software <http://www.gnu.org/philosophy/free-sw.html>`_, distr
 - Available in multiple languages (`supported languages
   <http://translations.launchpad.net/thetimelineproj>`_)
 
+News
+----
+
+.. image:: /images/feed-icon-28x28.png
+    :target: http://sourceforge.net/p/thetimelineproj/news/feed
+    :align: left
+
+News about the project can be found on the `sourceforge page <http://sourceforge.net/p/thetimelineproj/news>`_ (`feed <http://sourceforge.net/p/thetimelineproj/news/feed>`_).
+
 Timeline Documentation
 ----------------------
 
