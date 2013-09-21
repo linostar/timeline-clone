@@ -33,6 +33,8 @@ News about the project can be found on the `sourceforge page <http://sourceforge
 Timeline Documentation
 ----------------------
 
+**For everyone:**
+
 .. toctree::
    :maxdepth: 2
 
@@ -40,5 +42,11 @@ Timeline Documentation
    installing
    status
    participating
-   dev/release-instructions
    changelog
+
+**For developers:**
+
+.. toctree::
+   :maxdepth: 2
+
+   dev/release-instructions
