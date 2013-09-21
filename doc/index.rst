@@ -1,22 +1,12 @@
-.. Timeline documentation master file, created by
-   sphinx-quickstart on Sat Sep 21 07:42:51 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Timeline
+========
 
-Welcome to Timeline's documentation!
-====================================
+Timeline is a cross-platform application for displaying and navigating
+events on a timeline.
 
-Contents:
+Timeline is `free software <http://www.gnu.org/philosophy/free-sw.html>`_, distributed under the `GNU General Public License version 3 <http://www.gnu.org/copyleft/gpl.html>`_.
 
 .. toctree::
    :maxdepth: 2
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   participating
