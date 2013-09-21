@@ -36,6 +36,7 @@ Timeline Documentation
 .. toctree::
    :maxdepth: 2
 
+   support
    installing
    status
    participating
