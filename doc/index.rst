@@ -29,3 +29,4 @@ Timeline Documentation
    :maxdepth: 2
 
    participating
+   changelog
