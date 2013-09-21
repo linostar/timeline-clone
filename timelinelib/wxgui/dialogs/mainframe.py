@@ -724,14 +724,14 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
             if isinstance(self.timeline, XmlTimeline):
                 self.timeline.path = new_timeline_path
             else:
-                self.timeline =  transform_to_xml_timeline(new_timeline_path, 
+                self.timeline =  transform_to_xml_timeline(new_timeline_path,
                                                            self.timeline)
             self._save_current_timeline_data()
             self.controller.open_timeline(self.timeline.path)
-        
+
     def _export_to_svg_image(self):
         if not self._has_pysvg_module():
-            display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the INSTALL file for instructions how to install it."), self)
+            display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the doc/installing.rst file for instructions how to install it."), self)
             return
         wildcard = self.images_svg_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Export to SVG"),

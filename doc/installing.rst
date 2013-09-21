@@ -1,0 +1,126 @@
+Installing
+==========
+
+Timeline runs on multiple platforms. If you can run `Python
+<http://www.python.org/>`_ and `wxPython <http://www.wxpython.org/>`_ you
+should be able to run Timeline.
+
+However, timeline is only actively being tested on Windows and Linux.  If you
+are experiencing problems with a different platform, please send an email to
+the user mailing list thetimelineproj-user@lists.sourceforge.
+
+The recommended way to install timeline is with a binary package or installer.
+If that is not available for your platform, you need to install from source.
+
+Installing with a binary package or installer
+---------------------------------------------
+
+Windows
+^^^^^^^
+
+.. image:: /images/logo-windows.png
+    :align: right
+
+We provide a binary installer for Windows. It installs an executable version of
+timeline built with `py2exe <http://www.py2exe.org/>`_. It is a self contained
+executable that doesn't need any other dependencies.
+
+Download `SetupTimeline0211Py2Exe.exe
+<http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/0.21.1/SetupTimeline0211Py2Exe.exe>`_
+and execute it.
+
+Fedora
+^^^^^^
+
+.. image:: /images/logo-fedora.png
+    :align: right
+
+Someone else has packaged timeline for Fedora. Install using::
+
+    su -c 'yum install timeline'
+
+Note that the version included in Fedora is often not the latest.
+
+Installing from source
+----------------------
+
+.. image:: /images/logo-source.png
+    :align: right
+
+Get the source code here: `timeline-0.21.1.zip
+<http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/0.21.1/timeline-0.21.1.zip/download>`_.
+
+Prerequisites
+^^^^^^^^^^^^^
+
+Required:
+
+* Python version 2.5 or 2.6
+  (http://www.python.org)
+* wxPython version 2.8.9.2 or greater
+  (http://www.wxpython.org)
+
+Optional:
+
+* Markdown version 2.0.3 (for viewing help pages, included in repo)
+  (http://www.freewisdom.org/projects/python-markdown/)
+* iCalendar version 2.1 (for working with ics files, included in repo)
+  (http://pypi.python.org/pypi/icalendar/2.1)
+* pysvg version 0.2.1 (for exporting to SVG, included in repo)
+  (http://codeboje.de/pysvg/)
+
+For translations (other than English) you also need the following:
+
+* SCons
+  (http://www.scons.org/)
+* gettext version 0.17
+  (http://www.gnu.org/software/gettext/)
+
+Extra development tools:
+
+* Mock version 0.7.2 (for running tests, included in repo)
+  (http://www.voidspace.org.uk/python/mock/)
+* Mechanize version 0.2.5 (for release announcer, included in repo)
+  (http://wwwsearch.sourceforge.net/mechanize/)
+
+Installing prerequisites on a Debian-based system
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: If your version of wxPython is less than 2.8.9.2 you need to install a
+newer version. Check out this wiki page for instructions how to do that:
+http://wiki.wxpython.org/InstallingOnUbuntuOrDebian.::
+
+  apt-get install python python-wxgtk2.8 wx2.8-i18n python-markdown
+  apt-get install scons gettext
+
+You have to install iCalendar manually since there is no Debian packages for
+it. See section below.
+
+Installing gettext on Windows
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the zipfiles gettext-tools-0.17.zip and gettext-runtime-0.17-1.zip from
+here http://ftp.acc.umu.se/pub/gnome/binaries/win32/dependencies/.
+
+Installing iCalendar
+^^^^^^^^^^^^^^^^^^^^
+
+The easiest way to install iCalendar is to download the source code from its
+website and then copy the iCalendar-2.1/src/icalendar folder to the root folder
+of Timeline. Or you can follow their installation instructions.
+
+The important thing is that you can do 'import icalendar' from Python.
+
+Installing and starting timeline
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To install the translations, run this command::
+
+  cd <path-to-timeline-directory>
+  scons mo
+
+To run the application, use this command::
+
+  python <path-to-timeline-directory>/timeline.py
+
+Preferable you create a shortcut on your platform that issues this command.

@@ -15,9 +15,9 @@ managed on Launchpad: http://translations.launchpad.net/thetimelineproj.
 
 To learn what is new in this version of Timeline, see doc/changelog.rst.
 
-For installation instructions, see INSTALL.
+For installation instructions, see doc/installing.rst.
 
-For project status, see http://sourceforge.net/p/thetimelineproj/wiki/Status/.
+For project status, see doc/status.rst.
 
 For more information about Timeline, visit its website at
 http://thetimelineproj.sourceforge.net/ or send an email to the user mailing

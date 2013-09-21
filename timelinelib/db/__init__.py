@@ -111,7 +111,7 @@ def db_open_ics(path, import_timeline=False):
     try:
         import icalendar
     except ImportError:
-        raise TimelineIOError(_("Could not find iCalendar Python package. It is required for working with ICS files. See the Timeline website or the INSTALL file for instructions how to install it."))
+        raise TimelineIOError(_("Could not find iCalendar Python package. It is required for working with ICS files. See the Timeline website or the doc/installing.rst file for instructions how to install it."))
     else:
         from timelinelib.db.backends.ics import IcsTimeline
         if import_timeline and current_timeline:

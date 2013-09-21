@@ -63,7 +63,7 @@ class HelpBrowser(wx.Frame):
         """
         if self.help_system is None:
             display_error_message(
-                _("Could not find markdown Python package.  It is needed by the help system. See the Timeline website or the INSTALL file for instructions how to install it."),
+                _("Could not find markdown Python package.  It is needed by the help system. See the Timeline website or the doc/installing.rst file for instructions how to install it."),
                 self.GetParent())
             return
         if change_history:
