@@ -21,7 +21,6 @@ Timeline is `free software <http://www.gnu.org/philosophy/free-sw.html>`_, distr
 - Available in multiple languages (`supported languages
   <http://translations.launchpad.net/thetimelineproj>`_)
 
-
 Timeline Documentation
 ----------------------
 
@@ -29,4 +28,5 @@ Timeline Documentation
    :maxdepth: 2
 
    participating
+   status
    changelog
