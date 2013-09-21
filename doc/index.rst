@@ -39,4 +39,5 @@ Timeline Documentation
    installing
    status
    participating
+   dev/release-instructions
    changelog
