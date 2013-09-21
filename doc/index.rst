@@ -36,19 +36,20 @@ Timeline Documentation
 **For everyone:**
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   support
-   installing
-   status
-   known-bugs
-   participating
-   changelog
+    problems
+    support
+    installing
+    status
+    known-bugs
+    participating
+    changelog
 
 **For developers:**
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   dev/release-instructions
-   dev/class-descriptions
+    dev/release-instructions
+    dev/class-descriptions
