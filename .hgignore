@@ -17,3 +17,4 @@ api/
 Thumbs.db
 codemonitor.errors
 *.log
+doc/_build
