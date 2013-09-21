@@ -41,6 +41,7 @@ Timeline Documentation
    support
    installing
    status
+   known-bugs
    participating
    changelog
 
