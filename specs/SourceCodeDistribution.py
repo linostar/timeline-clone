@@ -36,10 +36,10 @@ class SourceCodeDistributionSpec(unittest.TestCase):
             self.get_module_version_string() in
             self.read_first_line_from(self.README))
 
-    def test_version_number_in_CHANGES_should_match_that_in_version_module(self):
+    def test_version_number_in_changelog_should_match_that_in_version_module(self):
         self.assertTrue(
             self.get_module_version_string() in
-            self.read_first_line_from(self.CHANGES))
+            self.read_first_version_line_from(self.changelog))
 
     def test_all_authors_mentioned_in_about_module_should_be_mentioned_in_AUTHORS(self):
         authors_content = self.read_utf8_encoded_text_from(self.AUTHORS)
@@ -49,7 +49,7 @@ class SourceCodeDistributionSpec(unittest.TestCase):
     def setUp(self):
         self.ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
         self.README = os.path.join(self.ROOT_DIR, "README")
-        self.CHANGES = os.path.join(self.ROOT_DIR, "CHANGES")
+        self.changelog = os.path.join(self.ROOT_DIR, "doc", "changelog.rst")
         self.AUTHORS = os.path.join(self.ROOT_DIR, "AUTHORS")
         self.MANPAGE = os.path.join(self.ROOT_DIR, "man", "man1", "timeline.1")
 
@@ -70,23 +70,17 @@ class SourceCodeDistributionSpec(unittest.TestCase):
     def is_header(self, possible_author):
         return ":" in possible_author
 
-    def get_release_date_from_changes(self):
-        first_line = self.read_first_line_from(self.CHANGES)
-        date_str = first_line.split("released on ")[1]
-        return self.parse_release_date_from(date_str)
-
-    def parse_release_date_from(self, date_str):
-        day_str, month_name, year_str = date_str.split(" ")
-        return datetime.date(
-            int(year_str),
-            month_from_english_name(month_name),
-            int(day_str))
-
-    def release_date_in_man_format(self, date):
-        return "%s %s" % (english_name_of_month(date.month), date.year)
-
     def get_module_version_string(self):
         return "%s.%s.%s" % timelinelib.meta.version.VERSION
+
+    def read_first_version_line_from(self, path):
+        f = open(path, "r")
+        while True:
+            first_version_line = f.readline()
+            if first_version_line.startswith("Version"):
+                break
+        f.close()
+        return first_version_line
 
     def read_first_line_from(self, path):
         f = open(path, "r")
