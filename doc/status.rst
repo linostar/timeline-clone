@@ -1,5 +1,5 @@
-Status
-======
+Project status
+==============
 
 This document describes the project status: what is happening right now and
 what might happen in the future.
