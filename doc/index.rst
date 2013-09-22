@@ -28,7 +28,8 @@ News
     :target: http://sourceforge.net/p/thetimelineproj/news/feed
     :align: left
 
-News about the project can be found on the `sourceforge page <http://sourceforge.net/p/thetimelineproj/news>`_ (`feed <http://sourceforge.net/p/thetimelineproj/news/feed>`_).
+News about the project can be found on the :sf:`sourceforge page <news>`
+(:sf:`feed <news/feed>`).
 
 Timeline Documentation
 ----------------------
