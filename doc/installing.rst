@@ -3,14 +3,14 @@ Installing
 
 Timeline runs on multiple platforms. If you can run `Python
 <http://www.python.org/>`_ and `wxPython <http://www.wxpython.org/>`_ you
-should be able to run Timeline.
-
-However, timeline is only actively being tested on Windows and Linux.  If you
-are experiencing problems with a different platform, please send an email to
-the user mailing list thetimelineproj-user@lists.sourceforge.
+should be able to run Timeline. However, timeline is only tested on Windows and
+Linux.
 
 The recommended way to install timeline is with a binary package or installer.
-If that is not available for your platform, you need to install from source.
+If that is not available for your platform, you have to install from source.
+
+If you have problems installing timeline, please see the :doc:`support` page
+for ways to get help.
 
 Installing with a binary package or installer
 ---------------------------------------------
@@ -26,6 +26,7 @@ timeline built with `py2exe <http://www.py2exe.org/>`_. It is a self contained
 executable that doesn't need any other dependencies.
 
 Download |latest_exe|_ and execute it.
+(:sfl:`Other downloads <files/thetimelineproj>`.)
 
 Fedora
 ^^^^^^
@@ -39,6 +40,8 @@ Someone else has packaged timeline for Fedora. Install using::
 
 Note that the version included in Fedora is often not the latest.
 
+.. _label-installing-from-source:
+
 Installing from source
 ----------------------
 
@@ -46,78 +49,19 @@ Installing from source
     :align: right
 
 Get the source code here: |latest_zip|_.
+(:sfl:`Other downloads <files/thetimelineproj>`.)
 
-Prerequisites
-^^^^^^^^^^^^^
+When you install from source, you have to install all required dependencies
+yourself. Timeline requires:
 
-Required:
+* Python version 2.5 or greater (http://www.python.org)
+* wxPython version 2.8.9.2 or greater (http://www.wxpython.org)
 
-* Python version 2.5 or 2.6
-  (http://www.python.org)
-* wxPython version 2.8.9.2 or greater
-  (http://www.wxpython.org)
+On Linux systems, you can often install these via the package manager.
 
-Optional:
+Once you have extracted the timeline zip and installed the required
+dependencies, you should be able to run the application with this command::
 
-* Markdown version 2.0.3 (for viewing help pages, included in repo)
-  (http://www.freewisdom.org/projects/python-markdown/)
-* iCalendar version 2.1 (for working with ics files, included in repo)
-  (http://pypi.python.org/pypi/icalendar/2.1)
-* pysvg version 0.2.1 (for exporting to SVG, included in repo)
-  (http://codeboje.de/pysvg/)
-
-For translations (other than English) you also need the following:
-
-* SCons
-  (http://www.scons.org/)
-* gettext version 0.17
-  (http://www.gnu.org/software/gettext/)
-
-Extra development tools:
-
-* Mock version 0.7.2 (for running tests, included in repo)
-  (http://www.voidspace.org.uk/python/mock/)
-* Mechanize version 0.2.5 (for release announcer, included in repo)
-  (http://wwwsearch.sourceforge.net/mechanize/)
-
-Installing prerequisites on a Debian-based system
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Note: If your version of wxPython is less than 2.8.9.2 you need to install a
-newer version. Check out this wiki page for instructions how to do that:
-http://wiki.wxpython.org/InstallingOnUbuntuOrDebian.::
-
-  apt-get install python python-wxgtk2.8 wx2.8-i18n python-markdown
-  apt-get install scons gettext
-
-You have to install iCalendar manually since there is no Debian packages for
-it. See section below.
-
-Installing gettext on Windows
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Get the zipfiles gettext-tools-0.17.zip and gettext-runtime-0.17-1.zip from
-here http://ftp.acc.umu.se/pub/gnome/binaries/win32/dependencies/.
-
-Installing iCalendar
-^^^^^^^^^^^^^^^^^^^^
-
-The easiest way to install iCalendar is to download the source code from its
-website and then copy the iCalendar-2.1/src/icalendar folder to the root folder
-of Timeline. Or you can follow their installation instructions.
-
-The important thing is that you can do 'import icalendar' from Python.
-
-Installing and starting timeline
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To install the translations, run this command::
-
-  cd <path-to-timeline-directory>
-  scons mo
-
-To run the application, use this command::
-
-  python <path-to-timeline-directory>/timeline.py
+    python <path-to-timeline-directory>/timeline.py
 
 Preferable you create a shortcut on your platform that issues this command.

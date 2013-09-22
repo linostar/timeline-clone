@@ -51,5 +51,6 @@ Timeline Documentation
 .. toctree::
     :maxdepth: 2
 
+    dev/setup
     dev/release-instructions
     dev/class-descriptions

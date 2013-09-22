@@ -29,6 +29,7 @@ extensions = ["sphinx.ext.extlinks"]
 
 extlinks = {
     "sf": ("http://sourceforge.net/p/thetimelineproj/%s", None),
+    "sfl": ("http://sourceforge.net/projects/thetimelineproj/%s", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
