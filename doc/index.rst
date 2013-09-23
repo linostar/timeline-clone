@@ -9,6 +9,7 @@ distributed under the `GNU General Public License version 3
 <http://www.gnu.org/copyleft/gpl.html>`_.
 
 .. image:: /images/screenshot.png
+    :alt: Screenshot
 
 **Features:**
 
@@ -27,10 +28,10 @@ distributed under the `GNU General Public License version 3
 
 .. image:: /images/feed-icon-28x28.png
     :target: http://sourceforge.net/p/thetimelineproj/news/feed
+    :alt: News feed
     :align: left
 
-News about the project can be found on the :sf:`sourceforge page <news>`
-(:sf:`feed <news/feed>`).
+News about the project can be found on the :sf:`SourceForge news page <news>`.
 
 About timeline
 --------------
