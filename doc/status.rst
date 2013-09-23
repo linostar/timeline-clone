@@ -11,10 +11,10 @@ A note about version numbers
 
 Timeline uses a three-component version numbering system (X.Y.Z).
 
-Z is only incremented when bugs are corrected or translations are updated. The
-functionality of the program is the same for all X.Y versions.
+Z is only incremented when critical bugs are corrected or translations are
+updated. The functionality of the program is the same for all X.Y versions.
 
-Y is incremented every time a new feature is added.
+Y is incremented every time a new feature or enhancement is added.
 
 X is incremented when the new version is no longer compatible with previous
 versions or when the program undergoes some big change or significant
@@ -33,17 +33,5 @@ is incremented by one).
 Future plans
 ------------
 
-**1.0.0**
-
-For the first incompatible version we would like to clean up some parts:
-
-* **Get rid of printing.** Printing does not work very well. A better way to
-  print is to generate an image and then print the image from another program.
-
-* **Get rid of old file formats**. It was a long time since the old file format
-  was used. It would be nice to get rid of that code.
-
-* **Get rid of extended date ranges / Think of a better solution**. Extended
-  date ranges does not work very well and it added lots of complexity to the
-  code. It would be nice to get rid of it all together. Perhaps we can come up
-  with a better way to handle extended dates?
+Our highest priority is to fix critical bugs and annoyances. Those are usually
+reported and discussed on the mailing list (:doc:`support`).
