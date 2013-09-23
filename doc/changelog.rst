@@ -6,23 +6,29 @@ Version 1.0.0
 
 **Planned: Released on 30 September 2013.**
 
+After about 4.5 years in development, timeline 1.0.0 is released. This is the
+first time we increment the x-component of the version number
+(:ref:`label-version-number`). The main reason for doing so is that timeline
+can no longer read files produced with timeline versions before 0.10.0
+(released over 3 years ago).
+
+The other big thing in 1.0.0 is that the experimental support for dates before
+year 0 is no longer experimental. We have rewritten large parts of the date
+handling partly to be able to support BC dates in a better way.
+
 New features, enhancements:
 
 * Implemented export to image for whole timeline
 * Implemented vertical zooming with Alt+Mousewheel
 * Implemented vertical scrolling of timeline events
-* Select all, Ctrl-A implemented in event editor description.
-* New entry in Help menu for feedback reporting
-* New entry in Help menu for feature descriptions and feedback reporting
-* Feedback button in event editor dialog.
+* Select all, Ctrl-A implemented in event editor description
 * New entries in categories tree context menu allowing parent/children
   check/uncheck
 * New checkbox under categories tree, used to view categories individually
-  independant on parent checked-status.
+  independent on parent checked-status
+* Dialog for sending feedback (available from help menu and event editor)
 * Balloon size restricted to not expand over timeline border
 * Help documentation updated
-* Adjustments made to be able to use wxpython version 2.9
-* Replaced WxTimeType and PyTimeType with GregorianTimeType
 
 Bug fixes:
 
@@ -34,6 +40,11 @@ Removed features:
 
 * Printing: Use export to image and print image instead
 * Old timeline file format: Last used in version 0.9.0
+
+Non-visible changes:
+
+* Adjustments made to be able to use wxPython version 2.9
+* Replaced internal time type to support dates before year 0
 
 Version 0.21.1
 --------------
