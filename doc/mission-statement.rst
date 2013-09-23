@@ -1,5 +1,5 @@
-Problems
-========
+Mission statement
+=================
 
 This page describes problems that timeline solves, and also problems it does
 not intent to solve. It explains why timeline exists and what it does.

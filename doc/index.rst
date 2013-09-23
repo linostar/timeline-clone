@@ -39,7 +39,7 @@ About timeline
 .. toctree::
     :maxdepth: 2
 
-    problems
+    mission-statement
     status
 
 Getting started
