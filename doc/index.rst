@@ -13,13 +13,13 @@ distributed under the `GNU General Public License version 3
 
 **Features:**
 
+- Scroll and zoom with mouse wheel
+- Different representation depending on zoom level
+- Go to a specific date
+- Search events
 - Organize events in hierarchical categories
 - Move and resize events with the mouse
 - Duplicate events
-- Search events
-- Go to a specific date
-- Scroll and zoom with mouse wheel
-- Different representation depending on zoom level
 - Export to image
 - Available in multiple languages (`supported languages
   <http://translations.launchpad.net/thetimelineproj>`_)
