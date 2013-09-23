@@ -22,14 +22,12 @@ timeline**. It has done that since version 0.1.0 which was released on 11 April
     it should be easy to quickly display different periods in time with
     different kinds of information on the timeline.
 
-Implications
-^^^^^^^^^^^^
-
 If you have data that you would like to display on a timeline, timeline should
-be able to do it.
+be able to show it. Timeline has multiple backends to display data from
+different sources.
 
-Edit events
------------
+Editing events
+--------------
 
 If timeline only displayed events, it would be cumbersome to edit them. You
 would have to edit them in one program, then open timeline to view them.
@@ -39,23 +37,7 @@ However, read-only timelines have always existed, indicating that the very core
 task is displaying events on a timeline, and not editing events. But being able
 to edit events from within timeline makes it usable in more situations.
 
-* Drag to resize
-* ...
-
-Problems related to event storage
----------------------------------
-
-* Own file format
-* Different backends
-
-Problems related to being an application
-----------------------------------------
-
-* Availability: Cross-platform
-* Binary packages
-* Translation of strings
-
 Problems that timeline does not solve
 -------------------------------------
 
-* Printing
+* Printing. We have export to image that can be used instead.
