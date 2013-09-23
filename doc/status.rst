@@ -1,8 +1,8 @@
 Project status
 ==============
 
-This document describes the project status: what is happening right now and
-what might happen in the future.
+This page describes the project status: what is happening right now and what
+might happen in the future.
 
 .. _label-version-number:
 
