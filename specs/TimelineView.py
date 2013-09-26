@@ -176,7 +176,7 @@ class TimelineViewSpec(unittest.TestCase):
     def test_removes_event_info_from_status_bar_when_un_hovering_event(self):
         self.init_view_with_db()
         self.simulate_mouse_move(0, ANY_Y)
-        self.assertEqual("", self.get_status_text())
+        self.assertEqual("1999-09-19 00:00", self.get_status_text())
 
     def test_displays_hidden_event_count_in_status_bar(self):
         self.mock_drawer.hidden_event_count = 3
