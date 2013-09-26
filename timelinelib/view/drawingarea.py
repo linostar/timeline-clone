@@ -33,6 +33,7 @@ from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
+import timelinelib.calendar.gregorian as gregorian
 
 
 # The width in pixels of the vertical scroll zones.
@@ -459,10 +460,17 @@ class DrawingArea(object):
     def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos, alt_down=False):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos, alt_down)
         if event != None:
-            self.status_bar_adapter.set_text(event.get_label())
+            label = event.get_label()
         else:
-            self.status_bar_adapter.set_text("")
+            label = self._format_current_pos_datetime_string(xpixelpos)
+        self.status_bar_adapter.set_text(label)
 
+    def _format_current_pos_datetime_string(self, xpos):
+        tm = self.get_time(xpos)
+        dt = self.time_type.event_date_string(tm)
+        tm = self.time_type.event_time_string(tm)
+        return "%s %s" % (dt, tm)
+        
     def balloon_show_timer_fired(self):
         self.input_handler.balloon_show_timer_fired()
 
