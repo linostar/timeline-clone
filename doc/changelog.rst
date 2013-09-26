@@ -29,6 +29,7 @@ New features, enhancements:
 * Dialog for sending feedback (available from help menu and event editor)
 * Balloon size restricted to not expand over timeline border
 * Help documentation updated
+* Show numerical day number together with day name when zooming to week
 
 Bug fixes:
 
