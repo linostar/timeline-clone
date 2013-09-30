@@ -49,6 +49,23 @@ class CategoryTreeModelSpec(unittest.TestCase):
             },
         ])
 
+    def test_category_hierarchy(self):
+        self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
+        self.given_child_category("Reading", (0, 255, 0), (0, 0, 0), False)
+        self.assert_update_gives_entries([
+            {
+                "name": "Work",
+                "visible": False,
+                "color": (255, 0, 100),
+            },
+            {
+                "name": "Reading",
+                "visible": False,
+                "color": (0, 255, 0),
+                "indent_level": 1,
+            },
+        ])
+
     def test_one_category_multiple_updates(self):
         self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
         self.model.update_from_timeline_view(self.timeline_view)
@@ -76,10 +93,17 @@ class CategoryTreeModelSpec(unittest.TestCase):
         self.model = CustomCategoryTreeModel()
 
     def given_category(self, name, bg_color, fg_color, visible):
-        work_category = Category(name, bg_color, fg_color, True)
-        self.categories.append(work_category)
+        category = Category(name, bg_color, fg_color, True)
+        self.given_category_generic(category, visible)
+
+    def given_child_category(self, name, bg_color, fg_color, visible):
+        category = Category(name, bg_color, fg_color, True, parent=self.categories[-1])
+        self.given_category_generic(category, visible)
+
+    def given_category_generic(self, category, visible):
+        self.categories.append(category)
         if visible:
-            self.visible_categories.append(work_category)
+            self.visible_categories.append(category)
 
     def assert_update_gives_entries(self, expected_entries):
         self.model.update_from_timeline_view(self.timeline_view)

@@ -42,12 +42,14 @@ class CustomCategoryTree(wx.Panel):
 class CustomCategoryTreeRenderer(object):
 
     HEIGHT = 20
+    INDENT_PX = 10
 
     def render(self, dc, width, height, model):
         y = 0
         for entry in model.entries:
-            dc.DrawRectangle(0, y, width, self.HEIGHT)
-            dc.DrawText(entry.get("name", ""), 0, y)
+            x = self.INDENT_PX * entry.get("indent_level", 0)
+            dc.DrawRectangle(x, y, width, self.HEIGHT)
+            dc.DrawText(entry.get("name", ""), x, y)
             y += self.HEIGHT
 
 
@@ -57,11 +59,30 @@ class CustomCategoryTreeModel(object):
         self.entries = []
 
     def update_from_timeline_view(self, timeline_view):
+        self.timeline_view = timeline_view
+        self.update_entries()
+
+    def get_categories(self):
+        return self.timeline_view.get_timeline().get_categories()
+
+    def is_category_visible(self, category):
+        return self.timeline_view.get_view_properties().category_visible(category)
+
+    def update_entries(self):
         self.entries = []
-        for category in timeline_view.get_timeline().get_categories():
+        self._update_from_tree(self._list_to_tree(self.get_categories()))
+
+    def _list_to_tree(self, categories, parent=None):
+        top = [category for category in categories if (category.parent == parent)]
+        return [(category, self._list_to_tree(categories, category)) for category in top]
+
+    def _update_from_tree(self, category_tree, indent_level=0):
+        for (category, child_tree) in category_tree:
             self.entries.append({
                 "name": category.name,
                 "color": category.color,
-                "visible":
-                timeline_view.get_view_properties().category_visible(category),
+                "visible": self.is_category_visible(category),
             })
+            if indent_level > 0:
+                self.entries[-1]["indent_level"] = indent_level
+            self._update_from_tree(child_tree, indent_level+1)
