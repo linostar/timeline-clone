@@ -66,6 +66,13 @@ class CategoryTreeModelSpec(unittest.TestCase):
             },
         ])
 
+    def test_category_sorting(self):
+        self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
+        self.given_category("Reading", (0, 255, 0), (0, 0, 0), False)
+        self.model.update_from_timeline_view(self.timeline_view)
+        self.assertEqual([entry["name"] for entry in self.model.entries],
+                         ["Reading", "Work"])
+
     def test_one_category_multiple_updates(self):
         self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
         self.model.update_from_timeline_view(self.timeline_view)

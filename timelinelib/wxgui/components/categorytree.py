@@ -74,7 +74,9 @@ class CustomCategoryTreeModel(object):
 
     def _list_to_tree(self, categories, parent=None):
         top = [category for category in categories if (category.parent == parent)]
-        return [(category, self._list_to_tree(categories, category)) for category in top]
+        sorted_top = sorted(top, key=lambda category: category.name)
+        return [(category, self._list_to_tree(categories, category)) for
+                category in sorted_top]
 
     def _update_from_tree(self, category_tree, indent_level=0):
         for (category, child_tree) in category_tree:
