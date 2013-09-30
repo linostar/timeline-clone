@@ -20,6 +20,7 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.db.utils import IdCounter
 from timelinelib.db.objects import Category
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 
@@ -35,10 +36,12 @@ class CategoryTreeModelSpec(unittest.TestCase):
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_entries([
             {
+                "id": 1,
                 "name": "Work",
                 "visible": True,
                 "color": (255, 0, 100),
                 "indent_level": 0,
+                "expanded": True,
             },
         ])
 
@@ -47,10 +50,12 @@ class CategoryTreeModelSpec(unittest.TestCase):
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_entries([
             {
+                "id": 1,
                 "name": "Work",
                 "visible": False,
                 "color": (255, 0, 100),
                 "indent_level": 0,
+                "expanded": True,
             },
         ])
 
@@ -60,16 +65,20 @@ class CategoryTreeModelSpec(unittest.TestCase):
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_entries([
             {
+                "id": 1,
                 "name": "Work",
                 "visible": False,
                 "color": (255, 0, 100),
                 "indent_level": 0,
+                "expanded": True,
             },
             {
+                "id": 2,
                 "name": "Reading",
                 "visible": False,
                 "color": (0, 255, 0),
                 "indent_level": 1,
+                "expanded": True,
             },
         ])
 
@@ -85,7 +94,29 @@ class CategoryTreeModelSpec(unittest.TestCase):
         self.model.set_timeline_view(self.timeline_view)
         self.assertEqual(len(self.model.entries), 1)
 
+    def test_toggles_expandedness(self):
+        self.model.HEIGHT = 20
+        self.add_category("Work", (255, 0, 100), False)
+        self.add_category("Reading", (0, 255, 0), False)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assertTrue(self.model.entries[1]["expanded"])
+        self.model.toggle_expandedness(25)
+        self.assertFalse(self.model.entries[1]["expanded"])
+        self.model.toggle_expandedness(25)
+        self.assertTrue(self.model.entries[1]["expanded"])
+
+    def test_hides_subtrees_if_parent_not_expanded(self):
+        self.model.HEIGHT = 20
+        work_category = self.add_category("Work", (255, 0, 100), False)
+        self.add_category("Reading", (0, 255, 0), False, work_category)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_names(["Work", "Reading"])
+        self.model.toggle_expandedness(5)
+        self.assert_model_has_names(["Work"])
+
     def setUp(self):
+        self.id_counter = IdCounter()
+
         self.categories = []
         self.visible_categories = []
 
@@ -107,6 +138,7 @@ class CategoryTreeModelSpec(unittest.TestCase):
 
     def add_category(self, name, color, visible, parent=None):
         category = Category(name, color, (0, 0, 0), True, parent=parent)
+        category.set_id(self.id_counter.get_next())
         if visible:
             self.visible_categories.append(category)
         self.categories.append(category)
