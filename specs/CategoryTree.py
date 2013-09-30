@@ -26,37 +26,44 @@ from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 
 class CategoryTreeModelSpec(unittest.TestCase):
 
-    def test_no_categories(self):
-        self.assert_update_gives_entries([])
+    def test_has_no_entries_when_no_categories(self):
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_entries([])
 
-    def test_one_category_visible(self):
-        self.given_category("Work", (255, 0, 100), (0, 0, 0), True)
-        self.assert_update_gives_entries([
+    def test_copies_event_properties_when_event_visible(self):
+        self.add_category("Work", (255, 0, 100), True)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_entries([
             {
                 "name": "Work",
                 "visible": True,
                 "color": (255, 0, 100),
+                "indent_level": 0,
             },
         ])
 
-    def test_one_category_hidden(self):
-        self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
-        self.assert_update_gives_entries([
+    def test_copies_event_properties_when_event_hidden(self):
+        self.add_category("Work", (255, 0, 100), False)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_entries([
             {
                 "name": "Work",
                 "visible": False,
                 "color": (255, 0, 100),
+                "indent_level": 0,
             },
         ])
 
-    def test_category_hierarchy(self):
-        self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
-        self.given_child_category("Reading", (0, 255, 0), (0, 0, 0), False)
-        self.assert_update_gives_entries([
+    def test_flattens_category_hierarchy_with_indent_level(self):
+        work_category = self.add_category("Work", (255, 0, 100), False)
+        self.add_category("Reading", (0, 255, 0), False, work_category)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_entries([
             {
                 "name": "Work",
                 "visible": False,
                 "color": (255, 0, 100),
+                "indent_level": 0,
             },
             {
                 "name": "Reading",
@@ -66,17 +73,16 @@ class CategoryTreeModelSpec(unittest.TestCase):
             },
         ])
 
-    def test_category_sorting(self):
-        self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
-        self.given_category("Reading", (0, 255, 0), (0, 0, 0), False)
-        self.model.update_from_timeline_view(self.timeline_view)
-        self.assertEqual([entry["name"] for entry in self.model.entries],
-                         ["Reading", "Work"])
+    def test_sorts_categories_at_same_level(self):
+        self.add_category("Work", (255, 0, 100), False)
+        self.add_category("Reading", (0, 255, 0), False)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_names(["Reading", "Work"])
 
-    def test_one_category_multiple_updates(self):
-        self.given_category("Work", (255, 0, 100), (0, 0, 0), False)
-        self.model.update_from_timeline_view(self.timeline_view)
-        self.model.update_from_timeline_view(self.timeline_view)
+    def test_can_set_view_multiple_times_without_entries_duplicating(self):
+        self.add_category("Work", (255, 0, 100), False)
+        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_timeline_view(self.timeline_view)
         self.assertEqual(len(self.model.entries), 1)
 
     def setUp(self):
@@ -99,19 +105,15 @@ class CategoryTreeModelSpec(unittest.TestCase):
 
         self.model = CustomCategoryTreeModel()
 
-    def given_category(self, name, bg_color, fg_color, visible):
-        category = Category(name, bg_color, fg_color, True)
-        self.given_category_generic(category, visible)
-
-    def given_child_category(self, name, bg_color, fg_color, visible):
-        category = Category(name, bg_color, fg_color, True, parent=self.categories[-1])
-        self.given_category_generic(category, visible)
-
-    def given_category_generic(self, category, visible):
-        self.categories.append(category)
+    def add_category(self, name, color, visible, parent=None):
+        category = Category(name, color, (0, 0, 0), True, parent=parent)
         if visible:
             self.visible_categories.append(category)
+        self.categories.append(category)
+        return category
 
-    def assert_update_gives_entries(self, expected_entries):
-        self.model.update_from_timeline_view(self.timeline_view)
+    def assert_model_has_entries(self, expected_entries):
         self.assertEqual(self.model.entries, expected_entries)
+
+    def assert_model_has_names(self, expected_names):
+        self.assertEqual([x["name"] for x in self.model.entries], expected_names)

@@ -30,8 +30,8 @@ class CustomCategoryTree(wx.Panel):
         self.renderer = CustomCategoryTreeRenderer()
         self.model = CustomCategoryTreeModel()
 
-    def update_from_timeline_view(self, timeline_view):
-        self.model.update_from_timeline_view(timeline_view)
+    def set_timeline_view(self, timeline_view):
+        self.model.set_timeline_view(timeline_view)
         self.Refresh()
 
     def _on_size(self, event):
@@ -100,7 +100,7 @@ class CustomCategoryTreeModel(object):
     def __init__(self):
         self.entries = []
 
-    def update_from_timeline_view(self, timeline_view):
+    def set_timeline_view(self, timeline_view):
         self.timeline_view = timeline_view
         self.update_entries()
 
@@ -126,7 +126,6 @@ class CustomCategoryTreeModel(object):
                 "name": category.name,
                 "color": category.color,
                 "visible": self.is_category_visible(category),
+                "indent_level": indent_level,
             })
-            if indent_level > 0:
-                self.entries[-1]["indent_level"] = indent_level
             self._update_from_tree(child_tree, indent_level+1)
