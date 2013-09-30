@@ -1,8 +1,11 @@
 Mission statement
 =================
 
-This page describes problems that timeline solves, and also problems it does
-not intent to solve. It explains why timeline exists and what it does.
+This page describes problems that timeline tries to solve and also problems
+that it does not intend to solve. It should not be read as a feature list, but
+more like a vision. If it says that timeline should be able to do something, it
+doesn't mean that it can do it today, but that it is a problem that timeline
+might solve in the future.
 
 Timeline display
 ----------------
