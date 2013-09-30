@@ -7,17 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thetimelineproj\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-03-30 11:06+0100\n"
+"POT-Creation-Date: 2013-06-30 19:36+0200\n"
 "PO-Revision-Date: 2010-10-28 06:45+0000\n"
 "Last-Translator: Павел Ехлаков <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-06-30 15:28+0000\n"
-"X-Generator: Launchpad (build 16692)\n"
+"X-Launchpad-Export-Date: 2013-09-30 17:24+0000\n"
+"X-Generator: Launchpad (build 16774)\n"
 
-#: timelinelib\application.py:89
+#: timelinelib\application.py:56
+#, python-format
+msgid "File '%s' does not exist."
+msgstr "Файл '%s' не существует."
+
+#: timelinelib\application.py:105
 msgid ""
 "Someoneelse has changed the Timeline.\n"
 "You have two choices!\n"
@@ -148,7 +153,30 @@ msgstr "Невозможно переименовать временный фа�
 msgid "Unable to delete backup file '%s'."
 msgstr "Невозможно удалить файл резервного восстановления '%s'."
 
-#: timelinelib\db\__init__.py:67
+#: timelinelib\db\__init__.py:57
+#, python-format
+msgid "Unable to open timeline '%s'."
+msgstr "Не могу открыть хронологию '%s'."
+
+#: timelinelib\db\__init__.py:58
+msgid "Unknown format."
+msgstr "Неизвестный формат."
+
+#: timelinelib\db\__init__.py:89
+msgid "Other timelines can't be imported to a directory timeline"
+msgstr ""
+
+#: timelinelib\db\__init__.py:92
+msgid ""
+"Tutorial must be saved as a timeline to be able to import other timeline"
+msgstr ""
+
+#: timelinelib\db\__init__.py:96 timelinelib\db\__init__.py:134
+#, python-format
+msgid "Only %s files can be imported"
+msgstr ""
+
+#: timelinelib\db\__init__.py:128
 msgid ""
 "Could not find iCalendar Python package. It is required for working with ICS "
 "files. See the Timeline website or the INSTALL file for instructions how to "
@@ -158,28 +186,19 @@ msgstr ""
 "Информацию о том как установить его, вы можете найти на сайте Timeline или в "
 "файле INSTALL."
 
-#: timelinelib\db\__init__.py:72
-#, python-format
-msgid "Unable to open timeline '%s'."
-msgstr "Не могу открыть хронологию '%s'."
-
-#: timelinelib\db\__init__.py:73
-msgid "Unknown format."
-msgstr "Неизвестный формат."
-
 #: timelinelib\db\backends\dir.py:105 timelinelib\db\backends\file.py:114
-#: timelinelib\db\backends\ics.py:137
+#: timelinelib\db\backends\ics.py:139
 #, python-format
 msgid "Unable to read from file '%s'."
 msgstr "Невозможно прочесть из файла '%s'."
 
-#: timelinelib\db\backends\file.py:107 timelinelib\db\backends\ics.py:131
+#: timelinelib\db\backends\file.py:107 timelinelib\db\backends\ics.py:133
 #: timelinelib\db\backends\xmlfile.py:142
 #, python-format
 msgid "Unable to read timeline data from '%s'."
 msgstr "Невозможно прочесть данные из '%s'."
 
-#: timelinelib\db\backends\memory.py:227
+#: timelinelib\db\backends\memory.py:243
 msgid "Displayed period must be > 0."
 msgstr "Время отображения должно быть  > 0."
 
@@ -327,6 +346,10 @@ msgstr ""
 msgid "Text"
 msgstr "Текст"
 
+#: timelinelib\editors\setcategory.py:32
+msgid "You must select a category!"
+msgstr ""
+
 #: timelinelib\export\bitmap.py:29
 msgid "Image files"
 msgstr "Файлы изображений"
@@ -335,7 +358,7 @@ msgstr "Файлы изображений"
 msgid "Export to Image"
 msgstr "Экспорт в изображения"
 
-#: timelinelib\export\bitmap.py:35 timelinelib\wxgui\dialogs\mainframe.py:325
+#: timelinelib\export\bitmap.py:35 timelinelib\wxgui\dialogs\mainframe.py:740
 #, python-format
 msgid "File '%s' exists. Overwrite?"
 msgstr "Файл '%s' существует. Перезаписать?"
@@ -570,7 +593,6 @@ msgstr ""
 
 #: timelinelib\help\pages.py:228
 #: timelinelib\wxgui\components\categorychoice.py:53
-#: timelinelib\wxgui\dialogs\mainframe.py:514
 msgid "Edit categories"
 msgstr "Редактировать категории"
 
@@ -589,8 +611,8 @@ msgid ""
 "*Sidebar*).\n"
 msgstr ""
 
-#: timelinelib\help\pages.py:243 timelinelib\wxgui\dialogs\mainframe.py:653
-#: timelinelib\wxgui\dialogs\mainframe.py:1139
+#: timelinelib\help\pages.py:243 timelinelib\wxgui\dialogs\mainframe.py:385
+#: timelinelib\wxgui\dialogs\mainframe.py:1270
 msgid "Contact"
 msgstr "Контакт"
 
@@ -785,8 +807,8 @@ msgstr "Не могу масштабировать глубже чем на 1 ч
 msgid "Day"
 msgstr "День"
 
-#: timelinelib\time\pytime.py:221 timelinelib\time\pytime.py:583
-#: timelinelib\time\wxtime.py:218 timelinelib\time\wxtime.py:561
+#: timelinelib\time\pytime.py:221 timelinelib\time\pytime.py:608
+#: timelinelib\time\wxtime.py:218 timelinelib\time\wxtime.py:594
 msgid "Week"
 msgstr "Неделя"
 
@@ -798,7 +820,7 @@ msgstr "Месяц"
 msgid "Year"
 msgstr "Год"
 
-#: timelinelib\time\pytime.py:259 timelinelib\time\wxtime.py:262
+#: timelinelib\time\pytime.py:284 timelinelib\time\wxtime.py:295
 msgid "Go to Date"
 msgstr "Перейти к дате"
 
@@ -891,7 +913,7 @@ msgstr "Ошибка"
 msgid "Warning"
 msgstr ""
 
-#: timelinelib\wxgui\utils.py:144 timelinelib\wxgui\utils.py:150
+#: timelinelib\wxgui\utils.py:149 timelinelib\wxgui\utils.py:155
 msgid "Question"
 msgstr "Вопрос"
 
@@ -937,11 +959,11 @@ msgstr "События принадлежавшие '%s', теперь отно�
 msgid "Invalid date"
 msgstr ""
 
-#: timelinelib\wxgui\components\search.py:70
+#: timelinelib\wxgui\components\search.py:71
 msgid "No match"
 msgstr "Совпадений не найдено"
 
-#: timelinelib\wxgui\components\search.py:74
+#: timelinelib\wxgui\components\search.py:76
 msgid "Only one match"
 msgstr "Только одно совпадение"
 
@@ -1150,242 +1172,240 @@ msgstr "Страница не найдена"
 msgid "Could not find page '%s'."
 msgstr "Не могу найти страницу '%s'."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:105
-#: timelinelib\wxgui\dialogs\mainframe.py:225
-msgid "Timeline files"
-msgstr "Файлы хронологии"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:107
-msgid "SVG files"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:157
+#: timelinelib\wxgui\dialogs\mainframe.py:124
 msgid "&File"
 msgstr "&Файл"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:163
+#: timelinelib\wxgui\dialogs\mainframe.py:130
 msgid "New"
 msgstr "Создать"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:163
+#: timelinelib\wxgui\dialogs\mainframe.py:130
 msgid "Create a new timeline"
 msgstr "Создать новую хронологию"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:169
+#: timelinelib\wxgui\dialogs\mainframe.py:136
 msgid "File Timeline..."
 msgstr "Файл Timeline..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:177
-#: timelinelib\wxgui\dialogs\mainframe.py:200
-msgid "Create Timeline"
-msgstr "Создать хронологию"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:183
-msgid "The specified timeline already exists."
-msgstr "Указанная хронология уже существует."
-
-#: timelinelib\wxgui\dialogs\mainframe.py:184
-msgid "Opening timeline instead of creating new."
-msgstr "Открыть хронологию вместо того, чтобы создать новую."
-
-#: timelinelib\wxgui\dialogs\mainframe.py:186
-msgid "Information"
-msgstr "Сведения"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:193
+#: timelinelib\wxgui\dialogs\mainframe.py:141
 msgid "Directory Timeline..."
 msgstr "Директория Timeline..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:209
+#: timelinelib\wxgui\dialogs\mainframe.py:147
 msgid "Open an existing timeline"
 msgstr "Открыть существующую хронологию"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:228
-msgid "Save Timeline As"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:253
-msgid "Open Timeline"
-msgstr "Открыть хронологию"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:263
+#: timelinelib\wxgui\dialogs\mainframe.py:152
 msgid "Open &Recent"
 msgstr "&Недавние файлы"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:267
+#: timelinelib\wxgui\dialogs\mainframe.py:156
 msgid "Save As..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:272
+#: timelinelib\wxgui\dialogs\mainframe.py:161
+msgid "Import timeline..."
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:166
 msgid "Page Set&up..."
 msgstr "&Настройка страницы..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:272
+#: timelinelib\wxgui\dialogs\mainframe.py:166
 msgid "Setup page for printing"
 msgstr "Настройка страницы для печати"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:281
+#: timelinelib\wxgui\dialogs\mainframe.py:172
 msgid "Print Preview"
 msgstr "Предварительный просмотр"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:290
+#: timelinelib\wxgui\dialogs\mainframe.py:178
 msgid "Print"
 msgstr "Печать"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:299
+#: timelinelib\wxgui\dialogs\mainframe.py:184
 msgid "&Export to Image..."
 msgstr "&Экспорт в изображение..."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:299
+#: timelinelib\wxgui\dialogs\mainframe.py:184
 msgid "Export the current view to a PNG image"
 msgstr "Эскпортировать текущий вид в изображение формата PNG"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:308
+#: timelinelib\wxgui\dialogs\mainframe.py:190
 msgid "&Export to SVG..."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:308
+#: timelinelib\wxgui\dialogs\mainframe.py:190
 msgid "Export the current view to a SVG image"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:317
+#: timelinelib\wxgui\dialogs\mainframe.py:196
+msgid "Play timeline"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:196
+msgid "Play timeline as movie"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:201
+msgid "Exit the program"
+msgstr "Выйти из программы"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:219
+msgid "&Edit"
+msgstr "&Редактировать"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:235
+msgid "&Sidebar\tCtrl+I"
+msgstr "&Боковая панель\tCtrl+I"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:236
+msgid "&Legend"
+msgstr "&Легенда"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:238
+msgid "&Balloons on hover"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:243
+msgid "&View"
+msgstr "&Вид"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:299
+msgid "Create &Event..."
+msgstr "Создать &событие..."
+
+#: timelinelib\wxgui\dialogs\mainframe.py:300
+msgid "&Edit Selected Event..."
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:301
+msgid "&Duplicate Selected Event..."
+msgstr "&Дублировать выбранное событие..."
+
+#: timelinelib\wxgui\dialogs\mainframe.py:302
+msgid "Set Category on Selected Events..."
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:304
+msgid "&Measure Distance between two Events..."
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:306
+msgid "Set Category on events without category..."
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:307
+msgid "Edit &Categories"
+msgstr "Редактировать &категории"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:309
+msgid "Read Only"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:313
+msgid "&Timeline"
+msgstr "&Хронология"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:350
+msgid "Find First Event"
+msgstr "Найти первое событие"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:351
+msgid "Find Last Event"
+msgstr "Найти последнее событие"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:352
+msgid "Fit All Events"
+msgstr "Все события"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:360
+msgid "&Navigate"
+msgstr "&Навигация"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:382
+msgid "&Contents\tF1"
+msgstr "Содержание\tF1"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:384
+#: timelinelib\wxgui\dialogs\mainframe.py:1135
+msgid "Getting started tutorial"
+msgstr "Изучить руководство"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:390
+msgid "&Help"
+msgstr "&Помощь"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:516
+msgid "read-only"
+msgstr "только для чтения"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:638
+#: timelinelib\wxgui\dialogs\mainframe.py:708
+msgid "Timeline files"
+msgstr "Файлы хронологии"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:640
+msgid "SVG files"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:668
+#: timelinelib\wxgui\dialogs\mainframe.py:683
+msgid "Create Timeline"
+msgstr "Создать хронологию"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:674
+msgid "The specified timeline already exists."
+msgstr "Указанная хронология уже существует."
+
+#: timelinelib\wxgui\dialogs\mainframe.py:675
+msgid "Opening timeline instead of creating new."
+msgstr "Открыть хронологию вместо того, чтобы создать новую."
+
+#: timelinelib\wxgui\dialogs\mainframe.py:677
+msgid "Information"
+msgstr "Сведения"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:694
+msgid "Open Timeline"
+msgstr "Открыть хронологию"
+
+#: timelinelib\wxgui\dialogs\mainframe.py:711
+msgid "Save Timeline As"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:733
 msgid ""
 "Could not find pysvg Python package. It is needed to export to SVG. See the "
 "Timeline website or the INSTALL file for instructions how to install it."
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:321
+#: timelinelib\wxgui\dialogs\mainframe.py:736
 msgid "Export to SVG"
 msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:343
-msgid "Play timeline"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:343
-msgid "Play timeline as movie"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:351
-msgid "Exit the program"
-msgstr "Выйти из программы"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:362
-msgid "&Edit"
-msgstr "&Редактировать"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:389
-msgid "&View"
-msgstr "&Вид"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:393
-msgid "&Sidebar\tCtrl+I"
-msgstr "&Боковая панель\tCtrl+I"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:407
-msgid "&Legend"
-msgstr "&Легенда"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:418
-msgid "&Balloons on hover"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:433
-msgid "&Timeline"
-msgstr "&Хронология"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:437
-msgid "Create &Event..."
-msgstr "Создать &событие..."
-
-#: timelinelib\wxgui\dialogs\mainframe.py:437
-msgid "Create a new event"
-msgstr "Создать новое событие"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:447
-msgid "&Duplicate Selected Event..."
-msgstr "&Дублировать выбранное событие..."
-
-#: timelinelib\wxgui\dialogs\mainframe.py:447
-msgid "Duplicate the Selected Event"
-msgstr "Дублировать выбранное событие"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:468
-msgid "&Measure Distance between two Events..."
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:469
-msgid "Measure the Distance between two Events"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:500
-msgid "Distance between selected events"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:503
-msgid "Events are overlapping or distance is 0"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:514
-msgid "Edit &Categories"
-msgstr "Редактировать &категории"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:526
-msgid "Read Only"
-msgstr ""
-
-#: timelinelib\wxgui\dialogs\mainframe.py:534
-#: timelinelib\wxgui\dialogs\mainframe.py:723
-msgid "read-only"
-msgstr "только для чтения"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:551
-msgid "&Navigate"
-msgstr "&Навигация"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:555
-msgid "Find First Event"
-msgstr "Найти первое событие"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:569
-msgid "Find Last Event"
-msgstr "Найти последнее событие"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:583
-msgid "Fit All Events"
-msgstr "Все события"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:636
-msgid "&Help"
-msgstr "&Помощь"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:639
-msgid "&Contents\tF1"
-msgstr "Содержание\tF1"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:646
-#: timelinelib\wxgui\dialogs\mainframe.py:1034
-msgid "Getting started tutorial"
-msgstr "Изучить руководство"
-
-#: timelinelib\wxgui\dialogs\mainframe.py:682
+#: timelinelib\wxgui\dialogs\mainframe.py:766
 msgid "Unable to write configuration file."
 msgstr "Невозможно записать в файл настроек."
 
-#: timelinelib\wxgui\dialogs\mainframe.py:784
-#, python-format
-msgid "File '%s' does not exist."
-msgstr "Файл '%s' не существует."
+#: timelinelib\wxgui\dialogs\mainframe.py:790
+msgid "Distance between selected events"
+msgstr ""
 
-#: timelinelib\wxgui\dialogs\mainframe.py:1026
+#: timelinelib\wxgui\dialogs\mainframe.py:793
+msgid "Events are overlapping or distance is 0"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\mainframe.py:1127
 msgid "No timeline opened."
 msgstr "Нет открытой хронологии"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:1031
+#: timelinelib\wxgui\dialogs\mainframe.py:1132
 msgid "First time using Timeline?"
 msgstr "Используете программу в первый раз?"
 
-#: timelinelib\wxgui\dialogs\mainframe.py:1136
+#: timelinelib\wxgui\dialogs\mainframe.py:1267
 msgid "Relevant help topics:"
 msgstr ""
 
@@ -1437,6 +1457,18 @@ msgstr "Понедельника"
 #: timelinelib\wxgui\dialogs\preferences.py:133
 msgid "Sunday"
 msgstr "Воскресенья"
+
+#: timelinelib\wxgui\dialogs\setcategoryeditor.py:61
+msgid "Select a Category:"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\setcategoryeditor.py:94
+msgid "Set Category on events without category"
+msgstr ""
+
+#: timelinelib\wxgui\dialogs\setcategoryeditor.py:96
+msgid "Set Category on selected events"
+msgstr ""
 
 #: timelinelib\wxgui\dialogs\textdisplay.py:90
 msgid "Unable to copy to clipboard."
