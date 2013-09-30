@@ -37,6 +37,7 @@ from timelinelib.meta.about import display_about_dialog
 from timelinelib.meta.version import DEV
 from timelinelib.utils import ex_msg
 from timelinelib.wxgui.components.cattree import CategoriesTree
+from timelinelib.wxgui.components.categorytree import CustomCategoryTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
@@ -1049,6 +1050,9 @@ class MainPanel(wx.Panel):
     def _show_new_timeline(self, timeline):
         self.set_timeline(timeline)
         self.cattree.initialize_from_timeline_view(self.get_drawing_area())
+        if DEV:
+            cc = self.timeline_panel.sidebar.custom_categories
+            cc.update_from_timeline_view(self.get_drawing_area())
         self.set_searchbar_drawing_area_panel(self.get_drawing_area())
         self.show_timeline_panel()
         
@@ -1341,6 +1345,10 @@ class Sidebar(wx.Panel):
         sizer.AddGrowableRow(0, proportion=0)
         sizer.Add(self.cattree, (0,0), flag=wx.GROW)
         sizer.Add(self.cbx_toggle_cat_view, (1,0), flag=wx.ALL, border=5)
+        if DEV:
+            self.custom_categories = CustomCategoryTree(self)
+            sizer.Add(self.custom_categories, (2,0), flag=wx.GROW)
+            sizer.AddGrowableRow(2, proportion=0)
         self.SetSizer(sizer)
         self.Bind(wx.EVT_CHECKBOX, self._cbx_on_click, self.cbx_toggle_cat_view)
         
