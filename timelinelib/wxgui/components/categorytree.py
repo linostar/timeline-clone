@@ -52,7 +52,6 @@ class CustomCategoryTree(wx.Panel):
 
 class CustomCategoryTreeRenderer(object):
 
-    INDENT_PX = 15
     INNER_PADDING = 2
     TRIANGLE_SIZE = 8
 
@@ -64,22 +63,19 @@ class CustomCategoryTreeRenderer(object):
         del self.dc
 
     def render_entries(self, entries):
-        self.y = 0
         for entry in entries:
             self.render_entry(entry)
-            self.y += self.model.HEIGHT
 
     def render_entry(self, entry):
         self.render_arrow(entry)
-        self.render_name(entry.get("name", ""), entry.get("indent_level", 0))
-        self.render_color_box(entry.get("color", None))
+        self.render_name(entry)
+        self.render_color_box(entry)
 
     def render_arrow(self, entry):
-        indent_level = entry.get("indent_level", 0)
         self.dc.SetBrush(wx.Brush(wx.Color(100, 100, 100), wx.SOLID))
         self.dc.SetPen(wx.Pen(wx.Color(100, 100, 100), 0, wx.SOLID))
-        center_y = self.y + self.model.HEIGHT / 2
-        start_x = self.INDENT_PX * indent_level + self.INNER_PADDING
+        center_y = entry["y"] + self.model.HEIGHT / 2
+        start_x = entry["x"] + self.INNER_PADDING
         if entry["expanded"]:
             open_polygon = [
                 wx.Point(start_x + self.INNER_PADDING, center_y - self.TRIANGLE_SIZE / 2),
@@ -95,17 +91,18 @@ class CustomCategoryTreeRenderer(object):
             ]
             self.dc.DrawPolygon(closed_polygon)
 
-    def render_name(self, name, indent_level):
-        x = self.INDENT_PX * indent_level + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
-        (w, h) = self.dc.GetTextExtent(name)
-        self.dc.DrawText(name, x + self.INNER_PADDING, self.y + self.INNER_PADDING)
+    def render_name(self, entry):
+        x = entry["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
+        (w, h) = self.dc.GetTextExtent(entry["name"])
+        self.dc.DrawText(entry["name"], x + self.INNER_PADDING, entry["y"] + self.INNER_PADDING)
 
-    def render_color_box(self, color):
+    def render_color_box(self, entry):
+        color = entry.get("color", None)
         self.dc.SetBrush(wx.Brush(color, wx.SOLID))
         self.dc.SetPen(wx.Pen(darken_color(color), 1, wx.SOLID))
         self.dc.DrawRectangle(
             self.width - self.model.HEIGHT - self.INNER_PADDING,
-            self.y + self.INNER_PADDING,
+            entry["y"] + self.INNER_PADDING,
             self.model.HEIGHT - 2 * self.INNER_PADDING,
             self.model.HEIGHT - 2 * self.INNER_PADDING)
 
@@ -113,6 +110,7 @@ class CustomCategoryTreeRenderer(object):
 class CustomCategoryTreeModel(object):
 
     HEIGHT = 22
+    INDENT_PX = 15
 
     def __init__(self):
         self.entries = []
@@ -139,6 +137,7 @@ class CustomCategoryTreeModel(object):
 
     def update_entries(self):
         self.entries = []
+        self.y = 0
         self._update_from_tree(self._list_to_tree(self.get_categories()))
 
     def _list_to_tree(self, categories, parent=None):
@@ -155,8 +154,10 @@ class CustomCategoryTreeModel(object):
                 "name": category.name,
                 "color": category.color,
                 "visible": self.is_category_visible(category),
-                "indent_level": indent_level,
+                "x": indent_level * self.INDENT_PX,
+                "y": self.y,
                 "expanded": expanded,
             })
+            self.y += self.HEIGHT
             if expanded:
                 self._update_from_tree(child_tree, indent_level+1)

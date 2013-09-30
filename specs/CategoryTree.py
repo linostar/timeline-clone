@@ -40,7 +40,8 @@ class CategoryTreeModelSpec(unittest.TestCase):
                 "name": "Work",
                 "visible": True,
                 "color": (255, 0, 100),
-                "indent_level": 0,
+                "x": 0,
+                "y": 0,
                 "expanded": True,
             },
         ])
@@ -54,12 +55,15 @@ class CategoryTreeModelSpec(unittest.TestCase):
                 "name": "Work",
                 "visible": False,
                 "color": (255, 0, 100),
-                "indent_level": 0,
+                "x": 0,
+                "y": 0,
                 "expanded": True,
             },
         ])
 
     def test_flattens_category_hierarchy_with_indent_level(self):
+        self.model.HEIGHT = 20
+        self.model.INDENT_PX = 10
         work_category = self.add_category("Work", (255, 0, 100), False)
         self.add_category("Reading", (0, 255, 0), False, work_category)
         self.model.set_timeline_view(self.timeline_view)
@@ -69,7 +73,8 @@ class CategoryTreeModelSpec(unittest.TestCase):
                 "name": "Work",
                 "visible": False,
                 "color": (255, 0, 100),
-                "indent_level": 0,
+                "x": 0,
+                "y": 0,
                 "expanded": True,
             },
             {
@@ -77,7 +82,8 @@ class CategoryTreeModelSpec(unittest.TestCase):
                 "name": "Reading",
                 "visible": False,
                 "color": (0, 255, 0),
-                "indent_level": 1,
+                "x": 10,
+                "y": 20,
                 "expanded": True,
             },
         ])
