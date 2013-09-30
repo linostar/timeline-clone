@@ -18,17 +18,23 @@
 
 import wx
 
+from timelinelib.drawing.utils import darken_color
+
 
 class CustomCategoryTree(wx.Panel):
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self.Bind(wx.EVT_PAINT, self._on_paint)
+        self.Bind(wx.EVT_SIZE, self._on_size)
         self.renderer = CustomCategoryTreeRenderer()
         self.model = CustomCategoryTreeModel()
 
     def update_from_timeline_view(self, timeline_view):
         self.model.update_from_timeline_view(timeline_view)
+        self.Refresh()
+
+    def _on_size(self, event):
         self.Refresh()
 
     def _on_paint(self, event):
@@ -41,16 +47,52 @@ class CustomCategoryTree(wx.Panel):
 
 class CustomCategoryTreeRenderer(object):
 
-    HEIGHT = 20
-    INDENT_PX = 10
+    HEIGHT = 22
+    INDENT_PX = 15
+    INNER_PADDING = 2
+    TRIANGLE_SIZE = 8
 
     def render(self, dc, width, height, model):
-        y = 0
-        for entry in model.entries:
-            x = self.INDENT_PX * entry.get("indent_level", 0)
-            dc.DrawRectangle(x, y, width, self.HEIGHT)
-            dc.DrawText(entry.get("name", ""), x, y)
-            y += self.HEIGHT
+        self.dc = dc
+        self.width = width
+        self.render_entries(model.entries)
+        del self.dc
+
+    def render_entries(self, entries):
+        self.y = 0
+        for entry in entries:
+            self.render_entry(entry)
+            self.y += self.HEIGHT
+
+    def render_entry(self, entry):
+        self.render_arrow(entry.get("indent_level", 0))
+        self.render_name(entry.get("name", ""), entry.get("indent_level", 0))
+        self.render_color_box(entry.get("color", None))
+
+    def render_arrow(self, indent_level):
+        self.dc.SetBrush(wx.Brush(wx.Color(100, 100, 100), wx.SOLID))
+        self.dc.SetPen(wx.Pen(wx.Color(100, 100, 100), 0, wx.SOLID))
+        center_y = self.y + self.HEIGHT / 2
+        start_x = self.INDENT_PX * indent_level + self.INNER_PADDING
+        closed_polygon = [ wx.Point(start_x + self.INNER_PADDING, center_y - self.TRIANGLE_SIZE / 2)
+                         , wx.Point(start_x + self.INNER_PADDING + self.TRIANGLE_SIZE, center_y)
+                         , wx.Point(start_x + self.INNER_PADDING, center_y + self.TRIANGLE_SIZE / 2)
+                         ]
+        self.dc.DrawPolygon(closed_polygon)
+
+    def render_name(self, name, indent_level):
+        x = self.INDENT_PX * indent_level + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
+        (w, h) = self.dc.GetTextExtent(name)
+        self.dc.DrawText(name, x + self.INNER_PADDING, self.y + self.INNER_PADDING)
+
+    def render_color_box(self, color):
+        self.dc.SetBrush(wx.Brush(color, wx.SOLID))
+        self.dc.SetPen(wx.Pen(darken_color(color), 1, wx.SOLID))
+        self.dc.DrawRectangle(
+            self.width - self.HEIGHT - self.INNER_PADDING,
+            self.y + self.INNER_PADDING,
+            self.HEIGHT - 2 * self.INNER_PADDING,
+            self.HEIGHT - 2 * self.INNER_PADDING)
 
 
 class CustomCategoryTreeModel(object):
