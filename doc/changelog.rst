@@ -1,10 +1,16 @@
 Changelog
 =========
 
+Version 1.1.0
+-------------
+
+**Planned: Released on 30 December 2013.**
+
+
 Version 1.0.0
 -------------
 
-**Planned: Released on 30 September 2013.**
+**Released on 30 September 2013.**
 
 After about 4.5 years in development, timeline 1.0.0 is released. This is the
 first time we increment the x-component of the version number
