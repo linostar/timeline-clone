@@ -109,7 +109,16 @@ class CategoryTreeModelSpec(unittest.TestCase):
         self.model.toggle_expandedness(25)
         self.assertFalse(self.model.entries[1]["expanded"])
         self.model.toggle_expandedness(25)
-        self.assertTrue(self.model.entries[1]["expanded"])
+
+    def test_does_not_toggle_expandedness_if_doing_it_out_of_range(self):
+        self.model.HEIGHT = 20
+        self.add_category("Work", (255, 0, 100), False)
+        self.add_category("Reading", (0, 255, 0), False)
+        self.model.set_timeline_view(self.timeline_view)
+        before = [x["expanded"] for x in self.model.entries]
+        self.model.toggle_expandedness(50)
+        after = [x["expanded"] for x in self.model.entries]
+        self.assertEqual(before, after)
 
     def test_hides_subtrees_if_parent_not_expanded(self):
         self.model.HEIGHT = 20

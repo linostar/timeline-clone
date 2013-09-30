@@ -122,12 +122,13 @@ class CustomCategoryTreeModel(object):
 
     def toggle_expandedness(self, y_position):
         index = y_position // self.HEIGHT
-        id_at_index = self.entries[index]["id"]
-        if id_at_index in self.collapsed_category_ids:
-            self.collapsed_category_ids.remove(id_at_index)
-        else:
-            self.collapsed_category_ids.append(id_at_index)
-        self.update_entries()
+        if index < len(self.entries):
+            id_at_index = self.entries[index]["id"]
+            if id_at_index in self.collapsed_category_ids:
+                self.collapsed_category_ids.remove(id_at_index)
+            else:
+                self.collapsed_category_ids.append(id_at_index)
+            self.update_entries()
 
     def get_categories(self):
         return self.timeline_view.get_timeline().get_categories()
