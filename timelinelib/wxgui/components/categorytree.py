@@ -30,8 +30,8 @@ class CustomCategoryTree(wx.Panel):
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
-        self.renderer = CustomCategoryTreeRenderer()
         self.model = CustomCategoryTreeModel()
+        self.renderer = CustomCategoryTreeRenderer(self.model)
 
     def set_timeline_view(self, timeline_view):
         self.model.set_timeline_view(timeline_view)
@@ -41,7 +41,7 @@ class CustomCategoryTree(wx.Panel):
         dc = wx.AutoBufferedPaintDC(self)
         dc.BeginDrawing()
         (width, height) = self.GetSizeTuple()
-        self.renderer.render(dc, width, height, self.model)
+        self.renderer.render(dc, width)
         dc.EndDrawing()
 
     def _on_size(self, event):
@@ -57,23 +57,25 @@ class CustomCategoryTreeRenderer(object):
     INNER_PADDING = 2
     TRIANGLE_SIZE = 8
 
-    def render(self, dc, width, height, model):
+    def __init__(self, model):
+        self.model = model
+
+    def render(self, dc, width):
         self.dc = dc
         self.width = width
-        self.model = model
-        self.render_entries(model.entries)
+        self._render_entries(self.model.entries)
         del self.dc
 
-    def render_entries(self, entries):
+    def _render_entries(self, entries):
         for entry in entries:
-            self.render_entry(entry)
+            self._render_entry(entry)
 
-    def render_entry(self, entry):
-        self.render_arrow(entry)
-        self.render_name(entry)
-        self.render_color_box(entry)
+    def _render_entry(self, entry):
+        self._render_arrow(entry)
+        self._render_name(entry)
+        self._render_color_box(entry)
 
-    def render_arrow(self, entry):
+    def _render_arrow(self, entry):
         self.dc.SetBrush(wx.Brush(wx.Color(100, 100, 100), wx.SOLID))
         self.dc.SetPen(wx.Pen(wx.Color(100, 100, 100), 0, wx.SOLID))
         center_y = entry["y"] + self.model.HEIGHT / 2
@@ -93,12 +95,12 @@ class CustomCategoryTreeRenderer(object):
             ]
             self.dc.DrawPolygon(closed_polygon)
 
-    def render_name(self, entry):
+    def _render_name(self, entry):
         x = entry["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
         (w, h) = self.dc.GetTextExtent(entry["name"])
         self.dc.DrawText(entry["name"], x + self.INNER_PADDING, entry["y"] + self.INNER_PADDING)
 
-    def render_color_box(self, entry):
+    def _render_color_box(self, entry):
         color = entry.get("color", None)
         self.dc.SetBrush(wx.Brush(color, wx.SOLID))
         self.dc.SetPen(wx.Pen(darken_color(color), 1, wx.SOLID))
