@@ -36,21 +36,27 @@ class CustomCategoryTree(wx.Panel):
 
     def set_timeline_view(self, timeline_view):
         self.model.set_timeline_view(timeline_view)
-        self.Refresh()
+        self._redraw()
 
     def _on_paint(self, event):
         dc = wx.AutoBufferedPaintDC(self)
         dc.BeginDrawing()
+        dc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
+        dc.Clear()
         self.renderer.render(dc)
         dc.EndDrawing()
 
     def _on_size(self, event):
         self._size_to_model()
-        self.Refresh()
+        self._redraw()
 
     def _on_left_down(self, event):
         self.model.toggle_expandedness(event.GetY())
+        self._redraw()
+
+    def _redraw(self):
         self.Refresh()
+        self.Update()
 
     def _size_to_model(self):
         (view_width, view_height) = self.GetSizeTuple()
