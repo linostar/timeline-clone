@@ -25,6 +25,8 @@ class CustomCategoryTree(wx.Panel):
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM) # Needed when using
+                                                    # wx.AutoBufferedPaintDC
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
@@ -35,19 +37,19 @@ class CustomCategoryTree(wx.Panel):
         self.model.set_timeline_view(timeline_view)
         self.Refresh()
 
-    def _on_size(self, event):
-        self.Refresh()
-
-    def _on_left_down(self, event):
-        self.model.toggle_expandedness(event.GetY())
-        self.Refresh()
-
     def _on_paint(self, event):
         dc = wx.AutoBufferedPaintDC(self)
         dc.BeginDrawing()
         (width, height) = self.GetSizeTuple()
         self.renderer.render(dc, width, height, self.model)
         dc.EndDrawing()
+
+    def _on_size(self, event):
+        self.Refresh()
+
+    def _on_left_down(self, event):
+        self.model.toggle_expandedness(event.GetY())
+        self.Refresh()
 
 
 class CustomCategoryTreeRenderer(object):
