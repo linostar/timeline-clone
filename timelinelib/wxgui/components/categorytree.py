@@ -32,6 +32,7 @@ class CustomCategoryTree(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         self.model = CustomCategoryTreeModel()
         self.renderer = CustomCategoryTreeRenderer(self.model)
+        self._size_to_model()
 
     def set_timeline_view(self, timeline_view):
         self.model.set_timeline_view(timeline_view)
@@ -40,16 +41,20 @@ class CustomCategoryTree(wx.Panel):
     def _on_paint(self, event):
         dc = wx.AutoBufferedPaintDC(self)
         dc.BeginDrawing()
-        (width, height) = self.GetSizeTuple()
-        self.renderer.render(dc, width)
+        self.renderer.render(dc)
         dc.EndDrawing()
 
     def _on_size(self, event):
+        self._size_to_model()
         self.Refresh()
 
     def _on_left_down(self, event):
         self.model.toggle_expandedness(event.GetY())
         self.Refresh()
+
+    def _size_to_model(self):
+        (view_width, view_height) = self.GetSizeTuple()
+        self.model.set_view_size(view_width, view_height)
 
 
 class CustomCategoryTreeRenderer(object):
@@ -60,27 +65,26 @@ class CustomCategoryTreeRenderer(object):
     def __init__(self, model):
         self.model = model
 
-    def render(self, dc, width):
+    def render(self, dc):
         self.dc = dc
-        self.width = width
-        self._render_entries(self.model.entries)
+        self._render_items(self.model.items)
         del self.dc
 
-    def _render_entries(self, entries):
-        for entry in entries:
-            self._render_entry(entry)
+    def _render_items(self, items):
+        for item in items:
+            self._render_item(item)
 
-    def _render_entry(self, entry):
-        self._render_arrow(entry)
-        self._render_name(entry)
-        self._render_color_box(entry)
+    def _render_item(self, item):
+        self._render_arrow(item)
+        self._render_name(item)
+        self._render_color_box(item)
 
-    def _render_arrow(self, entry):
+    def _render_arrow(self, item):
         self.dc.SetBrush(wx.Brush(wx.Color(100, 100, 100), wx.SOLID))
         self.dc.SetPen(wx.Pen(wx.Color(100, 100, 100), 0, wx.SOLID))
-        center_y = entry["y"] + self.model.HEIGHT / 2
-        start_x = entry["x"] + self.INNER_PADDING
-        if entry["expanded"]:
+        center_y = item["y"] + self.model.ITEM_HEIGHT_PX / 2
+        start_x = item["x"] + self.INNER_PADDING
+        if item["expanded"]:
             open_polygon = [
                 wx.Point(start_x + self.INNER_PADDING, center_y - self.TRIANGLE_SIZE / 2),
                 wx.Point(start_x + self.INNER_PADDING + self.TRIANGLE_SIZE, center_y - self.TRIANGLE_SIZE / 2),
@@ -95,55 +99,66 @@ class CustomCategoryTreeRenderer(object):
             ]
             self.dc.DrawPolygon(closed_polygon)
 
-    def _render_name(self, entry):
-        x = entry["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
-        (w, h) = self.dc.GetTextExtent(entry["name"])
-        self.dc.DrawText(entry["name"], x + self.INNER_PADDING, entry["y"] + self.INNER_PADDING)
+    def _render_name(self, item):
+        x = item["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
+        (w, h) = self.dc.GetTextExtent(item["name"])
+        self.dc.DrawText(item["name"], x + self.INNER_PADDING, item["y"] + self.INNER_PADDING)
 
-    def _render_color_box(self, entry):
-        color = entry.get("color", None)
+    def _render_color_box(self, item):
+        color = item.get("color", None)
         self.dc.SetBrush(wx.Brush(color, wx.SOLID))
         self.dc.SetPen(wx.Pen(darken_color(color), 1, wx.SOLID))
         self.dc.DrawRectangle(
-            self.width - self.model.HEIGHT - self.INNER_PADDING,
-            entry["y"] + self.INNER_PADDING,
-            self.model.HEIGHT - 2 * self.INNER_PADDING,
-            self.model.HEIGHT - 2 * self.INNER_PADDING)
+            item["x"] + item["width"] - self.model.ITEM_HEIGHT_PX - self.INNER_PADDING,
+            item["y"] + self.INNER_PADDING,
+            self.model.ITEM_HEIGHT_PX - 2 * self.INNER_PADDING,
+            self.model.ITEM_HEIGHT_PX - 2 * self.INNER_PADDING)
 
 
 class CustomCategoryTreeModel(object):
 
-    HEIGHT = 22
+    ITEM_HEIGHT_PX = 22
     INDENT_PX = 15
 
     def __init__(self):
-        self.entries = []
+        self.view_width = 0
+        self.view_height = 0
+        self.timeline_view = None
         self.collapsed_category_ids = []
+        self.items = []
+
+    def get_items(self):
+        return self.items
+
+    def set_view_size(self, view_width, view_height):
+        self.view_width = view_width
+        self.view_height = view_height
+        self._update_items()
 
     def set_timeline_view(self, timeline_view):
         self.timeline_view = timeline_view
-        self.update_entries()
+        self._update_items()
 
     def toggle_expandedness(self, y_position):
-        index = y_position // self.HEIGHT
-        if index < len(self.entries):
-            id_at_index = self.entries[index]["id"]
+        index = y_position // self.ITEM_HEIGHT_PX
+        if index < len(self.items):
+            id_at_index = self.items[index]["id"]
             if id_at_index in self.collapsed_category_ids:
                 self.collapsed_category_ids.remove(id_at_index)
             else:
                 self.collapsed_category_ids.append(id_at_index)
-            self.update_entries()
+            self._update_items()
 
-    def get_categories(self):
-        return self.timeline_view.get_timeline().get_categories()
-
-    def is_category_visible(self, category):
-        return self.timeline_view.get_view_properties().category_visible(category)
-
-    def update_entries(self):
-        self.entries = []
+    def _update_items(self):
+        self.items = []
         self.y = 0
-        self._update_from_tree(self._list_to_tree(self.get_categories()))
+        self._update_from_tree(self._list_to_tree(self._get_categories()))
+
+    def _get_categories(self):
+        if self.timeline_view is None:
+            return []
+        else:
+            return self.timeline_view.get_timeline().get_categories()
 
     def _list_to_tree(self, categories, parent=None):
         top = [category for category in categories if (category.parent == parent)]
@@ -154,15 +169,19 @@ class CustomCategoryTreeModel(object):
     def _update_from_tree(self, category_tree, indent_level=0):
         for (category, child_tree) in category_tree:
             expanded = category.id not in self.collapsed_category_ids
-            self.entries.append({
+            self.items.append({
                 "id": category.id,
                 "name": category.name,
                 "color": category.color,
-                "visible": self.is_category_visible(category),
+                "visible": self._is_category_visible(category),
                 "x": indent_level * self.INDENT_PX,
                 "y": self.y,
+                "width": self.view_width - indent_level * self.INDENT_PX,
                 "expanded": expanded,
             })
-            self.y += self.HEIGHT
+            self.y += self.ITEM_HEIGHT_PX
             if expanded:
                 self._update_from_tree(child_tree, indent_level+1)
+
+    def _is_category_visible(self, category):
+        return self.timeline_view.get_view_properties().category_visible(category)
