@@ -416,12 +416,13 @@ class DefaultDrawingAlgorithm(Drawer):
     def _scroll_events_vertically(self, view_properties):
         collection = []
         amount = view_properties.hscroll_amount
-        for (event, rect) in self.scene.event_data:
-            if rect.Y < self.scene.divider_y:
-                self._scroll_point_events(amount, event, rect, collection)
-            else:
-                self._scroll_period_events(amount, event, rect, collection)
-        self.scene.event_data = collection
+        if amount != 0:
+            for (event, rect) in self.scene.event_data:
+                if rect.Y < self.scene.divider_y:
+                    self._scroll_point_events(amount, event, rect, collection)
+                else:
+                    self._scroll_period_events(amount, event, rect, collection)
+            self.scene.event_data = collection
         
     def _scroll_point_events(self, amount, event, rect, collection):
         rect.Y += amount
