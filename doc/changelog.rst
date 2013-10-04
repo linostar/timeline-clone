@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Version 1.0.1
+-------------
+
+**Released on 4 October 2013.**
+
+Bug fixes:
+
+* Events Disappearing when zooming
+
 Version 1.0.0
 -------------
 
