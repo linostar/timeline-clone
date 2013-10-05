@@ -66,6 +66,8 @@ Developing timeline
 
     dev/release-instructions
 
+    dev/links
+
 Project history
 ---------------
 
