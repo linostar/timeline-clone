@@ -13,8 +13,9 @@ The mailing list
 ----------------
 
 We use a mailing list for all kinds of discussions about timeline. Before you
-send your question, please search the archive to see if you can find your
-answer: :sf:`search mailing list archive <mailman/search/?mail_list=thetimelineproj-user>`.
+send your question, please :sf:`browse <mailman/thetimelineproj-user>` or
+:sf:`search <mailman/search/?mail_list=thetimelineproj-user>` the mailing
+archive to see if you can find your answer.
 
 If you can't find your answer, send an email to
 thetimelineproj-user@lists.sourceforge.net.
