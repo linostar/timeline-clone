@@ -89,20 +89,21 @@ class CustomCategoryTreeRenderer(object):
     def _render_arrow(self, item):
         self.dc.SetBrush(wx.Brush(wx.Color(100, 100, 100), wx.SOLID))
         self.dc.SetPen(wx.Pen(wx.Color(100, 100, 100), 0, wx.SOLID))
-        center_y = item["y"] + self.model.ITEM_HEIGHT_PX / 2
-        start_x = item["x"] + self.INNER_PADDING
+        offset = self.TRIANGLE_SIZE/2
+        center_x = item["x"] + 2*self.INNER_PADDING + offset
+        center_y = item["y"] + self.model.ITEM_HEIGHT_PX/2
         if item["expanded"]:
             open_polygon = [
-                wx.Point(start_x + self.INNER_PADDING, center_y - self.TRIANGLE_SIZE / 2),
-                wx.Point(start_x + self.INNER_PADDING + self.TRIANGLE_SIZE, center_y - self.TRIANGLE_SIZE / 2),
-                wx.Point(start_x + self.INNER_PADDING + self.TRIANGLE_SIZE / 2, center_y),
+                wx.Point(center_x - offset, center_y - offset),
+                wx.Point(center_x + offset, center_y - offset),
+                wx.Point(center_x         , center_y + offset),
             ]
             self.dc.DrawPolygon(open_polygon)
         else:
             closed_polygon = [
-                wx.Point(start_x + self.INNER_PADDING, center_y - self.TRIANGLE_SIZE / 2),
-                wx.Point(start_x + self.INNER_PADDING + self.TRIANGLE_SIZE, center_y),
-                wx.Point(start_x + self.INNER_PADDING, center_y + self.TRIANGLE_SIZE / 2),
+                wx.Point(center_x - offset, center_y - offset),
+                wx.Point(center_x - offset, center_y + offset),
+                wx.Point(center_x + offset, center_y),
             ]
             self.dc.DrawPolygon(closed_polygon)
 
