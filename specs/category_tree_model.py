@@ -112,6 +112,21 @@ class item_properties(Base):
             },
         ])
 
+    def test_has_child_attribute(self):
+        play_category = self.add_category("Play")
+        work_category = self.add_category("Work", parent=play_category)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_itmes_matching([
+            {
+                "name": "Play",
+                "has_children": True,
+            },
+            {
+                "name": "Work",
+                "has_children": False,
+            },
+        ])
+
 
 class bounding_box(Base):
 

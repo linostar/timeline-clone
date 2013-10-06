@@ -81,7 +81,8 @@ class CustomCategoryTreeRenderer(object):
             self._render_item(item)
 
     def _render_item(self, item):
-        self._render_arrow(item)
+        if item["has_children"]:
+            self._render_arrow(item)
         self._render_name(item)
         self._render_color_box(item)
 
@@ -184,6 +185,7 @@ class CustomCategoryTreeModel(object):
                 "y": self.y,
                 "width": self.view_width - indent_level * self.INDENT_PX,
                 "expanded": expanded,
+                "has_children": len(child_tree) > 0,
             })
             self.y += self.ITEM_HEIGHT_PX
             if expanded:
