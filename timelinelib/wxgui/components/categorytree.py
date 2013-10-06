@@ -83,6 +83,8 @@ class CustomCategoryTreeRenderer(object):
     def _render_item(self, item):
         if item["has_children"]:
             self._render_arrow(item)
+        if item["visible"]:
+            self._render_visible_toggle(item)
         self._render_name(item)
         self._render_color_box(item)
 
@@ -110,7 +112,20 @@ class CustomCategoryTreeRenderer(object):
     def _render_name(self, item):
         x = item["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
         (w, h) = self.dc.GetTextExtent(item["name"])
+        if item["actually_visible"]:
+            self.dc.SetTextForeground(wx.BLACK)
+        else:
+            self.dc.SetTextForeground((150, 150, 150))
         self.dc.DrawText(item["name"], x + self.INNER_PADDING, item["y"] + self.INNER_PADDING)
+
+    def _render_visible_toggle(self, item):
+        color = (150, 150, 150)
+        self.dc.SetBrush(wx.Brush(color, wx.SOLID))
+        self.dc.SetPen(wx.Pen(darken_color(color), 1, wx.SOLID))
+        self.dc.DrawCircle(
+            item["x"] + item["width"] - self.model.ITEM_HEIGHT_PX*2,
+            item["y"] + self.model.ITEM_HEIGHT_PX/2,
+            self.model.ITEM_HEIGHT_PX/4)
 
     def _render_color_box(self, item):
         color = item.get("color", None)
@@ -187,6 +202,7 @@ class CustomCategoryTreeModel(object):
                 "width": self.view_width - indent_level * self.INDENT_PX,
                 "expanded": expanded,
                 "has_children": len(child_tree) > 0,
+                "actually_visible": self._is_category_actually_visible(category),
             })
             self.y += self.ITEM_HEIGHT_PX
             if expanded:
@@ -194,3 +210,6 @@ class CustomCategoryTreeModel(object):
 
     def _is_category_visible(self, category):
         return self.timeline_view.get_view_properties().category_visible(category)
+
+    def _is_category_actually_visible(self, category):
+        return self.timeline_view.get_view_properties().category_actually_visible(category)

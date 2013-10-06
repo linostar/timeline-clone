@@ -20,8 +20,9 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.db.utils import IdCounter
 from timelinelib.db.objects import Category
+from timelinelib.db.utils import IdCounter
+from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 
 
@@ -32,12 +33,14 @@ class Base(unittest.TestCase):
 
         self.categories = []
         self.visible_categories = []
+        self.actually_visible_categories = []
 
         timeline = Mock()
         timeline.get_categories.return_value = self.categories
 
-        view_properties = Mock()
+        view_properties = Mock(ViewProperties)
         view_properties.category_visible.side_effect = self._category_visible
+        view_properties.category_actually_visible.side_effect = self._category_actually_visible
 
         timeline_view = Mock()
         timeline_view.get_timeline.return_value = timeline
@@ -50,11 +53,16 @@ class Base(unittest.TestCase):
     def _category_visible(self, category):
         return category in self.visible_categories
 
-    def add_category(self, name, color=(0, 0, 0), visible=True, parent=None):
+    def _category_actually_visible(self, category):
+        return category in self.actually_visible_categories
+
+    def add_category(self, name, color=(0, 0, 0), visible=True, actually_visible=True, parent=None):
         category = Category(name, color, (0, 0, 0), True, parent=parent)
         category.set_id(self.id_counter.get_next())
         if visible:
             self.visible_categories.append(category)
+        if actually_visible:
+            self.actually_visible_categories.append(category)
         self.categories.append(category)
         return category
 
@@ -94,20 +102,22 @@ class setting_timline_view(Base):
 class item_properties(Base):
 
     def test_has_items_for_categories(self):
-        play_category = self.add_category("Play", (255, 0, 100), False)
-        work_category = self.add_category("Work", (88, 55, 22), True)
+        play_category = self.add_category("Play", (255, 0, 100), visible=False, actually_visible=True)
+        work_category = self.add_category("Work", (88, 55, 22), visible=True, actually_visible=False)
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_itmes_matching([
             {
                 "id": play_category.id,
                 "name": "Play",
                 "visible": False,
+                "actually_visible": True,
                 "color": (255, 0, 100),
             },
             {
                 "id": work_category.id,
                 "name": "Work",
                 "visible": True,
+                "actually_visible": False,
                 "color": (88, 55, 22),
             },
         ])
@@ -214,8 +224,8 @@ class expandedness(Base):
 
     def test_hides_subtrees_if_parent_not_expanded(self):
         self.model.ITEM_HEIGHT_PX = 20
-        work_category = self.add_category("Work", (255, 0, 100), False)
-        self.add_category("Reading", (0, 255, 0), False, work_category)
+        work_category = self.add_category("Work")
+        self.add_category("Reading", parent=work_category)
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_item_names(["Work", "Reading"])
         self.model.toggle_expandedness(5)

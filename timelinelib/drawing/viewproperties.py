@@ -127,6 +127,16 @@ class ViewProperties(object):
     def category_visible(self, category):
         return not category.id in self.hidden_categories
 
+    def category_actually_visible(self, category):
+        def category_visible(cat):
+            if cat is None:
+                return True
+            elif self.category_visible(cat) == True:
+                return category_visible(cat.parent)
+            else:
+                return False
+        return category_visible(category)
+
     def set_category_visible(self, category, is_visible=True):
         if is_visible == True and category.id in self.hidden_categories:
             self.hidden_categories.remove(category.id)
