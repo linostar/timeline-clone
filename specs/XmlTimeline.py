@@ -33,8 +33,6 @@ import timelinelib.calendar.gregorian as gregorian
 
 class XmlTimelineSpec(TmpDirTestCase):
 
-    IO = True
-
     def test_backs_up_pre_1_0_0_files(self):
         contents = """<?xml version="1.0" encoding="utf-8"?>
 <timeline>

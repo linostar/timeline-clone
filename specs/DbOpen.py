@@ -81,8 +81,6 @@ CONTENT_0100 = u"""
 
 class DbOpenSpec(TmpDirTestCase):
 
-    IO = True
-
     def test_raises_error_when_reading_non_xml_file(self):
         self.writeContentToTmpFile(CONTENT_010)
         self.assertRaises(TimelineIOError, db_open, self.tmp_path)
