@@ -1,9 +1,14 @@
 Changelog
 =========
+
 Version 1.1.0
 -------------
 
 **Planned: Released on 30 December 2013.**
+
+Bug fixes:
+
+* SVG export can handle ampersand (&) in event text
 
 Version 1.0.1
 -------------
