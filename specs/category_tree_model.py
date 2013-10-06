@@ -25,7 +25,51 @@ from timelinelib.db.objects import Category
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 
 
-class CategoryTreeModelSpec(unittest.TestCase):
+class Base(unittest.TestCase):
+
+    def setUp(self):
+        self.id_counter = IdCounter()
+
+        self.categories = []
+        self.visible_categories = []
+
+        timeline = Mock()
+        timeline.get_categories.return_value = self.categories
+
+        view_properties = Mock()
+        view_properties.category_visible.side_effect = self._category_visible
+
+        timeline_view = Mock()
+        timeline_view.get_timeline.return_value = timeline
+        timeline_view.get_view_properties.return_value = view_properties
+
+        self.timeline_view = timeline_view
+
+        self.model = CustomCategoryTreeModel()
+
+    def _category_visible(self, category):
+        return category in self.visible_categories
+
+    def add_category(self, name, color=(0, 0, 0), visible=True, parent=None):
+        category = Category(name, color, (0, 0, 0), True, parent=parent)
+        category.set_id(self.id_counter.get_next())
+        if visible:
+            self.visible_categories.append(category)
+        self.categories.append(category)
+        return category
+
+    def assert_model_has_itmes_matching(self, expected_entries):
+        self.assertEqual(len(self.model.get_items()), len(expected_entries))
+        for i in range(len(self.model.get_items())):
+            for key in expected_entries[i]:
+                self.assertEqual(self.model.get_items()[i][key],
+                                 expected_entries[i][key])
+
+    def assert_model_has_item_names(self, expected_names):
+        self.assertEqual([x["name"] for x in self.model.get_items()], expected_names)
+
+
+class setting_timline_view(Base):
 
     def test_has_no_items_when_no_timeline_view_set(self):
         self.assert_model_has_itmes_matching([])
@@ -33,6 +77,21 @@ class CategoryTreeModelSpec(unittest.TestCase):
     def test_has_no_items_when_no_categories_available(self):
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_itmes_matching([])
+
+    def test_has_items_for_each_category(self):
+        self.add_category("Play")
+        self.add_category("Work")
+        self.model.set_timeline_view(self.timeline_view)
+        self.assert_model_has_item_names(["Play", "Work"])
+
+    def test_can_set_view_multiple_times_without_items_duplicating(self):
+        self.add_category("Work")
+        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_timeline_view(self.timeline_view)
+        self.assertEqual(len(self.model.get_items()), 1)
+
+
+class item_properties(Base):
 
     def test_has_items_for_categories(self):
         play_category = self.add_category("Play", (255, 0, 100), False)
@@ -52,6 +111,9 @@ class CategoryTreeModelSpec(unittest.TestCase):
                 "color": (88, 55, 22),
             },
         ])
+
+
+class bounding_box(Base):
 
     def test_includes_bounding_box_information_for_items(self):
         self.model.ITEM_HEIGHT_PX = 20
@@ -93,17 +155,17 @@ class CategoryTreeModelSpec(unittest.TestCase):
             },
         ])
 
+
+class sorting(Base):
+
     def test_sorts_categories_at_same_level(self):
         self.add_category("Work")
         self.add_category("Reading")
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_item_names(["Reading", "Work"])
 
-    def test_can_set_view_multiple_times_without_items_duplicating(self):
-        self.add_category("Work")
-        self.model.set_timeline_view(self.timeline_view)
-        self.model.set_timeline_view(self.timeline_view)
-        self.assertEqual(len(self.model.get_items()), 1)
+
+class expandedness(Base):
 
     def test_toggles_expandedness(self):
         self.model.ITEM_HEIGHT_PX = 20
@@ -143,43 +205,3 @@ class CategoryTreeModelSpec(unittest.TestCase):
         self.assert_model_has_item_names(["Work", "Reading"])
         self.model.toggle_expandedness(5)
         self.assert_model_has_item_names(["Work"])
-
-    def setUp(self):
-        self.id_counter = IdCounter()
-
-        self.categories = []
-        self.visible_categories = []
-
-        timeline = Mock()
-        timeline.get_categories.return_value = self.categories
-
-        def category_visible(category):
-            return category in self.visible_categories
-        view_properties = Mock()
-        view_properties.category_visible.side_effect = category_visible
-
-        timeline_view = Mock()
-        timeline_view.get_timeline.return_value = timeline
-        timeline_view.get_view_properties.return_value = view_properties
-
-        self.timeline_view = timeline_view
-
-        self.model = CustomCategoryTreeModel()
-
-    def add_category(self, name, color=(0, 0, 0), visible=True, parent=None):
-        category = Category(name, color, (0, 0, 0), True, parent=parent)
-        category.set_id(self.id_counter.get_next())
-        if visible:
-            self.visible_categories.append(category)
-        self.categories.append(category)
-        return category
-
-    def assert_model_has_itmes_matching(self, expected_entries):
-        self.assertEqual(len(self.model.get_items()), len(expected_entries))
-        for i in range(len(self.model.get_items())):
-            for key in expected_entries[i]:
-                self.assertEqual(self.model.get_items()[i][key],
-                                 expected_entries[i][key])
-
-    def assert_model_has_item_names(self, expected_names):
-        self.assertEqual([x["name"] for x in self.model.get_items()], expected_names)
