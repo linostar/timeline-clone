@@ -31,11 +31,19 @@ class CustomCategoryTree(wx.Panel):
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         self.model = CustomCategoryTreeModel()
+        self.timeline_view = None
         self.renderer = CustomCategoryTreeRenderer(self.model)
         self._size_to_model()
 
     def set_timeline_view(self, timeline_view):
-        self.model.set_timeline_view(timeline_view)
+        if self.timeline_view:
+            self.timeline_view.unregister(self._db_changed)
+        self.timeline_view = timeline_view
+        self.timeline_view.register(self._db_changed)
+        self._db_changed(None)
+
+    def _db_changed(self, _):
+        self.model.set_timeline_view(self.timeline_view)
         self._redraw()
 
     def _on_paint(self, event):

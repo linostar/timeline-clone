@@ -19,6 +19,7 @@
 import wx
 
 from timelinelib.drawing import get_drawer
+from timelinelib.utilities.observer import Observable
 from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
@@ -26,11 +27,12 @@ from timelinelib.wxgui.dialogs.eventeditor import open_event_editor_for
 from timelinelib.wxgui.utils import _ask_question
 
 
-class DrawingAreaPanel(wx.Panel):
+class DrawingAreaPanel(wx.Panel, Observable):
 
     def __init__(self, parent, status_bar_adapter, divider_line_slider,
                  fn_handle_db_error, config, main_frame):
         wx.Panel.__init__(self, parent, style=wx.NO_BORDER)
+        Observable.__init__(self)
         self.fn_handle_db_error = fn_handle_db_error
         self.config = config
         self.main_frame = main_frame
@@ -69,6 +71,7 @@ class DrawingAreaPanel(wx.Panel):
         self.controller.navigate_timeline(navigation_fn)
 
     def redraw_timeline(self):
+        self._notify(None)
         self.controller.redraw_timeline()
 
     def balloon_visibility_changed(self, visible):
