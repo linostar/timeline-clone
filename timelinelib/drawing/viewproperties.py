@@ -49,11 +49,11 @@ class ViewProperties(object):
 
     def filter_events(self, events):
         if self.view_cats_individually:
-            return self.filter_events_individually(events)
+            return self._filter_events_individually(events)
         else:
-            return self.filter_events_with_all_parents_selected(events)
+            return self._filter_events_with_all_parents_selected(events)
 
-    def filter_events_with_all_parents_selected(self, events):
+    def _filter_events_with_all_parents_selected(self, events):
         def category_visible(e, cat):
             if cat is None:
                 return True
@@ -73,7 +73,7 @@ class ViewProperties(object):
                 return False
         return [e for e in events if category_visible(e, e.category)]
 
-    def filter_events_individually(self, events):
+    def _filter_events_individually(self, events):
         def category_visible(e, cat):
             if cat is None:
                 return True

@@ -20,7 +20,9 @@ import unittest
 
 from mock import Mock
 
+from specs.utils import an_event_with
 from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
 from timelinelib.db.utils import IdCounter
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
@@ -78,3 +80,28 @@ class actual_category_visiblity(Base):
         self.view_properties.view_cats_individually = True
         self.view_properties.set_category_visible(self.work, False)
         self.assert_actually_visible(self.boring_meetings)
+
+
+class event_filtering(Base):
+
+    def setUp(self):
+        Base.setUp(self)
+        self.work = self.create_category("Work", parent=None)
+        self.play = self.create_category("Play", parent=None)
+        self.write_report = self.create_event("Write report", category=self.work)
+        self.play_football = self.create_event("Play football", category=self.play)
+
+    def create_event(self, text, category):
+        event = an_event_with(text=text, category=category)
+        event.set_id(self.id_counter.get_next())
+        return event
+
+    def test_none_filtered_by_default(self):
+        events = [self.write_report, self.play_football]
+        self.assertEqual(self.view_properties.filter_events(events), events)
+
+    def test_filters_those_in_hidden_categories(self):
+        self.view_properties.set_category_visible(self.play, False)
+        events = [self.write_report, self.play_football]
+        self.assertEqual(self.view_properties.filter_events(events),
+                         [self.write_report])

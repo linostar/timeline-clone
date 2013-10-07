@@ -91,15 +91,17 @@ def an_event():
 
 
 def an_event_with(start=None, end=None, time=ANY_TIME, text="foo", fuzzy=False,
-                  locked=False, ends_today=False):
+                  locked=False, ends_today=False, category=None):
     if start and end:
         start = human_time_to_gregorian(start)
         end = human_time_to_gregorian(end)
     else:
         start = human_time_to_gregorian(time)
         end = human_time_to_gregorian(time)
+    if category is None:
+        category = Category("bar", None, None, True)
     return Event(
-        GregorianTimeType(), start, end, text, Category("bar", None, None, True),
+        GregorianTimeType(), start, end, text, category,
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
