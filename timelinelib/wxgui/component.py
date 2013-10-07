@@ -34,7 +34,7 @@ class DummyConfig(object):
         self.recently_opened = []
         self.open_recent_at_startup = False
         self.balloon_on_hover = True
-        self.week_start = "monaday"
+        self.week_start = "monday"
         self.use_inertial_scrolling = False
 
     def get_sidebar_width(self):
@@ -68,6 +68,9 @@ class DummyMainFrame(object):
         pass
 
     def edit_ends(self):
+        pass
+
+    def view_categories_individually(self):
         pass
 
 
