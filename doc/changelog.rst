@@ -9,6 +9,7 @@ Version 1.1.0
 Bug fixes:
 
 * SVG export can handle ampersand (&) in event text
+* Move event vertically, can be done for events very close to each other (with different y-coordinates)
 
 Version 1.0.1
 -------------

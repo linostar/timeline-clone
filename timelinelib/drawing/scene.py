@@ -87,12 +87,17 @@ class TimelineScene(object):
         return self._metrics.calc_width(time_period)
 
     def get_closest_overlapping_event(self, selected_event, up=True):
+        self._inflate_event_rects_to_get_right_dimensions_for_overlap_calculations()
         rect = self._get_event_rect(selected_event)
         period = self._event_rect_drawn_as_period(rect)
         direction = self._get_direction(period, up)
         evt = self._get_overlapping_event(period, direction, selected_event, rect)
         return (evt, direction)
 
+    def _inflate_event_rects_to_get_right_dimensions_for_overlap_calculations(self):
+        for (evt, rect) in self.event_data:
+            rect.Inflate(self._outer_padding, self._outer_padding)
+            
     def _get_event_rect(self, event):
         for (evt, rect) in self.event_data:
             if evt == event:
