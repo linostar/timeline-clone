@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Version 1.0.2
+-------------
+
+**May be released.**
+
+Bug fixes:
+
+* SVG export can handle ampersand (&) in event text
+* Prevent overflow error when zooming in on wide events
+
 Version 1.0.1
 -------------
 
