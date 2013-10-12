@@ -1,10 +1,8 @@
 Changelog
 =========
 
-Version 1.0.2
--------------
-
-**May be released.**
+Maybe be released: 1.0.2
+------------------------
 
 Bug fixes:
 
