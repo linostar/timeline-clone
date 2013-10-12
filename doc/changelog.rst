@@ -8,8 +8,15 @@ Version 1.1.0
 
 Bug fixes:
 
-* SVG export can handle ampersand (&) in event text
 * Move event vertically, can be done for events very close to each other (with different y-coordinates)
+
+Maybe be released: 1.0.2
+------------------------
+
+Bug fixes:
+
+* SVG export can handle ampersand (&) in event text
+* Prevent overflow error when zooming in on wide events
 
 Version 1.0.1
 -------------

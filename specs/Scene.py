@@ -83,6 +83,19 @@ class SceneSpec(unittest.TestCase):
         self.assertEqual(self.scene.event_data[0][1].Y,
                          self.scene.event_data[1][1].Y)
 
+    def test_long_periods_are_not_drawn_very_far_outside_screen(self):
+        self.given_displayed_period("1 Jan 50 12:00", "1 Jan 50 13:00")
+        self.given_visible_event_at("1 Jan 0", "1 Jan 1000")
+        self.when_scene_is_created()
+        event_x = self.scene.event_data[0][1].X
+        event_width = self.scene.event_data[0][1].Width
+        event_right_x = event_x + event_width
+        window_width = self.size[0]
+        self.assertTrue(event_x > -self.MAX_OUTSIDE_SCREEN)
+        self.assertTrue(event_x < 0)
+        self.assertTrue(event_right_x < window_width + self.MAX_OUTSIDE_SCREEN)
+        self.assertTrue(event_right_x > window_width)
+
     def test_scene_must_be_created_at_last_century(self):
         self.given_displayed_period("1 Jan 9890", "1 Jan 9990")
         try:
@@ -90,18 +103,19 @@ class SceneSpec(unittest.TestCase):
             self.assertTrue(self.scene != None)
         except:
             self.assertTrue(False)
-        
+
     def setUp(self):
         self.db = MemoryDB()
         self.view_properties = ViewProperties()
         self.given_number_of_events_stackable_is(5)
+        self.MAX_OUTSIDE_SCREEN = 20
 
     def get_text_size_fn(self, text):
         return (len(text), self.event_height)
 
     def given_number_of_events_stackable_is(self, number):
         self.event_height = 10
-        self.size = (100, 2 * self.event_height * number)
+        self.size = (1000, 2 * self.event_height * number)
         self.view_properties.divider_position = 0.5
         self.outer_padding = 0
         self.inner_padding = 0
