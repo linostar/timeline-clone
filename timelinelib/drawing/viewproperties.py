@@ -54,24 +54,14 @@ class ViewProperties(object):
             return self._filter_events_with_all_parents_selected(events)
 
     def _filter_events_with_all_parents_selected(self, events):
-        def category_visible(e, cat):
-            if cat is None:
-                return True
-            elif e.is_subevent():
-                container_visible = category_visible(e.container,
-                                                     e.container.category)
-                if container_visible:
-                    if self.category_visible(cat) == True:
-                        return category_visible(e, cat.parent)
-                    else:
-                        return False
-                else:
-                    return False
-            elif self.category_visible(cat) == True:
-                return category_visible(e, cat.parent)
-            else:
-                return False
-        return [e for e in events if category_visible(e, e.category)]
+        return [event for event in events if self._is_event_visible(event)]
+
+    def _is_event_visible(self, event):
+        if event.is_subevent():
+            return (self.category_actually_visible(event.category) and
+                    self.category_actually_visible(event.container.category))
+        else:
+            return self.category_actually_visible(event.category)
 
     def _filter_events_individually(self, events):
         def category_visible(e, cat):

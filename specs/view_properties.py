@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from specs.utils import an_event_with
+from specs.utils import an_event_with, a_container
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.utils import IdCounter
@@ -105,3 +105,21 @@ class event_filtering(Base):
         events = [self.write_report, self.play_football]
         self.assertEqual(self.view_properties.filter_events(events),
                          [self.write_report])
+
+    def test_filters_those_hidden_in_containers(self):
+        events = a_container("Container", category=self.work, sub_events=[
+            ("Write report", self.work),
+            ("Play footbal", self.play),
+        ])
+        self.assertEqual(self.view_properties.filter_events(events), events)
+        self.view_properties.set_category_visible(self.play, False)
+        self.assertEqual(self.view_properties.filter_events(events), [events[0], events[1]])
+
+    def test_filters_those_in_hidden_containers(self):
+        events = a_container("Container", category=self.work, sub_events=[
+            ("Write report", self.work),
+            ("Play footbal", self.play),
+        ])
+        self.assertEqual(self.view_properties.filter_events(events), events)
+        self.view_properties.set_category_visible(self.work, False)
+        self.assertEqual(self.view_properties.filter_events(events), [])
