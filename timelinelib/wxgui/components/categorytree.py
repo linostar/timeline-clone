@@ -217,7 +217,7 @@ class CustomCategoryTreeModel(object):
                 self._update_from_tree(child_tree, indent_level+1)
 
     def _is_category_visible(self, category):
-        return self.timeline_view.get_view_properties().category_visible(category)
+        return self.timeline_view.get_view_properties().is_category_visible(category)
 
     def _is_category_actually_visible(self, category):
         return self.timeline_view.get_view_properties().category_actually_visible(category)

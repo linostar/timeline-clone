@@ -39,7 +39,7 @@ class Base(unittest.TestCase):
         timeline.get_categories.return_value = self.categories
 
         view_properties = Mock(ViewProperties)
-        view_properties.category_visible.side_effect = self._category_visible
+        view_properties.is_category_visible.side_effect = self._category_visible
         view_properties.category_actually_visible.side_effect = self._category_actually_visible
 
         timeline_view = Mock()

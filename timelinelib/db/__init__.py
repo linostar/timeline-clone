@@ -185,7 +185,7 @@ def copy_db(from_db, to_db):
     to_vp = ViewProperties()
     for from_cat in from_db.get_categories():
         cat = cat_map[from_cat.name]
-        visible = from_vp.category_visible(from_cat)
+        visible = from_vp.is_category_visible(from_cat)
         to_vp.set_category_visible(cat, visible)
     if from_vp.displayed_period is not None:
         # start_time and end_time immutable so safe to copy

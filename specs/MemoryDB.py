@@ -66,8 +66,8 @@ class MemoryDBSpec(unittest.TestCase):
         # into memory and the view is being configured
         new_vp = ViewProperties()
         self.db.load_view_properties(new_vp)
-        self.assertFalse(new_vp.category_visible(self.c1))
-        self.assertTrue(new_vp.category_visible(self.c2))
+        self.assertFalse(new_vp.is_category_visible(self.c1))
+        self.assertTrue(new_vp.is_category_visible(self.c2))
         self.assertEqual(new_vp.displayed_period, self.db.displayed_period)
         # Assert virtual _save method called: 2 save categories, 1 save view
         # properties
@@ -107,8 +107,8 @@ class MemoryDBSpec(unittest.TestCase):
         # ViewProperties
         vp = ViewProperties()
         self.db.load_view_properties(vp)
-        self.assertFalse(vp.category_visible(self.c1))
-        self.assertTrue(vp.category_visible(self.c2))
+        self.assertFalse(vp.is_category_visible(self.c1))
+        self.assertTrue(vp.is_category_visible(self.c2))
 
     def testSaveNewCategory(self):
         self.db.save_category(self.c1)

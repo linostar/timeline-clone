@@ -44,14 +44,14 @@ class category_visibility(Base):
 
     def test_visible_by_default(self):
         work = self.create_category("Work", parent=None)
-        self.assertTrue(self.view_properties.category_visible(work))
+        self.assertTrue(self.view_properties.is_category_visible(work))
 
     def test_can_set_visibility(self):
         work = self.create_category("Work", parent=None)
         self.view_properties.set_category_visible(work, True)
-        self.assertTrue(self.view_properties.category_visible(work))
+        self.assertTrue(self.view_properties.is_category_visible(work))
         self.view_properties.set_category_visible(work, False)
-        self.assertFalse(self.view_properties.category_visible(work))
+        self.assertFalse(self.view_properties.is_category_visible(work))
 
 
 class actual_category_visiblity(Base):
