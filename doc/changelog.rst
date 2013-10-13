@@ -8,6 +8,7 @@ Bug fixes:
 
 * SVG export can handle ampersand (&) in event text
 * Prevent overflow error when zooming in on wide events
+* Prevent error when using up arrow to increase month in date editor
 
 Version 1.0.1
 -------------

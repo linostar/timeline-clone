@@ -290,6 +290,11 @@ class GregorianDatePickerWithFocusOnMonth(GregorianDatePickerBaseFixture):
         self.controller.on_up()
         self.date_picker.set_date_string.assert_called_with("2010-02-01")
 
+    def testIncreasesMonthOnUpToNextYear(self):
+        self.simulate_change_date_string("2010-12-01")
+        self.controller.on_up()
+        self.date_picker.set_date_string.assert_called_with("2011-01-01")
+
     def testDecreasesMonthOnDown(self):
         self.simulate_change_date_string("2009-07-31")
         self.controller.on_down()
