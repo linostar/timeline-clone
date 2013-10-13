@@ -52,10 +52,10 @@ class ViewProperties(object):
 
     def _is_event_visible(self, event):
         if event.is_subevent():
-            return (self.category_actually_visible(event.category) and
-                    self.category_actually_visible(event.container.category))
+            return (self.is_event_with_category_visible(event.category) and
+                    self.is_event_with_category_visible(event.container.category))
         else:
-            return self.category_actually_visible(event.category)
+            return self.is_event_with_category_visible(event.category)
 
     def is_selected(self, event):
         return event.id in self.selected_event_ids
@@ -91,7 +91,7 @@ class ViewProperties(object):
     def is_category_visible(self, category):
         return not category.id in self.hidden_categories
 
-    def category_actually_visible(self, category):
+    def is_event_with_category_visible(self, category):
         if self.view_cats_individually:
             return self.is_category_visible(category)
         else:

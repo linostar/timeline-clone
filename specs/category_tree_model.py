@@ -40,7 +40,7 @@ class Base(unittest.TestCase):
 
         view_properties = Mock(ViewProperties)
         view_properties.is_category_visible.side_effect = self._category_visible
-        view_properties.category_actually_visible.side_effect = self._category_actually_visible
+        view_properties.is_event_with_category_visible.side_effect = self._event_with_category_visible
 
         timeline_view = Mock()
         timeline_view.get_timeline.return_value = timeline
@@ -53,7 +53,7 @@ class Base(unittest.TestCase):
     def _category_visible(self, category):
         return category in self.visible_categories
 
-    def _category_actually_visible(self, category):
+    def _event_with_category_visible(self, category):
         return category in self.actually_visible_categories
 
     def add_category(self, name, color=(0, 0, 0), visible=True, actually_visible=True, parent=None):
