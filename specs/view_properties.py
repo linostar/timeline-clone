@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from specs.utils import an_event_with
+from specs.utils import an_event_with, a_container
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.utils import IdCounter
@@ -44,17 +44,17 @@ class category_visibility(Base):
 
     def test_visible_by_default(self):
         work = self.create_category("Work", parent=None)
-        self.assertTrue(self.view_properties.category_visible(work))
+        self.assertTrue(self.view_properties.is_category_visible(work))
 
     def test_can_set_visibility(self):
         work = self.create_category("Work", parent=None)
         self.view_properties.set_category_visible(work, True)
-        self.assertTrue(self.view_properties.category_visible(work))
+        self.assertTrue(self.view_properties.is_category_visible(work))
         self.view_properties.set_category_visible(work, False)
-        self.assertFalse(self.view_properties.category_visible(work))
+        self.assertFalse(self.view_properties.is_category_visible(work))
 
 
-class actual_category_visiblity(Base):
+class event_visiblity(Base):
 
     def setUp(self):
         Base.setUp(self)
@@ -63,23 +63,30 @@ class actual_category_visiblity(Base):
         self.fun_meetings = self.create_category("Fun meetings", parent=self.meetings)
         self.boring_meetings = self.create_category("Boring meetings", parent=self.meetings)
 
-    def assert_actually_visible(self, category):
-        self.assertTrue(self.view_properties.category_actually_visible(category))
+    def assertEventWithCategoryVisible(self, category):
+        self.assertTrue(self.view_properties.is_event_with_category_visible(category))
 
-    def assert_actually_hidden(self, category):
-        self.assertFalse(self.view_properties.category_actually_visible(category))
+    def assertEventWithCategoryHidden(self, category):
+        self.assertFalse(self.view_properties.is_event_with_category_visible(category))
 
     def test_visible_by_default(self):
-        self.assert_actually_visible(self.boring_meetings)
+        self.assertEventWithCategoryVisible(self.boring_meetings)
+
+    def test_visible_if_no_category(self):
+        self.assertEventWithCategoryVisible(None)
+
+    def test_visible_if_no_category_and_individual_view(self):
+        self.view_properties.view_cats_individually = True
+        self.assertEventWithCategoryVisible(None)
 
     def test_children_hidden_if_parent_hidden(self):
         self.view_properties.set_category_visible(self.work, False)
-        self.assert_actually_hidden(self.boring_meetings)
+        self.assertEventWithCategoryHidden(self.boring_meetings)
 
     def test_children_visible_if_parent_hidden_and_individual_view(self):
         self.view_properties.view_cats_individually = True
         self.view_properties.set_category_visible(self.work, False)
-        self.assert_actually_visible(self.boring_meetings)
+        self.assertEventWithCategoryVisible(self.boring_meetings)
 
 
 class event_filtering(Base):
@@ -105,3 +112,21 @@ class event_filtering(Base):
         events = [self.write_report, self.play_football]
         self.assertEqual(self.view_properties.filter_events(events),
                          [self.write_report])
+
+    def test_filters_those_hidden_in_containers(self):
+        events = a_container("Container", category=self.work, sub_events=[
+            ("Write report", self.work),
+            ("Play footbal", self.play),
+        ])
+        self.assertEqual(self.view_properties.filter_events(events), events)
+        self.view_properties.set_category_visible(self.play, False)
+        self.assertEqual(self.view_properties.filter_events(events), [events[0], events[1]])
+
+    def test_filters_those_in_hidden_containers(self):
+        events = a_container("Container", category=self.work, sub_events=[
+            ("Write report", self.work),
+            ("Play footbal", self.play),
+        ])
+        self.assertEqual(self.view_properties.filter_events(events), events)
+        self.view_properties.set_category_visible(self.work, False)
+        self.assertEqual(self.view_properties.filter_events(events), [])

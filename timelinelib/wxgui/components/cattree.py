@@ -155,7 +155,7 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
             item = self.AppendItem(root_item, cat.name, ct_type=ct_type,
                                    wnd=legend_panel, data=cat)
             if view_properties:
-                visible = view_properties.category_visible(cat)
+                visible = view_properties.is_category_visible(cat)
                 self.CheckItem2(item, visible)
             self._update_categories_from_tree(subtree, item, view_properties)
             self.Expand(item)

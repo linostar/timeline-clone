@@ -210,14 +210,14 @@ class CustomCategoryTreeModel(object):
                 "width": self.view_width - indent_level * self.INDENT_PX,
                 "expanded": expanded,
                 "has_children": len(child_tree) > 0,
-                "actually_visible": self._is_category_actually_visible(category),
+                "actually_visible": self._is_event_with_category_visible(category),
             })
             self.y += self.ITEM_HEIGHT_PX
             if expanded:
                 self._update_from_tree(child_tree, indent_level+1)
 
     def _is_category_visible(self, category):
-        return self.timeline_view.get_view_properties().category_visible(category)
+        return self.timeline_view.get_view_properties().is_category_visible(category)
 
-    def _is_category_actually_visible(self, category):
-        return self.timeline_view.get_view_properties().category_actually_visible(category)
+    def _is_event_with_category_visible(self, category):
+        return self.timeline_view.get_view_properties().is_event_with_category_visible(category)

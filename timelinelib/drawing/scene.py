@@ -192,7 +192,6 @@ class TimelineScene(object):
 
     def _create_rectangle_for_possibly_overlapping_event(self, event):
         rect = self._create_ideal_rect_for_event(event)
-        self._ensure_rect_is_not_far_outisde_screen(rect)
         self._prevent_overlapping_by_adjusting_rect_y(event, rect)
         return rect
 
@@ -240,17 +239,6 @@ class TimelineScene(object):
         ry = self._get_ry(event)
         return self._create_ideal_wx_rect(rx, ry, rw, rh)
 
-    def _create_ideal_wx_rect(self, rx, ry, rw, rh):
-        PADDING = 15
-        if rx < (-PADDING):
-            move_distance = abs(rx) - PADDING
-            rx += move_distance
-            rw -= move_distance
-        right_edge_x = rx + rw
-        if right_edge_x > self.width + PADDING:
-            rw -= right_edge_x - self.width - PADDING
-        return wx.Rect(rx, ry, rw, rh)
-
     def _get_ry(self, event):
         if event.is_subevent():
             if event.is_period():
@@ -276,25 +264,21 @@ class TimelineScene(object):
             rw += th + 2 * self._inner_padding
         rx = self._metrics.calc_x(event.mean_time()) - rw / 2
         ry = self._metrics.half_height - rh - self._baseline_padding
-        rect = wx.Rect(rx, ry, rw, rh)
-        return rect
+        return self._create_ideal_wx_rect(rx, ry, rw, rh)
 
-    def _ensure_rect_is_not_far_outisde_screen(self, rect):
+    def _create_ideal_wx_rect(self, rx, ry, rw, rh):
         # Drawing stuff on huge x-coordinates causes drawing to fail.
         # MARGIN must be big enough to hide outer padding, borders, and
         # selection markers.
-        rx = rect.GetX()
-        rw = rect.GetWidth()
-        MARGIN = 50
-        if rx < -MARGIN:
-            distance_beyond_left_margin = -rx - MARGIN
-            rx += distance_beyond_left_margin
-            rw -= distance_beyond_left_margin
+        MARGIN = 15
+        if rx < (-MARGIN):
+            move_distance = abs(rx) - MARGIN
+            rx += move_distance
+            rw -= move_distance
         right_edge_x = rx + rw
-        if right_edge_x > self._metrics.width + MARGIN:
-            rw -= right_edge_x - self._metrics.width - MARGIN
-        rect.SetX(rx)
-        rect.SetWidth(rw)
+        if right_edge_x > self.width + MARGIN:
+            rw -= right_edge_x - self.width - MARGIN
+        return wx.Rect(rx, ry, rw, rh)
 
     def _calc_strips(self):
         """Fill the two arrays `minor_strip_data` and `major_strip_data`."""

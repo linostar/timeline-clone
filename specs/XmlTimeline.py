@@ -168,15 +168,15 @@ class XmlTimelineSpec(TmpDirTestCase):
             if cat.name == "Category 1":
                 self.assertEqual(cat.color, (255, 0, 0))
                 self.assertEqual(cat.font_color, (0, 0, 255))
-                self.assertTrue(vp.category_visible(cat))
+                self.assertTrue(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent, None)
             elif cat.name == "Category 2":
                 self.assertEqual(cat.color, (0, 255, 0))
-                self.assertTrue(vp.category_visible(cat))
+                self.assertTrue(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent.name, "Category 1")
             elif cat.name == "Category 3":
                 self.assertEqual(cat.color, (0, 0, 255))
-                self.assertFalse(vp.category_visible(cat))
+                self.assertFalse(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent.name, "Category 2")
             else:
                 self.fail("Unknown category.")
