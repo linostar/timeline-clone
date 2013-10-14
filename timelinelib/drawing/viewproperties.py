@@ -89,19 +89,22 @@ class ViewProperties(object):
         return self.selected_event_ids[:]
 
     def is_category_visible(self, category):
-        return not category.id in self.hidden_categories
+        return category.id not in self.hidden_categories
 
     def is_event_with_category_visible(self, category):
-        if self.view_cats_individually:
+        if category is None:
+            return True
+        elif self.view_cats_individually:
             return self.is_category_visible(category)
         else:
             return self._is_category_recursively_visible(category)
 
     def _is_category_recursively_visible(self, category):
-        if category is None:
-            return True
-        elif self.is_category_visible(category) == True:
-            return self._is_category_recursively_visible(category.parent)
+        if self.is_category_visible(category):
+            if category.parent is None:
+                return True
+            else:
+                return self._is_category_recursively_visible(category.parent)
         else:
             return False
 

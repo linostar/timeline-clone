@@ -72,6 +72,13 @@ class event_visiblity(Base):
     def test_visible_by_default(self):
         self.assertEventWithCategoryVisible(self.boring_meetings)
 
+    def test_visible_if_no_category(self):
+        self.assertEventWithCategoryVisible(None)
+
+    def test_visible_if_no_category_and_individual_view(self):
+        self.view_properties.view_cats_individually = True
+        self.assertEventWithCategoryVisible(None)
+
     def test_children_hidden_if_parent_hidden(self):
         self.view_properties.set_category_visible(self.work, False)
         self.assertEventWithCategoryHidden(self.boring_meetings)
