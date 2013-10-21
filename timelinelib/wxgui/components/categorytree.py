@@ -21,10 +21,10 @@ import wx
 from timelinelib.drawing.utils import darken_color
 
 
-class CustomCategoryTree(wx.Panel):
+class CustomCategoryTree(wx.ScrolledWindow):
 
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent)
+        wx.ScrolledWindow.__init__(self, parent)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM) # Needed when using
                                                     # wx.AutoBufferedPaintDC
         self.Bind(wx.EVT_PAINT, self._on_paint)
@@ -49,6 +49,7 @@ class CustomCategoryTree(wx.Panel):
 
     def _on_paint(self, event):
         dc = wx.AutoBufferedPaintDC(self)
+        self.DoPrepareDC(dc)
         dc.BeginDrawing()
         dc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
         dc.Clear()
@@ -60,14 +61,18 @@ class CustomCategoryTree(wx.Panel):
         self._redraw()
 
     def _on_left_down(self, event):
-        self.model.toggle_expandedness(event.GetY())
+        (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+        self.model.toggle_expandedness(y)
         self._redraw()
 
     def _on_right_down(self, event):
-        self.model.toggle_visibility(event.GetY())
+        (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+        self.model.toggle_visibility(y)
         self._redraw()
 
     def _redraw(self):
+        self.SetVirtualSize((-1, self.model.ITEM_HEIGHT_PX * len(self.model.items)))
+        self.SetScrollRate(-1, self.model.ITEM_HEIGHT_PX)
         self.Refresh()
         self.Update()
 
