@@ -30,6 +30,7 @@ class CustomCategoryTree(wx.Panel):
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
+        self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
         self.model = CustomCategoryTreeModel()
         self.timeline_view = None
         self.renderer = CustomCategoryTreeRenderer(self.model)
@@ -60,6 +61,10 @@ class CustomCategoryTree(wx.Panel):
 
     def _on_left_down(self, event):
         self.model.toggle_expandedness(event.GetY())
+        self._redraw()
+
+    def _on_right_down(self, event):
+        self.model.toggle_visibility(event.GetY())
         self._redraw()
 
     def _redraw(self):
@@ -179,6 +184,13 @@ class CustomCategoryTreeModel(object):
             else:
                 self.collapsed_category_ids.append(id_at_index)
             self._update_items()
+
+    def toggle_visibility(self, y_position):
+        index = y_position // self.ITEM_HEIGHT_PX
+        if index < len(self.items):
+            id_at_index = self.items[index]["id"]
+            self.timeline_view.get_view_properties().set_category_with_id_visible(id_at_index, not self.items[index]["visible"])
+            self.timeline_view.redraw_timeline()
 
     def _update_items(self):
         self.items = []
