@@ -21,18 +21,19 @@ import wx
 from timelinelib.drawing.utils import darken_color
 
 
-class CustomCategoryTree(wx.Panel):
+class CustomCategoryTree(wx.ScrolledWindow):
 
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent)
+        wx.ScrolledWindow.__init__(self, parent)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM) # Needed when using
                                                     # wx.AutoBufferedPaintDC
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
+        self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
         self.model = CustomCategoryTreeModel()
         self.timeline_view = None
-        self.renderer = CustomCategoryTreeRenderer(self.model)
+        self.renderer = CustomCategoryTreeRenderer(self, self.model)
         self._size_to_model()
 
     def set_timeline_view(self, timeline_view):
@@ -48,6 +49,7 @@ class CustomCategoryTree(wx.Panel):
 
     def _on_paint(self, event):
         dc = wx.AutoBufferedPaintDC(self)
+        self.DoPrepareDC(dc)
         dc.BeginDrawing()
         dc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
         dc.Clear()
@@ -59,15 +61,23 @@ class CustomCategoryTree(wx.Panel):
         self._redraw()
 
     def _on_left_down(self, event):
-        self.model.toggle_expandedness(event.GetY())
+        (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+        self.model.toggle_expandedness(y)
+        self._redraw()
+
+    def _on_right_down(self, event):
+        (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+        self.model.toggle_visibility(y)
         self._redraw()
 
     def _redraw(self):
+        self.SetVirtualSize((-1, self.model.ITEM_HEIGHT_PX * len(self.model.items)))
+        self.SetScrollRate(-1, self.model.ITEM_HEIGHT_PX/2)
         self.Refresh()
         self.Update()
 
     def _size_to_model(self):
-        (view_width, view_height) = self.GetSizeTuple()
+        (view_width, view_height) = self.GetVirtualSizeTuple()
         self.model.set_view_size(view_width, view_height)
 
 
@@ -76,7 +86,8 @@ class CustomCategoryTreeRenderer(object):
     INNER_PADDING = 2
     TRIANGLE_SIZE = 8
 
-    def __init__(self, model):
+    def __init__(self, window, model):
+        self.window = window
         self.model = model
 
     def render(self, dc):
@@ -91,8 +102,7 @@ class CustomCategoryTreeRenderer(object):
     def _render_item(self, item):
         if item["has_children"]:
             self._render_arrow(item)
-        if item["visible"]:
-            self._render_visible_toggle(item)
+        self._render_checkbox(item)
         self._render_name(item)
         self._render_color_box(item)
 
@@ -118,7 +128,7 @@ class CustomCategoryTreeRenderer(object):
             self.dc.DrawPolygon(closed_polygon)
 
     def _render_name(self, item):
-        x = item["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING
+        x = item["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING + 20
         (w, h) = self.dc.GetTextExtent(item["name"])
         if item["actually_visible"]:
             self.dc.SetTextForeground(wx.BLACK)
@@ -126,14 +136,17 @@ class CustomCategoryTreeRenderer(object):
             self.dc.SetTextForeground((150, 150, 150))
         self.dc.DrawText(item["name"], x + self.INNER_PADDING, item["y"] + self.INNER_PADDING)
 
-    def _render_visible_toggle(self, item):
-        color = (150, 150, 150)
-        self.dc.SetBrush(wx.Brush(color, wx.SOLID))
-        self.dc.SetPen(wx.Pen(darken_color(color), 1, wx.SOLID))
-        self.dc.DrawCircle(
-            item["x"] + item["width"] - self.model.ITEM_HEIGHT_PX*2,
-            item["y"] + self.model.ITEM_HEIGHT_PX/2,
-            self.model.ITEM_HEIGHT_PX/4)
+    def _render_checkbox(self, item):
+        bouning_rect = wx.Rect(item["x"] + 15,
+                               item["y"] + 4,
+                               0,
+                               0)
+        if item["visible"]:
+            flag = wx.CONTROL_CHECKED
+        else:
+            flag = 0
+        renderer = wx.RendererNative.Get()
+        renderer.DrawCheckBox(self.window, self.dc, bouning_rect, flag)
 
     def _render_color_box(self, item):
         color = item.get("color", None)
@@ -179,6 +192,13 @@ class CustomCategoryTreeModel(object):
             else:
                 self.collapsed_category_ids.append(id_at_index)
             self._update_items()
+
+    def toggle_visibility(self, y_position):
+        index = y_position // self.ITEM_HEIGHT_PX
+        if index < len(self.items):
+            id_at_index = self.items[index]["id"]
+            self.timeline_view.get_view_properties().set_category_with_id_visible(id_at_index, not self.items[index]["visible"])
+            self.timeline_view.redraw_timeline()
 
     def _update_items(self):
         self.items = []
