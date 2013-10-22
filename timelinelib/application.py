@@ -25,7 +25,7 @@ from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.wxgui.utils import get_user_ack
 from timelinelib.wxgui.utils import display_warning_message
 from timelinelib.wxgui.utils import display_error_message
-
+from timelinelib.time.numtime import NumTimeType
 
 class LockedException(Exception):
     pass
@@ -55,9 +55,9 @@ class TimelineApplication(object):
         else:
             display_error_message(_("File '%s' does not exist.") % path, self.main_frame)
 
-    def open_timeline(self, path, import_timeline=False):
+    def open_timeline(self, path, import_timeline=False, timetype=None):
         try:
-            self.timeline = self.db_open_fn(path, import_timeline)
+            self.timeline = self.db_open_fn(path, import_timeline, timetype)
         except TimelineIOError, e:
             self.main_frame.handle_db_error(e)
             self.timelinepath = None
@@ -69,7 +69,7 @@ class TimelineApplication(object):
             self.last_changed = self._get_modification_date()
         self.main_frame.update_navigation_menu_items()
         self.main_frame.enable_disable_menus()
-
+        
     def set_no_timeline(self):
         self.timeline = None
         self.main_frame.display_timeline(None)

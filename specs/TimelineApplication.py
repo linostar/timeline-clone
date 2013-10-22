@@ -24,13 +24,18 @@ from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import Config
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.wxgui.dialogs.mainframe import MainFrame
+from timelinelib.time.numtime import NumTimeType
 
 
 class MainFrameSpec(unittest.TestCase):
 
     def test_used_db_open_factory_method_to_create_timeline(self):
         self.when_timeline_is_opened("foo.timeline")
-        self.db_open.assert_called_with("foo.timeline", False)
+        self.db_open.assert_called_with("foo.timeline", False, None)
+
+    def test_used_db_open_factory_method_to_create_numeric_timeline(self):
+        self.when_numeric_timeline_is_opened("foo.timeline")
+        self.db_open.assert_called_with("foo.timeline", False, self.timetype)
 
     def test_create_empty_timeline(self):
         self.controller.set_no_timeline()
@@ -68,3 +73,7 @@ class MainFrameSpec(unittest.TestCase):
 
     def when_timeline_is_opened(self, name=""):
         self.controller.open_timeline(name)
+
+    def when_numeric_timeline_is_opened(self, name=""):
+        self.timetype = NumTimeType()
+        self.controller.open_timeline(name, False, self.timetype)

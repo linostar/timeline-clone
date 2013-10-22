@@ -95,6 +95,7 @@ class XmlTimelineSpec(TmpDirTestCase):
         self.assertEqual(content, """<?xml version="1.0" encoding="utf-8"?>
 <timeline>
   <version>%s</version>
+  <timetype>gregoriantime</timetype>
   <categories>
   </categories>
   <events>

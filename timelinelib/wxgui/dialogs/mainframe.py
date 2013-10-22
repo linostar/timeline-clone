@@ -58,6 +58,7 @@ import timelinelib.wxgui.utils as gui_utils
 from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
 from timelinelib.feedback.feature import show_feature_feedback_dialog
 from timelinelib.feedback.feature import FEATURES
+from timelinelib.time.numtime import NumTimeType
 
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -127,6 +128,7 @@ class GuiCreator(object):
     def _create_file_new_menu(self, file_menu):
         file_new_menu = wx.Menu()
         self._create_file_new_timeline_menu_item(file_new_menu)
+        self._create_file_new_numtimeline_menu_item(file_new_menu)
         self._create_file_new_dir_timeline_menu_item(file_new_menu)
         file_menu.AppendMenu(wx.ID_ANY, _("New"), file_new_menu, _("Create a new timeline"))
 
@@ -137,6 +139,11 @@ class GuiCreator(object):
             wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
         
+    def _create_file_new_numtimeline_menu_item(self, file_new_menu):
+        mnu_file_new_numeric = file_new_menu.Append(
+            wx.ID_ANY, _("Numeric Timeline..."), _("Numeric Timeline..."))
+        self.Bind(wx.EVT_MENU, self._mnu_file_new_numeric_on_click, mnu_file_new_numeric)
+                
     def _create_file_new_dir_timeline_menu_item(self, file_new_menu):
         mnu_file_new_dir = file_new_menu.Append(
             wx.ID_ANY, _("Directory Timeline..."), _("Directory Timeline..."))
@@ -425,6 +432,9 @@ class GuiCreator(object):
     def _mnu_file_new_on_click(self, event):
         self._create_new_timeline()
 
+    def _mnu_file_new_numeric_on_click(self, event):
+        self._create_new_numeric_timeline()
+        
     def _mnu_file_new_dir_on_click(self, event):
         self._create_new_dir_timeline()
 
@@ -666,6 +676,18 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
     # File Menu action handlers
     def _create_new_timeline(self):
+        path = self._get_file_path()
+        if path is not None:
+            self.controller.open_timeline(path)
+
+    def _create_new_numeric_timeline(self):
+        path = self._get_file_path()
+        if path is not None:
+            timetype = NumTimeType()
+            self.controller.open_timeline(path, False, timetype)
+
+    def _get_file_path(self):
+        path = None
         wildcard = self.timeline_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Create Timeline"),
                                wildcard=wildcard, style=wx.FD_SAVE)
@@ -678,9 +700,10 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
                 wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
                               _("Information"),
                               wx.OK|wx.ICON_INFORMATION, self)
-            self.controller.open_timeline(path)
         dialog.Destroy()
-
+        return path
+        
+         
     def _create_new_dir_timeline(self):
         dialog = wx.DirDialog(self, message=_("Create Timeline"))
         if dialog.ShowModal() == wx.ID_OK:
