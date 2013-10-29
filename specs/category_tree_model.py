@@ -192,7 +192,7 @@ class sorting(Base):
 
 class expandedness(Base):
 
-    def test_toggles_expandedness(self):
+    def test_toggles_when_clicking_on_arrow(self):
         self.model.ITEM_HEIGHT_PX = 20
         self.add_category("Reading")
         self.add_category("Work")
@@ -201,24 +201,34 @@ class expandedness(Base):
             { "name": "Reading", "expanded": True, },
             { "name": "Work",    "expanded": True, },
         ])
-        self.model.toggle_expandedness(25)
+        self.model.left_click(5, 25)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "expanded": True, },
             { "name": "Work",    "expanded": False, },
         ])
-        self.model.toggle_expandedness(25)
+        self.model.left_click(5, 25)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "expanded": True, },
             { "name": "Work",    "expanded": True, },
         ])
 
-    def test_does_not_toggle_expandedness_if_doing_it_out_of_range(self):
+    def test_does_not_toggle_if_clicking_outside_arrow(self):
+        self.model.ITEM_HEIGHT_PX = 20
+        self.add_category("Reading")
+        self.add_category("Work")
+        self.model.set_timeline_view(self.timeline_view)
+        before = [x["expanded"] for x in self.model.get_items()]
+        self.model.left_click(50, 25)
+        after = [x["expanded"] for x in self.model.get_items()]
+        self.assertEqual(before, after)
+
+    def test_does_not_toggle_if_clicking_outside_item(self):
         self.model.ITEM_HEIGHT_PX = 20
         self.add_category("Work")
         self.add_category("Reading")
         self.model.set_timeline_view(self.timeline_view)
         before = [x["expanded"] for x in self.model.get_items()]
-        self.model.toggle_expandedness(50)
+        self.model.left_click(5, 50)
         after = [x["expanded"] for x in self.model.get_items()]
         self.assertEqual(before, after)
 
@@ -228,5 +238,5 @@ class expandedness(Base):
         self.add_category("Reading", parent=work_category)
         self.model.set_timeline_view(self.timeline_view)
         self.assert_model_has_item_names(["Work", "Reading"])
-        self.model.toggle_expandedness(5)
+        self.model.left_click(5, 5)
         self.assert_model_has_item_names(["Work"])

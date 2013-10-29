@@ -30,10 +30,9 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
-        self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
         self.model = CustomCategoryTreeModel()
-        self.timeline_view = None
         self.renderer = CustomCategoryTreeRenderer(self, self.model)
+        self.timeline_view = None
         self._size_to_model()
 
     def set_timeline_view(self, timeline_view):
@@ -62,12 +61,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def _on_left_down(self, event):
         (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
-        self.model.toggle_expandedness(y)
-        self._redraw()
-
-    def _on_right_down(self, event):
-        (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
-        self.model.toggle_visibility(y)
+        self.model.left_click(x, y)
         self._redraw()
 
     def _redraw(self):
@@ -137,7 +131,7 @@ class CustomCategoryTreeRenderer(object):
         self.dc.DrawText(item["name"], x + self.INNER_PADDING, item["y"] + self.INNER_PADDING)
 
     def _render_checkbox(self, item):
-        bouning_rect = wx.Rect(item["x"] + 15,
+        bouning_rect = wx.Rect(item["x"] + self.model.INDENT_PX,
                                item["y"] + 4,
                                0,
                                0)
@@ -183,22 +177,41 @@ class CustomCategoryTreeModel(object):
         self.timeline_view = timeline_view
         self._update_items()
 
-    def toggle_expandedness(self, y_position):
-        index = y_position // self.ITEM_HEIGHT_PX
-        if index < len(self.items):
-            id_at_index = self.items[index]["id"]
-            if id_at_index in self.collapsed_category_ids:
-                self.collapsed_category_ids.remove(id_at_index)
-            else:
-                self.collapsed_category_ids.append(id_at_index)
-            self._update_items()
+    def left_click(self, x, y):
+        item = self._item_at(y)
+        if item:
+            if self._hits_arrow(x, item):
+                self._toggle_expandedness(item)
+            if self._hits_checkbox(x, item):
+                self._toggle_visibility(item)
 
-    def toggle_visibility(self, y_position):
-        index = y_position // self.ITEM_HEIGHT_PX
+    def _toggle_expandedness(self, item):
+        category_id = item["id"]
+        if category_id in self.collapsed_category_ids:
+            self.collapsed_category_ids.remove(category_id)
+        else:
+            self.collapsed_category_ids.append(category_id)
+        self._update_items()
+
+    def _toggle_visibility(self, item):
+        self.timeline_view.get_view_properties().set_category_with_id_visible(
+            item["id"], not item["visible"])
+        self.timeline_view.redraw_timeline()
+
+    def _item_at(self, y):
+        index = y // self.ITEM_HEIGHT_PX
         if index < len(self.items):
-            id_at_index = self.items[index]["id"]
-            self.timeline_view.get_view_properties().set_category_with_id_visible(id_at_index, not self.items[index]["visible"])
-            self.timeline_view.redraw_timeline()
+            return self.items[index]
+        else:
+            return None
+
+    def _hits_arrow(self, x, item):
+        return (x > item["x"] and
+                x < (item["x"] + self.INDENT_PX))
+
+    def _hits_checkbox(self, x, item):
+        return (x > (item["x"] + self.INDENT_PX) and
+                x < (item["x"] + 2*self.INDENT_PX))
 
     def _update_items(self):
         self.items = []
