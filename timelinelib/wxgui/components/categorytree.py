@@ -133,8 +133,8 @@ class CustomCategoryTreeRenderer(object):
     def _render_checkbox(self, item):
         bouning_rect = wx.Rect(item["x"] + self.model.INDENT_PX,
                                item["y"] + 4,
-                               0,
-                               0)
+                               16,
+                               16)
         if item["visible"]:
             flag = wx.CONTROL_CHECKED
         else:
