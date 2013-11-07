@@ -480,8 +480,11 @@ class StripCentury(Strip):
             # TODO: This only works for English. Possible to localize?
             time = gregorian.from_time(time)
             start_year = self._century_start_year(time.year)
-            next_start_year = start_year + 100
-            return str(next_start_year / 100) + " century"
+            century = (start_year + 100) / 100
+            if century <= 0:
+                return str(abs(century - 1)) + " century BC"
+            else:
+                return str(century) + " century"
         return ""
 
     def start(self, time):

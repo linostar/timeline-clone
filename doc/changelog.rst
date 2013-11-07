@@ -6,6 +6,10 @@ Version 1.1.0
 
 **Planned: Released on 30 December 2013.**
 
+New features, enhancements:
+
+* Century labeling changed. Century 0 is now removed
+
 Bug fixes:
 
 * Move event vertically, can be done for events very close to each other (with different y-coordinates)
