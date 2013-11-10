@@ -16,16 +16,20 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
+import datetime
 import webbrowser
+
+import wx
 
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.utils import safe_locking
+from timelinelib.drawing.utils import get_default_font
+from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.qa import qa
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
-from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.utils import ex_msg
 from timelinelib.view.move import MoveByDragInputHandler
 from timelinelib.view.noop import NoOpInputHandler
@@ -33,7 +37,6 @@ from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
-import timelinelib.calendar.gregorian as gregorian
 
 
 # The width in pixels of the vertical scroll zones.
@@ -429,7 +432,17 @@ class DrawingArea(object):
         def fn_draw(dc):
             try:
                 self.drawing_algorithm.use_fast_draw(self.fast_draw)
+                time_before = datetime.datetime.now()
                 self.drawing_algorithm.draw(dc, self.timeline, self.view_properties, self.config)
+                time_after = datetime.datetime.now()
+                if qa.IS_ENABLED:
+                    (width, height) = self.view.GetSizeTuple()
+                    redraw_time = (time_after - time_before).total_seconds() * 1000
+                    qa.count_timeline_redraw()
+                    dc.SetTextForeground((255, 0, 0))
+                    dc.SetFont(get_default_font(12, bold=True))
+                    dc.DrawText("Redraw count: %d" % qa.timeline_redraw_count, width - 300, height - 60)
+                    dc.DrawText("Last redraw time: %.3f ms" % redraw_time, width - 300, height - 40)
             except TimelineIOError, e:
                 self.fn_handle_db_error(e)
             finally:
