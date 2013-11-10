@@ -413,6 +413,7 @@ class DrawingArea(object):
     def _set_initial_values_to_member_variables(self):
         self.timeline = None
         self.view_properties = ViewProperties()
+        self.view_properties.listen_for_any(self._redraw_timeline)
         self.view_properties.show_legend = self.config.get_show_legend()
         self.view_properties.show_balloons_on_hover = self.config.get_balloon_on_hover()
         self.dragscroll_timer_running = False
@@ -434,7 +435,7 @@ class DrawingArea(object):
             finally:
                 self.drawing_algorithm.use_fast_draw(False)
         self.view_properties.view_cats_individually = self.view.view_categories_individually()
-        if self.timeline:
+        if self.timeline and self.view_properties.displayed_period:
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)
             self.view.redraw_surface(fn_draw)
