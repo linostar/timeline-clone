@@ -118,8 +118,10 @@ class DrawingArea(object):
         self.timeline = timeline
         self.time_type = timeline.get_time_type()
         self.timeline.register(self._timeline_changed)
+        self.view_properties.unlisten(self._redraw_timeline)
         properties_loaded = self._load_view_properties()
         if properties_loaded:
+            self.view_properties.listen_for_any(self._redraw_timeline)
             self._redraw_timeline()
             self.view.Enable()
             self.view.SetFocus()
@@ -414,7 +416,6 @@ class DrawingArea(object):
     def _set_initial_values_to_member_variables(self):
         self.timeline = None
         self.view_properties = ViewProperties()
-        self.view_properties.listen_for_any(self._redraw_timeline)
         self.view_properties.change_show_legend(self.config.get_show_legend())
         self.view_properties.show_balloons_on_hover = self.config.get_balloon_on_hover()
         self.dragscroll_timer_running = False
