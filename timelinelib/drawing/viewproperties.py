@@ -16,7 +16,10 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class ViewProperties(object):
+from timelinelib.utilities.observer import Observable
+
+
+class ViewProperties(Observable):
     """
     Store properties of a view.
 
@@ -25,6 +28,7 @@ class ViewProperties(object):
     """
 
     def __init__(self):
+        Observable.__init__(self)
         self.sticky_balloon_event_ids = []
         self.hovered_event = None
         self.selected_event_ids = []
@@ -43,6 +47,7 @@ class ViewProperties(object):
         self.hidden_categories = []
         self.period_selection = None
         self.displayed_period = None
+        self._notify(None)
 
     def get_displayed_period(self):
         return self.displayed_period
@@ -62,6 +67,7 @@ class ViewProperties(object):
 
     def clear_selected(self):
         self.selected_event_ids = []
+        self._notify(None)
 
     def event_is_hovered(self, event):
         return (self.hovered_event is not None and
@@ -75,15 +81,18 @@ class ViewProperties(object):
             self.sticky_balloon_event_ids.append(event.id)
         elif has_sticky == False and event.id in self.sticky_balloon_event_ids:
             self.sticky_balloon_event_ids.remove(event.id)
+        self._notify(None)
 
     def set_selected(self, event, is_selected=True):
         if is_selected == True and not event.id in self.selected_event_ids:
             self.selected_event_ids.append(event.id)
         elif is_selected == False and event.id in self.selected_event_ids:
             self.selected_event_ids.remove(event.id)
+        self._notify(None)
 
     def set_displayed_period(self, period):
         self.displayed_period = period
+        self._notify(None)
 
     def get_selected_event_ids(self):
         return self.selected_event_ids[:]
@@ -110,9 +119,11 @@ class ViewProperties(object):
 
     def set_category_visible(self, category, is_visible=True):
         self.set_category_with_id_visible(category.id, is_visible)
+        self._notify(None)
 
     def set_category_with_id_visible(self, id, is_visible=True):
         if is_visible == True and id in self.hidden_categories:
             self.hidden_categories.remove(id)
         elif is_visible == False and not id in self.hidden_categories:
             self.hidden_categories.append(id)
+        self._notify(None)

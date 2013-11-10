@@ -22,8 +22,7 @@ from mock import Mock
 
 from timelinelib.db.objects import Category
 from timelinelib.db.utils import IdCounter
-from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
+from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel, CategoriesFacade
 
 
 class Base(unittest.TestCase):
@@ -35,18 +34,11 @@ class Base(unittest.TestCase):
         self.visible_categories = []
         self.actually_visible_categories = []
 
-        timeline = Mock()
-        timeline.get_categories.return_value = self.categories
-
-        view_properties = Mock(ViewProperties)
-        view_properties.is_category_visible.side_effect = self._category_visible
-        view_properties.is_event_with_category_visible.side_effect = self._event_with_category_visible
-
-        timeline_view = Mock()
-        timeline_view.get_timeline.return_value = timeline
-        timeline_view.get_view_properties.return_value = view_properties
-
-        self.timeline_view = timeline_view
+        self.categories_facade = Mock(CategoriesFacade)
+        self.categories_facade.get_all.return_value = self.categories
+        self.categories_facade.is_visible.side_effect = self._category_visible
+        self.categories_facade.is_event_with_category_visible.side_effect = self._event_with_category_visible
+        self.categories_facade.set_visible.side_effect = self._set_visible
 
         self.model = CustomCategoryTreeModel()
 
@@ -55,6 +47,18 @@ class Base(unittest.TestCase):
 
     def _event_with_category_visible(self, category):
         return category in self.actually_visible_categories
+
+    def _set_visible(self, category_id, visible):
+        def find_category_with_id(id):
+            for category in self.categories:
+                if category.id == id:
+                    return category
+        category = find_category_with_id(category_id)
+        if visible:
+            self.visible_categories.append(category)
+        else:
+            self.visible_categories.remove(category)
+        self.categories_facade.register.call_args[0][0](None)
 
     def add_category(self, name, color=(0, 0, 0), visible=True, actually_visible=True, parent=None):
         category = Category(name, color, (0, 0, 0), True, parent=parent)
@@ -77,25 +81,25 @@ class Base(unittest.TestCase):
         self.assertEqual([x["name"] for x in self.model.get_items()], expected_names)
 
 
-class setting_timline_view(Base):
+class setting_categories(Base):
 
     def test_has_no_items_when_no_timeline_view_set(self):
         self.assert_model_has_itmes_matching([])
 
     def test_has_no_items_when_no_categories_available(self):
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([])
 
     def test_has_items_for_each_category(self):
         self.add_category("Play")
         self.add_category("Work")
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_item_names(["Play", "Work"])
 
     def test_can_set_view_multiple_times_without_items_duplicating(self):
         self.add_category("Work")
-        self.model.set_timeline_view(self.timeline_view)
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
+        self.model.set_categories(self.categories_facade)
         self.assertEqual(len(self.model.get_items()), 1)
 
 
@@ -104,7 +108,7 @@ class item_properties(Base):
     def test_has_items_for_categories(self):
         play_category = self.add_category("Play", (255, 0, 100), visible=False, actually_visible=True)
         work_category = self.add_category("Work", (88, 55, 22), visible=True, actually_visible=False)
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             {
                 "id": play_category.id,
@@ -125,7 +129,7 @@ class item_properties(Base):
     def test_has_child_attribute(self):
         play_category = self.add_category("Play")
         work_category = self.add_category("Work", parent=play_category)
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             {
                 "name": "Play",
@@ -144,7 +148,7 @@ class bounding_box(Base):
         self.model.ITEM_HEIGHT_PX = 20
         self.add_category("Play")
         self.add_category("Work")
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.model.set_view_size(200, 900)
         self.assert_model_has_itmes_matching([
             {
@@ -166,7 +170,7 @@ class bounding_box(Base):
         work_category = self.add_category("Work")
         self.add_category("Reading", parent=work_category)
         self.model.set_view_size(200, 900)
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             {
                 "name": "Work",
@@ -186,8 +190,31 @@ class sorting(Base):
     def test_sorts_categories_at_same_level(self):
         self.add_category("Work")
         self.add_category("Reading")
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_item_names(["Reading", "Work"])
+
+
+class visibility(Base):
+
+    def test_toggles_when_clicking_on_checkbox(self):
+        self.model.ITEM_HEIGHT_PX = 20
+        self.add_category("Reading")
+        self.add_category("Work")
+        self.model.set_categories(self.categories_facade)
+        self.assert_model_has_itmes_matching([
+            { "name": "Reading", "visible": True, },
+            { "name": "Work",    "visible": True, },
+        ])
+        self.model.left_click(20, 25)
+        self.assert_model_has_itmes_matching([
+            { "name": "Reading", "visible": True, },
+            { "name": "Work",    "visible": False, },
+        ])
+        self.model.left_click(20, 25)
+        self.assert_model_has_itmes_matching([
+            { "name": "Reading", "visible": True, },
+            { "name": "Work",    "visible": True, },
+        ])
 
 
 class expandedness(Base):
@@ -196,7 +223,7 @@ class expandedness(Base):
         self.model.ITEM_HEIGHT_PX = 20
         self.add_category("Reading")
         self.add_category("Work")
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "expanded": True, },
             { "name": "Work",    "expanded": True, },
@@ -216,7 +243,7 @@ class expandedness(Base):
         self.model.ITEM_HEIGHT_PX = 20
         self.add_category("Reading")
         self.add_category("Work")
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         before = [x["expanded"] for x in self.model.get_items()]
         self.model.left_click(50, 25)
         after = [x["expanded"] for x in self.model.get_items()]
@@ -226,7 +253,7 @@ class expandedness(Base):
         self.model.ITEM_HEIGHT_PX = 20
         self.add_category("Work")
         self.add_category("Reading")
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         before = [x["expanded"] for x in self.model.get_items()]
         self.model.left_click(5, 50)
         after = [x["expanded"] for x in self.model.get_items()]
@@ -236,7 +263,7 @@ class expandedness(Base):
         self.model.ITEM_HEIGHT_PX = 20
         work_category = self.add_category("Work")
         self.add_category("Reading", parent=work_category)
-        self.model.set_timeline_view(self.timeline_view)
+        self.model.set_categories(self.categories_facade)
         self.assert_model_has_item_names(["Work", "Reading"])
         self.model.left_click(5, 5)
         self.assert_model_has_item_names(["Work"])

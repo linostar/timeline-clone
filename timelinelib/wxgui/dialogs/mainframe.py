@@ -1074,7 +1074,8 @@ class MainPanel(wx.Panel):
         self.cattree.initialize_from_timeline_view(self.get_drawing_area())
         if DEV:
             cc = self.timeline_panel.sidebar.custom_categories
-            cc.set_timeline_view(self.get_drawing_area())
+            cc.set_timeline_view(self.get_drawing_area().get_timeline(),
+                                 self.get_drawing_area().get_view_properties())
         self.set_searchbar_drawing_area_panel(self.get_drawing_area())
         self.show_timeline_panel()
         

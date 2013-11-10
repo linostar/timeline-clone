@@ -19,6 +19,35 @@
 import wx
 
 from timelinelib.drawing.utils import darken_color
+from timelinelib.utilities.observer import Observable
+
+
+class CategoriesFacade(Observable):
+
+    def __init__(self, db, view_properties):
+        Observable.__init__(self)
+        self.db = db
+        self.view_properties = view_properties
+        self.db.register(self._db_changed)
+        self.view_properties.register(self._view_properties_changed)
+
+    def get_all(self):
+        return self.db.get_categories()
+
+    def is_visible(self, category):
+        return self.view_properties.is_category_visible(category)
+
+    def is_event_with_category_visible(self, category):
+        return self.view_properties.is_event_with_category_visible(category)
+
+    def set_visible(self, category_id, visible):
+        self.view_properties.set_category_with_id_visible(category_id, visible)
+
+    def _db_changed(self, _):
+        self._notify(None)
+
+    def _view_properties_changed(self, _):
+        self._notify(None)
 
 
 class CustomCategoryTree(wx.ScrolledWindow):
@@ -33,17 +62,13 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.model = CustomCategoryTreeModel()
         self.renderer = CustomCategoryTreeRenderer(self, self.model)
         self.timeline_view = None
+        self.model.register(self._model_changed)
         self._size_to_model()
 
-    def set_timeline_view(self, timeline_view):
-        if self.timeline_view:
-            self.timeline_view.unregister(self._db_changed)
-        self.timeline_view = timeline_view
-        self.timeline_view.register(self._db_changed)
-        self._db_changed(None)
+    def set_timeline_view(self, db, view_properties):
+        self.model.set_categories(CategoriesFacade(db, view_properties))
 
-    def _db_changed(self, _):
-        self.model.set_timeline_view(self.timeline_view)
+    def _model_changed(self, _):
         self._redraw()
 
     def _on_paint(self, event):
@@ -57,12 +82,10 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def _on_size(self, event):
         self._size_to_model()
-        self._redraw()
 
     def _on_left_down(self, event):
         (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
         self.model.left_click(x, y)
-        self._redraw()
 
     def _redraw(self):
         self.SetVirtualSize((-1, self.model.ITEM_HEIGHT_PX * len(self.model.items)))
@@ -153,15 +176,16 @@ class CustomCategoryTreeRenderer(object):
             self.model.ITEM_HEIGHT_PX - 2 * self.INNER_PADDING)
 
 
-class CustomCategoryTreeModel(object):
+class CustomCategoryTreeModel(Observable):
 
     ITEM_HEIGHT_PX = 22
     INDENT_PX = 15
 
     def __init__(self):
+        Observable.__init__(self)
         self.view_width = 0
         self.view_height = 0
-        self.timeline_view = None
+        self.categories = None
         self.collapsed_category_ids = []
         self.items = []
 
@@ -173,8 +197,12 @@ class CustomCategoryTreeModel(object):
         self.view_height = view_height
         self._update_items()
 
-    def set_timeline_view(self, timeline_view):
-        self.timeline_view = timeline_view
+    def set_categories(self, categories):
+        self.categories = categories
+        self.categories.register(self._categories_changed)
+        self._update_items()
+
+    def _categories_changed(self, _):
         self._update_items()
 
     def left_click(self, x, y):
@@ -194,9 +222,7 @@ class CustomCategoryTreeModel(object):
         self._update_items()
 
     def _toggle_visibility(self, item):
-        self.timeline_view.get_view_properties().set_category_with_id_visible(
-            item["id"], not item["visible"])
-        self.timeline_view.redraw_timeline()
+        self.categories.set_visible(item["id"], not item["visible"])
 
     def _item_at(self, y):
         index = y // self.ITEM_HEIGHT_PX
@@ -217,12 +243,13 @@ class CustomCategoryTreeModel(object):
         self.items = []
         self.y = 0
         self._update_from_tree(self._list_to_tree(self._get_categories()))
+        self._notify(None)
 
     def _get_categories(self):
-        if self.timeline_view is None:
+        if self.categories is None:
             return []
         else:
-            return self.timeline_view.get_timeline().get_categories()
+            return self.categories.get_all()
 
     def _list_to_tree(self, categories, parent=None):
         top = [category for category in categories if (category.parent == parent)]
@@ -250,7 +277,7 @@ class CustomCategoryTreeModel(object):
                 self._update_from_tree(child_tree, indent_level+1)
 
     def _is_category_visible(self, category):
-        return self.timeline_view.get_view_properties().is_category_visible(category)
+        return self.categories.is_visible(category)
 
     def _is_event_with_category_visible(self, category):
-        return self.timeline_view.get_view_properties().is_event_with_category_visible(category)
+        return self.categories.is_event_with_category_visible(category)
