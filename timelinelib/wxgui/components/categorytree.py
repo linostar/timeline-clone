@@ -30,8 +30,6 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def __init__(self, parent):
         wx.ScrolledWindow.__init__(self, parent)
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM) # Needed when using
-                                                    # wx.AutoBufferedPaintDC
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
@@ -45,7 +43,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.model.set_categories(CategoriesFacade(db, view_properties))
 
     def _on_paint(self, event):
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = wx.PaintDC(self)
         self.DoPrepareDC(dc)
         dc.BeginDrawing()
         dc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
