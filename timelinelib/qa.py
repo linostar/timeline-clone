@@ -25,9 +25,13 @@ class QA(object):
 
     def __init__(self):
         self.timeline_redraw_count = 0
+        self.category_redraw_count = 0
 
     def count_timeline_redraw(self):
         self.timeline_redraw_count += 1
+
+    def count_category_redraw(self):
+        self.category_redraw_count += 1
 
 
 qa = QA()

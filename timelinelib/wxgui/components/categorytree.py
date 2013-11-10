@@ -16,9 +16,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import datetime
+
 import wx
 
 from timelinelib.drawing.utils import darken_color
+from timelinelib.drawing.utils import get_default_font
+from timelinelib.qa import qa
 from timelinelib.utilities.observer import Observable
 
 
@@ -46,7 +50,17 @@ class CustomCategoryTree(wx.ScrolledWindow):
         dc.BeginDrawing()
         dc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
         dc.Clear()
+        time_before = datetime.datetime.now()
         self.renderer.render(dc)
+        time_after = datetime.datetime.now()
+        if qa.IS_ENABLED:
+            (width, height) = self.GetSizeTuple()
+            redraw_time = (time_after - time_before).total_seconds() * 1000
+            qa.count_category_redraw()
+            dc.SetTextForeground((255, 0, 0))
+            dc.SetFont(get_default_font(10, bold=True))
+            dc.DrawText("Redraw count: %d" % qa.category_redraw_count, 10, height - 35)
+            dc.DrawText("Last redraw time: %.3f ms" % redraw_time, 10, height - 20)
         dc.EndDrawing()
 
     def _on_size(self, event):
@@ -189,6 +203,8 @@ class CustomCategoryTreeModel(Observable):
         self._update_items()
 
     def set_categories(self, categories):
+        if self.categories:
+            self.categories.unlisten(self._update_items)
         self.categories = categories
         self.categories.listen_for_any(self._update_items)
         self._update_items()
