@@ -462,9 +462,10 @@ class DrawingArea(object):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos, alt_down)
         if event:
             selected = not self.view_properties.is_selected(event)
-            if not control_down:
-                self.view_properties.clear_selected()
-            self.view_properties.set_selected(event, selected)
+            if control_down:
+                self.view_properties.set_selected(event, selected)
+            else:
+                self.view_properties.set_only_selected(event, selected)
         else:
             self.view_properties.clear_selected()
         return event != None

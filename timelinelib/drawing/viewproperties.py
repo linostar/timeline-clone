@@ -102,6 +102,14 @@ class ViewProperties(Observable):
             self.selected_event_ids.remove(event.id)
             self._notify()
 
+    def set_only_selected(self, event, is_selected):
+        if is_selected:
+            if self.selected_event_ids != [event.id]:
+                self.selected_event_ids = [event.id]
+                self._notify()
+        else:
+            self.clear_selected()
+
     def set_displayed_period(self, period):
         self.displayed_period = period
         self._notify()
