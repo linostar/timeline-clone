@@ -467,7 +467,6 @@ class DrawingArea(object):
             self.view_properties.set_selected(event, selected)
         else:
             self.view_properties.clear_selected()
-        self._redraw_timeline()
         return event != None
 
     def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos, alt_down=False):

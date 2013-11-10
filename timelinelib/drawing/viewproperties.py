@@ -76,8 +76,9 @@ class ViewProperties(Observable):
         return event.id in self.selected_event_ids
 
     def clear_selected(self):
-        self.selected_event_ids = []
-        self._notify()
+        if self.selected_event_ids:
+            self.selected_event_ids = []
+            self._notify()
 
     def event_is_hovered(self, event):
         return (self.hovered_event is not None and
@@ -96,9 +97,10 @@ class ViewProperties(Observable):
     def set_selected(self, event, is_selected=True):
         if is_selected == True and not event.id in self.selected_event_ids:
             self.selected_event_ids.append(event.id)
+            self._notify()
         elif is_selected == False and event.id in self.selected_event_ids:
             self.selected_event_ids.remove(event.id)
-        self._notify()
+            self._notify()
 
     def set_displayed_period(self, period):
         self.displayed_period = period
