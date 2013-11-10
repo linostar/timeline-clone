@@ -143,9 +143,7 @@ class DrawingArea(object):
             timeline.unregister(self._timeline_changed)
 
     def show_hide_legend(self, show):
-        self.view_properties.show_legend = show
-        if self.timeline:
-            self._redraw_timeline()
+        self.view_properties.change_show_legend(show)
 
     def get_time_period(self):
         """Return currently displayed time period."""
@@ -417,7 +415,7 @@ class DrawingArea(object):
         self.timeline = None
         self.view_properties = ViewProperties()
         self.view_properties.listen_for_any(self._redraw_timeline)
-        self.view_properties.show_legend = self.config.get_show_legend()
+        self.view_properties.change_show_legend(self.config.get_show_legend())
         self.view_properties.show_balloons_on_hover = self.config.get_balloon_on_hover()
         self.dragscroll_timer_running = False
 
