@@ -58,7 +58,7 @@ class Base(unittest.TestCase):
             self.visible_categories.append(category)
         else:
             self.visible_categories.remove(category)
-        self.categories_facade.register.call_args[0][0](None)
+        self.categories_facade.listen_for_any.call_args[0][0]()
 
     def add_category(self, name, color=(0, 0, 0), visible=True, actually_visible=True, parent=None):
         category = Category(name, color, (0, 0, 0), True, parent=parent)

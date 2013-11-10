@@ -22,34 +22,6 @@ from timelinelib.drawing.utils import darken_color
 from timelinelib.utilities.observer import Observable
 
 
-class CategoriesFacade(Observable):
-
-    def __init__(self, db, view_properties):
-        Observable.__init__(self)
-        self.db = db
-        self.view_properties = view_properties
-        self.db.register(self._db_changed)
-        self.view_properties.register(self._view_properties_changed)
-
-    def get_all(self):
-        return self.db.get_categories()
-
-    def is_visible(self, category):
-        return self.view_properties.is_category_visible(category)
-
-    def is_event_with_category_visible(self, category):
-        return self.view_properties.is_event_with_category_visible(category)
-
-    def set_visible(self, category_id, visible):
-        self.view_properties.set_category_with_id_visible(category_id, visible)
-
-    def _db_changed(self, _):
-        self._notify(None)
-
-    def _view_properties_changed(self, _):
-        self._notify(None)
-
-
 class CustomCategoryTree(wx.ScrolledWindow):
 
     def __init__(self, parent):
@@ -60,16 +32,13 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         self.model = CustomCategoryTreeModel()
+        self.model.listen_for_any(self._redraw)
         self.renderer = CustomCategoryTreeRenderer(self, self.model)
         self.timeline_view = None
-        self.model.register(self._model_changed)
         self._size_to_model()
 
     def set_timeline_view(self, db, view_properties):
         self.model.set_categories(CategoriesFacade(db, view_properties))
-
-    def _model_changed(self, _):
-        self._redraw()
 
     def _on_paint(self, event):
         dc = wx.AutoBufferedPaintDC(self)
@@ -96,6 +65,28 @@ class CustomCategoryTree(wx.ScrolledWindow):
     def _size_to_model(self):
         (view_width, view_height) = self.GetVirtualSizeTuple()
         self.model.set_view_size(view_width, view_height)
+
+
+class CategoriesFacade(Observable):
+
+    def __init__(self, db, view_properties):
+        Observable.__init__(self)
+        self.db = db
+        self.view_properties = view_properties
+        self.db.listen_for_any(self._notify)
+        self.view_properties.listen_for_any(self._notify)
+
+    def get_all(self):
+        return self.db.get_categories()
+
+    def is_visible(self, category):
+        return self.view_properties.is_category_visible(category)
+
+    def is_event_with_category_visible(self, category):
+        return self.view_properties.is_event_with_category_visible(category)
+
+    def set_visible(self, category_id, visible):
+        self.view_properties.set_category_with_id_visible(category_id, visible)
 
 
 class CustomCategoryTreeRenderer(object):
@@ -199,10 +190,7 @@ class CustomCategoryTreeModel(Observable):
 
     def set_categories(self, categories):
         self.categories = categories
-        self.categories.register(self._categories_changed)
-        self._update_items()
-
-    def _categories_changed(self, _):
+        self.categories.listen_for_any(self._update_items)
         self._update_items()
 
     def left_click(self, x, y):

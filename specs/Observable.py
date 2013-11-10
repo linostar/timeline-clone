@@ -26,16 +26,16 @@ from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 class ObservableSpec(unittest.TestCase):
 
     def test_at_construction_there_area_zero_observers(self):
-        self.assertTrue(len(self.observable.observers) == 0)
+        self.assertTrue(len(self.observable._observers) == 0)
 
     def test_an_observer_can_be_registered(self):
         self.registerObserver()
-        self.assertTrue(len(self.observable.observers) == 1)
+        self.assertTrue(len(self.observable._observers) == 1)
 
     def test_an_observer_can_be_unregistered(self):
         self.registerObserver()
         self.observable.unregister(self.observer.event_triggered)
-        self.assertTrue(len(self.observable.observers) == 0)
+        self.assertTrue(len(self.observable._observers) == 0)
 
     def test_an_observer_gets_notifications(self):
         self.registerObserver()
@@ -44,6 +44,28 @@ class ObservableSpec(unittest.TestCase):
         self.assertTrue(len(self.observer.events) == 2)
         self.assertTrue(self.observer.events[0] == STATE_CHANGE_ANY)
         self.assertTrue(self.observer.events[1] == STATE_CHANGE_CATEGORY)
+
+    def test_can_listen_for_specific_events(self):
+        observer = Observer()
+        self.observable.listen_for("bananas", observer.event_triggered2)
+        self.observable._notify("apples")
+        self.observable._notify("bananas")
+        self.assertEqual(len(observer.events), 1)
+
+    def test_can_listen_for_all_events(self):
+        observer = Observer()
+        self.observable.listen_for_any(observer.event_triggered2)
+        self.observable._notify()
+        self.observable._notify()
+        self.assertEqual(len(observer.events), 2)
+
+    def test_can_unlisten(self):
+        observer = Observer()
+        self.observable.listen_for_any(observer.event_triggered2)
+        self.observable._notify()
+        self.observable.unlisten(observer.event_triggered2)
+        self.observable._notify()
+        self.assertEqual(len(observer.events), 1)
 
     def setUp(self):
         self.observable = Observable()
@@ -56,8 +78,10 @@ class ObservableSpec(unittest.TestCase):
 class Observer():
     
     def __init__(self):
-        self.event_count = 0
         self.events = []
         
     def event_triggered(self, evt):
         self.events.append(evt)
+
+    def event_triggered2(self):
+        self.events.append(None)
