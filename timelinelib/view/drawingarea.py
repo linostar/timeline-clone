@@ -492,8 +492,7 @@ class DrawingArea(object):
         self.input_handler.balloon_hide_timer_fired()
 
     def _redraw_balloons(self, event):
-        self.view_properties.hovered_event = event
-        self._redraw_timeline()
+        self.view_properties.change_hovered_event(event)
 
     def _in_scroll_zone(self, x):
         """
