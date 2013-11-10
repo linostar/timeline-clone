@@ -603,7 +603,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         self.Bind(EVT_CATS_VIEW_CHANGED, self._on_cats_view_changed)
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-        self.view_cats_individually = False
         self.help_browser = HelpBrowser(self)
         self.controller = TimelineApplication(self, db_open, self.config)
         self.menu_controller = MenuController()
@@ -632,17 +631,13 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
     # Concurrent editing
     def ok_to_edit(self):
         return self.controller.ok_to_edit()
-        
+
     def edit_ends(self):
         self.controller.edit_ends()
-        
-    def view_categories_individually(self):
-        return self.view_cats_individually
-        
+
     def _on_cats_view_changed(self, evt):
-        self.view_cats_individually = evt.GetClientData()
-        self.main_panel.redraw_timeline()
-        
+        self.main_panel.get_view_properties().change_view_cats_individually(evt.GetClientData())
+
     # Creation process methods
     def _set_initial_values_to_member_variables(self):
         self.timeline = None
@@ -1016,7 +1011,7 @@ class MainPanel(wx.Panel):
         current_period = None
         if self.main_frame.timeline:
             time_type = self.main_frame.timeline.get_time_type()
-            current_period = self._get_view_properties().displayed_period
+            current_period = self.get_view_properties().displayed_period
             period_delta = current_period.end_time - current_period.start_time
             periods.append(current_period)
             start_time = current_period.start_time
@@ -1089,30 +1084,30 @@ class MainPanel(wx.Panel):
         return self.timeline_panel.get_scene()
         
     def save_view_properties(self, timeline):
-        timeline.save_view_properties(self._get_view_properties())
+        timeline.save_view_properties(self.get_view_properties())
 
     def get_displayed_period_delta(self):
-        return self._get_view_properties().displayed_period.delta()
+        return self.get_view_properties().displayed_period.delta()
     
     def get_time_period(self):
         return self.timeline_panel.get_time_period()
         
     def get_ids_of_two_first_selected_events(self):
-        view_properties = self._get_view_properties()
+        view_properties = self.get_view_properties()
         return (view_properties.selected_event_ids[0],
                 view_properties.selected_event_ids[1])
                 
     def get_selected_event_ids(self):
-        return self._get_view_properties().get_selected_event_ids()
+        return self.get_view_properties().get_selected_event_ids()
         
     def show_hide_legend(self, checked):    
         self.timeline_panel.show_hide_legend(checked)
     
     def get_id_of_first_selected_event(self):
-        return self._get_view_properties().get_selected_event_ids()[0]
+        return self.get_view_properties().get_selected_event_ids()[0]
             
     def get_nbr_of_selected_events(self):
-        return len(self._get_view_properties().get_selected_event_ids())
+        return len(self.get_view_properties().get_selected_event_ids())
                 
     def balloon_visibility_changed(self, checked):
         self.timeline_panel.balloon_visibility_changed(checked)
@@ -1127,7 +1122,7 @@ class MainPanel(wx.Panel):
         return self.timeline_panel.navigate_timeline(navigation_fn)
             
     def get_visible_events(self, all_events):
-        view_properties = self._get_view_properties()
+        view_properties = self.get_view_properties()
         visible_events = view_properties.filter_events(all_events)
         return visible_events  
           
@@ -1139,9 +1134,9 @@ class MainPanel(wx.Panel):
         svgexport.export(
                     path,
                     self.get_scene(),
-                    self._get_view_properties())
+                    self.get_view_properties())
                 
-    def _get_view_properties(self):
+    def get_view_properties(self):
         return self.timeline_panel.get_view_properties()
     
     def _create_gui(self):

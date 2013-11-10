@@ -446,7 +446,6 @@ class DrawingArea(object):
                 self.fn_handle_db_error(e)
             finally:
                 self.drawing_algorithm.use_fast_draw(False)
-        self.view_properties.view_cats_individually = self.view.view_categories_individually()
         if self.timeline and self.view_properties.displayed_period:
             self.view_properties.divider_position = (self.divider_line_slider.GetValue())
             self.view_properties.divider_position = (float(self.divider_line_slider.GetValue()) / 100.0)

@@ -70,9 +70,6 @@ class DummyMainFrame(object):
     def edit_ends(self):
         pass
 
-    def view_categories_individually(self):
-        pass
-
 
 class TimelineComponent(TimelinePanel):
 

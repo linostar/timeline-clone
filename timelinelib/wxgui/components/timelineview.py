@@ -149,9 +149,6 @@ class DrawingAreaPanel(wx.Panel):
         self.SetFocusIgnoringChildren()
         return self.main_frame.edit_ends()
 
-    def view_categories_individually(self):    
-        return self.main_frame.view_categories_individually()
-
     def _create_gui(self):
         self.balloon_show_timer = wx.Timer(self, -1)
         self.balloon_hide_timer = wx.Timer(self, -1)

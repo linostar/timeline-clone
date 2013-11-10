@@ -59,6 +59,11 @@ class ViewProperties(Observable):
             self.show_legend = show
             self._notify()
 
+    def change_view_cats_individually(self, view_cats_individually):
+        if self.view_cats_individually != view_cats_individually:
+            self.view_cats_individually = view_cats_individually
+            self._notify()
+
     def get_displayed_period(self):
         return self.displayed_period
 
