@@ -30,9 +30,11 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def __init__(self, parent):
         wx.ScrolledWindow.__init__(self, parent)
+        self._create_context_menu()
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
+        self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
         self.model = CustomCategoryTreeModel()
         self.model.listen_for_any(self._redraw)
         self.renderer = CustomCategoryTreeRenderer(self, self.model)
@@ -68,6 +70,45 @@ class CustomCategoryTree(wx.ScrolledWindow):
         (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
         self.model.left_click(x, y)
 
+    def _on_right_down(self, event):
+        self.PopupMenu(self.mnu)
+
+    def _on_menu_edit(self, e):
+        pass
+
+    def _on_menu_add(self, e):
+        pass
+
+    def _on_menu_delete(self, e):
+        pass
+
+    def _on_menu_check_all(self, e):
+        pass
+
+    def _on_menu_check_children(self, e):
+        pass
+
+    def _on_menu_check_all_children(self, e):
+        pass
+
+    def _on_menu_check_parents(self, e):
+        pass
+
+    def _on_menu_check_all_parents(self, e):
+        pass
+
+    def _on_menu_uncheck_all(self, e):
+        pass
+
+    def _on_menu_uncheck_children(self, e):
+        pass
+
+    def _on_menu_uncheck_all_children(self, e):
+        pass
+
+    def _on_menu_uncheck_parents(self, e):
+        pass
+
     def _redraw(self):
         self.SetVirtualSize((-1, self.model.ITEM_HEIGHT_PX * len(self.model.items)))
         self.SetScrollRate(-1, self.model.ITEM_HEIGHT_PX/2)
@@ -77,6 +118,28 @@ class CustomCategoryTree(wx.ScrolledWindow):
     def _size_to_model(self):
         (view_width, view_height) = self.GetVirtualSizeTuple()
         self.model.set_view_size(view_width, view_height)
+
+    def _create_context_menu(self):
+        def add_item(callback, name):
+            item = wx.MenuItem(self.mnu, wx.ID_ANY, name)
+            self.mnu.AppendItem(item)
+            self.Bind(wx.EVT_MENU, callback, item)
+            return item
+        self.mnu = wx.Menu()
+        self.mnu_edit = add_item(self._on_menu_edit, _("Edit..."))
+        self.mnu_add = add_item(self._on_menu_add, _("Add..."))
+        self.mnu_delete = add_item(self._on_menu_delete, _("Delete"))
+        self.mnu.AppendSeparator()
+        self.mnu_check_all = add_item(self._on_menu_check_all, _("Check All"))
+        self.mnu_check_children = add_item(self._on_menu_check_children, _("Check children"))
+        self.mnu_check_all_children = add_item(self._on_menu_check_all_children, _("Check all children"))
+        self.mnu_check_parents = add_item(self._on_menu_check_parents, _("Check all parents"))
+        self.mnu_check_all_parents = add_item(self._on_menu_check_all_parents, _("Check all parents of all childs"))
+        self.mnu.AppendSeparator()
+        self.mnu_uncheck_all = add_item(self._on_menu_uncheck_all, _("Uncheck All"))
+        self.mnu_uncheck_children = add_item(self._on_menu_uncheck_children, _("Uncheck children"))
+        self.mnu_uncheck_all_children = add_item(self._on_menu_uncheck_all_children, _("Uncheck all children"))
+        self.mnu_uncheck_parents = add_item(self._on_menu_uncheck_parents, _("Uncheck all parents"))
 
 
 class CategoriesFacade(Observable):
