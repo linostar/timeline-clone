@@ -35,7 +35,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
-        self.categories = None
+        self.view_properties = None
         self.model = CustomCategoryTreeModel()
         self.model.listen_for_any(self._redraw)
         self.renderer = CustomCategoryTreeRenderer(self, self.model)
@@ -43,8 +43,8 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self._size_to_model()
 
     def set_timeline_view(self, db, view_properties):
-        self.categories = CategoriesFacade(db, view_properties)
-        self.model.set_categories(self.categories)
+        self.view_properties = view_properties
+        self.model.set_categories(CategoriesFacade(db, view_properties))
 
     def _on_paint(self, event):
         dc = wx.PaintDC(self)
@@ -80,10 +80,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.model.toggle_expandedness(category)
 
     def _on_left_down_check(self, category):
-        if self.categories:
-            self.categories.set_visible(
-                category.id,
-                not self.categories.is_visible(category))
+        self.view_properties.toggle_category_visibility(category)
 
     def _on_right_down(self, event):
         self.PopupMenu(self.mnu)
@@ -174,9 +171,6 @@ class CategoriesFacade(Observable):
 
     def is_event_with_category_visible(self, category):
         return self.view_properties.is_event_with_category_visible(category)
-
-    def set_visible(self, category_id, visible):
-        self.view_properties.set_category_with_id_visible(category_id, visible)
 
 
 class CustomCategoryTreeRenderer(object):

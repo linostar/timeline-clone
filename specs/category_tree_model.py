@@ -38,7 +38,6 @@ class Base(unittest.TestCase):
         self.categories_facade.get_all.return_value = self.categories
         self.categories_facade.is_visible.side_effect = self._category_visible
         self.categories_facade.is_event_with_category_visible.side_effect = self._event_with_category_visible
-        self.categories_facade.set_visible.side_effect = self._set_visible
 
         self.model = CustomCategoryTreeModel()
 
@@ -47,18 +46,6 @@ class Base(unittest.TestCase):
 
     def _event_with_category_visible(self, category):
         return category in self.actually_visible_categories
-
-    def _set_visible(self, category_id, visible):
-        def find_category_with_id(id):
-            for category in self.categories:
-                if category.id == id:
-                    return category
-        category = find_category_with_id(category_id)
-        if visible:
-            self.visible_categories.append(category)
-        else:
-            self.visible_categories.remove(category)
-        self.categories_facade.listen_for_any.call_args[0][0]()
 
     def add_category(self, name, color=(0, 0, 0), visible=True, actually_visible=True, parent=None):
         category = Category(name, color, (0, 0, 0), True, parent=parent)

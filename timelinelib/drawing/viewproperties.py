@@ -122,6 +122,10 @@ class ViewProperties(Observable):
     def get_selected_event_ids(self):
         return self.selected_event_ids[:]
 
+    def toggle_category_visibility(self, category):
+        self.set_category_visible(category,
+                                  not self.is_category_visible(category))
+
     def is_category_visible(self, category):
         return category.id not in self.hidden_categories
 
