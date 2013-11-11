@@ -225,28 +225,6 @@ class hit_test(Base):
         self.model.ITEM_HEIGHT_PX = 20
 
 
-class visibility(Base):
-
-    def test_can_toggle(self):
-        reading = self.add_category("Reading")
-        work = self.add_category("Work")
-        self.model.set_categories(self.categories_facade)
-        self.assert_model_has_itmes_matching([
-            { "name": "Reading", "visible": True, },
-            { "name": "Work",    "visible": True, },
-        ])
-        self.model.toggle_visibility(work)
-        self.assert_model_has_itmes_matching([
-            { "name": "Reading", "visible": True, },
-            { "name": "Work",    "visible": False, },
-        ])
-        self.model.toggle_visibility(work)
-        self.assert_model_has_itmes_matching([
-            { "name": "Reading", "visible": True, },
-            { "name": "Work",    "visible": True, },
-        ])
-
-
 class expandedness(Base):
 
     def test_can_toggle(self):
