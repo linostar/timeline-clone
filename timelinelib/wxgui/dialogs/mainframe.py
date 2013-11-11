@@ -1364,7 +1364,7 @@ class Sidebar(wx.Panel):
         sizer.Add(self.cattree, (0,0), flag=wx.GROW)
         sizer.Add(self.cbx_toggle_cat_view, (1,0), flag=wx.ALL, border=5)
         if DEV:
-            self.custom_categories = CustomCategoryTree(self)
+            self.custom_categories = CustomCategoryTree(self, handle_db_error)
             sizer.Add(self.custom_categories, (2,0), flag=wx.GROW)
             sizer.AddGrowableRow(2, proportion=0)
         self.SetSizer(sizer)

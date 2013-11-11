@@ -24,17 +24,20 @@ from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.qa import qa
 from timelinelib.utilities.observer import Observable
+from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
+import timelinelib.wxgui.utils as gui_utils
 
 
 class CustomCategoryTree(wx.ScrolledWindow):
 
-    def __init__(self, parent):
+    def __init__(self, parent, handle_db_error):
         wx.ScrolledWindow.__init__(self, parent)
         self._create_context_menu()
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
+        self.handle_db_error = handle_db_error
         self.view_properties = None
         self.model = CustomCategoryTreeModel()
         self.model.listen_for_any(self._redraw)
@@ -43,6 +46,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self._size_to_model()
 
     def set_timeline_view(self, db, view_properties):
+        self.db = db
         self.view_properties = view_properties
         self.model.set_categories(CategoriesFacade(db, view_properties))
 
@@ -69,24 +73,24 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self._size_to_model()
 
     def _on_left_down(self, event):
-        (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
-        hit_info = self.model.hit(x, y)
-        if hit_info.is_on_arrow():
-            self._on_left_down_expanded(hit_info.get_category())
-        elif hit_info.is_on_checkbox():
-            self._on_left_down_check(hit_info.get_category())
-
-    def _on_left_down_expanded(self, category):
-        self.model.toggle_expandedness(category)
-
-    def _on_left_down_check(self, category):
-        self.view_properties.toggle_category_visibility(category)
+        self._store_hit_info(event)
+        category = self.last_hit_info.get_category()
+        if self.last_hit_info.is_on_arrow():
+            self.model.toggle_expandedness(category)
+        elif self.last_hit_info.is_on_checkbox():
+            self.view_properties.toggle_category_visibility(category)
 
     def _on_right_down(self, event):
+        self._store_hit_info(event)
         self.PopupMenu(self.mnu)
 
     def _on_menu_edit(self, e):
-        pass
+        category = self.last_hit_info.get_category()
+        if category:
+            def create_category_editor():
+                return WxCategoryEdtiorDialog(self, _("Edit Category"),
+                                              self.db, category)
+            gui_utils.show_modal(create_category_editor, self.handle_db_error)
 
     def _on_menu_add(self, e):
         pass
@@ -120,6 +124,10 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def _on_menu_uncheck_parents(self, e):
         pass
+
+    def _store_hit_info(self, event):
+        (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+        self.last_hit_info = self.model.hit(x, y)
 
     def _redraw(self):
         self.SetVirtualSize((-1, self.model.ITEM_HEIGHT_PX * len(self.model.items)))
