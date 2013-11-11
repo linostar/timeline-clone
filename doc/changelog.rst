@@ -14,6 +14,7 @@ Bug fixes:
 
 * Move event vertically, can be done for events very close to each other (with different y-coordinates)
 * Ics-files could load events without text which caused an exception when trying to 'Save As'
+* Handle exception in dragging situation when julian day becomes < 0.
 
 Maybe be released: 1.0.2
 ------------------------
