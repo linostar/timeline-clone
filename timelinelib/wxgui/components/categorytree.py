@@ -68,7 +68,17 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def _on_left_down(self, event):
         (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
-        self.model.left_click(x, y)
+        hit_info = self.model.hit(x, y)
+        if hit_info.is_on_arrow():
+            self._on_left_down_expanded(hit_info.get_category())
+        elif hit_info.is_on_checkbox():
+            self._on_left_down_check(hit_info.get_category())
+
+    def _on_left_down_expanded(self, category):
+        self.model.toggle_expandedness(category)
+
+    def _on_left_down_check(self, category):
+        self.model.toggle_visibility(category)
 
     def _on_right_down(self, event):
         self.PopupMenu(self.mnu)
@@ -270,24 +280,26 @@ class CustomCategoryTreeModel(Observable):
         self.categories.listen_for_any(self._update_items)
         self._update_items()
 
-    def left_click(self, x, y):
+    def hit(self, x, y):
         item = self._item_at(y)
         if item:
-            if self._hits_arrow(x, item):
-                self._toggle_expandedness(item)
-            if self._hits_checkbox(x, item):
-                self._toggle_visibility(item)
-
-    def _toggle_expandedness(self, item):
-        category_id = item["id"]
-        if category_id in self.collapsed_category_ids:
-            self.collapsed_category_ids.remove(category_id)
+            return HitInfo(item["category"],
+                           self._hits_arrow(x, item),
+                           self._hits_checkbox(x, item))
         else:
-            self.collapsed_category_ids.append(category_id)
-        self._update_items()
+            return HitInfo(None, False, False)
 
-    def _toggle_visibility(self, item):
-        self.categories.set_visible(item["id"], not item["visible"])
+    def toggle_expandedness(self, category):
+        if category.id in self.collapsed_category_ids:
+            self.collapsed_category_ids.remove(category.id)
+            self._update_items()
+        else:
+            self.collapsed_category_ids.append(category.id)
+            self._update_items()
+
+    def toggle_visibility(self, category):
+        self.categories.set_visible(category.id,
+                                    not self._is_category_visible(category))
 
     def _item_at(self, y):
         index = y // self.ITEM_HEIGHT_PX
@@ -336,6 +348,7 @@ class CustomCategoryTreeModel(Observable):
                 "expanded": expanded,
                 "has_children": len(child_tree) > 0,
                 "actually_visible": self._is_event_with_category_visible(category),
+                "category": category,
             })
             self.y += self.ITEM_HEIGHT_PX
             if expanded:
@@ -346,3 +359,20 @@ class CustomCategoryTreeModel(Observable):
 
     def _is_event_with_category_visible(self, category):
         return self.categories.is_event_with_category_visible(category)
+
+
+class HitInfo(object):
+
+    def __init__(self, category, is_on_arrow, is_on_checkbox):
+        self._category = category
+        self._is_on_arrow = is_on_arrow
+        self._is_on_checkbox = is_on_checkbox
+
+    def get_category(self):
+        return self._category
+
+    def is_on_arrow(self):
+        return self._is_on_arrow
+
+    def is_on_checkbox(self):
+        return self._is_on_checkbox

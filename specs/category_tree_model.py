@@ -106,8 +106,10 @@ class setting_categories(Base):
 class item_properties(Base):
 
     def test_has_items_for_categories(self):
-        play_category = self.add_category("Play", (255, 0, 100), visible=False, actually_visible=True)
-        work_category = self.add_category("Work", (88, 55, 22), visible=True, actually_visible=False)
+        play_category = self.add_category(
+            "Play", (255, 0, 100), visible=False, actually_visible=True)
+        work_category = self.add_category(
+            "Work", (88, 55, 22), visible=True, actually_visible=False)
         self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             {
@@ -116,6 +118,7 @@ class item_properties(Base):
                 "visible": False,
                 "actually_visible": True,
                 "color": (255, 0, 100),
+                "category": play_category,
             },
             {
                 "id": work_category.id,
@@ -123,6 +126,7 @@ class item_properties(Base):
                 "visible": True,
                 "actually_visible": False,
                 "color": (88, 55, 22),
+                "category": work_category,
             },
         ])
 
@@ -194,23 +198,49 @@ class sorting(Base):
         self.assert_model_has_item_names(["Reading", "Work"])
 
 
+class hit_test(Base):
+
+    def test_can_get_category(self):
+        reading = self.add_category("Reading")
+        work = self.add_category("Work")
+        self.model.set_categories(self.categories_facade)
+        self.assertEqual(self.model.hit(0, 0).get_category(), reading)
+        self.assertEqual(self.model.hit(0, 25).get_category(), work)
+        self.assertEqual(self.model.hit(0, 45).get_category(), None)
+
+    def test_can_check_if_hit_arrow(self):
+        reading = self.add_category("Reading")
+        self.model.set_categories(self.categories_facade)
+        self.assertEqual(self.model.hit(5, 10).is_on_arrow(), True)
+        self.assertEqual(self.model.hit(0, 25).is_on_arrow(), False)
+
+    def test_can_check_if_hit_checkbox(self):
+        reading = self.add_category("Reading")
+        self.model.set_categories(self.categories_facade)
+        self.assertEqual(self.model.hit(25, 10).is_on_checkbox(), True)
+        self.assertEqual(self.model.hit(0, 25).is_on_checkbox(), False)
+
+    def setUp(self):
+        Base.setUp(self)
+        self.model.ITEM_HEIGHT_PX = 20
+
+
 class visibility(Base):
 
-    def test_toggles_when_clicking_on_checkbox(self):
-        self.model.ITEM_HEIGHT_PX = 20
-        self.add_category("Reading")
-        self.add_category("Work")
+    def test_can_toggle(self):
+        reading = self.add_category("Reading")
+        work = self.add_category("Work")
         self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "visible": True, },
             { "name": "Work",    "visible": True, },
         ])
-        self.model.left_click(20, 25)
+        self.model.toggle_visibility(work)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "visible": True, },
             { "name": "Work",    "visible": False, },
         ])
-        self.model.left_click(20, 25)
+        self.model.toggle_visibility(work)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "visible": True, },
             { "name": "Work",    "visible": True, },
@@ -219,51 +249,29 @@ class visibility(Base):
 
 class expandedness(Base):
 
-    def test_toggles_when_clicking_on_arrow(self):
-        self.model.ITEM_HEIGHT_PX = 20
-        self.add_category("Reading")
-        self.add_category("Work")
+    def test_can_toggle(self):
+        reading = self.add_category("Reading")
+        work = self.add_category("Work")
         self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "expanded": True, },
             { "name": "Work",    "expanded": True, },
         ])
-        self.model.left_click(5, 25)
+        self.model.toggle_expandedness(work)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "expanded": True, },
             { "name": "Work",    "expanded": False, },
         ])
-        self.model.left_click(5, 25)
+        self.model.toggle_expandedness(work)
         self.assert_model_has_itmes_matching([
             { "name": "Reading", "expanded": True, },
             { "name": "Work",    "expanded": True, },
         ])
 
-    def test_does_not_toggle_if_clicking_outside_arrow(self):
-        self.model.ITEM_HEIGHT_PX = 20
-        self.add_category("Reading")
-        self.add_category("Work")
-        self.model.set_categories(self.categories_facade)
-        before = [x["expanded"] for x in self.model.get_items()]
-        self.model.left_click(50, 25)
-        after = [x["expanded"] for x in self.model.get_items()]
-        self.assertEqual(before, after)
-
-    def test_does_not_toggle_if_clicking_outside_item(self):
-        self.model.ITEM_HEIGHT_PX = 20
-        self.add_category("Work")
-        self.add_category("Reading")
-        self.model.set_categories(self.categories_facade)
-        before = [x["expanded"] for x in self.model.get_items()]
-        self.model.left_click(5, 50)
-        after = [x["expanded"] for x in self.model.get_items()]
-        self.assertEqual(before, after)
-
     def test_hides_subtrees_if_parent_not_expanded(self):
-        self.model.ITEM_HEIGHT_PX = 20
         work_category = self.add_category("Work")
         self.add_category("Reading", parent=work_category)
         self.model.set_categories(self.categories_facade)
         self.assert_model_has_item_names(["Work", "Reading"])
-        self.model.left_click(5, 5)
+        self.model.toggle_expandedness(work_category)
         self.assert_model_has_item_names(["Work"])
