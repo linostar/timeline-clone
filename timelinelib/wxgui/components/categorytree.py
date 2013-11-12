@@ -44,6 +44,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.renderer = CustomCategoryTreeRenderer(self, self.model)
         self.timeline_view = None
         self._size_to_model()
+        self._draw_bitmap()
 
     def set_timeline_view(self, db, view_properties):
         self.db = db
@@ -51,23 +52,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.model.set_categories(CategoriesFacade(db, view_properties))
 
     def _on_paint(self, event):
-        dc = wx.PaintDC(self)
-        self.DoPrepareDC(dc)
-        dc.BeginDrawing()
-        dc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
-        dc.Clear()
-        time_before = datetime.datetime.now()
-        self.renderer.render(dc)
-        time_after = datetime.datetime.now()
-        if qa.IS_ENABLED:
-            (width, height) = self.GetSizeTuple()
-            redraw_time = (time_after - time_before).total_seconds() * 1000
-            qa.count_category_redraw()
-            dc.SetTextForeground((255, 0, 0))
-            dc.SetFont(get_default_font(10, bold=True))
-            dc.DrawText("Redraw count: %d" % qa.category_redraw_count, 10, height - 35)
-            dc.DrawText("Last redraw time: %.3f ms" % redraw_time, 10, height - 20)
-        dc.EndDrawing()
+        dc = wx.BufferedPaintDC(self, self.buffer_image, wx.BUFFER_VIRTUAL_AREA)
 
     def _on_size(self, event):
         self._size_to_model()
@@ -132,8 +117,30 @@ class CustomCategoryTree(wx.ScrolledWindow):
     def _redraw(self):
         self.SetVirtualSize((-1, self.model.ITEM_HEIGHT_PX * len(self.model.items)))
         self.SetScrollRate(-1, self.model.ITEM_HEIGHT_PX/2)
+        self._draw_bitmap()
         self.Refresh()
         self.Update()
+
+    def _draw_bitmap(self):
+        width, height = self.GetVirtualSizeTuple()
+        self.buffer_image = wx.EmptyBitmap(width, height)
+        memdc = wx.BufferedDC(None, self.buffer_image)
+        memdc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
+        memdc.Clear()
+        memdc.BeginDrawing()
+        time_before = datetime.datetime.now()
+        self.renderer.render(memdc)
+        time_after = datetime.datetime.now()
+        if qa.IS_ENABLED:
+            (width, height) = self.GetSizeTuple()
+            redraw_time = (time_after - time_before).total_seconds() * 1000
+            qa.count_category_redraw()
+            memdc.SetTextForeground((255, 0, 0))
+            memdc.SetFont(get_default_font(10, bold=True))
+            memdc.DrawText("Redraw count: %d" % qa.category_redraw_count, 10, height - 35)
+            memdc.DrawText("Last redraw time: %.3f ms" % redraw_time, 10, height - 20)
+        memdc.EndDrawing()
+        del memdc
 
     def _size_to_model(self):
         (view_width, view_height) = self.GetVirtualSizeTuple()
@@ -196,6 +203,7 @@ class CustomCategoryTreeRenderer(object):
         del self.dc
 
     def _render_items(self, items):
+        self.dc.SetFont(wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT))
         for item in items:
             self._render_item(item)
 
@@ -211,7 +219,7 @@ class CustomCategoryTreeRenderer(object):
         self.dc.SetPen(wx.Pen(wx.Color(100, 100, 100), 0, wx.SOLID))
         offset = self.TRIANGLE_SIZE/2
         center_x = item["x"] + 2*self.INNER_PADDING + offset
-        center_y = item["y"] + self.model.ITEM_HEIGHT_PX/2
+        center_y = item["y"] + self.model.ITEM_HEIGHT_PX/2 - 1
         if item["expanded"]:
             open_polygon = [
                 wx.Point(center_x - offset, center_y - offset),
@@ -231,16 +239,19 @@ class CustomCategoryTreeRenderer(object):
         x = item["x"] + self.TRIANGLE_SIZE + 4 * self.INNER_PADDING + 20
         (w, h) = self.dc.GetTextExtent(item["name"])
         if item["actually_visible"]:
-            self.dc.SetTextForeground(wx.BLACK)
+            self.dc.SetTextForeground(self.window.GetForegroundColour())
         else:
             self.dc.SetTextForeground((150, 150, 150))
-        self.dc.DrawText(item["name"], x + self.INNER_PADDING, item["y"] + self.INNER_PADDING)
+        self.dc.DrawText(item["name"],
+                         x + self.INNER_PADDING,
+                         item["y"] + (self.model.ITEM_HEIGHT_PX - h)/2)
 
     def _render_checkbox(self, item):
+        (w, h) = (17, 17)
         bouning_rect = wx.Rect(item["x"] + self.model.INDENT_PX,
-                               item["y"] + 4,
-                               16,
-                               16)
+                               item["y"] + (self.model.ITEM_HEIGHT_PX - h)/2,
+                               w,
+                               h)
         if item["visible"]:
             flag = wx.CONTROL_CHECKED
         else:
