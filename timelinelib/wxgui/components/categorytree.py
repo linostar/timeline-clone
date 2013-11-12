@@ -74,22 +74,22 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def _on_left_down(self, event):
         self._store_hit_info(event)
-        category = self.last_hit_info.get_category()
+        hit_category = self.last_hit_info.get_category()
         if self.last_hit_info.is_on_arrow():
-            self.model.toggle_expandedness(category)
+            self.model.toggle_expandedness(hit_category)
         elif self.last_hit_info.is_on_checkbox():
-            self.view_properties.toggle_category_visibility(category)
+            self.view_properties.toggle_category_visibility(hit_category)
 
     def _on_right_down(self, event):
         self._store_hit_info(event)
         self.PopupMenu(self.mnu)
 
     def _on_menu_edit(self, e):
-        category = self.last_hit_info.get_category()
-        if category:
+        hit_category = self.last_hit_info.get_category()
+        if hit_category:
             def create_category_editor():
                 return WxCategoryEdtiorDialog(self, _("Edit Category"),
-                                              self.db, category)
+                                              self.db, hit_category)
             gui_utils.show_modal(create_category_editor, self.handle_db_error)
 
     def _on_menu_add(self, e):
