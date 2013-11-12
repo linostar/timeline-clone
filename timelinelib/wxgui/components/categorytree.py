@@ -128,12 +128,12 @@ class CustomCategoryTree(wx.ScrolledWindow):
         memdc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
         memdc.Clear()
         memdc.BeginDrawing()
-        time_before = datetime.datetime.now()
+        qa.timer_start()
         self.renderer.render(memdc)
-        time_after = datetime.datetime.now()
+        qa.timer_end()
         if qa.IS_ENABLED:
             (width, height) = self.GetSizeTuple()
-            redraw_time = (time_after - time_before).total_seconds() * 1000
+            redraw_time = qa.timer_elapsed_ms()
             qa.count_category_redraw()
             memdc.SetTextForeground((255, 0, 0))
             memdc.SetFont(get_default_font(10, bold=True))

@@ -431,12 +431,12 @@ class DrawingArea(object):
         def fn_draw(dc):
             try:
                 self.drawing_algorithm.use_fast_draw(self.fast_draw)
-                time_before = datetime.datetime.now()
+                qa.timer_start()
                 self.drawing_algorithm.draw(dc, self.timeline, self.view_properties, self.config)
-                time_after = datetime.datetime.now()
+                qa.timer_end()
                 if qa.IS_ENABLED:
                     (width, height) = self.view.GetSizeTuple()
-                    redraw_time = (time_after - time_before).total_seconds() * 1000
+                    redraw_time = qa.timer_elapsed_ms()
                     qa.count_timeline_redraw()
                     dc.SetTextForeground((255, 0, 0))
                     dc.SetFont(get_default_font(12, bold=True))
