@@ -58,6 +58,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self._size_to_model()
 
     def _on_left_down(self, event):
+        self.SetFocus()
         self._store_hit_info(event)
         hit_category = self.last_hit_info.get_category()
         if self.last_hit_info.is_on_arrow():
