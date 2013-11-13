@@ -116,7 +116,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
 
     def _redraw(self):
         self.SetVirtualSize((-1, self.model.ITEM_HEIGHT_PX * len(self.model.items)))
-        self.SetScrollRate(-1, self.model.ITEM_HEIGHT_PX/2)
+        self.SetScrollRate(0, self.model.ITEM_HEIGHT_PX/2)
         self._draw_bitmap()
         self.Refresh()
         self.Update()
