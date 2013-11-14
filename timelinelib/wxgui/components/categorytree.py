@@ -71,18 +71,14 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.PopupMenu(self.mnu)
 
     def _on_menu_edit(self, e):
+        from timelinelib.wxgui.components.cattree import edit_category
         hit_category = self.last_hit_info.get_category()
         if hit_category:
-            def create_category_editor():
-                return WxCategoryEdtiorDialog(self, _("Edit Category"),
-                                              self.db, hit_category)
-            gui_utils.show_modal(create_category_editor, self.handle_db_error)
+            edit_category(self, self.db, hit_category, self.handle_db_error)
 
     def _on_menu_add(self, e):
-        def create_category_editor():
-            return WxCategoryEdtiorDialog(self, _("Add Category"),
-                                          self.db, None)
-        gui_utils.show_modal(create_category_editor, self.handle_db_error)
+        from timelinelib.wxgui.components.cattree import add_category
+        add_category(self, self.db, self.handle_db_error)
 
     def _on_menu_delete(self, e):
         from timelinelib.wxgui.components.cattree import delete_category
