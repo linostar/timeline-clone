@@ -85,7 +85,10 @@ class CustomCategoryTree(wx.ScrolledWindow):
         gui_utils.show_modal(create_category_editor, self.handle_db_error)
 
     def _on_menu_delete(self, e):
-        pass
+        from timelinelib.wxgui.components.cattree import delete_category
+        hit_category = self.last_hit_info.get_category()
+        if hit_category:
+            delete_category(self, self.db, hit_category, self.handle_db_error)
 
     def _on_menu_check_all(self, e):
         pass
