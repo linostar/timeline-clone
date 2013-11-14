@@ -24,8 +24,9 @@ from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.qa import qa
 from timelinelib.utilities.observer import Observable
-from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog
-import timelinelib.wxgui.utils as gui_utils
+from timelinelib.wxgui.components.cattree import add_category
+from timelinelib.wxgui.components.cattree import delete_category
+from timelinelib.wxgui.components.cattree import edit_category
 
 
 class CustomCategoryTree(wx.ScrolledWindow):
@@ -71,17 +72,14 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.PopupMenu(self.mnu)
 
     def _on_menu_edit(self, e):
-        from timelinelib.wxgui.components.cattree import edit_category
         hit_category = self.last_hit_info.get_category()
         if hit_category:
             edit_category(self, self.db, hit_category, self.handle_db_error)
 
     def _on_menu_add(self, e):
-        from timelinelib.wxgui.components.cattree import add_category
         add_category(self, self.db, self.handle_db_error)
 
     def _on_menu_delete(self, e):
-        from timelinelib.wxgui.components.cattree import delete_category
         hit_category = self.last_hit_info.get_category()
         if hit_category:
             delete_category(self, self.db, hit_category, self.handle_db_error)
