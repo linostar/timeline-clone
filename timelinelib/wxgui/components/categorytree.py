@@ -79,7 +79,10 @@ class CustomCategoryTree(wx.ScrolledWindow):
             gui_utils.show_modal(create_category_editor, self.handle_db_error)
 
     def _on_menu_add(self, e):
-        pass
+        def create_category_editor():
+            return WxCategoryEdtiorDialog(self, _("Add Category"),
+                                          self.db, None)
+        gui_utils.show_modal(create_category_editor, self.handle_db_error)
 
     def _on_menu_delete(self, e):
         pass
