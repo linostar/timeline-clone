@@ -9,6 +9,7 @@ Version 1.1.0
 New features, enhancements:
 
 * Century labeling changed. Century 0 is now removed
+* Menus for Zoom In and Zoom Out
 
 Bug fixes:
 

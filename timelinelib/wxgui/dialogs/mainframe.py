@@ -67,6 +67,8 @@ CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
 ID_SIDEBAR = wx.NewId()
 ID_LEGEND = wx.NewId()
 ID_BALLOONS = wx.NewId()
+ID_ZOOMIN = wx.NewId()
+ID_ZOOMOUT = wx.NewId()
 ID_CREATE_EVENT = wx.NewId()
 ID_EDIT_EVENT = wx.NewId()
 ID_DUPLICATE_EVENT = wx.NewId()
@@ -221,11 +223,18 @@ class GuiCreator(object):
         def balloons(evt):
             self.config.set_balloon_on_hover(evt.IsChecked())
             self.main_panel.balloon_visibility_changed(evt.IsChecked())
+        def zoomin(evt):
+            self.main_panel.zoom_in()
+        def zoomout(evt):
+            self.main_panel.zoom_out()
         cbx = True
         items = ((ID_SIDEBAR, sidebar, _("&Sidebar\tCtrl+I"), cbx),
                  (ID_LEGEND, legend, _("&Legend"), cbx),
                  None,
-                 (ID_BALLOONS, balloons, _("&Balloons on hover"), cbx))
+                 (ID_BALLOONS, balloons, _("&Balloons on hover"), cbx),
+                 None,
+                 (ID_ZOOMIN, zoomin, _("Zoom In\tCtrl++"), False),
+                 (ID_ZOOMOUT, zoomout, _("Zoom Out\tCtrl+-"), False))
         view_menu = wx.Menu()
         self._create_menu_items(view_menu, items)
         self._check_view_menu_items(view_menu)
@@ -1139,6 +1148,12 @@ class MainPanel(wx.Panel):
     def get_view_properties(self):
         return self.timeline_panel.get_view_properties()
     
+    def zoom_in(self):
+        self.timeline_panel.zoom_in()
+        
+    def zoom_out(self):
+        self.timeline_panel.zoom_out()
+        
     def _create_gui(self):
         # Search bar
         self.searchbar = SearchBar(self)
@@ -1303,6 +1318,12 @@ class TimelinePanel(wx.Panel):
     def activated(self):
         if self.config.get_show_sidebar():
             self.show_sidebar()
+
+    def zoom_in(self):
+        self.drawing_area.zoom_in()
+
+    def zoom_out(self):
+        self.drawing_area.zoom_out()
 
 
 class ErrorPanel(wx.Panel):
