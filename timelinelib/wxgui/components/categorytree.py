@@ -86,13 +86,18 @@ class CustomCategoryTree(wx.ScrolledWindow):
             delete_category(self, self.db, hit_category, self.handle_db_error)
 
     def _on_menu_check_all(self, e):
-        self.categories.check_all()
+        categories = self.categories.get_all()
+        self.view_properties.set_categories_visible(categories)
 
     def _on_menu_check_children(self, e):
-        self.categories.check_children(self.last_hit_info.get_category())
+        categories = self.categories.get_immediate_children(
+            self.last_hit_info.get_category())
+        self.view_properties.set_categories_visible(categories)
 
     def _on_menu_check_all_children(self, e):
-        self.categories.check_all_children(self.last_hit_info.get_category())
+        categories = self.categories.get_all_children(
+            self.last_hit_info.get_category())
+        self.view_properties.set_categories_visible(categories)
 
     def _on_menu_check_parents(self, e):
         pass
@@ -101,13 +106,18 @@ class CustomCategoryTree(wx.ScrolledWindow):
         pass
 
     def _on_menu_uncheck_all(self, e):
-        pass
+        categories = self.categories.get_all()
+        self.view_properties.set_categories_visible(categories, False)
 
     def _on_menu_uncheck_children(self, e):
-        pass
+        categories = self.categories.get_immediate_children(
+            self.last_hit_info.get_category())
+        self.view_properties.set_categories_visible(categories, False)
 
     def _on_menu_uncheck_all_children(self, e):
-        pass
+        categories = self.categories.get_all_children(
+            self.last_hit_info.get_category())
+        self.view_properties.set_categories_visible(categories, False)
 
     def _on_menu_uncheck_parents(self, e):
         pass
@@ -183,37 +193,22 @@ class CategoriesFacade(Observable):
     def get_all(self):
         return self.db.get_categories()
 
+    def get_immediate_children(self, parent):
+        return [category for category in self.db.get_categories()
+                if category.parent == parent]
+
+    def get_all_children(self, parent):
+        all_children = []
+        for child in self.get_immediate_children(parent):
+            all_children.append(child)
+            all_children.extend(self.get_all_children(child))
+        return all_children
+
     def is_visible(self, category):
         return self.view_properties.is_category_visible(category)
 
     def is_event_with_category_visible(self, category):
         return self.view_properties.is_event_with_category_visible(category)
-
-    def check_all(self):
-        self.view_properties.set_categories_visible(
-            self.db.get_categories(), is_visible=True)
-
-    def check_children(self, parent):
-        immediate_children = []
-        for category in self.db.get_categories():
-            if category.parent == parent:
-                immediate_children.append(category)
-        self.view_properties.set_categories_visible(
-            immediate_children, is_visible=True)
-
-    def check_all_children(self, parent):
-        self.view_properties.set_categories_visible(
-            self._get_all_children(parent), is_visible=True)
-
-    def _get_all_children(self, parent):
-        immediate_children = [category for category in self.db.get_categories()
-                              if (category.parent == parent)]
-        if immediate_children:
-            for child in immediate_children:
-                immediate_children.extend(self._get_all_children(child))
-            return immediate_children
-        else:
-            return []
 
 
 class CustomCategoryTreeRenderer(object):

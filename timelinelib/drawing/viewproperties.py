@@ -148,7 +148,7 @@ class ViewProperties(Observable):
 
     def set_categories_visible(self, categories, is_visible=True):
         for category in categories:
-            self.set_category_visible(category, True)
+            self.set_category_visible(category, is_visible)
         self._notify()
 
     def set_category_visible(self, category, is_visible=True):

@@ -244,39 +244,27 @@ class expandedness(Base):
         self.assert_model_has_item_names(["Work"])
 
 
-class category_selection(unittest.TestCase):
+class category_queries(unittest.TestCase):
 
-    def test_check_all(self):
-        work = self.add_category("Work")
-        play = self.add_category("Play")
-        self.categories.check_all()
-        self.view_properties.set_categories_visible.assert_called_with(
-            [work, play], is_visible=True)
+    def test_get_all(self):
+        self.assertEqual(self.categories.get_all(),
+                         self.category_list)
 
-    def test_check_children(self):
-        work = self.add_category("Work")
-        report = self.add_category("Report", parent=work)
-        play = self.add_category("Play")
-        football = self.add_category("Football", parent=play)
-        self.categories.check_children(work)
-        self.view_properties.set_categories_visible.assert_called_with(
-            [report], is_visible=True)
+    def test_get_immediate_children(self):
+        self.assertEqual(self.categories.get_immediate_children(self.work),
+                         [self.report])
 
-    def test_check_all_children(self):
-        self._create_example_tree()
-        self.categories.check_all_children(self.work)
-        self.view_properties.set_categories_visible.assert_called_with(
-            [self.report, self.monthly_report, self.yearly_report],
-            is_visible=True)
+    def test_get_all_children(self):
+        self.assertEqual(self.categories.get_all_children(self.work),
+                         [self.report, self.monthly_report, self.yearly_report])
 
     def setUp(self):
         self.category_list = []
         self.view_properties = Mock(ViewProperties)
-
         self.db = Mock(MemoryDB)
         self.db.get_categories.return_value = self.category_list
-
         self.categories = CategoriesFacade(self.db, self.view_properties)
+        self._create_example_tree()
 
     def _create_example_tree(self):
         self.work = self.add_category("Work")
