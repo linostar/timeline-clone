@@ -50,7 +50,8 @@ class CustomCategoryTree(wx.ScrolledWindow):
     def set_timeline_view(self, db, view_properties):
         self.db = db
         self.view_properties = view_properties
-        self.model.set_categories(CategoriesFacade(db, view_properties))
+        self.categories = CategoriesFacade(db, view_properties)
+        self.model.set_categories(self.categories)
 
     def _on_paint(self, event):
         dc = wx.BufferedPaintDC(self, self.buffer_image, wx.BUFFER_VIRTUAL_AREA)
@@ -85,7 +86,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
             delete_category(self, self.db, hit_category, self.handle_db_error)
 
     def _on_menu_check_all(self, e):
-        pass
+        self.categories.check_all()
 
     def _on_menu_check_children(self, e):
         pass
@@ -187,6 +188,10 @@ class CategoriesFacade(Observable):
 
     def is_event_with_category_visible(self, category):
         return self.view_properties.is_event_with_category_visible(category)
+
+    def check_all(self):
+        self.view_properties.set_categories_visible(
+            self.db.get_categories(), is_visible=True)
 
 
 class CustomCategoryTreeRenderer(object):

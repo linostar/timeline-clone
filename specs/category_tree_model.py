@@ -22,6 +22,8 @@ from mock import Mock
 
 from timelinelib.db.objects import Category
 from timelinelib.db.utils import IdCounter
+from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel, CategoriesFacade
 
 
@@ -240,3 +242,28 @@ class expandedness(Base):
         self.assert_model_has_item_names(["Work", "Reading"])
         self.model.toggle_expandedness(work_category)
         self.assert_model_has_item_names(["Work"])
+
+
+class category_selection(unittest.TestCase):
+
+    def test_check_all(self):
+        work = self.add_category("Work")
+        play = self.add_category("Play")
+        self.categories.check_all()
+        self.view_properties.set_categories_visible.assert_called_with(
+            [work, play], is_visible=True)
+
+    def setUp(self):
+        self.category_list = []
+        self.view_properties = Mock(ViewProperties)
+
+        self.db = Mock(MemoryDB)
+        self.db.get_categories.return_value = self.category_list
+
+        self.categories = CategoriesFacade(self.db, self.view_properties)
+
+    def add_category(self, name):
+        category = Category(name, color=(0, 0, 0), font_color=(0, 0, ),
+                            visible=True, parent=None)
+        self.category_list.append(category)
+        return category
