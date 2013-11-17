@@ -92,7 +92,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.categories.check_children(self.last_hit_info.get_category())
 
     def _on_menu_check_all_children(self, e):
-        pass
+        self.categories.check_all_children(self.last_hit_info.get_category())
 
     def _on_menu_check_parents(self, e):
         pass
@@ -200,6 +200,20 @@ class CategoriesFacade(Observable):
                 immediate_children.append(category)
         self.view_properties.set_categories_visible(
             immediate_children, is_visible=True)
+
+    def check_all_children(self, parent):
+        self.view_properties.set_categories_visible(
+            self._get_all_children(parent), is_visible=True)
+
+    def _get_all_children(self, parent):
+        immediate_children = [category for category in self.db.get_categories()
+                              if (category.parent == parent)]
+        if immediate_children:
+            for child in immediate_children:
+                immediate_children.extend(self._get_all_children(child))
+            return immediate_children
+        else:
+            return []
 
 
 class CustomCategoryTreeRenderer(object):

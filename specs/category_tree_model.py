@@ -262,6 +262,13 @@ class category_selection(unittest.TestCase):
         self.view_properties.set_categories_visible.assert_called_with(
             [report], is_visible=True)
 
+    def test_check_all_children(self):
+        self._create_example_tree()
+        self.categories.check_all_children(self.work)
+        self.view_properties.set_categories_visible.assert_called_with(
+            [self.report, self.monthly_report, self.yearly_report],
+            is_visible=True)
+
     def setUp(self):
         self.category_list = []
         self.view_properties = Mock(ViewProperties)
@@ -270,6 +277,14 @@ class category_selection(unittest.TestCase):
         self.db.get_categories.return_value = self.category_list
 
         self.categories = CategoriesFacade(self.db, self.view_properties)
+
+    def _create_example_tree(self):
+        self.work = self.add_category("Work")
+        self.report = self.add_category("Report", parent=self.work)
+        self.monthly_report = self.add_category("Monthly report", parent=self.report)
+        self.yearly_report = self.add_category("Yearly report", parent=self.report)
+        self.play = self.add_category("Play")
+        self.football = self.add_category("Football", parent=self.play)
 
     def add_category(self, name, parent=None):
         category = Category(name, color=(0, 0, 0), font_color=(0, 0, ),
