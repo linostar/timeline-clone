@@ -146,13 +146,21 @@ class ViewProperties(Observable):
         else:
             return False
 
-    def set_category_visible(self, category, is_visible=True):
-        self.set_category_with_id_visible(category.id, is_visible)
+    def set_categories_visible(self, categories, is_visible=True):
+        category_ids = [category.id for category in categories]
+        self._set_categories_with_ids_visible(category_ids, is_visible)
 
-    def set_category_with_id_visible(self, id, is_visible=True):
-        if is_visible == True and id in self.hidden_categories:
-            self.hidden_categories.remove(id)
-            self._notify()
-        elif is_visible == False and not id in self.hidden_categories:
-            self.hidden_categories.append(id)
+    def set_category_visible(self, category, is_visible=True):
+        self._set_categories_with_ids_visible([category.id], is_visible)
+
+    def _set_categories_with_ids_visible(self, category_ids, is_visible):
+        need_notify = False
+        for id in category_ids:
+            if is_visible == True and id in self.hidden_categories:
+                self.hidden_categories.remove(id)
+                need_notify = True
+            elif is_visible == False and not id in self.hidden_categories:
+                self.hidden_categories.append(id)
+                need_notify = True
+        if need_notify:
             self._notify()

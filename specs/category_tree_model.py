@@ -22,7 +22,8 @@ from mock import Mock
 
 from timelinelib.db.objects import Category
 from timelinelib.db.utils import IdCounter
-from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel, CategoriesFacade
+from timelinelib.wxgui.components.categorytree import CategoriesFacade
+from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 
 
 class Base(unittest.TestCase):

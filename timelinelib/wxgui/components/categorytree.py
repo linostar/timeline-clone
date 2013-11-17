@@ -23,6 +23,7 @@ import wx
 from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.qa import qa
+from timelinelib.repositories.categories import CategoriesFacade
 from timelinelib.utilities.observer import Observable
 from timelinelib.wxgui.components.cattree import add_category
 from timelinelib.wxgui.components.cattree import delete_category
@@ -85,13 +86,16 @@ class CustomCategoryTree(wx.ScrolledWindow):
             delete_category(self, self.db, hit_category, self.handle_db_error)
 
     def _on_menu_check_all(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.db.get_categories())
 
     def _on_menu_check_children(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_immediate_children())
 
     def _on_menu_check_all_children(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_all_children())
 
     def _on_menu_check_parents(self, e):
         pass
@@ -100,13 +104,16 @@ class CustomCategoryTree(wx.ScrolledWindow):
         pass
 
     def _on_menu_uncheck_all(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.db.get_categories(), False)
 
     def _on_menu_uncheck_children(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_immediate_children(), False)
 
     def _on_menu_uncheck_all_children(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_all_children(), False)
 
     def _on_menu_uncheck_parents(self, e):
         pass
@@ -168,25 +175,6 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.mnu_uncheck_children = add_item(self._on_menu_uncheck_children, _("Uncheck children"))
         self.mnu_uncheck_all_children = add_item(self._on_menu_uncheck_all_children, _("Uncheck all children"))
         self.mnu_uncheck_parents = add_item(self._on_menu_uncheck_parents, _("Uncheck all parents"))
-
-
-class CategoriesFacade(Observable):
-
-    def __init__(self, db, view_properties):
-        Observable.__init__(self)
-        self.db = db
-        self.view_properties = view_properties
-        self.db.listen_for_any(self._notify)
-        self.view_properties.listen_for_any(self._notify)
-
-    def get_all(self):
-        return self.db.get_categories()
-
-    def is_visible(self, category):
-        return self.view_properties.is_category_visible(category)
-
-    def is_event_with_category_visible(self, category):
-        return self.view_properties.is_event_with_category_visible(category)
 
 
 class CustomCategoryTreeRenderer(object):
@@ -302,11 +290,12 @@ class CustomCategoryTreeModel(Observable):
     def hit(self, x, y):
         item = self._item_at(y)
         if item:
-            return HitInfo(item["category"],
+            return HitInfo(self.categories,
+                           item["category"],
                            self._hits_arrow(x, item),
                            self._hits_checkbox(x, item))
         else:
-            return HitInfo(None, False, False)
+            return HitInfo(self.categories, None, False, False)
 
     def toggle_expandedness(self, category):
         if category.id in self.collapsed_category_ids:
@@ -378,13 +367,20 @@ class CustomCategoryTreeModel(Observable):
 
 class HitInfo(object):
 
-    def __init__(self, category, is_on_arrow, is_on_checkbox):
+    def __init__(self, categories, category, is_on_arrow, is_on_checkbox):
+        self._categories = categories
         self._category = category
         self._is_on_arrow = is_on_arrow
         self._is_on_checkbox = is_on_checkbox
 
     def get_category(self):
         return self._category
+
+    def get_immediate_children(self):
+        return self._categories.get_immediate_children(self._category)
+
+    def get_all_children(self):
+        return self._categories.get_all_children(self._category)
 
     def is_on_arrow(self):
         return self._is_on_arrow
