@@ -50,8 +50,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
     def set_timeline_view(self, db, view_properties):
         self.db = db
         self.view_properties = view_properties
-        self.categories = CategoriesFacade(db, view_properties)
-        self.model.set_categories(self.categories)
+        self.model.set_categories(CategoriesFacade(db, view_properties))
 
     def _on_paint(self, event):
         dc = wx.BufferedPaintDC(self, self.buffer_image, wx.BUFFER_VIRTUAL_AREA)
@@ -86,18 +85,16 @@ class CustomCategoryTree(wx.ScrolledWindow):
             delete_category(self, self.db, hit_category, self.handle_db_error)
 
     def _on_menu_check_all(self, e):
-        categories = self.categories.get_all()
-        self.view_properties.set_categories_visible(categories)
+        self.view_properties.set_categories_visible(
+            self.db.get_categories())
 
     def _on_menu_check_children(self, e):
-        categories = self.categories.get_immediate_children(
-            self.last_hit_info.get_category())
-        self.view_properties.set_categories_visible(categories)
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_immediate_children())
 
     def _on_menu_check_all_children(self, e):
-        categories = self.categories.get_all_children(
-            self.last_hit_info.get_category())
-        self.view_properties.set_categories_visible(categories)
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_all_children())
 
     def _on_menu_check_parents(self, e):
         pass
@@ -106,18 +103,16 @@ class CustomCategoryTree(wx.ScrolledWindow):
         pass
 
     def _on_menu_uncheck_all(self, e):
-        categories = self.categories.get_all()
-        self.view_properties.set_categories_visible(categories, False)
+        self.view_properties.set_categories_visible(
+            self.db.get_categories(), False)
 
     def _on_menu_uncheck_children(self, e):
-        categories = self.categories.get_immediate_children(
-            self.last_hit_info.get_category())
-        self.view_properties.set_categories_visible(categories, False)
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_immediate_children(), False)
 
     def _on_menu_uncheck_all_children(self, e):
-        categories = self.categories.get_all_children(
-            self.last_hit_info.get_category())
-        self.view_properties.set_categories_visible(categories, False)
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_all_children(), False)
 
     def _on_menu_uncheck_parents(self, e):
         pass
@@ -324,11 +319,12 @@ class CustomCategoryTreeModel(Observable):
     def hit(self, x, y):
         item = self._item_at(y)
         if item:
-            return HitInfo(item["category"],
+            return HitInfo(self.categories,
+                           item["category"],
                            self._hits_arrow(x, item),
                            self._hits_checkbox(x, item))
         else:
-            return HitInfo(None, False, False)
+            return HitInfo(self.categories, None, False, False)
 
     def toggle_expandedness(self, category):
         if category.id in self.collapsed_category_ids:
@@ -400,13 +396,20 @@ class CustomCategoryTreeModel(Observable):
 
 class HitInfo(object):
 
-    def __init__(self, category, is_on_arrow, is_on_checkbox):
+    def __init__(self, categories, category, is_on_arrow, is_on_checkbox):
+        self._categories = categories
         self._category = category
         self._is_on_arrow = is_on_arrow
         self._is_on_checkbox = is_on_checkbox
 
     def get_category(self):
         return self._category
+
+    def get_immediate_children(self):
+        return self._categories.get_immediate_children(self._category)
+
+    def get_all_children(self):
+        return self._categories.get_all_children(self._category)
 
     def is_on_arrow(self):
         return self._is_on_arrow
