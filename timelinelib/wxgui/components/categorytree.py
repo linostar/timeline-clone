@@ -23,6 +23,7 @@ import wx
 from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.qa import qa
+from timelinelib.repositories.categories import CategoriesFacade
 from timelinelib.utilities.observer import Observable
 from timelinelib.wxgui.components.cattree import add_category
 from timelinelib.wxgui.components.cattree import delete_category
@@ -174,36 +175,6 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.mnu_uncheck_children = add_item(self._on_menu_uncheck_children, _("Uncheck children"))
         self.mnu_uncheck_all_children = add_item(self._on_menu_uncheck_all_children, _("Uncheck all children"))
         self.mnu_uncheck_parents = add_item(self._on_menu_uncheck_parents, _("Uncheck all parents"))
-
-
-class CategoriesFacade(Observable):
-
-    def __init__(self, db, view_properties):
-        Observable.__init__(self)
-        self.db = db
-        self.view_properties = view_properties
-        self.db.listen_for_any(self._notify)
-        self.view_properties.listen_for_any(self._notify)
-
-    def get_all(self):
-        return self.db.get_categories()
-
-    def get_immediate_children(self, parent):
-        return [category for category in self.db.get_categories()
-                if category.parent == parent]
-
-    def get_all_children(self, parent):
-        all_children = []
-        for child in self.get_immediate_children(parent):
-            all_children.append(child)
-            all_children.extend(self.get_all_children(child))
-        return all_children
-
-    def is_visible(self, category):
-        return self.view_properties.is_category_visible(category)
-
-    def is_event_with_category_visible(self, category):
-        return self.view_properties.is_event_with_category_visible(category)
 
 
 class CustomCategoryTreeRenderer(object):

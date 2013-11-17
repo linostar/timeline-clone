@@ -22,9 +22,8 @@ from mock import Mock
 
 from timelinelib.db.objects import Category
 from timelinelib.db.utils import IdCounter
-from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel, CategoriesFacade
+from timelinelib.wxgui.components.categorytree import CategoriesFacade
+from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 
 
 class Base(unittest.TestCase):
@@ -242,40 +241,3 @@ class expandedness(Base):
         self.assert_model_has_item_names(["Work", "Reading"])
         self.model.toggle_expandedness(work_category)
         self.assert_model_has_item_names(["Work"])
-
-
-class category_queries(unittest.TestCase):
-
-    def test_get_all(self):
-        self.assertEqual(self.categories.get_all(),
-                         self.category_list)
-
-    def test_get_immediate_children(self):
-        self.assertEqual(self.categories.get_immediate_children(self.work),
-                         [self.report])
-
-    def test_get_all_children(self):
-        self.assertEqual(self.categories.get_all_children(self.work),
-                         [self.report, self.monthly_report, self.yearly_report])
-
-    def setUp(self):
-        self.category_list = []
-        self.view_properties = Mock(ViewProperties)
-        self.db = Mock(MemoryDB)
-        self.db.get_categories.return_value = self.category_list
-        self.categories = CategoriesFacade(self.db, self.view_properties)
-        self._create_example_tree()
-
-    def _create_example_tree(self):
-        self.work = self.add_category("Work")
-        self.report = self.add_category("Report", parent=self.work)
-        self.monthly_report = self.add_category("Monthly report", parent=self.report)
-        self.yearly_report = self.add_category("Yearly report", parent=self.report)
-        self.play = self.add_category("Play")
-        self.football = self.add_category("Football", parent=self.play)
-
-    def add_category(self, name, parent=None):
-        category = Category(name, color=(0, 0, 0), font_color=(0, 0, ),
-                            visible=True, parent=parent)
-        self.category_list.append(category)
-        return category
