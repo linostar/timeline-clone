@@ -49,8 +49,18 @@ class CategoriesFacade(Observable):
             child = child.parent
         return parents
 
+    def get_parents_for_checked_childs(self):
+        parents = []
+        for category in self._get_all_checked_categories():
+            parents.extend(self.get_parents(category))
+        return parents
+
     def is_visible(self, category):
         return self.view_properties.is_category_visible(category)
 
     def is_event_with_category_visible(self, category):
         return self.view_properties.is_event_with_category_visible(category)
+
+    def _get_all_checked_categories(self):
+        return [category for category in self.db.get_categories()
+                if self.is_visible(category)]

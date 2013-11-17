@@ -102,7 +102,8 @@ class CustomCategoryTree(wx.ScrolledWindow):
             self.last_hit_info.get_parents())
 
     def _on_menu_check_all_parents(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_parents_for_checked_childs())
 
     def _on_menu_uncheck_all(self, e):
         self.view_properties.set_categories_visible(
@@ -387,6 +388,9 @@ class HitInfo(object):
     def get_parents(self):
         return self._categories.get_parents(self._category)
 
+    def get_parents_for_checked_childs(self):
+        return self._categories.get_parents_for_checked_childs()
+        
     def is_on_arrow(self):
         return self._is_on_arrow
 

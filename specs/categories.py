@@ -44,14 +44,23 @@ class queries(unittest.TestCase):
         self.assertEqual(set(self.categories.get_parents(self.monthly_report)),
                          set([self.work, self.report]))
         
+    def test_get_parents_for_checked_childs(self):
+        self.checked_categories = (self.monthly_report,)
+        self.assertEqual(set(self.categories.get_parents_for_checked_childs()),
+                         set([self.work, self.report]))
+
     def setUp(self):
         self.category_list = []
         self.view_properties = Mock(ViewProperties)
+        self.view_properties.is_category_visible.side_effect = self._is_category_visible
         self.db = Mock(MemoryDB)
         self.db.get_categories.return_value = self.category_list
         self.categories = CategoriesFacade(self.db, self.view_properties)
         self._create_example_tree()
 
+    def _is_category_visible(self, category):
+        return category in self.checked_categories
+        
     def _create_example_tree(self):
         self.work = self.add_category("Work")
         self.report = self.add_category("Report", parent=self.work)
