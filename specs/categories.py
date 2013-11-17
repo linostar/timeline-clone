@@ -40,6 +40,10 @@ class queries(unittest.TestCase):
         self.assertEqual(self.categories.get_all_children(self.work),
                          [self.report, self.monthly_report, self.yearly_report])
 
+    def test_get_parents(self):
+        self.assertEqual(set(self.categories.get_parents(self.monthly_report)),
+                         set([self.work, self.report]))
+        
     def setUp(self):
         self.category_list = []
         self.view_properties = Mock(ViewProperties)

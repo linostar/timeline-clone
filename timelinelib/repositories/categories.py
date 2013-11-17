@@ -42,6 +42,13 @@ class CategoriesFacade(Observable):
             all_children.extend(self.get_all_children(child))
         return all_children
 
+    def get_parents(self, child):
+        parents = []
+        while child.parent:
+            parents.append(child.parent)
+            child = child.parent
+        return parents
+
     def is_visible(self, category):
         return self.view_properties.is_category_visible(category)
 

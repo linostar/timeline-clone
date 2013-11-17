@@ -98,7 +98,8 @@ class CustomCategoryTree(wx.ScrolledWindow):
             self.last_hit_info.get_all_children())
 
     def _on_menu_check_parents(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_parents())
 
     def _on_menu_check_all_parents(self, e):
         pass
@@ -116,7 +117,8 @@ class CustomCategoryTree(wx.ScrolledWindow):
             self.last_hit_info.get_all_children(), False)
 
     def _on_menu_uncheck_parents(self, e):
-        pass
+        self.view_properties.set_categories_visible(
+            self.last_hit_info.get_parents(), False)
 
     def _store_hit_info(self, event):
         (x, y) = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
@@ -381,6 +383,9 @@ class HitInfo(object):
 
     def get_all_children(self):
         return self._categories.get_all_children(self._category)
+
+    def get_parents(self):
+        return self._categories.get_parents(self._category)
 
     def is_on_arrow(self):
         return self._is_on_arrow
