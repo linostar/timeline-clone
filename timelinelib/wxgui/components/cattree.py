@@ -101,11 +101,11 @@ class CategoriesTree(customtreectrl.CustomTreeCtrl):
         self.Bind(wx.EVT_MENU, self._mnu_check_parents_on_click, 
                   self.mnu_check_parents)
         self.mnu.AppendItem(self.mnu_check_parents)
-        self.mnu_check_all_parents = wx.MenuItem(self.mnu, wx.ID_ANY, 
+        self.mnu_check_parents_for_checked_childs = wx.MenuItem(self.mnu, wx.ID_ANY, 
                                                 _("Check all parents of all childs"))
         self.Bind(wx.EVT_MENU, self._mnu_check_all_parents_on_click, 
-                  self.mnu_check_all_parents)
-        self.mnu.AppendItem(self.mnu_check_all_parents)
+                  self.mnu_check_parents_for_checked_childs)
+        self.mnu.AppendItem(self.mnu_check_parents_for_checked_childs)
         self.mnu.AppendSeparator()
         self.mnu_uncheck_all = wx.MenuItem(self.mnu, wx.ID_ANY, 
                                            _("Uncheck All"))

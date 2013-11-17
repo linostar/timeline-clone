@@ -16,8 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import datetime
-
 import wx
 
 from timelinelib.drawing.utils import darken_color
@@ -101,7 +99,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.view_properties.set_categories_visible(
             self.last_hit_info.get_parents())
 
-    def _on_menu_check_all_parents(self, e):
+    def _on_menu_check_parents_for_checked_childs(self, e):
         self.view_properties.set_categories_visible(
             self.last_hit_info.get_parents_for_checked_childs())
 
@@ -172,7 +170,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.mnu_check_children = add_item(self._on_menu_check_children, _("Check children"))
         self.mnu_check_all_children = add_item(self._on_menu_check_all_children, _("Check all children"))
         self.mnu_check_parents = add_item(self._on_menu_check_parents, _("Check all parents"))
-        self.mnu_check_all_parents = add_item(self._on_menu_check_all_parents, _("Check all parents of all childs"))
+        self.mnu_check_parents_for_checked_childs = add_item(self._on_menu_check_parents_for_checked_childs, _("Check parents for checked childs"))
         self.mnu.AppendSeparator()
         self.mnu_uncheck_all = add_item(self._on_menu_uncheck_all, _("Uncheck All"))
         self.mnu_uncheck_children = add_item(self._on_menu_uncheck_children, _("Uncheck children"))
