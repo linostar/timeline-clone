@@ -26,12 +26,14 @@ from timelinelib.utilities.observer import Observable
 from timelinelib.wxgui.components.cattree import add_category
 from timelinelib.wxgui.components.cattree import delete_category
 from timelinelib.wxgui.components.cattree import edit_category
+from timelinelib.db.utils import safe_locking
 
 
 class CustomCategoryTree(wx.ScrolledWindow):
 
     def __init__(self, parent, handle_db_error):
         wx.ScrolledWindow.__init__(self, parent)
+        self.parent = parent
         self._create_context_menu()
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
@@ -67,8 +69,11 @@ class CustomCategoryTree(wx.ScrolledWindow):
             self.view_properties.toggle_category_visibility(hit_category)
 
     def _on_right_down(self, event):
-        self._store_hit_info(event)
-        self.PopupMenu(self.mnu)
+        def edit_function():
+            self._store_hit_info(event)
+            self.PopupMenu(self.mnu)
+        safe_locking(self.parent, edit_function)
+
 
     def _on_menu_edit(self, e):
         hit_category = self.last_hit_info.get_category()
