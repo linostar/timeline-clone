@@ -233,8 +233,8 @@ class GuiCreator(object):
                  None,
                  (ID_BALLOONS, balloons, _("&Balloons on hover"), cbx),
                  None,
-                 (ID_ZOOMIN, zoomin, _("Zoom In\tCtrl++"), False),
-                 (ID_ZOOMOUT, zoomout, _("Zoom Out\tCtrl+-"), False))
+                 (ID_ZOOMIN, zoomin, _("Zoom &In\tCtrl++"), False),
+                 (ID_ZOOMOUT, zoomout, _("Zoom &Out\tCtrl+-"), False))
         view_menu = wx.Menu()
         self._create_menu_items(view_menu, items)
         self._check_view_menu_items(view_menu)
@@ -302,10 +302,10 @@ class GuiCreator(object):
                  None,
                  (ID_MEASURE_DISTANCE, measure_distance, _("&Measure Distance between two Events..."), cbx),
                  None,
-                 (ID_SET_CATEGORY_ON_WITHOUT, set_category_on_without, _("Set Category on events without category..."), cbx),
+                 (ID_SET_CATEGORY_ON_WITHOUT, set_category_on_without, _("Set Category on events &without category..."), cbx),
                  (ID_EDIT_CATEGORIES, edit_categories, _("Edit &Categories"), cbx),
                  None,
-                 (ID_SET_READONLY, set_readonly, _("Read Only"), cbx))
+                 (ID_SET_READONLY, set_readonly, _("&Read Only"), cbx))
         self.timeline_menu = wx.Menu()
         self._create_menu_items(self.timeline_menu, items)
         self._add_timeline_menu_items_to_controller(self.timeline_menu)
@@ -346,9 +346,9 @@ class GuiCreator(object):
             self._fit_all_events()
     
         cbx = False
-        items = ((ID_FIND_FIRST, find_first, _("Find First Event"), cbx),
-                 (ID_FIND_LAST, find_last, _("Find Last Event"), cbx),
-                 (ID_FIT_ALL, fit_all, _("Fit All Events"), cbx))
+        items = ((ID_FIND_FIRST, find_first, _("Find &First Event"), cbx),
+                 (ID_FIND_LAST, find_last, _("Find &Last Event"), cbx),
+                 (ID_FIT_ALL, fit_all, _("Fit &All Events"), cbx))
         navigate_menu = wx.Menu()
         self._navigation_menu_items = []
         self._navigation_functions_by_menu_item_id = {}
@@ -389,10 +389,10 @@ class GuiCreator(object):
         cbx = False
         items = [(wx.ID_HELP, contents, _("&Contents\tF1"), cbx),
                  None,
-                 (wx.ID_ANY, tutorial, _("Getting started tutorial"), cbx),
+                 (wx.ID_ANY, tutorial, _("Getting started &tutorial"), cbx),
                  None,
-                 (wx.ID_ANY, feedback, _("Give Feedback..."), cbx),
-                 (wx.ID_ANY, contact, _("Contact"), cbx),
+                 (wx.ID_ANY, feedback, _("Give &Feedback..."), cbx),
+                 (wx.ID_ANY, contact, _("Co&ntact"), cbx),
                  None,
                  (wx.ID_ABOUT, about, None, cbx)]
         help_menu = wx.Menu()
@@ -411,7 +411,7 @@ class GuiCreator(object):
                 mi = menu.Append(wx.ID_ANY, "%s..." % item)
                 self.feedback_featues[mi.GetId()] = item
                 self.Bind(wx.EVT_MENU, features, mi)
-        help_menu.InsertMenu(5, wx.ID_ANY, "Give Feedback on Features", menu)
+        help_menu.InsertMenu(5, wx.ID_ANY, "&Give Feedback on Features", menu)
         
     def _create_menu_items(self, menu, items):
         menu_items = []

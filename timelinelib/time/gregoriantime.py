@@ -65,7 +65,7 @@ class GregorianTimeType(TimeType):
     def get_navigation_functions(self):
         return [
             (_("Go to &Today\tCtrl+T"), go_to_today_fn),
-            (_("Go to D&ate...\tCtrl+G"), go_to_date_fn),
+            (_("Go to &Date...\tCtrl+G"), go_to_date_fn),
             ("SEP", None),
             (_("Backward\tPgUp"), backward_fn),
             (_("Forward\tPgDn"), forward_fn),
