@@ -10,6 +10,7 @@ New features, enhancements:
 
 * Century labeling changed. Century 0 is now removed
 * Menus for Zoom In and Zoom Out
+* Numeric Timeline
 
 Bug fixes:
 
