@@ -83,13 +83,13 @@ ID_FIT_ALL = wx.NewId()
 
 
 class GuiCreator(object):
-    
+
     def _create_gui(self):
         self._create_status_bar()
         self._create_main_panel()
         self._create_main_menu_bar()
         self._bind_frame_events()
-    
+
     def _create_status_bar(self):
         self.CreateStatusBar()
         self.status_bar_adapter = StatusBarAdapter(self.GetStatusBar())
@@ -140,12 +140,12 @@ class GuiCreator(object):
         file_new_menu.Append(
             wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_on_click, id=wx.ID_NEW)
-        
+
     def _create_file_new_numtimeline_menu_item(self, file_new_menu):
         mnu_file_new_numeric = file_new_menu.Append(
             wx.ID_ANY, _("Numeric Timeline..."), _("Numeric Timeline..."))
         self.Bind(wx.EVT_MENU, self._mnu_file_new_numeric_on_click, mnu_file_new_numeric)
-                
+
     def _create_file_new_dir_timeline_menu_item(self, file_new_menu):
         mnu_file_new_dir = file_new_menu.Append(
             wx.ID_ANY, _("Directory Timeline..."), _("Directory Timeline..."))
@@ -259,7 +259,7 @@ class GuiCreator(object):
 
     def _create_timeline_menu(self, main_menu_bar):
         def create_event(evt):
-            open_create_event_editor(self, self.config, self.timeline, 
+            open_create_event_editor(self, self.config, self.timeline,
                                      self.handle_db_error)
         def edit_event(evt):
             try:
@@ -276,7 +276,7 @@ class GuiCreator(object):
             except IndexError:
                 # No event selected so do nothing!
                 return
-            open_duplicate_event_dialog_for_event(self, self.timeline, 
+            open_duplicate_event_dialog_for_event(self, self.timeline,
                                                   self.handle_db_error, event)
         def set_categoryon_selected(evt):
             def edit_function():
@@ -344,7 +344,7 @@ class GuiCreator(object):
                 self._navigate_timeline(lambda tp: tp.update(start, end, end_delta=margin_delta))
         def fit_all(evt):
             self._fit_all_events()
-    
+
         cbx = False
         items = ((ID_FIND_FIRST, find_first, _("Find &First Event"), cbx),
                  (ID_FIND_LAST, find_last, _("Find &Last Event"), cbx),
@@ -412,7 +412,7 @@ class GuiCreator(object):
                 self.feedback_featues[mi.GetId()] = item
                 self.Bind(wx.EVT_MENU, features, mi)
         help_menu.InsertMenu(5, wx.ID_ANY, "&Give Feedback on Features", menu)
-        
+
     def _create_menu_items(self, menu, items):
         menu_items = []
         for item in items:
@@ -422,7 +422,7 @@ class GuiCreator(object):
             else:
                 menu.AppendSeparator()
         return menu_items
-    
+
     def _create_menu_item(self, menu, item_spec):
         item_id, handler, label, checkbox = item_spec
         if label is not None:
@@ -437,13 +437,13 @@ class GuiCreator(object):
             item = menu.Append(item_id)
         self.Bind(wx.EVT_MENU, handler, item)
         return item
-        
+
     def _mnu_file_new_on_click(self, event):
         self._create_new_timeline()
 
     def _mnu_file_new_numeric_on_click(self, event):
         self._create_new_numeric_timeline()
-        
+
     def _mnu_file_new_dir_on_click(self, event):
         self._create_new_dir_timeline()
 
@@ -456,7 +456,7 @@ class GuiCreator(object):
 
     def _mnu_file_import_on_click(self, menu):
         self._open_existing_timeline(True)
-                
+
     def _mnu_file_export_view_on_click(self, evt):
         export_to_image(self)
 
@@ -557,7 +557,7 @@ class MainFrameApiUsedByController(object):
     def _clear_recent_menu_items(self):
         for item in self.mnu_file_open_recent_submenu.GetMenuItems():
             self.mnu_file_open_recent_submenu.DeleteItem(item)
-        
+
     def _create_recent_menu_items(self):
         self.open_recent_map = {}
         for path in self.config.get_recently_opened():
@@ -570,7 +570,7 @@ class MainFrameApiUsedByController(object):
         item = self.mnu_file_open_recent_submenu.Append(wx.ID_ANY, name)
         self.open_recent_map[item.GetId()] = path
         self.Bind(wx.EVT_MENU, self._mnu_file_open_recent_item_on_click, item)
-                
+
     def _mnu_file_open_recent_item_on_click(self, event):
         path = self.open_recent_map[event.GetId()]
         self.controller.open_timeline_if_exists(path)
@@ -706,8 +706,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
                               wx.OK|wx.ICON_INFORMATION, self)
         dialog.Destroy()
         return path
-        
-         
+
     def _create_new_dir_timeline(self):
         dialog = wx.DirDialog(self, message=_("Create Timeline"))
         if dialog.ShowModal() == wx.ID_OK:
@@ -731,7 +730,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
     def _save_as(self):
         new_timeline_path = self._get_new_timeline_path_from_user()
         self._save_timeline_to_new_path(new_timeline_path)
-    
+
     def _get_new_timeline_path_from_user(self):
         defaultDir = os.path.dirname(self.timeline.path)
         wildcard_helper = WildcardHelper(_("Timeline files"), ["timeline"])
@@ -884,7 +883,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         first_time = self._first_time(events)
         last_time = self._last_time(events)
         return self.main_panel.get_export_periods(first_time, last_time)
-    
+
     # Error handling
     def _switch_to_error_view(self, error):
         self.controller.set_no_timeline()
@@ -1011,6 +1010,8 @@ class MainPanel(wx.Panel):
         self._create_gui()
         # Install variables for backwards compatibility
         self.cattree = self.timeline_panel.sidebar.cattree
+        if DEV:
+            self.custom_categories = self.timeline_panel.sidebar.custom_categories
         self.show_sidebar = self.timeline_panel.show_sidebar
         self.hide_sidebar = self.timeline_panel.hide_sidebar
         self.get_sidebar_width = self.timeline_panel.get_sidebar_width
@@ -1037,8 +1038,8 @@ class MainPanel(wx.Panel):
                 end_time = period.end_time + period_delta
                 period = TimePeriod(time_type, start_time, end_time)
                 periods.append(period)
-        return periods, current_period         
-        
+        return periods, current_period
+
     def timeline_panel_visible(self):
         return self.timeline_panel.IsShown()
 
@@ -1059,101 +1060,101 @@ class MainPanel(wx.Panel):
 
     def get_current_image(self):
         return self.timeline_panel.get_current_image()
-    
+
     def _remove_timeline_and_show_welcome_panel(self):
         self.cattree.initialize_from_timeline_view(None)
         self.set_searchbar_drawing_area_panel(None)
         self.set_timeline(None)
         self.show_welcome_panel()
-        
+
     def display_timeline(self, timeline):
         if timeline == None:
             # Do we ever end up here with the welcome panel displayed?
             self._remove_timeline_and_show_welcome_panel()
         else:
             self._show_new_timeline(timeline)
-        
+
     def _show_new_timeline(self, timeline):
         self.set_timeline(timeline)
         self.cattree.initialize_from_timeline_view(self.get_drawing_area())
         if DEV:
-            cc = self.timeline_panel.sidebar.custom_categories
-            cc.set_timeline_view(self.get_drawing_area().get_timeline(),
-                                 self.get_drawing_area().get_view_properties())
+            self.custom_categories.set_timeline_view(
+                self.get_drawing_area().get_timeline(),
+                self.get_drawing_area().get_view_properties())
         self.set_searchbar_drawing_area_panel(self.get_drawing_area())
         self.show_timeline_panel()
-        
+
     def set_timeline(self, timeline):
         self.timeline_panel.set_timeline(timeline)
-    
+
     def get_drawing_area(self):
         return self.timeline_panel.get_drawing_area()
-        
+
     def get_scene(self):
         return self.timeline_panel.get_scene()
-        
+
     def save_view_properties(self, timeline):
         timeline.save_view_properties(self.get_view_properties())
 
     def get_displayed_period_delta(self):
         return self.get_view_properties().displayed_period.delta()
-    
+
     def get_time_period(self):
         return self.timeline_panel.get_time_period()
-        
+
     def get_ids_of_two_first_selected_events(self):
         view_properties = self.get_view_properties()
         return (view_properties.selected_event_ids[0],
                 view_properties.selected_event_ids[1])
-                
+
     def get_selected_event_ids(self):
         return self.get_view_properties().get_selected_event_ids()
-        
-    def show_hide_legend(self, checked):    
+
+    def show_hide_legend(self, checked):
         self.timeline_panel.show_hide_legend(checked)
-    
+
     def get_id_of_first_selected_event(self):
         return self.get_view_properties().get_selected_event_ids()[0]
-            
+
     def get_nbr_of_selected_events(self):
         return len(self.get_view_properties().get_selected_event_ids())
-                
+
     def balloon_visibility_changed(self, checked):
         self.timeline_panel.balloon_visibility_changed(checked)
-    
+
     def open_event_editor(self, event):
         self.timeline_panel.open_event_editor(event)
 
     def redraw_timeline(self):
         self.timeline_panel.redraw_timeline()
-        
+
     def navigate_timeline(self, navigation_fn):
         return self.timeline_panel.navigate_timeline(navigation_fn)
-            
+
     def get_visible_events(self, all_events):
         view_properties = self.get_view_properties()
         visible_events = view_properties.filter_events(all_events)
-        return visible_events  
-          
+        return visible_events
+
     def set_searchbar_drawing_area_panel(self, drawing_area_panel):
         self.searchbar.set_drawing_area_panel(drawing_area_panel)
-        
+
     def svgexport(self, path):
         import timelinelib.export.svg as svgexport
         svgexport.export(
                     path,
                     self.get_scene(),
                     self.get_view_properties())
-                
+
     def get_view_properties(self):
         return self.timeline_panel.get_view_properties()
-    
+
     def zoom_in(self):
         self.timeline_panel.zoom_in()
-        
+
     def zoom_out(self):
         self.timeline_panel.zoom_out()
-        
+
     def _create_gui(self):
         # Search bar
         self.searchbar = SearchBar(self)
@@ -1235,34 +1236,34 @@ class TimelinePanel(wx.Panel):
 
     def get_drawing_area(self):
         return self.drawing_area
-            
+
     def get_scene(self):
         return self.drawing_area.get_drawer().scene
-            
+
     def get_time_period(self):
         return self.drawing_area.get_time_period()
-                
-    def show_hide_legend(self, checked):    
+
+    def show_hide_legend(self, checked):
         self.drawing_area.show_hide_legend(checked)
-    
+
     def balloon_visibility_changed(self, checked):
         self.drawing_area.balloon_visibility_changed(checked)
-    
+
     def open_event_editor(self, event):
         self.drawing_area.open_event_editor_for(event)
 
     def redraw_timeline(self):
         self.drawing_area.redraw_timeline()
-        
+
     def navigate_timeline(self, navigation_fn):
         return self.drawing_area.navigate_timeline(navigation_fn)
-    
+
     def get_view_properties(self):
         return self.drawing_area.get_view_properties()
-              
+
     def get_current_image(self):
         return self.drawing_area.get_current_image()
-      
+
     def _create_gui(self):
         self._create_divider_line_slider()
         self._create_splitter()
@@ -1390,7 +1391,7 @@ class Sidebar(wx.Panel):
             sizer.AddGrowableRow(2, proportion=0)
         self.SetSizer(sizer)
         self.Bind(wx.EVT_CHECKBOX, self._cbx_on_click, self.cbx_toggle_cat_view)
-        
+
     def ok_to_edit(self):
         return self.main_frame.ok_to_edit()
 
@@ -1401,8 +1402,8 @@ class Sidebar(wx.Panel):
         event = CatsViewChangedEvent(self.GetId())
         event.ClientData = evt.GetEventObject().IsChecked()
         self.GetEventHandler().ProcessEvent(event)
-        
-    
+
+
 class StatusBarAdapter(object):
 
     HIDDEN_EVENT_COUNT_COLUMN = 1

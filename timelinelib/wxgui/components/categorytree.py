@@ -74,7 +74,6 @@ class CustomCategoryTree(wx.ScrolledWindow):
             self.PopupMenu(self.mnu)
         safe_locking(self.parent, edit_function)
 
-
     def _on_menu_edit(self, e):
         hit_category = self.last_hit_info.get_category()
         if hit_category:
