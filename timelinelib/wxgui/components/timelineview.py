@@ -155,6 +155,12 @@ class DrawingAreaPanel(wx.Panel):
     def zoom_out(self):
         self.controller.mouse_wheel_moved(-120, True, False, False, self._get_half_width())
 
+    def vert_zoom_in(self):
+        self.controller.mouse_wheel_moved(120, False, False, True, self._get_half_width())
+    
+    def vert_zoom_out(self):
+        self.controller.mouse_wheel_moved(-120, False, False, True, self._get_half_width())
+
     def _get_half_width(self):
         return self.GetSize()[0] / 2
         

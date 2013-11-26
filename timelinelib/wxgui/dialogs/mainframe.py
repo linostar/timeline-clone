@@ -69,6 +69,8 @@ ID_LEGEND = wx.NewId()
 ID_BALLOONS = wx.NewId()
 ID_ZOOMIN = wx.NewId()
 ID_ZOOMOUT = wx.NewId()
+ID_VERT_ZOOMIN = wx.NewId()
+ID_VERT_ZOOMOUT = wx.NewId()
 ID_CREATE_EVENT = wx.NewId()
 ID_EDIT_EVENT = wx.NewId()
 ID_DUPLICATE_EVENT = wx.NewId()
@@ -227,6 +229,10 @@ class GuiCreator(object):
             self.main_panel.zoom_in()
         def zoomout(evt):
             self.main_panel.zoom_out()
+        def vert_zoomin(evt):
+            self.main_panel.vert_zoom_in()
+        def vert_zoomout(evt):
+            self.main_panel.vert_zoom_out()
         cbx = True
         items = ((ID_SIDEBAR, sidebar, _("&Sidebar\tCtrl+I"), cbx),
                  (ID_LEGEND, legend, _("&Legend"), cbx),
@@ -234,7 +240,9 @@ class GuiCreator(object):
                  (ID_BALLOONS, balloons, _("&Balloons on hover"), cbx),
                  None,
                  (ID_ZOOMIN, zoomin, _("Zoom &In\tCtrl++"), False),
-                 (ID_ZOOMOUT, zoomout, _("Zoom &Out\tCtrl+-"), False))
+                 (ID_ZOOMOUT, zoomout, _("Zoom &Out\tCtrl+-"), False),
+                 (ID_VERT_ZOOMIN, vert_zoomin, _("Vertical Zoom &In\tAlt++"), False),
+                 (ID_VERT_ZOOMOUT, vert_zoomout, _("Vertical Zoom &Out\tAlt+-"), False))
         view_menu = wx.Menu()
         self._create_menu_items(view_menu, items)
         self._check_view_menu_items(view_menu)
@@ -1154,6 +1162,12 @@ class MainPanel(wx.Panel):
     def zoom_out(self):
         self.timeline_panel.zoom_out()
         
+    def vert_zoom_in(self):
+        self.timeline_panel.vert_zoom_in()
+        
+    def vert_zoom_out(self):
+        self.timeline_panel.vert_zoom_out()
+        
     def _create_gui(self):
         # Search bar
         self.searchbar = SearchBar(self)
@@ -1325,6 +1339,11 @@ class TimelinePanel(wx.Panel):
     def zoom_out(self):
         self.drawing_area.zoom_out()
 
+    def vert_zoom_in(self):
+        self.drawing_area.vert_zoom_in()
+
+    def vert_zoom_out(self):
+        self.drawing_area.vert_zoom_out()
 
 class ErrorPanel(wx.Panel):
 
