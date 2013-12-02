@@ -12,6 +12,7 @@ New features, enhancements:
 * Menus for Zoom In and Zoom Out
 * Menus for vertical Zoom In and vertical Zoom Out
 * Numeric Timeline
+* New category tree in sidebar
 
 Bug fixes:
 
