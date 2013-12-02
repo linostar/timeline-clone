@@ -74,7 +74,6 @@ class CustomCategoryTree(wx.ScrolledWindow):
             self.PopupMenu(self.mnu)
         safe_locking(self.parent, edit_function)
 
-
     def _on_menu_edit(self, e):
         hit_category = self.last_hit_info.get_category()
         if hit_category:
@@ -258,11 +257,12 @@ class CustomCategoryTreeRenderer(object):
         color = item.get("color", None)
         self.dc.SetBrush(wx.Brush(color, wx.SOLID))
         self.dc.SetPen(wx.Pen(darken_color(color), 1, wx.SOLID))
+        (w, h) = (16, 16)
         self.dc.DrawRectangle(
-            item["x"] + item["width"] - self.model.ITEM_HEIGHT_PX - self.INNER_PADDING,
-            item["y"] + self.INNER_PADDING,
-            self.model.ITEM_HEIGHT_PX - 2 * self.INNER_PADDING,
-            self.model.ITEM_HEIGHT_PX - 2 * self.INNER_PADDING)
+            item["x"] + item["width"] - w - self.INNER_PADDING,
+            item["y"] + self.model.ITEM_HEIGHT_PX/2 - h/2,
+            w,
+            h)
 
 
 class CustomCategoryTreeModel(Observable):
