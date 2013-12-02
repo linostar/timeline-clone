@@ -24,41 +24,39 @@ import wx.lib.newevent
 from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import read_config
 from timelinelib.config.paths import ICONS_DIR
+from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
-from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.transformers.toxmltimeline import transform_to_xml_timeline
 from timelinelib.db.utils import safe_locking
 from timelinelib.export.bitmap import export_to_image
 from timelinelib.export.bitmap import export_to_images
+from timelinelib.feedback.feature import FEATURES
+from timelinelib.feedback.feature import show_feature_feedback_dialog
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
-from timelinelib.meta.version import DEV
+from timelinelib.time.numtime import NumTimeType
 from timelinelib.utils import ex_msg
-from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.categorytree import CustomCategoryTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
 from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
-from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
+from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
+from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
+from timelinelib.wxgui.timer import TimelineTimer
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
-from timelinelib.wxgui.timer import TimelineTimer
 import timelinelib.wxgui.utils as gui_utils
-from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
-from timelinelib.feedback.feature import show_feature_feedback_dialog
-from timelinelib.feedback.feature import FEATURES
-from timelinelib.time.numtime import NumTimeType
 
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -1017,9 +1015,7 @@ class MainPanel(wx.Panel):
         self.main_frame = main_frame
         self._create_gui()
         # Install variables for backwards compatibility
-        self.cattree = self.timeline_panel.sidebar.cattree
-        if DEV:
-            self.custom_categories = self.timeline_panel.sidebar.custom_categories
+        self.category_tree = self.timeline_panel.sidebar.category_tree
         self.show_sidebar = self.timeline_panel.show_sidebar
         self.hide_sidebar = self.timeline_panel.hide_sidebar
         self.get_sidebar_width = self.timeline_panel.get_sidebar_width
@@ -1070,7 +1066,7 @@ class MainPanel(wx.Panel):
         return self.timeline_panel.get_current_image()
 
     def _remove_timeline_and_show_welcome_panel(self):
-        self.cattree.initialize_from_timeline_view(None)
+        self.category_tree.set_no_timeline_view()
         self.set_searchbar_drawing_area_panel(None)
         self.set_timeline(None)
         self.show_welcome_panel()
@@ -1084,11 +1080,9 @@ class MainPanel(wx.Panel):
 
     def _show_new_timeline(self, timeline):
         self.set_timeline(timeline)
-        self.cattree.initialize_from_timeline_view(self.get_drawing_area())
-        if DEV:
-            self.custom_categories.set_timeline_view(
-                self.get_drawing_area().get_timeline(),
-                self.get_drawing_area().get_view_properties())
+        self.category_tree.set_timeline_view(
+            self.get_drawing_area().get_timeline(),
+            self.get_drawing_area().get_view_properties())
         self.set_searchbar_drawing_area_panel(self.get_drawing_area())
         self.show_timeline_panel()
 
@@ -1395,19 +1389,15 @@ class Sidebar(wx.Panel):
         self._create_gui(handle_db_error)
 
     def _create_gui(self, handle_db_error):
-        self.cattree = CategoriesTree(self, handle_db_error)
+        self.category_tree = CustomCategoryTree(self, handle_db_error)
         label = _("View Categories Individually")
         self.cbx_toggle_cat_view = wx.CheckBox(self, -1, label)
         # Layout
         sizer = wx.GridBagSizer(vgap=0, hgap=0)
         sizer.AddGrowableCol(0, proportion=0)
         sizer.AddGrowableRow(0, proportion=0)
-        sizer.Add(self.cattree, (0,0), flag=wx.GROW)
+        sizer.Add(self.category_tree, (0,0), flag=wx.GROW)
         sizer.Add(self.cbx_toggle_cat_view, (1,0), flag=wx.ALL, border=5)
-        if DEV:
-            self.custom_categories = CustomCategoryTree(self, handle_db_error)
-            sizer.Add(self.custom_categories, (2,0), flag=wx.GROW)
-            sizer.AddGrowableRow(2, proportion=0)
         self.SetSizer(sizer)
         self.Bind(wx.EVT_CHECKBOX, self._cbx_on_click, self.cbx_toggle_cat_view)
 
