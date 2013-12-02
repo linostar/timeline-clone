@@ -15,20 +15,14 @@ New features, enhancements:
 
 Bug fixes:
 
-* Move event vertically, can be done for events very close to each other (with different y-coordinates)
-* Ics-files could load events without text which caused an exception when trying to 'Save As'
-* Handle exception in dragging situation when julian day becomes < 0.
-
-Maybe be released: 1.0.2
-------------------------
-
-Bug fixes:
-
 * SVG export can handle ampersand (&) in event text
-* SVG export use UTF-8 encoding
+* SVG export can handle more characters by using UTF-8 encoding
 * Prevent overflow error when zooming in on wide events
 * Prevent error when using up arrow to increase month in date editor
 * Prevent error when fitting all events and they almost fit
+* Move event vertically, can be done for events very close to each other (with different y-coordinates)
+* Ics-files could load events without text which caused an exception when trying to 'Save As'
+* Handle exception in dragging situation when julian day becomes < 0.
 
 Version 1.0.1
 -------------
