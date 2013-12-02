@@ -22,7 +22,7 @@ import time
 from timelinelib.meta.version import DEV
 
 
-class QA(object):
+class Monitoring(object):
 
     IS_ENABLED = DEV
 
@@ -68,4 +68,4 @@ class Timer(object):
         return (self._end - self._start) * 1000
 
 
-qa = QA()
+monitoring = Monitoring()

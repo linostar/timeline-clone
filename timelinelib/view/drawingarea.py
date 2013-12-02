@@ -27,7 +27,7 @@ from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.utils import safe_locking
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.qa import qa
+from timelinelib.monitoring import monitoring
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 from timelinelib.utils import ex_msg
@@ -431,16 +431,16 @@ class DrawingArea(object):
         def fn_draw(dc):
             try:
                 self.drawing_algorithm.use_fast_draw(self.fast_draw)
-                qa.timer_start()
+                monitoring.timer_start()
                 self.drawing_algorithm.draw(dc, self.timeline, self.view_properties, self.config)
-                qa.timer_end()
-                if qa.IS_ENABLED:
+                monitoring.timer_end()
+                if monitoring.IS_ENABLED:
                     (width, height) = self.view.GetSizeTuple()
-                    redraw_time = qa.timer_elapsed_ms()
-                    qa.count_timeline_redraw()
+                    redraw_time = monitoring.timer_elapsed_ms()
+                    monitoring.count_timeline_redraw()
                     dc.SetTextForeground((255, 0, 0))
                     dc.SetFont(get_default_font(12, bold=True))
-                    dc.DrawText("Redraw count: %d" % qa.timeline_redraw_count, width - 300, height - 60)
+                    dc.DrawText("Redraw count: %d" % monitoring.timeline_redraw_count, width - 300, height - 60)
                     dc.DrawText("Last redraw time: %.3f ms" % redraw_time, width - 300, height - 40)
             except TimelineIOError, e:
                 self.fn_handle_db_error(e)

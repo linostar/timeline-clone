@@ -18,15 +18,15 @@
 
 import wx
 
+from timelinelib.db.utils import safe_locking
 from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
-from timelinelib.qa import qa
+from timelinelib.monitoring import monitoring
 from timelinelib.repositories.categories import CategoriesFacade
 from timelinelib.utilities.observer import Observable
 from timelinelib.wxgui.components.cattree import add_category
 from timelinelib.wxgui.components.cattree import delete_category
 from timelinelib.wxgui.components.cattree import edit_category
-from timelinelib.db.utils import safe_locking
 
 
 class CustomCategoryTree(wx.ScrolledWindow):
@@ -142,16 +142,16 @@ class CustomCategoryTree(wx.ScrolledWindow):
         memdc.SetBackground(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
         memdc.Clear()
         memdc.BeginDrawing()
-        qa.timer_start()
+        monitoring.timer_start()
         self.renderer.render(memdc)
-        qa.timer_end()
-        if qa.IS_ENABLED:
+        monitoring.timer_end()
+        if monitoring.IS_ENABLED:
             (width, height) = self.GetSizeTuple()
-            redraw_time = qa.timer_elapsed_ms()
-            qa.count_category_redraw()
+            redraw_time = monitoring.timer_elapsed_ms()
+            monitoring.count_category_redraw()
             memdc.SetTextForeground((255, 0, 0))
             memdc.SetFont(get_default_font(10, bold=True))
-            memdc.DrawText("Redraw count: %d" % qa.category_redraw_count, 10, height - 35)
+            memdc.DrawText("Redraw count: %d" % monitoring.category_redraw_count, 10, height - 35)
             memdc.DrawText("Last redraw time: %.3f ms" % redraw_time, 10, height - 20)
         memdc.EndDrawing()
         del memdc

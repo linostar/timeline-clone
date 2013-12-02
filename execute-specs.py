@@ -30,7 +30,7 @@ ONLY_FLAG = "--only"
 def execute_specs(args):
     setup_paths()
     install_gettext_in_builtin_namespace()
-    ensure_no_qa()
+    disable_monitoring()
     suite = create_suite(create_include_test_function(args))
     all_pass = execute_suite(suite, select_verbosity(args))
     return all_pass
@@ -50,9 +50,9 @@ def install_gettext_in_builtin_namespace():
     __builtin__.__dict__["_"] = _
 
 
-def ensure_no_qa():
-    from timelinelib.qa import qa
-    qa.IS_ENABLED = False
+def disable_monitoring():
+    from timelinelib.monitoring import monitoring
+    monitoring.IS_ENABLED = False
 
 
 def create_include_test_function(args):
