@@ -25,9 +25,9 @@ class WxEndToEndSpec(WxEndToEndTestCase):
 
     def test_sidebar_gets_same_width_as_in_config(self):
         self.config.set_show_sidebar(True)
-        self.config.set_sidebar_width(234)
+        self.config.set_sidebar_width(300)
         self.start_timeline_and([
-            self.check_that_sidebar_width_equals(234),
+            self.check_that_sidebar_width_equals(300),
         ])
 
     def check_that_sidebar_width_equals(self, expected_width):
