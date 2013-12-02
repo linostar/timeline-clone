@@ -34,19 +34,23 @@ class CustomCategoryTree(wx.ScrolledWindow):
     def __init__(self, parent, handle_db_error):
         wx.ScrolledWindow.__init__(self, parent)
         self.parent = parent
+        self.handle_db_error = handle_db_error
         self._create_context_menu()
         self.Bind(wx.EVT_PAINT, self._on_paint)
         self.Bind(wx.EVT_SIZE, self._on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
-        self.handle_db_error = handle_db_error
-        self.view_properties = None
         self.model = CustomCategoryTreeModel()
         self.model.listen_for_any(self._redraw)
         self.renderer = CustomCategoryTreeRenderer(self, self.model)
-        self.timeline_view = None
+        self.set_no_timeline_view()
         self._size_to_model()
         self._draw_bitmap()
+
+    def set_no_timeline_view(self):
+        self.db = None
+        self.view_properties = None
+        self.model.set_categories(None)
 
     def set_timeline_view(self, db, view_properties):
         self.db = db
@@ -290,7 +294,8 @@ class CustomCategoryTreeModel(Observable):
         if self.categories:
             self.categories.unlisten(self._update_items)
         self.categories = categories
-        self.categories.listen_for_any(self._update_items)
+        if self.categories:
+            self.categories.listen_for_any(self._update_items)
         self._update_items()
 
     def hit(self, x, y):
