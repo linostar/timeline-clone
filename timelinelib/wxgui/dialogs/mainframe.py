@@ -1320,6 +1320,7 @@ class TimelinePanel(wx.Panel):
         self.splitter.SplitVertically(
             self.sidebar, self.drawing_area, self.sidebar_width)
         self.splitter.SetSashPosition(self.sidebar_width)
+        self.splitter.SetMinimumPaneSize(self.sidebar.GetBestSize()[0])
 
     def hide_sidebar(self):
         self.splitter.Unsplit(self.sidebar)
