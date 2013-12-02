@@ -57,6 +57,9 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.view_properties = view_properties
         self.model.set_categories(CategoriesFacade(db, view_properties))
 
+    def _has_timeline_view(self):
+        return self.db is not None and self.view_properties is not None
+
     def _on_paint(self, event):
         dc = wx.BufferedPaintDC(self, self.buffer_image, wx.BUFFER_VIRTUAL_AREA)
 
@@ -75,7 +78,9 @@ class CustomCategoryTree(wx.ScrolledWindow):
     def _on_right_down(self, event):
         def edit_function():
             self._store_hit_info(event)
-            self.PopupMenu(self.mnu)
+            for (menu_item, should_be_enabled_fn) in self.context_menu_items:
+                menu_item.Enable(should_be_enabled_fn(self.last_hit_info))
+            self.PopupMenu(self.context_menu)
         safe_locking(self.parent, edit_function)
 
     def _on_menu_edit(self, e):
@@ -107,7 +112,7 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.view_properties.set_categories_visible(
             self.last_hit_info.get_parents())
 
-    def _on_menu_check_parents_for_checked_childs(self, e):
+    def _on_menu_check_parents_for_checked_children(self, e):
         self.view_properties.set_categories_visible(
             self.last_hit_info.get_parents_for_checked_childs())
 
@@ -164,26 +169,64 @@ class CustomCategoryTree(wx.ScrolledWindow):
         self.model.set_view_size(view_width, view_height)
 
     def _create_context_menu(self):
-        def add_item(callback, name):
-            item = wx.MenuItem(self.mnu, wx.ID_ANY, name)
-            self.mnu.AppendItem(item)
+        def add_item(name, callback, should_be_enabled_fn):
+            item = wx.MenuItem(self.context_menu, wx.ID_ANY, name)
+            self.context_menu.AppendItem(item)
             self.Bind(wx.EVT_MENU, callback, item)
+            self.context_menu_items.append((item, should_be_enabled_fn))
             return item
-        self.mnu = wx.Menu()
-        self.mnu_edit = add_item(self._on_menu_edit, _("Edit..."))
-        self.mnu_add = add_item(self._on_menu_add, _("Add..."))
-        self.mnu_delete = add_item(self._on_menu_delete, _("Delete"))
-        self.mnu.AppendSeparator()
-        self.mnu_check_all = add_item(self._on_menu_check_all, _("Check All"))
-        self.mnu_check_children = add_item(self._on_menu_check_children, _("Check children"))
-        self.mnu_check_all_children = add_item(self._on_menu_check_all_children, _("Check all children"))
-        self.mnu_check_parents = add_item(self._on_menu_check_parents, _("Check all parents"))
-        self.mnu_check_parents_for_checked_childs = add_item(self._on_menu_check_parents_for_checked_childs, _("Check parents for checked childs"))
-        self.mnu.AppendSeparator()
-        self.mnu_uncheck_all = add_item(self._on_menu_uncheck_all, _("Uncheck All"))
-        self.mnu_uncheck_children = add_item(self._on_menu_uncheck_children, _("Uncheck children"))
-        self.mnu_uncheck_all_children = add_item(self._on_menu_uncheck_all_children, _("Uncheck all children"))
-        self.mnu_uncheck_parents = add_item(self._on_menu_uncheck_parents, _("Uncheck all parents"))
+        self.context_menu_items = []
+        self.context_menu = wx.Menu()
+        add_item(
+            _("Edit..."),
+            self._on_menu_edit,
+            lambda hit_info: hit_info.has_category())
+        add_item(
+            _("Add..."),
+            self._on_menu_add,
+            lambda hit_info: self._has_timeline_view())
+        add_item(
+            _("Delete"),
+            self._on_menu_delete,
+            lambda hit_info: hit_info.has_category())
+        self.context_menu.AppendSeparator()
+        add_item(
+            _("Check All"),
+            self._on_menu_check_all,
+            lambda hit_info: self._has_timeline_view())
+        add_item(
+            _("Check children"),
+            self._on_menu_check_children,
+            lambda hit_info: hit_info.has_category())
+        add_item(
+            _("Check all children"),
+            self._on_menu_check_all_children,
+            lambda hit_info: hit_info.has_category())
+        add_item(
+            _("Check all parents"),
+            self._on_menu_check_parents,
+            lambda hit_info: hit_info.has_category())
+        add_item(
+            _("Check parents for checked children"),
+            self._on_menu_check_parents_for_checked_children,
+            lambda hit_info: self._has_timeline_view())
+        self.context_menu.AppendSeparator()
+        add_item(
+            _("Uncheck All"),
+            self._on_menu_uncheck_all,
+            lambda hit_info: self._has_timeline_view())
+        add_item(
+            _("Uncheck children"),
+            self._on_menu_uncheck_children,
+            lambda hit_info: hit_info.has_category())
+        add_item(
+            _("Uncheck all children"),
+            self._on_menu_uncheck_all_children,
+            lambda hit_info: hit_info.has_category())
+        add_item(
+            _("Uncheck all parents"),
+            self._on_menu_uncheck_parents,
+            lambda hit_info: hit_info.has_category())
 
 
 class CustomCategoryTreeRenderer(object):
@@ -383,6 +426,9 @@ class HitInfo(object):
         self._category = category
         self._is_on_arrow = is_on_arrow
         self._is_on_checkbox = is_on_checkbox
+
+    def has_category(self):
+        return self._category is not None
 
     def get_category(self):
         return self._category
