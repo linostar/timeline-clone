@@ -57,7 +57,7 @@ from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 import timelinelib.wxgui.utils as gui_utils
-
+from timelinelib.proxies.drawingarea import DrawingAreaProxy
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -228,9 +228,9 @@ class GuiCreator(object):
         def zoomout(evt):
             self.main_panel.zoom_out()
         def vert_zoomin(evt):
-            self.main_panel.vert_zoom_in()
+            DrawingAreaProxy(self).vert_zoom_in()
         def vert_zoomout(evt):
-            self.main_panel.vert_zoom_out()
+            DrawingAreaProxy(self).vert_zoom_out()
         cbx = True
         items = ((ID_SIDEBAR, sidebar, _("&Sidebar\tCtrl+I"), cbx),
                  (ID_LEGEND, legend, _("&Legend"), cbx),
@@ -1157,12 +1157,6 @@ class MainPanel(wx.Panel):
     def zoom_out(self):
         self.timeline_panel.zoom_out()
 
-    def vert_zoom_in(self):
-        self.timeline_panel.vert_zoom_in()
-
-    def vert_zoom_out(self):
-        self.timeline_panel.vert_zoom_out()
-
     def _create_gui(self):
         # Search bar
         self.searchbar = SearchBar(self)
@@ -1335,11 +1329,6 @@ class TimelinePanel(wx.Panel):
     def zoom_out(self):
         self.drawing_area.zoom_out()
 
-    def vert_zoom_in(self):
-        self.drawing_area.vert_zoom_in()
-
-    def vert_zoom_out(self):
-        self.drawing_area.vert_zoom_out()
 
 class ErrorPanel(wx.Panel):
 
