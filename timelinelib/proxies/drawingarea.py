@@ -34,3 +34,7 @@ class DrawingAreaProxy():
 
     def vert_zoom_out(self):
         self.drawing_area.vert_zoom_out()
+        
+    def show_hide_legend(self, checked):
+        self.drawing_area.show_hide_legend(checked)
+        

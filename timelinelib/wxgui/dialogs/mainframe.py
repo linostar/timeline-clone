@@ -219,7 +219,7 @@ class GuiCreator(object):
                 self.main_panel.hide_sidebar()
         def legend(evt):
             self.config.set_show_legend(evt.IsChecked())
-            self.main_panel.show_hide_legend(evt.IsChecked())
+            DrawingAreaProxy(self).show_hide_legend(evt.IsChecked())
         def balloons(evt):
             self.config.set_balloon_on_hover(evt.IsChecked())
             self.main_panel.balloon_visibility_changed(evt.IsChecked())
@@ -1112,9 +1112,6 @@ class MainPanel(wx.Panel):
     def get_selected_event_ids(self):
         return self.get_view_properties().get_selected_event_ids()
 
-    def show_hide_legend(self, checked):
-        self.timeline_panel.show_hide_legend(checked)
-
     def get_id_of_first_selected_event(self):
         return self.get_view_properties().get_selected_event_ids()[0]
 
@@ -1238,9 +1235,6 @@ class TimelinePanel(wx.Panel):
 
     def get_time_period(self):
         return self.drawing_area.get_time_period()
-
-    def show_hide_legend(self, checked):
-        self.drawing_area.show_hide_legend(checked)
 
     def balloon_visibility_changed(self, checked):
         self.drawing_area.balloon_visibility_changed(checked)
