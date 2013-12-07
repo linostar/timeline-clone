@@ -38,3 +38,6 @@ class DrawingAreaProxy():
     def show_hide_legend(self, checked):
         self.drawing_area.show_hide_legend(checked)
         
+    def balloon_visibility_changed(self, checked):
+        self.drawing_area.balloon_visibility_changed(checked)
+        

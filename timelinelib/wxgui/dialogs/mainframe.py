@@ -222,7 +222,8 @@ class GuiCreator(object):
             DrawingAreaProxy(self).show_hide_legend(evt.IsChecked())
         def balloons(evt):
             self.config.set_balloon_on_hover(evt.IsChecked())
-            self.main_panel.balloon_visibility_changed(evt.IsChecked())
+            #self.main_panel.balloon_visibility_changed(evt.IsChecked())
+            DrawingAreaProxy(self).balloon_visibility_changed(evt.IsChecked())
         def zoomin(evt):
             DrawingAreaProxy(self).zoom_in()
         def zoomout(evt):
@@ -1118,9 +1119,6 @@ class MainPanel(wx.Panel):
     def get_nbr_of_selected_events(self):
         return len(self.get_view_properties().get_selected_event_ids())
 
-    def balloon_visibility_changed(self, checked):
-        self.timeline_panel.balloon_visibility_changed(checked)
-
     def open_event_editor(self, event):
         self.timeline_panel.open_event_editor(event)
 
@@ -1235,9 +1233,6 @@ class TimelinePanel(wx.Panel):
 
     def get_time_period(self):
         return self.drawing_area.get_time_period()
-
-    def balloon_visibility_changed(self, checked):
-        self.drawing_area.balloon_visibility_changed(checked)
 
     def open_event_editor(self, event):
         self.drawing_area.open_event_editor_for(event)
