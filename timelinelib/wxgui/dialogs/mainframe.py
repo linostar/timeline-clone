@@ -224,9 +224,9 @@ class GuiCreator(object):
             self.config.set_balloon_on_hover(evt.IsChecked())
             self.main_panel.balloon_visibility_changed(evt.IsChecked())
         def zoomin(evt):
-            self.main_panel.zoom_in()
+            DrawingAreaProxy(self).zoom_in()
         def zoomout(evt):
-            self.main_panel.zoom_out()
+            DrawingAreaProxy(self).zoom_out()
         def vert_zoomin(evt):
             DrawingAreaProxy(self).vert_zoom_in()
         def vert_zoomout(evt):
@@ -1151,12 +1151,6 @@ class MainPanel(wx.Panel):
     def get_view_properties(self):
         return self.timeline_panel.get_view_properties()
 
-    def zoom_in(self):
-        self.timeline_panel.zoom_in()
-
-    def zoom_out(self):
-        self.timeline_panel.zoom_out()
-
     def _create_gui(self):
         # Search bar
         self.searchbar = SearchBar(self)
@@ -1322,12 +1316,6 @@ class TimelinePanel(wx.Panel):
     def activated(self):
         if self.config.get_show_sidebar():
             self.show_sidebar()
-
-    def zoom_in(self):
-        self.drawing_area.zoom_in()
-
-    def zoom_out(self):
-        self.drawing_area.zoom_out()
 
 
 class ErrorPanel(wx.Panel):

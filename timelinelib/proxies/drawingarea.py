@@ -23,6 +23,12 @@ class DrawingAreaProxy():
         if isinstance(creator, MainFrame):
             self.drawing_area = creator.main_panel.timeline_panel.drawing_area
         
+    def zoom_in(self):
+        self.drawing_area.zoom_in()
+
+    def zoom_out(self):
+        self.drawing_area.zoom_out()
+
     def vert_zoom_in(self):
         self.drawing_area.vert_zoom_in()
 
