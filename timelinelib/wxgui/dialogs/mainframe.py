@@ -703,7 +703,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         dialog = wx.FileDialog(self, message=_("Create Timeline"),
                                wildcard=wildcard, style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
-            self._save_current_timeline_data()
             path = self.timeline_wildcard_helper.get_path(dialog)
             if os.path.exists(path):
                 msg_first_part = _("The specified timeline already exists.")
@@ -717,7 +716,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
     def _create_new_dir_timeline(self):
         dialog = wx.DirDialog(self, message=_("Create Timeline"))
         if dialog.ShowModal() == wx.ID_OK:
-            self._save_current_timeline_data()
             self.controller.open_timeline(dialog.GetPath())
         dialog.Destroy()
 
@@ -730,7 +728,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
                                defaultDir=dir,
                                wildcard=wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
-            self._save_current_timeline_data()
             self.controller.open_timeline(dialog.GetPath(), import_timeline)
         dialog.Destroy()
 
@@ -760,7 +757,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
             else:
                 self.timeline =  transform_to_xml_timeline(new_timeline_path,
                                                            self.timeline)
-            self._save_current_timeline_data()
             self.controller.open_timeline(self.timeline.path)
 
     def _export_to_svg_image(self):
@@ -786,7 +782,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
             return False
 
     def _window_on_close(self, event):
-        self._save_current_timeline_data()
+        self.save_current_timeline_data()
         self._save_application_config()
         self.Destroy()
 
@@ -802,7 +798,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
             msg = "%s\n\n%s" % (friendly, ex_msg(ex))
             display_error_message(msg, self)
 
-    def _save_current_timeline_data(self):
+    def save_current_timeline_data(self):
         if self.timeline:
             try:
                 self.main_panel.save_view_properties(self.timeline)
