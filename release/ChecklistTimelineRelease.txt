@@ -23,14 +23,7 @@ Checklist for making a timeline release
      3. hg update
      3. hg push
 
-  2. Notify developers of repo change
-    1. Send email to thetimelineproj-user@lists.sourceforge.net
-       Detta är inte så relevant.
-       Det handlar om att meddela alla utvecklare att vi bestämt oss för
-       att göra en stable av det som finns i main nu. Detta för att de
-       ska kunna göra buggfixar på stable om de håller på med det.
-
-  3. Import translations from Launchpad
+  2. Import translations from Launchpad
     1. Request download from here (login required)
        http://translations.launchpad.net/thetimelineproj/trunk/+translations
        Format: PO format
@@ -38,44 +31,44 @@ Checklist for making a timeline release
     3. This script updates the .po files
     4. Commit "import translations"
 
-  4. Update Timeline.iss
+  3. Update Timeline.iss
     1. Check that all po files found in the directory win\timeline\po also are
        mentioned in the main\release\win\inno\Timeline.iss file.
     2. Commit "Added po info to iss-file"
 
-  5. Check that version numbers are correct in timelinelib/meta/version.py
+  4. Check that version numbers are correct in timelinelib/meta/version.py
     1. Check version number
     2. Change to "DEV = False"
     3. Commit "0.xx.0 Changed version for release"
 
-  6. Check that information is correct in changelog.rst
+  5. Check that information is correct in changelog.rst
     1. Check
     2. Commit "Updated changes"
     3. Pull these changes into main.
 
-  7. Check that information is correct in about.py
+  6. Check that information is correct in about.py
     1. Check developers
     2. Check contributors
     3. Check translators
     4. Commit "Updated about"
     5. Pull these changes into main.
 
-  8. Run "python execute-specs.py" to find possible errors
+  7. Run "python execute-specs.py" to find possible errors
     1. Fix errors
     2. Commit
     3. Pull these changes into main.
 
-  9. Run "python release/make-source-release.py"
+  8. Run "python release/make-source-release.py"
     1. This script creates the file timeline-x.y.0.zip file
     2. It also runs the tests as in section 5.
 
-  10. Try running the unzipped release to make a basic check that it works
+  9. Try running the unzipped release to make a basic check that it works
     1. Mail copies to all developers, to let them test before publishing
 
-  11. Tag the release
+  10. Tag the release
     1. Run "hg tag x.y.z"
 
-  12. Update repository
+  11. Update repository
     1. hg push
 
 
