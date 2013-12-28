@@ -9,8 +9,8 @@ AppName=Timeline
 ; The two lines below must be uncommented and text changed to reflect
 ; the version number of the executable to be built.
 ;
-AppVerName= 
-OutputBaseFilename=
+AppVerName=Timeline 1.1.0
+OutputBaseFilename=SetupTimeline110Py2Exe
 ;
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -38,8 +38,8 @@ Name: "startmenu";   Description: "Create a start menu"; GroupDescription: "{cm:
 [Files]
 Source: "dist\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion
-Source: "C:\Program Files\Python25\lib\site-packages\wx-2.8-msw-unicode\wx\MSVCP71.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files\Python25\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Python27\lib\site-packages\wx-2.8-msw-unicode\wx\MSVCP90.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Python27\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
