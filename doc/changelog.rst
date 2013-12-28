@@ -4,7 +4,7 @@ Changelog
 Version 1.1.0
 -------------
 
-**Planned: Released on 30 December 2013.**
+**Released on 28 December 2013.**
 
 New features, enhancements:
 
