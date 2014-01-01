@@ -8,6 +8,8 @@ Version 1.2.0
 
 New features, enhancements:
 
+* Shortcuts can be user defined.
+
 Bug fixes:
 
 Version 1.1.0
