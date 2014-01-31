@@ -9,6 +9,7 @@ Version 1.2.0
 New features, enhancements:
 
 * Shortcuts can be user defined.
+* Events now have a progress attribute.
 
 Bug fixes:
 
