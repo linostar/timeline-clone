@@ -12,6 +12,8 @@ New features, enhancements:
 
 Bug fixes:
 
+* Exception when opening event editor from menu for a nunmeric timeline.
+
 Version 1.1.0
 -------------
 
