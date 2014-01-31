@@ -245,7 +245,9 @@ class EventEditorDialog(wx.Dialog):
         editors = {"description" : (_("Description"), DescriptionEditor),
                    "alert" : (_("Alert"), AlertEditor),
                    "icon" : (_("Icon"), IconEditor),
-                   "hyperlink" :  (_("Hyperlink"), HyperlinkEditor),}
+                   "hyperlink" :  (_("Hyperlink"), HyperlinkEditor),
+                   "progress" :  (_("Progress"), ProgressEditor),
+                   }
         if editors.has_key(editor_class_id):
             return editors[editor_class_id]
         else:
@@ -732,6 +734,29 @@ class HyperlinkEditor(wx.Panel):
         self.btn_clear.Enable(value)
         self.btn_test.Enable(value)
         self.GetSizer().Layout()
+
+
+class ProgressEditor(wx.Panel):
+
+    def __init__(self, parent, editor):
+        wx.Panel.__init__(self, parent)
+        self.editor = editor
+        self._create_gui()
+
+    def _create_gui(self):
+        self.progress = wx.SpinCtrl(self, size=(50, -1))
+        self.progress.SetRange(0, 100)
+        label = wx.StaticText(self, label=_("Progress %:"))
+        sizer = wx.GridBagSizer(10, 10)
+        sizer.Add(label, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
+        sizer.Add(self.progress, wx.GBPosition(1, 1), wx.GBSpan(1, 1))
+        self.SetSizerAndFit(sizer)
+
+    def get_data(self):
+        return self.progress.GetValue()
+
+    def set_data(self, data):
+        self.progress.SetValue(data)
 
 
 def open_event_editor_for(parent, config, db, handle_db_error, event):
