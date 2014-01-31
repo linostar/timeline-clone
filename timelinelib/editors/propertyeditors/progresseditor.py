@@ -18,6 +18,8 @@
 
 import wx
 
+from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
+
 
 class ProgressEditorGuiCreator(wx.Panel):
 
@@ -26,23 +28,26 @@ class ProgressEditorGuiCreator(wx.Panel):
         self._create_gui()
 
     def _create_gui(self):
-        self.progress = wx.SpinCtrl(self, size=(50, -1))
-        self.progress.SetRange(0, 100)
         label = wx.StaticText(self, label=_("Progress %:"))
-        sizer = wx.GridBagSizer(10, 10)
-        sizer.Add(label, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
-        sizer.Add(self.progress, wx.GBPosition(1, 1), wx.GBSpan(1, 1))
+        self.data = self._create_spin_control()
+        sizer = self._put_controls_in_sizer(label, self.data)
         self.SetSizerAndFit(sizer)
 
+    def _create_spin_control(self):
+        progress = wx.SpinCtrl(self, size=(50, -1))
+        progress.SetRange(0, 100)
+        return progress
+    
+    def _put_controls_in_sizer(self, label, spin_ctrl):
+        sizer = wx.GridBagSizer(vgap=10, hgap=10)
+        span = wx.GBSpan(rowspan=1, colspan=1)
+        sizer.Add(label, wx.GBPosition(row=1, col=0), span)
+        sizer.Add(spin_ctrl, wx.GBPosition(row=1, col=1), span)
+        return sizer
 
-class ProgressEditor(ProgressEditorGuiCreator):
+
+class ProgressEditor(BaseEditor, ProgressEditorGuiCreator):
 
     def __init__(self, parent, editor):
+        BaseEditor.__init__(self, editor)
         ProgressEditorGuiCreator.__init__(self, parent)
-        self.editor = editor
-
-    def get_data(self):
-        return self.progress.GetValue()
-
-    def set_data(self, data):
-        self.progress.SetValue(data)
