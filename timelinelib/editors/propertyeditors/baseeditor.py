@@ -27,3 +27,6 @@ class BaseEditor(object):
 
     def set_data(self, data):
         self.data.SetValue(data)
+
+    def focus(self):
+        self.data.SetFocus()

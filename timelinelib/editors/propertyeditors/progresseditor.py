@@ -51,3 +51,7 @@ class ProgressEditor(BaseEditor, ProgressEditorGuiCreator):
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, editor)
         ProgressEditorGuiCreator.__init__(self, parent)
+
+    def focus(self):
+        super(ProgressEditor, self).focus()
+        self.data.SetSelection(0, -1)

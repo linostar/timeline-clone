@@ -236,8 +236,14 @@ class EventEditorDialog(wx.Dialog):
         notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
         for data_id in self.timeline.supported_event_data():
             self._add_editor(notebook, data_id)
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self._notebook_page_changed, notebook)
         return notebook
 
+    def _notebook_page_changed(self, evt):
+        if evt.Selection == 4:
+            _, editor = self.event_data[evt.Selection]
+            editor.focus()
+    
     def _add_editor(self, notebook, data_id):
         editor_class_decription = self._get_editor_class_description(data_id)
         if editor_class_decription is None:
