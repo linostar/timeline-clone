@@ -38,7 +38,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(db.displayed_period, None)
         self.assertEqual(db.hidden_categories, [])
         self.assertEqual(db.is_read_only(), False)
-        self.assertEqual(db.supported_event_data(), ["description", "icon", "alert", "hyperlink"])
+        self.assertEqual(db.supported_event_data(), ["description", "icon", "alert", "hyperlink", "progress"])
         self.assertEqual(db.search(""), [])
         self.assertEqual(db.get_all_events(), [])
         self.assertEqual(db.get_first_event(), None)
