@@ -21,22 +21,22 @@ import wx
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class DescriptionEditor(BaseEditor, wx.TextCtrl):
+class DescriptionEditor(BaseEditor, wx.Panel):
 
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, editor)
-        self.data = self
-        wx.TextCtrl.__init__(self, parent, style=wx.TE_MULTILINE)
+        wx.Panel.__init__(self, parent)
+        self.data = wx.TextCtrl(self, style=wx.TE_MULTILINE)
+        sizer = wx.BoxSizer()
+        sizer.Add(self.data, 1, wx.ALL|wx.EXPAND, 0)
         self.Bind(wx.EVT_CHAR, self._on_char)
+        self.SetSizerAndFit(sizer)
 
     def get_data(self):
         description = self.GetValue().strip()
         if description != "":
             return description
         return None
-
-#     def set_data(self, data):
-#         self.SetValue(data)
 
     def clear_data(self):
         self.SetValue("")
