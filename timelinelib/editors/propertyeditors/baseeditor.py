@@ -29,4 +29,5 @@ class BaseEditor(object):
         self.data.SetValue(data)
 
     def focus(self):
-        self.data.SetFocus()
+        if self.data is not None:
+            self.data.SetFocus()

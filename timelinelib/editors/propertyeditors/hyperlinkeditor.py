@@ -19,10 +19,13 @@
 import wx
 import webbrowser
 
+from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
-class HyperlinkEditor(wx.Panel):
+
+class HyperlinkEditor(BaseEditor, wx.Panel):
 
     def __init__(self, parent, editor):
+        BaseEditor.__init__(self, editor)
         wx.Panel.__init__(self, parent)
         self.editor = editor
         self._create_gui()
@@ -37,7 +40,7 @@ class HyperlinkEditor(wx.Panel):
         self._set_visible(False)
 
     def _set_initial_text(self):
-        self.text_data.SetValue("")
+        self.data.SetValue("")
 
     def _create_controls(self):
         self.btn_add = self._create_add_button()
@@ -71,19 +74,19 @@ class HyperlinkEditor(wx.Panel):
 
     def _create_input_controls(self):
         alert_panel = wx.Panel(self)
-        self.text_data = wx.TextCtrl(alert_panel, size=(300,20))
+        self.data = wx.TextCtrl(alert_panel, size=(300,20))
         return alert_panel
 
     def _layout_input_controls(self, alert_panel):
         text = wx.StaticText(alert_panel, label=_("URL:"))
         sizer = wx.GridBagSizer(5, 10)
         sizer.Add(text, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
-        sizer.Add(self.text_data, wx.GBPosition(1, 1), wx.GBSpan(1, 9))
+        sizer.Add(self.data, wx.GBPosition(1, 1), wx.GBSpan(1, 9))
         alert_panel.SetSizerAndFit(sizer)
 
     def get_data(self):
         if self.url_visible:
-            return self.text_data.GetValue()
+            return self.data.GetValue()
         else:
             return None
 
@@ -92,7 +95,7 @@ class HyperlinkEditor(wx.Panel):
             self._set_visible(False)
         else:
             self._set_visible(True)
-            self.text_data.SetValue(data)
+            self.data.SetValue(data)
 
     def _btn_add_on_click(self, evt):
         self._set_visible(True)

@@ -20,10 +20,13 @@ import os.path
 
 import wx
 
+from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
-class IconEditor(wx.Panel):
+
+class IconEditor(BaseEditor, wx.Panel):
 
     def __init__(self, parent, editor):
+        BaseEditor.__init__(self, editor)
         wx.Panel.__init__(self, parent)
         self.MAX_SIZE = (128, 128)
         # Controls

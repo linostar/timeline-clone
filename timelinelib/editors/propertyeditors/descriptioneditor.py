@@ -18,10 +18,14 @@
 
 import wx
 
+from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
-class DescriptionEditor(wx.TextCtrl):
+
+class DescriptionEditor(BaseEditor, wx.TextCtrl):
 
     def __init__(self, parent, editor):
+        BaseEditor.__init__(self, editor)
+        self.data = self
         wx.TextCtrl.__init__(self, parent, style=wx.TE_MULTILINE)
         self.Bind(wx.EVT_CHAR, self._on_char)
 
@@ -31,8 +35,8 @@ class DescriptionEditor(wx.TextCtrl):
             return description
         return None
 
-    def set_data(self, data):
-        self.SetValue(data)
+#     def set_data(self, data):
+#         self.SetValue(data)
 
     def clear_data(self):
         self.SetValue("")
