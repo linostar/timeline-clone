@@ -23,45 +23,23 @@ from timelinelib.wxgui.utils import time_picker_for
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class AlertEditor(BaseEditor):
+class AlertEditorGuiCreator(object):
 
-    def __init__(self, parent, editor):
-        BaseEditor.__init__(self, parent, editor)
-        self.editor = editor
-        self._create_gui()
-        self._initialize_data()
-
-    def _create_gui(self):
-        self._create_controls()
-        self._layout_controls()
-
-    def _initialize_data(self):
-        self._set_initial_time()
-        self._set_initial_text()
-        self._set_visible(False)
-
-    def _set_initial_time(self):
-        if self.editor.event is not None:
-            self.dtp_start.set_value(self.editor.event.time_period.start_time)
-        else:
-            self.dtp_start.set_value(self.editor.start)
-
-    def _set_initial_text(self):
-        self.text_data.SetValue("")
-
-    def _create_controls(self):
+    def create_sizer(self):
+        return wx.GridBagSizer(vgap=5, hgap=5)
+        
+    def create_controls(self):
         self.btn_add = self._create_add_button()
         self.btn_clear = self._create_clear_button()
-        self.url_panel = self._create_input_controls()
-
-    def _layout_controls(self):
-        self._layout_input_controls(self.url_panel)
-        sizer = wx.GridBagSizer(5, 5)
-        sizer.Add(self.btn_add, wx.GBPosition(0, 0), wx.GBSpan(1, 1))
-        sizer.Add(self.btn_clear, wx.GBPosition(0, 1), wx.GBSpan(1, 1))
-        sizer.Add(self.url_panel, wx.GBPosition(1, 0), wx.GBSpan(4, 5))
-        self.SetSizerAndFit(sizer)
-
+        self.input_panel = self._create_input_controls()
+        return (self.btn_add, self.btn_clear, self.input_panel)
+    
+    def put_controls_in_sizer(self, sizer, controls):
+        btn_add, btn_clear, input_panel = controls 
+        sizer.Add(btn_add, wx.GBPosition(0, 0), wx.GBSpan(1, 1))
+        sizer.Add(btn_clear, wx.GBPosition(0, 1), wx.GBSpan(1, 1))
+        sizer.Add(input_panel, wx.GBPosition(1, 0), wx.GBSpan(4, 5))
+        
     def _create_add_button(self):
         btn_add = wx.Button(self, wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self._btn_add_on_click, btn_add)
@@ -78,6 +56,7 @@ class AlertEditor(BaseEditor):
         self.dtp_start =  time_picker_for(time_type)(alert_panel, config=self.editor.config)
         self.text_data = wx.TextCtrl(alert_panel, size=(300,80), style=wx.TE_MULTILINE)
         self.data = self.dtp_start
+        self._layout_input_controls(alert_panel)
         return alert_panel
 
     def _layout_input_controls(self, alert_panel):
@@ -90,8 +69,31 @@ class AlertEditor(BaseEditor):
         sizer.Add(self.text_data, wx.GBPosition(1, 1), wx.GBSpan(1, 9))
         alert_panel.SetSizerAndFit(sizer)
 
+
+class AlertEditor(BaseEditor, AlertEditorGuiCreator):
+
+    def __init__(self, parent, editor):
+        BaseEditor.__init__(self, parent, editor)
+        self.editor = editor
+        self.create_gui()
+        self._initialize_data()
+
+    def _initialize_data(self):
+        self._set_initial_time()
+        self._set_initial_text()
+        self._set_visible(False)
+
+    def _set_initial_time(self):
+        if self.editor.event is not None:
+            self.dtp_start.set_value(self.editor.event.time_period.start_time)
+        else:
+            self.dtp_start.set_value(self.editor.start)
+
+    def _set_initial_text(self):
+        self.text_data.SetValue("")
+
     def get_data(self):
-        if self.url_visible:
+        if self.input_visible:
             time = self.dtp_start.get_value()
             text = self.text_data.GetValue()
             return (time, text)
@@ -119,8 +121,8 @@ class AlertEditor(BaseEditor):
         self._set_visible(False)
 
     def _set_visible(self, value):
-        self.url_visible = value
-        self.url_panel.Show(self.url_visible)
+        self.input_visible = value
+        self.input_panel.Show(self.input_visible)
         self.btn_add.Enable(not value)
         self.btn_clear.Enable(value)
         self.GetSizer().Layout()
