@@ -21,11 +21,10 @@ import wx
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class DescriptionEditor(BaseEditor, wx.Panel):
+class DescriptionEditor(BaseEditor):
 
     def __init__(self, parent, editor):
-        BaseEditor.__init__(self, editor)
-        wx.Panel.__init__(self, parent)
+        BaseEditor.__init__(self, parent, editor)
         self.data = wx.TextCtrl(self, style=wx.TE_MULTILINE)
         sizer = wx.BoxSizer()
         sizer.Add(self.data, 1, wx.ALL|wx.EXPAND, 0)
@@ -33,7 +32,7 @@ class DescriptionEditor(BaseEditor, wx.Panel):
         self.SetSizerAndFit(sizer)
 
     def get_data(self):
-        description = self.GetValue().strip()
+        description = self.data.GetValue().strip()
         if description != "":
             return description
         return None

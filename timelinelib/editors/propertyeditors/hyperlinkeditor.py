@@ -22,11 +22,10 @@ import webbrowser
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class HyperlinkEditor(BaseEditor, wx.Panel):
+class HyperlinkEditor(BaseEditor):
 
     def __init__(self, parent, editor):
-        BaseEditor.__init__(self, editor)
-        wx.Panel.__init__(self, parent)
+        BaseEditor.__init__(self, parent, editor)
         self.editor = editor
         self._create_gui()
         self._initialize_data()

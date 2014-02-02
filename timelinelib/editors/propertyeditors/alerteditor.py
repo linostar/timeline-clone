@@ -23,11 +23,10 @@ from timelinelib.wxgui.utils import time_picker_for
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class AlertEditor(BaseEditor, wx.Panel):
+class AlertEditor(BaseEditor):
 
     def __init__(self, parent, editor):
-        BaseEditor.__init__(self, editor)
-        wx.Panel.__init__(self, parent)
+        BaseEditor.__init__(self, parent, editor)
         self.editor = editor
         self._create_gui()
         self._initialize_data()

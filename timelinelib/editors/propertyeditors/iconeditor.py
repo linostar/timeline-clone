@@ -23,11 +23,10 @@ import wx
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class IconEditor(BaseEditor, wx.Panel):
+class IconEditor(BaseEditor):
 
     def __init__(self, parent, editor):
-        BaseEditor.__init__(self, editor)
-        wx.Panel.__init__(self, parent)
+        BaseEditor.__init__(self, parent, editor)
         self.MAX_SIZE = (128, 128)
         # Controls
         self.img_icon = wx.StaticBitmap(self, size=self.MAX_SIZE)

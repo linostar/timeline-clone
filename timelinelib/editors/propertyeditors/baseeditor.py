@@ -16,9 +16,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class BaseEditor(object):
+import wx
 
-    def __init__(self, editor):
+
+class BaseEditor(wx.Panel):
+
+    def __init__(self, parent, editor):
+        wx.Panel.__init__(self, parent)
         self.editor = editor
         self.data = None
 
