@@ -57,6 +57,7 @@ from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 import timelinelib.wxgui.utils as gui_utils
 from timelinelib.proxies.drawingarea import DrawingAreaProxy
+from timelinelib.proxies.sidebar import SidebarProxy
 from timelinelib.wxgui.dialogs.shortcutseditor import ShortcutsEditorDialog
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -228,8 +229,18 @@ class GuiCreator(object):
         self.Bind(wx.EVT_MENU, self._mnu_file_exit_on_click, id=wx.ID_EXIT)
 
     def _create_edit_menu(self, main_menu_bar):
+        from timelinelib.wxgui.dialogs.categoryfind import CategoryFindDialog
+        def create_category_find_dialog():
+            return CategoryFindDialog(self, self.timeline)
         def find(evt):
-            self.main_panel.show_searchbar(True)
+            if mouse_in_sidebar():
+                gui_utils.show_modal(create_category_find_dialog, self.handle_db_error)
+            else:
+                self.main_panel.show_searchbar(True)
+        def mouse_in_sidebar():
+            if not self.config.show_sidebar:
+                return False
+            return SidebarProxy(self).mouse_over_sidebar()
         def preferences(evt):
             def edit_function():
                 dialog = PreferencesDialog(self, self.config)
