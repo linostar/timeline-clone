@@ -26,6 +26,12 @@ class BaseEditor(wx.Panel):
         self.editor = editor
         self.data = None
 
+    def create_gui(self):
+        sizer = self.create_sizer()
+        controls = self.create_controls()
+        self.put_controls_in_sizer(sizer, controls)
+        self.SetSizerAndFit(sizer)
+        
     def get_data(self):
         return self.data.GetValue()
 
