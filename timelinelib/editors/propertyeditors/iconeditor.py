@@ -23,27 +23,49 @@ import wx
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class IconEditor(BaseEditor):
-
-    def __init__(self, parent, editor):
-        BaseEditor.__init__(self, parent, editor)
+class IconEditorGuiCreator(object):
+    
+    def create_sizer(self):
+        return wx.GridBagSizer(5, 5)
+        
+    def create_controls(self):
         self.MAX_SIZE = (128, 128)
-        # Controls
-        self.img_icon = wx.StaticBitmap(self, size=self.MAX_SIZE)
-        label = _("Images will be scaled to fit inside a %ix%i box.")
-        description = wx.StaticText(self, label=label % self.MAX_SIZE)
-        btn_select = wx.Button(self, wx.ID_OPEN)
-        btn_clear = wx.Button(self, wx.ID_CLEAR)
-        self.Bind(wx.EVT_BUTTON, self._btn_select_on_click, btn_select)
-        self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, btn_clear)
-        # Layout
-        sizer = wx.GridBagSizer(5, 5)
+        self.img_icon = self._create_icon()
+        description = self._create_description()
+        btn_select = self._create_select_button()
+        btn_clear = self._create_clear_button()
+        return (description, btn_select, btn_clear, self.img_icon )
+    
+    def put_controls_in_sizer(self, sizer, controls):
+        description, btn_select, btn_clear, img_icon = controls     
         sizer.Add(description, wx.GBPosition(0, 0), wx.GBSpan(1, 2))
         sizer.Add(btn_select, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
         sizer.Add(btn_clear, wx.GBPosition(1, 1), wx.GBSpan(1, 1))
-        sizer.Add(self.img_icon, wx.GBPosition(0, 2), wx.GBSpan(2, 1))
-        self.SetSizerAndFit(sizer)
-        # Data
+        sizer.Add(img_icon, wx.GBPosition(0, 2), wx.GBSpan(2, 1))
+
+    def _create_select_button(self):
+        btn = wx.Button(self, wx.ID_OPEN)
+        self.Bind(wx.EVT_BUTTON, self._btn_select_on_click, btn)
+        return btn
+        
+    def _create_clear_button(self):
+        btn = wx.Button(self, wx.ID_CLEAR)
+        self.Bind(wx.EVT_BUTTON, self._btn_clear_on_click, btn)
+        return btn
+
+    def _create_description(self):
+        label = _("Images will be scaled to fit inside a %ix%i box.")
+        return wx.StaticText(self, label=label % self.MAX_SIZE)
+
+    def _create_icon(self):
+        return wx.StaticBitmap(self, size=self.MAX_SIZE)
+
+
+class IconEditor(BaseEditor, IconEditorGuiCreator):
+
+    def __init__(self, parent, editor):
+        BaseEditor.__init__(self, parent, editor)
+        self.create_gui()
         self.bmp = None
 
     def get_data(self):
