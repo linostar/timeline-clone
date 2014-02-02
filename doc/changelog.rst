@@ -14,6 +14,7 @@ New features, enhancements:
 Bug fixes:
 
 * Exception when opening event editor from menu for a nunmeric timeline.
+* Incorrect display of decades BC, fixed.
 
 Version 1.1.0
 -------------
