@@ -70,7 +70,7 @@ class IconEditor(BaseEditor, IconEditorGuiCreator):
         BaseEditor.__init__(self, parent, editor)
         IconEditorGuiCreator.__init__(self, parent)
         self.create_gui()
-        self.bmp = None
+        self._initialize_data()
 
     def get_data(self):
         return self.get_icon()
@@ -91,6 +91,9 @@ class IconEditor(BaseEditor, IconEditorGuiCreator):
 
     def get_icon(self):
         return self.bmp
+
+    def _initialize_data(self):
+        self.bmp = None
 
     def _btn_select_on_click(self, evt):
         dialog = wx.FileDialog(self, message=_("Select Icon"),
