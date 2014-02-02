@@ -3,25 +3,25 @@
 Select Menu(Help, "Getting started tutorial") 
 
 Select Menu(File, New, "File Timeline...") 
-Click Button(Avbryt)
+Click Button(Cancel)
 
 Select Menu(File, New, "Directory Timeline...") 
-Click Button(Avbryt)
+Click Button(Cancel)
 
 Select Menu(File, "Öppna") 
-Click Button(Avbryt)
+Click Button(Cancel)
 
 Select Menu(File, "Spara som") 
-Click Button(Avbryt)
+Click Button(Cancel)
 
 Select Menu(File, "Import timeline...") 
-Click Button(Avbryt)
+Click Button(Cancel)
 
 Select Menu(File, "Export Current view to Image...") 
-Click Button(Avbryt)
+Click Button(Cancel)
 
 Select Menu(File, "Export Whole Timeline to Images...") 
-Click Button(Avbryt)
+Click Button(Cancel)
 
 Select Menu(File, "Export to SVG") 
-Click Button(Avbryt)
+Click Button(Cancel)
