@@ -22,39 +22,24 @@ import webbrowser
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class HyperlinkEditor(BaseEditor):
-
-    def __init__(self, parent, editor):
-        BaseEditor.__init__(self, parent, editor)
-        self.editor = editor
-        self._create_gui()
-        self._initialize_data()
-
-    def _create_gui(self):
-        self._create_controls()
-        self._layout_controls()
-
-    def _initialize_data(self):
-        self._set_initial_text()
-        self._set_visible(False)
-
-    def _set_initial_text(self):
-        self.data.SetValue("")
-
-    def _create_controls(self):
+class HyperlinkEditorGuiCreator(object):
+    
+    def create_sizer(self):
+        return wx.GridBagSizer(5, 5)
+        
+    def create_controls(self):
         self.btn_add = self._create_add_button()
         self.btn_clear = self._create_clear_button()
         self.btn_test = self._create_test_button()
         self.url_panel = self._create_input_controls()
-
-    def _layout_controls(self):
-        self._layout_input_controls(self.url_panel)
-        sizer = wx.GridBagSizer(5, 5)
+        return (self.btn_add, self.btn_clear, self.btn_test, self.url_panel)
+    
+    def put_controls_in_sizer(self, sizer, controls):
+        self.btn_add, self.btn_clear, self.btn_test, self.url_panel = controls     
         sizer.Add(self.btn_add, wx.GBPosition(0, 0), wx.GBSpan(1, 1))
         sizer.Add(self.btn_clear, wx.GBPosition(0, 1), wx.GBSpan(1, 1))
         sizer.Add(self.btn_test, wx.GBPosition(0, 2), wx.GBSpan(1, 1))
-        sizer.Add(self.url_panel, wx.GBPosition(1, 0), wx.GBSpan(4, 5))
-        self.SetSizerAndFit(sizer)
+        sizer.Add(self.url_panel, wx.GBPosition(2, 0), wx.GBSpan(4, 5))
 
     def _create_add_button(self):
         btn_add = wx.Button(self, wx.ID_ADD)
@@ -72,16 +57,30 @@ class HyperlinkEditor(BaseEditor):
         return btn_test
 
     def _create_input_controls(self):
-        alert_panel = wx.Panel(self)
-        self.data = wx.TextCtrl(alert_panel, size=(300,20))
-        return alert_panel
-
-    def _layout_input_controls(self, alert_panel):
-        text = wx.StaticText(alert_panel, label=_("URL:"))
+        panel = wx.Panel(self)
+        label = wx.StaticText(panel, label=_("URL:"))
+        self.data = wx.TextCtrl(panel, size=(300,20))
         sizer = wx.GridBagSizer(5, 10)
-        sizer.Add(text, wx.GBPosition(1, 0), wx.GBSpan(1, 1))
-        sizer.Add(self.data, wx.GBPosition(1, 1), wx.GBSpan(1, 9))
-        alert_panel.SetSizerAndFit(sizer)
+        sizer.Add(label, wx.GBPosition(0, 0), wx.GBSpan(1, 1))
+        sizer.Add(self.data, wx.GBPosition(0, 1), wx.GBSpan(1, 9))
+        panel.SetSizerAndFit(sizer)
+        return panel
+
+
+class HyperlinkEditor(BaseEditor, HyperlinkEditorGuiCreator):
+
+    def __init__(self, parent, editor):
+        BaseEditor.__init__(self, parent, editor)
+        self.editor = editor
+        self.create_gui()
+        self._initialize_data()
+
+    def _initialize_data(self):
+        self._set_initial_text()
+        self._set_visible(False)
+
+    def _set_initial_text(self):
+        self.data.SetValue("")
 
     def get_data(self):
         if self.url_visible:
