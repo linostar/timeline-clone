@@ -22,8 +22,11 @@ import webbrowser
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class HyperlinkEditorGuiCreator(object):
-    
+class HyperlinkEditorGuiCreator(wx.Panel):
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+            
     def create_sizer(self):
         return wx.GridBagSizer(5, 5)
         
@@ -71,6 +74,7 @@ class HyperlinkEditor(BaseEditor, HyperlinkEditorGuiCreator):
 
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, parent, editor)
+        HyperlinkEditorGuiCreator.__init__(self, parent)
         self.editor = editor
         self.create_gui()
         self._initialize_data()

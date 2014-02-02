@@ -21,8 +21,11 @@ import wx
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class ProgressEditorGuiCreator(object):
-
+class ProgressEditorGuiCreator(wx.Panel):
+    
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+      
     def create_sizer(self):
         return wx.GridBagSizer(vgap=10, hgap=10)
         
@@ -47,6 +50,7 @@ class ProgressEditor(BaseEditor, ProgressEditorGuiCreator):
 
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, parent, editor)
+        ProgressEditorGuiCreator.__init__(self, parent)
         self.create_gui()
 
     def focus(self):

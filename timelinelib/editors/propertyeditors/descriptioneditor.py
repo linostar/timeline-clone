@@ -21,8 +21,11 @@ import wx
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class DescriptionEditorGuiCreator(object):
-
+class DescriptionEditorGuiCreator(wx.Panel):
+    
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+            
     def create_sizer(self):
         return wx.BoxSizer()
         
@@ -54,6 +57,7 @@ class DescriptionEditor(BaseEditor, DescriptionEditorGuiCreator):
 
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, parent, editor)
+        DescriptionEditorGuiCreator.__init__(self, parent)
         self.create_gui()
 
     def get_data(self):

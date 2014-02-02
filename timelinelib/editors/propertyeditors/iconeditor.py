@@ -23,8 +23,11 @@ import wx
 from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 
 
-class IconEditorGuiCreator(object):
+class IconEditorGuiCreator(wx.Panel):
     
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+                
     def create_sizer(self):
         return wx.GridBagSizer(5, 5)
         
@@ -65,6 +68,7 @@ class IconEditor(BaseEditor, IconEditorGuiCreator):
 
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, parent, editor)
+        IconEditorGuiCreator.__init__(self, parent)
         self.create_gui()
         self.bmp = None
 
