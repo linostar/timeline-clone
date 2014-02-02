@@ -78,7 +78,6 @@ class AlertEditor(BaseEditor, AlertEditorGuiCreator):
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, parent, editor)
         AlertEditorGuiCreator.__init__(self, parent)
-        self.editor = editor
         self.create_gui()
         self._initialize_data()
 

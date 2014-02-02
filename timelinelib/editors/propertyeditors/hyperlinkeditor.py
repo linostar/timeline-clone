@@ -75,7 +75,6 @@ class HyperlinkEditor(BaseEditor, HyperlinkEditorGuiCreator):
     def __init__(self, parent, editor):
         BaseEditor.__init__(self, parent, editor)
         HyperlinkEditorGuiCreator.__init__(self, parent)
-        self.editor = editor
         self.create_gui()
         self._initialize_data()
 
