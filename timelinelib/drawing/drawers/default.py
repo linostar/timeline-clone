@@ -460,7 +460,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 return
         self._draw_box(rect, event)
         self._draw_text(rect, event)
-        if event.has_data():
+        if event.has_balloon_data():
             self._draw_contents_indicator(event, rect)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)

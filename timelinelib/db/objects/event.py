@@ -114,6 +114,11 @@ class Event(object):
                 return True
         return False
 
+    def has_balloon_data(self):
+        """Return True if the event has associated data to be displayed in a balloon."""
+        return (self.get_data("description") is not None or
+                self.get_data("icon") is not None)
+
     def get_label(self):
         """Returns a unicode label describing the event."""
         return u"%s (%s)" % (self.text, self.time_period.get_label())
