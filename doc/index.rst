@@ -8,8 +8,22 @@ Timeline is `free software <http://www.gnu.org/philosophy/free-sw.html>`_,
 distributed under the `GNU General Public License version 3
 <http://www.gnu.org/copyleft/gpl.html>`_.
 
-.. image:: /images/screenshot.png
-    :alt: Screenshot
+.. raw:: html
+
+    <ul class="bxslider">
+      <li><img src="_static/gallery/screenshot.png" title="Main window."></li>
+      <li><img src="_static/gallery/event_editor.png" title="The event editor
+      dialog."></li>
+    </ul>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('.bxslider').bxSlider({
+            mod: "fade",
+            adaptiveHeight: true,
+            captions: true
+        });
+    });
+    </script>
 
 **Features:**
 
