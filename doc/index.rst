@@ -11,9 +11,8 @@ distributed under the `GNU General Public License version 3
 .. raw:: html
 
     <ul class="bxslider">
-      <li><img src="_static/gallery/screenshot.png" title="Main window."></li>
-      <li><img src="_static/gallery/event_editor.png" title="The event editor
-      dialog."></li>
+      <li><img src="_static/gallery/main_window.png" title="The main window when the the tutorial timeline is open."></li>
+      <li><img src="_static/gallery/event_editor.png" title="The event editor dialog."></li>
     </ul>
     <script type="text/javascript">
     $(document).ready(function(){
