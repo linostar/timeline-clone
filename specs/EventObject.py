@@ -52,6 +52,43 @@ class EventSpec(unittest.TestCase):
         self.event.update(self.now, self.now, "evt", ends_today=False)
         self.assertEqual(True, self.event.ends_today)
 
+    def test_event_has_a_label(self):
+        self.given_point_event()
+        self.assertEqual(u"evt (1 #Jan# 2000 10:01)", self.event.get_label())
+
+    def test_point_event_has_an_empty_duration_label(self):
+        self.given_point_event()
+        self.assertEqual(u"", self.event.get_duration_label())
+
+    def test_point_event_has_an_empty_duration_label(self):
+        self.given_point_event()
+        self.assertEqual(u"", self.event._get_duration_label())
+
+    def test_duration_label_for_period_events(self):
+        cases = ( (0,0,1, "1 #minute#"),
+                  (0,1,0, "1 #hour#"),
+                  (1,0,0, "1 #day#"),
+                  (0,1,1, "1 #hour# 1 #minute#"),
+                  (1,0,1, "1 #day# 1 #minute#"),
+                  (1,1,0, "1 #day# 1 #hour#"),
+                  (1,1,1, "1 #day# 1 #hour# 1 #minute#"),
+                  (0,0,2, "2 #minutes#"),
+                  (0,2,0, "2 #hours#"),
+                  (2,0,0, "2 #days#"),
+                  (0,2,2, "2 #hours# 2 #minutes#"),
+                  (2,0,2, "2 #days# 2 #minutes#"),
+                  (2,2,0, "2 #days# 2 #hours#"),
+                  (2,2,2, "2 #days# 2 #hours# 2 #minutes#"),
+                  (0,1,2, "1 #hour# 2 #minutes#"),
+                  (1,0,2, "1 #day# 2 #minutes#"),
+                  (1,2,0, "1 #day# 2 #hours#"),
+                  (1,2,2, "1 #day# 2 #hours# 2 #minutes#"),
+                 )
+        for case in cases:
+            days, hours, minutes, expected_label = case
+            self.given_period_event(days, hours, minutes)
+            self.assertEqual(expected_label, self.event._get_duration_label())
+
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
@@ -65,6 +102,13 @@ class EventSpec(unittest.TestCase):
     def given_point_event(self):
         self.event = Event(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
                            self.time("2000-01-01 10:01:01"), "evt")
+
+    def given_period_event(self, days=0, hours=0, minutes=0):
+        days += 1
+        hours += 1
+        minutes += 1
+        self.event = Event(self.db.get_time_type(), self.time("2000-01-01 01:01:01"),
+                           self.time("2000-01-0%d %d:%d:01" % (days, hours, minutes)), "period evt")
 
 
 class EventCosntructorSpec(unittest.TestCase):

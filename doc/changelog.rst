@@ -11,6 +11,7 @@ New features, enhancements:
 * Shortcuts can be user defined.
 * Events now have a progress attribute.
 * Find feature for categories with Ctrl+F when mouse in category tree.
+* Event duration is displayd in the status bar
 
 Bug fixes:
 
