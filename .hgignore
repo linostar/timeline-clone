@@ -18,3 +18,6 @@ Thumbs.db
 codemonitor.errors
 *.log
 doc/_build
+main.v12.suo
+main.sln
+main.pyproj
