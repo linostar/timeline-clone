@@ -240,7 +240,7 @@ class ShortcutController(object):
         self._set_menuitem_label(menu_item, new_shortcut)
 
     def _set_menuitem_label(self, menu_item, new_shortcut):
-        label = str(menu_item.GetItemLabel())
+        label = menu_item.GetItemLabel()
         prefix = label.split("\t")[0]
         if new_shortcut == "+":
             new_label = prefix
