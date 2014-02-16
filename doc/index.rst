@@ -13,6 +13,7 @@ distributed under the `GNU General Public License version 3
     <ul class="bxslider">
       <li><img src="_static/gallery/main_window.png" title="The main window when the the tutorial timeline is open."></li>
       <li><img src="_static/gallery/event_editor.png" title="The event editor dialog."></li>
+      <li><img src="_static/gallery/GNUmed-EMR_timeline.png" title="We use the Timeline component to display Electronic Medical Records in a chronological way."></li>
     </ul>
     <script type="text/javascript">
     $(document).ready(function(){
