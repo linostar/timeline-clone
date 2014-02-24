@@ -18,6 +18,7 @@ Bug fixes:
 * Exception when opening event editor from menu for a nunmeric timeline.
 * Incorrect display of decades BC, fixed.
 * Contents indicator is drawn even when no balloon data exists.
+* End date is set to now in validate function when ends-today is checked
 
 Version 1.1.0
 -------------
