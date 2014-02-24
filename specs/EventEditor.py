@@ -186,7 +186,12 @@ class describe_event_editor__ends_today_checkbox(EventEditorTestCase):
         self.when_editor_opened_with_event(event)
         self.view.set_ends_today.assert_called_with(sentinel.ENDS_TODYAY)
 
-
+    def test_no_endtime_check(self):
+        self.when_editor_opened_with_period("2 Jan 2010", "3 Jan 2010")
+        self.editor.ends_today = True
+        end_time = human_time_to_gregorian("1 Jan 2010")
+        self.assertTrue(end_time <= self.editor._validate_and_save_end(end_time))
+        
 class describe_event_editor__text_field(EventEditorTestCase):
 
     def test_has_no_value_by_default(self):
@@ -344,6 +349,7 @@ class describe_event_editor__validation(EventEditorTestCase):
     def test_start_must_be_less_then_end(self):
         self.when_editor_opened_with_period("1 Jan 2010", "1 Jan 2010")
         self.view.get_name.return_value = "updated_event"
+        self.view.get_ends_today.return_value = False
         self.simulate_user_enters_start_time("2 Jan 2011")
         self.simulate_user_enters_end_time("1 Jan 2011")
         self.simulate_user_clicks_ok()
@@ -354,6 +360,7 @@ class describe_event_editor__validation(EventEditorTestCase):
         self.when_editor_opened_with_time("1 Jan 2010")
         self.view.get_name.return_value = "a valid name" # why needed?
         self.view.get_locked.return_value = False # why needed?
+        self.view.get_ends_today.return_value = False
         self.simulate_user_enters_start_time("1 Jan 2000")
         self.simulate_user_enters_end_time("1 Jan 5000")
         self.simulate_user_clicks_ok()
