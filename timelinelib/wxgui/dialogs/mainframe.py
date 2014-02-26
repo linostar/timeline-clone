@@ -993,10 +993,11 @@ class AlertController(object):
     def _time_has_expired(self, time):
         return time <= self.time_type.now()
 
-
     def _display_alert_dialog(self, alert, event):
         text = self._format_alert_text(alert, event)
         dialog = TextDisplayDialog("Alert", text)
+        dialog.SetWindowStyleFlag(dialog.GetWindowStyleFlag() | wx.STAY_ON_TOP)
+        wx.Bell()
         dialog.ShowModal()
         dialog.Destroy()
 
