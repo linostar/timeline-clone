@@ -62,10 +62,10 @@ class EventEditorDialog(wx.Dialog):
 
     def _create_properties_box(self):
         properties_box = wx.BoxSizer(wx.VERTICAL)
-        self._create_propeties_controls(properties_box)
+        self._create_properties_controls(properties_box)
         return properties_box
 
-    def _create_propeties_controls(self, sizer):
+    def _create_properties_controls(self, sizer):
         groupbox = wx.StaticBox(self, wx.ID_ANY, _("Event Properties"))
         main_box_content = wx.StaticBoxSizer(groupbox, wx.VERTICAL)
         self._create_detail_content(main_box_content)
