@@ -14,6 +14,7 @@ distributed under the `GNU General Public License version 3
       <li><img src="_static/gallery/main_window.png" title="The main window when the the tutorial timeline is open."></li>
       <li><img src="_static/gallery/event_editor.png" title="The event editor dialog."></li>
       <li><img src="_static/gallery/GNUmed-EMR_timeline.png" title="We use the Timeline component to display Electronic Medical Records in a chronological way."></li>
+      <li><img src="_static/gallery/Screenshot.PNG" title="The Secretariat uses Timeline to organise its important documents visually, so that users can easily locate and open minutes, MOU’s, letters etc. This allows us to send out Timeline to multiple stakeholders who can access but not alter the database, and saves us time in responding to requests for information. It is an easy to use and robust piece of software. Highly recommended."></li>
     </ul>
     <script type="text/javascript">
     $(document).ready(function(){
