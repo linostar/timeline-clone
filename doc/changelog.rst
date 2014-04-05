@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Version 1.3.0
+-------------
+
+**Planned Release on 30 June 2014.**
+
+New features, enhancements:
+
+Bug fixes:
+
 Version 1.2.0
 -------------
 
