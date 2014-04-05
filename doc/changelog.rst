@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 1.2.1
+-------------
+
+**Released on 5 April 2014.**
+
+New features, enhancements:
+
+Bug fixes:
+
+* Encoding problems with navigation menus and shortcut configuration.
+
 Version 1.2.0
 -------------
 
