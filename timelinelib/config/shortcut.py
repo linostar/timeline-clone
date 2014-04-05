@@ -188,7 +188,7 @@ class ShortcutController(object):
     def _add_navigation_function(self, wxid, function_format):
         function = self._get_function_from_menuitem(wxid)
         modifier, shortcut_key = self._get_modifier_and_key_from_menuitem(wxid)
-        metadata = Metadata(wxid, "shortcut_navigate_%s" % function, function_format % function, modifier, shortcut_key)
+        metadata = Metadata(wxid, "shortcut_navigate_%s" % str(wxid), function_format % function, modifier, shortcut_key)
         METADATA.append(metadata)
         self._load_config_setting(metadata)
         
