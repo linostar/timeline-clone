@@ -8,6 +8,8 @@ Version 1.3.0
 
 New features, enhancements:
 
+* Added button to enlarge/reduce the size of the event editor dialog.
+
 Bug fixes:
 
 Version 1.2.3
