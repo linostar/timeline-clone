@@ -37,6 +37,9 @@ import timelinelib.time.timeline as timeline
 
 class GregorianTimeType(TimeType):
 
+    def __init__(self):
+        self.major_strip_is_decade = False
+        
     def __eq__(self, other):
         return isinstance(other, GregorianTimeType)
 

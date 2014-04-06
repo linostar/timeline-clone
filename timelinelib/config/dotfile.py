@@ -207,4 +207,4 @@ class Config(object):
             self.set_shortcut_key(cfgid, default)
             return default
     def set_shortcut_key(self, cfgid, value):
-        self.config_parser.set(DEFAULTSECT, cfgid, str(value))
+        self.config_parser.set(DEFAULTSECT, cfgid, value)

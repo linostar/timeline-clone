@@ -4,11 +4,33 @@ Changelog
 Version 1.3.0
 -------------
 
+**Planned Release on 30 June 2014.**
+
+New features, enhancements:
+
+Bug fixes:
+
+Version 1.2.3
+-------------
+
 **Released on 5 April 2014.**
 
 New features, enhancements:
 
 Bug fixes:
+
+* Shortcuts dissapear when navigation menu is created
+
+Version 1.2.2
+-------------
+
+**Released on 5 April 2014.**
+
+New features, enhancements:
+
+Bug fixes:
+
+* Uninitialized flag comes into play when opening an ics file
 
 Version 1.2.1
 -------------
