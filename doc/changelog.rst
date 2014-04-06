@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 1.2.3
+-------------
+
+**Released on 5 April 2014.**
+
+New features, enhancements:
+
+Bug fixes:
+
+* Shortcuts dissapear when navigation menu is created
+
 Version 1.2.2
 -------------
 

@@ -180,6 +180,8 @@ class ShortcutController(object):
                 wxid = mf.ID_NAVIGATE + pos
                 if not self.wxid_exists(wxid):
                     self._add_navigation_function(wxid, function_format)
+                else:
+                    self._set_menuitem_shortcut(wxid)
                 pos += 1
         except KeyError, ex:
             # We will end up here when there are no more navigation functions
@@ -242,7 +244,7 @@ class ShortcutController(object):
     def _set_menuitem_label(self, menu_item, new_shortcut):
         label = menu_item.GetItemLabel()
         prefix = label.split("\t")[0]
-        if new_shortcut == "+":
+        if new_shortcut in ("", "+"):
             new_label = prefix
         else:
             new_label = "%s\t%s" % (prefix, new_shortcut)
@@ -253,4 +255,11 @@ class ShortcutController(object):
             return "%s+%s" % (metadata.modifier, metadata.key)
         else:
             return metadata.key
-        
+
+    def _set_menuitem_shortcut(self, wxid):
+        menu_item = self.wxItems[wxid]
+        for metadata in METADATA:
+            if metadata.wxid == wxid:
+                shortcut_key = self._shortcut_from_metadata(metadata)
+                self._set_menuitem_label(menu_item, shortcut_key)
+                break
