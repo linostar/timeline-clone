@@ -8,9 +8,18 @@ Version 1.3.0
 
 New features, enhancements:
 
-* Added button to enlarge/reduce the size of the event editor dialog.
+Bug fixes:
+
+Version 1.2.4
+-------------
+
+**Released on 7 April 2014.**
+
+New features, enhancements:
 
 Bug fixes:
+
+* Exception in event editors when "Add more events after this one" is checked
 
 Version 1.2.3
 -------------

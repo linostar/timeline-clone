@@ -67,4 +67,4 @@ class DescriptionEditor(BaseEditor, DescriptionEditorGuiCreator):
         return None
 
     def clear_data(self):
-        self.SetValue("")
+        self.data.SetValue("")
