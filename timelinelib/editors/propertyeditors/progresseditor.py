@@ -59,3 +59,6 @@ class ProgressEditor(BaseEditor, ProgressEditorGuiCreator):
         
     def _select_all(self):
         self.data.SetSelection(0, -1)
+
+    def clear_data(self):
+        self.data.SetValue(0)

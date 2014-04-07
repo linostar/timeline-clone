@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 1.2.4
+-------------
+
+**Released on 7 April 2014.**
+
+New features, enhancements:
+
+Bug fixes:
+
+* Exception in event editors when "Add more events after this one" is checked
+
 Version 1.2.3
 -------------
 
