@@ -1,0 +1,16 @@
+# Timeline menu
+
+# Open a well known Timeline
+Select Menu(Help, "Getting started tutorial") 
+
+Select Menu(Timeline, "Create Event...")
+Enter Text(5, "Event label") 
+Enter Text(6, "Event decription") 
+Enter Text(11, "56") 
+Click Button("Add more events after this one")
+Click Button(OK)
+Click Button(Enlarge)
+Click Button(Enlarge)
+Click Button(Avbryt)
+
+
