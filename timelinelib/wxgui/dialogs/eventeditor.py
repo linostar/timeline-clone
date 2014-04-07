@@ -43,7 +43,7 @@ class EventEditorDialog(wx.Dialog):
 
     def __init__(self, parent, config, title, timeline,
                  start=None, end=None, event=None):
-        self.TXT_ENLARGE = _("&Enalrge")
+        self.TXT_ENLARGE = _("&Enlarge")
         self.TXT_REDUCE = _("&Reduce")
         wx.Dialog.__init__(self, parent, title=title, name="event_editor",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
