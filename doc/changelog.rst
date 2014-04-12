@@ -9,6 +9,7 @@ Version 1.3.0
 New features, enhancements:
 
 * Event description included in search target.
+* Search result can now be presented and selected in a listbox
 
 Bug fixes:
 
