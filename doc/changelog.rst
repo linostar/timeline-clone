@@ -8,6 +8,8 @@ Version 1.3.0
 
 New features, enhancements:
 
+* Event description included in search target.
+
 Bug fixes:
 
 Version 1.2.4
