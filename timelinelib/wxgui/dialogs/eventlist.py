@@ -35,8 +35,8 @@ class EventListDialog(wx.Dialog):
         
     def _create_gui(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self._create_listbox(), flag=wx.EXPAND|wx.ALL, proportion=1)
-        sizer.Add(self._create_buttons(), flag=wx.EXPAND|wx.LEFT|wx.RIGHT, border=BORDER)
+        sizer.Add(self._create_listbox(), flag=wx.ALL|wx.EXPAND, border=BORDER, proportion=1)
+        sizer.Add(self._create_buttons(), flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(sizer)
 
     def _create_listbox(self):
