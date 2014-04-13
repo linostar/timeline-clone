@@ -7,7 +7,7 @@ Select Menu(Timeline, "Create Event...")
 Click Button(Avbryt)
 
 # Make sure an event is selected with this command
-click mouse(605,484)
+click mouse(605,464)
 
 Select Menu(Timeline, "Edit Selected Event...") 
 Click Button(Avbryt)

@@ -2,4 +2,5 @@ Select Menu(Help, "Getting started tutorial")
 Select Menu(File, "Öppna") 
 Enter text(1, "abc")
 Click Button(Öppna)
+Click Button(Open)
 

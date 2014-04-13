@@ -2,6 +2,7 @@ Select Menu(Help, "Getting started tutorial")
 Select Menu(File, "Import timeline...") 
 Enter text(1, "abc")
 Click Button(Öppna)
+Click Button(Open)
 
 # Can't import to tutorial
 Click Button(OK)
@@ -10,7 +11,9 @@ Click Button(OK)
 Select Menu(File, "Öppna") 
 Enter text(1, "abc")
 Click Button(Öppna)
+Click Button(Open)
 
 Select Menu(File, "Import timeline...") 
 Enter text(1, "abc")
 Click Button(Öppna)
+Click Button(Open)
