@@ -30,6 +30,9 @@ class EventListDialog(wx.Dialog):
         self._create_gui()
         self._bind()
 
+    def get_selected_index(self):
+        return self.lb_eventlist.GetSelection()
+        
     def _create_gui(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self._create_listbox(), flag=wx.EXPAND|wx.ALL, proportion=1)
@@ -38,7 +41,6 @@ class EventListDialog(wx.Dialog):
 
     def _create_listbox(self):
         self.lb_eventlist = wx.ListBox(self, wx.ID_ANY, choices=self.event_list)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self._btn_ok_on_click, self.lb_eventlist)
         return self.lb_eventlist
 
     def _create_buttons(self):
@@ -47,15 +49,14 @@ class EventListDialog(wx.Dialog):
     def _bind(self):
         self.Bind(wx.EVT_BUTTON, self._btn_ok_on_click, id=wx.ID_OK)
         self.Bind(wx.EVT_SIZE, self._on_size, self)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self._btn_ok_on_click, self.lb_eventlist)
+        self.Bind(wx.EVT_CLOSE, self._window_on_close)
 
     def _btn_ok_on_click(self, evt):
-        self.close()
+        self.EndModal(wx.ID_OK)
 
     def _on_size(self, evt):
         self.Layout()
         
-    def get_selected_index(self):
-        return self.lb_eventlist.GetSelection()
-        
-    def close(self):
-        self.EndModal(wx.ID_OK)
+    def _window_on_close(self, e):
+        self.EndModal(wx.ID_CANCEL)
