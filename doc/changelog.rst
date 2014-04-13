@@ -10,6 +10,7 @@ New features, enhancements:
 
 * Event description included in search target.
 * Search result can now be presented and selected in a listbox
+* CategoriesEditor is now resizeable
 
 Bug fixes:
 

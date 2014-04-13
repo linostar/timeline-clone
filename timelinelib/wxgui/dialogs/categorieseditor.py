@@ -35,10 +35,10 @@ class CategoriesEditor(wx.Dialog):
     """
 
     def __init__(self, parent, timeline):
-        wx.Dialog.__init__(self, parent, title=_("Edit Categories"))
+        wx.Dialog.__init__(self, parent, title=_("Edit Categories"), name="categories_editor", style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.db = timeline
-        self.cat_tree = self._create_gui()
-        self._fill_controls_with_data()
+        self._create_gui()
+        self._bind()
 
     def ok_to_edit(self):
         """
@@ -56,16 +56,16 @@ class CategoriesEditor(wx.Dialog):
         when we close the CategoriesEditor, so we do nothing.
         """
     
-    def _fill_controls_with_data(self):
-        self.cat_tree.initialize_from_db(self.db)
-
     def _create_gui(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
-        cat_tree = self._create_cat_tree(vbox)
+        self.cat_tree = self._create_cat_tree(vbox)
         self._create_buttons(vbox)
         self.SetSizerAndFit(vbox)
+        self.cat_tree.initialize_from_db(self.db)
+
+    def _bind(self):
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
-        return cat_tree
+        self.Bind(wx.EVT_SIZE, self._on_size, self)
 
     def _window_on_close(self, e):
         self.cat_tree.destroy()
@@ -76,7 +76,7 @@ class CategoriesEditor(wx.Dialog):
         cat_tree.SetMinSize((-1, 200))
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self._cat_tree_on_sel_changed,
                   cat_tree)
-        vbox.Add(cat_tree, flag=wx.ALL|wx.EXPAND, border=BORDER)
+        vbox.Add(cat_tree, flag=wx.ALL|wx.EXPAND, border=BORDER, proportion=1)
         return cat_tree
 
     def _cat_tree_on_sel_changed(self, e):
@@ -134,6 +134,9 @@ class CategoriesEditor(wx.Dialog):
         button_box.Add(btn, flag=wx.LEFT, border=BORDER)
         return btn
 
+    def _on_size(self, evt):
+        self.Layout()
+        
     def _btn_close_on_click(self, e):
         self.Close()
 
