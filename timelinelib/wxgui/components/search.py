@@ -143,7 +143,7 @@ class SearchBarController(object):
 
     def list(self):
         event_list = [event.get_label() for event in self.result]
-        dlg = EventListDialog("Found Events", event_list)
+        dlg = EventListDialog(self.view, event_list)
         if dlg.ShowModal() == wx.ID_OK:
             self.result_index = dlg.get_selected_index()
             self.navigate_to_match()

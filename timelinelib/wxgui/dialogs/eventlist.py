@@ -23,8 +23,8 @@ from timelinelib.wxgui.utils import BORDER
 
 class EventListDialog(wx.Dialog):
 
-    def __init__(self, title, event_list, parent=None):
-        wx.Dialog.__init__(self, parent, title=title, name="event_list",
+    def __init__(self, parent, event_list):
+        wx.Dialog.__init__(self, parent, title=_("Found Events"), name="event_list",
                            style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.event_list = event_list
         self._create_gui()
