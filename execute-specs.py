@@ -40,6 +40,8 @@ def setup_paths():
     root_dir = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, os.path.join(root_dir, "libs", "dev", "mock-0.7.2"))
     sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "icalendar-3.2"))
+    sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "markdown-2.0.3"))
+    sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "pysvg-0.2.1"))
     sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "pytz-2012j"))
 
 
@@ -95,19 +97,37 @@ def load_test_cases_from_module_name(suite, module_name, include_test_function):
 
 
 def add_doctests(suite, include_test_function):
-    for module in [
-                    "timelinelib.xml.parser",
-                    "timelinelib.utils"
-                  ]:
+    root_dir = os.path.abspath(os.path.dirname(__file__))
+    timelinelib_dir = os.path.join(root_dir, "timelinelib")
+    for module in find_modules(timelinelib_dir):
         load_doc_test_from_module_name(suite, module, include_test_function)
+
+
+def find_modules(path):
+    module_names = []
+    files = os.listdir(path)
+    if "__init__.py" in files:
+        module_names.append("%s" % os.path.basename(path))
+        for file in files:
+            if file.endswith(".py") and file != "__init__.py":
+                module_names.append("%s.%s" % (os.path.basename(path), file[:-3]))
+            if os.path.isdir(os.path.join(path, file)):
+                for x in find_modules(os.path.join(path, file)):
+                    module_names.append("%s.%s" % (os.path.basename(path), x))
+    return module_names
 
 
 def load_doc_test_from_module_name(suite, module_name, include_test_function):
     __import__(module_name)
     module = sys.modules[module_name]
-    module_suite = doctest.DocTestSuite(module)
-    filtered = filter_suite(module_suite, include_test_function)
-    suite.addTest(filtered)
+    try:
+        module_suite = doctest.DocTestSuite(module)
+    except ValueError:
+        # No tests found
+        pass
+    else:
+        filtered = filter_suite(module_suite, include_test_function)
+        suite.addTest(filtered)
 
 
 def filter_suite(test, include_test_function):
