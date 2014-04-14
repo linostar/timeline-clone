@@ -16,11 +16,10 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
-
 import unittest
 
 from mock import Mock
+import wx
 
 from timelinelib.config.shortcut import ShortcutController
 from timelinelib.config.dotfile import Config
@@ -38,7 +37,7 @@ class ShortcutControllerSpec(unittest.TestCase):
         list = self.controller.get_functions()
         self.assertTrue(len(list) > 0)
         self.assertEqual(NEW_FUNCTION, list[0])
-        
+
     def test_get_function_returns_function(self):
         function = self.controller.get_function("Ctrl+N")
         self.assertEqual(NEW_FUNCTION, function)
@@ -83,9 +82,9 @@ class ShortcutControllerSpec(unittest.TestCase):
         self.controller.edit(SIDEBAR_FUNCTION, "Ctrl+X")
         function = self.controller.get_function("Ctrl+X")
         self.assertEqual(SIDEBAR_FUNCTION, function)
-        
+
     def setUp(self):
+        self.app = wx.App() # a stored app is needed to create a menu item
         config = Mock(Config)
         menuitem = wx.MenuItem(wx.Menu("title"), -1, "label")
         self.controller = ShortcutController(config, {mf.ID_SIDEBAR:menuitem,})
-
