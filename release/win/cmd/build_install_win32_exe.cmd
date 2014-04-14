@@ -83,5 +83,5 @@ rem pause
 echo ***. Compile Inno Std script
 pushd  ..\inno
 call "%ProgramFiles%\Inno Setup 5\iscc.exe" timelineWin32_tmp.iss
-rem pause
+pause
 
