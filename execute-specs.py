@@ -46,10 +46,8 @@ def setup_paths():
 
 
 def install_gettext_in_builtin_namespace():
-    def _(message):
-        return "#%s#" % message
-    import __builtin__
-    __builtin__.__dict__["_"] = _
+    import specs.utils
+    specs.utils.install_gettext_in_builtin_namespace()
 
 
 def disable_monitoring():
