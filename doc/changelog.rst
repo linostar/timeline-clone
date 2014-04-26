@@ -17,6 +17,7 @@ Bug fixes:
 * Scrolling with PgUp/PgDn does not crash when it would end up on non-existing
   Feb 29 (`bug report
   <http://sourceforge.net/p/thetimelineproj/mailman/message/32218798/>`_)
+* Prevent PyAssertionError when opening category editor (wxPython 3.0.0.0)
 
 Version 1.2.4
 -------------
