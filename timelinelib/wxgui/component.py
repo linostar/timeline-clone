@@ -70,6 +70,9 @@ class DummyMainFrame(object):
     def edit_ends(self):
         pass
 
+    def ok_to_edit(self):
+        return False
+
 
 class TimelineComponent(TimelinePanel):
 
@@ -85,8 +88,11 @@ class TimelineComponent(TimelinePanel):
     def open_timeline(self, path):
         timeline = db_open(path)
         self.drawing_area.set_timeline(timeline)
-        self.sidebar.cattree.initialize_from_timeline_view(self.drawing_area)
+        self.sidebar.category_tree.set_timeline_view(
+            self.drawing_area.get_timeline(),
+            self.drawing_area.get_view_properties()
+        )
 
     def clear_timeline(self):
         self.drawing_area.set_timeline(None)
-        self.sidebar.cattree.initialize_from_timeline_view(self.drawing_area)
+        self.sidebar.category_tree.set_no_timeline_view()
