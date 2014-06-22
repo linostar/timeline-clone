@@ -1,0 +1,20 @@
+# View menu
+
+Select Menu(Hjälp, "Getting started tutorial") 
+
+Select Menu(Visa, Sidopanel) 
+Select Menu(Visa, Sidopanel) 
+
+Select Menu(Visa, Teckenförklaring) 
+Select Menu(Visa, Teckenförklaring) 
+
+Select Menu(Visa, "Ballonger vid hoovring") 
+Select Menu(Visa, "Ballonger vid hoovring") 
+
+Select Menu(Visa, "Zoom In")
+ 
+Select Menu(Visa, "Zoom Out") 
+
+Select Menu(Visa, "Vertical Zoom In")
+ 
+Select Menu(Visa, "Vertical Zoom Out") 

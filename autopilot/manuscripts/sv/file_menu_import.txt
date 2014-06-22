@@ -1,0 +1,16 @@
+Select Menu(Hjälp, "Getting started tutorial") 
+Select Menu(Arkiv, "Importera Timeline...") 
+Enter text(1, "abc")
+Click Button(Open)
+
+# Can't import to tutorial
+Click Button(OK)
+
+# Try again to import abc to abc
+Select Menu(Arkiv, "Öppna") 
+Enter text(1, "abc")
+Click Button(Open)
+
+Select Menu(Arkiv, "Importera Timeline...") 
+Enter text(1, "abc")
+Click Button(Open)

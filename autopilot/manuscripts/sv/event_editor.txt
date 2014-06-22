@@ -1,0 +1,16 @@
+# Timeline menu
+
+# Open a well known Timeline
+Select Menu(Hjälp, "Getting started tutorial") 
+
+Select Menu(Tidslinje, "Skapa Händelse...")
+Enter Text(5, "Event label") 
+Enter Text(6, "Event decription") 
+Enter Text(11, "56") 
+Click Button("Lägg till fler händelser efter denna")
+Click Button(OK)
+Click Button(Enlarge)
+Click Button(Enlarge)
+Click Button(Avbryt)
+
+

@@ -1,0 +1,30 @@
+# File menu
+
+Select Menu(Hjälp, "Getting started tutorial") 
+
+Select Menu(Arkiv, Ny, "Timelinefil...") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, Ny, "Numeric Timeline...") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, Ny, "Timeline från filkataloger...") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, "Öppna") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, "Spara som") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, "Importera Timeline...") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, "Exportera vyn till en Bild...") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, "Exportera hela Timelinen till bilder...") 
+Click Button(Cancel)
+
+Select Menu(Arkiv, "Exportera som SVG") 
+Click Button(Cancel)
