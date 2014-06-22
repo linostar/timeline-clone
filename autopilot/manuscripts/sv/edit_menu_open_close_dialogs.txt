@@ -1,0 +1,13 @@
+# Edit menu
+
+Select Menu(Hjälp, "Getting started tutorial") 
+
+Select Menu(Redigera, Sök) 
+Click Button(Stäng)
+
+Select Menu(Redigera, Inställningar) 
+Click Button(Stäng)
+
+Select Menu(Redigera, Shortcuts...) 
+Click Button(Stäng)
+
