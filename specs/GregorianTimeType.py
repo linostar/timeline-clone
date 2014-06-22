@@ -592,6 +592,10 @@ class GregorianTimeNavigationFunctionsSpec(unittest.TestCase):
         self.when_navigating(fit_century_fn, "1 Jan 9989", "1 Jan 9990")
         self.then_period_becomes("1 Jan 9890", "1 Jan 9990")
 
+    def test_fit_first_millennium_should_display_the_millennium_that_is_in_the_center(self):
+        self.when_navigating(fit_millennium_fn, "1 Jan -4712", "1 Feb -4712")
+        self.then_period_becomes("1 Jan -4712", "1 Jan -3712")
+
     def test_fit_millennium_should_display_the_millennium_that_is_in_the_center(self):
         self.when_navigating(fit_millennium_fn, "1 Jan 2010", "2 Jan 2010")
         self.then_period_becomes("1 Jan 2000", "1 Jan 3000")

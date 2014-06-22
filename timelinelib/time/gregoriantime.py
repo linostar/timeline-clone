@@ -452,14 +452,14 @@ def fit_millennium_fn(main_frame, current_period, navigation_fn):
     if mean.year > get_millenium_max_year():
         year = get_millenium_max_year()
     else:
-        year = max(get_min_year(), int(mean.year/1000)*1000)
+        year = max(get_min_year_containing_jan_1(), int(mean.year/1000)*1000)
     start = gregorian.from_date(year, 1, 1).to_time()
     end = gregorian.from_date(year + 1000, 1, 1).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
 
 
-def get_min_year():
-    return gregorian.from_time(GregorianTimeType().get_min_time()[0]).year
+def get_min_year_containing_jan_1():
+    return gregorian.from_time(GregorianTimeType().get_min_time()[0]).year + 1
 
 
 def get_millenium_max_year():
@@ -475,7 +475,7 @@ def fit_century_fn(main_frame, current_period, navigation_fn):
     if mean.year > get_century_max_year():
         year = get_century_max_year()
     else:
-        year = max(get_min_year(), int(mean.year/100)*100)
+        year = max(get_min_year_containing_jan_1(), int(mean.year/100)*100)
     start = gregorian.from_date(year, 1, 1).to_time()
     end = gregorian.from_date(year + 100, 1, 1).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
