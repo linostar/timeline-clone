@@ -48,6 +48,8 @@ Source: "C:\Python27\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll"; DestD
 ; You must check to see if there are any more po-files to add
 ;
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Source: "dist\po\el\LC_MESSAGES\*"; DestDir: "{app}\po\el\LC_MESSAGES"; Flags: ignoreversion
+Source: "dist\po\eu\LC_MESSAGES\*"; DestDir: "{app}\po\eu\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\ca\LC_MESSAGES\*"; DestDir: "{app}\po\ca\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\de\LC_MESSAGES\*"; DestDir: "{app}\po\de\LC_MESSAGES"; Flags: ignoreversion
 Source: "dist\po\es\LC_MESSAGES\*"; DestDir: "{app}\po\es\LC_MESSAGES"; Flags: ignoreversion
