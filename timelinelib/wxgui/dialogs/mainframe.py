@@ -262,7 +262,14 @@ class GuiCreator(object):
         edit_menu = wx.Menu()
         self._create_menu_items(edit_menu, items)
         main_menu_bar.Append(edit_menu, _("&Edit"))
-        
+        self._add_edit_menu_items_to_controller(edit_menu)
+
+    def _add_edit_menu_items_to_controller(self, edit_menu):
+        find_item = edit_menu.FindItemById(ID_FIND)
+        find_categories_item = edit_menu.FindItemById(ID_FIND_CATEGORIES)
+        self.menu_controller.add_menu_requiring_timeline(find_item)
+        self.menu_controller.add_menu_requiring_timeline(find_categories_item)
+                
     def _create_view_menu(self, main_menu_bar):
         def sidebar(evt):
             self.config.set_show_sidebar(evt.IsChecked())

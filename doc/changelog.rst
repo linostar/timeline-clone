@@ -19,6 +19,7 @@ Bug fixes:
   <http://sourceforge.net/p/thetimelineproj/mailman/message/32218798/>`_)
 * Prevent PyAssertionError when opening category editor (wxPython 3.0.0.0)
 * Fit millennium does not crash if timeline is far to the left
+* Some Edit menu items are disabled when there is no open Timeline
 
 Version 1.2.4
 -------------
