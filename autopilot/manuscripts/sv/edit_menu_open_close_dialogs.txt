@@ -3,6 +3,8 @@
 Select Menu(Hjälp, "Getting started tutorial") 
 
 Select Menu(Redigera, Sök) 
+
+Select Menu(Redigera, "Find Categories") 
 Click Button(Stäng)
 
 Select Menu(Redigera, Inställningar) 
