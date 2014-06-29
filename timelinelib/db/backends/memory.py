@@ -168,8 +168,6 @@ class MemoryDB(Observable):
             event.set_id(None)
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
-        else:
-            raise TimelineIOError("Event not in db.")
 
     def get_categories(self):
         return list(self.categories)
