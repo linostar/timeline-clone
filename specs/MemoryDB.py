@@ -323,11 +323,8 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(self.db._save.call_count, 4)
 
     def testDeleteNonExistingEvent(self):
-        self.assertRaises(TimelineIOError, self.db.delete_event, self.e1)
-        self.assertRaises(TimelineIOError, self.db.delete_event, 5)
         other_db = MemoryDB()
         other_db.save_event(self.e2)
-        self.assertRaises(TimelineIOError, self.db.delete_event, self.c2)
         # Assert virtual _save method not called
         self.assertEqual(self.db._save.call_count, 0)
 
