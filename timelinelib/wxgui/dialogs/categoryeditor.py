@@ -52,12 +52,12 @@ class WxCategoryEdtiorDialog(wx.Dialog):
         self.txt_name.SetValue(new_name)
 
     def get_color(self):
-        # Convert wx.Color to (r, g, b) tuple
+        # Convert wx.Colour to (r, g, b) tuple
         (r, g, b) = self.colorpicker.GetValue()
         return (r, g, b)
 
     def get_font_color(self):
-        # Convert wx.Color to (r, g, b) tuple
+        # Convert wx.Colour to (r, g, b) tuple
         (r, g, b) = self.fontcolorpicker.GetValue()
         return (r, g, b)
 

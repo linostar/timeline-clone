@@ -262,8 +262,8 @@ class CustomCategoryTreeRenderer(object):
         self._render_color_box(item)
 
     def _render_arrow(self, item):
-        self.dc.SetBrush(wx.Brush(wx.Color(100, 100, 100), wx.SOLID))
-        self.dc.SetPen(wx.Pen(wx.Color(100, 100, 100), 0, wx.SOLID))
+        self.dc.SetBrush(wx.Brush(wx.Colour(100, 100, 100), wx.SOLID))
+        self.dc.SetPen(wx.Pen(wx.Colour(100, 100, 100), 0, wx.SOLID))
         offset = self.TRIANGLE_SIZE/2
         center_x = item["x"] + 2*self.INNER_PADDING + offset
         center_y = item["y"] + self.model.ITEM_HEIGHT_PX/2 - 1
