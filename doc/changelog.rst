@@ -10,6 +10,8 @@ New features, enhancements:
 
 Bug fixes:
 
+* Fixed following error when using wxPython >= 2.9: AttributeError: 'module' object has no attribute 'Color'
+
 Version 1.3.0
 -------------
 
