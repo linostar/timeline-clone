@@ -196,13 +196,13 @@ class DrawingArea(object):
         If the mouse hits an event and the timeline is not readonly, the
         context menu for that event is displayed.
         """
+        self.context_menu_event = self.drawing_algorithm.event_at(x, y, alt_down)
+        if self.context_menu_event is None:
+            self.display_timeline_context_menu()
         if self.timeline.is_read_only():
             return
-        self.context_menu_event = self.drawing_algorithm.event_at(x, y, alt_down)
         if self.context_menu_event is not None:
             self.display_event_context_menu()
-        else:
-            self.display_timeline_context_menu()
             
     def display_event_context_menu(self):
         self.view_properties.set_selected(self.context_menu_event, True)
