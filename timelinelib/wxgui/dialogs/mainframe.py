@@ -424,7 +424,7 @@ class GuiCreator(object):
         self._create_menu_items(navigate_menu, items)
         self._add_navigate_menu_items_to_controller(navigate_menu)
         main_menu_bar.Append(navigate_menu, _("&Navigate"))
-        self.mnu_navigate = navigate_menu
+        self.navigate_menu = navigate_menu
 
     def _add_navigate_menu_items_to_controller(self, menu):
         self._add_to_controller_requiring_timeline(menu, ID_FIND_FIRST)
@@ -602,7 +602,7 @@ class MainFrameApiUsedByController(object):
 
     def _clear_navigation_menu_items(self):
         while self._navigation_menu_items:
-            self.mnu_navigate.RemoveItem(self._navigation_menu_items.pop())
+            self.navigate_menu.RemoveItem(self._navigation_menu_items.pop())
         self._navigation_functions_by_menu_item_id.clear()
 
     def _create_navigation_menu_items(self):
@@ -611,10 +611,10 @@ class MainFrameApiUsedByController(object):
         id_offset = self.get_navigation_id_offset()
         for (itemstr, fn) in item_data:
             if itemstr == "SEP":
-                item = self.mnu_navigate.InsertSeparator(pos)
+                item = self.navigate_menu.InsertSeparator(pos)
             else:
                 wxid = ID_NAVIGATE + id_offset
-                item = self.mnu_navigate.Insert(pos, wxid, itemstr)
+                item = self.navigate_menu.Insert(pos, wxid, itemstr)
                 self._navigation_functions_by_menu_item_id[item.GetId()] = fn
                 self.Bind(wx.EVT_MENU, self._navigation_menu_item_on_click, item)
                 self.shortcut_items[wxid] = item
