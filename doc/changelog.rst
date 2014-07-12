@@ -8,6 +8,8 @@ Version 1.4.0
 
 New features, enhancements:
 
+* Added a context menu to Timeline.
+
 Bug fixes:
 
 * Fixed following error when using wxPython >= 2.9: AttributeError: 'module' object has no attribute 'Color'
