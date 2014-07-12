@@ -484,6 +484,25 @@ class GuiCreator(object):
                 self.Bind(wx.EVT_MENU, features, mi)
         help_menu.InsertMenu(5, wx.ID_ANY, "&Give Feedback on Features", menu)
 
+    def display_timeline_context_menu(self):
+        try:
+            menu = self.context_menu
+        except:
+            self.context_menu = self._create_timeline_context_menu()
+            menu = self.context_menu
+        self.PopupMenu(menu)
+
+    def _create_timeline_context_menu(self):
+            menu = wx.Menu()
+            menu_bar = self.file_menu.GetMenuBar()
+            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(0), self.file_menu)
+            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(1), self.edit_menu)
+            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(2), self.view_menu)
+            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(3), self.timeline_menu)
+            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(4), self.navigate_menu) 
+            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(5), self.help_menu)
+            return menu 
+        
     def _create_menu_items(self, menu, items):
         menu_items = []
         for item in items:

@@ -199,8 +199,12 @@ class DrawingArea(object):
         if self.timeline.is_read_only():
             return
         self.context_menu_event = self.drawing_algorithm.event_at(x, y, alt_down)
-        if self.context_menu_event is None:
-            return
+        if self.context_menu_event is not None:
+            self.display_event_context_menu()
+        else:
+            self.display_timeline_context_menu()
+            
+    def display_event_context_menu(self):
         self.view_properties.set_selected(self.context_menu_event, True)
         menu_definitions = [
             (_("Edit"), self._context_menu_on_edit_event),
@@ -220,6 +224,9 @@ class DrawingArea(object):
             menu.AppendItem(menu_item)
         self.view.PopupMenu(menu)
         menu.Destroy()
+
+    def display_timeline_context_menu(self):
+        self.view.display_timeline_context_menu()
 
     def _one_and_only_one_event_selected(self):
         selected_event_ids = self.view_properties.get_selected_event_ids()

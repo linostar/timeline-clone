@@ -243,3 +243,7 @@ class DrawingAreaPanel(wx.Panel):
 
     def _on_key_up(self, evt):
         self.controller.key_up(evt.GetKeyCode())
+
+    def display_timeline_context_menu(self):
+        self.main_frame.display_timeline_context_menu()
+
