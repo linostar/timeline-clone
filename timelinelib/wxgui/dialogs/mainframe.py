@@ -153,6 +153,7 @@ class GuiCreator(object):
         file_menu.AppendSeparator()
         self._create_file_exit_menu_item(file_menu)
         main_menu_bar.Append(file_menu, _("&File"))
+        self.file_menu = file_menu
 
     def _create_file_new_menu(self, file_menu):
         file_new_menu = wx.Menu()
@@ -263,6 +264,7 @@ class GuiCreator(object):
         self._create_menu_items(edit_menu, items)
         main_menu_bar.Append(edit_menu, _("&Edit"))
         self._add_edit_menu_items_to_controller(edit_menu)
+        self.edit_menu = edit_menu
 
     def _add_edit_menu_items_to_controller(self, edit_menu):
         find_item = edit_menu.FindItemById(ID_FIND)
@@ -307,6 +309,7 @@ class GuiCreator(object):
         self._check_view_menu_items(view_menu)
         self._add_view_menu_items_to_controller(view_menu)
         main_menu_bar.Append(view_menu, _("&View"))
+        self.view_menu = view_menu
 
     def _check_view_menu_items(self, view_menu):
         sidebar_item = view_menu.FindItemById(ID_SIDEBAR)
@@ -466,6 +469,7 @@ class GuiCreator(object):
         self._create_menu_items(help_menu, items)
         self._create_menu_features_feedback(help_menu)
         main_menu_bar.Append(help_menu, _("&Help"))
+        self.help_menu = help_menu
 
     def _create_menu_features_feedback(self, help_menu):
         def features(e):
