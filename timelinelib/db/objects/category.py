@@ -58,4 +58,4 @@ def clone_categories_list(categories):
     for cat in cloned_list:
         if cat.parent is not None:
             cat.parent = clones[cat.parent]
-    return cloned_list
+    return cloned_list, clones

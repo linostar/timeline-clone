@@ -92,7 +92,7 @@ class cloning(TestBase):
         self.assertEqual(cloned_category.parent, self.category_list[0].parent)
 
     def test_cloning_list_of_categories_keeps_track_of_parents(self):
-        cloned_list = clone_categories_list(self.category_list)
+        cloned_list, _ = clone_categories_list(self.category_list)
         self.assertEquals(len(cloned_list), len(self.category_list))
         for i in range(len(self.category_list)):
             self.assertFalse(self.category_list[i] == cloned_list[i])
