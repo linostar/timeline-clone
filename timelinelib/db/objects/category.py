@@ -40,6 +40,9 @@ class Category(object):
     def set_id(self, id):
         self.id = id
 
+    def clone(self):
+        return Category(self.name, self.color, self.font_color, self.visible, self.parent)
+    
 
 def sort_categories(categories):
     sorted_categories = list(categories)

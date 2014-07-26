@@ -49,6 +49,15 @@ class queries(unittest.TestCase):
         self.assertEqual(set(self.categories.get_parents_for_checked_childs()),
                          set([self.work, self.report]))
 
+    def test_cloning_returns_new_object(self):
+        cloned_category = self.category_list[0].clone()
+        self.assertTrue(self.category_list[0] != cloned_category)
+        self.assertEqual(cloned_category.name, self.category_list[0].name)
+        self.assertEqual(cloned_category.color, self.category_list[0].color)
+        self.assertEqual(cloned_category.font_color, self.category_list[0].font_color)
+        self.assertEqual(cloned_category.visible, self.category_list[0].visible)
+        self.assertEqual(cloned_category.parent, self.category_list[0].parent)
+
     def setUp(self):
         self.category_list = []
         self.view_properties = Mock(ViewProperties)
