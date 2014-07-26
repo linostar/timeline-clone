@@ -48,3 +48,14 @@ def sort_categories(categories):
     sorted_categories = list(categories)
     sorted_categories.sort(cmp, lambda x: x.name.lower())
     return sorted_categories
+
+
+def clone_categories_list(categories):
+    clones = {}
+    for cat in categories:
+        clones[cat] = cat.clone()
+    cloned_list = clones.values()
+    for cat in cloned_list:
+        if cat.parent is not None:
+            cat.parent = clones[cat.parent]
+    return cloned_list

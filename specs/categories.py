@@ -24,6 +24,7 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.repositories.categories import CategoriesFacade
+from timelinelib.db.objects.category import clone_categories_list
 
 
 class TestBase(unittest.TestCase):
@@ -90,6 +91,17 @@ class cloning(TestBase):
         self.assertEqual(cloned_category.visible, self.category_list[0].visible)
         self.assertEqual(cloned_category.parent, self.category_list[0].parent)
 
+    def test_cloning_list_of_categories_keeps_track_of_parents(self):
+        cloned_list = clone_categories_list(self.category_list)
+        self.assertEquals(len(cloned_list), len(self.category_list))
+        for i in range(len(self.category_list)):
+            self.assertFalse(self.category_list[i] == cloned_list[i])
+        for cat in cloned_list:
+            if cat.name == "Football":
+                self.assertTrue(cat.parent != self.play)
+                self.assertTrue(cat.parent is not None)
+                self.assertTrue(cat.parent not in self.category_list)
+        
     def setUp(self):
         self.category_list = []
         self._create_example_tree()
