@@ -55,3 +55,16 @@ class Subevent(Event):
     def register_container(self, container):
         self.container = container
         self.container_id = container.cid()
+
+    def clone(self):
+        # Objects of type datetime are immutable.
+        new_event = Subevent(self.time_type, self.time_period.start_time,
+                          self.time_period.end_time, self.text, self.category,
+                          None, self.container_id)
+        # Description is immutable
+        new_event.set_data("description", self.get_data("description") )
+        # Icon is immutable in the sense that it is never changed by our
+        # application.
+        new_event.set_data("icon", self.get_data("icon"))
+        new_event.set_data("hyperlink", self.get_data("hyperlink"))
+        return new_event
