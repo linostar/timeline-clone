@@ -112,11 +112,12 @@ class MemoryDB(Observable):
         self._notify(STATE_CHANGE_ANY)
 
     def clone_data(self):
-        self.categories, catclones = clone_categories_list(self.categories)
-        self.events = clone_event_list(self.events)
-        for event in self.events:
+        categories, catclones = clone_categories_list(self.categories)
+        events = clone_event_list(self.events)
+        for event in events:
             event.category = catclones[event.category]
-
+        return categories, events
+    
     def _register_subevent(self, subevent):
         container_events = [event for event in self.events
                             if event.is_container()]
