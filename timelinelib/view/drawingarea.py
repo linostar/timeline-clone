@@ -546,10 +546,14 @@ class DrawingArea(object):
                 self.fn_handle_db_error(ex)
             else:
                 raise(ex)
+        def _last_event(event_id):
+            return event_id == selected_event_ids[-1]
+        def _delete_events():
+            for event_id in selected_event_ids:
+                self.timeline.delete_event(event_id, save=_last_event(event_id))        
         def edit_function():
             if user_ack():
-                for event_id in selected_event_ids:
-                    self.timeline.delete_event(event_id)
+                _delete_events()
             self.view_properties.clear_selected()
         safe_locking(self.view, edit_function, exception_handler)
             

@@ -80,7 +80,7 @@ class IcsTimeline(Observable):
     def save_event(self, event):
         pass
 
-    def delete_event(self, event_or_id):
+    def delete_event(self, event_or_id, save=False):
         pass
 
     def get_categories(self):

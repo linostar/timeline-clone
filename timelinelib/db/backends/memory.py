@@ -155,7 +155,7 @@ class MemoryDB(Observable):
         except:
             pass
 
-    def delete_event(self, event_or_id):
+    def delete_event(self, event_or_id, save=True):
         if isinstance(event_or_id, Event):
             event = event_or_id
         else:
@@ -168,8 +168,9 @@ class MemoryDB(Observable):
                     self.events.remove(subevent)
             self.events.remove(event)
             event.set_id(None)
-            self._save_if_not_disabled()
-            self._notify(STATE_CHANGE_ANY)
+            if save:
+                self._save_if_not_disabled()
+                self._notify(STATE_CHANGE_ANY)
 
     def get_categories(self):
         return list(self.categories)
