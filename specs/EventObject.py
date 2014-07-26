@@ -19,6 +19,9 @@
 import unittest
 
 from timelinelib.db.objects import Event
+from timelinelib.db.objects.event import clone_event_list
+from timelinelib.db.objects import Container
+from timelinelib.db.objects import Subevent
 from timelinelib.db.backends.memory import MemoryDB
 
 
@@ -155,6 +158,46 @@ class EventFunctionsSpec(unittest.TestCase):
     def test_zero_time_span(self):
         self.given_default_point_event()
         self.assertEqual(self.event.time_type.get_zero_delta(), self.event.time_span())
+
+    def given_default_point_event(self):
+        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
+
+    def setUp(self):
+        self.db = MemoryDB()
+        self.now = self.db.get_time_type().now()
+
+
+class EventCloningSpec(unittest.TestCase):
+
+    def test_cloning_returns_new_object(self):
+        self.given_default_point_event()
+        cloned_event = self.event.clone()
+        self.assertTrue(self.event != cloned_event)
+        self.assertEqual(cloned_event.time_type, self.event.time_type)        
+        self.assertEqual(cloned_event.time_period, self.event.time_period)        
+        self.assertEqual(cloned_event.text, self.event.text)        
+        self.assertEqual(cloned_event.category, self.event.category)        
+        self.assertEqual(cloned_event.fuzzy, self.event.fuzzy)        
+        self.assertEqual(cloned_event.locked, self.event.locked)        
+        self.assertEqual(cloned_event.ends_today, self.event.ends_today)        
+
+    def test_container_relationships_are_maintained_when_cloning(self):
+        self.given_container_with_subevents()
+        cloned_event_list = clone_event_list(self.events) 
+        self.assertEqual(len(self.events), len(cloned_event_list))
+        for i in range(len(self.events)):
+            self.assertTrue(self.events[i] != cloned_event_list[i])
+        self.assertTrue(isinstance(cloned_event_list[0], Container))
+        self.assertTrue(isinstance(cloned_event_list[1], Subevent))
+        self.assertTrue(isinstance(cloned_event_list[2], Subevent))
+            
+    def given_container_with_subevents(self):
+        self.container = Container(self.db.get_time_type(), self.now, self.now, "container", category=None, cid=1)
+        self.subevent1 = Subevent(self.db.get_time_type(), self.now, self.now, "sub1", category=None, container=self.container, cid=1)
+        self.subevent2 = Subevent(self.db.get_time_type(), self.now, self.now, "sub2", category=None, container=self.container)
+        self.container.register_subevent(self.subevent1)
+        self.container.register_subevent(self.subevent2)
+        self.events = [self.container, self.subevent1, self.subevent2]
 
     def given_default_point_event(self):
         self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
