@@ -21,6 +21,8 @@ import unittest
 from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.ics import IcsTimeline
 from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.db.objects import Category
+from timelinelib.db.objects import Event
 
 
 class BackendTest(object):
@@ -70,3 +72,33 @@ SUMMARY:Bastille Day Party
 END:VEVENT
 END:VCALENDAR
 """
+
+class CloningTest(unittest.TestCase):
+    """
+    An Event can be associated with a category.
+    When the backend event-list and category-list are cloned this association must be maintained.
+    """
+    
+    def test_when_db_data_is_cloned_category_event_relasionship_is_preserved(self):
+        self.given_event_and_category_lists()
+        self.when_cloning()
+        self.assertTrue(self.new_category != self.old_category)
+        self.assertTrue(self.new_event != self.old_event)
+        self.assertTrue(self.db.events[0].category != self.old_category)
+        self.assertEquals(self.new_event.category.name, self.old_category.name)
+
+    def when_cloning(self):
+        self.db.clone_data()
+        self.new_category = self.db.categories[0]
+        self.new_event = self.db.events[0]
+    
+    def given_event_and_category_lists(self):
+        self.db.categories = [Category("cat1", None, None, True, parent=None)]
+        self.db.events = [Event(self.db.get_time_type(), self.now, self.now, "evt", category=self.db.categories[0])]
+        self.old_category = self.db.categories[0]
+        self.old_event = self.db.events[0]
+         
+    def setUp(self):
+        self.db = MemoryDB()
+        self.now = self.db.get_time_type().now()
+    

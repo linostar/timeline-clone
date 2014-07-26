@@ -38,6 +38,8 @@ from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
+from timelinelib.db.objects.event import clone_event_list
+from timelinelib.db.objects.category import clone_categories_list
 
 
 class MemoryDB(Observable):
@@ -108,6 +110,12 @@ class MemoryDB(Observable):
                 self._register_subevent(event)
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_ANY)
+
+    def clone_data(self):
+        self.categories, catclones = clone_categories_list(self.categories)
+        self.events = clone_event_list(self.events)
+        for event in self.events:
+            event.category = catclones[event.category]
 
     def _register_subevent(self, subevent):
         container_events = [event for event in self.events
