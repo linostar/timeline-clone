@@ -21,6 +21,7 @@ import unittest
 from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.ics import IcsTimeline
 from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.db.backends.memory import clone_data
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 
@@ -88,7 +89,7 @@ class CloningTest(unittest.TestCase):
         self.assertEquals(self.new_event.category.name, self.old_category.name)
 
     def when_cloning(self):
-        self.db.categories, self.db.events = self.db.clone_data()
+        self.db.categories, self.db.events = clone_data(self.db.categories, self.db.events)
         self.new_category = self.db.categories[0]
         self.new_event = self.db.events[0]
     

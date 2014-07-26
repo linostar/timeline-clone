@@ -111,13 +111,6 @@ class MemoryDB(Observable):
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_ANY)
 
-    def clone_data(self):
-        categories, catclones = clone_categories_list(self.categories)
-        events = clone_event_list(self.events)
-        for event in events:
-            event.category = catclones[event.category]
-        return categories, events
-    
     def _register_subevent(self, subevent):
         container_events = [event for event in self.events
                             if event.is_container()]
@@ -342,3 +335,12 @@ class MemoryDB(Observable):
         Called whenever this db changes.
         """
         pass
+
+
+def clone_data(categories, events):
+    categories, catclones = clone_categories_list(categories)
+    events = clone_event_list(events)
+    for event in events:
+        event.category = catclones[event.category]
+    return categories, events
+    
