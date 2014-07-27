@@ -40,6 +40,7 @@ from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
 from timelinelib.db.objects.event import clone_event_list
 from timelinelib.db.objects.category import clone_categories_list
+from timelinelib.db.undo.undohandler import UndoHandler
 
 
 class MemoryDB(Observable):
@@ -58,6 +59,7 @@ class MemoryDB(Observable):
         self.time_type = GregorianTimeType()
         self.readonly = False
         self.importing = False
+        self._undo_handler = UndoHandler(self)
 
     def get_time_type(self):
         return self.time_type
@@ -195,7 +197,8 @@ class MemoryDB(Observable):
         self._notify(STATE_CHANGE_CATEGORY)
 
     def loaded(self):
-        pass
+        self._undo_handler.enable(True)
+        self._undo_handler.save()
 
     def _category_name_exists(self, category):
         return self._get_category_by_name(category) is not None
