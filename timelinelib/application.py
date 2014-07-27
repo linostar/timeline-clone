@@ -59,6 +59,7 @@ class TimelineApplication(object):
         self.main_frame.save_current_timeline_data()
         try:
             self.timeline = self.db_open_fn(path, import_timeline, timetype)
+            self.timeline.loaded()
         except TimelineIOError, e:
             self.main_frame.handle_db_error(e)
             self.timelinepath = None

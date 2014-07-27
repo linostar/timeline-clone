@@ -105,6 +105,9 @@ class IcsTimeline(Observable):
                 return e
         return None
 
+    def loaded(self):
+        pass
+
     def _get_events(self, decider_fn=None):
         self.events = []
         for cal in self.cals:

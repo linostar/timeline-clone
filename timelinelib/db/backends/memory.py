@@ -194,6 +194,9 @@ class MemoryDB(Observable):
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_CATEGORY)
 
+    def loaded(self):
+        pass
+
     def _category_name_exists(self, category):
         return self._get_category_by_name(category) is not None
         
