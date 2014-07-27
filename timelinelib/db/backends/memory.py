@@ -285,6 +285,13 @@ class MemoryDB(Observable):
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
 
+    def redo(self):
+        if self._undo_handler.redo():
+            self.categories, self.events = self._undo_handler.get_data()
+            self._save_if_not_disabled()
+            self._notify(STATE_CHANGE_ANY)
+            self._undo_handler.enable(True)    
+
     def _ensure_no_circular_parent(self, cat):
         parent = cat.parent
         while parent is not None:
