@@ -278,6 +278,13 @@ class MemoryDB(Observable):
         new_index = self.events.index(target_event)
         self.events.insert(new_index, event_to_place)
 
+    def undo(self):
+        if self._undo_handler.undo():
+            self.categories, self.events = self._undo_handler.get_data()
+            self._save_if_not_disabled()
+            self._notify(STATE_CHANGE_ANY)
+            self._undo_handler.enable(True)
+
     def _ensure_no_circular_parent(self, cat):
         parent = cat.parent
         while parent is not None:
