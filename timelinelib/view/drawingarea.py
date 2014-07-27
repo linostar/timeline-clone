@@ -447,6 +447,8 @@ class DrawingArea(object):
                     monitoring.count_timeline_redraw()
                     dc.SetTextForeground((255, 0, 0))
                     dc.SetFont(get_default_font(12, bold=True))
+                    dc.DrawText("Undo buffer size: %d" % len(self.timeline._undo_handler._undo_buffer), width - 300, height - 100)
+                    dc.DrawText("Undo buffer pos: %d" % self.timeline._undo_handler._pos, width - 300, height - 80)
                     dc.DrawText("Redraw count: %d" % monitoring.timeline_redraw_count, width - 300, height - 60)
                     dc.DrawText("Last redraw time: %.3f ms" % redraw_time, width - 300, height - 40)
             except TimelineIOError, e:
