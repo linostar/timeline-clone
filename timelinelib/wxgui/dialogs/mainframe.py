@@ -94,6 +94,8 @@ ID_NEW_DIR = wx.NewId()
 ID_FIND_CATEGORIES = wx.NewId()
 ID_NEW = wx.ID_NEW
 ID_FIND = wx.ID_FIND
+ID_UNDO = wx.NewId()
+ID_REDO = wx.NewId()
 ID_PREFERENCES = wx.ID_PREFERENCES
 ID_HELP = wx.ID_HELP
 ID_ABOUT = wx.ID_ABOUT
@@ -364,6 +366,12 @@ class GuiCreator(object):
             safe_locking(self, edit_function)
         def set_readonly(evt):
             self.controller.set_timeline_in_readonly_mode()
+        def undo(evt):
+            safe_locking(self, self.timeline.undo)
+            self.main_panel.redraw_timeline()          
+        def redo(evt):
+            safe_locking(self, self.timeline.redo)
+            self.main_panel.redraw_timeline()        
         cbx = False
         items = ((ID_CREATE_EVENT, create_event, _("Create &Event..."), cbx),
                  (ID_EDIT_EVENT, edit_event, _("&Edit Selected Event..."), cbx),
@@ -375,7 +383,10 @@ class GuiCreator(object):
                  (ID_SET_CATEGORY_ON_WITHOUT, set_category_on_without, _("Set Category on events &without category..."), cbx),
                  (ID_EDIT_CATEGORIES, edit_categories, _("Edit &Categories"), cbx),
                  None,
-                 (ID_SET_READONLY, set_readonly, _("&Read Only"), cbx))
+                 (ID_SET_READONLY, set_readonly, _("&Read Only"), cbx),
+                 None,
+                 (ID_UNDO, undo, _("&Undo\tCtrl+Z"), cbx),
+                 (ID_REDO, redo, _("&Redo\tAlt+Z"), cbx))
         self.timeline_menu = wx.Menu()
         self._create_menu_items(self.timeline_menu, items)
         self._add_timeline_menu_items_to_controller(self.timeline_menu)
