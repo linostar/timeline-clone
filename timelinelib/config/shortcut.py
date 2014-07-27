@@ -87,7 +87,9 @@ METADATA = [
              Metadata(mf.ID_SET_CATEGORY_ON_WITHOUT, "shortcut_set_category_on_without", LABEL_TIMELINE % _("Set Category on events without category"), NO_MODIFIER, ""),
              Metadata(mf.ID_EDIT_CATEGORIES, "shortcut_edit_categories", LABEL_TIMELINE % _("Edit Categories"), NO_MODIFIER, ""),
              Metadata(mf.ID_SET_READONLY, "shortcut_set_readonly", LABEL_TIMELINE % _("Read Only"), NO_MODIFIER, ""),
-             # Help
+             Metadata(mf.ID_UNDO, "shortcut_undo", LABEL_TIMELINE % _("Undo"), CTRL_MODIFIER, "Z"),
+             Metadata(mf.ID_REDO, "shortcut_redo", LABEL_TIMELINE % _("Redo"), ALT_MODIFIER, "Z"),
+             # Help            
              Metadata(mf.ID_HELP, "shortcut_help_content", LABEL_HELP % _("Contents"), NO_MODIFIER, "F1"),
              Metadata(mf.ID_TUTORIAL, "shortcut_tutorial", LABEL_HELP % _("Getting started tutorial"), NO_MODIFIER, ""),
              Metadata(mf.ID_FEEDBACK, "shortcut_feedback", LABEL_HELP % _("Give Feedback"), NO_MODIFIER, ""),
