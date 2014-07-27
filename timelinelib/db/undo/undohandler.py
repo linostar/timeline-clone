@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+MAX_BUFFER_SIZE = 100
+
 
 class UndoHandler(object):
     
@@ -25,7 +27,7 @@ class UndoHandler(object):
         self._enabled = False
         self._pos = -1
         self._report_enabled = False
-        self._max_buffer_size = 5
+        self._max_buffer_size = MAX_BUFFER_SIZE
         self.report("After Init---------------------")
         
     def enable(self, value):
