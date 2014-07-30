@@ -19,9 +19,9 @@
 import unittest
 
 from specs.utils import TmpDirTestCase
-from timelinelib.db.backends.ics import IcsTimeline
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.backends.memory import clone_data
+from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.db.importers.ics import import_db_from_ics
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 
@@ -49,7 +49,12 @@ class IcsBackendTest(TmpDirTestCase, BackendTest):
 
     def setUp(self):
         TmpDirTestCase.setUp(self)
-        self.backend = IcsTimeline(self.write_ics_content())
+        self.backend = import_db_from_ics(self.write_ics_content())
+
+    def test_content(self):
+        self.assertEqual(self.backend.get_categories(), [])
+        self.assertEqual(len(self.backend.get_all_events()), 1)
+        self.assertEqual(self.backend.get_all_events()[0].text, "Bastille Day Party")
 
     def write_ics_content(self):
         tmp_path = self.get_tmp_path("test.ics")
