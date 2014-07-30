@@ -331,14 +331,14 @@ class MemoryDB(Observable):
         """
         self.displayed_period = period
 
-    def _get_hidden_categories(self):
+    def get_hidden_categories(self):
         """
         Inheritors can call this method to get the hidden categories used in
         load_view_properties and save_view_properties.
         """
         return self.hidden_categories
 
-    def _set_hidden_categories(self, hidden_categories):
+    def set_hidden_categories(self, hidden_categories):
         """
         Inheritors can call this method to set the hidden categories used in
         load_view_properties and save_view_properties.

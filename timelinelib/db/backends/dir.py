@@ -92,7 +92,7 @@ class DirTimeline(MemoryDB):
                     evt = self._event_from_path(path_inner)
                     self.save_event(evt)
             # Hide all categories but the first
-            self._set_hidden_categories(all_cats[1:])
+            self.set_hidden_categories(all_cats[1:])
             # Set colors and change names
             for cat in self.get_categories():
                 cat.color = self._color_from_range(color_ranges[cat.name])

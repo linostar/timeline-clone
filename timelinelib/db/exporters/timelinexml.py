@@ -163,7 +163,7 @@ class Exporter(object):
                                           "displayed_period", INDENT2)
 
     def _write_hidden_categories(self, file):
-        for cat in self.db._get_hidden_categories():
+        for cat in self.db.get_hidden_categories():
             write_simple_tag(file, "name", cat.name, INDENT3)
     _write_hidden_categories = wrap_in_tag(_write_hidden_categories,
                                            "hidden_categories", INDENT2)

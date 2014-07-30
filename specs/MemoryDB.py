@@ -96,13 +96,13 @@ class MemoryDBSpec(unittest.TestCase):
 
     def testGetSetHiddenCategories(self):
         # Assert that we cannot include categories not in the db
-        self.assertRaises(ValueError, self.db._set_hidden_categories, [self.c1])
-        self.db._set_hidden_categories([])
+        self.assertRaises(ValueError, self.db.set_hidden_categories, [self.c1])
+        self.db.set_hidden_categories([])
         self.db.save_category(self.c1)
         self.db.save_category(self.c2)
-        self.db._set_hidden_categories([self.c1])
+        self.db.set_hidden_categories([self.c1])
         # Assert that the returned list is the same
-        self.assertEqual(self.db._get_hidden_categories(), [self.c1])
+        self.assertEqual(self.db.get_hidden_categories(), [self.c1])
         # Assert that category visibility information is correctly written to
         # ViewProperties
         vp = ViewProperties()

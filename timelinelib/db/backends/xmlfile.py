@@ -349,7 +349,7 @@ class XmlTimeline(MemoryDB):
         tmp_dict["hidden_categories"].append(category)
 
     def _parse_hidden_categories(self, text, tmp_dict):
-        self._set_hidden_categories(tmp_dict.pop("hidden_categories"))
+        self.set_hidden_categories(tmp_dict.pop("hidden_categories"))
 
     def _save(self):
         export(self, self.path)
