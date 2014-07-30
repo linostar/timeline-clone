@@ -126,8 +126,8 @@ class TutorialTimelineCreator(object):
         now = gregorian.from_time(self.db.time_type.now())
         self.start = self.get_time(now.year, now.month, 1)
         self.end = self.start + self.get_days_delta(30)
-        self.db._set_displayed_period(TimePeriod(self.db.get_time_type(),
-                                                 self.start, self.end))
+        self.db.set_displayed_period(TimePeriod(self.db.get_time_type(),
+                                                self.start, self.end))
         self.last_cat = None
 
     def add_category(self, name, color, font_color, make_last_added_parent=False):

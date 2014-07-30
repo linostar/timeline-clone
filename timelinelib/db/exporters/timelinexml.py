@@ -148,13 +148,13 @@ class Exporter(object):
         return " %s" % text
 
     def _write_view(self, file):
-        if self.db._get_displayed_period() is not None:
+        if self.db.get_displayed_period() is not None:
             self._write_displayed_period(file)
         self._write_hidden_categories(file)
     _write_view = wrap_in_tag(_write_view, "view", INDENT1)
 
     def _write_displayed_period(self, file):
-        period = self.db._get_displayed_period()
+        period = self.db.get_displayed_period()
         write_simple_tag(file, "start",
                          self._time_string(period.start_time), INDENT3)
         write_simple_tag(file, "end",

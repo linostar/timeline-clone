@@ -392,7 +392,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.mock_drawer.setup_get_time_call(x, human_time_to_gregorian(time))
 
     def init_view_with_db_with_period(self, start, end):
-        self.db._set_displayed_period(gregorian_period(start, end))
+        self.db.set_displayed_period(gregorian_period(start, end))
         self.init_view_with_db()
 
     def init_view_with_db(self):

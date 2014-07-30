@@ -86,9 +86,9 @@ class MemoryDBSpec(unittest.TestCase):
     def testGetSetDisplayedPeriod(self):
         tp = TimePeriod(self.db.get_time_type(), gregorian.from_date(2010, 3, 23).to_time(),
                         gregorian.from_date(2010, 3, 24).to_time())
-        self.db._set_displayed_period(tp)
+        self.db.set_displayed_period(tp)
         # Assert that we get back the same period
-        self.assertEqual(self.db._get_displayed_period(), tp)
+        self.assertEqual(self.db.get_displayed_period(), tp)
         # Assert that the period is correctly loaded into ViewProperties
         vp = ViewProperties()
         self.db.load_view_properties(vp)

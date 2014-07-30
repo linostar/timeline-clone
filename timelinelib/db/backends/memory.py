@@ -317,14 +317,14 @@ class MemoryDB(Observable):
             self._save()
         self._undo_handler.save()
 
-    def _get_displayed_period(self):
+    def get_displayed_period(self):
         """
         Inheritors can call this method to get the displayed period used in
         load_view_properties and save_view_properties.
         """
         return self.displayed_period
 
-    def _set_displayed_period(self, period):
+    def set_displayed_period(self, period):
         """
         Inheritors can call this method to set the displayed period used in
         load_view_properties and save_view_properties.
