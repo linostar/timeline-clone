@@ -19,8 +19,8 @@
 from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
-from timelinelib.db.objects import Event
 from timelinelib.db.objects import Container
+from timelinelib.db.objects import Event
 from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
 from timelinelib.time.timeline import delta_from_days
@@ -135,7 +135,7 @@ class TutorialTimelineCreator(object):
             parent = self.last_cat
         else:
             parent = None
-        self.prev_cat = self.last_cat 
+        self.prev_cat = self.last_cat
         self.last_cat = Category(name, color, font_color, True, parent)
         self.db.save_category(self.last_cat)
 
@@ -159,14 +159,14 @@ class TutorialTimelineCreator(object):
             evt.set_data("description", description)
         self.db.save_event(evt)
         container.register_subevent(evt)
-        
+
     def calc_start_end(self, start_add, end_add=None):
         start = self.start + start_add
         end = start
         if end_add is not None:
             end = self.start + end_add
         return (start, end)
-    
+
     def get_db(self):
         return self.db
 

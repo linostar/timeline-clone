@@ -16,13 +16,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
 import mock
+import unittest
 
-from timelinelib.view.periodbase import SelectPeriodByDragInputHandler
-from timelinelib.db.backends.tutorial import TutorialTimelineCreator
-from timelinelib.time.timeline import Time
 from timelinelib.calendar.gregorian import from_date
+from timelinelib.db.importers.tutorial import TutorialTimelineCreator
+from timelinelib.time.timeline import Time
+from timelinelib.view.periodbase import SelectPeriodByDragInputHandler
 
 
 class SelectperiodByDragInputHandler(unittest.TestCase):
