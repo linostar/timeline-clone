@@ -67,9 +67,9 @@ def open_tutorial_timeline(path):
 
 
 def open_directory_timeline(path):
-    from timelinelib.db.backends.dir import DirTimeline
+    from timelinelib.db.importers.dir import import_db_from_dir
     global current_timeline
-    current_timeline = DirTimeline(path)
+    current_timeline = import_db_from_dir(path)
     current_timeline.path = path
     return current_timeline
 
