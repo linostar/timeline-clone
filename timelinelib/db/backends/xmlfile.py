@@ -22,7 +22,6 @@ Implementation of timeline database with xml file storage.
 
 
 from os.path import abspath
-from xml.sax.saxutils import escape as xmlescape
 import base64
 import os.path
 import re
@@ -33,13 +32,13 @@ import wx
 
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.db.exporters.timelinexml import export
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Container
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import Subevent
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.utils import safe_write, create_non_exising_path
-from timelinelib.meta.version import get_version
+from timelinelib.db.utils import create_non_exising_path
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType
 from timelinelib.utils import ex_msg
@@ -49,28 +48,6 @@ from timelinelib.xml.parser import parse
 from timelinelib.xml.parser import parse_fn_store
 from timelinelib.xml.parser import SINGLE
 from timelinelib.xml.parser import Tag
-
-
-ENCODING = "utf-8"
-INDENT1 = "  "
-INDENT2 = "    "
-INDENT3 = "      "
-
-
-# Must be defined before the XmlTimeline class since it is used as a decorator
-def wrap_in_tag(func, name, indent=""):
-    def wrapper(*args, **kwargs):
-        file = args[1] # 1st argument is self, 2nd argument is file
-        file.write(indent)
-        file.write("<")
-        file.write(name)
-        file.write(">\n")
-        func(*args, **kwargs)
-        file.write(indent)
-        file.write("</")
-        file.write(name)
-        file.write(">\n")
-    return wrapper
 
 
 class ParseException(Exception):
@@ -375,121 +352,7 @@ class XmlTimeline(MemoryDB):
         self._set_hidden_categories(tmp_dict.pop("hidden_categories"))
 
     def _save(self):
-        self._make_sure_subevets_are_saved_last()
-        safe_write(self.path, ENCODING, self._write_xml_doc)
-
-    def _make_sure_subevets_are_saved_last(self):
-        subevents = [event for event in self.events if event.is_subevent()]
-        events = [event for event in self.events if not event.is_subevent()]
-        events.extend(subevents)
-        self.events = events
-
-    def _write_xml_doc(self, file):
-        file.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-        self._write_timeline(file)
-
-    def _write_timeline(self, file):
-        write_simple_tag(file, "version", get_version(), INDENT1)
-        write_simple_tag(file, "timetype", self.time_type.get_name(), INDENT1)
-        self._write_categories(file)
-        self._write_events(file)
-        self._write_view(file)
-    _write_timeline = wrap_in_tag(_write_timeline, "timeline")
-
-    def _write_categories(self, file):
-        def write_with_parent(categories, parent):
-            for cat in categories:
-                if cat.parent == parent:
-                    self._write_category(file, cat)
-                    write_with_parent(categories, cat)
-        write_with_parent(self.get_categories(), None)
-    _write_categories = wrap_in_tag(_write_categories, "categories", INDENT1)
-
-    def _write_category(self, file, cat):
-        write_simple_tag(file, "name", cat.name, INDENT3)
-        write_simple_tag(file, "color", color_string(cat.color), INDENT3)
-        write_simple_tag(file, "font_color", color_string(cat.font_color), INDENT3)
-        if cat.parent:
-            write_simple_tag(file, "parent", cat.parent.name, INDENT3)
-    _write_category = wrap_in_tag(_write_category, "category", INDENT2)
-
-    def _write_events(self, file):
-        for evt in self.get_all_events():
-            self._write_event(file, evt)
-    _write_events = wrap_in_tag(_write_events, "events", INDENT1)
-
-    def _write_event(self, file, evt):
-        write_simple_tag(file, "start",
-                         self._time_string(evt.time_period.start_time), INDENT3)
-        write_simple_tag(file, "end",
-                         self._time_string(evt.time_period.end_time), INDENT3)
-        if evt.is_container():
-            write_simple_tag(file, "text", "[%d]%s " % (evt.cid(), evt.text), INDENT3)
-        elif evt.is_subevent():
-            write_simple_tag(file, "text", "(%d)%s " % (evt.cid(), evt.text), INDENT3)
-        else:
-            text = evt.text
-            if self._text_starts_with_container_tag(evt.text):
-                text = self._add_leading_space_to_text(evt.text)
-            write_simple_tag(file, "text", text, INDENT3)
-        if evt.get_data("progress") is not None:
-            write_simple_tag(file, "progress", "%s" % evt.get_data("progress"), INDENT3)
-        write_simple_tag(file, "fuzzy", "%s" % evt.fuzzy, INDENT3)
-        write_simple_tag(file, "locked", "%s" % evt.locked, INDENT3)
-        write_simple_tag(file, "ends_today", "%s" % evt.ends_today, INDENT3)
-        if evt.category is not None:
-            write_simple_tag(file, "category", evt.category.name, INDENT3)
-        if evt.get_data("description") is not None:
-            write_simple_tag(file, "description", evt.get_data("description"), INDENT3)
-        alert = evt.get_data("alert")
-        if alert is not None:
-            write_simple_tag(file, "alert", self.alert_string(alert),
-                             INDENT3)
-        hyperlink = evt.get_data("hyperlink")
-        if hyperlink is not None:
-            write_simple_tag(file, "hyperlink", hyperlink, INDENT3)
-        if evt.get_data("icon") is not None:
-            icon_text = icon_string(evt.get_data("icon"))
-            write_simple_tag(file, "icon", icon_text, INDENT3)
-    _write_event = wrap_in_tag(_write_event, "event", INDENT2)
-
-    def _text_starts_with_container_tag(self, text):
-        return text[0] in ('(', '[')
-
-    def _add_leading_space_to_text(self, text):
-        return " %s" % text
-    
-    def _write_view(self, file):
-        if self._get_displayed_period() is not None:
-            self._write_displayed_period(file)
-        self._write_hidden_categories(file)
-    _write_view = wrap_in_tag(_write_view, "view", INDENT1)
-
-    def _write_displayed_period(self, file):
-        period = self._get_displayed_period()
-        write_simple_tag(file, "start",
-                         self._time_string(period.start_time), INDENT3)
-        write_simple_tag(file, "end",
-                         self._time_string(period.end_time), INDENT3)
-    _write_displayed_period = wrap_in_tag(_write_displayed_period,
-                                          "displayed_period", INDENT2)
-
-    def _write_hidden_categories(self, file):
-        for cat in self._get_hidden_categories():
-            write_simple_tag(file, "name", cat.name, INDENT3)
-    _write_hidden_categories = wrap_in_tag(_write_hidden_categories,
-                                           "hidden_categories", INDENT2)
-
-
-def write_simple_tag(file, name, content, indent=""):
-    file.write(indent)
-    file.write("<")
-    file.write(name)
-    file.write(">")
-    file.write(xmlescape(content))
-    file.write("</")
-    file.write(name)
-    file.write(">\n")
+        export(self, self.path)
 
 
 def parse_bool(bool_string):
@@ -504,10 +367,6 @@ def parse_bool(bool_string):
         return False
     else:
         raise ParseException("Unknown boolean '%s'" % bool_string)
-
-
-def color_string(color):
-    return "%i,%i,%i" % color
 
 
 def parse_color(color_string):
@@ -530,13 +389,6 @@ def parse_color(color_string):
     else:
         raise ParseException("Color not on correct format, color string = '%s'"
                              % color_string)
-
-def icon_string(bitmap):
-    output = StringIO.StringIO()
-    image = wx.ImageFromBitmap(bitmap)
-    image.SaveStream(output, wx.BITMAP_TYPE_PNG)
-    return base64.b64encode(output.getvalue())
-
 
 def parse_icon(string):
     """
