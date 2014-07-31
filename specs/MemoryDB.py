@@ -396,12 +396,6 @@ class MemoryDBSpec(unittest.TestCase):
     def testEventShouldNotBeLockedByDefault(self):
         self.assertFalse(self.e1.locked)
 
-    def testImport(self):
-        base_db = MemoryDB()
-        import_db = MemoryDB()
-        base_db.import_db(import_db)
-        self.assertEqual(base_db.get_all_events(), [])
-
     def setUp(self):
         self.save_callback_mock = Mock()
         self.db = MemoryDB()
@@ -416,3 +410,13 @@ class MemoryDBSpec(unittest.TestCase):
         self.e3 = Event(self.db.get_time_type(), gregorian.from_date(2010, 2, 15).to_time(), gregorian.from_date(2010, 2, 16).to_time(),
                         "period")
         self.db.register(self.db_listener)
+
+
+class describe_importing_of_db(unittest.TestCase):
+
+    def test_importing_empty_db_does_nothing(self):
+        base_db = MemoryDB()
+        import_db = MemoryDB()
+        base_db.import_db(import_db)
+        self.assertEqual(base_db.get_categories(), [])
+        self.assertEqual(base_db.get_all_events(), [])
