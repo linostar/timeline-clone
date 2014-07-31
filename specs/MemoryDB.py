@@ -415,26 +415,24 @@ class MemoryDBSpec(unittest.TestCase):
 class describe_importing_of_db(unittest.TestCase):
 
     def test_importing_empty_db_does_nothing(self):
-        base_db = MemoryDB()
-        import_db = MemoryDB()
-        base_db.import_db(import_db)
-        self.assertEqual(base_db.get_categories(), [])
-        self.assertEqual(base_db.get_all_events(), [])
+        self.base_db.import_db(self.import_db)
+        self.assertEqual(self.base_db.get_categories(), [])
+        self.assertEqual(self.base_db.get_all_events(), [])
 
     def test_categories_are_imported(self):
-        base_db = MemoryDB()
-        import_db = MemoryDB()
-        import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
-        base_db.import_db(import_db)
-        self.assertEqual(len(base_db.get_categories()), 1)
-        self.assertEqual(base_db.get_categories()[0].name, "work (imported 1)")
+        self.import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
+        self.base_db.import_db(self.import_db)
+        self.assertEqual(len(self.base_db.get_categories()), 1)
+        self.assertEqual(self.base_db.get_categories()[0].name, "work (imported 1)")
 
     def test_categories_are_given_unique_names(self):
-        base_db = MemoryDB()
-        base_db.save_category(Category("work (imported 1)", (255, 0, 0), (0, 255, 255), True))
-        import_db = MemoryDB()
-        import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
-        base_db.import_db(import_db)
-        self.assertEqual(len(base_db.get_categories()), 2)
-        self.assertEqual(base_db.get_categories()[0].name, "work (imported 1)")
-        self.assertEqual(base_db.get_categories()[1].name, "work (imported 2)")
+        self.base_db.save_category(Category("work (imported 1)", (255, 0, 0), (0, 255, 255), True))
+        self.import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
+        self.base_db.import_db(self.import_db)
+        self.assertEqual(len(self.base_db.get_categories()), 2)
+        self.assertEqual(self.base_db.get_categories()[0].name, "work (imported 1)")
+        self.assertEqual(self.base_db.get_categories()[1].name, "work (imported 2)")
+
+    def setUp(self):
+        self.base_db = MemoryDB()
+        self.import_db = MemoryDB()

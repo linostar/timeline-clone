@@ -357,15 +357,17 @@ class MemoryDB(Observable):
     def import_db(self, db):
         for category in db.get_categories():
             cloned_category = category.clone()
-            name_try = 1
-            while True:
-                new_name = "%s (imported %d)" % (cloned_category.name, name_try)
-                if self._has_category_with_name(new_name):
-                    name_try += 1
-                else:
-                    break
-            cloned_category.name = new_name
+            cloned_category.name = self._get_unique_import_category_name(category.name)
             self.save_category(cloned_category)
+
+    def _get_unique_import_category_name(self, original_name):
+        number_of_tries = 1
+        while True:
+            new_name = "%s (imported %d)" % (original_name, number_of_tries)
+            if self._has_category_with_name(new_name):
+                number_of_tries += 1
+            else:
+                return new_name
 
     def _has_category_with_name(self, name):
         for category in self.get_categories():
