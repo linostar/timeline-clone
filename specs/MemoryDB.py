@@ -427,4 +427,14 @@ class describe_importing_of_db(unittest.TestCase):
         import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
         base_db.import_db(import_db)
         self.assertEqual(len(base_db.get_categories()), 1)
-        self.assertEqual(base_db.get_categories()[0].name, "work")
+        self.assertEqual(base_db.get_categories()[0].name, "work (imported 1)")
+
+    def test_categories_are_given_unique_names(self):
+        base_db = MemoryDB()
+        base_db.save_category(Category("work (imported 1)", (255, 0, 0), (0, 255, 255), True))
+        import_db = MemoryDB()
+        import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
+        base_db.import_db(import_db)
+        self.assertEqual(len(base_db.get_categories()), 2)
+        self.assertEqual(base_db.get_categories()[0].name, "work (imported 1)")
+        self.assertEqual(base_db.get_categories()[1].name, "work (imported 2)")
