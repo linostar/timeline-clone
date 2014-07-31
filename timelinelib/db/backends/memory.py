@@ -355,7 +355,8 @@ class MemoryDB(Observable):
             self.hidden_categories.append(cat)
 
     def import_db(self, db):
-        pass
+        for category in db.get_categories():
+            self.save_category(category.clone())
 
 
 def clone_data(categories, events):

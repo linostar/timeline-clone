@@ -420,3 +420,11 @@ class describe_importing_of_db(unittest.TestCase):
         base_db.import_db(import_db)
         self.assertEqual(base_db.get_categories(), [])
         self.assertEqual(base_db.get_all_events(), [])
+
+    def test_categories_are_imported(self):
+        base_db = MemoryDB()
+        import_db = MemoryDB()
+        import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
+        base_db.import_db(import_db)
+        self.assertEqual(len(base_db.get_categories()), 1)
+        self.assertEqual(base_db.get_categories()[0].name, "work")
