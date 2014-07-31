@@ -354,6 +354,9 @@ class MemoryDB(Observable):
                 raise ValueError("Category '%s' not in db." % cat.name)
             self.hidden_categories.append(cat)
 
+    def import_db(self, db):
+        pass
+
 
 def clone_data(categories, events):
     categories, catclones = clone_categories_list(categories)

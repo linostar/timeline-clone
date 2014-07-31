@@ -396,6 +396,12 @@ class MemoryDBSpec(unittest.TestCase):
     def testEventShouldNotBeLockedByDefault(self):
         self.assertFalse(self.e1.locked)
 
+    def testImport(self):
+        base_db = MemoryDB()
+        import_db = MemoryDB()
+        base_db.import_db(import_db)
+        self.assertEqual(base_db.get_all_events(), [])
+
     def setUp(self):
         self.save_callback_mock = Mock()
         self.db = MemoryDB()
