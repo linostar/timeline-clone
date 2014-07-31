@@ -60,6 +60,10 @@ class MemoryDB(Observable):
         self.readonly = False
         self.importing = False
         self._undo_handler = UndoHandler(self)
+        self._save_callback = None
+
+    def register_save_callback(self, callback):
+        self._save_callback = callback
 
     def get_time_type(self):
         return self.time_type
@@ -314,7 +318,8 @@ class MemoryDB(Observable):
 
     def _save_if_not_disabled(self):
         if self.save_disabled == False:
-            self._save()
+            if self._save_callback is not None:
+                self._save_callback()
         self._undo_handler.save()
 
     def get_displayed_period(self):
@@ -348,15 +353,6 @@ class MemoryDB(Observable):
             if cat not in self.categories:
                 raise ValueError("Category '%s' not in db." % cat.name)
             self.hidden_categories.append(cat)
-
-    def _save(self):
-        """
-        Inheritors can override this method to save this db to persistent
-        storage.
-
-        Called whenever this db changes.
-        """
-        pass
 
 
 def clone_data(categories, events):

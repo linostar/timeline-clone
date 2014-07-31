@@ -59,6 +59,7 @@ class XmlTimeline(MemoryDB):
 
     def __init__(self, path, load=True, import_timeline=False, timetype=None):
         MemoryDB.__init__(self)
+        self.register_save_callback(self._on_save)
         self.path = path
         self.time_type = self._select_timetype(timetype)
         if load == True:
@@ -351,7 +352,7 @@ class XmlTimeline(MemoryDB):
     def _parse_hidden_categories(self, text, tmp_dict):
         self.set_hidden_categories(tmp_dict.pop("hidden_categories"))
 
-    def _save(self):
+    def _on_save(self):
         export(self, self.path)
 
 
