@@ -33,7 +33,7 @@ class TimeEditorDialog(wx.Dialog):
         self.config = config
         self._create_gui()
         self.time_picker.set_value(time)
-        if self._should_display_show_time_checkbox():
+        if self._display_checkbox_show_time():
             self.time_picker.show_time(self.checkbox.IsChecked())
         self.time_picker.SetFocus()
 
@@ -44,7 +44,7 @@ class TimeEditorDialog(wx.Dialog):
         self._layout_components()
 
     def _create_show_time_checkbox(self):
-        if self._should_display_show_time_checkbox():
+        if self._display_checkbox_show_time():
             self.checkbox = wx.CheckBox(self, label=_("Show time"))
             self.checkbox.SetValue(False)
             self.Bind(wx.EVT_CHECKBOX, self._show_time_checkbox_on_checked, self.checkbox)
@@ -64,7 +64,7 @@ class TimeEditorDialog(wx.Dialog):
 
     def on_return(self):
         try:
-            if self._should_display_show_time_checkbox():
+            if self._display_checkbox_show_time():
                 self.time = self.time_picker.get_value()
                 if not self.checkbox.IsChecked():
                     gt = gregorian.from_time(self.time)
@@ -79,10 +79,10 @@ class TimeEditorDialog(wx.Dialog):
         
     def _layout_components(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
-        if self._should_display_show_time_checkbox():
+        if self._display_checkbox_show_time():
             vbox.Add(self.checkbox, flag=wx.LEFT|wx.TOP|wx.RIGHT,
                      border=BORDER, proportion=1)
-        if self._should_display_show_time_checkbox():
+        if self._display_checkbox_show_time():
             flag = wx.EXPAND|wx.RIGHT|wx.BOTTOM|wx.LEFT
         else:
             flag = wx.EXPAND|wx.RIGHT|wx.TOP|wx.BOTTOM|wx.LEFT
@@ -91,5 +91,5 @@ class TimeEditorDialog(wx.Dialog):
         vbox.Add(self.button_box, flag=wx.ALL|wx.EXPAND, border=BORDER)
         self.SetSizerAndFit(vbox)
 
-    def _should_display_show_time_checkbox(self):
+    def _display_checkbox_show_time(self):
         return self.time_type.is_date_time_type()
