@@ -355,9 +355,13 @@ class MemoryDB(Observable):
             self.hidden_categories.append(cat)
 
     def import_db(self, db):
+        cloned_categories_by_old_name = {}
         for category in db.get_categories():
             cloned_category = category.clone()
             cloned_category.name = self._get_unique_import_category_name(category.name)
+            if cloned_category.parent is not None:
+                cloned_category.parent = cloned_categories_by_old_name[cloned_category.parent.name]
+            cloned_categories_by_old_name[category.name] = cloned_category
             self.save_category(cloned_category)
 
     def _get_unique_import_category_name(self, original_name):

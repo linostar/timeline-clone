@@ -27,6 +27,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType
+from timelinelib.wxgui.utils import category_tree
 import timelinelib.calendar.gregorian as gregorian
 
 
@@ -420,18 +421,32 @@ class describe_importing_of_db(unittest.TestCase):
         self.assertEqual(self.base_db.get_all_events(), [])
 
     def test_categories_are_imported(self):
-        self.import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
+        work = Category("work", (255, 0, 0), (0, 255, 255), True)
+        self.import_db.save_category(work)
+        paper_work = Category("paper work", (255, 0, 0), (0, 255, 255), True, parent=work)
+        self.import_db.save_category(paper_work)
         self.base_db.import_db(self.import_db)
-        self.assertEqual(len(self.base_db.get_categories()), 1)
-        self.assertEqual(self.base_db.get_categories()[0].name, "work (imported 1)")
+        self.assertCategoryTreeIs([
+            ("work (imported 1)", [
+                ("paper work (imported 1)", []),
+            ]),
+        ])
 
     def test_categories_are_given_unique_names(self):
         self.base_db.save_category(Category("work (imported 1)", (255, 0, 0), (0, 255, 255), True))
         self.import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
         self.base_db.import_db(self.import_db)
-        self.assertEqual(len(self.base_db.get_categories()), 2)
-        self.assertEqual(self.base_db.get_categories()[0].name, "work (imported 1)")
-        self.assertEqual(self.base_db.get_categories()[1].name, "work (imported 2)")
+        self.assertCategoryTreeIs([
+            ("work (imported 1)", []),
+            ("work (imported 2)", []),
+        ])
+
+    def assertCategoryTreeIs(self, expected_tree):
+        def replace_category_with_name(tree):
+            return [(category.name, replace_category_with_name(child_tree))
+                    for (category, child_tree) in tree]
+        actual_tree = replace_category_with_name(category_tree(self.base_db.get_categories()))
+        self.assertEqual(actual_tree, expected_tree)
 
     def setUp(self):
         self.base_db = MemoryDB()
