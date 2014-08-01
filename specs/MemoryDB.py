@@ -433,13 +433,29 @@ class describe_importing_of_db(unittest.TestCase):
         ])
 
     def test_categories_are_given_unique_names(self):
-        self.base_db.save_category(Category("work (imported 1)", (255, 0, 0), (0, 255, 255), True))
-        self.import_db.save_category(Category("work", (255, 0, 0), (0, 255, 255), True))
+        self.base_db.save_category(self.a_category_with(name="work (imported 1)"))
+        self.import_db.save_category(self.a_category_with(name="work"))
         self.base_db.import_db(self.import_db)
         self.assertCategoryTreeIs([
             ("work (imported 1)", []),
             ("work (imported 2)", []),
         ])
+
+    def test_events_are_imported(self):
+        self.import_db.save_event(self.an_event_with(name="dentist"))
+        self.base_db.import_db(self.import_db)
+        self.assertEventListIs([
+            "dentist",
+        ])
+
+    def a_category_with(self, name):
+        return Category(name, (255, 0, 0), (0, 255, 255), True)
+
+    def an_event_with(self, name):
+        return Event(self.import_db.get_time_type(),
+                     gregorian.from_date(2010, 2, 13).to_time(),
+                     gregorian.from_date(2010, 2, 13).to_time(),
+                     name)
 
     def assertCategoryTreeIs(self, expected_tree):
         def replace_category_with_name(tree):
@@ -447,6 +463,10 @@ class describe_importing_of_db(unittest.TestCase):
                     for (category, child_tree) in tree]
         actual_tree = replace_category_with_name(category_tree(self.base_db.get_categories()))
         self.assertEqual(actual_tree, expected_tree)
+
+    def assertEventListIs(self, expected_list):
+        actual_list = [event.text for event in self.base_db.get_all_events()]
+        self.assertEqual(sorted(actual_list), expected_list)
 
     def setUp(self):
         self.base_db = MemoryDB()
