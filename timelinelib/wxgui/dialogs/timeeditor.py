@@ -64,11 +64,14 @@ class TimeEditorDialog(wx.Dialog):
 
     def on_return(self):
         try:
-            self.time = self.time_picker.get_value()
-            if not self.checkbox.IsChecked():
-                gt = gregorian.from_time(self.time)
-                gt.hour = 12
-                self.time = gt.to_time()
+            if self._should_display_show_time_checkbox():
+                self.time = self.time_picker.get_value()
+                if not self.checkbox.IsChecked():
+                    gt = gregorian.from_time(self.time)
+                    gt.hour = 12
+                    self.time = gt.to_time()
+            else:
+                self.time = 0
         except ValueError, ex:
             display_error_message(ex_msg(ex))
         else:
