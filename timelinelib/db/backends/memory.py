@@ -364,7 +364,10 @@ class MemoryDB(Observable):
             cloned_categories_by_old_name[category.name] = cloned_category
             self.save_category(cloned_category)
         for event in db.get_all_events():
-            self.save_event(event.clone())
+            cloned_event = event.clone()
+            if event.category is not None:
+                cloned_event.category = cloned_categories_by_old_name[event.category.name]
+            self.save_event(cloned_event)
 
     def _get_unique_import_category_name(self, original_name):
         number_of_tries = 1
