@@ -151,10 +151,10 @@ class MemoryDBSpec(unittest.TestCase):
         #   c11
         #     c111
         #   c12
-        c1 = Category("c1", (255, 0, 0), None, True, parent=None)
-        c11 = Category("c11", (255, 0, 0), None, True, parent=c1)
-        c111 = Category("c111", (255, 0, 0), None, True, parent=c11)
-        c12 = Category("c12", (255, 0, 0), None, True, parent=c1)
+        c1 = a_category_with(name="c1", parent=None)
+        c11 = a_category_with(name="c11", parent=c1)
+        c111 = a_category_with(name="c111", parent=c11)
+        c12 = a_category_with(name="c12", parent=c1)
         self.db.save_category(c1)
         self.db.save_category(c11)
         self.db.save_category(c111)
@@ -221,10 +221,10 @@ class MemoryDBSpec(unittest.TestCase):
         #   c11
         #   c12
         #     c121
-        c1 = Category("c1", (255, 0, 0), None, True, parent=None)
-        c11 = Category("c11", (255, 0, 0), None, True, parent=c1)
-        c12 = Category("c12", (255, 0, 0), None, True, parent=c1)
-        c121 = Category("c121", (255, 0, 0), None, True, parent=c12)
+        c1 = a_category_with(name="c1", parent=None)
+        c11 = a_category_with(name="c11", parent=c1)
+        c12 = a_category_with(name="c12", parent=c1)
+        c121 = a_category_with(name="c121", parent=c12)
         self.db.save_category(c1)
         self.db.save_category(c11)
         self.db.save_category(c12)
@@ -241,8 +241,8 @@ class MemoryDBSpec(unittest.TestCase):
         # Create hierarchy:
         # c1
         #   c11
-        c1 = Category("c1", (255, 0, 0), None, True, parent=None)
-        c11 = Category("c11", (255, 0, 0), None, True, parent=c1)
+        c1 = a_category_with(name="c1", parent=None)
+        c11 = a_category_with(name="c11", parent=c1)
         self.db.save_category(c1)
         self.db.save_category(c11)
         # Create event belonging to c11
@@ -402,14 +402,11 @@ class MemoryDBSpec(unittest.TestCase):
         self.db = MemoryDB()
         self.db.register_save_callback(self.save_callback_mock)
         self.db_listener = Mock()
-        self.c1 = Category("work", (255, 0, 0), None, True)
-        self.c2 = Category("private", (0, 255, 0), None, True)
-        self.e1 = Event(self.db.get_time_type(), gregorian.from_date(2010, 2, 13).to_time(), gregorian.from_date(2010, 2, 13).to_time(),
-                        "holiday")
-        self.e2 = Event(self.db.get_time_type(), gregorian.from_date(2010, 2, 14).to_time(), gregorian.from_date(2010, 2, 14).to_time(),
-                        "work starts")
-        self.e3 = Event(self.db.get_time_type(), gregorian.from_date(2010, 2, 15).to_time(), gregorian.from_date(2010, 2, 16).to_time(),
-                        "period")
+        self.c1 = a_category_with(name="work")
+        self.c2 = a_category_with(name="private")
+        self.e1 = an_event_with(name="holiday")
+        self.e2 = an_event_with(name="work starts")
+        self.e3 = an_event_with(name="period")
         self.db.register(self.db_listener)
 
 
@@ -421,9 +418,9 @@ class describe_importing_of_db(unittest.TestCase):
         self.assertEqual(self.base_db.get_all_events(), [])
 
     def test_categories_are_imported(self):
-        work = Category("work", (255, 0, 0), (0, 255, 255), True)
+        work = a_category_with(name="work")
         self.import_db.save_category(work)
-        paper_work = Category("paper work", (255, 0, 0), (0, 255, 255), True, parent=work)
+        paper_work = a_category_with(name="paper work", parent=work)
         self.import_db.save_category(paper_work)
         self.base_db.import_db(self.import_db)
         self.assertCategoryTreeIs([
@@ -433,8 +430,8 @@ class describe_importing_of_db(unittest.TestCase):
         ])
 
     def test_categories_are_given_unique_names(self):
-        self.base_db.save_category(self.a_category_with(name="work (imported 1)"))
-        self.import_db.save_category(self.a_category_with(name="work"))
+        self.base_db.save_category(a_category_with(name="work (imported 1)"))
+        self.import_db.save_category(a_category_with(name="work"))
         self.base_db.import_db(self.import_db)
         self.assertCategoryTreeIs([
             ("work (imported 1)", []),
@@ -442,31 +439,21 @@ class describe_importing_of_db(unittest.TestCase):
         ])
 
     def test_events_are_imported(self):
-        work = self.a_category_with(name="work")
+        work = a_category_with(name="work")
         self.import_db.save_category(work)
-        self.import_db.save_event(self.an_event_with(name="dentist", category=work))
+        dentist = an_event_with(name="dentist", category=work)
+        self.import_db.save_event(dentist)
         self.base_db.import_db(self.import_db)
         self.assertEventListIs([
             "dentist (work (imported 1))",
         ])
 
-    def a_category_with(self, name):
-        return Category(name, (255, 0, 0), (0, 255, 255), True)
-
-    def an_event_with(self, name, category=None):
-        event = Event(self.import_db.get_time_type(),
-                      gregorian.from_date(2010, 2, 13).to_time(),
-                      gregorian.from_date(2010, 2, 13).to_time(),
-                      name)
-        event.category = category
-        return event
-
     def assertCategoryTreeIs(self, expected_tree):
         def replace_category_with_name(tree):
             return [(category.name, replace_category_with_name(child_tree))
                     for (category, child_tree) in tree]
-        actual_tree = replace_category_with_name(category_tree(self.base_db.get_categories()))
-        self.assertEqual(actual_tree, expected_tree)
+        tree = category_tree(self.base_db.get_categories())
+        self.assertEqual(replace_category_with_name(tree), expected_tree)
 
     def assertEventListIs(self, expected_list):
         actual_list = ["%s (%s)" % (event.text, event.category.name)
@@ -476,3 +463,16 @@ class describe_importing_of_db(unittest.TestCase):
     def setUp(self):
         self.base_db = MemoryDB()
         self.import_db = MemoryDB()
+
+
+def a_category_with(name, parent=None):
+    return Category(name, (255, 0, 0), (0, 255, 255), True, parent=parent)
+
+
+def an_event_with(name, category=None):
+    event = Event(GregorianTimeType(),
+                  gregorian.from_date(2010, 2, 13).to_time(),
+                  gregorian.from_date(2010, 2, 13).to_time(),
+                  name)
+    event.category = category
+    return event
