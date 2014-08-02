@@ -448,6 +448,12 @@ class describe_importing_of_db(unittest.TestCase):
             "dentist (work (imported 1))",
         ])
 
+    def test_save_is_only_called_once(self):
+        self.import_db.save_category(a_category_with(name="work"))
+        self.import_db.save_category(a_category_with(name="private"))
+        self.base_db.import_db(self.import_db)
+        self.assertEqual(self.base_db_save_callback.call_count, 1)
+
     def assertCategoryTreeIs(self, expected_tree):
         def replace_category_with_name(tree):
             return [(category.name, replace_category_with_name(child_tree))
@@ -461,8 +467,12 @@ class describe_importing_of_db(unittest.TestCase):
         self.assertEqual(sorted(actual_list), expected_list)
 
     def setUp(self):
+        self.base_db_save_callback = Mock()
         self.base_db = MemoryDB()
+        self.base_db.register_save_callback(self.base_db_save_callback)
+        self.import_db_save_callback = Mock()
         self.import_db = MemoryDB()
+        self.import_db.register_save_callback(self.import_db_save_callback)
 
 
 def a_category_with(name, parent=None):

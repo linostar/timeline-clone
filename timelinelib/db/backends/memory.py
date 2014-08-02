@@ -355,18 +355,26 @@ class MemoryDB(Observable):
             self.hidden_categories.append(cat)
 
     def import_db(self, db):
-        cloned_categories_by_old_name = {}
+        self.disable_save()
+        self._import_events(db, self._import_categories(db))
+        self.enable_save()
+
+    def _import_categories(self, db):
+        category_map = {}
         for category in db.get_categories():
             cloned_category = category.clone()
+            category_map[category.name] = cloned_category
             cloned_category.name = self._get_unique_import_category_name(category.name)
             if cloned_category.parent is not None:
-                cloned_category.parent = cloned_categories_by_old_name[cloned_category.parent.name]
-            cloned_categories_by_old_name[category.name] = cloned_category
+                cloned_category.parent = category_map[cloned_category.parent.name]
             self.save_category(cloned_category)
+        return category_map
+
+    def _import_events(self, db, category_map):
         for event in db.get_all_events():
             cloned_event = event.clone()
             if event.category is not None:
-                cloned_event.category = cloned_categories_by_old_name[event.category.name]
+                cloned_event.category = category_map[event.category.name]
             self.save_event(cloned_event)
 
     def _get_unique_import_category_name(self, original_name):
