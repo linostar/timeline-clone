@@ -68,12 +68,15 @@ class MemoryDB(Observable):
     def get_time_type(self):
         return self.time_type
 
+    def set_time_type(self, time_type):
+        self.time_type = time_type
+
     def is_read_only(self):
         return self.readonly
 
     def set_readonly(self):
         self.readonly = True
-        
+
     def supported_event_data(self):
         return ["description", "icon", "alert", "hyperlink", "progress"]
 
@@ -355,6 +358,8 @@ class MemoryDB(Observable):
             self.hidden_categories.append(cat)
 
     def import_db(self, db):
+        if self.get_time_type() != db.get_time_type():
+            raise Exception("Import failed: time type does not match")
         self.disable_save()
         self._import_events(db, self._import_categories(db))
         self.enable_save()

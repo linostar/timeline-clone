@@ -454,6 +454,10 @@ class describe_importing_of_db(unittest.TestCase):
         self.base_db.import_db(self.import_db)
         self.assertEqual(self.base_db_save_callback.call_count, 1)
 
+    def test_fails_if_type_type_missmatch(self):
+        self.import_db.set_time_type(Mock())
+        self.assertRaises(Exception, self.base_db.import_db, self.import_db)
+
     def assertCategoryTreeIs(self, expected_tree):
         def replace_category_with_name(tree):
             return [(category.name, replace_category_with_name(child_tree))
