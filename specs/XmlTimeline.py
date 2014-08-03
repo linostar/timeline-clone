@@ -22,6 +22,7 @@ import os.path
 
 from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.xmlfile import XmlTimeline
+from timelinelib.db.exporters.timelinexml import export
 from timelinelib.db import db_open
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
@@ -142,6 +143,7 @@ class XmlTimelineSpec(TmpDirTestCase):
         vp.displayed_period = TimePeriod(db.get_time_type(), start, end)
         vp.set_category_visible(cat3, False)
         db.save_view_properties(vp)
+        export(db, self.tmp_path)
 
     def _assert_re_read_db_same(self, db):
         # Assert event correctly loaded

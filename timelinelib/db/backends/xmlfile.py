@@ -32,7 +32,6 @@ import wx
 
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.exporters.timelinexml import export
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Container
 from timelinelib.db.objects import Event
@@ -59,7 +58,6 @@ class XmlTimeline(MemoryDB):
 
     def __init__(self, path, load=True, timetype=None):
         MemoryDB.__init__(self)
-        self.register_save_callback(self._on_save)
         self.path = path
         self.time_type = self._select_timetype(timetype)
         if load == True:
@@ -340,9 +338,6 @@ class XmlTimeline(MemoryDB):
 
     def _parse_hidden_categories(self, text, tmp_dict):
         self.set_hidden_categories(tmp_dict.pop("hidden_categories"))
-
-    def _on_save(self):
-        export(self, self.path)
 
 
 def parse_bool(bool_string):

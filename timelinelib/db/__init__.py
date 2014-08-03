@@ -78,7 +78,12 @@ def db_open_timeline(path, timetype=None):
 
 def db_open_newtype_timeline(path, timetype=None):
     from timelinelib.db.backends.xmlfile import XmlTimeline
-    return XmlTimeline(path, timetype=timetype)
+    from timelinelib.db.exporters.timelinexml import export
+    db = XmlTimeline(path, timetype=timetype)
+    def save_callback():
+        export(db, path)
+    db.register_save_callback(save_callback)
+    return db
 
 
 def db_open_ics(path):
