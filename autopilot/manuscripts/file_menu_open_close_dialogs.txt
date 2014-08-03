@@ -5,6 +5,9 @@ Select Menu(Help, "Getting started tutorial")
 Select Menu(File, New, "File Timeline...") 
 Click Button(Cancel)
 
+Select Menu(File, New, "Numeric Timeline...") 
+Click Button(Cancel)
+
 Select Menu(File, New, "Directory Timeline...") 
 Click Button(Cancel)
 
