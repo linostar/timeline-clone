@@ -13,6 +13,7 @@ New features, enhancements:
 Bug fixes:
 
 * Fixed following error when using wxPython >= 2.9: AttributeError: 'module' object has no attribute 'Color'
+* Fixed navigation problem, got to time, for numeric timeline
 
 Version 1.3.0
 -------------

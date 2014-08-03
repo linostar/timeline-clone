@@ -1,0 +1,27 @@
+# Numeric Timeline
+
+
+# Open the tutorial timeline to verify that a numeric timline
+# can be opened
+Select Menu(Hjälp, "Getting started tutorial") 
+
+# Try to create a new numeric timeline for an existing timeline
+Select Menu(Arkiv, Ny, "Numeric Timeline...") 
+Enter text(1, "numeric_timeline")
+Click Button(Spara)
+
+# Accept opening the already existing numeric timeline
+Click Button(OK)
+
+# Navigate "Go to Time"
+Select Menu(Navigera, "Gå till &Tid 	Ctrl+T") 
+Enter text(1, "10")
+Click Button(OK)
+
+Select Menu(Navigera, "Gå till &Tid 	Ctrl+T") 
+Enter text(1, "100")
+Click Button(OK)
+
+Select Menu(Navigera, "Gå till &Tid 	Ctrl+T") 
+Enter text(1, "-10")
+Click Button(OK)
