@@ -28,10 +28,7 @@ from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.wxgui.utils import display_warning_message
 
 
-current_timeline = None
-
-
-def db_open(path, import_timeline=False, timetype=None):
+def db_open(path, timetype=None):
     """
     Create timeline database that can read and write timeline data from and to
     persistent storage identified by path.
@@ -50,9 +47,9 @@ def db_open(path, import_timeline=False, timetype=None):
     elif os.path.isdir(path):
         return open_directory_timeline(path)
     elif path.endswith(".timeline"):
-        return db_open_timeline(path, import_timeline, timetype)
+        return db_open_timeline(path, timetype)
     elif path.endswith(".ics"):
-        return db_open_ics(path, import_timeline)
+        return db_open_ics(path)
     else:
         msg_template = (_("Unable to open timeline '%s'.") + "\n\n" +
                         _("Unknown format."))
@@ -60,69 +57,38 @@ def db_open(path, import_timeline=False, timetype=None):
 
 
 def open_tutorial_timeline(path):
-    global current_timeline
-    current_timeline = create_in_memory_tutorial_db()
-    current_timeline.path = path
-    return  current_timeline
+    db = create_in_memory_tutorial_db()
+    db.path = path
+    return  db
 
 
 def open_directory_timeline(path):
     from timelinelib.db.importers.dir import import_db_from_dir
-    global current_timeline
-    current_timeline = import_db_from_dir(path)
-    current_timeline.path = path
-    return current_timeline
+    db = import_db_from_dir(path)
+    db.path = path
+    return db
 
 
-def db_open_timeline(path, import_timeline=False, timetype=None):
-    if import_timeline and current_timeline:
-        return db_import_timeline(path)
-    elif (os.path.exists(path) and file_starts_with(path, "# Written by Timeline ")):
+def db_open_timeline(path, timetype=None):
+    if (os.path.exists(path) and file_starts_with(path, "# Written by Timeline ")):
         raise TimelineIOError(_("You are trying to open an old file with a new version of timeline. Please install version 0.21.1 of timeline to convert it to the new format."))
     else:
         return db_open_newtype_timeline(path, timetype)
 
 
-def db_import_timeline(path):
-    global current_timeline
-    if os.path.isdir(current_timeline.path):
-        display_warning_message(_("Other timelines can't be imported to a directory timeline"))
-        return current_timeline
-    if current_timeline.path == ":tutorial:":
-        display_warning_message(_("Tutorial must be saved as a timeline to be able to import other timeline"))
-        return current_timeline
-    extension = current_timeline.path.rsplit(".", 1)[1]
-    if extension != "timeline":
-        display_warning_message(_("Only %s files can be imported") % extension)
-        return current_timeline
-    current_timeline.import_timeline(path)
-    return current_timeline
-
-
 def db_open_newtype_timeline(path, timetype=None):
-    global current_timeline
     from timelinelib.db.backends.xmlfile import XmlTimeline
-    current_timeline = XmlTimeline(path, import_timeline=False, timetype=timetype)
-    return current_timeline
+    return XmlTimeline(path, timetype=timetype)
 
 
-def db_open_ics(path, import_timeline=False):
-    global current_timeline
+def db_open_ics(path):
     try:
         import icalendar
     except ImportError:
         raise TimelineIOError(_("Could not find iCalendar Python package. It is required for working with ICS files. See the Timeline website or the doc/installing.rst file for instructions how to install it."))
     else:
         from timelinelib.db.importers.ics import import_db_from_ics
-        if import_timeline and current_timeline:
-            extension = current_timeline.path.rsplit(".", 1)[1]
-            if extension != "ics":
-                display_warning_message(_("Only %s files can be imported") % extension)
-                return current_timeline
-            current_timeline.import_timeline(path)
-        else:
-            current_timeline = import_db_from_ics(path)
-        return current_timeline
+        return import_db_from_ics(path)
 
 
 def file_starts_with(path, start):

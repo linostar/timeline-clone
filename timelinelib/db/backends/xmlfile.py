@@ -57,7 +57,7 @@ class ParseException(Exception):
 
 class XmlTimeline(MemoryDB):
 
-    def __init__(self, path, load=True, import_timeline=False, timetype=None):
+    def __init__(self, path, load=True, timetype=None):
         MemoryDB.__init__(self)
         self.register_save_callback(self._on_save)
         self.path = path
@@ -123,17 +123,6 @@ class XmlTimeline(MemoryDB):
             msg = _("Unable to read timeline data from '%s'.")
             whole_msg = (msg + "\n\n%s") % (abspath(self.path), ex_msg(e))
             raise TimelineIOError(whole_msg)
-
-    def import_timeline(self, path):
-        try:
-            self.importing = True
-            p = self.path
-            self.path = path
-            self._load()
-            self._fill_containers()
-            self.path = p
-        finally:
-            self.importing = False
 
     def _parse_version(self, text, tmp_dict):
         match = re.search(r"^(\d+).(\d+).(\d+)(dev.*)?$", text)
