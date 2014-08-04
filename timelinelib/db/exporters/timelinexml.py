@@ -36,7 +36,6 @@ def export_db_to_timeline_xml(db, path):
     Exporter(db).export(path)
 
 
-# Must be defined before the XmlTimeline class since it is used as a decorator
 def wrap_in_tag(func, name, indent=""):
     def wrapper(*args, **kwargs):
         file = args[1] # 1st argument is self, 2nd argument is file

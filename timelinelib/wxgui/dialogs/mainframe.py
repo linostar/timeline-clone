@@ -23,7 +23,6 @@ import wx.lib.newevent
 from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import read_config
 from timelinelib.config.paths import ICONS_DIR
-from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db import db_open
@@ -1084,12 +1083,6 @@ class MenuController(object):
             menu.Enable(False)
         else:
             menu.Enable(True)
-
-    def _enable_disable_menu_requiring_xml_timeline(self, menu):
-        if isinstance(self.current_timeline, XmlTimeline):
-            menu.Enable(True)
-        else:
-            menu.Enable(False)
 
     def _enable_disable_menu_requiring_timeline(self, menu):
         menu.Enable(self.current_timeline != None)

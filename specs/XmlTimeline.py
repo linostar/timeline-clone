@@ -24,6 +24,7 @@ from specs.utils import TmpDirTestCase
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db import db_open
+from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
@@ -49,7 +50,7 @@ class XmlTimelineSpec(TmpDirTestCase):
 </timeline>
 """
         self.write(self.tmp_path, contents)
-        XmlTimeline(self.tmp_path)
+        import_db_from_timeline_xml(self.tmp_path)
         self.assertEqual(self.read(self.tmp_path + ".pre100bak1"), contents)
 
     def test_does_not_back_up_1_0_0_files(self):
@@ -67,7 +68,7 @@ class XmlTimelineSpec(TmpDirTestCase):
 </timeline>
 """
         self.write(self.tmp_path, contents)
-        XmlTimeline(self.tmp_path)
+        import_db_from_timeline_xml(self.tmp_path)
         self.assertFalse(os.path.exists(self.tmp_path + ".pre100bak1"))
 
     def testAlertStringParsingGivesAlertData(self):
@@ -118,7 +119,7 @@ class XmlTimelineSpec(TmpDirTestCase):
 
     def testWriteReadCycle(self):
         self._create_db()
-        db_re_read = XmlTimeline(self.tmp_path)
+        db_re_read = import_db_from_timeline_xml(self.tmp_path)
         self._assert_re_read_db_same(db_re_read)
 
     def _create_db(self):

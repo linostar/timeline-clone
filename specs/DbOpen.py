@@ -20,7 +20,6 @@ import codecs
 
 from specs.utils import TmpDirTestCase
 from timelinelib.calendar.gregorian import Gregorian
-from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
 from timelinelib.db.objects import Category
