@@ -26,7 +26,6 @@ import StringIO
 import wx
 
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Container
@@ -46,7 +45,7 @@ from timelinelib.xml.parser import Tag
 
 
 def import_db_from_timeline_xml(path):
-    db = XmlTimeline(path)
+    db = MemoryDB()
     db.path = path
     db.set_time_type(GregorianTimeType())
     Parser(db, path).parse()

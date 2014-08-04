@@ -91,6 +91,7 @@ def db_open_newtype_timeline(path, timetype=None):
     def save_callback():
         export_db_to_timeline_xml(db, path)
     db.register_save_callback(save_callback)
+    db.set_should_lock(True)
     return db
 
 

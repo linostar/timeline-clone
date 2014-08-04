@@ -19,7 +19,6 @@
 import getpass
 import os
 
-from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.time.numtime import NumTimeType
 from timelinelib.wxgui.utils import display_error_message
@@ -150,7 +149,7 @@ class TimelineApplication(object):
 
     def _lock(self):
         fp = None
-        if not isinstance(self.timeline, XmlTimeline):
+        if not self.timeline.get_should_lock():
             return
         try:
             ts = self._get_timestamp_string()

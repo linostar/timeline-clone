@@ -61,6 +61,13 @@ class MemoryDB(Observable):
         self.importing = False
         self._undo_handler = UndoHandler(self)
         self._save_callback = None
+        self._should_lock = False
+
+    def get_should_lock(self):
+        return self._should_lock
+
+    def set_should_lock(self, should_lock):
+        self._should_lock = should_lock
 
     def register_save_callback(self, callback):
         self._save_callback = callback
