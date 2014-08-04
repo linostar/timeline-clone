@@ -20,6 +20,8 @@ import os.path
 
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.db.exporters.timelinexml import export
+from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
 from timelinelib.db.importers.tutorial import create_in_memory_tutorial_db
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
@@ -78,10 +80,8 @@ def db_open_timeline(path, timetype=None):
 
 
 def db_open_newtype_timeline(path, timetype=None):
-    from timelinelib.db.backends.xmlfile import XmlTimeline
-    from timelinelib.db.exporters.timelinexml import export
     if os.path.exists(path):
-        db = XmlTimeline(path, timetype=timetype)
+        db = import_db_from_timeline_xml(path)
     else:
         db = MemoryDB()
         if timetype is None:
