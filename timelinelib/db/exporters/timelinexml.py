@@ -32,7 +32,7 @@ INDENT2 = "    "
 INDENT3 = "      "
 
 
-def export(db, path):
+def export_db_to_timeline_xml(db, path):
     Exporter(db).export(path)
 
 

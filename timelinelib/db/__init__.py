@@ -20,7 +20,7 @@ import os.path
 
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.exporters.timelinexml import export
+from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
 from timelinelib.db.importers.tutorial import create_in_memory_tutorial_db
 from timelinelib.db.objects import Category
@@ -89,7 +89,7 @@ def db_open_newtype_timeline(path, timetype=None):
         else:
             db.set_time_type(timetype)
     def save_callback():
-        export(db, path)
+        export_db_to_timeline_xml(db, path)
     db.register_save_callback(save_callback)
     return db
 

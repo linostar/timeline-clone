@@ -25,7 +25,7 @@ from timelinelib.config.dotfile import read_config
 from timelinelib.config.paths import ICONS_DIR
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.exporters.timelinexml import export
+from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db import db_open
 from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import safe_locking
@@ -861,7 +861,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
     def _save_timeline_to_new_path(self, new_timeline_path):
         if new_timeline_path is not None:
             assert new_timeline_path.endswith(".timeline")
-            export(self.timeline, new_timeline_path)
+            export_db_to_timeline_xml(self.timeline, new_timeline_path)
             self.controller.open_timeline(new_timeline_path)
 
     def _export_to_svg_image(self):
