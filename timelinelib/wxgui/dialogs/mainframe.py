@@ -25,9 +25,9 @@ from timelinelib.config.dotfile import read_config
 from timelinelib.config.paths import ICONS_DIR
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.db.exporters.timelinexml import export
 from timelinelib.db import db_open
 from timelinelib.db.objects import TimePeriod
-from timelinelib.db.transformers.toxmltimeline import transform_to_xml_timeline
 from timelinelib.db.utils import safe_locking
 from timelinelib.export.bitmap import export_to_image
 from timelinelib.export.bitmap import export_to_images
@@ -35,6 +35,8 @@ from timelinelib.feedback.feature import FEATURES
 from timelinelib.feedback.feature import show_feature_feedback_dialog
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
+from timelinelib.proxies.drawingarea import DrawingAreaProxy
+from timelinelib.proxies.sidebar import SidebarProxy
 from timelinelib.time.numtime import NumTimeType
 from timelinelib.utils import ex_msg
 from timelinelib.wxgui.components.categorytree import CustomCategoryTree
@@ -48,6 +50,7 @@ from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
 from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
+from timelinelib.wxgui.dialogs.shortcutseditor import ShortcutsEditorDialog
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.wxgui.timer import TimelineTimer
@@ -56,9 +59,6 @@ from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 import timelinelib.wxgui.utils as gui_utils
-from timelinelib.proxies.drawingarea import DrawingAreaProxy
-from timelinelib.proxies.sidebar import SidebarProxy
-from timelinelib.wxgui.dialogs.shortcutseditor import ShortcutsEditorDialog
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -860,12 +860,9 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
     def _save_timeline_to_new_path(self, new_timeline_path):
         if new_timeline_path is not None:
-            if isinstance(self.timeline, XmlTimeline):
-                self.timeline.path = new_timeline_path
-            else:
-                self.timeline =  transform_to_xml_timeline(new_timeline_path,
-                                                           self.timeline)
-            self.controller.open_timeline(self.timeline.path)
+            assert new_timeline_path.endswith(".timeline")
+            export(self.timeline, new_timeline_path)
+            self.controller.open_timeline(new_timeline_path)
 
     def _export_to_svg_image(self):
         if not self._has_pysvg_module():
