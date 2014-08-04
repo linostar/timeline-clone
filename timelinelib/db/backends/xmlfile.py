@@ -56,48 +56,14 @@ class ParseException(Exception):
 
 class XmlTimeline(MemoryDB):
 
-    def __init__(self, path, load=True, timetype=None):
+    def __init__(self, path):
         MemoryDB.__init__(self)
         self.path = path
-        self.time_type = self._select_timetype(timetype)
-        if load == True:
-            self._load()
-            self._fill_containers()
-
-    def _select_timetype(self, timetype):
-        if timetype == None:
-            timetype = GregorianTimeType()
-        return timetype
-
-    def _parse_time(self, time_string):
-        return self.get_time_type().parse_time(time_string)
-
-    def _fill_containers(self):
-        container_events = [event for event in self.events
-                            if event.is_container()]
-        subevents = [event for event in self.events
-                     if event.is_subevent()]
-        containers = {}
-        for container in container_events:
-            containers[container.cid()] = container
-        for subevent in subevents:
-            try:
-                container = containers[subevent.cid()]
-                container.register_subevent(subevent)
-            except:
-                #TODO: Create container
-                pass
+        self.time_type = GregorianTimeType()
+        self._load()
+        self._fill_containers()
 
     def _load(self):
-        """
-        Load timeline data from the file that this timeline points to.
-
-        This should only be done once when this class is created.
-
-        The data is stored internally until we do a save.
-
-        If a read error occurs a TimelineIOError will be raised.
-        """
         try:
             # _parse_version will create the rest of the schema dynamically
             partial_schema = Tag("timeline", SINGLE, None, [
@@ -194,7 +160,7 @@ class XmlTimeline(MemoryDB):
                 break
         if self.time_type is None:
             raise ParseException("Invalid timetype '%s' found." % text)
-    
+
     def _parse_category(self, text, tmp_dict):
         name = tmp_dict.pop("tmp_name")
         color = parse_color(tmp_dict.pop("tmp_color"))
@@ -209,7 +175,7 @@ class XmlTimeline(MemoryDB):
         category = Category(name, color, font_color, True, parent=parent)
         old_category = self._get_category_by_name(category)
         if old_category is not None:
-            category = old_category     
+            category = old_category
         if not tmp_dict["category_map"].has_key(name):
             tmp_dict["category_map"][name] = category
             self.save_category(category)
@@ -316,19 +282,24 @@ class XmlTimeline(MemoryDB):
     def _parse_hidden_categories(self, text, tmp_dict):
         self.set_hidden_categories(tmp_dict.pop("hidden_categories"))
 
+    def _parse_time(self, time_string):
+        return self.get_time_type().parse_time(time_string)
 
-def parse_bool(bool_string):
-    """
-    Expected format 'True' or 'False'.
-
-    Return True or False.
-    """
-    if bool_string == "True":
-        return True
-    elif bool_string == "False":
-        return False
-    else:
-        raise ParseException("Unknown boolean '%s'" % bool_string)
+    def _fill_containers(self):
+        container_events = [event for event in self.events
+                            if event.is_container()]
+        subevents = [event for event in self.events
+                     if event.is_subevent()]
+        containers = {}
+        for container in container_events:
+            containers[container.cid()] = container
+        for subevent in subevents:
+            try:
+                container = containers[subevent.cid()]
+                container.register_subevent(subevent)
+            except:
+                #TODO: Create container
+                pass
 
 
 def parse_color(color_string):
