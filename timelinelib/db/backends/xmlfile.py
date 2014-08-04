@@ -68,12 +68,9 @@ class XmlTimeline(MemoryDB):
         if timetype == None:
             timetype = GregorianTimeType()
         return timetype
-    
+
     def _parse_time(self, time_string):
         return self.get_time_type().parse_time(time_string)
-
-    def _time_string(self, time):
-        return self.get_time_type().time_string(time)
 
     def _fill_containers(self):
         container_events = [event for event in self.events
@@ -234,7 +231,7 @@ class XmlTimeline(MemoryDB):
                 raise ParseException("Category '%s' not found." % category_text)
         description = tmp_dict.pop("tmp_description", None)
         alert_string = tmp_dict.pop("tmp_alert", None)
-        alert = self._parse_alert_string(alert_string)
+        alert = parse_alert_string(self.get_time_type(), alert_string)
         icon_text = tmp_dict.pop("tmp_icon", None)
         if icon_text is None:
             icon = None
@@ -260,26 +257,9 @@ class XmlTimeline(MemoryDB):
 
     def _text_starts_with_added_space(self, text):
         return text[0:2] in (" (", " [")
-    
+
     def _remove_added_space(self, text):
         return text[1:]
-        
-    def alert_string(self, alert):
-        time, text = alert
-        time_string = self._time_string(time)
-        return "%s;%s" % (time_string, text)
-
-    def _parse_alert_string(self, alert_string):
-        if alert_string is not None:
-            try:
-                time_string, alert_text = alert_string.split(";", 1)
-                alert_time = self._parse_time(time_string)
-                alert = (alert_time, alert_text)
-            except:
-                raise ParseException("Could not parse alert from '%s'." % alert_string)
-        else:
-            alert = None
-        return alert
 
     def _is_container_event(self, text):
         return text.startswith("[")
@@ -372,6 +352,7 @@ def parse_color(color_string):
         raise ParseException("Color not on correct format, color string = '%s'"
                              % color_string)
 
+
 def parse_icon(string):
     """
     Expected format: base64 encoded png image.
@@ -384,3 +365,16 @@ def parse_icon(string):
         return image.ConvertToBitmap()
     except:
         raise ParseException("Could not parse icon from '%s'." % string)
+
+
+def parse_alert_string(time_type, alert_string):
+    if alert_string is not None:
+        try:
+            time_string, alert_text = alert_string.split(";", 1)
+            alert_time = time_type.parse_time(time_string)
+            alert = (alert_time, alert_text)
+        except:
+            raise ParseException("Could not parse alert from '%s'." % alert_string)
+    else:
+        alert = None
+    return alert

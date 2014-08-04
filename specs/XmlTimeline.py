@@ -21,7 +21,8 @@ import codecs
 import os.path
 
 from specs.utils import TmpDirTestCase
-from timelinelib.db.backends.xmlfile import XmlTimeline
+from timelinelib.db.backends.xmlfile import parse_alert_string
+from timelinelib.db.exporters.timelinexml import alert_string
 from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db import db_open
 from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
@@ -30,6 +31,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.meta.version import get_version
+from timelinelib.time.gregoriantime import GregorianTimeType
 import timelinelib.calendar.gregorian as gregorian
 
 
@@ -72,15 +74,13 @@ class XmlTimelineSpec(TmpDirTestCase):
         self.assertFalse(os.path.exists(self.tmp_path + ".pre100bak1"))
 
     def testAlertStringParsingGivesAlertData(self):
-        timeline = XmlTimeline(None, load=False)
-        time, text = timeline._parse_alert_string("2012-11-11 00:00:00;Now is the time")
+        time, text = parse_alert_string(GregorianTimeType(), "2012-11-11 00:00:00;Now is the time")
         self.assertEqual("Now is the time", text)
-        self.assertEqual("2012-11-11 00:00:00", "%s" % timeline.get_time_type().time_string(time))
+        self.assertEqual("2012-11-11 00:00:00", "%s" % GregorianTimeType().time_string(time))
 
     def testAlertDataConversionGivesAlertString(self):
-        timeline = XmlTimeline(None, load=False)
         alert = (gregorian.from_date(2010, 8, 31).to_time(), "Hoho")
-        alert_text = timeline.alert_string(alert)
+        alert_text = alert_string(GregorianTimeType(), alert)
         self.assertEqual("2010-08-31 00:00:00;Hoho", alert_text)
 
     def testDisplayedPeriodTagNotWrittenIfNotSet(self):

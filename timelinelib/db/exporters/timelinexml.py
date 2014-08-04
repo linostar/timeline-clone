@@ -62,11 +62,6 @@ class Exporter(object):
     def _time_string(self, time):
         return self.db.get_time_type().time_string(time)
 
-    def alert_string(self, alert):
-        time, text = alert
-        time_string = self._time_string(time)
-        return "%s;%s" % (time_string, text)
-
     def _write_xml_doc(self, file):
         file.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
         self._write_timeline(file)
@@ -130,7 +125,7 @@ class Exporter(object):
             write_simple_tag(file, "description", evt.get_data("description"), INDENT3)
         alert = evt.get_data("alert")
         if alert is not None:
-            write_simple_tag(file, "alert", self.alert_string(alert),
+            write_simple_tag(file, "alert", alert_string(self.db.get_time_type(), alert),
                              INDENT3)
         hyperlink = evt.get_data("hyperlink")
         if hyperlink is not None:
@@ -188,3 +183,9 @@ def icon_string(bitmap):
     image = wx.ImageFromBitmap(bitmap)
     image.SaveStream(output, wx.BITMAP_TYPE_PNG)
     return base64.b64encode(output.getvalue())
+
+
+def alert_string(time_type, alert):
+    time, text = alert
+    time_string = time_type.time_string(time)
+    return "%s;%s" % (time_string, text)
