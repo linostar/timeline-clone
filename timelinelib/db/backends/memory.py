@@ -208,16 +208,16 @@ class MemoryDB(Observable):
         self._undo_handler.save()
 
     def _category_name_exists(self, category):
-        return self._get_category_by_name(category) is not None
-        
+        return self.get_category_by_name(category) is not None
+
     def _append_category(self, category):
         if category.has_id():
             raise TimelineIOError("Category with id %s not found in db." %
                                   category.id)
         self.categories.append(category)
         category.set_id(self.event_id_counter.get_next())
-        
-    def _get_category_by_name(self, category):
+
+    def get_category_by_name(self, category):
         for cat in self.categories:
             if cat.name == category.name:
                 return cat
