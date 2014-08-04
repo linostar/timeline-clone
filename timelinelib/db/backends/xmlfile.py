@@ -101,9 +101,6 @@ class XmlTimeline(MemoryDB):
 
         If a read error occurs a TimelineIOError will be raised.
         """
-        if not os.path.exists(self.path):
-            # Nothing to load. Will create a new timeline on save.
-            return
         try:
             # _parse_version will create the rest of the schema dynamically
             partial_schema = Tag("timeline", SINGLE, None, [

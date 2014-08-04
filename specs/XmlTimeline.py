@@ -122,7 +122,7 @@ class XmlTimelineSpec(TmpDirTestCase):
         self._assert_re_read_db_same(db_re_read)
 
     def _create_db(self):
-        db = XmlTimeline(self.tmp_path)
+        db = db_open(self.tmp_path)
         # Create categories
         cat1 = Category("Category 1", (255, 0, 0), (0, 0, 255), True)
         db.save_category(cat1)

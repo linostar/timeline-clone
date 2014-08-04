@@ -25,6 +25,7 @@ from timelinelib.db.objects import Category
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.utils import display_warning_message
 
 
@@ -79,7 +80,14 @@ def db_open_timeline(path, timetype=None):
 def db_open_newtype_timeline(path, timetype=None):
     from timelinelib.db.backends.xmlfile import XmlTimeline
     from timelinelib.db.exporters.timelinexml import export
-    db = XmlTimeline(path, timetype=timetype)
+    if os.path.exists(path):
+        db = XmlTimeline(path, timetype=timetype)
+    else:
+        db = MemoryDB()
+        if timetype is None:
+            db.set_time_type(GregorianTimeType())
+        else:
+            db.set_time_type(timetype)
     def save_callback():
         export(db, path)
     db.register_save_callback(save_callback)

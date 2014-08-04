@@ -23,6 +23,7 @@ from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.db.backends.xmlfile import XmlTimeline
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
+from timelinelib.db.objects import Category
 from timelinelib.drawing.viewproperties import ViewProperties
 
 import wx
@@ -128,6 +129,13 @@ class DbOpenSpec(TmpDirTestCase):
                 self.assertEqual(cat.parent.name, "Category 2")
             else:
                 self.fail("Unknown category.")
+
+    def test_creates_new_xml_file(self):
+        new_db = db_open(self.tmp_path)
+        new_db.save_category(Category("work", (255, 0, 0), None, True))
+        re_read_db = db_open(self.tmp_path)
+        self.assertEqual(len(re_read_db.get_categories()), 1)
+        self.assertEqual(re_read_db.get_categories()[0].name, "work")
 
     def setUp(self):
         TmpDirTestCase.setUp(self)
