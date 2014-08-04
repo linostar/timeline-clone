@@ -27,6 +27,12 @@ from timelinelib.db.objects import TimePeriod
 
 class NumTimeType(TimeType):
 
+    def __eq__(self, other):
+        return isinstance(other, NumTimeType)
+
+    def __ne__(self, other):
+        return not (self == other)
+
     def time_string(self, time):
         return "%s" % (time)
 

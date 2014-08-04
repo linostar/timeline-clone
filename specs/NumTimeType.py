@@ -20,8 +20,9 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.time.numtime import NumTimeType
 from timelinelib.db.objects import TimePeriod
+from timelinelib.time.gregoriantime import GregorianTimeType
+from timelinelib.time.numtime import NumTimeType
 
 
 class NumTimeTypeSpec(unittest.TestCase):
@@ -46,3 +47,7 @@ class NumTimeTypeSpec(unittest.TestCase):
     def test_format_delta_2(self):
         delta = 2
         self.assertEqual("2", self.time_type.format_delta(delta))
+
+    def test_equality(self):
+        self.assertEqual(NumTimeType(), NumTimeType())
+        self.assertNotEqual(NumTimeType(), GregorianTimeType())
