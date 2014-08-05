@@ -24,7 +24,7 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.cattree import CategoriesTreeController
-from timelinelib.wxgui.components.timeline import DrawingAreaPanel
+from timelinelib.wxgui.components.timeline import TimelineCanvas
 
 
 class describe_categories_tree_control(unittest.TestCase):
@@ -39,13 +39,13 @@ class describe_categories_tree_control(unittest.TestCase):
         ], None)
 
     def test_categories_are_populated_from_db_when_initializing_from_timeline_view(self):
-        self.controller.initialize_from_timeline_view(self.timeline_view)
+        self.controller.initialize_from_timeline_view(self.timeline_canvas)
         self.view.set_category_tree.assert_called_with([
             (self.bar, []),
             (self.foo, [
                 (self.foofoo, []),
             ])
-        ], self.timeline_view.get_view_properties())
+        ], self.timeline_canvas.get_view_properties())
 
     def test_initializing_from_none_timeline_view_should_not_raise_exception(self):
         self.controller.initialize_from_timeline_view(None)
@@ -57,7 +57,7 @@ class describe_categories_tree_control(unittest.TestCase):
         self.bar = Category("bar", (255, 0, 0), None, True, parent=None)
         self.db.get_categories.return_value = [self.foo, self.foofoo, self.bar]
         self.view = Mock(CategoriesTree)
-        self.timeline_view = Mock(DrawingAreaPanel)
-        self.timeline_view.get_timeline.return_value = self.db
-        self.timeline_view.get_view_properties.return_value = Mock()
+        self.timeline_canvas = Mock(TimelineCanvas)
+        self.timeline_canvas.get_timeline.return_value = self.db
+        self.timeline_canvas.get_view_properties.return_value = Mock()
         self.controller = CategoriesTreeController(self.view, None)

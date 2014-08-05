@@ -1099,7 +1099,7 @@ class MainPanel(wx.Panel):
     Displays one of the following panels:
 
       * The welcome panel (show_welcome_panel)
-      * A splitter with sidebar and DrawingAreaPanel (show_timeline_panel)
+      * The timeline panel (show_timeline_panel)
       * The error panel (show_error_panel)
 
     Also displays the search bar.

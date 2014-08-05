@@ -93,7 +93,7 @@ class TimelinePanel(wx.Panel):
         self.sidebar = _Sidebar(self.main_frame, self.splitter, self.handle_db_error)
 
     def _create_drawing_area(self):
-        self.drawing_area = DrawingAreaPanel(
+        self.drawing_area = TimelineCanvas(
             self.splitter,
             self.status_bar_adapter,
             self.divider_line_slider,
@@ -156,7 +156,7 @@ class _Sidebar(wx.Panel):
         self.GetEventHandler().ProcessEvent(event)
 
 
-class DrawingAreaPanel(wx.Panel):
+class TimelineCanvas(wx.Panel):
 
     def __init__(self, parent, status_bar_adapter, divider_line_slider,
                  fn_handle_db_error, config, main_frame):

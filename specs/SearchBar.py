@@ -35,7 +35,7 @@ class SearchBarTestCase(unittest.TestCase):
     def test_no_events_found_no_navigation_call(self):
         self.view.get_value.return_value = ""
         self.controller.search()
-        self.assertFalse(self.drawing_area_panel.navigate)
+        self.assertFalse(self.timeline_canvas.navigate)
 
     def test_on_event_found_displays_singlematch_label(self):
         self.view.get_value.return_value = "one"
@@ -46,7 +46,7 @@ class SearchBarTestCase(unittest.TestCase):
     def test_on_event_found_navigation_called(self):
         self.view.get_value.return_value = "one"
         self.controller.search()
-        self.assertTrue(self.drawing_area_panel.navigate)
+        self.assertTrue(self.timeline_canvas.navigate)
 
     def test_two_events_found_displays_no_label(self):
         self.view.get_value.return_value = "two"
@@ -90,12 +90,12 @@ class SearchBarTestCase(unittest.TestCase):
 
     def setUp(self):
         self.view = Mock(SearchBar)
-        self.drawing_area_panel = DrawingAreaPanel()
+        self.timeline_canvas = TimelineCanvas()
         self.controller = SearchBarController(self.view)
-        self.controller.set_drawing_area_panel(self.drawing_area_panel)
+        self.controller.set_drawing_area_panel(self.timeline_canvas)
 
 
-class DrawingAreaPanel():
+class TimelineCanvas():
 
     def __init__(self):
         self.navigate = False

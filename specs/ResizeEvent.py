@@ -27,7 +27,7 @@ from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.wxgui.components.timeline import DrawingArea
-from timelinelib.wxgui.components.timeline import DrawingAreaPanel
+from timelinelib.wxgui.components.timeline import TimelineCanvas
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
 
@@ -65,7 +65,7 @@ class ResizeEventSpec(unittest.TestCase):
         self.drawer = Mock()
         self.controller = Mock(DrawingArea)
         self.controller.timeline = None
-        self.controller.view = Mock(DrawingAreaPanel)
+        self.controller.view = Mock(TimelineCanvas)
         self.controller.get_drawer.return_value = self.drawer
         self.status_bar = Mock(StatusBarAdapter)
 

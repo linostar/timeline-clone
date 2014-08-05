@@ -29,7 +29,7 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.wxgui.components.timeline import DrawingArea
-from timelinelib.wxgui.components.timeline import DrawingAreaPanel
+from timelinelib.wxgui.components.timeline import TimelineCanvas
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
 
@@ -208,7 +208,7 @@ class TimelineViewSpec(unittest.TestCase):
         event = self.given_event_with(pos=(40, 60), size=(20, 10))
         self.init_view_with_db()
         self.simulate_mouse_double_click(50, 65)
-        self.view.open_event_editor_for.assert_called_with(event)
+        self.timeline_canvas.open_event_editor_for.assert_called_with(event)
         self.assert_timeline_redrawn()
 
     def test_selects_and_deselects_event_when_clicking_on_it(self):
@@ -241,7 +241,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.init_view_with_db()
         self.simulate_mouse_click(10, 65)
         self.simulate_mouse_move(10, 65)
-        self.assertTrue(self.view.set_move_cursor.called)
+        self.assertTrue(self.timeline_canvas.set_move_cursor.called)
 
     def test_displays_resize_cursor_when_hovering_resize_icons_on_event(self):
         event = self.given_event_with(pos=(30, 60), size=(60, 10))
@@ -249,7 +249,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.simulate_mouse_click(50, 65)
         self.simulate_mouse_move(31, 65)
         self.simulate_mouse_move(89, 65)
-        self.assertEqual(2, self.view.set_size_cursor.call_count)
+        self.assertEqual(2, self.timeline_canvas.set_size_cursor.call_count)
 
     def test_resizes_event_when_dragging_right_drag_icon_on_event(self):
         event = self.given_event_with(start="4 Aug 2010", end="10 Aug 2010", pos=(30, 55), size=(60, 10))
@@ -299,7 +299,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.simulate_mouse_click(50, 60)
         self.controller.left_mouse_down(65, 60, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(199, 60)
-        self.assertTrue(self.view.start_dragscroll_timer.called)
+        self.assertTrue(self.timeline_canvas.start_dragscroll_timer.called)
         self.controller.dragscroll_timer_fired()
         self.controller.left_mouse_up()
         self.assert_displays_period("3 Aug 2010", "23 Aug 2010")
@@ -311,7 +311,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.simulate_mouse_click(50, 60)
         self.controller.left_mouse_down(89, 60, ctrl_down=False, shift_down=False)
         self.controller.mouse_moved(199, 60)
-        self.assertTrue(self.view.start_dragscroll_timer.called)
+        self.assertTrue(self.timeline_canvas.start_dragscroll_timer.called)
         self.controller.dragscroll_timer_fired()
         self.controller.left_mouse_up()
         self.assert_displays_period("3 Aug 2010", "23 Aug 2010")
@@ -332,7 +332,7 @@ class TimelineViewSpec(unittest.TestCase):
         period_event = self.given_event_with(start="4 Aug 2010", end="10 Aug 2010", pos=(30, 60-5), size=(60, 10))
         point_event = self.given_event_with(start="15 Aug 2010", end="15 Aug 2010", pos=(130, 30-5), size=(50, 10))
         self.init_view_with_db()
-        self.view.ask_question.return_value = wx.YES
+        self.timeline_canvas.ask_question.return_value = wx.YES
         self.simulate_mouse_click(50, 60)
         self.controller.key_down(wx.WXK_DELETE, False)
         self.assertEqual([point_event], self.db.get_all_events())
@@ -341,7 +341,7 @@ class TimelineViewSpec(unittest.TestCase):
         period_event = self.given_event_with(start="4 Aug 2010", end="10 Aug 2010", pos=(30, 60-5), size=(60, 10))
         point_event = self.given_event_with(start="15 Aug 2010", end="15 Aug 2010", pos=(130, 30-5), size=(50, 10))
         self.init_view_with_db()
-        self.view.ask_question.return_value = wx.NO
+        self.timeline_canvas.ask_question.return_value = wx.NO
         self.simulate_mouse_click(50, 60)
         self.controller.key_down(wx.WXK_DELETE, False)
         self.assertTrue(period_event in self.db.get_all_events())
@@ -356,14 +356,14 @@ class TimelineViewSpec(unittest.TestCase):
 
     def test_disables_view_if_no_timeline_set(self):
         self.controller.set_timeline(None)
-        self.view.Disable.assert_called_with()
+        self.timeline_canvas.Disable.assert_called_with()
 
     def setUp(self):
         self.db = MemoryDB()
-        self.view = Mock(DrawingAreaPanel)
+        self.timeline_canvas = Mock(TimelineCanvas)
         self.width = 10
         self.middle_x = self.width / 2
-        self.view.GetSizeTuple.return_value = (self.width, 10)
+        self.timeline_canvas.GetSizeTuple.return_value = (self.width, 10)
         self.status_bar_adapter = Mock(StatusBarAdapter)
         self.config = Mock(Config)
         self.mock_drawer = MockDrawer()
@@ -371,7 +371,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.divider_line_slider.GetValue.return_value = 50
         self.fn_handle_db_error = Mock()
         self.controller = DrawingArea(
-            self.view,
+            self.timeline_canvas,
             self.status_bar_adapter,
             self.config,
             self.mock_drawer,
@@ -399,11 +399,11 @@ class TimelineViewSpec(unittest.TestCase):
         self.controller.set_timeline(self.db)
 
     def fire_balloon_show_timer(self):
-        self.assertTrue(self.view.start_balloon_show_timer.called)
+        self.assertTrue(self.timeline_canvas.start_balloon_show_timer.called)
         self.controller.balloon_show_timer_fired()
 
     def fire_balloon_hide_timer(self):
-        self.assertTrue(self.view.start_balloon_hide_timer.called)
+        self.assertTrue(self.timeline_canvas.start_balloon_hide_timer.called)
         self.controller.balloon_hide_timer_fired()
 
     def start_shift_drag_at_x(self, x):
@@ -465,10 +465,10 @@ class TimelineViewSpec(unittest.TestCase):
             gregorian_period(start, end), view_properties.displayed_period)
 
     def assert_timeline_redrawn(self):
-        self.assertTrue(self.view.redraw_surface.called)
+        self.assertTrue(self.timeline_canvas.redraw_surface.called)
 
     def assert_created_event_with_period(self, start, end):
-        self.view.open_create_event_editor.assert_called_with(
+        self.timeline_canvas.open_create_event_editor.assert_called_with(
             human_time_to_gregorian(start), human_time_to_gregorian(end))
 
     def assert_is_selected(self, event):
@@ -483,8 +483,8 @@ class TimelineViewSpec(unittest.TestCase):
         self.assertEqual(text, self.get_status_text())
 
     def get_view_properties_used_when_drawing(self):
-        self.assertTrue(self.view.redraw_surface.called)
-        draw_fn = self.view.redraw_surface.call_args[0][0]
+        self.assertTrue(self.timeline_canvas.redraw_surface.called)
+        draw_fn = self.timeline_canvas.redraw_surface.call_args[0][0]
         draw_fn(Mock())
         return self.mock_drawer.draw_view_properties
 

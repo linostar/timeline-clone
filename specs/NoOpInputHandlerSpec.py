@@ -24,7 +24,7 @@ import wx
 from specs.utils import an_event, an_event_with, human_time_to_gregorian
 from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.view.noop import NoOpInputHandler
-from timelinelib.wxgui.components.timeline import DrawingAreaPanel
+from timelinelib.wxgui.components.timeline import TimelineCanvas
 
 
 class NoOpInputHandlerSpec(unittest.TestCase):
@@ -54,12 +54,12 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)
         self.handler.mouse_moved(10, 10)
-        self.assertEqual(0, self.view.set_move_cursor.call_count)
+        self.assertEqual(0, self.timeline_canvas.set_move_cursor.call_count)
 
     def setUp(self):
         self.setup_drawing_area_mock()
-        self.view = Mock(DrawingAreaPanel)
-        self.handler = NoOpInputHandler(self.drawing_area, self.view)
+        self.timeline_canvas = Mock(TimelineCanvas)
+        self.handler = NoOpInputHandler(self.drawing_area, self.timeline_canvas)
 
     def setup_drawing_area_mock(self):
         self.times_at = {}
