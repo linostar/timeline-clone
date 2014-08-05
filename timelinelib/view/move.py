@@ -21,16 +21,16 @@ from timelinelib.view.scrollbase import ScrollViewInputHandler
 
 class MoveByDragInputHandler(ScrollViewInputHandler):
 
-    def __init__(self, drawing_area, status_bar_adapter, event, start_drag_time):
-        ScrollViewInputHandler.__init__(self, drawing_area)
-        self.drawing_area = drawing_area
+    def __init__(self, timeline_canvas_controller, status_bar_adapter, event, start_drag_time):
+        ScrollViewInputHandler.__init__(self, timeline_canvas_controller)
+        self.timeline_canvas_controller = timeline_canvas_controller
         self.status_bar_adapter = status_bar_adapter
         self.start_drag_time = start_drag_time
         self._store_event_periods(event)
 
     def _store_event_periods(self, event_being_dragged):
         self.event_periods = []
-        selected_events = self.drawing_area.get_selected_events()
+        selected_events = self.timeline_canvas_controller.get_selected_events()
         if not event_being_dragged in selected_events:
             return
         for event in selected_events:
@@ -52,9 +52,9 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
     def left_mouse_up(self):
         ScrollViewInputHandler.left_mouse_up(self)
         self.status_bar_adapter.set_text("")
-        if self.drawing_area.timeline is not None:
-            self.drawing_area.timeline._save_if_not_disabled()
-        self.drawing_area.change_input_handler_to_no_op()
+        if self.timeline_canvas_controller.timeline is not None:
+            self.timeline_canvas_controller.timeline._save_if_not_disabled()
+        self.timeline_canvas_controller.change_input_handler_to_no_op()
 
     def view_scrolled(self):
         self._move_event()
@@ -66,7 +66,7 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
             self.status_bar_adapter.set_text(_("Can't move locked event"))
             return
         self._move_selected_events()
-        self.drawing_area.redraw_timeline()
+        self.timeline_canvas_controller.redraw_timeline()
 
     def _any_event_locked(self):
         for (event, original_period) in self.event_periods:
@@ -81,7 +81,7 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def _get_total_move_delta(self):
         moved_delta = self._get_moved_delta()
-        if self.drawing_area.event_is_period(self.event_periods[0][0]):
+        if self.timeline_canvas_controller.event_is_period(self.event_periods[0][0]):
             new_period = self.event_periods[0][1].move_delta(moved_delta)
             snapped_period = self._snap(new_period)
             return snapped_period.start_time - self.event_periods[0][1].start_time
@@ -89,15 +89,15 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
             return moved_delta
 
     def _get_moved_delta(self):
-        current_time = self.drawing_area.get_time(self.last_x)
+        current_time = self.timeline_canvas_controller.get_time(self.last_x)
         delta = current_time - self.start_drag_time
         return delta
 
     def _snap(self, period):
         start = period.start_time
         end = period.end_time
-        start_snapped = self.drawing_area.snap(start)
-        end_snapped = self.drawing_area.snap(end)
+        start_snapped = self.timeline_canvas_controller.snap(start)
+        end_snapped = self.timeline_canvas_controller.snap(end)
         if start_snapped != start:
             return period.move_delta(start_snapped - start)
         elif end_snapped != end:
