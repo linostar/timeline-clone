@@ -20,10 +20,140 @@ import wx
 
 from timelinelib.drawing import get_drawer
 from timelinelib.view.drawingarea import DrawingArea
+from timelinelib.wxgui.components.categorytree import CustomCategoryTree
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.eventeditor import open_event_editor_for
 from timelinelib.wxgui.utils import _ask_question
+
+
+class TimelinePanel(wx.Panel):
+
+    def __init__(self, parent, config, handle_db_error, status_bar_adapter,
+            main_frame):
+        wx.Panel.__init__(self, parent)
+        self.config = config
+        self.handle_db_error = handle_db_error
+        self.status_bar_adapter = status_bar_adapter
+        self.main_frame = main_frame
+        self.sidebar_width = self.config.get_sidebar_width()
+        self._create_gui()
+
+    def set_timeline(self, timeline):
+        self.drawing_area.set_timeline(timeline)
+
+    def get_drawing_area(self):
+        return self.drawing_area
+
+    def get_scene(self):
+        return self.drawing_area.get_drawer().scene
+
+    def get_time_period(self):
+        return self.drawing_area.get_time_period()
+
+    def open_event_editor(self, event):
+        self.drawing_area.open_event_editor_for(event)
+
+    def redraw_timeline(self):
+        self.drawing_area.redraw_timeline()
+
+    def navigate_timeline(self, navigation_fn):
+        return self.drawing_area.navigate_timeline(navigation_fn)
+
+    def get_view_properties(self):
+        return self.drawing_area.get_view_properties()
+
+    def get_current_image(self):
+        return self.drawing_area.get_current_image()
+
+    def _create_gui(self):
+        self._create_divider_line_slider()
+        self._create_splitter()
+        self._layout_components()
+
+    def _create_divider_line_slider(self):
+        self.divider_line_slider = wx.Slider(
+            self, value=50, size=(20, -1), style=wx.SL_LEFT|wx.SL_VERTICAL)
+
+    def _create_splitter(self):
+        self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        self.splitter.SetMinimumPaneSize(50)
+        self.Bind(
+            wx.EVT_SPLITTER_SASH_POS_CHANGED,
+            self._splitter_on_splitter_sash_pos_changed, self.splitter)
+        self._create_sidebar()
+        self._create_drawing_area()
+        self.splitter.Initialize(self.drawing_area)
+
+    def _splitter_on_splitter_sash_pos_changed(self, event):
+        if self.IsShown():
+            self.sidebar_width = self.splitter.GetSashPosition()
+
+    def _create_sidebar(self):
+        self.sidebar = _Sidebar(self.main_frame, self.splitter, self.handle_db_error)
+
+    def _create_drawing_area(self):
+        self.drawing_area = DrawingAreaPanel(
+            self.splitter,
+            self.status_bar_adapter,
+            self.divider_line_slider,
+            self.handle_db_error,
+            self.config,
+            self.main_frame)
+
+    def _layout_components(self):
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self.splitter, proportion=1, flag=wx.EXPAND)
+        sizer.Add(self.divider_line_slider, proportion=0, flag=wx.EXPAND)
+        self.SetSizer(sizer)
+
+    def get_sidebar_width(self):
+        return self.sidebar_width
+
+    def show_sidebar(self):
+        self.splitter.SplitVertically(
+            self.sidebar, self.drawing_area, self.sidebar_width)
+        self.splitter.SetSashPosition(self.sidebar_width)
+        self.splitter.SetMinimumPaneSize(self.sidebar.GetBestSize()[0])
+
+    def hide_sidebar(self):
+        self.splitter.Unsplit(self.sidebar)
+
+    def activated(self):
+        if self.config.get_show_sidebar():
+            self.show_sidebar()
+
+
+class _Sidebar(wx.Panel):
+
+    def __init__(self, main_frame, parent, handle_db_error):
+        self.main_frame = main_frame
+        wx.Panel.__init__(self, parent, style=wx.BORDER_NONE)
+        self._create_gui(handle_db_error)
+
+    def _create_gui(self, handle_db_error):
+        self.category_tree = CustomCategoryTree(self, handle_db_error)
+        label = _("View Categories Individually")
+        self.cbx_toggle_cat_view = wx.CheckBox(self, -1, label)
+        # Layout
+        sizer = wx.GridBagSizer(vgap=0, hgap=0)
+        sizer.AddGrowableCol(0, proportion=0)
+        sizer.AddGrowableRow(0, proportion=0)
+        sizer.Add(self.category_tree, (0,0), flag=wx.GROW)
+        sizer.Add(self.cbx_toggle_cat_view, (1,0), flag=wx.ALL, border=5)
+        self.SetSizer(sizer)
+        self.Bind(wx.EVT_CHECKBOX, self._cbx_on_click, self.cbx_toggle_cat_view)
+
+    def ok_to_edit(self):
+        return self.main_frame.ok_to_edit()
+
+    def edit_ends(self):
+        return self.main_frame.edit_ends()
+
+    def _cbx_on_click(self, evt):
+        event = CatsViewChangedEvent(self.GetId())
+        event.ClientData = evt.GetEventObject().IsChecked()
+        self.GetEventHandler().ProcessEvent(event)
 
 
 class DrawingAreaPanel(wx.Panel):
