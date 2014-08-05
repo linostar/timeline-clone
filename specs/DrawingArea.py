@@ -23,8 +23,8 @@ import wx
 
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
-from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.view.drawingarea import HSCROLL_STEP
+from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.wxgui.components.timeline import TimelineCanvas
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
@@ -84,9 +84,9 @@ class DrawingAreaSpec(unittest.TestCase):
         divider_line_slider = Mock(wx.Slider)
         divider_line_slider.GetValue.return_value = 1
         fn_handle_db_error = None
-        self.controller = DrawingArea(self.timeline_canvas, status_bar_adapter,
-                                      config, self.drawing_algorithm,
-                                      divider_line_slider, fn_handle_db_error)
+        self.controller = TimelineCanvasController(
+            self.timeline_canvas, status_bar_adapter, config,
+            self.drawing_algorithm, divider_line_slider, fn_handle_db_error)
 
 
 class Config(object):

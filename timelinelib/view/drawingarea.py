@@ -50,7 +50,7 @@ LEFT_RIGHT_SCROLL_FACTOR = 1 / 200.0
 MOUSE_SCROLL_FACTOR = 1 / 10.0
 
 
-class DrawingArea(object):
+class TimelineCanvasController(object):
 
     def __init__(self, view, status_bar_adapter, config, drawing_algorithm,
                  divider_line_slider, fn_handle_db_error):

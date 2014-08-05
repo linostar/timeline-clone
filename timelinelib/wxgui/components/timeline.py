@@ -19,7 +19,7 @@
 import wx
 
 from timelinelib.drawing import get_drawer
-from timelinelib.view.drawingarea import DrawingArea
+from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.wxgui.components.categorytree import CustomCategoryTree
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
@@ -164,7 +164,7 @@ class TimelineCanvas(wx.Panel):
         self.fn_handle_db_error = fn_handle_db_error
         self.config = config
         self.main_frame = main_frame
-        self.controller = DrawingArea(
+        self.controller = TimelineCanvasController(
             self, status_bar_adapter, config, get_drawer(),
             divider_line_slider, fn_handle_db_error)
         self.surface_bitmap = None

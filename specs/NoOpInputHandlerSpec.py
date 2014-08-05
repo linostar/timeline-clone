@@ -22,7 +22,7 @@ from mock import Mock
 import wx
 
 from specs.utils import an_event, an_event_with, human_time_to_gregorian
-from timelinelib.view.drawingarea import DrawingArea
+from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.view.noop import NoOpInputHandler
 from timelinelib.wxgui.components.timeline import TimelineCanvas
 
@@ -36,7 +36,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)
         self.handler.left_mouse_down(10, 10, False, False)
-        self.drawing_area.change_input_handler_to_move_by_drag.assert_called_once_with(event, time)
+        self.controller.change_input_handler_to_move_by_drag.assert_called_once_with(event, time)
 
     def test_disables_move_handler_when_event_ends_today(self):
         event = an_event_with(ends_today=True)
@@ -45,7 +45,7 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.given_event_with_rect_at(10, 10, event, wx.Rect(0, 0, 20, 20))
         self.given_event_selected(event)
         self.handler.left_mouse_down(10, 10, False, False)
-        self.assertEqual(0, self.drawing_area.change_input_handler_to_move_by_drag.call_count)
+        self.assertEqual(0, self.controller.change_input_handler_to_move_by_drag.call_count)
 
     def test_disables_mouse_cursor_when_event_ends_today(self):
         event = an_event_with(ends_today=True)
@@ -59,19 +59,19 @@ class NoOpInputHandlerSpec(unittest.TestCase):
     def setUp(self):
         self.setup_drawing_area_mock()
         self.timeline_canvas = Mock(TimelineCanvas)
-        self.handler = NoOpInputHandler(self.drawing_area, self.timeline_canvas)
+        self.handler = NoOpInputHandler(self.controller, self.timeline_canvas)
 
     def setup_drawing_area_mock(self):
         self.times_at = {}
         self.events_at = {}
         self.selected_events = []
-        self.drawing_area = Mock(DrawingArea)
-        self.drawing_area.drawing_algorithm = Mock()
-        self.drawing_area.view_properties = Mock()
-        self.drawing_area.get_time.side_effect = lambda x: self.times_at[x]
-        self.drawing_area.event_with_rect_at.side_effect = lambda x, y, alt: self.events_at[(x, y)]
-        self.drawing_area.event_at.side_effect = lambda x, y, alt: self.events_at[(x, y)][0]
-        self.drawing_area.is_selected.side_effect = lambda event: event in self.selected_events
+        self.controller = Mock(TimelineCanvasController)
+        self.controller.drawing_algorithm = Mock()
+        self.controller.view_properties = Mock()
+        self.controller.get_time.side_effect = lambda x: self.times_at[x]
+        self.controller.event_with_rect_at.side_effect = lambda x, y, alt: self.events_at[(x, y)]
+        self.controller.event_at.side_effect = lambda x, y, alt: self.events_at[(x, y)][0]
+        self.controller.is_selected.side_effect = lambda event: event in self.selected_events
 
     def given_time_at_x_is(self, x, time):
         self.times_at[x] = time

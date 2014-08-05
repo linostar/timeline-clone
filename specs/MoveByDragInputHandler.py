@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 
 from specs.utils import an_event_with, human_time_to_gregorian, gregorian_period
-from timelinelib.view.drawingarea import DrawingArea
+from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.view.move import MoveByDragInputHandler
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
@@ -90,7 +90,7 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
         self.given_time_at_x_is(50, "5 Jan 2011")
         self.when_moving(self.a_point_event("1 Jan 2011"),
                          from_time="1 Jan 2011", to_x=50)
-        self.assertTrue(self.drawing_area.redraw_timeline.called)
+        self.assertTrue(self.controller.redraw_timeline.called)
 
     def setUp(self):
         def x(time):
@@ -102,14 +102,14 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
         self.period_events = []
         self.snap_times = {}
         self.selected_events = []
-        self.drawing_area = Mock(DrawingArea)
-        self.drawing_area.timeline = None
-        self.drawing_area.view = Mock()
-        self.drawing_area.get_time.side_effect = lambda x: self.times_at[x]
-        self.drawing_area.event_is_period.side_effect = lambda event: event in self.period_events
-        #self.drawing_area.snap.side_effect = lambda time: self.snap_times[time]
-        self.drawing_area.snap.side_effect = x
-        self.drawing_area.get_selected_events.return_value = self.selected_events
+        self.controller = Mock(TimelineCanvasController)
+        self.controller.timeline = None
+        self.controller.view = Mock()
+        self.controller.get_time.side_effect = lambda x: self.times_at[x]
+        self.controller.event_is_period.side_effect = lambda event: event in self.period_events
+        #self.controller.snap.side_effect = lambda time: self.snap_times[time]
+        self.controller.snap.side_effect = x
+        self.controller.get_selected_events.return_value = self.selected_events
         self.status_bar = Mock(StatusBarAdapter)
 
     def a_point_event(self, time):
@@ -126,7 +126,7 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
         self.snap_times[human_time_to_gregorian(from_)] = human_time_to_gregorian(to)
 
     def given_no_snap(self):
-        self.drawing_area.snap.side_effect = lambda x: x
+        self.controller.snap.side_effect = lambda x: x
 
     def given_time_at_x_is(self, x, time):
         self.times_at[x] = human_time_to_gregorian(time)
@@ -136,12 +136,12 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
         if event.is_period():
             self.period_events.append(event)
         handler = MoveByDragInputHandler(
-            self.drawing_area, self.status_bar, event, human_time_to_gregorian(from_time))
+            self.controller, self.status_bar, event, human_time_to_gregorian(from_time))
         handler.mouse_moved(to_x, 10)
 
     def when_move_done(self):
         handler = MoveByDragInputHandler(
-            self.drawing_area, self.status_bar, self.a_point_event("1 Jan 2011"), None)
+            self.controller, self.status_bar, self.a_point_event("1 Jan 2011"), None)
         handler.left_mouse_up()
 
     def assert_event_has_period(self, start, end, event=None):

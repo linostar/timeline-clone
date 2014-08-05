@@ -28,8 +28,8 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimeOutOfRangeLeftError
 from timelinelib.db.objects import TimeOutOfRangeRightError
-from timelinelib.wxgui.components.timeline import DrawingArea
 from timelinelib.wxgui.components.timeline import TimelineCanvas
+from timelinelib.wxgui.components.timeline import TimelineCanvasController
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
 
@@ -370,7 +370,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.divider_line_slider = Mock()
         self.divider_line_slider.GetValue.return_value = 50
         self.fn_handle_db_error = Mock()
-        self.controller = DrawingArea(
+        self.controller = TimelineCanvasController(
             self.timeline_canvas,
             self.status_bar_adapter,
             self.config,
