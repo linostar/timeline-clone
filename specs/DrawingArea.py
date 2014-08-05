@@ -23,11 +23,11 @@ from mock import Mock
 import wx
 
 from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.view.drawingarea import HSCROLL_STEP
+from timelinelib.wxgui.components.timeline import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
-from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
-from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 
 class DrawingAreaSpec(unittest.TestCase):
 

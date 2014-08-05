@@ -23,11 +23,11 @@ import wx
 
 from specs.utils import an_event
 from specs.utils import an_event_with
-from specs.utils import human_time_to_gregorian
 from specs.utils import gregorian_period
+from specs.utils import human_time_to_gregorian
 from timelinelib.view.resize import ResizeByDragInputHandler
-from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
-from timelinelib.wxgui.components.timelineview import DrawingArea
+from timelinelib.wxgui.components.timeline import DrawingArea
+from timelinelib.wxgui.components.timeline import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 
 

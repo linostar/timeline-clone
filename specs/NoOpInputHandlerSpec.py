@@ -24,7 +24,7 @@ import wx
 from specs.utils import an_event, an_event_with, human_time_to_gregorian
 from timelinelib.view.drawingarea import DrawingArea
 from timelinelib.view.noop import NoOpInputHandler
-from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
+from timelinelib.wxgui.components.timeline import DrawingAreaPanel
 
 
 class NoOpInputHandlerSpec(unittest.TestCase):

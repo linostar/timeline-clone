@@ -24,7 +24,7 @@ from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.objects import Category
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.cattree import CategoriesTreeController
-from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
+from timelinelib.wxgui.components.timeline import DrawingAreaPanel
 
 
 class describe_categories_tree_control(unittest.TestCase):

@@ -41,7 +41,7 @@ from timelinelib.utils import ex_msg
 from timelinelib.wxgui.components.categorytree import CustomCategoryTree
 from timelinelib.wxgui.components.hyperlinkbutton import HyperlinkButton
 from timelinelib.wxgui.components.search import SearchBar
-from timelinelib.wxgui.components.timelineview import DrawingAreaPanel
+from timelinelib.wxgui.components.timeline import DrawingAreaPanel
 from timelinelib.wxgui.dialogs.categorieseditor import CategoriesEditor
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
