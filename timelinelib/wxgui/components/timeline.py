@@ -40,31 +40,31 @@ class TimelinePanel(wx.Panel):
         self._create_gui()
 
     def set_timeline(self, timeline):
-        self.drawing_area.set_timeline(timeline)
+        self.timeline_canvas.set_timeline(timeline)
 
     def get_drawing_area(self):
-        return self.drawing_area
+        return self.timeline_canvas
 
     def get_scene(self):
-        return self.drawing_area.get_drawer().scene
+        return self.timeline_canvas.get_drawer().scene
 
     def get_time_period(self):
-        return self.drawing_area.get_time_period()
+        return self.timeline_canvas.get_time_period()
 
     def open_event_editor(self, event):
-        self.drawing_area.open_event_editor_for(event)
+        self.timeline_canvas.open_event_editor_for(event)
 
     def redraw_timeline(self):
-        self.drawing_area.redraw_timeline()
+        self.timeline_canvas.redraw_timeline()
 
     def navigate_timeline(self, navigation_fn):
-        return self.drawing_area.navigate_timeline(navigation_fn)
+        return self.timeline_canvas.navigate_timeline(navigation_fn)
 
     def get_view_properties(self):
-        return self.drawing_area.get_view_properties()
+        return self.timeline_canvas.get_view_properties()
 
     def get_current_image(self):
-        return self.drawing_area.get_current_image()
+        return self.timeline_canvas.get_current_image()
 
     def _create_gui(self):
         self._create_divider_line_slider()
@@ -83,7 +83,7 @@ class TimelinePanel(wx.Panel):
             self._splitter_on_splitter_sash_pos_changed, self.splitter)
         self._create_sidebar()
         self._create_drawing_area()
-        self.splitter.Initialize(self.drawing_area)
+        self.splitter.Initialize(self.timeline_canvas)
 
     def _splitter_on_splitter_sash_pos_changed(self, event):
         if self.IsShown():
@@ -93,7 +93,7 @@ class TimelinePanel(wx.Panel):
         self.sidebar = _Sidebar(self.main_frame, self.splitter, self.handle_db_error)
 
     def _create_drawing_area(self):
-        self.drawing_area = TimelineCanvas(
+        self.timeline_canvas = TimelineCanvas(
             self.splitter,
             self.status_bar_adapter,
             self.divider_line_slider,
@@ -112,7 +112,7 @@ class TimelinePanel(wx.Panel):
 
     def show_sidebar(self):
         self.splitter.SplitVertically(
-            self.sidebar, self.drawing_area, self.sidebar_width)
+            self.sidebar, self.timeline_canvas, self.sidebar_width)
         self.splitter.SetSashPosition(self.sidebar_width)
         self.splitter.SetMinimumPaneSize(self.sidebar.GetBestSize()[0])
 

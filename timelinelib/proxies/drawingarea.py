@@ -17,27 +17,26 @@
 
 
 class DrawingAreaProxy():
-    
+
     def __init__(self, creator):
         from timelinelib.wxgui.dialogs.mainframe import MainFrame
         if isinstance(creator, MainFrame):
-            self.drawing_area = creator.main_panel.timeline_panel.drawing_area
-        
+            self.timeline_canvas = creator.main_panel.timeline_panel.timeline_canvas
+
     def zoom_in(self):
-        self.drawing_area.zoom_in()
+        self.timeline_canvas.zoom_in()
 
     def zoom_out(self):
-        self.drawing_area.zoom_out()
+        self.timeline_canvas.zoom_out()
 
     def vert_zoom_in(self):
-        self.drawing_area.vert_zoom_in()
+        self.timeline_canvas.vert_zoom_in()
 
     def vert_zoom_out(self):
-        self.drawing_area.vert_zoom_out()
-        
+        self.timeline_canvas.vert_zoom_out()
+
     def show_hide_legend(self, checked):
-        self.drawing_area.show_hide_legend(checked)
-        
+        self.timeline_canvas.show_hide_legend(checked)
+
     def balloon_visibility_changed(self, checked):
-        self.drawing_area.balloon_visibility_changed(checked)
-        
+        self.timeline_canvas.balloon_visibility_changed(checked)

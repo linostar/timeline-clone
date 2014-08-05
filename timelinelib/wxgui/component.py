@@ -87,12 +87,12 @@ class TimelineComponent(TimelinePanel):
 
     def open_timeline(self, path):
         timeline = db_open(path)
-        self.drawing_area.set_timeline(timeline)
+        self.timeline_canvas.set_timeline(timeline)
         self.sidebar.category_tree.set_timeline_view(
-            self.drawing_area.get_timeline(),
-            self.drawing_area.get_view_properties()
+            self.timeline_canvas.get_timeline(),
+            self.timeline_canvas.get_view_properties()
         )
 
     def clear_timeline(self):
-        self.drawing_area.set_timeline(None)
+        self.timeline_canvas.set_timeline(None)
         self.sidebar.category_tree.set_no_timeline_view()

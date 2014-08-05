@@ -140,12 +140,12 @@ class TimelineApplication(object):
             return 0
 
     def _synchronize(self):
-        drawing_area = self.main_frame.main_panel.timeline_panel.drawing_area
-        vp = drawing_area.get_view_properties()
+        timeline_canvas = self.main_frame.main_panel.timeline_panel.timeline_canvas
+        vp = timeline_canvas.get_view_properties()
         displayed_period = vp.get_displayed_period()
         self.open_timeline(self.timelinepath)
         vp.set_displayed_period(displayed_period)
-        drawing_area.redraw_timeline()
+        timeline_canvas.redraw_timeline()
 
     def _lock(self):
         fp = None

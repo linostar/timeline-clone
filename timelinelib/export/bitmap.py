@@ -40,13 +40,13 @@ def export_to_images(main_frame):
         for period in periods:
             path = "%s_%d.%s" % (path_without_extension, count, extension)
             if overwrite_existing_path(main_frame, path):
-                main_frame.main_panel.timeline_panel.drawing_area.controller.view_properties.displayed_period = period
+                main_frame.main_panel.timeline_panel.timeline_canvas.controller.view_properties.displayed_period = period
                 main_frame.main_panel.redraw_timeline()
                 bitmap = main_frame.main_panel.get_current_image()
                 image = wx.ImageFromBitmap(bitmap)
                 image.SaveFile(path, image_type)
             count += 1
-        main_frame.main_panel.timeline_panel.drawing_area.controller.view_properties.displayed_period = current_period
+        main_frame.main_panel.timeline_panel.timeline_canvas.controller.view_properties.displayed_period = current_period
         main_frame.main_panel.redraw_timeline()
 
 def get_image_path(main_frame):
