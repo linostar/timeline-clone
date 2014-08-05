@@ -1163,7 +1163,7 @@ class MainPanel(wx.Panel):
 
     def _remove_timeline_and_show_welcome_panel(self):
         self.category_tree.set_no_timeline_view()
-        self.set_searchbar_drawing_area_panel(None)
+        self.set_searchbar_timeline_canvas(None)
         self.set_timeline(None)
         self.show_welcome_panel()
 
@@ -1177,16 +1177,16 @@ class MainPanel(wx.Panel):
     def _show_new_timeline(self, timeline):
         self.set_timeline(timeline)
         self.category_tree.set_timeline_view(
-            self.get_drawing_area().get_timeline(),
-            self.get_drawing_area().get_view_properties())
-        self.set_searchbar_drawing_area_panel(self.get_drawing_area())
+            self.get_timeline_canvas().get_timeline(),
+            self.get_timeline_canvas().get_view_properties())
+        self.set_searchbar_timeline_canvas(self.get_timeline_canvas())
         self.show_timeline_panel()
 
     def set_timeline(self, timeline):
         self.timeline_panel.set_timeline(timeline)
 
-    def get_drawing_area(self):
-        return self.timeline_panel.get_drawing_area()
+    def get_timeline_canvas(self):
+        return self.timeline_panel.get_timeline_canvas()
 
     def get_scene(self):
         return self.timeline_panel.get_scene()
@@ -1228,8 +1228,8 @@ class MainPanel(wx.Panel):
         visible_events = view_properties.filter_events(all_events)
         return visible_events
 
-    def set_searchbar_drawing_area_panel(self, drawing_area_panel):
-        self.searchbar.set_drawing_area_panel(drawing_area_panel)
+    def set_searchbar_timeline_canvas(self, timeline_canvas):
+        self.searchbar.set_timeline_canvas(timeline_canvas)
 
     def svgexport(self, path):
         import timelinelib.export.svg as svgexport

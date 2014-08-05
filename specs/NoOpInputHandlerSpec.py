@@ -57,11 +57,11 @@ class NoOpInputHandlerSpec(unittest.TestCase):
         self.assertEqual(0, self.timeline_canvas.set_move_cursor.call_count)
 
     def setUp(self):
-        self.setup_drawing_area_mock()
+        self.setup_timeline_canvas_controller_mock()
         self.timeline_canvas = Mock(TimelineCanvas)
         self.handler = NoOpInputHandler(self.controller, self.timeline_canvas)
 
-    def setup_drawing_area_mock(self):
+    def setup_timeline_canvas_controller_mock(self):
         self.times_at = {}
         self.events_at = {}
         self.selected_events = []

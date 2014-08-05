@@ -84,15 +84,15 @@ class SearchBarTestCase(unittest.TestCase):
         self.controller.search()
         self.assertEqual(self.controller.result_index, 1)
 
-    def test_no_drawing_area_panel_hides_search_bar(self):
-        self.controller.set_drawing_area_panel(None)
+    def test_no_timeline_canvas_hides_search_bar(self):
+        self.controller.set_timeline_canvas(None)
         self.view.Enable.assert_called_with(False)
 
     def setUp(self):
         self.view = Mock(SearchBar)
         self.timeline_canvas = TimelineCanvas()
         self.controller = SearchBarController(self.view)
-        self.controller.set_drawing_area_panel(self.timeline_canvas)
+        self.controller.set_timeline_canvas(self.timeline_canvas)
 
 
 class TimelineCanvas():

@@ -42,7 +42,7 @@ class TimelinePanel(wx.Panel):
     def set_timeline(self, timeline):
         self.timeline_canvas.set_timeline(timeline)
 
-    def get_drawing_area(self):
+    def get_timeline_canvas(self):
         return self.timeline_canvas
 
     def get_scene(self):
@@ -82,7 +82,7 @@ class TimelinePanel(wx.Panel):
             wx.EVT_SPLITTER_SASH_POS_CHANGED,
             self._splitter_on_splitter_sash_pos_changed, self.splitter)
         self._create_sidebar()
-        self._create_drawing_area()
+        self._create_timeline_canvas()
         self.splitter.Initialize(self.timeline_canvas)
 
     def _splitter_on_splitter_sash_pos_changed(self, event):
@@ -92,7 +92,7 @@ class TimelinePanel(wx.Panel):
     def _create_sidebar(self):
         self.sidebar = _Sidebar(self.main_frame, self.splitter, self.handle_db_error)
 
-    def _create_drawing_area(self):
+    def _create_timeline_canvas(self):
         self.timeline_canvas = TimelineCanvas(
             self.splitter,
             self.status_bar_adapter,

@@ -27,9 +27,9 @@ HIT_REGION_PX_WITH = 5
 
 class NoOpInputHandler(InputHandler):
 
-    def __init__(self, timeline_canvas_controller, drawing_area_view):
+    def __init__(self, timeline_canvas_controller, timeline_canvas):
         self.timeline_canvas_controller = timeline_canvas_controller
-        self.drawing_area_view = drawing_area_view
+        self.timeline_canvas = timeline_canvas
         self.drawer = timeline_canvas_controller.drawing_algorithm
         self.view_properties = timeline_canvas_controller.view_properties
         self.show_timer_running = False
@@ -42,20 +42,20 @@ class NoOpInputHandler(InputHandler):
         event = self.timeline_canvas_controller.event_at(x, y, alt_down)
         time_at_x = self.timeline_canvas_controller.get_time(x)
         if self._hit_resize_handle(x, y, alt_down) is not None:
-            if self.drawing_area_view.ok_to_edit():
+            if self.timeline_canvas.ok_to_edit():
                 try:
                     direction = self._hit_resize_handle(x, y, alt_down)
                     self.timeline_canvas_controller.change_input_handler_to_resize_by_drag(event, direction)
                 except:
-                    self.drawing_area_view.edit_ends()
+                    self.timeline_canvas.edit_ends()
                     raise
             return
         if self._hit_move_handle(x, y, alt_down) and not event.ends_today:
-            if self.drawing_area_view.ok_to_edit():
+            if self.timeline_canvas.ok_to_edit():
                 try:
                     self.timeline_canvas_controller.change_input_handler_to_move_by_drag(event, time_at_x)
                 except:
-                    self.drawing_area_view.edit_ends()
+                    self.timeline_canvas.edit_ends()
                     raise
             return
         if (event is None and ctrl_down == False and shift_down == False):
@@ -91,11 +91,11 @@ class NoOpInputHandler(InputHandler):
         self._start_balloon_timers()
         self.timeline_canvas_controller._display_eventinfo_in_statusbar(x, y, alt_down)
         if self._hit_resize_handle(x, y, alt_down) is not None:
-            self.drawing_area_view.set_size_cursor()
+            self.timeline_canvas.set_size_cursor()
         elif self._hit_move_handle(x, y, alt_down) and not self.last_hovered_event.ends_today:
-            self.drawing_area_view.set_move_cursor()
+            self.timeline_canvas.set_move_cursor()
         else:
-            self.drawing_area_view.set_default_cursor()
+            self.timeline_canvas.set_default_cursor()
 
     def _start_balloon_timers(self):
         if self._balloons_disabled():
@@ -107,10 +107,10 @@ class NoOpInputHandler(InputHandler):
         if self.hide_timer_running:
             return
         if self._should_start_balloon_show_timer():
-            self.drawing_area_view.start_balloon_show_timer(milliseconds=500, oneShot=True)
+            self.timeline_canvas.start_balloon_show_timer(milliseconds=500, oneShot=True)
             self.show_timer_running = True
         elif self._should_start_balloon_hide_timer():
-            self.drawing_area_view.start_balloon_hide_timer(milliseconds=100, oneShot=True)
+            self.timeline_canvas.start_balloon_hide_timer(milliseconds=100, oneShot=True)
             self.hide_timer_running = True
 
     def _balloons_disabled(self):

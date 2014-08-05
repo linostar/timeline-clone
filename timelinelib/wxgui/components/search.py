@@ -109,9 +109,9 @@ class SearchBarController(object):
         self.result_index = 0
         self.last_search = None
 
-    def set_drawing_area_panel(self, drawing_area_panel):
-        self.drawing_area_panel = drawing_area_panel
-        self.view.Enable(drawing_area_panel is not None)
+    def set_timeline_canvas(self, timeline_canvas):
+        self.timeline_canvas = timeline_canvas
+        self.view.Enable(timeline_canvas is not None)
 
     def search(self):
         new_search = self.view.get_value()
@@ -119,8 +119,8 @@ class SearchBarController(object):
             self.next()
         else:
             self.last_search = new_search
-            if self.drawing_area_panel is not None:
-                self.result = self.drawing_area_panel.get_filtered_events(new_search)
+            if self.timeline_canvas is not None:
+                self.result = self.timeline_canvas.get_filtered_events(new_search)
             else:
                 self.result = []
             self.result_index = 0
@@ -150,9 +150,9 @@ class SearchBarController(object):
         dlg.Destroy()
     
     def navigate_to_match(self):
-        if (self.drawing_area_panel is not None and self.result_index in range(len(self.result))):
+        if (self.timeline_canvas is not None and self.result_index in range(len(self.result))):
             event = self.result[self.result_index]
-            self.drawing_area_panel.navigate_timeline(lambda tp: tp.center(event.mean_time()))
+            self.timeline_canvas.navigate_timeline(lambda tp: tp.center(event.mean_time()))
 
     def enable_backward(self):
         return bool(self.result and self.result_index > 0)
@@ -178,8 +178,8 @@ class SearchBar(wx.ToolBar, GuiCreator):
         self._create_gui()
         self.update_buttons()
 
-    def set_drawing_area_panel(self, drawing_area_panel):
-        self.controller.set_drawing_area_panel(drawing_area_panel)
+    def set_timeline_canvas(self, timeline_canvas):
+        self.controller.set_timeline_canvas(timeline_canvas)
 
     def get_value(self):
         return self.search.GetValue()
