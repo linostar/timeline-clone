@@ -18,10 +18,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
-import os.path
-import unittest
 import doctest
+import os.path
+import random
+import sys
+import unittest
 
 
 ONLY_FLAG = "--only"
@@ -71,10 +72,12 @@ def select_verbosity(args):
 
 
 def create_suite(include_test_function):
-    suite = unittest.TestSuite()
-    add_specs(suite, include_test_function)
-    add_doctests(suite, include_test_function)
-    return suite
+    specs_suite = unittest.TestSuite()
+    add_specs(specs_suite, include_test_function)
+    doctest_suite = unittest.TestSuite()
+    add_doctests(doctest_suite, include_test_function)
+    return unittest.TestSuite([shuffled_suite(specs_suite),
+                               shuffled_suite(doctest_suite)])
 
 
 def add_specs(suite, include_test_function):
@@ -137,6 +140,22 @@ def filter_suite(test, include_test_function):
         for subtest in test:
             new_suite.addTest(filter_suite(subtest, include_test_function))
     return new_suite
+
+
+def shuffled_suite(suite):
+    test_cases = extract_test_cases(suite)
+    random.shuffle(test_cases)
+    return unittest.TestSuite(test_cases)
+
+
+def extract_test_cases(suite):
+    if isinstance(suite, unittest.TestCase):
+        return [suite]
+    else:
+        tests = []
+        for test in suite:
+            tests.extend(extract_test_cases(test))
+        return tests
 
 
 def execute_suite(suite, verbosity):
