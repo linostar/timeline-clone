@@ -68,9 +68,6 @@ class ShortcutControllerSpec(unittest.TestCase):
     def test_wxid_exists(self):
         self.assertTrue(self.controller.wxid_exists(mf.ID_NEW))
 
-    def test_wxid_dont_exists(self):
-        self.assertFalse(self.controller.wxid_exists(mf.ID_NAVIGATE))
-
     def test_is_function_key(self):
         for key in sc.FUNCTION_KEYS:
             self.assertTrue(self.controller.is_function_key(key))
@@ -88,3 +85,7 @@ class ShortcutControllerSpec(unittest.TestCase):
         config = Mock(Config)
         menuitem = wx.MenuItem(wx.Menu("title"), -1, "label")
         self.controller = ShortcutController(config, {mf.ID_SIDEBAR:menuitem,})
+
+    def tearDown(self):
+        self.controller = None
+        
