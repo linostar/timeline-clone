@@ -92,7 +92,7 @@ class ConfigSpec(unittest.TestCase):
         self.config.append_recently_opened("5")
         self.config.append_recently_opened("6")
         self.config.append_recently_opened("7")
-        last_five = [abspath(entry) for entry in ["7", "6", "5", "4", "3"]]
+        last_five = [unicode(abspath(entry)) for entry in ["7", "6", "5", "4", "3"]]
         self.assertEqual(self.config.recently_opened, last_five)
 
     def test_recently_opened_list_does_not_contain_duplicates(self):
@@ -101,7 +101,7 @@ class ConfigSpec(unittest.TestCase):
         self.config.append_recently_opened("foo")
         self.assertEqual(
             self.config.recently_opened,
-            [abspath("foo"), abspath("bar")])
+            [unicode(abspath("foo")), unicode(abspath("bar"))])
 
     def test_converts_recently_opened_path_to_unicode(self):
         self.config.append_recently_opened("non-unicode-path")
