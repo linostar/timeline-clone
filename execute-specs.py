@@ -29,12 +29,23 @@ ONLY_FLAG = "--only"
 
 
 def execute_specs(args):
+    setup_displayhook()
     setup_paths()
     install_gettext_in_builtin_namespace()
     disable_monitoring()
     suite = create_suite(create_include_test_function(args))
     all_pass = execute_suite(suite, select_verbosity(args))
     return all_pass
+
+
+def setup_displayhook():
+    # Background why this is needed:
+    # http://sheep.art.pl/Gettext%20and%20Doctest%20Together%20in%20Python
+    # Current doctest seems to use sys.__displayhook__ instead, so replace both.
+    def displayhook_that_does_not_modify_(value):
+        if value is not None:
+            print(repr(value))
+    sys.__displayhook__ = sys.displayhook = displayhook_that_does_not_modify_
 
 
 def setup_paths():
@@ -47,8 +58,10 @@ def setup_paths():
 
 
 def install_gettext_in_builtin_namespace():
-    import specs.utils
-    specs.utils.install_gettext_in_builtin_namespace()
+    def _(message):
+        return "#%s#" % message
+    import __builtin__
+    __builtin__.__dict__["_"] = _
 
 
 def disable_monitoring():

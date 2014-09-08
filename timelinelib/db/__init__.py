@@ -28,7 +28,6 @@ from timelinelib.db.objects import Event
 from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType
-from timelinelib.wxgui.utils import display_warning_message
 
 
 def db_open(path, timetype=None):

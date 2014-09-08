@@ -276,21 +276,16 @@ def _move_page_smart(current_period, navigation_fn, direction):
 def _whole_number_of_years(period):
     """
     >>> from specs.utils import gregorian_period
-    >>> from specs.utils import install_gettext_in_builtin_namespace
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_years(gregorian_period("1 Jan 2013", "1 Jan 2014"))
     True
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_years(gregorian_period("1 Jan 2013", "1 Jan 2015"))
     True
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_years(gregorian_period("1 Feb 2013", "1 Feb 2014"))
     False
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_years(gregorian_period("1 Jan 2013", "1 Feb 2014"))
     False
     """
@@ -330,21 +325,16 @@ def _calculate_year_diff(period):
 def _whole_number_of_months(period):
     """
     >>> from specs.utils import gregorian_period
-    >>> from specs.utils import install_gettext_in_builtin_namespace
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_months(gregorian_period("1 Jan 2013", "1 Jan 2014"))
     True
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_months(gregorian_period("1 Jan 2013", "1 Mar 2014"))
     True
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_months(gregorian_period("2 Jan 2013", "2 Mar 2014"))
     False
 
-    >>> install_gettext_in_builtin_namespace() # Needed because REPL replaces _
     >>> _whole_number_of_months(gregorian_period("1 Jan 2013 12:00", "1 Mar 2014"))
     False
     """

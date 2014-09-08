@@ -42,13 +42,6 @@ from timelinelib.wxgui.setup import start_wx_application
 ANY_TIME = "1 Jan 2010"
 
 
-def install_gettext_in_builtin_namespace():
-    def _(message):
-        return "#%s#" % message
-    import __builtin__
-    __builtin__.__dict__["_"] = _
-
-
 #def py_period(start, end):
 #    return TimePeriod(GregorianTimeType(), human_time_to_py(start), human_time_to_py(end))
 
