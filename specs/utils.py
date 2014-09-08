@@ -42,22 +42,8 @@ from timelinelib.wxgui.setup import start_wx_application
 ANY_TIME = "1 Jan 2010"
 
 
-#def py_period(start, end):
-#    return TimePeriod(GregorianTimeType(), human_time_to_py(start), human_time_to_py(end))
-
-
 def gregorian_period(start, end):
     return TimePeriod(GregorianTimeType(), human_time_to_gregorian(start), human_time_to_gregorian(end))
-
-
-#def human_time_to_py(human_time):
-#    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
-#    return py_time(year, month, day, hour, minute)
-
-
-#def human_time_to_wx(human_time):
-#    (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
-#    return wx_time(year, month, day, hour, minute)
 
 
 def human_time_to_gregorian(human_time):
@@ -78,14 +64,6 @@ def human_time_to_ymdhm(human_time):
         hour = 0
         minute = 0
     return (year, month, day, hour, minute)
-
-
-#def py_time(year, month, day, hour=0, minute=0, second=0):
-#    return datetime.datetime(year, month, day, hour, minute, second)
-
-
-#def wx_time(year, month, day, hour=0, minute=0, second=0):
-#    return wx.DateTimeFromDMY(day, month-1, year, hour, minute, second)
 
 
 def an_event():
