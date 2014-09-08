@@ -85,12 +85,10 @@ def select_verbosity(args):
 
 
 def create_suite(include_test_function):
-    specs_suite = unittest.TestSuite()
-    add_specs(specs_suite, include_test_function)
-    doctest_suite = unittest.TestSuite()
-    add_doctests(doctest_suite, include_test_function)
-    return unittest.TestSuite([shuffled_suite(specs_suite),
-                               shuffled_suite(doctest_suite)])
+    suite = unittest.TestSuite()
+    add_specs(suite, include_test_function)
+    add_doctests(suite, include_test_function)
+    return shuffled_suite(suite)
 
 
 def add_specs(suite, include_test_function):
