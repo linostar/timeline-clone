@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
+
 import wx
 
 from specs.utils import WxEndToEndTestCase
@@ -38,7 +40,7 @@ class WxEndToEndSpec(WxEndToEndTestCase):
         return check
 
     def test_can_create_new_event(self):
-        if wx.version() not in ("2.9.4.0 msw (classic)"):
+        if not sys.platform.startswith("win"):
             self.start_timeline_and([
                 self.click_menu_item("Timeline -> Create Event..."), [
                     self.enter_text("event_editor -> text", "event text"),
