@@ -83,8 +83,10 @@ class DbOpenSpec(TmpDirTestCase):
 
     def test_raises_error_when_reading_non_xml_file(self):
         self.writeContentToTmpFile(CONTENT_010)
-        self.assertRaisesRegexp(TimelineIOError, r"old file with a new version",
-                                db_open, self.tmp_path)
+        try:
+            db_open(self.tmp_path)
+        except TimelineIOError as e:
+            self.assertTrue("old file with a new version" in str(e))
 
     def testRead0100File(self):
         self.writeContentToTmpFile(CONTENT_0100)
