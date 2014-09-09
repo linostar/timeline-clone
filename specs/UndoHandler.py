@@ -20,7 +20,7 @@ import unittest
 
 from timelinelib.data.db import MemoryDB
 from timelinelib.data import Event
-from timelinelib.db.undo.undohandler import UndoHandler
+from timelinelib.data.undohandler import UndoHandler
 
 
 class UndoHandlerSpec(unittest.TestCase):

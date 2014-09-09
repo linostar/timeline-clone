@@ -34,9 +34,9 @@ from timelinelib.data.event import clone_event_list
 from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Event
+from timelinelib.data.undohandler import UndoHandler
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.search import generic_event_search
-from timelinelib.db.undo.undohandler import UndoHandler
 from timelinelib.db.utils import IdCounter
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
@@ -414,4 +414,3 @@ def clone_data(categories, events):
         except KeyError:
             event.category = None
     return categories, events
-    
