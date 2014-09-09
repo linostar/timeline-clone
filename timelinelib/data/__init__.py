@@ -17,6 +17,7 @@
 
 
 from timelinelib.data.category import Category
+from timelinelib.data.category import sort_categories
 from timelinelib.data.container import Container
 from timelinelib.data.event import Event
 from timelinelib.data.subevent import Subevent
