@@ -22,3 +22,4 @@ doc/_build
 main.v12.suo
 main.sln
 main.pyproj
+.ropeproject/
