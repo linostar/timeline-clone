@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.objects.event import Event
+from timelinelib.data.event import Event
 
 
 class Subevent(Event):

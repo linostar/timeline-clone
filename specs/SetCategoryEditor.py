@@ -21,8 +21,8 @@ import unittest
 from mock import Mock
 
 from timelinelib.data.category import Category
+from timelinelib.data.event import Event
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.objects.event import Event
 from timelinelib.editors.setcategory import SetCategoryEditor
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
@@ -40,7 +40,7 @@ class set_category_editor_spec_base(unittest.TestCase):
         self._create_db_mock()
         self.controller = SetCategoryEditor(
             self._create_view_mock(), self.db, view_properties)
-        
+
     def _create_view_mock(self):
         self.view = Mock(SetCategoryEditorDialog)
         self.view.get_category.return_value = self.category1
@@ -53,17 +53,17 @@ class set_category_editor_spec_base(unittest.TestCase):
         return self.db
 
     def _create_category1(self):
-        self.category1 = Category("category-name-1", None, None, False, None) 
+        self.category1 = Category("category-name-1", None, None, False, None)
 
     def _create_category2(self):
-        self.category2 = Category("category-name-2", None, None, False, None) 
+        self.category2 = Category("category-name-2", None, None, False, None)
 
     def _create_event1(self):
         self.event1 = self._create_event(None)
 
     def _create_event2(self):
         self.event2 = self._create_event(self.category2)
-    
+
     def _create_event(self, category):
         return Event(
             self.time_type,
