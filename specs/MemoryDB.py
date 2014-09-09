@@ -397,6 +397,11 @@ class MemoryDBSpec(unittest.TestCase):
     def testEventShouldNotBeLockedByDefault(self):
         self.assertFalse(self.e1.locked)
 
+    def testSearch(self):
+        self.db.save_event(self.e1)
+        self.db.save_event(self.e2)
+        self.assertEqual(self.db.search("holiday"), [self.e1])
+
     def setUp(self):
         self.save_callback_mock = Mock()
         self.db = MemoryDB()

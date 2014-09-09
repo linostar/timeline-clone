@@ -36,7 +36,6 @@ from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data.undohandler import UndoHandler
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.search import generic_event_search
 from timelinelib.db.utils import IdCounter
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
@@ -88,7 +87,7 @@ class MemoryDB(Observable):
         return ["description", "icon", "alert", "hyperlink", "progress"]
 
     def search(self, search_string):
-        return generic_event_search(self.events, search_string)
+        return _generic_event_search(self.events, search_string)
 
     def get_events(self, time_period):
         def include_event(event):
@@ -414,3 +413,19 @@ def clone_data(categories, events):
         except KeyError:
             event.category = None
     return categories, events
+
+
+def _generic_event_search(events, search_string):
+    def match(event):
+        target = search_string.lower()
+        description = event.get_data("description")
+        if description is None:
+            description = ""
+        else:
+            description = description.lower()
+        return target in event.text.lower() or target in description
+    def mean_time(event):
+        return event.mean_time()
+    matches = [event for event in events if match(event)]
+    matches.sort(key=mean_time)
+    return matches
