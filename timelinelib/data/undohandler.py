@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-MAX_BUFFER_SIZE = 100
+MAX_BUFFER_SIZE = 10
 
 
 class UndoHandler(object):
