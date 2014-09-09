@@ -23,6 +23,7 @@ from timelinelib.drawing.utils import darken_color
 from timelinelib.utilities.observer import Listener
 from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.wxgui.components.categorytree import CustomCategoryTree
+from timelinelib.wxgui.components.messagebar import MessageBar
 from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog_for_event
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.eventeditor import open_event_editor_for
@@ -34,6 +35,7 @@ class TimelinePanel(wx.Panel):
     def __init__(self, parent, config, handle_db_error, status_bar_adapter,
             main_frame):
         wx.Panel.__init__(self, parent)
+        self._db_listener = Listener(self._on_db_changed)
         self.config = config
         self.handle_db_error = handle_db_error
         self.status_bar_adapter = status_bar_adapter
@@ -41,9 +43,21 @@ class TimelinePanel(wx.Panel):
         self.sidebar_width = self.config.get_sidebar_width()
         self._create_gui()
 
+    def _on_db_changed(self, db):
+        if db.is_read_only():
+            header = _("This timeline is read-only.")
+            body = _("To edit this timeline, save it to a new file: File -> Save As.")
+            self.message_bar.ShowInformationMessage("%s\n%s" % (header, body))
+        elif not db.is_saved():
+            header = _("This timeline is not being saved.")
+            body = _("To save this timeline, save it to a new file: File -> Save As.")
+            self.message_bar.ShowWarningMessage("%s\n%s" % (header, body))
+        else:
+            self.message_bar.ShowNoMessage()
+
     def set_timeline(self, timeline):
         self.timeline_canvas.set_timeline(timeline)
-        self.warning_bar.SetDB(timeline)
+        self._db_listener.set_observable(timeline)
 
     def get_timeline_canvas(self):
         return self.timeline_canvas
@@ -76,7 +90,7 @@ class TimelinePanel(wx.Panel):
         self._layout_components()
 
     def _create_warning_bar(self):
-        self.warning_bar = _WarningBar(self)
+        self.message_bar = MessageBar(self)
 
     def _create_divider_line_slider(self):
         self.divider_line_slider = wx.Slider(
@@ -113,7 +127,7 @@ class TimelinePanel(wx.Panel):
         hsizer.Add(self.splitter, proportion=1, flag=wx.EXPAND)
         hsizer.Add(self.divider_line_slider, proportion=0, flag=wx.EXPAND)
         vsizer = wx.BoxSizer(wx.VERTICAL)
-        vsizer.Add(self.warning_bar, proportion=0, flag=wx.EXPAND)
+        vsizer.Add(self.message_bar, proportion=0, flag=wx.EXPAND)
         vsizer.Add(hsizer, proportion=1, flag=wx.EXPAND)
         self.SetSizer(vsizer)
 
@@ -132,64 +146,6 @@ class TimelinePanel(wx.Panel):
     def activated(self):
         if self.config.get_show_sidebar():
             self.show_sidebar()
-
-
-class _WarningBar(wx.Panel):
-
-    def __init__(self, parent):
-        wx.Panel.__init__(self, parent, style=wx.BORDER_NONE)
-        self._db_listener = Listener(self._on_db_changed)
-        self._create_gui()
-
-    def _create_gui(self):
-        self._inner_panel = wx.Panel(self)
-        self._label = wx.StaticText(self._inner_panel,
-                                    style=wx.ALIGN_CENTRE_HORIZONTAL)
-        self._add_with_border(self, self._inner_panel, 2,
-                              style=wx.EXPAND)
-        self._add_with_border(self._inner_panel, self._label, 5,
-                              style=wx.ALIGN_CENTER)
-
-
-    def _add_with_border(self, parent, child, border, style=0):
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(child, proportion=1, flag=wx.ALL|style, border=border)
-        parent.SetSizer(sizer)
-
-    def SetDB(self, db):
-        self._db_listener.set_observable(db)
-
-    def ShowWarningMessage(self, message):
-        self._set_colour((251, 100, 100))
-        self._label.SetLabel(message)
-        self.Show()
-        self.GetParent().Layout()
-
-    def ShowInformationMessage(self, message):
-        self._set_colour((251, 203, 58))
-        self._label.SetLabel(message)
-        self.Show()
-        self.GetParent().Layout()
-
-    def ShowNoMessage(self):
-        self.Hide()
-        self.GetParent().Layout()
-
-    def _set_colour(self, colour):
-        self.SetBackgroundColour(darken_color(colour))
-        self._inner_panel.SetBackgroundColour(colour)
-
-    def _on_db_changed(self, db):
-        if db.is_read_only():
-            header = _("This timeline is read-only.")
-            body = _("To edit this timeline, save it to a new file: File -> Save As.")
-            self.ShowInformationMessage("%s\n%s" % (header, body))
-        elif not db.is_saved():
-            header = _("This timeline is not being saved.")
-            body = _("To save this timeline, save it to a new file: File -> Save As.")
-            self.ShowWarningMessage("%s\n%s" % (header, body))
-        else:
-            self.ShowNoMessage()
 
 
 class _Sidebar(wx.Panel):
