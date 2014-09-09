@@ -18,12 +18,15 @@
 
 import unittest
 
+from mock import Mock
+
+from timelinelib.utilities.observer import Listener
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
 
 
-class ObservableSpec(unittest.TestCase):
+class describe_observable(unittest.TestCase):
 
     def test_at_construction_there_area_zero_observers(self):
         self.assertTrue(len(self.observable._observers) == 0)
@@ -75,11 +78,40 @@ class ObservableSpec(unittest.TestCase):
         self.observable.register(self.observer.event_triggered)
 
 
-class Observer():
-    
+class describe_listener(unittest.TestCase):
+
+    def test_does_not_call_callback_at_construction(self):
+        Listener(self.callback)
+        self.assertFalse(self.callback.called)
+
+    def test_calls_callback_when_observable_set(self):
+        Listener(self.callback).set_observable(self.observable)
+        self.callback.assert_called_with(self.observable)
+
+    def test_calls_callback_when_observable_changed(self):
+        Listener(self.callback).set_observable(self.observable)
+        self.callback.reset_mock()
+        self.observable._notify()
+        self.callback.assert_called_with(self.observable)
+
+    def test_unregisters_on_old_observer(self):
+        first_observable = Mock()
+        second_observable = Mock()
+        listener = Listener(self.callback)
+        listener.set_observable(first_observable)
+        listener.set_observable(second_observable)
+        self.assertTrue(first_observable.unlisten.called)
+
+    def setUp(self):
+        self.callback = Mock()
+        self.observable = Observable()
+
+
+class Observer(object):
+
     def __init__(self):
         self.events = []
-        
+
     def event_triggered(self, evt):
         self.events.append(evt)
 

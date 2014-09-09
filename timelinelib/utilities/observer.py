@@ -55,3 +55,27 @@ class Observable(object):
                 function()
         for fn in self._observers:
             fn(state_change)
+
+
+class Listener(object):
+
+    def __init__(self, callback):
+        self._observable = None
+        self._callback = callback
+
+    def set_observable(self, observable):
+        self._unlisten()
+        self._observable = observable
+        self._listen()
+
+    def _unlisten(self):
+        if self._observable is not None:
+            self._observable.unlisten(self._listener)
+
+    def _listen(self):
+        if self._observable is not None:
+            self._observable.listen_for_any(self._listener)
+            self._listener()
+
+    def _listener(self):
+        self._callback(self._observable)
