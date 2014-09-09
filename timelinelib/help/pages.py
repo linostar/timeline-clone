@@ -41,6 +41,7 @@ def install(help_system):
     - Help(why_not_timeline_in_my_language)
     - Help(week_numbers_sunday_week_start)
     - Help(multiple_users)
+    - Help(check_all_categories)
 - **%s**
     - Help(timeline)
     - Help(events)
@@ -53,6 +54,7 @@ def install(help_system):
     - Help(edit_categories)
     - Help(select_events)
     - Help(import_timeline)
+    - Help(undo_action)
 - **Help(contact)**
 """ % (_("Questions and answers"), _("Concepts"), _("Tasks"))))
 
@@ -99,6 +101,23 @@ When you try to make a change and someone else has made a change you will be ask
 - Synchronize the timeline.
  
 During the your edit action the timeline is locked for changes by others. If you try to edit a timeline when it is locked by someone else you will be notified about this situation.
+"""))
+
+    help_system.install_page(
+        id="check_all_categories",
+        header=_("Can I Check or Uncheck all categories?"),
+        related_pages=["categories", "edit_categories"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+Yes you can check or uncheck all categories as well as a lot of other selection alternatives.
+
+Make sure the categories pane is visible and then right-click with the mouse in the pane.
+A context menu will now show up with all the check/uncheck alternatives available.
+
 """))
 
     help_system.install_page(
@@ -221,6 +240,33 @@ The *Create Event* dialog can be opened in the following ways:
 - Select *Timeline* - *Create Event* from the menu.
 - Double click with the *left* mouse button on the timeline.
 - Press the *Ctrl* key, thereafter hold *left* mouse button down on the timeline, drag the mouse and release it.
+"""))
+
+    help_system.install_page(
+        id="undo_action",
+        header=_("Undo/Redo"),
+        related_pages=["create_event", "edit_event", "delete_event", "edit_categories"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+The *Undo* function can revert an action such as creating an event, editing a category or deleting an event.
+
+To revert an action you:
+ 
+- Use the Ctrl+Z key (Key combination can be changed by user) 
+- Select the menu *Timeline* - *Undo*
+
+To save memory usage we have decided to limit the number of actions that can be reverted.
+This means that only the 10 latest actions can be Undone.
+
+An action that is Undone can also be Redone if you:
+
+- Use the Alt+Z key (Key combination can be changed by user) 
+- Select the menu *Timeline* - *Redo*
+
 """))
 
     help_system.install_page(
