@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.objects.timeperiod import TimePeriod
+from timelinelib.data.timeperiod import TimePeriod
 
 
 class Event(object):
