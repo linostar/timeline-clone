@@ -23,10 +23,10 @@ from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
 from timelinelib.db.importers.tutorial import create_in_memory_tutorial_db
 from timelinelib.drawing.viewproperties import ViewProperties
+from timelinelib.export.timelinexml import export_db_to_timeline_xml
 from timelinelib.time.gregoriantime import GregorianTimeType
 
 
