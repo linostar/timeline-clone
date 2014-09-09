@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.objects.category import Category
+from timelinelib.data.category import Category
 from timelinelib.db.objects.container import Container
 from timelinelib.db.objects.event import Event
 from timelinelib.db.objects.subevent import Subevent

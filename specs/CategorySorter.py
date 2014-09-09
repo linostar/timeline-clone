@@ -18,7 +18,7 @@
 
 import unittest
 
-from timelinelib.db.objects.category import sort_categories
+from timelinelib.data.category import sort_categories
 from timelinelib.db.objects import Category
 
 

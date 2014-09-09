@@ -22,12 +22,12 @@ import os.path
 import wx
 
 from timelinelib.config.paths import ICONS_DIR
-from timelinelib.db.objects.category import sort_categories
+from timelinelib.data.category import sort_categories
+from timelinelib.drawing.drawers import get_progress_color
 from timelinelib.drawing.interface import Drawer
 from timelinelib.drawing.scene import TimelineScene
 from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
-from timelinelib.drawing.drawers import get_progress_color
 
 
 OUTER_PADDING = 5 # Space between event boxes (pixels)

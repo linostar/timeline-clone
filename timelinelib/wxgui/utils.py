@@ -18,8 +18,8 @@
 
 import wx
 
+from timelinelib.data.category import sort_categories
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects.category import sort_categories
 
 
 # Border, in pixels, between controls in a window (should always be used when

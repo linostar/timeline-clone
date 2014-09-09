@@ -29,18 +29,18 @@ query persistent storage to retrieve data.
 """
 
 
+from timelinelib.data.category import clone_categories_list
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.db.objects.event import clone_event_list
 from timelinelib.db.objects import Category
 from timelinelib.db.objects import Container
 from timelinelib.db.objects import Event
+from timelinelib.db.search import generic_event_search
+from timelinelib.db.undo.undohandler import UndoHandler
+from timelinelib.db.utils import IdCounter
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
-from timelinelib.db.search import generic_event_search
-from timelinelib.db.utils import IdCounter
-from timelinelib.db.objects.event import clone_event_list
-from timelinelib.db.objects.category import clone_categories_list
-from timelinelib.db.undo.undohandler import UndoHandler
 
 
 class MemoryDB(Observable):
