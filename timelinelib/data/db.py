@@ -50,6 +50,9 @@ class MemoryDB(Observable):
         self._save_callback = None
         self._should_lock = False
 
+    def is_saved(self):
+        return self._save_callback is not None
+
     def get_should_lock(self):
         return self._should_lock
 

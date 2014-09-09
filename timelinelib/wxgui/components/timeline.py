@@ -184,6 +184,10 @@ class _WarningBar(wx.Panel):
             header = _("This timeline is read-only.")
             body = _("To edit this timeline, save it to a new file: File -> Save As.")
             self.ShowInformationMessage("%s\n%s" % (header, body))
+        elif not db.is_saved():
+            header = _("This timeline is not being saved.")
+            body = _("To save this timeline, save it to a new file: File -> Save As.")
+            self.ShowWarningMessage("%s\n%s" % (header, body))
         else:
             self.ShowNoMessage()
 
