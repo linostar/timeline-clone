@@ -20,18 +20,16 @@ import unittest
 
 from mock import Mock
 
+from specs.utils import a_category_with
+from specs.utils import an_event_with
+from specs.utils import gregorian_period
 from timelinelib.data.db import InvalidOperationError
 from timelinelib.data.db import MemoryDB
-from timelinelib.data import Category
-from timelinelib.data import Event
-from timelinelib.data import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
-from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.utils import category_tree
-import timelinelib.calendar.gregorian as gregorian
 
 
-class MemoryDBSpec(unittest.TestCase):
+class describe_memory_db(unittest.TestCase):
 
     def testInitialState(self):
         db = MemoryDB()
@@ -54,9 +52,7 @@ class MemoryDBSpec(unittest.TestCase):
         # specific period and hidden one category
         vp = ViewProperties()
         vp.set_category_visible(self.c1, False)
-        start = gregorian.from_date(2010, 3, 23).to_time()
-        end = gregorian.from_date(2010, 3, 24).to_time()
-        tp = TimePeriod(self.db.get_time_type(), start, end)
+        tp = gregorian_period("23 Mar 2010", "24 Mar 2010")
         vp.displayed_period = tp
         # Save these properties and assert that the database fields are written
         # correctly
@@ -76,16 +72,13 @@ class MemoryDBSpec(unittest.TestCase):
     def testSaveInvalidDisplayedPeriod(self):
         # Assign a zero-period as displayed period
         vp = ViewProperties()
-        start = gregorian.from_date(2010, 3, 23).to_time()
-        end = gregorian.from_date(2010, 3, 23).to_time()
-        tp = TimePeriod(GregorianTimeType(), start, end)
+        tp = gregorian_period("23 Mar 2010", "23 Mar 2010")
         vp.displayed_period = tp
         # Assert error when trying to save
         self.assertRaises(InvalidOperationError, self.db.save_view_properties, vp)
 
     def testGetSetDisplayedPeriod(self):
-        tp = TimePeriod(self.db.get_time_type(), gregorian.from_date(2010, 3, 23).to_time(),
-                        gregorian.from_date(2010, 3, 24).to_time())
+        tp = gregorian_period("23 Mar 2010", "24 Mar 2010")
         self.db.set_displayed_period(tp)
         # Assert that we get back the same period
         self.assertEqual(self.db.get_displayed_period(), tp)
@@ -268,8 +261,7 @@ class MemoryDBSpec(unittest.TestCase):
 
     def testSaveNewEvent(self):
         self.db.save_event(self.e1)
-        tp = TimePeriod(self.db.get_time_type(), gregorian.from_date(2010, 2, 12).to_time(),
-                        gregorian.from_date(2010, 2, 14).to_time())
+        tp = gregorian_period("12 Feb 2010", "14 Feb 2010")
         self.assertTrue(self.e1.has_id())
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db.get_all_events(), [self.e1])
@@ -282,8 +274,7 @@ class MemoryDBSpec(unittest.TestCase):
         id_before = self.e1.id
         self.e1.text = "new text"
         self.db.save_event(self.e1)
-        tp = TimePeriod(self.db.get_time_type(), gregorian.from_date(2010, 2, 12).to_time(),
-                        gregorian.from_date(2010, 2, 14).to_time())
+        tp = gregorian_period("12 Feb 2010", "14 Feb 2010")
         self.assertEqual(id_before, self.e1.id)
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db.get_all_events(), [self.e1])
@@ -300,8 +291,7 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(self.save_callback_mock.call_count, 0)
 
     def testDeleteExistingEvent(self):
-        tp = TimePeriod(self.db.get_time_type(), gregorian.from_date(2010, 2, 12).to_time(),
-                        gregorian.from_date(2010, 2, 15).to_time())
+        tp = gregorian_period("12 Feb 2010", "15 Feb 2010")
         self.db.save_event(self.e1)
         self.db.save_event(self.e2)
         # Assert both in db
@@ -397,11 +387,6 @@ class MemoryDBSpec(unittest.TestCase):
     def testEventShouldNotBeLockedByDefault(self):
         self.assertFalse(self.e1.locked)
 
-    def testSearch(self):
-        self.db.save_event(self.e1)
-        self.db.save_event(self.e2)
-        self.assertEqual(self.db.search("holiday"), [self.e1])
-
     def setUp(self):
         self.save_callback_mock = Mock()
         self.db = MemoryDB()
@@ -409,13 +394,26 @@ class MemoryDBSpec(unittest.TestCase):
         self.db_listener = Mock()
         self.c1 = a_category_with(name="work")
         self.c2 = a_category_with(name="private")
-        self.e1 = an_event_with(name="holiday")
-        self.e2 = an_event_with(name="work starts")
-        self.e3 = an_event_with(name="period")
+        self.e1 = an_event_with(text="holiday", time="13 Feb 2010")
+        self.e2 = an_event_with(text="work starts", time="13 Feb 2010")
+        self.e3 = an_event_with(text="period", time="13 Feb 2010")
         self.db.register(self.db_listener)
 
 
-class describe_importing_of_db(unittest.TestCase):
+class describe_searching(unittest.TestCase):
+
+    def test_find_events_with_matching_text(self):
+        holiday_event = an_event_with(text="holiday in the alps")
+        football_event = an_event_with(text="football training")
+        self.db.save_event(holiday_event)
+        self.db.save_event(football_event)
+        self.assertEqual(self.db.search("holiday"), [holiday_event])
+
+    def setUp(self):
+        self.db = MemoryDB()
+
+
+class describe_importing(unittest.TestCase):
 
     def test_importing_empty_db_does_nothing(self):
         self.base_db.import_db(self.import_db)
@@ -446,7 +444,7 @@ class describe_importing_of_db(unittest.TestCase):
     def test_events_are_imported(self):
         work = a_category_with(name="work")
         self.import_db.save_category(work)
-        dentist = an_event_with(name="dentist", category=work)
+        dentist = an_event_with(text="dentist", category=work)
         self.import_db.save_event(dentist)
         self.base_db.import_db(self.import_db)
         self.assertEventListIs([
@@ -464,9 +462,6 @@ class describe_importing_of_db(unittest.TestCase):
         self.assertRaises(Exception, self.base_db.import_db, self.import_db)
 
     def assertCategoryTreeIs(self, expected_tree):
-        def replace_category_with_name(tree):
-            return [(category.name, replace_category_with_name(child_tree))
-                    for (category, child_tree) in tree]
         tree = category_tree(self.base_db.get_categories())
         self.assertEqual(replace_category_with_name(tree), expected_tree)
 
@@ -484,14 +479,6 @@ class describe_importing_of_db(unittest.TestCase):
         self.import_db.register_save_callback(self.import_db_save_callback)
 
 
-def a_category_with(name, parent=None):
-    return Category(name, (255, 0, 0), (0, 255, 255), True, parent=parent)
-
-
-def an_event_with(name, category=None):
-    event = Event(GregorianTimeType(),
-                  gregorian.from_date(2010, 2, 13).to_time(),
-                  gregorian.from_date(2010, 2, 13).to_time(),
-                  name)
-    event.category = category
-    return event
+def replace_category_with_name(tree):
+    return [(category.name, replace_category_with_name(child_tree))
+            for (category, child_tree) in tree]

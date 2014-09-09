@@ -78,10 +78,8 @@ def an_event_with(start=None, end=None, time=ANY_TIME, text="foo", fuzzy=False,
     else:
         start = human_time_to_gregorian(time)
         end = human_time_to_gregorian(time)
-    if category is None:
-        category = Category("bar", None, None, True)
     return Event(
-        GregorianTimeType(), start, end, text, category,
+        GregorianTimeType(), start, end, text, category=category,
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
@@ -97,6 +95,10 @@ def a_container(name, category, sub_events):
         all_events.append(Subevent(GregorianTimeType(), start, end, name,
                                    category=category, container=container))
     return all_events
+
+
+def a_category_with(name, parent=None):
+    return Category(name, (255, 0, 0), (0, 255, 255), True, parent=parent)
 
 
 class TmpDirTestCase(unittest.TestCase):
