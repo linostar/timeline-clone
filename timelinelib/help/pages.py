@@ -41,6 +41,7 @@ def install(help_system):
     - Help(why_not_timeline_in_my_language)
     - Help(week_numbers_sunday_week_start)
     - Help(multiple_users)
+    - Help(check_all_categories)
 - **%s**
     - Help(timeline)
     - Help(events)
@@ -100,6 +101,23 @@ When you try to make a change and someone else has made a change you will be ask
 - Synchronize the timeline.
  
 During the your edit action the timeline is locked for changes by others. If you try to edit a timeline when it is locked by someone else you will be notified about this situation.
+"""))
+
+    help_system.install_page(
+        id="check_all_categories",
+        header=_("Can I Check or Uncheck all categories?"),
+        related_pages=["categories", "edit_categories"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+Yes you can check or uncheck all categories as well as a lot of other selection alternatives.
+
+Make sure the categories pane is visible and then right-click with the mouse in the pane.
+A context menu will now show up with all the check/uncheck alternatives available.
+
 """))
 
     help_system.install_page(
