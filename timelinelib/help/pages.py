@@ -53,6 +53,7 @@ def install(help_system):
     - Help(edit_categories)
     - Help(select_events)
     - Help(import_timeline)
+    - Help(undo_action)
 - **Help(contact)**
 """ % (_("Questions and answers"), _("Concepts"), _("Tasks"))))
 
@@ -221,6 +222,33 @@ The *Create Event* dialog can be opened in the following ways:
 - Select *Timeline* - *Create Event* from the menu.
 - Double click with the *left* mouse button on the timeline.
 - Press the *Ctrl* key, thereafter hold *left* mouse button down on the timeline, drag the mouse and release it.
+"""))
+
+    help_system.install_page(
+        id="undo_action",
+        header=_("Undo/Redo"),
+        related_pages=["create_event", "edit_event", "delete_event", "edit_categories"],
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+The *Undo* function can revert an action such as creating an event, editing a category or deleting an event.
+
+To revert an action you:
+ 
+- Use the Ctrl+Z key (Key combination can be changed by user) 
+- Select the menu *Timeline* - *Undo*
+
+To save memory usage we have decided to limit the number of actions that can be reverted.
+This means that only the 10 latest actions can be Undone.
+
+An action that is Undone can also be Redone if you:
+
+- Use the Alt+Z key (Key combination can be changed by user) 
+- Select the menu *Timeline* - *Redo*
+
 """))
 
     help_system.install_page(
