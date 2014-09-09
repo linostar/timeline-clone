@@ -24,9 +24,9 @@ from specs.utils import TmpDirTestCase
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
+from timelinelib.dataimport.timelinexml import import_db_from_timeline_xml
+from timelinelib.dataimport.timelinexml import parse_alert_string
 from timelinelib.db import db_open
-from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
-from timelinelib.db.importers.timelinexml import parse_alert_string
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.export.timelinexml import alert_string
 from timelinelib.export.timelinexml import export_db_to_timeline_xml

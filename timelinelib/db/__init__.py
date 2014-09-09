@@ -22,9 +22,9 @@ from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
+from timelinelib.dataimport.timelinexml import import_db_from_timeline_xml
+from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
-from timelinelib.db.importers.tutorial import create_in_memory_tutorial_db
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.export.timelinexml import export_db_to_timeline_xml
 from timelinelib.time.gregoriantime import GregorianTimeType
@@ -65,7 +65,7 @@ def open_tutorial_timeline(path):
 
 
 def open_directory_timeline(path):
-    from timelinelib.db.importers.dir import import_db_from_dir
+    from timelinelib.dataimport.dir import import_db_from_dir
     db = import_db_from_dir(path)
     db.path = path
     return db
@@ -100,7 +100,7 @@ def db_open_ics(path):
     except ImportError:
         raise TimelineIOError(_("Could not find iCalendar Python package. It is required for working with ICS files. See the Timeline website or the doc/installing.rst file for instructions how to install it."))
     else:
-        from timelinelib.db.importers.ics import import_db_from_ics
+        from timelinelib.dataimport.ics import import_db_from_ics
         return import_db_from_ics(path)
 
 

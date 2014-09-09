@@ -23,7 +23,7 @@ from timelinelib.data.db import clone_data
 from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Event
-from timelinelib.db.importers.ics import import_db_from_ics
+from timelinelib.dataimport.ics import import_db_from_ics
 
 
 class BackendTest(object):
