@@ -20,11 +20,11 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.data.db import InvalidOperationError
 from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
-from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.utils import category_tree
@@ -81,7 +81,7 @@ class MemoryDBSpec(unittest.TestCase):
         tp = TimePeriod(GregorianTimeType(), start, end)
         vp.displayed_period = tp
         # Assert error when trying to save
-        self.assertRaises(TimelineIOError, self.db.save_view_properties, vp)
+        self.assertRaises(InvalidOperationError, self.db.save_view_properties, vp)
 
     def testGetSetDisplayedPeriod(self):
         tp = TimePeriod(self.db.get_time_type(), gregorian.from_date(2010, 3, 23).to_time(),
@@ -133,14 +133,14 @@ class MemoryDBSpec(unittest.TestCase):
         other_db = MemoryDB()
         other_db.save_category(self.c1)
         # It has id but is not in this db
-        self.assertRaises(TimelineIOError, self.db.save_category, self.c1)
+        self.assertRaises(InvalidOperationError, self.db.save_category, self.c1)
         # Assert save not called
         self.assertEqual(self.save_callback_mock.call_count, 0)
 
     def testSaveCategoryWithUnknownParent(self):
         self.c1.parent = self.c2
         # c2 not in db so we should get exception
-        self.assertRaises(TimelineIOError, self.db.save_category, self.c1)
+        self.assertRaises(InvalidOperationError, self.db.save_category, self.c1)
         # But after c2 is added everything is fine
         self.db.save_category(self.c2)
         self.db.save_category(self.c1)
@@ -173,7 +173,7 @@ class MemoryDBSpec(unittest.TestCase):
         # Changing c11's parent to c111 should raise exception since that would
         # create a circular parent link.
         c11.parent = c111
-        self.assertRaises(TimelineIOError, self.db.save_category, c11)
+        self.assertRaises(InvalidOperationError, self.db.save_category, c11)
 
     def testDeleteExistingCategory(self):
         # Add two categories to the db
@@ -207,11 +207,11 @@ class MemoryDBSpec(unittest.TestCase):
         self.assertEqual(self.save_callback_mock.call_count, 5)
 
     def testDeleteNonExistingCategory(self):
-        self.assertRaises(TimelineIOError, self.db.delete_category, self.c1)
-        self.assertRaises(TimelineIOError, self.db.delete_category, 5)
+        self.assertRaises(InvalidOperationError, self.db.delete_category, self.c1)
+        self.assertRaises(InvalidOperationError, self.db.delete_category, 5)
         other_db = MemoryDB()
         other_db.save_category(self.c2)
-        self.assertRaises(TimelineIOError, self.db.delete_category, self.c2)
+        self.assertRaises(InvalidOperationError, self.db.delete_category, self.c2)
         # Assert save not called
         self.assertEqual(self.save_callback_mock.call_count, 0)
 
@@ -258,11 +258,11 @@ class MemoryDBSpec(unittest.TestCase):
     def testSaveEventUnknownCategory(self):
         # A new
         self.e1.category = self.c1
-        self.assertRaises(TimelineIOError, self.db.save_event, self.e1)
+        self.assertRaises(InvalidOperationError, self.db.save_event, self.e1)
         # An existing
         self.db.save_event(self.e2)
         self.e2.category = self.c1
-        self.assertRaises(TimelineIOError, self.db.save_event, self.e2)
+        self.assertRaises(InvalidOperationError, self.db.save_event, self.e2)
         # Assert save not called
         self.assertEqual(self.save_callback_mock.call_count, 1)
 
@@ -295,7 +295,7 @@ class MemoryDBSpec(unittest.TestCase):
         other_db = MemoryDB()
         other_db.save_event(self.e1)
         # It has id but is not in this db
-        self.assertRaises(TimelineIOError, self.db.save_event, self.e1)
+        self.assertRaises(InvalidOperationError, self.db.save_event, self.e1)
         # Assert save not called
         self.assertEqual(self.save_callback_mock.call_count, 0)
 

@@ -35,10 +35,13 @@ from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data.undohandler import UndoHandler
-from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
+
+
+class InvalidOperationError(Exception):
+    pass
 
 
 class MemoryDB(Observable):
@@ -113,11 +116,10 @@ class MemoryDB(Observable):
     def save_event(self, event):
         if (event.category is not None and
             event.category not in self.categories):
-            raise TimelineIOError("Event's category not in db.")
+            raise InvalidOperationError("Event's category not in db.")
         if event not in self.events:
             if event.has_id():
-                raise TimelineIOError("Event with id %s not found in db." %
-                                      event.id)
+                raise InvalidOperationError("Event with id %s not found in db." % event.id)
             self.events.append(event)
             event.set_id(self.event_id_counter.get_next())
             if event.is_subevent():
@@ -197,7 +199,7 @@ class MemoryDB(Observable):
     def save_category(self, category):
         if (category.parent is not None and
             category.parent not in self.categories):
-            raise TimelineIOError("Parent category not in db.")
+            raise InvalidOperationError("Parent category not in db.")
         self._ensure_no_circular_parent(category)
         if not category in self.categories:
             if self.importing:
@@ -217,8 +219,7 @@ class MemoryDB(Observable):
 
     def _append_category(self, category):
         if category.has_id():
-            raise TimelineIOError("Category with id %s not found in db." %
-                                  category.id)
+            raise InvalidOperationError("Category with id %s not found in db." % category.id)
         self.categories.append(category)
         category.set_id(self.event_id_counter.get_next())
 
@@ -248,7 +249,7 @@ class MemoryDB(Observable):
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_CATEGORY)
         else:
-            raise TimelineIOError("Category not in db.")
+            raise InvalidOperationError("Category not in db.")
 
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.displayed_period
@@ -259,7 +260,7 @@ class MemoryDB(Observable):
     def save_view_properties(self, view_properties):
         if view_properties.displayed_period is not None:
             if not view_properties.displayed_period.is_period():
-                raise TimelineIOError(_("Displayed period must be > 0."))
+                raise InvalidOperationError(_("Displayed period must be > 0."))
             self.displayed_period = view_properties.displayed_period
         self.hidden_categories = []
         for cat in self.categories:
@@ -302,13 +303,13 @@ class MemoryDB(Observable):
             self.categories, self.events = self._undo_handler.get_data()
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
-            self._undo_handler.enable(True)    
+            self._undo_handler.enable(True)
 
     def _ensure_no_circular_parent(self, cat):
         parent = cat.parent
         while parent is not None:
             if parent == cat:
-                raise TimelineIOError("Circular category parent.")
+                raise InvalidOperationError("Circular category parent.")
             else:
                 parent = parent.parent
 
