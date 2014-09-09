@@ -29,12 +29,12 @@ from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.calendar.monthnames import ABBREVIATED_ENGLISH_MONTH_NAMES
 from timelinelib.config.arguments import ApplicationArguments
 from timelinelib.config.dotfile import read_config
+from timelinelib.data import Category
+from timelinelib.data import Container
+from timelinelib.data import Event
+from timelinelib.data import Subevent
+from timelinelib.data import TimePeriod
 from timelinelib.db import db_open
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import Container
-from timelinelib.db.objects import Subevent
-from timelinelib.db.objects import TimePeriod
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.setup import start_wx_application
 

@@ -31,10 +31,10 @@ query persistent storage to retrieve data.
 
 from timelinelib.data.category import clone_categories_list
 from timelinelib.data.event import clone_event_list
+from timelinelib.data import Category
+from timelinelib.data import Container
+from timelinelib.data import Event
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Container
-from timelinelib.db.objects import Event
 from timelinelib.db.search import generic_event_search
 from timelinelib.db.undo.undohandler import UndoHandler
 from timelinelib.db.utils import IdCounter

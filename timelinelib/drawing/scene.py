@@ -18,8 +18,8 @@
 
 import wx
 
+from timelinelib.data import TimePeriod
 from timelinelib.drawing.utils import Metrics
-from timelinelib.db.objects import TimePeriod
 
 
 FORWARD  = 1

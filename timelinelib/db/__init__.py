@@ -18,14 +18,14 @@
 
 import os.path
 
+from timelinelib.data import Category
+from timelinelib.data import Event
+from timelinelib.data import TimePeriod
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
 from timelinelib.db.importers.tutorial import create_in_memory_tutorial_db
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType
 

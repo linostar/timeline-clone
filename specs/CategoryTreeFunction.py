@@ -18,7 +18,7 @@
 
 import unittest
 
-from timelinelib.db.objects import Category
+from timelinelib.data import Category
 from timelinelib.wxgui.utils import category_tree
 
 

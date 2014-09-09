@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.db.objects import TimePeriod
+from timelinelib.data import TimePeriod
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType
 

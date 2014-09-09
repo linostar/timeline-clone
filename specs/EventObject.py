@@ -19,10 +19,10 @@
 import unittest
 
 from timelinelib.data.event import clone_event_list
+from timelinelib.data import Container
+from timelinelib.data import Event
+from timelinelib.data import Subevent
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.objects import Container
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import Subevent
 
 
 class EventSpec(unittest.TestCase):

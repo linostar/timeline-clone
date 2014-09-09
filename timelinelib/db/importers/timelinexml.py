@@ -25,13 +25,13 @@ import StringIO
 
 import wx
 
+from timelinelib.data import Category
+from timelinelib.data import Container
+from timelinelib.data import Event
+from timelinelib.data import Subevent
+from timelinelib.data import TimePeriod
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Container
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import Subevent
-from timelinelib.db.objects import TimePeriod
 from timelinelib.db.utils import create_non_exising_path
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType

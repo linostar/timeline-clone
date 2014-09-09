@@ -23,10 +23,10 @@ from timelinelib.calendar.gregorian import Gregorian
 from timelinelib.calendar.gregorian import gregorian_week
 from timelinelib.calendar.monthnames import abbreviated_name_of_month
 from timelinelib.calendar.weekdaynames import abbreviated_name_of_weekday
-from timelinelib.db.objects import TimeOutOfRangeLeftError
-from timelinelib.db.objects import TimeOutOfRangeRightError
-from timelinelib.db.objects import TimePeriod
-from timelinelib.db.objects import time_period_center
+from timelinelib.data import TimeOutOfRangeLeftError
+from timelinelib.data import TimeOutOfRangeRightError
+from timelinelib.data import TimePeriod
+from timelinelib.data import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.time.timeline import delta_from_days

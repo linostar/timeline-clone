@@ -20,8 +20,8 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.data import Category
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects import Category
 from timelinelib.editors.category import CategoryEditor
 from timelinelib.repositories.interface import CategoryRepository
 from timelinelib.wxgui.dialogs.categoryeditor import WxCategoryEdtiorDialog

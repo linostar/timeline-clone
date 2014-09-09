@@ -23,9 +23,9 @@ from os.path import abspath
 from icalendar import Calendar
 
 from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.data import Event
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects import Event
 from timelinelib.utils import ex_msg
 import timelinelib.calendar.gregorian as gregorian
 

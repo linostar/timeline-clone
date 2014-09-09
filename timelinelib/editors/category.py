@@ -16,8 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from timelinelib.data import Category
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects import Category
 
 
 class CategoryEditor(object):

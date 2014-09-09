@@ -20,9 +20,9 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.db.objects import TimePeriod
-from timelinelib.time.numtime import NumTimeType
+from timelinelib.data import TimePeriod
 from timelinelib.time.numtime import move_period
+from timelinelib.time.numtime import NumTimeType
 
 
 class NumTimeDuplicateFunctionsSpec(unittest.TestCase):

@@ -18,7 +18,7 @@
 
 import wx
 
-from timelinelib.db.objects import PeriodTooLongError
+from timelinelib.data import PeriodTooLongError
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 
 

@@ -21,8 +21,8 @@ import unittest
 from mock import Mock
 
 from specs.utils import an_event_with, a_container
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Event
+from timelinelib.data import Category
+from timelinelib.data import Event
 from timelinelib.db.utils import IdCounter
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel

@@ -21,14 +21,14 @@ import codecs
 import os.path
 
 from specs.utils import TmpDirTestCase
+from timelinelib.data import Category
+from timelinelib.data import Event
+from timelinelib.data import TimePeriod
 from timelinelib.db.exporters.timelinexml import alert_string
 from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db import db_open
 from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml
 from timelinelib.db.importers.timelinexml import parse_alert_string
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import TimePeriod
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.meta.version import get_version
 from timelinelib.time.gregoriantime import GregorianTimeType

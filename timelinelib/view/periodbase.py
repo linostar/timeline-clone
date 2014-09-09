@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.objects import TimePeriod
+from timelinelib.data import TimePeriod
 from timelinelib.view.scrollbase import ScrollViewInputHandler
 
 

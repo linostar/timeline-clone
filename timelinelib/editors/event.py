@@ -16,10 +16,10 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import PeriodTooLongError
-from timelinelib.db.objects import Subevent
-from timelinelib.db.objects import TimePeriod
+from timelinelib.data import Event
+from timelinelib.data import PeriodTooLongError
+from timelinelib.data import Subevent
+from timelinelib.data import TimePeriod
 from timelinelib.utils import ex_msg
 
 

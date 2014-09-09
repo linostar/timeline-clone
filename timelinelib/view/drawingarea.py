@@ -21,9 +21,9 @@ import webbrowser
 
 import wx
 
+from timelinelib.data import TimeOutOfRangeLeftError
+from timelinelib.data import TimeOutOfRangeRightError
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects import TimeOutOfRangeLeftError
-from timelinelib.db.objects import TimeOutOfRangeRightError
 from timelinelib.db.utils import safe_locking
 from timelinelib.drawing.utils import get_default_font
 from timelinelib.drawing.viewproperties import ViewProperties

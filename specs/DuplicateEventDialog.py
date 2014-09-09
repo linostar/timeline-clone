@@ -20,10 +20,10 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.data import Event
+from timelinelib.data import TimePeriod
 from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.objects import Event
-from timelinelib.db.objects import TimePeriod
 from timelinelib.editors.duplicateevent import BACKWARD
 from timelinelib.editors.duplicateevent import BOTH
 from timelinelib.editors.duplicateevent import DuplicateEventEditor
@@ -31,6 +31,7 @@ from timelinelib.editors.duplicateevent import FORWARD
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.dialogs.duplicateevent import DuplicateEventDialog
 import timelinelib.calendar.gregorian as gregorian
+
 
 class duplicate_event_dialog_spec_base(unittest.TestCase):
 

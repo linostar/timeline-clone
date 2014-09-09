@@ -21,8 +21,8 @@ import unittest
 from mock import Mock
 
 from timelinelib.data.category import clone_categories_list
+from timelinelib.data import Category
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.objects import Category
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.repositories.categories import CategoriesFacade
 

@@ -19,13 +19,13 @@
 import datetime
 import unittest
 
-from specs.utils import human_time_to_gregorian
 from specs.utils import gregorian_period
+from specs.utils import human_time_to_gregorian
+from timelinelib.data import Category
+from timelinelib.data import Event
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.objects import Category
-from timelinelib.db.objects import Event
-from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.drawing.scene import TimelineScene
+from timelinelib.drawing.viewproperties import ViewProperties
 
 
 class SceneSpec(unittest.TestCase):

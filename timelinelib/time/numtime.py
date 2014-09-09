@@ -18,11 +18,11 @@
 
 import re
 
-from timelinelib.time.typeinterface import TimeType
-from timelinelib.db.objects import time_period_center
+from timelinelib.data import TimePeriod
+from timelinelib.data import time_period_center
 from timelinelib.drawing.interface import Strip
 from timelinelib.drawing.utils import get_default_font
-from timelinelib.db.objects import TimePeriod
+from timelinelib.time.typeinterface import TimeType
 
 
 class NumTimeType(TimeType):

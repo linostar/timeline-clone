@@ -17,7 +17,6 @@
 
 
 from timelinelib.data.event import Event
-from timelinelib.db.strategies import DefaultContainerStrategy
 
 
 class Container(Event):
@@ -28,7 +27,8 @@ class Container(Event):
                        False, False, False)
         self.container_id = cid
         self.events = []
-        self.strategy = DefaultContainerStrategy(self)
+        import timelinelib.db.strategies
+        self.strategy = timelinelib.db.strategies.DefaultContainerStrategy(self)
 
     def is_container(self):
         return True

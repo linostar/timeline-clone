@@ -22,7 +22,7 @@ import mock
 
 from specs.utils import gregorian_period
 from timelinelib.calendar.gregorian import Gregorian
-from timelinelib.db.objects import TimePeriod
+from timelinelib.data import TimePeriod
 from timelinelib.time.gregoriantime import backward_fn
 from timelinelib.time.gregoriantime import backward_one_month_fn
 from timelinelib.time.gregoriantime import backward_one_week_fn

@@ -18,7 +18,7 @@
 
 import unittest
 
-from timelinelib.db.objects import TimePeriod
+from timelinelib.data import TimePeriod
 from timelinelib.time.typeinterface import TimeType
 
 

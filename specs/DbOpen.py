@@ -20,9 +20,9 @@ import codecs
 
 from specs.utils import TmpDirTestCase
 from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.data import Category
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
-from timelinelib.db.objects import Category
 from timelinelib.drawing.viewproperties import ViewProperties
 
 import wx

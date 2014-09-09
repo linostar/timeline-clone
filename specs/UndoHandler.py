@@ -18,9 +18,9 @@
 
 import unittest
 
-from timelinelib.db.undo.undohandler import UndoHandler
+from timelinelib.data import Event
 from timelinelib.db.backends.memory import MemoryDB
-from timelinelib.db.objects import Event
+from timelinelib.db.undo.undohandler import UndoHandler
 
 
 class UndoHandlerSpec(unittest.TestCase):
