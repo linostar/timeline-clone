@@ -9,6 +9,7 @@ Version 1.4.0
 New features, enhancements:
 
 * Added a context menu to Timeline.
+* Added undo feature
 
 Bug fixes:
 

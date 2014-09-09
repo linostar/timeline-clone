@@ -19,7 +19,6 @@
 import os.path
 import webbrowser
 
-import wx
 import wx.html
 
 from timelinelib.config.paths import HELP_RESOURCES_DIR
@@ -35,7 +34,7 @@ class HelpBrowser(wx.Frame):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, title=_("Help"),
-                          size=(600, 550), style=wx.DEFAULT_FRAME_STYLE)
+                          size=(600, 600), style=wx.DEFAULT_FRAME_STYLE)
         self.history = []
         self.current_pos = -1
         self._create_help_system()
