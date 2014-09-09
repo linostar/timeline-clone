@@ -158,7 +158,7 @@ class Event(object):
 
 
 def clone_event_list(events):
-    from timelinelib.db.objects.container import Container
+    from timelinelib.data.container import Container
     from timelinelib.data.subevent import Subevent
     eventlist = []
     containers = {}
