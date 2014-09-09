@@ -21,11 +21,11 @@ import unittest
 from mock import Mock, sentinel
 
 from specs.utils import an_event_with, human_time_to_gregorian, ObjectWithTruthValue
+from timelinelib.data.db import MemoryDB
 from timelinelib.editors.event import EventEditor
 from timelinelib.repositories.interface import EventRepository
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.dialogs.eventeditor import EventEditorDialog
-from timelinelib.db.backends.memory import MemoryDB
 
 
 class EventEditorTestCase(unittest.TestCase):

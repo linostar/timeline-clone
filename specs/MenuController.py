@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 import wx
 
-from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.data.db import MemoryDB
 from timelinelib.wxgui.dialogs.mainframe import MenuController
 
 

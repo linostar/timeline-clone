@@ -24,10 +24,10 @@ import wx
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
 from timelinelib.config.dotfile import Config
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Event
 from timelinelib.data import TimeOutOfRangeLeftError
 from timelinelib.data import TimeOutOfRangeRightError
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.wxgui.components.timeline import TimelineCanvas
 from timelinelib.wxgui.components.timeline import TimelineCanvasController
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter

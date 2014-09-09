@@ -18,10 +18,10 @@
 
 import os.path
 
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db.exporters.timelinexml import export_db_to_timeline_xml
 from timelinelib.db.importers.timelinexml import import_db_from_timeline_xml

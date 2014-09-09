@@ -21,9 +21,9 @@ import unittest
 
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Event
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.drawing.scene import TimelineScene
 from timelinelib.drawing.viewproperties import ViewProperties
 

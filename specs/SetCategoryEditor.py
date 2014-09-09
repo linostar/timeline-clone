@@ -21,8 +21,8 @@ import unittest
 from mock import Mock
 
 from timelinelib.data.category import Category
+from timelinelib.data.db import MemoryDB
 from timelinelib.data.event import Event
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.editors.setcategory import SetCategoryEditor
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog

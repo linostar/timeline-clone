@@ -20,10 +20,10 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType

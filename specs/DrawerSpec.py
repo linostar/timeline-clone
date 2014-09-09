@@ -21,8 +21,8 @@ import unittest
 import wx
 from mock import Mock
 
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Event, TimePeriod
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType

@@ -20,11 +20,10 @@ from datetime import datetime
 import colorsys
 import os.path
 
-
 from timelinelib.calendar.gregorian import Gregorian
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Event
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
 
 

@@ -20,8 +20,8 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.wxgui.components.cattree import CategoriesTree
 from timelinelib.wxgui.components.cattree import CategoriesTreeController
 from timelinelib.wxgui.components.timeline import TimelineCanvas

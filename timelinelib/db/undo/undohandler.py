@@ -16,11 +16,12 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+
 MAX_BUFFER_SIZE = 100
 
 
 class UndoHandler(object):
-    
+
     def __init__(self, db):
         self._db = db
         self._undo_buffer = []
@@ -29,10 +30,10 @@ class UndoHandler(object):
         self._report_enabled = False
         self._max_buffer_size = MAX_BUFFER_SIZE
         self.report("After Init---------------------")
-        
+
     def enable(self, value):
         self._enabled = value
-        
+
     def undo(self):
         if len(self._undo_buffer) == 0:
             return False
@@ -42,7 +43,7 @@ class UndoHandler(object):
         self.enable(False)
         self.report("After Undo---------------------")
         return True
-        
+
     def redo(self):
         if len(self._undo_buffer) == 0:
             return False
@@ -52,16 +53,16 @@ class UndoHandler(object):
         self.enable(False)
         self.report("After Redo---------------------")
         return True
-        
+
     def get_data(self):
-        from timelinelib.db.backends.memory import clone_data
+        from timelinelib.data.db import clone_data
         if len(self._undo_buffer) > 0:
             return clone_data(self._undo_buffer[self._pos][0], self._undo_buffer[self._pos][1])
         else:
-            return []        
+            return []
 
     def save(self):
-        from timelinelib.db.backends.memory import clone_data
+        from timelinelib.data.db import clone_data
         if self._enabled:
             del (self._undo_buffer[self._pos + 1:])
             if self._max_buffer_size == len(self._undo_buffer):
@@ -72,7 +73,7 @@ class UndoHandler(object):
             #self._undo_buffer.append(self._db.events)
             self._pos += 1
             self.report("After Save---------------------")
-        
+
     def report(self, msg=""):
         if self._report_enabled:
             print msg
@@ -80,7 +81,7 @@ class UndoHandler(object):
             i = 0
             for list in self._undo_buffer:
                 print "List ", i
-                i += 1 
+                i += 1
                 for event in list:
                     print "   %s" % event.text
                     print "   %s" % event.category.name

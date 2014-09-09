@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 import wx
 
-from timelinelib.db.backends.memory import MemoryDB
+from timelinelib.data.db import MemoryDB
 from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
 from timelinelib.view.drawingarea import HSCROLL_STEP
 from timelinelib.view.drawingarea import TimelineCanvasController

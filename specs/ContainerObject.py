@@ -18,10 +18,10 @@
 
 import unittest
 
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Subevent
-from timelinelib.db.backends.memory import MemoryDB
 
 
 class ContainerSpec(unittest.TestCase):

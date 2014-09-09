@@ -21,8 +21,8 @@ import unittest
 from mock import Mock
 
 from timelinelib.data.category import clone_categories_list
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.repositories.categories import CategoriesFacade
 
@@ -61,7 +61,7 @@ class queries(TestBase):
     def test_get_parents(self):
         self.assertEqual(set(self.categories.get_parents(self.monthly_report)),
                          set([self.work, self.report]))
-        
+
     def test_get_parents_for_checked_childs(self):
         self.checked_categories = (self.monthly_report,)
         self.assertEqual(set(self.categories.get_parents_for_checked_childs()),
@@ -79,9 +79,9 @@ class queries(TestBase):
     def _is_category_visible(self, category):
         return category in self.checked_categories
 
-    
+
 class cloning(TestBase):
-    
+
     def test_cloning_returns_new_object(self):
         cloned_category = self.category_list[0].clone()
         self.assertTrue(self.category_list[0] != cloned_category)
@@ -101,8 +101,7 @@ class cloning(TestBase):
                 self.assertTrue(cat.parent != self.play)
                 self.assertTrue(cat.parent is not None)
                 self.assertTrue(cat.parent not in self.category_list)
-        
+
     def setUp(self):
         self.category_list = []
         self._create_example_tree()
-    

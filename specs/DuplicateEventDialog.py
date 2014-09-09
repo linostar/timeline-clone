@@ -20,9 +20,9 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.data.db import MemoryDB
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
-from timelinelib.db.backends.memory import MemoryDB
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.editors.duplicateevent import BACKWARD
 from timelinelib.editors.duplicateevent import BOTH
