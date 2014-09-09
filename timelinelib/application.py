@@ -54,8 +54,10 @@ class TimelineApplication(object):
         else:
             display_error_message(_("File '%s' does not exist.") % path, self.main_frame)
 
-    def open_timeline(self, path, import_timeline=False, timetype=None):
-        self.main_frame.save_current_timeline_data()
+    def open_timeline(self, path, import_timeline=False, timetype=None,
+                      save_current_data=True):
+        if save_current_data:
+            self.main_frame.save_current_timeline_data()
         try:
             new_db = self.db_open_fn(path, timetype=timetype)
             if import_timeline:
@@ -104,7 +106,7 @@ class TimelineApplication(object):
         if last_changed > self.last_changed:
             ack = get_user_ack(_("Someoneelse has changed the Timeline.\nYou have two choices!\n  1. Set Timeline in Read-Only mode.\n  2. Synchronize Timeline.\n\nDo you want to Synchronize?"))
             if ack:
-                self._synchronize()
+                self.reload_from_disk()
             else:
                 self.set_timeline_in_readonly_mode()
             return False
@@ -139,11 +141,11 @@ class TimelineApplication(object):
         except:
             return 0
 
-    def _synchronize(self):
+    def reload_from_disk(self):
         timeline_canvas = self.main_frame.main_panel.timeline_panel.timeline_canvas
         vp = timeline_canvas.get_view_properties()
         displayed_period = vp.get_displayed_period()
-        self.open_timeline(self.timelinepath)
+        self.open_timeline(self.timelinepath, save_current_data=False)
         vp.set_displayed_period(displayed_period)
         timeline_canvas.redraw_timeline()
 

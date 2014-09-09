@@ -48,6 +48,16 @@ class describe_timeline_application(unittest.TestCase):
         self.application.set_no_timeline()
         self.main_frame.display_timeline.assert_called_with(None)
 
+    def test_saves_current_timeline_data_when_opening_new_timeline(self):
+        self.application.open_timeline("foo.timeline")
+        self.main_frame.save_current_timeline_data.assert_called_with()
+
+    def test_does_not_save_current_timeline_data_when_reloading_from_disk(self):
+        self.application.open_timeline("foo.timeline")
+        self.main_frame.reset_mock()
+        self.application.reload_from_disk()
+        self.assertFalse(self.main_frame.save_current_timeline_data.called)
+
     def test_adds_opened_timeline_to_recently_opened_list(self):
         self.application.open_timeline("foo.timeline")
         self.config.append_recently_opened.assert_called_with("foo.timeline")
@@ -61,6 +71,9 @@ class describe_timeline_application(unittest.TestCase):
 
     def setUp(self):
         self.main_frame = Mock(MainFrame)
+        self.main_frame.main_panel = Mock()
+        self.main_frame.main_panel.timeline_panel = Mock()
+        self.main_frame.main_panel.timeline_panel.timeline_canvas = Mock()
         self.db_open = Mock()
         self.config = Mock(Config)
         self.application = TimelineApplication(self.main_frame, self.db_open,

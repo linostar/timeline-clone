@@ -14,6 +14,9 @@ Bug fixes:
 
 * Fixed following error when using wxPython >= 2.9: AttributeError: 'module' object has no attribute 'Color'
 * Fixed navigation problem, got to time, for numeric timeline
+* Synchronizing a timeline that has been modified by someone else actually
+  reads the modified timeline instead of ignoring it. (This bug was introduced
+  in version 1.1.0.)
 
 Version 1.3.0
 -------------
