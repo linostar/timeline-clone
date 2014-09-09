@@ -36,7 +36,6 @@ from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data.undohandler import UndoHandler
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.db.utils import IdCounter
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
@@ -402,6 +401,16 @@ class MemoryDB(Observable):
             if category.name == name:
                 return True
         return False
+
+
+class IdCounter(object):
+
+    def __init__(self, initial_id=0):
+        self.id = initial_id
+
+    def get_next(self):
+        self.id += 1
+        return self.id
 
 
 def clone_data(categories, events):

@@ -20,8 +20,8 @@ import unittest
 
 from mock import Mock
 
+from timelinelib.data.db import IdCounter
 from timelinelib.data import Category
-from timelinelib.db.utils import IdCounter
 from timelinelib.wxgui.components.categorytree import CategoriesFacade
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 

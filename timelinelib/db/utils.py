@@ -23,16 +23,6 @@ import os.path
 from timelinelib.db.exceptions import TimelineIOError
 
 
-class IdCounter(object):
-
-    def __init__(self, initial_id=0):
-        self.id = initial_id
-
-    def get_next(self):
-        self.id += 1
-        return self.id
-
-
 def safe_write(path, encoding, write_fn):
     """
     Write to path in such a way that the contents of path is only modified
