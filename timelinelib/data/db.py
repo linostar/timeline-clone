@@ -16,25 +16,13 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Implementation of timeline database that stores all data in memory.
-
-MemoryDB can be used as a base class for other timeline databases that wish to
-store all data in memory and also want to save the data to persistent storage
-whenever it changes in memory. Initially data can be read from persistent
-storage into memory.
-
-MemoryDB is not suitable as a base class for timeline databases that need to
-query persistent storage to retrieve data.
-"""
-
-
 from timelinelib.data.category import clone_categories_list
 from timelinelib.data.event import clone_event_list
 from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data.undohandler import UndoHandler
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
@@ -56,10 +44,8 @@ class MemoryDB(Observable):
         self.displayed_period = None
         self.hidden_categories = []
         self.save_disabled = False
-        from timelinelib.time.gregoriantime import GregorianTimeType
         self.time_type = GregorianTimeType()
         self.readonly = False
-        self.importing = False
         self._undo_handler = UndoHandler(self)
         self._save_callback = None
         self._should_lock = False
@@ -202,20 +188,13 @@ class MemoryDB(Observable):
             raise InvalidOperationError("Parent category not in db.")
         self._ensure_no_circular_parent(category)
         if not category in self.categories:
-            if self.importing:
-                if not self._category_name_exists(category):
-                    self._append_category(category)
-            else:
-                self._append_category(category)
+            self._append_category(category)
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_CATEGORY)
 
     def loaded(self):
         self._undo_handler.enable(True)
         self._undo_handler.save()
-
-    def _category_name_exists(self, category):
-        return self.get_category_by_name(category) is not None
 
     def _append_category(self, category):
         if category.has_id():
