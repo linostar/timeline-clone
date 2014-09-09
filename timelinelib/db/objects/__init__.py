@@ -18,10 +18,10 @@
 
 from timelinelib.data.category import Category
 from timelinelib.data.event import Event
+from timelinelib.data.subevent import Subevent
 from timelinelib.data.timeperiod import PeriodTooLongError
 from timelinelib.data.timeperiod import TimeOutOfRangeLeftError
 from timelinelib.data.timeperiod import TimeOutOfRangeRightError
 from timelinelib.data.timeperiod import TimePeriod
 from timelinelib.data.timeperiod import time_period_center
 from timelinelib.db.objects.container import Container
-from timelinelib.db.objects.subevent import Subevent
