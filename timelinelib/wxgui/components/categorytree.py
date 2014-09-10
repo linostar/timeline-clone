@@ -32,7 +32,7 @@ from timelinelib.wxgui.components.cattree import edit_category
 class CustomCategoryTree(wx.ScrolledWindow):
 
     def __init__(self, parent, handle_db_error):
-        wx.ScrolledWindow.__init__(self, parent)
+        wx.ScrolledWindow.__init__(self, parent, size=(100, 100))
         self.parent = parent
         self.handle_db_error = handle_db_error
         self._create_context_menu()

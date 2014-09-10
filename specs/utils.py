@@ -127,8 +127,8 @@ class WxComponentTest(unittest.TestCase):
     def tearDown(self):
         self._close()
 
-    def add_component(self, name, cls):
-        self._component_by_name[name] = cls(self._main_panel)
+    def add_component(self, name, cls, *args):
+        self._component_by_name[name] = cls(self._main_panel, *args)
         self._components.append(self._component_by_name[name])
 
     def add_button(self, text, callback, component_name):
