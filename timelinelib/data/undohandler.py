@@ -24,6 +24,7 @@ class UndoHandler(object):
     def __init__(self, db):
         self._db = db
         self._undo_buffer = []
+        self._checkpoint = None
         self._enabled = False
         self._pos = -1
         self._report_enabled = False
@@ -69,10 +70,30 @@ class UndoHandler(object):
                 self._pos -= 1
             self.report("After  delete---------------------")
             self._undo_buffer.append(clone_data(self._db.categories, self._db.events))
-            #self._undo_buffer.append(self._db.events)
             self._pos += 1
             self.report("After Save---------------------")
 
+    def set_checkpoint(self):
+        from timelinelib.data.db import clone_data
+        self._checkpoint = clone_data(self._db.categories, self._db.events)
+    
+    def revert_to_checkpoint(self):
+        """
+        When reverting to a checkpoint the undo buffer isn't valid anymore.
+        After new data is loaded into timeline, a save call is made, by
+        the timeline wich will trigger the undo buffer to be filled.
+        """
+        self._reset_buffer()
+        return self._get_checkpoint_data()
+        
+    def _reset_buffer(self):
+        self._pos = -1
+        self._undo_buffer = []
+        
+    def _get_checkpoint_data(self):
+        from timelinelib.data.db import clone_data
+        return clone_data(self._checkpoint[0], self._checkpoint[1])
+        
     def report(self, msg=""):
         if self._report_enabled:
             print msg

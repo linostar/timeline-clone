@@ -95,6 +95,8 @@ ID_NEW = wx.ID_NEW
 ID_FIND = wx.ID_FIND
 ID_UNDO = wx.NewId()
 ID_REDO = wx.NewId()
+ID_SET_CHECKPOINT = wx.NewId()
+ID_REVERT_TO_CHECKPOINT = wx.NewId()
 ID_PREFERENCES = wx.ID_PREFERENCES
 ID_HELP = wx.ID_HELP
 ID_ABOUT = wx.ID_ABOUT
@@ -371,6 +373,10 @@ class GuiCreator(object):
         def redo(evt):
             safe_locking(self, self.timeline.redo)
             self.main_panel.redraw_timeline()        
+        def set_checkpoint(evt):
+            safe_locking(self, self.timeline.set_checkpoint)
+        def revert_to_checkpoint(evt):
+            safe_locking(self, self.timeline.revert_to_checkpoint)
         cbx = False
         items = ((ID_CREATE_EVENT, create_event, _("Create &Event..."), cbx),
                  (ID_EDIT_EVENT, edit_event, _("&Edit Selected Event..."), cbx),
@@ -383,6 +389,9 @@ class GuiCreator(object):
                  (ID_EDIT_CATEGORIES, edit_categories, _("Edit &Categories"), cbx),
                  None,
                  (ID_SET_READONLY, set_readonly, _("&Read Only"), cbx),
+                 None,
+                 (ID_SET_CHECKPOINT, set_checkpoint, _("Set Checkpoint"), cbx),
+                 (ID_REVERT_TO_CHECKPOINT, revert_to_checkpoint, _("Revert to Checkpoint"), cbx),
                  None,
                  (ID_UNDO, undo, _("&Undo\tCtrl+Z"), cbx),
                  (ID_REDO, redo, _("&Redo\tAlt+Z"), cbx))
