@@ -19,7 +19,6 @@
 import wx
 
 from timelinelib.drawing import get_drawer
-from timelinelib.drawing.utils import darken_color
 from timelinelib.utilities.observer import Listener
 from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.wxgui.components.categorytree import CustomCategoryTree
