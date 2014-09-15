@@ -26,8 +26,8 @@ class _IdCounter(object):
         return self.id
 
 
-id_counter = _IdCounter()
+_id_counter = _IdCounter()
 
 
 def get_process_unique_id():
-    return id_counter.get_next()
+    return _id_counter.get_next()
