@@ -18,8 +18,8 @@
 
 import unittest
 
+from specs.utils import an_event
 from timelinelib.data.db import MemoryDB
-from timelinelib.data import Event
 from timelinelib.data.undohandler import UndoHandler
 
 
@@ -37,26 +37,28 @@ class UndoHandlerSpec(unittest.TestCase):
     def test_get_data_returns_empty_list_after_construction(self):
         self.assertEqual([], self.undo_handler.get_data())
 
+    def test_undo_not_possible_after_construction(self):
+        self.assertFalse(self.undo_handler.undo())
+
     def test_undo_handler_can_be_enabled(self):
         self.undo_handler.enable(True)
         self.assertEqual(True, self.undo_handler._enabled)
 
     def test_save_has_no_effect_when_undo_handler_is_disabled(self):
         buffer_size = len(self.undo_handler._undo_buffer)
-        self.given_timeline_with_two_events()
         self.undo_handler.enable(False)
         self.undo_handler.save()
         self.assertEqual(buffer_size, len(self.undo_handler._undo_buffer))
 
     def test_undo_buffer_updated_when_undo_handler_is_enabled(self):
         buffer_size = len(self.undo_handler._undo_buffer)
-        self.given_timeline_with_two_events()
         self.undo_handler.enable(True)
         self.undo_handler.save()
         self.assertEqual(buffer_size + 1, len(self.undo_handler._undo_buffer))
 
     def test_events_in_undo_buffer_are_cloned(self):
-        self.given_timeline_with_two_events()
+        self.db.events.append(an_event())
+        self.db.events.append(an_event())
         self.undo_handler.enable(True)
         self.undo_handler.save()
         self.assertFalse(self.undo_handler._undo_buffer[0][0] == self.db.events[0])
@@ -88,7 +90,7 @@ class UndoHandlerSpec(unittest.TestCase):
         self.given_empty_timeline()
         self.undo_handler.enable(False)
         self.assertEqual(1, len(self.undo_handler._undo_buffer))
-        self.given_point_event()
+        self.db.events.append(an_event())
         self.undo_handler.save()
         self.assertEqual(1, len(self.undo_handler._undo_buffer))
 
@@ -96,13 +98,13 @@ class UndoHandlerSpec(unittest.TestCase):
         self.given_empty_timeline()
         self.undo_handler.enable(True)
         self.undo_handler.set_checkpoint()
-        self.given_point_event()
+        self.db.events.append(an_event())
         self.undo_handler.save()
         self.undo_handler.save()
         self.assertEquals(3, len(self.undo_handler._undo_buffer))
         self.undo_handler.revert_to_checkpoint()
         self.assertEquals(0, len(self.undo_handler._undo_buffer))
-        
+
     def setUp(self):
         self.db = MemoryDB()
         self.undo_handler = UndoHandler(self.db)
@@ -111,37 +113,13 @@ class UndoHandlerSpec(unittest.TestCase):
         self.undo_handler.enable(True)
         self.undo_handler.save()
 
-    def given_timeline_with_two_events(self):
-        self.given_point_event()
-        self.given_period_event()
-
     def given_timeline_with_two_events_added(self):
         self.undo_handler.enable(True)
         self.undo_handler.save()
-        self.given_point_event()
+        self.db.events.append(an_event())
         self.undo_handler.save()
-        self.given_period_event()
+        self.db.events.append(an_event())
         self.undo_handler.save()
-
-    def given_event_list(self):
-        self.given_point_event()
-        self.given_period_event()
-
-    def given_point_event(self):
-        event = Event(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
-                           self.time("2000-01-01 10:01:01"), "evt")
-        self.db.events.append(event)
-
-    def given_period_event(self, days=0, hours=0, minutes=0):
-        days += 1
-        hours += 1
-        minutes += 1
-        event = Event(self.db.get_time_type(), self.time("2000-01-01 01:01:01"),
-                           self.time("2000-01-0%d %d:%d:01" % (days, hours, minutes)), "period evt")
-        self.db.events.append(event)
-
-    def time(self, tm):
-        return self.db.get_time_type().parse_time(tm)
 
     def get_event_list(self):
         return self.undo_handler.get_data()[1]
