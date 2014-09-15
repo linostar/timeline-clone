@@ -78,7 +78,7 @@ class MemoryDB(Observable):
         return ["description", "icon", "alert", "hyperlink", "progress"]
 
     def search(self, search_string):
-        return _generic_event_search(self._events.events, search_string)
+        return self._events.search(search_string)
 
     def get_events(self, time_period):
         def include_event(event):
@@ -414,19 +414,3 @@ def clone_data(categories, events):
         except KeyError:
             event.category = None
     return categories, events
-
-
-def _generic_event_search(events, search_string):
-    def match(event):
-        target = search_string.lower()
-        description = event.get_data("description")
-        if description is None:
-            description = ""
-        else:
-            description = description.lower()
-        return target in event.text.lower() or target in description
-    def mean_time(event):
-        return event.mean_time()
-    matches = [event for event in events if match(event)]
-    matches.sort(key=mean_time)
-    return matches

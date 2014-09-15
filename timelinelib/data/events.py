@@ -21,3 +21,22 @@ class Events(object):
     def __init__(self):
         self.categories = []
         self.events = []
+
+    def search(self, search_string):
+        return _generic_event_search(self.events, search_string)
+
+
+def _generic_event_search(events, search_string):
+    def match(event):
+        target = search_string.lower()
+        description = event.get_data("description")
+        if description is None:
+            description = ""
+        else:
+            description = description.lower()
+        return target in event.text.lower() or target in description
+    def mean_time(event):
+        return event.mean_time()
+    matches = [event for event in events if match(event)]
+    matches.sort(key=mean_time)
+    return matches
