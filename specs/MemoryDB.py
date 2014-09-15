@@ -433,6 +433,37 @@ class describe_searching(unittest.TestCase):
         self.db = MemoryDB()
 
 
+class describe_undo(unittest.TestCase):
+
+    def test_can_not_undo_non_modified_timeline(self):
+        self.db.undo()
+        self.assertFalse(self.db_changed_listener.called)
+
+    def test_can_undo_added_event(self):
+        self.db.save_event(an_event_with(text="football"))
+        self.assertHasEvents(["football"])
+        self.db.undo()
+        self.assertHasEvents([])
+
+    def test_can_redo_undo(self):
+        self.db.save_event(an_event_with(text="football"))
+        self.assertHasEvents(["football"])
+        self.db.undo()
+        self.assertHasEvents([])
+        self.db.redo()
+        self.assertHasEvents(["football"])
+
+    def assertHasEvents(self, event_texts):
+        actual_event_texts = [e.text for e in self.db.get_all_events()]
+        self.assertEqual(actual_event_texts, event_texts)
+
+    def setUp(self):
+        self.db_changed_listener = Mock()
+        self.db = MemoryDB()
+        self.db.listen_for_any(self.db_changed_listener)
+        self.db.loaded()
+
+
 class describe_importing(unittest.TestCase):
 
     def test_importing_empty_db_does_nothing(self):
