@@ -30,6 +30,11 @@ class Events(object):
             return None
         return min(self.get_all(), key=lambda e: e.time_period.start_time)
 
+    def get_last(self):
+        if len(self.get_all()) == 0:
+            return None
+        return max(self.get_all(), key=lambda e: e.time_period.end_time)
+
     def search(self, search_string):
         return _generic_event_search(self.events, search_string)
 

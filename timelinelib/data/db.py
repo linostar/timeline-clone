@@ -94,10 +94,7 @@ class MemoryDB(Observable):
         return self._events.get_first()
 
     def get_last_event(self):
-        if len(self._events.events) == 0:
-            return None
-        e = max(self._events.events, key=lambda e: e.time_period.end_time)
-        return e
+        return self._events.get_last()
 
     def save_event(self, event):
         if (event.category is not None and
