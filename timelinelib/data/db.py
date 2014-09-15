@@ -81,11 +81,7 @@ class MemoryDB(Observable):
         return self._events.search(search_string)
 
     def get_events(self, time_period):
-        def include_event(event):
-            if not event.inside_period(time_period):
-                return False
-            return True
-        return [e for e in self._events.events if include_event(e)]
+        return self._events.get_in_period(time_period)
 
     def get_all_events(self):
         return self._events.get_all()

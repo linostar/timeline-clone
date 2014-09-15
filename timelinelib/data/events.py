@@ -35,6 +35,13 @@ class Events(object):
             return None
         return max(self.get_all(), key=lambda e: e.time_period.end_time)
 
+    def get_in_period(self, time_period):
+        def include_event(event):
+            if not event.inside_period(time_period):
+                return False
+            return True
+        return [e for e in self.events if include_event(e)]
+
     def search(self, search_string):
         return _generic_event_search(self.events, search_string)
 
