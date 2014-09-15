@@ -16,8 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.data.category import clone_categories_list
-from timelinelib.data.event import clone_event_list
 from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Event
@@ -393,14 +391,3 @@ class IdCounter(object):
     def get_next(self):
         self.id += 1
         return self.id
-
-
-def clone_data(categories, events):
-    categories, catclones = clone_categories_list(categories)
-    events = clone_event_list(events)
-    for event in events:
-        try:
-            event.category = catclones[event.category]
-        except KeyError:
-            event.category = None
-    return categories, events

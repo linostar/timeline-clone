@@ -55,29 +55,27 @@ class UndoHandler(object):
         return True
 
     def get_data(self):
-        from timelinelib.data.db import clone_data
         if len(self._undo_buffer) > 0:
-            return clone_data(self._undo_buffer[self._pos][0], self._undo_buffer[self._pos][1])
+            return self._clone(self._undo_buffer[self._pos][0],
+                               self._undo_buffer[self._pos][1])
         else:
             return []
 
     def save(self):
-        from timelinelib.data.db import clone_data
         if self._enabled:
             del (self._undo_buffer[self._pos + 1:])
             if self._max_buffer_size == len(self._undo_buffer):
                 del(self._undo_buffer[0])
                 self._pos -= 1
             self.report("After  delete---------------------")
-            self._undo_buffer.append(clone_data(self._db._events.categories,
-                                                self._db._events.events))
+            self._undo_buffer.append(self._clone(self._db._events.categories,
+                                                 self._db._events.events))
             self._pos += 1
             self.report("After Save---------------------")
 
     def set_checkpoint(self):
-        from timelinelib.data.db import clone_data
-        self._checkpoint = clone_data(self._db._events.categories,
-                                      self._db._events.events)
+        self._checkpoint = self._clone(self._db._events.categories,
+                                       self._db._events.events)
 
     def revert_to_checkpoint(self):
         """
@@ -93,8 +91,12 @@ class UndoHandler(object):
         self._undo_buffer = []
 
     def _get_checkpoint_data(self):
-        from timelinelib.data.db import clone_data
-        return clone_data(self._checkpoint[0], self._checkpoint[1])
+        return self._clone(self._checkpoint[0], self._checkpoint[1])
+
+    def _clone(self, categories, events):
+        from timelinelib.data import Events
+        x = Events(categories, events).clone()
+        return (x.categories, x.events)
 
     def report(self, msg=""):
         if self._report_enabled:

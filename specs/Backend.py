@@ -19,8 +19,8 @@
 import unittest
 
 from specs.utils import TmpDirTestCase
-from timelinelib.data.db import clone_data
 from timelinelib.data.db import MemoryDB
+from timelinelib.data.events import clone_data
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.dataimport.ics import import_db_from_ics
@@ -79,12 +79,13 @@ END:VEVENT
 END:VCALENDAR
 """
 
+
 class CloningTest(unittest.TestCase):
     """
     An Event can be associated with a category.
     When the backend event-list and category-list are cloned this association must be maintained.
     """
-    
+
     def test_when_db_data_is_cloned_category_event_relasionship_is_preserved(self):
         self.given_event_and_category_lists()
         self.when_cloning()
@@ -97,14 +98,13 @@ class CloningTest(unittest.TestCase):
         self.db.categories, self.db.events = clone_data(self.db.categories, self.db.events)
         self.new_category = self.db.categories[0]
         self.new_event = self.db.events[0]
-    
+
     def given_event_and_category_lists(self):
         self.db.categories = [Category("cat1", None, None, True, parent=None)]
         self.db.events = [Event(self.db.get_time_type(), self.now, self.now, "evt", category=self.db.categories[0])]
         self.old_category = self.db.categories[0]
         self.old_event = self.db.events[0]
-         
+
     def setUp(self):
         self.db = MemoryDB()
         self.now = self.db.get_time_type().now()
-    

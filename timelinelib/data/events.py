@@ -16,11 +16,21 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from timelinelib.data.category import clone_categories_list
+from timelinelib.data.event import clone_event_list
+
+
 class Events(object):
 
-    def __init__(self):
-        self.categories = []
-        self.events = []
+    def __init__(self, categories=None, events=None):
+        if categories is None:
+            self.categories = []
+        else:
+            self.categories = categories
+        if events is None:
+            self.events = []
+        else:
+            self.events = events
 
     def get_all(self):
         return list(self.events)
@@ -45,6 +55,10 @@ class Events(object):
     def search(self, search_string):
         return _generic_event_search(self.events, search_string)
 
+    def clone(self):
+        (categories, events) = clone_data(self.categories, self.events)
+        return Events(categories, events)
+
 
 def _generic_event_search(events, search_string):
     def match(event):
@@ -60,3 +74,14 @@ def _generic_event_search(events, search_string):
     matches = [event for event in events if match(event)]
     matches.sort(key=mean_time)
     return matches
+
+
+def clone_data(categories, events):
+    categories, catclones = clone_categories_list(categories)
+    events = clone_event_list(events)
+    for event in events:
+        try:
+            event.category = catclones[event.category]
+        except KeyError:
+            event.category = None
+    return categories, events
