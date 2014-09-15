@@ -91,10 +91,7 @@ class MemoryDB(Observable):
         return self._events.get_all()
 
     def get_first_event(self):
-        if len(self._events.events) == 0:
-            return None
-        e = min(self._events.events, key=lambda e: e.time_period.start_time)
-        return e
+        return self._events.get_first()
 
     def get_last_event(self):
         if len(self._events.events) == 0:

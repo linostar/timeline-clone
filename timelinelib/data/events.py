@@ -25,6 +25,11 @@ class Events(object):
     def get_all(self):
         return list(self.events)
 
+    def get_first(self):
+        if len(self.get_all()) == 0:
+            return None
+        return min(self.get_all(), key=lambda e: e.time_period.start_time)
+
     def search(self, search_string):
         return _generic_event_search(self.events, search_string)
 
