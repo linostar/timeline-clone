@@ -16,14 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.data.category import Category
-from timelinelib.data.category import sort_categories
-from timelinelib.data.container import Container
-from timelinelib.data.event import Event
-from timelinelib.data.events import Events
-from timelinelib.data.subevent import Subevent
-from timelinelib.data.timeperiod import PeriodTooLongError
-from timelinelib.data.timeperiod import TimeOutOfRangeLeftError
-from timelinelib.data.timeperiod import TimeOutOfRangeRightError
-from timelinelib.data.timeperiod import TimePeriod
-from timelinelib.data.timeperiod import time_period_center
+class Events(object):
+
+    def __init__(self):
+        self.categories = []
+        self.events = []

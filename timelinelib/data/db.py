@@ -21,6 +21,7 @@ from timelinelib.data.event import clone_event_list
 from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Event
+from timelinelib.data import Events
 from timelinelib.data.undohandler import UndoHandler
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.utilities.observer import Observable
@@ -37,10 +38,9 @@ class MemoryDB(Observable):
     def __init__(self):
         Observable.__init__(self)
         self.path = ""
-        self.categories = []
         self.category_id_counter = IdCounter()
-        self.events = []
         self.event_id_counter = IdCounter()
+        self._events = Events()
         self.displayed_period = None
         self.hidden_categories = []
         self.save_disabled = False
@@ -78,38 +78,38 @@ class MemoryDB(Observable):
         return ["description", "icon", "alert", "hyperlink", "progress"]
 
     def search(self, search_string):
-        return _generic_event_search(self.events, search_string)
+        return _generic_event_search(self._events.events, search_string)
 
     def get_events(self, time_period):
         def include_event(event):
             if not event.inside_period(time_period):
                 return False
             return True
-        return [e for e in self.events if include_event(e)]
+        return [e for e in self._events.events if include_event(e)]
 
     def get_all_events(self):
-        return list(self.events)
+        return list(self._events.events)
 
     def get_first_event(self):
-        if len(self.events) == 0:
+        if len(self._events.events) == 0:
             return None
-        e = min(self.events, key=lambda e: e.time_period.start_time)
+        e = min(self._events.events, key=lambda e: e.time_period.start_time)
         return e
 
     def get_last_event(self):
-        if len(self.events) == 0:
+        if len(self._events.events) == 0:
             return None
-        e = max(self.events, key=lambda e: e.time_period.end_time)
+        e = max(self._events.events, key=lambda e: e.time_period.end_time)
         return e
 
     def save_event(self, event):
         if (event.category is not None and
-            event.category not in self.categories):
+            event.category not in self._events.categories):
             raise InvalidOperationError("Event's category not in db.")
-        if event not in self.events:
+        if event not in self._events.events:
             if event.has_id():
                 raise InvalidOperationError("Event with id %s not found in db." % event.id)
-            self.events.append(event)
+            self._events.events.append(event)
             event.set_id(self.event_id_counter.get_next())
             if event.is_subevent():
                 self._register_subevent(event)
@@ -117,7 +117,7 @@ class MemoryDB(Observable):
         self._notify(STATE_CHANGE_ANY)
 
     def _register_subevent(self, subevent):
-        container_events = [event for event in self.events
+        container_events = [event for event in self._events.events
                             if event.is_container()]
         containers = {}
         for container in container_events:
@@ -147,7 +147,7 @@ class MemoryDB(Observable):
         return id
 
     def _unregister_subevent(self, subevent):
-        container_events = [event for event in self.events
+        container_events = [event for event in self._events.events
                             if event.is_container()]
         containers = {}
         for container in container_events:
@@ -156,7 +156,7 @@ class MemoryDB(Observable):
             container = containers[subevent.cid()]
             container.unregister_subevent(subevent)
             if len(container.events) == 0:
-                self.events.remove(container)
+                self._events.events.remove(container)
         except:
             pass
 
@@ -165,32 +165,32 @@ class MemoryDB(Observable):
             event = event_or_id
         else:
             event = self.find_event_with_id(event_or_id)
-        if event in self.events:
+        if event in self._events.events:
             if event.is_subevent():
                 self._unregister_subevent(event)
             if event.is_container():
                 for subevent in event.events:
-                    self.events.remove(subevent)
-            self.events.remove(event)
+                    self._events.events.remove(subevent)
+            self._events.events.remove(event)
             event.set_id(None)
             if save:
                 self._save_if_not_disabled()
                 self._notify(STATE_CHANGE_ANY)
 
     def get_categories(self):
-        return list(self.categories)
+        return list(self._events.categories)
 
     def get_containers(self):
-        containers = [event for event in self.events
+        containers = [event for event in self._events.events
                       if event.is_container()]
         return containers
 
     def save_category(self, category):
         if (category.parent is not None and
-            category.parent not in self.categories):
+            category.parent not in self._events.categories):
             raise InvalidOperationError("Parent category not in db.")
         self._ensure_no_circular_parent(category)
-        if not category in self.categories:
+        if not category in self._events.categories:
             self._append_category(category)
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_CATEGORY)
@@ -203,11 +203,11 @@ class MemoryDB(Observable):
     def _append_category(self, category):
         if category.has_id():
             raise InvalidOperationError("Category with id %s not found in db." % category.id)
-        self.categories.append(category)
+        self._events.categories.append(category)
         category.set_id(self.event_id_counter.get_next())
 
     def get_category_by_name(self, category):
-        for cat in self.categories:
+        for cat in self._events.categories:
             if cat.name == category.name:
                 return cat
 
@@ -216,17 +216,17 @@ class MemoryDB(Observable):
             category = category_or_id
         else:
             category = self._find_category_with_id(category_or_id)
-        if category in self.categories:
+        if category in self._events.categories:
             if category in self.hidden_categories:
                 self.hidden_categories.remove(category)
-            self.categories.remove(category)
+            self._events.categories.remove(category)
             category.set_id(None)
             # Loop to update parent attribute on children
-            for cat in self.categories:
+            for cat in self._events.categories:
                 if cat.parent == category:
                     cat.parent = category.parent
             # Loop to update category for events
-            for event in self.events:
+            for event in self._events.events:
                 if event.category == category:
                     event.category = category.parent
             self._save_if_not_disabled()
@@ -236,7 +236,7 @@ class MemoryDB(Observable):
 
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.displayed_period
-        for cat in self.categories:
+        for cat in self._events.categories:
             visible = cat not in self.hidden_categories
             view_properties.set_category_visible(cat, visible)
 
@@ -246,7 +246,7 @@ class MemoryDB(Observable):
                 raise InvalidOperationError(_("Displayed period must be > 0."))
             self.displayed_period = view_properties.displayed_period
         self.hidden_categories = []
-        for cat in self.categories:
+        for cat in self._events.categories:
             if not view_properties.is_category_visible(cat):
                 self.hidden_categories.append(cat)
         self._save_if_not_disabled()
@@ -263,27 +263,27 @@ class MemoryDB(Observable):
     def place_event_after_event(self, event_to_place, target_event):
         if (event_to_place == target_event):
             return
-        self.events.remove(event_to_place)
-        new_index = self.events.index(target_event) + 1
-        self.events.insert(new_index, event_to_place)
+        self._events.events.remove(event_to_place)
+        new_index = self._events.events.index(target_event) + 1
+        self._events.events.insert(new_index, event_to_place)
 
     def place_event_before_event(self, event_to_place, target_event):
         if (event_to_place == target_event):
             return
-        self.events.remove(event_to_place)
-        new_index = self.events.index(target_event)
-        self.events.insert(new_index, event_to_place)
+        self._events.events.remove(event_to_place)
+        new_index = self._events.events.index(target_event)
+        self._events.events.insert(new_index, event_to_place)
 
     def undo(self):
         if self._undo_handler.undo():
-            self.categories, self.events = self._undo_handler.get_data()
+            self._events.categories, self._events.events = self._undo_handler.get_data()
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
 
     def redo(self):
         if self._undo_handler.redo():
-            self.categories, self.events = self._undo_handler.get_data()
+            self._events.categories, self._events.events = self._undo_handler.get_data()
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
@@ -292,7 +292,7 @@ class MemoryDB(Observable):
         self._undo_handler.set_checkpoint()
 
     def revert_to_checkpoint(self):
-        self.categories, self.events = self._undo_handler.revert_to_checkpoint()
+        self._events.categories, self._events.events = self._undo_handler.revert_to_checkpoint()
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_ANY)
 
@@ -305,13 +305,13 @@ class MemoryDB(Observable):
                 parent = parent.parent
 
     def find_event_with_id(self, id):
-        for e in self.events:
+        for e in self._events.events:
             if e.id == id:
                 return e
         return None
 
     def _find_category_with_id(self, id):
-        for c in self.categories:
+        for c in self._events.categories:
             if c.id == id:
                 return c
         return None
@@ -350,7 +350,7 @@ class MemoryDB(Observable):
         """
         self.hidden_categories = []
         for cat in hidden_categories:
-            if cat not in self.categories:
+            if cat not in self._events.categories:
                 raise ValueError("Category '%s' not in db." % cat.name)
             self.hidden_categories.append(cat)
 
