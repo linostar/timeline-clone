@@ -264,14 +264,14 @@ class MemoryDB(Observable):
 
     def undo(self):
         if self._undo_handler.undo():
-            self._events.categories, self._events.events = self._undo_handler.get_data()
+            self._events = self._undo_handler.get_data()
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
 
     def redo(self):
         if self._undo_handler.redo():
-            self._events.categories, self._events.events = self._undo_handler.get_data()
+            self._events = self._undo_handler.get_data()
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
@@ -280,7 +280,7 @@ class MemoryDB(Observable):
         self._undo_handler.set_checkpoint()
 
     def revert_to_checkpoint(self):
-        self._events.categories, self._events.events = self._undo_handler.revert_to_checkpoint()
+        self._events = self._undo_handler.revert_to_checkpoint()
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_ANY)
 

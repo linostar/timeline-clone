@@ -56,8 +56,7 @@ class UndoHandler(object):
 
     def get_data(self):
         if len(self._undo_buffer) > 0:
-            return self._clone(self._undo_buffer[self._pos][0],
-                               self._undo_buffer[self._pos][1])
+            return self._undo_buffer[self._pos].clone()
         else:
             return []
 
@@ -68,14 +67,12 @@ class UndoHandler(object):
                 del(self._undo_buffer[0])
                 self._pos -= 1
             self.report("After  delete---------------------")
-            self._undo_buffer.append(self._clone(self._db._events.categories,
-                                                 self._db._events.events))
+            self._undo_buffer.append(self._db._events.clone())
             self._pos += 1
             self.report("After Save---------------------")
 
     def set_checkpoint(self):
-        self._checkpoint = self._clone(self._db._events.categories,
-                                       self._db._events.events)
+        self._checkpoint = self._db._events.clone()
 
     def revert_to_checkpoint(self):
         """
@@ -91,12 +88,7 @@ class UndoHandler(object):
         self._undo_buffer = []
 
     def _get_checkpoint_data(self):
-        return self._clone(self._checkpoint[0], self._checkpoint[1])
-
-    def _clone(self, categories, events):
-        from timelinelib.data import Events
-        x = Events(categories, events).clone()
-        return (x.categories, x.events)
+        return self._checkpoint.clone()
 
     def report(self, msg=""):
         if self._report_enabled:

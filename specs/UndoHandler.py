@@ -26,7 +26,7 @@ from timelinelib.data.undohandler import UndoHandler
 class UndoHandlerSpec(unittest.TestCase):
 
     def test_undo_buffer_is_empty_after_construction(self):
-        self.assertEqual(0, len(self.undo_handler._undo_buffer))
+        self.assertEqual(0, self.get_undo_buffer_len())
 
     def test_undo_handler_position_is_invalid_after_construction(self):
         self.assertEqual(-1, self.undo_handler._pos)
@@ -45,54 +45,54 @@ class UndoHandlerSpec(unittest.TestCase):
         self.assertEqual(True, self.undo_handler._enabled)
 
     def test_save_has_no_effect_when_undo_handler_is_disabled(self):
-        buffer_size = len(self.undo_handler._undo_buffer)
+        old_len = self.get_undo_buffer_len()
         self.undo_handler.enable(False)
         self.undo_handler.save()
-        self.assertEqual(buffer_size, len(self.undo_handler._undo_buffer))
+        self.assertEqual(old_len, self.get_undo_buffer_len())
 
     def test_undo_buffer_updated_when_undo_handler_is_enabled(self):
-        buffer_size = len(self.undo_handler._undo_buffer)
+        old_len = self.get_undo_buffer_len()
         self.undo_handler.enable(True)
         self.undo_handler.save()
-        self.assertEqual(buffer_size + 1, len(self.undo_handler._undo_buffer))
+        self.assertEqual(old_len + 1, self.get_undo_buffer_len())
 
     def test_events_in_undo_buffer_are_cloned(self):
         self.db.save_event(an_event())
         self.db.save_event(an_event())
         self.undo_handler.enable(True)
         self.undo_handler.save()
-        self.assertFalse(self.undo_handler._undo_buffer[0][0] == self.db.get_all_events()[0])
-        self.assertFalse(self.undo_handler._undo_buffer[0][1] == self.db.get_all_events()[1])
+        self.assertFalse(self.undo_handler._undo_buffer[0].events[0] == self.db.get_all_events()[0])
+        self.assertFalse(self.undo_handler._undo_buffer[0].events[1] == self.db.get_all_events()[1])
 
     def test_save_of_empty_timeline(self):
         self.given_empty_timeline()
-        self.assertEqual(1, len(self.undo_handler._undo_buffer))
-        self.assertEqual(0, len(self.undo_handler._undo_buffer[0][1]))
+        self.assertEqual(1, self.get_undo_buffer_len())
+        self.assertEqual(0, len(self.undo_handler._undo_buffer[0].events))
 
     def test_undo_when_nothing_to_undo(self):
         self.given_empty_timeline()
         self.undo_handler.undo()
-        self.assertEqual(1, len(self.undo_handler._undo_buffer))
-        self.assertEqual(0, len(self.undo_handler.get_data()[1]))
+        self.assertEqual(1, self.get_undo_buffer_len())
+        self.assertEqual(0, len(self.undo_handler.get_data().events))
 
     def test_save_of_timeline(self):
         self.given_timeline_with_two_events_added()
-        self.assertEqual(3, len(self.undo_handler._undo_buffer))
-        self.assertEqual(2, len(self.undo_handler.get_data()[1]))
+        self.assertEqual(3, self.get_undo_buffer_len())
+        self.assertEqual(2, len(self.undo_handler.get_data().events))
 
     def test_undo(self):
         self.given_timeline_with_two_events_added()
         self.undo_handler.undo()
-        self.assertEqual(3, len(self.undo_handler._undo_buffer))
+        self.assertEqual(3, self.get_undo_buffer_len())
         self.assertEqual(1, len(self.get_event_list()))
 
     def test_save_not_possible_when_undo_disabled(self):
         self.given_empty_timeline()
         self.undo_handler.enable(False)
-        self.assertEqual(1, len(self.undo_handler._undo_buffer))
+        self.assertEqual(1, self.get_undo_buffer_len())
         self.db.save_event(an_event())
         self.undo_handler.save()
-        self.assertEqual(1, len(self.undo_handler._undo_buffer))
+        self.assertEqual(1, self.get_undo_buffer_len())
 
     def test_checkpoint_can_be_set(self):
         self.given_empty_timeline()
@@ -101,9 +101,9 @@ class UndoHandlerSpec(unittest.TestCase):
         self.db.save_event(an_event())
         self.undo_handler.save()
         self.undo_handler.save()
-        self.assertEquals(3, len(self.undo_handler._undo_buffer))
+        self.assertEquals(3, self.get_undo_buffer_len())
         self.undo_handler.revert_to_checkpoint()
-        self.assertEquals(0, len(self.undo_handler._undo_buffer))
+        self.assertEquals(0, self.get_undo_buffer_len())
 
     def setUp(self):
         self.db = MemoryDB()
@@ -121,5 +121,8 @@ class UndoHandlerSpec(unittest.TestCase):
         self.db.save_event(an_event())
         self.undo_handler.save()
 
+    def get_undo_buffer_len(self):
+        return len(self.undo_handler._undo_buffer)
+
     def get_event_list(self):
-        return self.undo_handler.get_data()[1]
+        return self.undo_handler.get_data().events
