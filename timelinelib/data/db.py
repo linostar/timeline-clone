@@ -88,7 +88,7 @@ class MemoryDB(Observable):
         return [e for e in self._events.events if include_event(e)]
 
     def get_all_events(self):
-        return list(self._events.events)
+        return self._events.get_all()
 
     def get_first_event(self):
         if len(self._events.events) == 0:

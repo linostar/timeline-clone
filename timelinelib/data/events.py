@@ -22,6 +22,9 @@ class Events(object):
         self.categories = []
         self.events = []
 
+    def get_all(self):
+        return list(self.events)
+
     def search(self, search_string):
         return _generic_event_search(self.events, search_string)
 
