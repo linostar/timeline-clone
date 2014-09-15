@@ -400,6 +400,26 @@ class describe_memory_db(unittest.TestCase):
         self.db.register(self.db_listener)
 
 
+class describe_querying(unittest.TestCase):
+
+    def test_can_get_first_event(self):
+        aug_event = an_event_with(time="30 Aug 2010")
+        jan_event = an_event_with(time="1 Jan 2010")
+        self.db.save_event(aug_event)
+        self.db.save_event(jan_event)
+        self.assertEqual(self.db.get_first_event(), jan_event)
+
+    def test_can_get_last_event(self):
+        jan_event = an_event_with(time="1 Jan 2010")
+        aug_event = an_event_with(time="30 Aug 2010")
+        self.db.save_event(aug_event)
+        self.db.save_event(jan_event)
+        self.assertEqual(self.db.get_last_event(), aug_event)
+
+    def setUp(self):
+        self.db = MemoryDB()
+
+
 class describe_searching(unittest.TestCase):
 
     def test_find_events_with_matching_text(self):
