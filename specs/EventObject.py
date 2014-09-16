@@ -190,6 +190,10 @@ class EventCloningSpec(unittest.TestCase):
         self.assertTrue(isinstance(cloned_event_list[0], Container))
         self.assertTrue(isinstance(cloned_event_list[1], Subevent))
         self.assertTrue(isinstance(cloned_event_list[2], Subevent))
+        self.assertTrue(cloned_event_list[1] in cloned_event_list[0].events)
+        self.assertTrue(cloned_event_list[2] in cloned_event_list[0].events)
+        self.assertEquals(cloned_event_list[1].container_id, cloned_event_list[0].container_id)
+        self.assertEquals(cloned_event_list[2].container_id, cloned_event_list[0].container_id)
             
     def given_container_with_subevents(self):
         self.container = Container(self.db.get_time_type(), self.now, self.now, "container", category=None, cid=1)

@@ -157,34 +157,37 @@ class Event(object):
         return self.time_period.end_time - self.time_period.start_time
 
 
-def clone_event_list(events):
+def clone_event_list(eventlist):
     from timelinelib.data.container import Container
     from timelinelib.data.subevent import Subevent
-    eventlist = []
-    containers = {}
-    subevents = []
     def clone_events():
-        for event in events:
+        events = []
+        for event in eventlist:
             new_event = event.clone()
             new_event.set_id(event.id)
-            eventlist.append(new_event)
-    def load_containers():
-        for event in eventlist:
+            events.append(new_event)
+        return events
+    def get_containers(cloned_events):
+        containers = {}
+        for event in cloned_events:
             if isinstance(event, Container):
                 containers[event.container_id] = event
-    def load_subevents():
-        for event in eventlist:
+        return containers
+    def get_subevents(cloned_events):
+        subevents = []
+        for event in cloned_events:
             if isinstance(event, Subevent):
                 subevents.append(event)
-    def update_container_subevent_relations():
+        return subevents
+    def update_container_subevent_relations(containers, subevents):
         for subevent in subevents:
             try:
                 subevent.container = containers[subevent.container_id]
                 subevent.container.events.append(subevent)
             except:
                 pass
-    clone_events()
-    load_containers()
-    load_subevents()
-    update_container_subevent_relations()
+    eventlist = clone_events()
+    containers = get_containers(eventlist)
+    subevents = get_subevents(eventlist)
+    update_container_subevent_relations(containers, subevents)
     return eventlist
