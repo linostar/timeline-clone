@@ -163,17 +163,28 @@ def clone_event_list(events):
     eventlist = []
     containers = {}
     subevents = []
-    for event in events:
-        new_event = event.clone()
-        new_event.set_id(event.id)
-        if isinstance(new_event, Container):
-            containers[event.container_id] = new_event
-        if isinstance(new_event, Subevent):
-            subevents.append(new_event)
-        eventlist.append(new_event)
-    for subevent in subevents:
-        try:
-            subevent.container = containers[subevent.container_id]
-        except:
-            pass
+    def clone_events():
+        for event in events:
+            new_event = event.clone()
+            new_event.set_id(event.id)
+            eventlist.append(new_event)
+    def load_containers():
+        for event in eventlist:
+            if isinstance(event, Container):
+                containers[event.container_id] = event
+    def load_subevents():
+        for event in eventlist:
+            if isinstance(event, Subevent):
+                subevents.append(event)
+    def update_container_subevent_relations():
+        for subevent in subevents:
+            try:
+                subevent.container = containers[subevent.container_id]
+                subevent.container.events.append(subevent)
+            except:
+                pass
+    clone_events()
+    load_containers()
+    load_subevents()
+    update_container_subevent_relations()
     return eventlist
