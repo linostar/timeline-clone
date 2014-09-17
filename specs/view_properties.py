@@ -21,7 +21,7 @@ import unittest
 from mock import Mock
 
 from specs.utils import an_event_with, a_container
-from timelinelib.data.db import IdCounter
+from timelinelib.data.idnumber import get_process_unique_id
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.drawing.viewproperties import ViewProperties
@@ -31,12 +31,11 @@ from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 class Base(unittest.TestCase):
 
     def setUp(self):
-        self.id_counter = IdCounter()
         self.view_properties = ViewProperties()
 
     def create_category(self, name, parent=None):
         category = Category(name, (0, 0, 0), (0, 0, 0), True, parent=parent)
-        category.set_id(self.id_counter.get_next())
+        category.set_id(get_process_unique_id())
         return category
 
 
@@ -100,7 +99,7 @@ class event_filtering(Base):
 
     def create_event(self, text, category):
         event = an_event_with(text=text, category=category)
-        event.set_id(self.id_counter.get_next())
+        event.set_id(get_process_unique_id())
         return event
 
     def test_none_filtered_by_default(self):

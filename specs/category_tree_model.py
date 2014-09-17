@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.data.db import IdCounter
+from timelinelib.data.idnumber import get_process_unique_id
 from timelinelib.data import Category
 from timelinelib.wxgui.components.categorytree import CategoriesFacade
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
@@ -29,8 +29,6 @@ from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 class Base(unittest.TestCase):
 
     def setUp(self):
-        self.id_counter = IdCounter()
-
         self.categories = []
         self.visible_categories = []
         self.actually_visible_categories = []
@@ -50,7 +48,7 @@ class Base(unittest.TestCase):
 
     def add_category(self, name, color=(0, 0, 0), visible=True, actually_visible=True, parent=None):
         category = Category(name, color, (0, 0, 0), True, parent=parent)
-        category.set_id(self.id_counter.get_next())
+        category.set_id(get_process_unique_id())
         if visible:
             self.visible_categories.append(category)
         if actually_visible:

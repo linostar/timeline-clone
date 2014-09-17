@@ -16,6 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from timelinelib.data.idnumber import get_process_unique_id
 from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Event
@@ -36,8 +37,6 @@ class MemoryDB(Observable):
     def __init__(self):
         Observable.__init__(self)
         self.path = ""
-        self.category_id_counter = IdCounter()
-        self.event_id_counter = IdCounter()
         self._events = Events()
         self.displayed_period = None
         self.hidden_categories = []
@@ -98,7 +97,7 @@ class MemoryDB(Observable):
             if event.has_id():
                 raise InvalidOperationError("Event with id %s not found in db." % event.id)
             self._events.events.append(event)
-            event.set_id(self.event_id_counter.get_next())
+            event.set_id(get_process_unique_id())
             if event.is_subevent():
                 self._register_subevent(event)
         self._save_if_not_disabled()
@@ -192,7 +191,7 @@ class MemoryDB(Observable):
         if category.has_id():
             raise InvalidOperationError("Category with id %s not found in db." % category.id)
         self._events.categories.append(category)
-        category.set_id(self.event_id_counter.get_next())
+        category.set_id(get_process_unique_id())
 
     def get_category_by_name(self, category):
         for cat in self._events.categories:
@@ -381,13 +380,3 @@ class MemoryDB(Observable):
             if category.name == name:
                 return True
         return False
-
-
-class IdCounter(object):
-
-    def __init__(self, initial_id=0):
-        self.id = initial_id
-
-    def get_next(self):
-        self.id += 1
-        return self.id
