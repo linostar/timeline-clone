@@ -94,17 +94,6 @@ class UndoHandlerSpec(unittest.TestCase):
         self.undo_handler.save()
         self.assertEqual(1, self.get_undo_buffer_len())
 
-    def test_checkpoint_can_be_set(self):
-        self.given_empty_timeline()
-        self.undo_handler.enable(True)
-        self.undo_handler.set_checkpoint()
-        self.db.save_event(an_event())
-        self.undo_handler.save()
-        self.undo_handler.save()
-        self.assertEquals(3, self.get_undo_buffer_len())
-        self.undo_handler.revert_to_checkpoint()
-        self.assertEquals(0, self.get_undo_buffer_len())
-
     def setUp(self):
         self.db = MemoryDB()
         self.undo_handler = UndoHandler(self.db)
