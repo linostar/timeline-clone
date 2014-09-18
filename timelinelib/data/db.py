@@ -184,7 +184,6 @@ class MemoryDB(Observable):
 
     def loaded(self):
         self._undo_handler.enable(True)
-        self._undo_handler.set_checkpoint()
         self._undo_handler.save()
         
     def _append_category(self, category):
@@ -274,14 +273,6 @@ class MemoryDB(Observable):
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
-
-    def set_checkpoint(self):
-        self._undo_handler.set_checkpoint()
-
-    def revert_to_checkpoint(self):
-        self._events = self._undo_handler.revert_to_checkpoint()
-        self._save_if_not_disabled()
-        self._notify(STATE_CHANGE_ANY)
 
     def _ensure_no_circular_parent(self, cat):
         parent = cat.parent
