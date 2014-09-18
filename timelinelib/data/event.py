@@ -145,6 +145,9 @@ class Event(object):
         # application.
         new_event.set_data("icon", self.get_data("icon"))
         new_event.set_data("hyperlink", self.get_data("hyperlink"))
+        new_event.fuzzy = self.fuzzy
+        new_event.locked = self.locked
+        new_event.ends_today = self.ends_today
         return new_event
 
     def is_container(self):

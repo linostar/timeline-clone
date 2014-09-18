@@ -181,6 +181,24 @@ class EventCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.locked, self.event.locked)        
         self.assertEqual(cloned_event.ends_today, self.event.ends_today)        
 
+    def test_cloning_dont_change_fuzzy_attribute(self):
+        self.given_default_point_event()
+        self.event.fuzzy = True
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event.fuzzy, self.event.fuzzy)        
+        
+    def test_cloning_dont_change_locked_attribute(self):
+        self.given_default_point_event()
+        self.event.locked = True
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event.locked, self.event.locked)        
+
+    def test_cloning_dont_change_ends_today_attribute(self):
+        self.given_default_point_event()
+        self.event.ends_today = True
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event.ends_today, self.event.ends_today)        
+
     def test_container_relationships_are_maintained_when_cloning(self):
         self.given_container_with_subevents()
         cloned_event_list = clone_event_list(self.events) 
