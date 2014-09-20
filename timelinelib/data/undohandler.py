@@ -38,8 +38,7 @@ class UndoHandler(object):
             return False
         self._pos -= 1
         self.enable(False)
-        self._notify_undo_state()
-        self._notify_redo_state()
+        self._notify_undo_redo_states()
         return True
 
     def redo(self):
@@ -49,8 +48,7 @@ class UndoHandler(object):
             return False
         self._pos += 1
         self.enable(False)
-        self._notify_undo_state()
-        self._notify_redo_state()
+        self._notify_undo_redo_states()
         return True
 
     def get_data(self):
@@ -67,15 +65,14 @@ class UndoHandler(object):
                 self._pos -= 1
             self._undo_buffer.append(self._db._events.clone())
             self._pos += 1
-            self._notify_undo_state()
-            self._notify_redo_state()
+            self._notify_undo_redo_states()
             
     def _reset_buffer(self):
         self._pos = -1
         self._undo_buffer = []
 
-    def _notify_undo_state(self):
-        self._db.notify_undo_enabled(self._pos > 0)
-
-    def _notify_redo_state(self):
-        self._db.notify_redo_enabled(self._pos < len(self._undo_buffer) - 1 and len(self._undo_buffer) > 1)
+    def _notify_undo_redo_states(self):
+        nbr_of_changes = len(self._undo_buffer) - 1
+        undo_state = self._pos > 0
+        redo_state = (self._pos < nbr_of_changes and nbr_of_changes > 0)
+        self._db.notify_undo_redo_states(undo_state, redo_state)

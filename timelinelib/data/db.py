@@ -276,12 +276,10 @@ class MemoryDB(Observable):
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
 
-    def notify_undo_enabled(self, state):
-        self._undo_enabled = state
-    
-    def notify_redo_enabled(self, state):
-        self._redo_enabled = state
-    
+    def notify_undo_redo_states(self, undo_state, redo_state):
+        self._undo_enabled = undo_state
+        self._redo_enabled = redo_state
+
     def undo_enabled(self):
         return self._undo_enabled
     
