@@ -16,10 +16,9 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
-
 from mock import Mock
 
+from specs.utils import TestCase
 from timelinelib.data.category import clone_categories_list
 from timelinelib.data.db import MemoryDB
 from timelinelib.data import Category
@@ -27,7 +26,7 @@ from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.repositories.categories import CategoriesFacade
 
 
-class TestBase(unittest.TestCase):
+class TestBase(TestCase):
 
     def _create_example_tree(self):
         self.work = self.add_category("Work")
@@ -94,13 +93,13 @@ class cloning(TestBase):
     def test_cloning_list_of_categories_keeps_track_of_parents(self):
         cloned_list, _ = clone_categories_list(self.category_list)
         self.assertEquals(len(cloned_list), len(self.category_list))
-        for i in range(len(self.category_list)):
-            self.assertFalse(self.category_list[i] == cloned_list[i])
-        for cat in cloned_list:
-            if cat.name == "Football":
-                self.assertTrue(cat.parent != self.play)
-                self.assertTrue(cat.parent is not None)
-                self.assertTrue(cat.parent not in self.category_list)
+        for clone in cloned_list:
+            self.assertInstanceNotIn(clone, self.category_list)
+        for clone in cloned_list:
+            if clone.name == "Football":
+                self.assertTrue(clone.parent != self.play)
+                self.assertTrue(clone.parent is not None)
+                self.assertInstanceNotIn(clone.parent, self.category_list)
 
     def setUp(self):
         self.category_list = []

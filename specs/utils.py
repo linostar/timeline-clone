@@ -101,7 +101,25 @@ def a_category_with(name, parent=None):
     return Category(name, (255, 0, 0), (0, 255, 255), True, parent=parent)
 
 
-class TmpDirTestCase(unittest.TestCase):
+class TestCase(unittest.TestCase):
+
+    def assertListIsCloneOf(self, cloned_list, original_list):
+        self.assertEqual(cloned_list, original_list)
+        self.assertTrue(cloned_list is not original_list)
+        for i in range(len(cloned_list)):
+            self.assertIsCloneOf(cloned_list[i], original_list[i])
+
+    def assertIsCloneOf(self, clone, original):
+        self.assertEqual(clone, original)
+        self.assertTrue(clone is not original)
+
+    def assertInstanceNotIn(self, object_, list_):
+        for element in list_:
+            if element is object_:
+                self.fail("%r was in list" % object_)
+
+
+class TmpDirTestCase(TestCase):
 
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="timeline-test")
@@ -113,7 +131,7 @@ class TmpDirTestCase(unittest.TestCase):
         return os.path.join(self.tmp_dir, name)
 
 
-class WxComponentTest(unittest.TestCase):
+class WxComponentTest(TestCase):
 
     def setUp(self):
         self._app = wx.App(False)

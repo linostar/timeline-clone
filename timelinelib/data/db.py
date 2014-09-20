@@ -165,7 +165,7 @@ class MemoryDB(Observable):
                 self._notify(STATE_CHANGE_ANY)
 
     def get_categories(self):
-        return list(self._events.categories)
+        return self._events.get_categories()
 
     def get_containers(self):
         containers = [event for event in self._events.events
@@ -173,24 +173,13 @@ class MemoryDB(Observable):
         return containers
 
     def save_category(self, category):
-        if (category.parent is not None and
-            category.parent not in self._events.categories):
-            raise InvalidOperationError("Parent category not in db.")
-        self._ensure_no_circular_parent(category)
-        if not category in self._events.categories:
-            self._append_category(category)
+        self._events.save_category(category)
         self._save_if_not_disabled()
         self._notify(STATE_CHANGE_CATEGORY)
 
     def loaded(self):
         self._undo_handler.enable(True)
         self._undo_handler.save()
-        
-    def _append_category(self, category):
-        if category.has_id():
-            raise InvalidOperationError("Category with id %s not found in db." % category.id)
-        self._events.categories.append(category)
-        category.set_id(get_process_unique_id())
 
     def get_category_by_name(self, category):
         for cat in self._events.categories:
@@ -273,14 +262,6 @@ class MemoryDB(Observable):
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
-
-    def _ensure_no_circular_parent(self, cat):
-        parent = cat.parent
-        while parent is not None:
-            if parent == cat:
-                raise InvalidOperationError("Circular category parent.")
-            else:
-                parent = parent.parent
 
     def find_event_with_id(self, id):
         for e in self._events.events:

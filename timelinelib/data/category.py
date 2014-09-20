@@ -41,8 +41,24 @@ class Category(object):
         self.id = id
 
     def clone(self):
-        return Category(self.name, self.color, self.font_color, self.visible,
-                        self.parent)
+        clone = Category(self.name, self.color, self.font_color, self.visible,
+                         self.parent)
+        return clone
+
+    def __repr__(self):
+        return "Category<id=%r, name=%r, color=%r, font_color=%r, visible=%r>" % (
+            self.id, self.name, self.color, self.font_color, self.visible)
+
+    def __eq__(self, other):
+        return (isinstance(other, Category) and
+                self.id == other.id and
+                self.name == other.name and
+                self.color == other.color and
+                self.font_color == other.font_color and
+                self.visible == other.visible)
+
+    def __nq__(self, other):
+        return (not (self == other))
 
 
 def sort_categories(categories):
@@ -55,6 +71,7 @@ def clone_categories_list(categories):
     clones = {}
     for cat in categories:
         clones[cat] = cat.clone()
+        clones[cat].id = cat.id
     cloned_list = clones.values()
     for cat in cloned_list:
         if cat.parent is not None:

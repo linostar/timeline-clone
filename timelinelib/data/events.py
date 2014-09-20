@@ -18,6 +18,7 @@
 
 from timelinelib.data.category import clone_categories_list
 from timelinelib.data.event import clone_event_list
+from timelinelib.data.idnumber import get_process_unique_id
 
 
 class Events(object):
@@ -54,6 +55,34 @@ class Events(object):
 
     def search(self, search_string):
         return _generic_event_search(self.events, search_string)
+
+    def get_categories(self):
+        return list(self.categories)
+
+    def save_category(self, category):
+        from timelinelib.data.db import InvalidOperationError
+        if (category.parent is not None and
+            category.parent not in self.categories):
+            raise InvalidOperationError("Parent category not in db.")
+        self._ensure_no_circular_parent(category)
+        if not category in self.categories:
+            self._append_category(category)
+
+    def _ensure_no_circular_parent(self, cat):
+        from timelinelib.data.db import InvalidOperationError
+        parent = cat.parent
+        while parent is not None:
+            if parent == cat:
+                raise InvalidOperationError("Circular category parent.")
+            else:
+                parent = parent.parent
+
+    def _append_category(self, category):
+        from timelinelib.data.db import InvalidOperationError
+        if category.has_id():
+            raise InvalidOperationError("Category with id %s not found in db." % category.id)
+        self.categories.append(category)
+        category.set_id(get_process_unique_id())
 
     def clone(self):
         (categories, events) = clone_data(self.categories, self.events)
