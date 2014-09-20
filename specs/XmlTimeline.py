@@ -125,11 +125,11 @@ class XmlTimelineSpec(TmpDirTestCase):
     def _create_db(self):
         db = db_open(self.tmp_path)
         # Create categories
-        cat1 = Category("Category 1", (255, 0, 0), (0, 0, 255), True)
+        cat1 = Category("Category 1", (255, 0, 0), (0, 0, 255))
         db.save_category(cat1)
-        cat2 = Category("Category 2", (0, 255, 0), None, True, parent=cat1)
+        cat2 = Category("Category 2", (0, 255, 0), None, parent=cat1)
         db.save_category(cat2)
-        cat3 = Category("Category 3", (0, 0, 255), None, True, parent=cat2)
+        cat3 = Category("Category 3", (0, 0, 255), None, parent=cat2)
         db.save_category(cat3)
         # Create events
         ev1 = Event(db.get_time_type(), gregorian.from_date(2010, 3, 3).to_time(), gregorian.from_date(2010, 3, 6).to_time(),

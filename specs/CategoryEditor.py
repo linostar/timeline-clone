@@ -35,9 +35,9 @@ class CategoryEditorBaseFixture(unittest.TestCase):
         #   foofoo
         # bar
         self.category_repository = Mock(CategoryRepository)
-        self.foo = Category("foo", (255, 0, 0), None, True, parent=None)
-        self.foofoo = Category("foofoo", (255, 0, 0), (0, 255, 0), True, parent=self.foo)
-        self.bar = Category("bar", (255, 0, 0), None, True, parent=None)
+        self.foo = Category("foo", (255, 0, 0), None, parent=None)
+        self.foofoo = Category("foofoo", (255, 0, 0), (0, 255, 0), parent=self.foo)
+        self.bar = Category("bar", (255, 0, 0), None, parent=None)
         self.category_repository.get_all.return_value = [self.foo, self.foofoo, self.bar]
         def get_tree_mock(remove):
             if remove is None:

@@ -37,6 +37,6 @@ class CategoryTreeFunctionSpec(unittest.TestCase):
         self.assertEqual(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
 
     def setUp(self):
-        self.c1 = Category("c1", (255, 0, 0), None, True, parent=None)
-        self.c11 = Category("c11", (255, 0, 0), None, True, parent=self.c1)
-        self.c2 = Category("c2", (255, 0, 0), None, True, parent=None)
+        self.c1 = Category("c1", (255, 0, 0), None, parent=None)
+        self.c11 = Category("c11", (255, 0, 0), None, parent=self.c1)
+        self.c2 = Category("c2", (255, 0, 0), None, parent=None)

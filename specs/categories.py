@@ -37,8 +37,8 @@ class TestBase(TestCase):
         self.football = self.add_category("Football", parent=self.play)
 
     def add_category(self, name, parent=None):
-        category = Category(name, color=(0, 0, 0), font_color=(0, 0, ),
-                            visible=True, parent=parent)
+        category = Category(name, color=(0, 0, 0), font_color=(0, 0, 0),
+                            parent=parent)
         self.category_list.append(category)
         return category
 
@@ -90,8 +90,6 @@ class cloning(TestBase):
                          self.category_list[0].get_color())
         self.assertEqual(cloned_category.get_font_color(),
                          self.category_list[0].get_font_color())
-        self.assertEqual(cloned_category.get_visible(),
-                         self.category_list[0].get_visible())
         self.assertEqual(cloned_category.get_parent(),
                          self.category_list[0].get_parent())
 

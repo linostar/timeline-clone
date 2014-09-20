@@ -24,12 +24,11 @@ from timelinelib.data import Category
 class describe_category(TestCase):
 
     def test_can_get_values(self):
-        category = Category("work", (50, 100, 150), (0, 0, 0), False)
+        category = Category("work", (50, 100, 150), (0, 0, 0))
         self.assertEqual(category.get_id(), None)
         self.assertEqual(category.get_name(), "work")
         self.assertEqual(category.get_color(), (50, 100, 150))
         self.assertEqual(category.get_font_color(), (0, 0, 0))
-        self.assertEqual(category.get_visible(), False)
         self.assertEqual(category.get_parent(), None)
 
     def test_can_set_values(self):
@@ -46,12 +45,9 @@ class describe_category(TestCase):
             self.category.set_font_color((11, 12, 13)).get_font_color(),
             (11, 12, 13))
         self.assertEqual(
-            self.category.set_visible(True).get_visible(),
-            True)
-        self.assertEqual(
             self.category.set_parent(self.a_parent).get_parent(),
             self.a_parent)
 
     def setUp(self):
-        self.category = Category("work", (50, 100, 150), (0, 0, 0), False)
+        self.category = Category("work", (50, 100, 150), (0, 0, 0))
         self.a_parent = a_category_with(name="parent")

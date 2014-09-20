@@ -53,10 +53,10 @@ class set_category_editor_spec_base(unittest.TestCase):
         return self.db
 
     def _create_category1(self):
-        self.category1 = Category("category-name-1", None, None, False, None)
+        self.category1 = Category("category-name-1", None, None, None)
 
     def _create_category2(self):
-        self.category2 = Category("category-name-2", None, None, False, None)
+        self.category2 = Category("category-name-2", None, None, None)
 
     def _create_event1(self):
         self.event1 = self._create_event(None)

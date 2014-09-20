@@ -131,7 +131,7 @@ class SceneSpec(unittest.TestCase):
         self.given_event_at(time, visible=False)
 
     def given_event_at(self, start_time, end_time=None, visible=True):
-        category = self.get_unique_category(visible)
+        category = self.get_unique_category()
         if end_time is None:
             end_time = start_time
         event = Event(self.db.get_time_type(), human_time_to_gregorian(start_time),
@@ -140,12 +140,12 @@ class SceneSpec(unittest.TestCase):
         self.db.save_event(event)
         self.view_properties.set_category_visible(category, visible)
 
-    def get_unique_category(self, visible):
+    def get_unique_category(self):
         number = 1
         while True:
             name = "category %d" % number
             if self.db.get_category_by_name(name) is None:
-                return Category(name, (0, 0, 0), None, visible)
+                return Category(name, (0, 0, 0), None)
             else:
                 number += 1
 

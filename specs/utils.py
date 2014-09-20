@@ -98,7 +98,7 @@ def a_container(name, category, sub_events):
 
 
 def a_category_with(name, parent=None):
-    return Category(name, (255, 0, 0), (0, 255, 255), True, parent=parent)
+    return Category(name, (255, 0, 0), (0, 255, 255), parent=parent)
 
 
 class TestCase(unittest.TestCase):

@@ -34,7 +34,7 @@ class Base(unittest.TestCase):
         self.view_properties = ViewProperties()
 
     def create_category(self, name, parent=None):
-        category = Category(name, (0, 0, 0), (0, 0, 0), True, parent=parent)
+        category = Category(name, (0, 0, 0), (0, 0, 0), parent=parent)
         category.set_id(get_process_unique_id())
         return category
 

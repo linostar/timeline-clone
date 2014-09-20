@@ -101,7 +101,7 @@ class CloningTest(unittest.TestCase):
         self.new_event = self.db.events[0]
 
     def given_event_and_category_lists(self):
-        self.db.categories = [Category("cat1", None, None, True, parent=None)]
+        self.db.categories = [Category("cat1", None, None, parent=None)]
         self.db.events = [Event(self.db.get_time_type(), self.now, self.now, "evt", category=self.db.categories[0])]
         self.old_category = self.db.categories[0]
         self.old_event = self.db.events[0]

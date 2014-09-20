@@ -18,12 +18,7 @@
 
 class Category(object):
 
-    # NOTE: The visible flag of categories should not be used any longer.
-    # Visibility of categories are now managed in ViewProperties. However some
-    # timeline databases still use this flag to manage the saving. This flag
-    # should be removed when we can.
-
-    def __init__(self, name, color, font_color, visible, parent=None):
+    def __init__(self, name, color, font_color, parent=None):
         self.id = None
         self.name = name
         self.color = color
@@ -31,7 +26,6 @@ class Category(object):
             self.font_color = (0, 0, 0)
         else:
             self.font_color = font_color
-        self.visible = visible
         self.parent = parent
 
     def get_id(self):
@@ -65,13 +59,6 @@ class Category(object):
         self.font_color = font_color
         return self
 
-    def get_visible(self):
-        return self.visible
-
-    def set_visible(self, visible):
-        self.visible = visible
-        return self
-
     def get_parent(self):
         return self.parent
 
@@ -81,22 +68,20 @@ class Category(object):
 
     def clone(self):
         clone = Category(self.get_name(), self.get_color(),
-                         self.get_font_color(), self.get_visible(),
-                         self.get_parent())
+                         self.get_font_color(), self.get_parent())
         return clone
 
     def __repr__(self):
-        return "Category<id=%r, name=%r, color=%r, font_color=%r, visible=%r>" % (
+        return "Category<id=%r, name=%r, color=%r, font_color=%r>" % (
             self.get_id(), self.get_name(), self.get_color(),
-            self.get_font_color(), self.get_visible())
+            self.get_font_color())
 
     def __eq__(self, other):
         return (isinstance(other, Category) and
                 self.get_id() == other.get_id() and
                 self.get_name() == other.get_name() and
                 self.get_color() == other.get_color() and
-                self.get_font_color() == other.get_font_color() and
-                self.get_visible() == other.get_visible())
+                self.get_font_color() == other.get_font_color())
 
     def __nq__(self, other):
         return (not (self == other))

@@ -176,7 +176,7 @@ class Parser(object):
                 raise ParseException("Parent category '%s' not found." % parent_name)
         else:
             parent = None
-        category = Category(name, color, font_color, True, parent=parent)
+        category = Category(name, color, font_color, parent=parent)
         old_category = self.db.get_category_by_name(name)
         if old_category is not None:
             category = old_category

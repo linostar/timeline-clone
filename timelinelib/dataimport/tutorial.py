@@ -136,7 +136,7 @@ class TutorialTimelineCreator(object):
         else:
             parent = None
         self.prev_cat = self.last_cat
-        self.last_cat = Category(name, color, font_color, True, parent)
+        self.last_cat = Category(name, color, font_color, parent)
         self.db.save_category(self.last_cat)
 
     def add_event(self, text, description, start_add, end_add=None):

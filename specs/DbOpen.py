@@ -134,7 +134,7 @@ class DbOpenSpec(TmpDirTestCase):
 
     def test_creates_new_xml_file(self):
         new_db = db_open(self.tmp_path)
-        new_db.save_category(Category("work", (255, 0, 0), None, True))
+        new_db.save_category(Category("work", (255, 0, 0), None))
         re_read_db = db_open(self.tmp_path)
         self.assertEqual(len(re_read_db.get_categories()), 1)
         self.assertEqual(re_read_db.get_categories()[0].get_name(), "work")

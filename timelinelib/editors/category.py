@@ -59,7 +59,7 @@ class CategoryEditor(object):
                 return
             if self.category is None:
                 self.category = Category(new_name, new_color, new_font_color,
-                                         True, parent=new_parent)
+                                         parent=new_parent)
             else:
                 self.category.name = new_name
                 self.category.color = new_color
