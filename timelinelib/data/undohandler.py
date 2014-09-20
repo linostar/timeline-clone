@@ -41,6 +41,7 @@ class UndoHandler(object):
         self._pos -= 1
         self.enable(False)
         self.report("After Undo---------------------")
+        self._notify_undo_state()
         return True
 
     def redo(self):
@@ -69,11 +70,15 @@ class UndoHandler(object):
             self._undo_buffer.append(self._db._events.clone())
             self._pos += 1
             self.report("After Save---------------------")
-
+            self._notify_undo_state()
+            
     def _reset_buffer(self):
         self._pos = -1
         self._undo_buffer = []
 
+    def _notify_undo_state(self):
+        self._db.notify_undo_enabled(self._pos > 0)
+            
     def report(self, msg=""):
         if self._report_enabled:
             print msg

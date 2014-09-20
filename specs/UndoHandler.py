@@ -94,6 +94,16 @@ class UndoHandlerSpec(unittest.TestCase):
         self.undo_handler.save()
         self.assertEqual(1, self.get_undo_buffer_len())
 
+    def test_db_should_be_notified_when_undo_isnt_possible(self):
+        self.assertFalse(self.db.undo_enabled())
+        self.given_empty_timeline()
+        self.assertFalse(self.db.undo_enabled())
+        self.db.save_event(an_event())
+        self.undo_handler.save()
+        self.assertTrue(self.db.undo_enabled())
+        self.undo_handler.undo()
+        self.assertFalse(self.db.undo_enabled())
+        
     def setUp(self):
         self.db = MemoryDB()
         self.undo_handler = UndoHandler(self.db)
