@@ -59,6 +59,11 @@ class Events(object):
     def get_categories(self):
         return list(self.categories)
 
+    def get_category_by_name(self, name):
+        for category in self.categories:
+            if category.name == name:
+                return category
+
     def save_category(self, category):
         from timelinelib.data.db import InvalidOperationError
         if (category.parent is not None and

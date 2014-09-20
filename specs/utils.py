@@ -111,7 +111,7 @@ class TestCase(unittest.TestCase):
 
     def assertIsCloneOf(self, clone, original):
         self.assertEqual(clone, original)
-        self.assertTrue(clone is not original)
+        self.assertTrue(clone is not original, "%r" % clone)
 
     def assertInstanceNotIn(self, object_, list_):
         for element in list_:
