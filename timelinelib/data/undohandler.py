@@ -76,10 +76,6 @@ class UndoHandler(object):
             self._pos += 1
             self._notify_undo_redo_states()
             
-    def _reset_buffer(self):
-        self._pos = -1
-        self._undo_buffer = []
-
     def _notify_undo_redo_states(self):
         self._db.notify_undo_redo_states(self._changes_to_undo(), 
                                          self._changes_to_redo())
