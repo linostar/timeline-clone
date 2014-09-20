@@ -68,12 +68,14 @@ def sort_categories(categories):
 
 
 def clone_categories_list(categories):
+    cloned_list = []
     clones = {}
-    for cat in categories:
-        clones[cat] = cat.clone()
-        clones[cat].id = cat.id
-    cloned_list = clones.values()
-    for cat in cloned_list:
-        if cat.parent is not None:
-            cat.parent = clones[cat.parent]
-    return cloned_list, clones
+    for category in categories:
+        clone = category.clone()
+        clone.id = category.id
+        cloned_list.append(clone)
+        clones[category] = clone
+    for category in cloned_list:
+        if category.parent is not None:
+            category.parent = clones[category.parent]
+    return (cloned_list, clones)

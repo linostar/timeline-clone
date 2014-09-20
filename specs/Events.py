@@ -25,6 +25,7 @@ class describe_cloning(TestCase):
 
     def test_categories_are_cloned(self):
         self.events.save_category(a_category_with(name="work"))
+        self.events.save_category(a_category_with(name="football"))
         clone = self.events.clone()
         self.assertListIsCloneOf(clone.get_categories(),
                                  self.events.get_categories())
