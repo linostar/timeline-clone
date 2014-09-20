@@ -34,9 +34,9 @@ class UndoHandlerSpec(unittest.TestCase):
     def test_undo_handler_is_disabled_after_construction(self):
         self.assertEqual(False, self.undo_handler._enabled)
 
-    def test_get_data_returns_empty_list_after_construction(self):
-        self.assertEqual([], self.undo_handler.get_data())
-
+    def test_get_data_on_empty_list_raises_exception(self):
+        self.assertRaises(IndexError, self.undo_handler.get_data)
+        
     def test_undo_not_possible_after_construction(self):
         self.assertFalse(self.undo_handler.undo())
 

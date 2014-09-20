@@ -61,10 +61,7 @@ class UndoHandler(object):
             return False
 
     def get_data(self):
-        if len(self._undo_buffer) > 0:
-            return self._undo_buffer[self._pos].clone()
-        else:
-            return []
+        return self._undo_buffer[self._pos].clone()
 
     def save(self):
         if self._enabled:
