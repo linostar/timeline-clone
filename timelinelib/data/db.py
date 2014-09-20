@@ -181,8 +181,8 @@ class MemoryDB(Observable):
         self._undo_handler.enable(True)
         self._undo_handler.save()
 
-    def get_category_by_name(self, category):
-        return self._events.get_category_by_name(category.name)
+    def get_category_by_name(self, name):
+        return self._events.get_category_by_name(name)
 
     def delete_category(self, category_or_id):
         if isinstance(category_or_id, Category):

@@ -177,7 +177,7 @@ class Parser(object):
         else:
             parent = None
         category = Category(name, color, font_color, True, parent=parent)
-        old_category = self.db.get_category_by_name(category)
+        old_category = self.db.get_category_by_name(name)
         if old_category is not None:
             category = old_category
         if not tmp_dict["category_map"].has_key(name):

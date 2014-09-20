@@ -143,12 +143,11 @@ class SceneSpec(unittest.TestCase):
     def get_unique_category(self, visible):
         number = 1
         while True:
-            category = Category("category %d" % number, (0, 0, 0), None, visible)
-            if self.db.get_category_by_name(category) is None:
-                break
+            name = "category %d" % number
+            if self.db.get_category_by_name(name) is None:
+                return Category(name, (0, 0, 0), None, visible)
             else:
                 number += 1
-        return category
 
     def when_scene_is_created(self):
         self.scene = TimelineScene(
