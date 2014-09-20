@@ -45,8 +45,28 @@ class describe_cloning(EventsTestCase):
 
 class describe_saving_categories(EventsTestCase):
 
+    def test_can_save(self):
+        category = a_category_with(name="work")
+        self.events.save_category(category)
+        self.assertEqual(self.events.get_categories(), [category])
+
+    def test_can_update(self):
+        self.events.save_category(a_category_with(name="work"))
+        updated_category = self.events.get_categories()[0]
+        updated_category.color = (50, 100, 150)
+        self.events.save_category(updated_category)
+        self.assertEqual(self.events.get_categories(), [updated_category])
+
     def test_fails_if_new_category_has_existing_name(self):
         self.events.save_category(a_category_with(name="work"))
         self.assertRaises(InvalidOperationError,
                           self.events.save_category,
                           a_category_with(name="work"))
+
+    def test_fails_if_category_has_existing_name(self):
+        self.events.save_category(a_category_with(name="work"))
+        self.events.save_category(a_category_with(name="sports"))
+        updated_category = self.events.get_categories()[0]
+        updated_category.name = "sports"
+        self.assertRaises(InvalidOperationError,
+                          self.events.save_category, updated_category)
