@@ -101,7 +101,7 @@ class DbOpenSpec(TmpDirTestCase):
                           Gregorian(2009, 11, 4, 22, 52, 0).to_time())
         self.assertEqual(event.time_period.end_time,
                           Gregorian(2009, 11, 11, 22, 52, 0).to_time())
-        self.assertEqual(event.category.name, "Category 1")
+        self.assertEqual(event.category.get_name(), "Category 1")
         self.assertEqual(event.get_data("description"), "The first event.")
         self.assertEqual(event.get_data("icon"), None)
         # Assert that correct view properties are loaded (category visibility
@@ -117,18 +117,18 @@ class DbOpenSpec(TmpDirTestCase):
         self.assertEqual(len(categories), 3)
         for cat in categories:
             self.assertTrue(cat.has_id())
-            if cat.name == "Category 1":
+            if cat.get_name() == "Category 1":
                 self.assertEqual(cat.color, (188, 129, 224))
                 self.assertTrue(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent, None)
-            elif cat.name == "Category 2":
+            elif cat.get_name() == "Category 2":
                 self.assertEqual(cat.color, (255, 165, 0))
                 self.assertTrue(vp.is_category_visible(cat))
-                self.assertEqual(cat.parent.name, "Category 1")
-            elif cat.name == "Category 3":
+                self.assertEqual(cat.parent.get_name(), "Category 1")
+            elif cat.get_name() == "Category 3":
                 self.assertEqual(cat.color, (173, 216, 230))
                 self.assertFalse(vp.is_category_visible(cat))
-                self.assertEqual(cat.parent.name, "Category 2")
+                self.assertEqual(cat.parent.get_name(), "Category 2")
             else:
                 self.fail("Unknown category.")
 
@@ -137,7 +137,7 @@ class DbOpenSpec(TmpDirTestCase):
         new_db.save_category(Category("work", (255, 0, 0), None, True))
         re_read_db = db_open(self.tmp_path)
         self.assertEqual(len(re_read_db.get_categories()), 1)
-        self.assertEqual(re_read_db.get_categories()[0].name, "work")
+        self.assertEqual(re_read_db.get_categories()[0].get_name(), "work")
 
     def setUp(self):
         TmpDirTestCase.setUp(self)

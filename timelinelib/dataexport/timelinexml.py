@@ -84,11 +84,11 @@ class Exporter(object):
     _write_categories = wrap_in_tag(_write_categories, "categories", INDENT1)
 
     def _write_category(self, file, cat):
-        write_simple_tag(file, "name", cat.name, INDENT3)
+        write_simple_tag(file, "name", cat.get_name(), INDENT3)
         write_simple_tag(file, "color", color_string(cat.color), INDENT3)
         write_simple_tag(file, "font_color", color_string(cat.font_color), INDENT3)
         if cat.parent:
-            write_simple_tag(file, "parent", cat.parent.name, INDENT3)
+            write_simple_tag(file, "parent", cat.parent.get_name(), INDENT3)
     _write_category = wrap_in_tag(_write_category, "category", INDENT2)
 
     def _write_events(self, file):
@@ -120,7 +120,7 @@ class Exporter(object):
         write_simple_tag(file, "locked", "%s" % evt.locked, INDENT3)
         write_simple_tag(file, "ends_today", "%s" % evt.ends_today, INDENT3)
         if evt.category is not None:
-            write_simple_tag(file, "category", evt.category.name, INDENT3)
+            write_simple_tag(file, "category", evt.category.get_name(), INDENT3)
         if evt.get_data("description") is not None:
             write_simple_tag(file, "description", evt.get_data("description"), INDENT3)
         alert = evt.get_data("alert")
@@ -158,7 +158,7 @@ class Exporter(object):
 
     def _write_hidden_categories(self, file):
         for cat in self.db.get_hidden_categories():
-            write_simple_tag(file, "name", cat.name, INDENT3)
+            write_simple_tag(file, "name", cat.get_name(), INDENT3)
     _write_hidden_categories = wrap_in_tag(_write_hidden_categories,
                                            "hidden_categories", INDENT2)
 

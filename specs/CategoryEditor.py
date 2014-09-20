@@ -146,7 +146,7 @@ class WhenSavingACategory(CategoryEditorBaseFixture):
         return self.category_repository.save.call_args_list[0][0][0]
 
     def test_saved_category_has_name_from_view(self):
-        self.assertEqual("new_cat", self._getSavedCategory().name)
+        self.assertEqual("new_cat", self._getSavedCategory().get_name())
 
     def test_saved_category_has_color_from_view(self):
         self.assertEqual((255, 44, 0), self._getSavedCategory().color)

@@ -61,7 +61,7 @@ class Events(object):
 
     def get_category_by_name(self, name):
         for category in self.categories:
-            if category.name == name:
+            if category.get_name() == name:
                 return category
 
     def save_category(self, category):
@@ -85,19 +85,19 @@ class Events(object):
 
     def _ensure_category_name_available(self, category):
         from timelinelib.data.db import InvalidOperationError
-        ids = self._get_ids_with_name(category.name)
+        ids = self._get_ids_with_name(category.get_name())
         raise_error = False
         if category.has_id() and ids != [category.get_id()]:
             raise_error = True
         if not category.has_id() and ids != []:
             raise_error = True
         if raise_error:
-            raise InvalidOperationError("A category with name %r already exists." % category.name)
+            raise InvalidOperationError("A category with name %r already exists." % category.get_name())
 
     def _get_ids_with_name(self, name):
         ids = []
         for category in self.get_categories():
-            if category.name == name:
+            if category.get_name() == name:
                 ids.append(category.get_id())
         return ids
 

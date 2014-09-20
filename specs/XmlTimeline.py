@@ -154,7 +154,7 @@ class XmlTimelineSpec(TmpDirTestCase):
         self.assertEqual(event.text, "Event 1")
         self.assertEqual(event.time_period.start_time, gregorian.from_date(2010, 3, 3).to_time())
         self.assertEqual(event.time_period.end_time, gregorian.from_date(2010, 3, 6).to_time())
-        self.assertEqual(event.category.name, "Category 1")
+        self.assertEqual(event.category.get_name(), "Category 1")
         self.assertEqual(event.get_data("description"), u"The <b>first</b> event åäö.")
         self.assertEqual(event.get_data("alert"), (gregorian.from_date(2012, 12, 31).to_time(), "Time to go"))
         self.assertEqual(event.get_data("icon"), None)
@@ -169,19 +169,19 @@ class XmlTimelineSpec(TmpDirTestCase):
         self.assertEqual(len(categories), 3)
         for cat in categories:
             self.assertTrue(cat.has_id())
-            if cat.name == "Category 1":
+            if cat.get_name() == "Category 1":
                 self.assertEqual(cat.color, (255, 0, 0))
                 self.assertEqual(cat.font_color, (0, 0, 255))
                 self.assertTrue(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent, None)
-            elif cat.name == "Category 2":
+            elif cat.get_name() == "Category 2":
                 self.assertEqual(cat.color, (0, 255, 0))
                 self.assertTrue(vp.is_category_visible(cat))
-                self.assertEqual(cat.parent.name, "Category 1")
-            elif cat.name == "Category 3":
+                self.assertEqual(cat.parent.get_name(), "Category 1")
+            elif cat.get_name() == "Category 3":
                 self.assertEqual(cat.color, (0, 0, 255))
                 self.assertFalse(vp.is_category_visible(cat))
-                self.assertEqual(cat.parent.name, "Category 2")
+                self.assertEqual(cat.parent.get_name(), "Category 2")
             else:
                 self.fail("Unknown category.")
 

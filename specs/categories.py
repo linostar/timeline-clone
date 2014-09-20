@@ -84,7 +84,8 @@ class cloning(TestBase):
     def test_cloning_returns_new_object(self):
         cloned_category = self.category_list[0].clone()
         self.assertTrue(self.category_list[0] != cloned_category)
-        self.assertEqual(cloned_category.name, self.category_list[0].name)
+        self.assertEqual(cloned_category.get_name(),
+                         self.category_list[0].get_name())
         self.assertEqual(cloned_category.color, self.category_list[0].color)
         self.assertEqual(cloned_category.font_color, self.category_list[0].font_color)
         self.assertEqual(cloned_category.visible, self.category_list[0].visible)
@@ -96,7 +97,7 @@ class cloning(TestBase):
         for clone in cloned_list:
             self.assertInstanceNotIn(clone, self.category_list)
         for clone in cloned_list:
-            if clone.name == "Football":
+            if clone.get_name() == "Football":
                 self.assertTrue(clone.parent != self.play)
                 self.assertTrue(clone.parent is not None)
                 self.assertInstanceNotIn(clone.parent, self.category_list)

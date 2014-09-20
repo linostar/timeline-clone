@@ -45,4 +45,4 @@ class CategorySorter(unittest.TestCase):
     def assert_sorted_in_order(self, names):
         self.assertEqual(
             names,
-            [category.name for category in self.sorted_categories])
+            [category.get_name() for category in self.sorted_categories])

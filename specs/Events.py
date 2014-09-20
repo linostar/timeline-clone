@@ -67,6 +67,6 @@ class describe_saving_categories(EventsTestCase):
         self.events.save_category(a_category_with(name="work"))
         self.events.save_category(a_category_with(name="sports"))
         updated_category = self.events.get_categories()[0]
-        updated_category.name = "sports"
+        updated_category.set_name("sports")
         self.assertRaises(InvalidOperationError,
                           self.events.save_category, updated_category)

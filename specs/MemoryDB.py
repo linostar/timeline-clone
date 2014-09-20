@@ -114,7 +114,7 @@ class describe_memory_db(unittest.TestCase):
     def testSaveExistingCategory(self):
         self.db.save_category(self.c1)
         id_before = self.c1.get_id()
-        self.c1.name = "new name"
+        self.c1.set_name("new name")
         self.db.save_category(self.c1)
         self.assertEqual(id_before, self.c1.get_id())
         self.assertEqual(self.db.get_categories(), [self.c1])
@@ -517,7 +517,7 @@ class describe_importing(unittest.TestCase):
         self.assertEqual(replace_category_with_name(tree), expected_tree)
 
     def assertEventListIs(self, expected_list):
-        actual_list = ["%s (%s)" % (event.text, event.category.name)
+        actual_list = ["%s (%s)" % (event.text, event.category.get_name())
                        for event in self.base_db.get_all_events()]
         self.assertEqual(sorted(actual_list), expected_list)
 
@@ -531,5 +531,5 @@ class describe_importing(unittest.TestCase):
 
 
 def replace_category_with_name(tree):
-    return [(category.name, replace_category_with_name(child_tree))
+    return [(category.get_name(), replace_category_with_name(child_tree))
             for (category, child_tree) in tree]

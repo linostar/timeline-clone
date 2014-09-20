@@ -92,7 +92,8 @@ class CloningTest(unittest.TestCase):
         self.assertTrue(self.new_category != self.old_category)
         self.assertTrue(self.new_event != self.old_event)
         self.assertTrue(self.db.events[0].category != self.old_category)
-        self.assertEquals(self.new_event.category.name, self.old_category.name)
+        self.assertEquals(self.new_event.category.get_name(),
+                          self.old_category.get_name())
 
     def when_cloning(self):
         self.db.categories, self.db.events = clone_data(self.db.categories, self.db.events)

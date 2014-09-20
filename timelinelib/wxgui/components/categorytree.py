@@ -394,7 +394,7 @@ class CustomCategoryTreeModel(Observable):
 
     def _list_to_tree(self, categories, parent=None):
         top = [category for category in categories if (category.parent == parent)]
-        sorted_top = sorted(top, key=lambda category: category.name)
+        sorted_top = sorted(top, key=lambda category: category.get_name())
         return [(category, self._list_to_tree(categories, category)) for
                 category in sorted_top]
 
@@ -403,7 +403,7 @@ class CustomCategoryTreeModel(Observable):
             expanded = category.get_id() not in self.collapsed_category_ids
             self.items.append({
                 "id": category.get_id(),
-                "name": category.name,
+                "name": category.get_name(),
                 "color": category.color,
                 "visible": self._is_category_visible(category),
                 "x": indent_level * self.INDENT_PX,

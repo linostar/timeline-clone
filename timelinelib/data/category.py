@@ -86,12 +86,13 @@ class Category(object):
 
     def __repr__(self):
         return "Category<id=%r, name=%r, color=%r, font_color=%r, visible=%r>" % (
-            self.id, self.name, self.color, self.font_color, self.visible)
+            self.get_id(), self.get_name(), self.color, self.font_color,
+            self.visible)
 
     def __eq__(self, other):
         return (isinstance(other, Category) and
                 self.get_id() == other.get_id() and
-                self.name == other.name and
+                self.get_name() == other.get_name() and
                 self.color == other.color and
                 self.font_color == other.font_color and
                 self.visible == other.visible)
@@ -102,7 +103,7 @@ class Category(object):
 
 def sort_categories(categories):
     sorted_categories = list(categories)
-    sorted_categories.sort(cmp, lambda x: x.name.lower())
+    sorted_categories.sort(cmp, lambda category: category.get_name().lower())
     return sorted_categories
 
 

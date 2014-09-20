@@ -320,7 +320,7 @@ class MemoryDB(Observable):
         self.hidden_categories = []
         for cat in hidden_categories:
             if cat not in self._events.categories:
-                raise ValueError("Category '%s' not in db." % cat.name)
+                raise ValueError("Category '%s' not in db." % cat.get_name())
             self.hidden_categories.append(cat)
 
     def import_db(self, db):
@@ -334,10 +334,10 @@ class MemoryDB(Observable):
         category_map = {}
         for category in db.get_categories():
             cloned_category = category.clone()
-            category_map[category.name] = cloned_category
-            cloned_category.name = self._get_unique_import_category_name(category.name)
+            category_map[category.get_name()] = cloned_category
+            cloned_category.set_name(self._get_unique_import_category_name(category.get_name()))
             if cloned_category.parent is not None:
-                cloned_category.parent = category_map[cloned_category.parent.name]
+                cloned_category.parent = category_map[cloned_category.parent.get_name()]
             self.save_category(cloned_category)
         return category_map
 
@@ -345,7 +345,7 @@ class MemoryDB(Observable):
         for event in db.get_all_events():
             cloned_event = event.clone()
             if event.category is not None:
-                cloned_event.category = category_map[event.category.name]
+                cloned_event.category = category_map[event.category.get_name()]
             self.save_event(cloned_event)
 
     def _get_unique_import_category_name(self, original_name):
@@ -359,6 +359,6 @@ class MemoryDB(Observable):
 
     def _has_category_with_name(self, name):
         for category in self.get_categories():
-            if category.name == name:
+            if category.get_name() == name:
                 return True
         return False

@@ -40,7 +40,7 @@ class CategoryEditor(object):
                 self.view.set_font_color((0, 0, 0))
                 self.view.set_parent(None)
             else:
-                self.view.set_name(self.category.name)
+                self.view.set_name(self.category.get_name())
                 self.view.set_color(self.category.color)
                 self.view.set_font_color(self.category.font_color)
                 self.view.set_parent(self.category.parent)
@@ -75,6 +75,6 @@ class CategoryEditor(object):
 
     def _name_in_use(self, name):
         for cat in self.category_repository.get_all():
-            if cat != self.category and cat.name == name:
+            if cat != self.category and cat.get_name() == name:
                 return True
         return False
