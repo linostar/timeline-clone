@@ -90,7 +90,7 @@ class Category(object):
 
     def __eq__(self, other):
         return (isinstance(other, Category) and
-                self.id == other.id and
+                self.get_id() == other.get_id() and
                 self.name == other.name and
                 self.color == other.color and
                 self.font_color == other.font_color and
@@ -111,7 +111,7 @@ def clone_categories_list(categories):
     clones = {}
     for category in categories:
         clone = category.clone()
-        clone.id = category.id
+        clone.set_id(category.get_id())
         cloned_list.append(clone)
         clones[category] = clone
     for category in cloned_list:

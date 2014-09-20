@@ -281,7 +281,7 @@ class MemoryDB(Observable):
 
     def _find_category_with_id(self, id):
         for c in self._events.categories:
-            if c.id == id:
+            if c.get_id() == id:
                 return c
         return None
 

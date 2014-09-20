@@ -99,7 +99,7 @@ class item_properties(Base):
         self.model.set_categories(self.categories_facade)
         self.assert_model_has_itmes_matching([
             {
-                "id": play_category.id,
+                "id": play_category.get_id(),
                 "name": "Play",
                 "visible": False,
                 "actually_visible": True,
@@ -107,7 +107,7 @@ class item_properties(Base):
                 "category": play_category,
             },
             {
-                "id": work_category.id,
+                "id": work_category.get_id(),
                 "name": "Work",
                 "visible": True,
                 "actually_visible": False,

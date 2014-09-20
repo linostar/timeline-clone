@@ -87,7 +87,7 @@ class Events(object):
         from timelinelib.data.db import InvalidOperationError
         ids = self._get_ids_with_name(category.name)
         raise_error = False
-        if category.has_id() and ids != [category.id]:
+        if category.has_id() and ids != [category.get_id()]:
             raise_error = True
         if not category.has_id() and ids != []:
             raise_error = True
@@ -98,7 +98,7 @@ class Events(object):
         ids = []
         for category in self.get_categories():
             if category.name == name:
-                ids.append(category.id)
+                ids.append(category.get_id())
         return ids
 
     def _append_category(self, category):

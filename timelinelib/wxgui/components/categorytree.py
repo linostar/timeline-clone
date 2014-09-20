@@ -358,11 +358,11 @@ class CustomCategoryTreeModel(Observable):
             return HitInfo(self.categories, None, False, False)
 
     def toggle_expandedness(self, category):
-        if category.id in self.collapsed_category_ids:
-            self.collapsed_category_ids.remove(category.id)
+        if category.get_id() in self.collapsed_category_ids:
+            self.collapsed_category_ids.remove(category.get_id())
             self._update_items()
         else:
-            self.collapsed_category_ids.append(category.id)
+            self.collapsed_category_ids.append(category.get_id())
             self._update_items()
 
     def _item_at(self, y):
@@ -400,9 +400,9 @@ class CustomCategoryTreeModel(Observable):
 
     def _update_from_tree(self, category_tree, indent_level=0):
         for (category, child_tree) in category_tree:
-            expanded = category.id not in self.collapsed_category_ids
+            expanded = category.get_id() not in self.collapsed_category_ids
             self.items.append({
-                "id": category.id,
+                "id": category.get_id(),
                 "name": category.name,
                 "color": category.color,
                 "visible": self._is_category_visible(category),

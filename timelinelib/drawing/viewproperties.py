@@ -127,7 +127,7 @@ class ViewProperties(Observable):
                                   not self.is_category_visible(category))
 
     def is_category_visible(self, category):
-        return category.id not in self.hidden_categories
+        return category.get_id() not in self.hidden_categories
 
     def is_event_with_category_visible(self, category):
         if category is None:
@@ -151,7 +151,7 @@ class ViewProperties(Observable):
         self._set_categories_with_ids_visible(category_ids, is_visible)
 
     def set_category_visible(self, category, is_visible=True):
-        self._set_categories_with_ids_visible([category.id], is_visible)
+        self._set_categories_with_ids_visible([category.get_id()], is_visible)
 
     def _set_categories_with_ids_visible(self, category_ids, is_visible):
         need_notify = False

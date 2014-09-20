@@ -113,10 +113,10 @@ class describe_memory_db(unittest.TestCase):
 
     def testSaveExistingCategory(self):
         self.db.save_category(self.c1)
-        id_before = self.c1.id
+        id_before = self.c1.get_id()
         self.c1.name = "new name"
         self.db.save_category(self.c1)
-        self.assertEqual(id_before, self.c1.id)
+        self.assertEqual(id_before, self.c1.get_id())
         self.assertEqual(self.db.get_categories(), [self.c1])
         self.assertEqual(self.db_listener.call_count, 2) # 2 save
         # Assert save called: 2 save category
@@ -189,7 +189,7 @@ class describe_memory_db(unittest.TestCase):
         self.assertFalse(self.c1.has_id())
         self.assertFalse(self.c1 in self.db.hidden_categories)
         # Remove second (by id)
-        self.db.delete_category(self.c2.id)
+        self.db.delete_category(self.c2.get_id())
         categories = self.db.get_categories()
         self.assertEqual(len(categories), 0)
         self.assertFalse(self.c2.has_id())
