@@ -46,6 +46,8 @@ class MemoryDB(Observable):
         self._undo_handler = UndoHandler(self)
         self._save_callback = None
         self._should_lock = False
+        self._undo_enabled = False
+        self._redo_enabled = False
 
     def is_saved(self):
         return self._save_callback is not None
@@ -261,6 +263,16 @@ class MemoryDB(Observable):
             self._notify(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
 
+    def notify_undo_redo_states(self, undo_state, redo_state):
+        self._undo_enabled = undo_state
+        self._redo_enabled = redo_state
+
+    def undo_enabled(self):
+        return self._undo_enabled
+    
+    def redo_enabled(self):
+        return self._redo_enabled
+    
     def find_event_with_id(self, id):
         for e in self._events.events:
             if e.id == id:

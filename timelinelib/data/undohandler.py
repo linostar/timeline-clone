@@ -20,44 +20,48 @@ MAX_BUFFER_SIZE = 10
 
 
 class UndoHandler(object):
+    """
+    The changes made to a timeline are stored in a list (self._undo_buffer). 
+    This list has a maximum size (MAX_BUFFER_SIZE) for the purpose of restricting
+    memory consumption. When a timeline is opened, the original timeline data is 
+    stored in the first element of the list. If more changes are made than can be 
+    stored in the list, the first element in the list is discarded. The list has a 
+    'current position' (self._pos) that keeps track of which data to use after an 
+    undo/redo action. When 'current position' is at the beginning of the list, no
+    more Undo's can be performed and when 'current position' is at the end of the
+    list no more Redo's can be performed.
+        """
 
     def __init__(self, db):
         self._db = db
         self._undo_buffer = []
         self._enabled = False
         self._pos = -1
-        self._report_enabled = False
         self._max_buffer_size = MAX_BUFFER_SIZE
-        self.report("After Init---------------------")
 
     def enable(self, value):
         self._enabled = value
 
     def undo(self):
-        if len(self._undo_buffer) == 0:
+        if self._changes_to_undo(): 
+            self._pos -= 1
+            self.enable(False)
+            self._notify_undo_redo_states()
+            return True
+        else:
             return False
-        if self._pos == 0:
-            return False
-        self._pos -= 1
-        self.enable(False)
-        self.report("After Undo---------------------")
-        return True
 
     def redo(self):
-        if len(self._undo_buffer) == 0:
+        if self._changes_to_redo():
+            self._pos += 1
+            self.enable(False)
+            self._notify_undo_redo_states()
+            return True
+        else:
             return False
-        if self._pos >= len(self._undo_buffer) - 1:
-            return False
-        self._pos += 1
-        self.enable(False)
-        self.report("After Redo---------------------")
-        return True
 
     def get_data(self):
-        if len(self._undo_buffer) > 0:
-            return self._undo_buffer[self._pos].clone()
-        else:
-            return []
+        return self._undo_buffer[self._pos].clone()
 
     def save(self):
         if self._enabled:
@@ -65,23 +69,19 @@ class UndoHandler(object):
             if self._max_buffer_size == len(self._undo_buffer):
                 del(self._undo_buffer[0])
                 self._pos -= 1
-            self.report("After  delete---------------------")
             self._undo_buffer.append(self._db._events.clone())
             self._pos += 1
-            self.report("After Save---------------------")
+            self._notify_undo_redo_states()
+            
+    def _notify_undo_redo_states(self):
+        self._db.notify_undo_redo_states(self._changes_to_undo(), 
+                                         self._changes_to_redo())
 
-    def _reset_buffer(self):
-        self._pos = -1
-        self._undo_buffer = []
+    def _changes_to_undo(self):
+        return self._pos > 0
 
-    def report(self, msg=""):
-        if self._report_enabled:
-            print msg
-            print "Size: %d  pos: %d" % (len(self._undo_buffer), self._pos)
-            i = 0
-            for list in self._undo_buffer:
-                print "List ", i
-                i += 1
-                for event in list:
-                    print "   %s" % event.text
-                    print "   %s" % event.category.name
+    def _changes_to_redo(self):
+        return self._pos < len(self._undo_buffer) - 1
+    
+
+    

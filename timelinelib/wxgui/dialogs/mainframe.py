@@ -616,6 +616,7 @@ class MainFrameApiUsedByController(object):
         self._enable_disable_one_selected_event_menus()
         self._enable_disable_measure_distance_between_two_events_menu()
         self._enable_disable_searchbar()
+        self._enable_disable_undo()
 
     def _set_title(self):
         if self.timeline == None:
@@ -711,6 +712,16 @@ class MainFrameApiUsedByController(object):
         if self.timeline == None:
             self.main_panel.show_searchbar(False)
 
+    def _enable_disable_undo(self):
+        mnu_undo = self.timeline_menu.FindItemById(ID_UNDO)
+        mnu_redo = self.timeline_menu.FindItemById(ID_REDO)
+        if self.timeline is not None:
+            mnu_undo.Enable(self.timeline.undo_enabled())
+            mnu_redo.Enable(self.timeline.redo_enabled())
+        else:
+            mnu_undo.Enable(False)
+            mnu_redo.Enable(False)
+        
 
 class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
