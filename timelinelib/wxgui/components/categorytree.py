@@ -393,7 +393,7 @@ class CustomCategoryTreeModel(Observable):
             return self.categories.get_all()
 
     def _list_to_tree(self, categories, parent=None):
-        top = [category for category in categories if (category.parent == parent)]
+        top = [category for category in categories if (category.get_parent() == parent)]
         sorted_top = sorted(top, key=lambda category: category.get_name())
         return [(category, self._list_to_tree(categories, category)) for
                 category in sorted_top]

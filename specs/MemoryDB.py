@@ -131,7 +131,7 @@ class describe_memory_db(unittest.TestCase):
         self.assertEqual(self.save_callback_mock.call_count, 0)
 
     def testSaveCategoryWithUnknownParent(self):
-        self.c1.parent = self.c2
+        self.c1.set_parent(self.c2)
         # c2 not in db so we should get exception
         self.assertRaises(InvalidOperationError, self.db.save_category, self.c1)
         # But after c2 is added everything is fine
@@ -157,15 +157,15 @@ class describe_memory_db(unittest.TestCase):
         #   c12
         #     c11
         #       c111
-        c11.parent = c12
+        c11.set_parent(c12)
         self.db.save_category(c11)
-        self.assertEqual(c1.parent, None)
-        self.assertEqual(c12.parent, c1)
-        self.assertEqual(c11.parent, c12)
-        self.assertEqual(c111.parent, c11)
+        self.assertEqual(c1.get_parent(), None)
+        self.assertEqual(c12.get_parent(), c1)
+        self.assertEqual(c11.get_parent(), c12)
+        self.assertEqual(c111.get_parent(), c11)
         # Changing c11's parent to c111 should raise exception since that would
         # create a circular parent link.
-        c11.parent = c111
+        c11.set_parent(c111)
         self.assertRaises(InvalidOperationError, self.db.save_category, c11)
 
     def testDeleteExistingCategory(self):
@@ -224,11 +224,11 @@ class describe_memory_db(unittest.TestCase):
         self.db.save_category(c121)
         # Delete c12 should cause c121 to get c1 as parent
         self.db.delete_category(c12)
-        self.assertEqual(c121.parent, c1)
+        self.assertEqual(c121.get_parent(), c1)
         # Delete c1 should cause c11, and c121 to be parentless
         self.db.delete_category(c1)
-        self.assertEqual(c11.parent, None)
-        self.assertEqual(c121.parent, None)
+        self.assertEqual(c11.get_parent(), None)
+        self.assertEqual(c121.get_parent(), None)
 
     def testDelteCategoryWithEvent(self):
         # Create hierarchy:

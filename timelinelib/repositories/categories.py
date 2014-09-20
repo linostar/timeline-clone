@@ -33,7 +33,7 @@ class CategoriesFacade(Observable):
 
     def get_immediate_children(self, parent):
         return [category for category in self.db.get_categories()
-                if category.parent == parent]
+                if category.get_parent() == parent]
 
     def get_all_children(self, parent):
         all_children = []
@@ -44,9 +44,9 @@ class CategoriesFacade(Observable):
 
     def get_parents(self, child):
         parents = []
-        while child.parent:
-            parents.append(child.parent)
-            child = child.parent
+        while child.get_parent():
+            parents.append(child.get_parent())
+            child = child.get_parent()
         return parents
 
     def get_parents_for_checked_childs(self):

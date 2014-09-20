@@ -198,12 +198,12 @@ class MemoryDB(Observable):
             category.set_id(None)
             # Loop to update parent attribute on children
             for cat in self._events.categories:
-                if cat.parent == category:
-                    cat.parent = category.parent
+                if cat.get_parent() == category:
+                    cat.set_parent(category.get_parent())
             # Loop to update category for events
             for event in self._events.events:
                 if event.category == category:
-                    event.category = category.parent
+                    event.category = category.get_parent()
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_CATEGORY)
         else:
@@ -336,8 +336,8 @@ class MemoryDB(Observable):
             cloned_category = category.clone()
             category_map[category.get_name()] = cloned_category
             cloned_category.set_name(self._get_unique_import_category_name(category.get_name()))
-            if cloned_category.parent is not None:
-                cloned_category.parent = category_map[cloned_category.parent.get_name()]
+            if cloned_category.get_parent() is not None:
+                cloned_category.set_parent(category_map[cloned_category.get_parent().get_name()])
             self.save_category(cloned_category)
         return category_map
 

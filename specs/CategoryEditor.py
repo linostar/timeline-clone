@@ -156,7 +156,7 @@ class WhenSavingACategory(CategoryEditorBaseFixture):
                          self._getSavedCategory().get_font_color())
 
     def test_saved_category_has_parent_from_view(self):
-        self.assertEqual(self.foo, self._getSavedCategory().parent)
+        self.assertEqual(self.foo, self._getSavedCategory().get_parent())
 
     def test_the_dialog_is_closed(self):
         self.assertTrue(self.view.close.called)

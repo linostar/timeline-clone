@@ -66,8 +66,8 @@ class Events(object):
 
     def save_category(self, category):
         from timelinelib.data.db import InvalidOperationError
-        if (category.parent is not None and
-            category.parent not in self.categories):
+        if (category.get_parent() is not None and
+            category.get_parent() not in self.categories):
             raise InvalidOperationError("Parent category not in db.")
         self._ensure_category_name_available(category)
         self._ensure_no_circular_parent(category)
@@ -76,12 +76,12 @@ class Events(object):
 
     def _ensure_no_circular_parent(self, cat):
         from timelinelib.data.db import InvalidOperationError
-        parent = cat.parent
+        parent = cat.get_parent()
         while parent is not None:
             if parent == cat:
                 raise InvalidOperationError("Circular category parent.")
             else:
-                parent = parent.parent
+                parent = parent.get_parent()
 
     def _ensure_category_name_available(self, category):
         from timelinelib.data.db import InvalidOperationError

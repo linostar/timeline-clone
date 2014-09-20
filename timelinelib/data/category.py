@@ -81,7 +81,8 @@ class Category(object):
 
     def clone(self):
         clone = Category(self.get_name(), self.get_color(),
-                         self.get_font_color(), self.get_visible(), self.parent)
+                         self.get_font_color(), self.get_visible(),
+                         self.get_parent())
         return clone
 
     def __repr__(self):
@@ -116,6 +117,6 @@ def clone_categories_list(categories):
         cloned_list.append(clone)
         clones[category] = clone
     for category in cloned_list:
-        if category.parent is not None:
-            category.parent = clones[category.parent]
+        if category.get_parent() is not None:
+            category.set_parent(clones[category.get_parent()])
     return (cloned_list, clones)
