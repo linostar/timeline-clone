@@ -34,11 +34,50 @@ class Category(object):
         self.visible = visible
         self.parent = parent
 
+    def get_id(self):
+        return self.id
+
     def has_id(self):
         return self.id is not None
 
     def set_id(self, id):
         self.id = id
+        return self
+
+    def get_name(self):
+        return self.name
+
+    def set_name(self, name):
+        self.name = name
+        return self
+
+    def get_color(self):
+        return self.color
+
+    def set_color(self, color):
+        self.color = color
+        return self
+
+    def get_font_color(self):
+        return self.font_color
+
+    def set_font_color(self, font_color):
+        self.font_color = font_color
+        return self
+
+    def get_visible(self):
+        return self.visible
+
+    def set_visible(self, visible):
+        self.visible = visible
+        return self
+
+    def get_parent(self):
+        return self.parent
+
+    def set_parent(self, parent):
+        self.parent = parent
+        return self
 
     def clone(self):
         clone = Category(self.name, self.color, self.font_color, self.visible,
