@@ -18,10 +18,10 @@
 
 from mock import Mock
 
+from specs.utils import a_category_with
 from specs.utils import TestCase
 from timelinelib.data.category import clone_categories_list
 from timelinelib.data.db import MemoryDB
-from timelinelib.data import Category
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.repositories.categories import CategoriesFacade
 
@@ -37,8 +37,7 @@ class TestBase(TestCase):
         self.football = self.add_category("Football", parent=self.play)
 
     def add_category(self, name, parent=None):
-        category = Category(name, color=(0, 0, 0), font_color=(0, 0, 0),
-                            parent=parent)
+        category = a_category_with(name=name, parent=parent)
         self.category_list.append(category)
         return category
 

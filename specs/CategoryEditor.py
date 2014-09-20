@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.data import Category
+from specs.utils import a_category_with
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.editors.category import CategoryEditor
 from timelinelib.repositories.interface import CategoryRepository
@@ -35,9 +35,9 @@ class CategoryEditorBaseFixture(unittest.TestCase):
         #   foofoo
         # bar
         self.category_repository = Mock(CategoryRepository)
-        self.foo = Category("foo", (255, 0, 0), None, parent=None)
-        self.foofoo = Category("foofoo", (255, 0, 0), (0, 255, 0), parent=self.foo)
-        self.bar = Category("bar", (255, 0, 0), None, parent=None)
+        self.foo = a_category_with(name="foo")
+        self.foofoo = a_category_with(name="foofoo", font_color=(0, 255, 0), parent=self.foo)
+        self.bar = a_category_with(name="bar")
         self.category_repository.get_all.return_value = [self.foo, self.foofoo, self.bar]
         def get_tree_mock(remove):
             if remove is None:

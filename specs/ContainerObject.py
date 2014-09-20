@@ -18,8 +18,8 @@
 
 import unittest
 
+from specs.utils import a_category_with
 from timelinelib.data.db import MemoryDB
-from timelinelib.data import Category
 from timelinelib.data import Container
 from timelinelib.data import Subevent
 
@@ -49,7 +49,7 @@ class ContainerSpec(unittest.TestCase):
     def testNameAndCategoryCanBeUpdated(self):
         self.given_default_container()
         new_name = "new text"
-        new_category = Category("cat", (255,0,0), (255,0,0), True)
+        new_category = a_category_with(name="cat")
         self.container.update_properties(new_name, new_category)
         self.assertEqual(new_category, self.container.category)
 

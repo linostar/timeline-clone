@@ -18,9 +18,9 @@
 
 import codecs
 
+from specs.utils import a_category_with
 from specs.utils import TmpDirTestCase
 from timelinelib.calendar.gregorian import Gregorian
-from timelinelib.data import Category
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
 from timelinelib.drawing.viewproperties import ViewProperties
@@ -134,7 +134,7 @@ class DbOpenSpec(TmpDirTestCase):
 
     def test_creates_new_xml_file(self):
         new_db = db_open(self.tmp_path)
-        new_db.save_category(Category("work", (255, 0, 0), None))
+        new_db.save_category(a_category_with(name="work"))
         re_read_db = db_open(self.tmp_path)
         self.assertEqual(len(re_read_db.get_categories()), 1)
         self.assertEqual(re_read_db.get_categories()[0].get_name(), "work")

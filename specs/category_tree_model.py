@@ -20,8 +20,8 @@ import unittest
 
 from mock import Mock
 
+from specs.utils import a_category_with
 from timelinelib.data.idnumber import get_process_unique_id
-from timelinelib.data import Category
 from timelinelib.wxgui.components.categorytree import CategoriesFacade
 from timelinelib.wxgui.components.categorytree import CustomCategoryTreeModel
 
@@ -47,7 +47,7 @@ class Base(unittest.TestCase):
         return category in self.actually_visible_categories
 
     def add_category(self, name, color=(0, 0, 0), visible=True, actually_visible=True, parent=None):
-        category = Category(name, color, (0, 0, 0), parent=parent)
+        category = a_category_with(name=name, color=color, parent=parent)
         category.set_id(get_process_unique_id())
         if visible:
             self.visible_categories.append(category)

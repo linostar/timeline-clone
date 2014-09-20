@@ -19,10 +19,10 @@
 import datetime
 import unittest
 
+from specs.utils import a_category_with
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
 from timelinelib.data.db import MemoryDB
-from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.drawing.scene import TimelineScene
 from timelinelib.drawing.viewproperties import ViewProperties
@@ -145,7 +145,7 @@ class SceneSpec(unittest.TestCase):
         while True:
             name = "category %d" % number
             if self.db.get_category_by_name(name) is None:
-                return Category(name, (0, 0, 0), None)
+                return a_category_with(name=name)
             else:
                 number += 1
 

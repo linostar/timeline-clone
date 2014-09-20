@@ -18,7 +18,7 @@
 
 import unittest
 
-from timelinelib.data import Category
+from specs.utils import a_category_with
 from timelinelib.wxgui.utils import category_tree
 
 
@@ -37,6 +37,6 @@ class CategoryTreeFunctionSpec(unittest.TestCase):
         self.assertEqual(tree, [(self.c1, [(self.c11, [])]), (self.c2, [])])
 
     def setUp(self):
-        self.c1 = Category("c1", (255, 0, 0), None, parent=None)
-        self.c11 = Category("c11", (255, 0, 0), None, parent=self.c1)
-        self.c2 = Category("c2", (255, 0, 0), None, parent=None)
+        self.c1 = a_category_with(name="c1")
+        self.c11 = a_category_with(name="c11", parent=self.c1)
+        self.c2 = a_category_with(name="c2")

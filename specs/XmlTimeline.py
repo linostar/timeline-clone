@@ -20,10 +20,10 @@
 import codecs
 import os.path
 
+from specs.utils import a_category_with
 from specs.utils import TmpDirTestCase
 from timelinelib.dataexport.timelinexml import alert_string
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
-from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.dataimport.timelinexml import import_db_from_timeline_xml
 from timelinelib.dataimport.timelinexml import parse_alert_string
@@ -125,11 +125,14 @@ class XmlTimelineSpec(TmpDirTestCase):
     def _create_db(self):
         db = db_open(self.tmp_path)
         # Create categories
-        cat1 = Category("Category 1", (255, 0, 0), (0, 0, 255))
+        cat1 = a_category_with(name="Category 1", color=(255, 0, 0),
+                               font_color=(0, 0, 255))
         db.save_category(cat1)
-        cat2 = Category("Category 2", (0, 255, 0), None, parent=cat1)
+        cat2 = a_category_with(name="Category 2", color=(0, 255, 0),
+                               font_color=None, parent=cat1)
         db.save_category(cat2)
-        cat3 = Category("Category 3", (0, 0, 255), None, parent=cat2)
+        cat3 = a_category_with(name="Category 3", color=(0, 0, 255),
+                               font_color=None, parent=cat2)
         db.save_category(cat3)
         # Create events
         ev1 = Event(db.get_time_type(), gregorian.from_date(2010, 3, 3).to_time(), gregorian.from_date(2010, 3, 6).to_time(),

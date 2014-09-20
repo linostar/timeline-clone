@@ -18,10 +18,10 @@
 
 import unittest
 
+from specs.utils import a_category_with
 from specs.utils import TmpDirTestCase
 from timelinelib.data.db import MemoryDB
 from timelinelib.data.events import clone_data
-from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.dataimport.ics import import_db_from_ics
 
@@ -101,7 +101,7 @@ class CloningTest(unittest.TestCase):
         self.new_event = self.db.events[0]
 
     def given_event_and_category_lists(self):
-        self.db.categories = [Category("cat1", None, None, parent=None)]
+        self.db.categories = [a_category_with(name="cat1")]
         self.db.events = [Event(self.db.get_time_type(), self.now, self.now, "evt", category=self.db.categories[0])]
         self.old_category = self.db.categories[0]
         self.old_event = self.db.events[0]

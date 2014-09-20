@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.data.category import Category
+from specs.utils import a_category_with
 from timelinelib.data.db import MemoryDB
 from timelinelib.data.event import Event
 from timelinelib.editors.setcategory import SetCategoryEditor
@@ -53,10 +53,10 @@ class set_category_editor_spec_base(unittest.TestCase):
         return self.db
 
     def _create_category1(self):
-        self.category1 = Category("category-name-1", None, None, None)
+        self.category1 = a_category_with(name="category-name-1")
 
     def _create_category2(self):
-        self.category2 = Category("category-name-2", None, None, None)
+        self.category2 = a_category_with(name="category-name-2")
 
     def _create_event1(self):
         self.event1 = self._create_event(None)

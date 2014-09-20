@@ -97,8 +97,10 @@ def a_container(name, category, sub_events):
     return all_events
 
 
-def a_category_with(name, parent=None):
-    return Category(name, (255, 0, 0), (0, 255, 255), parent=parent)
+def a_category_with(name, color=(255, 0, 0), font_color=(0, 255, 255),
+                    parent=None):
+    return Category(name=name, color=color, font_color=font_color,
+                    parent=parent)
 
 
 class TestCase(unittest.TestCase):

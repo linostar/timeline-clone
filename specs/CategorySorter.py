@@ -18,7 +18,7 @@
 
 import unittest
 
-from timelinelib.data import Category
+from specs.utils import a_category_with
 from timelinelib.data import sort_categories
 
 
@@ -26,21 +26,18 @@ class CategorySorter(unittest.TestCase):
 
     def test_sorts_categories_by_name(self):
         self.sort([
-            self.category_named("b"),
-            self.category_named("a")])
+            a_category_with(name="b"),
+            a_category_with(name="a")])
         self.assert_sorted_in_order(["a", "b"])
 
     def test_ignores_case(self):
         self.sort([
-            self.category_named("Foo"),
-            self.category_named("bar")])
+            a_category_with(name="Foo"),
+            a_category_with(name="bar")])
         self.assert_sorted_in_order(["bar", "Foo"])
 
     def sort(self, categories):
         self.sorted_categories = sort_categories(categories)
-
-    def category_named(self, name):
-        return Category(name, (0, 0, 0), None, True)
 
     def assert_sorted_in_order(self, names):
         self.assertEqual(
