@@ -86,6 +86,8 @@ class Events(object):
         from timelinelib.data.db import InvalidOperationError
         if category.has_id():
             raise InvalidOperationError("Category with id %s not found in db." % category.id)
+        if self.get_category_by_name(category.name):
+            raise InvalidOperationError("A category with name %r already exists." % category.name)
         self.categories.append(category)
         category.set_id(get_process_unique_id())
 

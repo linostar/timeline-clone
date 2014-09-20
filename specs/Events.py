@@ -19,9 +19,16 @@
 from specs.utils import a_category_with
 from specs.utils import TestCase
 from timelinelib.data import Events
+from timelinelib.data.db import InvalidOperationError
 
 
-class describe_cloning(TestCase):
+class EventsTestCase(TestCase):
+
+    def setUp(self):
+        self.events = Events()
+
+
+class describe_cloning(EventsTestCase):
 
     def test_categories_are_cloned(self):
         self.events.save_category(a_category_with(name="work"))
@@ -35,5 +42,11 @@ class describe_cloning(TestCase):
         self.assertIsCloneOf(clone.get_category_by_name("meetings").parent,
                              self.events.get_category_by_name("work"))
 
-    def setUp(self):
-        self.events = Events()
+
+class describe_saving_categories(EventsTestCase):
+
+    def test_fails_if_new_category_has_existing_name(self):
+        self.events.save_category(a_category_with(name="work"))
+        self.assertRaises(InvalidOperationError,
+                          self.events.save_category,
+                          a_category_with(name="work"))
