@@ -90,7 +90,8 @@ class cloning(TestBase):
                          self.category_list[0].get_color())
         self.assertEqual(cloned_category.get_font_color(),
                          self.category_list[0].get_font_color())
-        self.assertEqual(cloned_category.visible, self.category_list[0].visible)
+        self.assertEqual(cloned_category.get_visible(),
+                         self.category_list[0].get_visible())
         self.assertEqual(cloned_category.parent, self.category_list[0].parent)
 
     def test_cloning_list_of_categories_keeps_track_of_parents(self):
