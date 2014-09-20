@@ -26,9 +26,7 @@ class UndoHandler(object):
         self._undo_buffer = []
         self._enabled = False
         self._pos = -1
-        self._report_enabled = False
         self._max_buffer_size = MAX_BUFFER_SIZE
-        self.report("After Init---------------------")
 
     def enable(self, value):
         self._enabled = value
@@ -40,7 +38,6 @@ class UndoHandler(object):
             return False
         self._pos -= 1
         self.enable(False)
-        self.report("After Undo---------------------")
         self._notify_undo_state()
         return True
 
@@ -51,7 +48,6 @@ class UndoHandler(object):
             return False
         self._pos += 1
         self.enable(False)
-        self.report("After Redo---------------------")
         return True
 
     def get_data(self):
@@ -66,10 +62,8 @@ class UndoHandler(object):
             if self._max_buffer_size == len(self._undo_buffer):
                 del(self._undo_buffer[0])
                 self._pos -= 1
-            self.report("After  delete---------------------")
             self._undo_buffer.append(self._db._events.clone())
             self._pos += 1
-            self.report("After Save---------------------")
             self._notify_undo_state()
             
     def _reset_buffer(self):
@@ -78,15 +72,3 @@ class UndoHandler(object):
 
     def _notify_undo_state(self):
         self._db.notify_undo_enabled(self._pos > 0)
-            
-    def report(self, msg=""):
-        if self._report_enabled:
-            print msg
-            print "Size: %d  pos: %d" % (len(self._undo_buffer), self._pos)
-            i = 0
-            for list in self._undo_buffer:
-                print "List ", i
-                i += 1
-                for event in list:
-                    print "   %s" % event.text
-                    print "   %s" % event.category.name
