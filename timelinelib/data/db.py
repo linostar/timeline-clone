@@ -47,6 +47,7 @@ class MemoryDB(Observable):
         self._save_callback = None
         self._should_lock = False
         self._undo_enabled = False
+        self._redo_enabled = False
 
     def is_saved(self):
         return self._save_callback is not None
@@ -278,8 +279,14 @@ class MemoryDB(Observable):
     def notify_undo_enabled(self, state):
         self._undo_enabled = state
     
+    def notify_redo_enabled(self, state):
+        self._redo_enabled = state
+    
     def undo_enabled(self):
         return self._undo_enabled
+    
+    def redo_enabled(self):
+        return self._redo_enabled
     
     def _ensure_no_circular_parent(self, cat):
         parent = cat.parent

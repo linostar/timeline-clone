@@ -104,6 +104,16 @@ class UndoHandlerSpec(unittest.TestCase):
         self.undo_handler.undo()
         self.assertFalse(self.db.undo_enabled())
         
+    def test_db_should_be_notified_when_redo_isnt_possible(self):
+        self.assertFalse(self.db.redo_enabled())
+        self.given_empty_timeline()
+        self.assertFalse(self.db.redo_enabled())
+        self.db.save_event(an_event())
+        self.undo_handler.save()
+        self.assertFalse(self.db.redo_enabled())
+        self.undo_handler.undo()
+        self.assertTrue(self.db.redo_enabled())
+        
     def setUp(self):
         self.db = MemoryDB()
         self.undo_handler = UndoHandler(self.db)

@@ -714,10 +714,13 @@ class MainFrameApiUsedByController(object):
 
     def _enable_disable_undo(self):
         mnu_undo = self.timeline_menu.FindItemById(ID_UNDO)
+        mnu_redo = self.timeline_menu.FindItemById(ID_REDO)
         if self.timeline is not None:
             mnu_undo.Enable(self.timeline.undo_enabled())
+            mnu_redo.Enable(self.timeline.redo_enabled())
         else:
             mnu_undo.Enable(False)
+            mnu_redo.Enable(False)
         
 
 class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
