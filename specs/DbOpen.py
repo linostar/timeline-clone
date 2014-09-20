@@ -118,15 +118,15 @@ class DbOpenSpec(TmpDirTestCase):
         for cat in categories:
             self.assertTrue(cat.has_id())
             if cat.get_name() == "Category 1":
-                self.assertEqual(cat.color, (188, 129, 224))
+                self.assertEqual(cat.get_color(), (188, 129, 224))
                 self.assertTrue(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent, None)
             elif cat.get_name() == "Category 2":
-                self.assertEqual(cat.color, (255, 165, 0))
+                self.assertEqual(cat.get_color(), (255, 165, 0))
                 self.assertTrue(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent.get_name(), "Category 1")
             elif cat.get_name() == "Category 3":
-                self.assertEqual(cat.color, (173, 216, 230))
+                self.assertEqual(cat.get_color(), (173, 216, 230))
                 self.assertFalse(vp.is_category_visible(cat))
                 self.assertEqual(cat.parent.get_name(), "Category 2")
             else:

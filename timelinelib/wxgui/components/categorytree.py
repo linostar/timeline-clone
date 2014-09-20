@@ -404,7 +404,7 @@ class CustomCategoryTreeModel(Observable):
             self.items.append({
                 "id": category.get_id(),
                 "name": category.get_name(),
-                "color": category.color,
+                "color": category.get_color(),
                 "visible": self._is_category_visible(category),
                 "x": indent_level * self.INDENT_PX,
                 "y": self.y,
