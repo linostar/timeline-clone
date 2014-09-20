@@ -152,7 +152,8 @@ class WhenSavingACategory(CategoryEditorBaseFixture):
         self.assertEqual((255, 44, 0), self._getSavedCategory().get_color())
 
     def test_saved_category_has_font_color_from_view(self):
-        self.assertEqual((0, 44, 255), self._getSavedCategory().font_color)
+        self.assertEqual((0, 44, 255),
+                         self._getSavedCategory().get_font_color())
 
     def test_saved_category_has_parent_from_view(self):
         self.assertEqual(self.foo, self._getSavedCategory().parent)

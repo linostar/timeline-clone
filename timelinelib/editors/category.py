@@ -42,7 +42,7 @@ class CategoryEditor(object):
             else:
                 self.view.set_name(self.category.get_name())
                 self.view.set_color(self.category.get_color())
-                self.view.set_font_color(self.category.font_color)
+                self.view.set_font_color(self.category.get_font_color())
                 self.view.set_parent(self.category.parent)
 
     def save(self):

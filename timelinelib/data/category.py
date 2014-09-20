@@ -80,21 +80,21 @@ class Category(object):
         return self
 
     def clone(self):
-        clone = Category(self.get_name(), self.get_color(), self.font_color,
-                         self.visible, self.parent)
+        clone = Category(self.get_name(), self.get_color(),
+                         self.get_font_color(), self.visible, self.parent)
         return clone
 
     def __repr__(self):
         return "Category<id=%r, name=%r, color=%r, font_color=%r, visible=%r>" % (
-            self.get_id(), self.get_name(), self.get_color(), self.font_color,
-            self.visible)
+            self.get_id(), self.get_name(), self.get_color(),
+            self.get_font_color(), self.visible)
 
     def __eq__(self, other):
         return (isinstance(other, Category) and
                 self.get_id() == other.get_id() and
                 self.get_name() == other.get_name() and
                 self.get_color() == other.get_color() and
-                self.font_color == other.font_color and
+                self.get_font_color() == other.get_font_color() and
                 self.visible == other.visible)
 
     def __nq__(self, other):
