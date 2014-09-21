@@ -33,11 +33,85 @@ class Event(object):
         self.update(start_time, end_time, text, category)
         self.data = {}
 
+    def get_id(self):
+        return self.id
+
     def has_id(self):
         return self.id is not None
 
     def set_id(self, id):
         self.id = id
+        return self
+
+    def get_time_period(self):
+        return self.time_period
+
+    def set_time_period(self, time_period):
+        self.time_period = time_period
+        return self
+
+    def get_text(self):
+        return self.text
+
+    def set_text(self, text):
+        self.text = text
+        return self
+
+    def get_category(self):
+        return self.category
+
+    def set_category(self, category):
+        self.category = category
+        return self
+
+    def get_time_type(self):
+        return self.time_type
+
+    def set_time_type(self, time_type):
+        self.time_type = time_type
+        return self
+
+    def get_fuzzy(self):
+        return self.fuzzy
+
+    def set_fuzzy(self, fuzzy):
+        self.fuzzy = fuzzy
+        return self
+
+    def get_locked(self):
+        return self.locked
+
+    def set_locked(self, locked):
+        self.locked = locked
+        return self
+
+    def get_ends_today(self):
+        return self.ends_today
+
+    def set_ends_today(self, ends_today):
+        self.ends_today = ends_today
+        return self
+
+    def get_description(self):
+        return self.get_data("description")
+
+    def set_description(self, description):
+        self.set_data("description", description)
+        return self
+
+    def get_icon(self):
+        return self.get_data("icon")
+
+    def set_icon(self, icon):
+        self.set_data("icon", icon)
+        return self
+
+    def get_hyperlink(self):
+        return self.get_data("hyperlink")
+
+    def set_hyperlink(self, hyperlink):
+        self.set_data("hyperlink", hyperlink)
+        return self
 
     def update(self, start_time, end_time, text, category=None, fuzzy=None,
                locked=None, ends_today=None):
