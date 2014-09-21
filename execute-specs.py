@@ -28,12 +28,56 @@ import unittest
 ONLY_FLAG = "--only"
 
 
+class TestFileList(object):
+
+    def __init__(self):
+        self._modules = []
+
+    def find(self):
+        self._find_specs()
+        self._find_doctests()
+
+    def _find_specs(self):
+        for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
+            if file.endswith(".py") and file != "__init__.py":
+                module_name = os.path.basename(file)[:-3]
+                abs_module_name = "specs.%s" % module_name
+                self._modules.append(("spec", abs_module_name))
+
+    def _find_doctests(self):
+        root_dir = os.path.abspath(os.path.dirname(__file__))
+        timelinelib_dir = os.path.join(root_dir, "timelinelib")
+        for module in find_modules(timelinelib_dir):
+            self._modules.append(("doctest", module))
+
+    def shuffle(self):
+        random.shuffle(self._modules)
+
+    def show(self):
+        for x in self._modules:
+            print(x)
+
+    def get_suite(self, include_test_function):
+        suite = unittest.TestSuite()
+        for (test_type, module) in self._modules:
+            {
+                "spec": load_test_cases_from_module_name,
+                "doctest": load_doc_test_from_module_name,
+            }[test_type](suite, module, include_test_function)
+        return shuffled_suite(suite)
+
+
 def execute_specs(args):
     setup_displayhook()
     setup_paths()
     install_gettext_in_builtin_namespace()
     disable_monitoring()
-    suite = create_suite(create_include_test_function(args))
+
+    t = TestFileList()
+    t.find()
+
+    suite = t.get_suite(create_include_test_function(args))
+
     all_pass = execute_suite(suite, select_verbosity(args))
     return all_pass
 
@@ -84,35 +128,12 @@ def select_verbosity(args):
         return 1
 
 
-def create_suite(include_test_function):
-    suite = unittest.TestSuite()
-    add_specs(suite, include_test_function)
-    add_doctests(suite, include_test_function)
-    return shuffled_suite(suite)
-
-
-def add_specs(suite, include_test_function):
-    for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
-        if file.endswith(".py") and file != "__init__.py":
-            module_name = os.path.basename(file)[:-3]
-            abs_module_name = "specs.%s" % module_name
-            load_test_cases_from_module_name(suite, abs_module_name,
-                                             include_test_function)
-
-
 def load_test_cases_from_module_name(suite, module_name, include_test_function):
     __import__(module_name)
     module = sys.modules[module_name]
     module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
     filtered = filter_suite(module_suite, include_test_function)
     suite.addTest(filtered)
-
-
-def add_doctests(suite, include_test_function):
-    root_dir = os.path.abspath(os.path.dirname(__file__))
-    timelinelib_dir = os.path.join(root_dir, "timelinelib")
-    for module in find_modules(timelinelib_dir):
-        load_doc_test_from_module_name(suite, module, include_test_function)
 
 
 def find_modules(path):
