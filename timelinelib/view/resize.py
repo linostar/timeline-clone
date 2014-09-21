@@ -47,7 +47,7 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
         self._resize_event()
 
     def _resize_event(self):
-        if self.event.locked:
+        if self.event.get_locked():
             return
         new_time = self.controller.get_time(self.last_x)
         new_snapped_time = self.controller.get_drawer().snap(new_time)

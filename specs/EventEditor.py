@@ -149,7 +149,7 @@ class describe_event_editor__locked_checkbox(EventEditorTestCase):
 
     def test_has_value_from_event(self):
         event = Mock()
-        event.locked = sentinel.LOCKED
+        event.get_locked.return_value = sentinel.LOCKED
         self.when_editor_opened_with_event(event)
         self.view.set_locked.assert_called_with(sentinel.LOCKED)
 
@@ -296,7 +296,7 @@ class describe_event_editor__saving(object):
 
     def test_saves_locked(self):
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.locked, self.locked_value)
+        self.assertEqual(self.saved_event.get_locked(), self.locked_value)
 
     def test_saves_ends_today(self):
         self.given_saving_valid_event()

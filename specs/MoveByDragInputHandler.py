@@ -68,7 +68,7 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
     def test_moves_no_events_if_one_is_locked(self):
         event_1 = self.a_point_event("1 Jan 2011")
         event_2 = self.a_point_event("2 Jan 2011")
-        event_2.locked = True
+        event_2.set_locked(True)
         self.given_time_at_x_is(50, "5 Jan 2011")
         self.when_moving(event_1, from_time="1 Jan 2011", to_x=50)
         self.assert_event_has_period("1 Jan 2011", "1 Jan 2011", event_1)
@@ -77,7 +77,7 @@ class MoveByDragInputHandlerSpec(unittest.TestCase):
     def test_informs_user_through_status_text_why_locked_events_cant_be_moved(self):
         event_1 = self.a_point_event("1 Jan 2011")
         event_2 = self.a_point_event("2 Jan 2011")
-        event_2.locked = True
+        event_2.set_locked(True)
         self.given_time_at_x_is(50, "5 Jan 2011")
         self.when_moving(event_1, from_time="1 Jan 2011", to_x=50)
         self.assertTrue(self.status_bar.set_text.called)

@@ -385,7 +385,7 @@ class describe_memory_db(unittest.TestCase):
         self.assertFalse(self.e1.get_fuzzy())
 
     def testEventShouldNotBeLockedByDefault(self):
-        self.assertFalse(self.e1.locked)
+        self.assertFalse(self.e1.get_locked())
 
     def setUp(self):
         self.save_callback_mock = Mock()

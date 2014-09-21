@@ -220,7 +220,7 @@ class Event(object):
         new_event.set_data("icon", self.get_data("icon"))
         new_event.set_data("hyperlink", self.get_data("hyperlink"))
         new_event.set_fuzzy(self.get_fuzzy())
-        new_event.locked = self.locked
+        new_event.set_locked(self.get_locked())
         new_event.ends_today = self.ends_today
         return new_event
 

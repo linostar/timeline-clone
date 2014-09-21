@@ -40,7 +40,7 @@ class EventSpec(unittest.TestCase):
     def testEventPropertyLockedCanBeUpdated(self):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", locked=True)
-        self.assertEqual(True, self.event.locked)
+        self.assertEqual(True, self.event.get_locked())
 
     def testEventPropertyEndsTodayCantBeSetOnLockedEvent(self):
         self.given_default_point_event()
@@ -119,7 +119,7 @@ class EventCosntructorSpec(unittest.TestCase):
     def testEventPropertiesDefaultsToFalse(self):
         self.given_default_point_event()
         self.assertEqual(False, self.event.get_fuzzy())
-        self.assertEqual(False, self.event.locked)
+        self.assertEqual(False, self.event.get_locked())
         self.assertEqual(False, self.event.ends_today)
         self.assertEqual(False, self.event.is_container())
         self.assertEqual(False, self.event.is_subevent())
@@ -130,7 +130,7 @@ class EventCosntructorSpec(unittest.TestCase):
 
     def testEventPropertyLockedCanBeSetAtConstruction(self):
         self.given_locked_point_event()
-        self.assertEqual(True, self.event.locked)
+        self.assertEqual(True, self.event.get_locked())
 
     def testEventPropertyEndsTodayCanBeSetAtConstruction(self):
         self.given_point_event_wich_ends_today()
@@ -180,7 +180,7 @@ class EventCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.text, self.event.text)
         self.assertEqual(cloned_event.category, self.event.category)
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
-        self.assertEqual(cloned_event.locked, self.event.locked)
+        self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
         self.assertEqual(cloned_event.ends_today, self.event.ends_today)
 
     def test_cloning_dont_change_fuzzy_attribute(self):
@@ -191,9 +191,9 @@ class EventCloningSpec(unittest.TestCase):
 
     def test_cloning_dont_change_locked_attribute(self):
         self.given_default_point_event()
-        self.event.locked = True
+        self.event.set_locked(True)
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.locked, self.event.locked)
+        self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
 
     def test_cloning_dont_change_ends_today_attribute(self):
         self.given_default_point_event()

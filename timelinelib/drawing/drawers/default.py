@@ -476,7 +476,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawRectangleRect(rect)
         if event.get_fuzzy():
             self._draw_fuzzy_edges(rect, event)
-        if event.locked:
+        if event.get_locked():
             self._draw_locked_edges(rect, event)
         if event.data.has_key("progress"):
             self.draw_progress_box(rect, event)
@@ -616,7 +616,7 @@ class DefaultDrawingAlgorithm(Drawer):
             # Draw the text (if there is room for it)
             self.dc.SetClippingRect(rect_copy)
             text_x = rect.X + INNER_PADDING
-            if event.get_fuzzy() or event.locked:
+            if event.get_fuzzy() or event.get_locked():
                 text_x += rect.Height / 2
             text_y = rect.Y + INNER_PADDING
             if text_x < INNER_PADDING:

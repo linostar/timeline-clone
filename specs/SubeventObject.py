@@ -54,7 +54,7 @@ class ContainerSubeventSpec(unittest.TestCase):
         self.given_default_subevent()
         self.assertEqual(-1, self.subevent.cid())
         self.assertEqual(False, self.subevent.get_fuzzy())
-        self.assertEqual(False, self.subevent.locked)
+        self.assertEqual(False, self.subevent.get_locked())
         self.assertEqual(False, self.subevent.ends_today)
         self.assertEqual(False, self.subevent.is_container())
         self.assertEqual(True, self.subevent.is_subevent())
@@ -91,7 +91,7 @@ class SubeventCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.text, self.event.text)
         self.assertEqual(cloned_event.category, self.event.category)
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
-        self.assertEqual(cloned_event.locked, self.event.locked)
+        self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
         self.assertEqual(cloned_event.ends_today, self.event.ends_today)
 
     def given_subevent_event(self):

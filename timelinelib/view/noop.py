@@ -164,7 +164,7 @@ class NoOpInputHandler(InputHandler):
         if event_and_rect is None:
             return False
         event, rect = event_and_rect
-        if event.locked:
+        if event.get_locked():
             return None
         if not self.timeline_canvas_controller.is_selected(event):
             return False
@@ -178,7 +178,7 @@ class NoOpInputHandler(InputHandler):
         if event_and_rect == None:
             return None
         event, rect = event_and_rect
-        if event.locked:
+        if event.get_locked():
             return None
         if not self.timeline_canvas_controller.is_selected(event):
             return None

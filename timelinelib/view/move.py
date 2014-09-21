@@ -70,7 +70,7 @@ class MoveByDragInputHandler(ScrollViewInputHandler):
 
     def _any_event_locked(self):
         for (event, original_period) in self.event_periods:
-            if event.locked:
+            if event.get_locked():
                 return True
         return False
 
