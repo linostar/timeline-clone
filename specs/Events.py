@@ -53,7 +53,7 @@ class describe_saving_categories(EventsTestCase):
     def test_can_update(self):
         self.events.save_category(a_category_with(name="work"))
         updated_category = self.events.get_categories()[0]
-        updated_category.color = (50, 100, 150)
+        updated_category.set_color((50, 100, 150))
         self.events.save_category(updated_category)
         self.assertEqual(self.events.get_categories(), [updated_category])
 
@@ -66,7 +66,36 @@ class describe_saving_categories(EventsTestCase):
     def test_fails_if_category_has_existing_name(self):
         self.events.save_category(a_category_with(name="work"))
         self.events.save_category(a_category_with(name="sports"))
-        updated_category = self.events.get_categories()[0]
+        updated_category = self.events.get_category_by_name("work")
         updated_category.set_name("sports")
         self.assertRaises(InvalidOperationError,
                           self.events.save_category, updated_category)
+
+    def test_fails_if_parent_is_not_in_db(self):
+        self.assertRaises(InvalidOperationError,
+                          self.events.save_category,
+                          a_category_with(name="work",
+                                          parent=a_category_with(name="parent")))
+
+    def test_fails_if_parent_relationship_is_circular(self):
+        self.events.save_category(
+            a_category_with(name="root",
+                            parent=None))
+        self.events.save_category(
+            a_category_with(name="child",
+                            parent=self.events.get_category_by_name("root")))
+        self.events.save_category(
+            a_category_with(name="grandchild",
+                            parent=self.events.get_category_by_name("child")))
+        grandchild = self.events.get_category_by_name("grandchild")
+        child = self.events.get_category_by_name("child")
+        child.set_parent(grandchild)
+        self.assertRaises(InvalidOperationError,
+                          self.events.save_category, child)
+
+    def test_fails_if_existing_category_does_not_seem_to_be_found(self):
+        category = a_category_with(name="work")
+        category.set_id(15)
+        self.assertRaises(InvalidOperationError,
+                          self.events.save_category,
+                          category)

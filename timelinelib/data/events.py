@@ -65,34 +65,31 @@ class Events(object):
                 return category
 
     def save_category(self, category):
-        from timelinelib.data.db import InvalidOperationError
-        if (category.get_parent() is not None and
-            category.get_parent() not in self.categories):
-            raise InvalidOperationError("Parent category not in db.")
+        self._ensure_category_exists_for_update(category)
         self._ensure_category_name_available(category)
+        self._ensure_parent_exists(category)
         self._ensure_no_circular_parent(category)
-        if not category in self.categories:
-            self._append_category(category)
+        if not self._does_category_exists(category):
+            category.set_id(get_process_unique_id())
+            self.categories.append(category)
 
-    def _ensure_no_circular_parent(self, cat):
+    def _ensure_category_exists_for_update(self, category):
         from timelinelib.data.db import InvalidOperationError
-        parent = cat.get_parent()
-        while parent is not None:
-            if parent == cat:
-                raise InvalidOperationError("Circular category parent.")
-            else:
-                parent = parent.get_parent()
+        message = "Updating a category that does not exist."
+        if category.has_id():
+            if not self._does_category_exists(category):
+                raise InvalidOperationError(message)
 
     def _ensure_category_name_available(self, category):
         from timelinelib.data.db import InvalidOperationError
+        message = "A category with name %r already exists." % category.get_name()
         ids = self._get_ids_with_name(category.get_name())
-        raise_error = False
-        if category.has_id() and ids != [category.get_id()]:
-            raise_error = True
-        if not category.has_id() and ids != []:
-            raise_error = True
-        if raise_error:
-            raise InvalidOperationError("A category with name %r already exists." % category.get_name())
+        if self._does_category_exists(category):
+            if ids != [category.get_id()]:
+                raise InvalidOperationError(message)
+        else:
+            if ids != []:
+                raise InvalidOperationError(message)
 
     def _get_ids_with_name(self, name):
         ids = []
@@ -101,12 +98,28 @@ class Events(object):
                 ids.append(category.get_id())
         return ids
 
-    def _append_category(self, category):
+    def _does_category_exists(self, a_category):
+        for stored_category in self.get_categories():
+            if stored_category.get_id() == a_category.get_id():
+                return True
+        return False
+
+    def _ensure_parent_exists(self, category):
         from timelinelib.data.db import InvalidOperationError
-        if category.has_id():
-            raise InvalidOperationError("Category with id %s not found in db." % category.id)
-        self.categories.append(category)
-        category.set_id(get_process_unique_id())
+        message = "Parent category not in db."
+        if (category.get_parent() is not None and
+            category.get_parent() not in self.categories):
+            raise InvalidOperationError(message)
+
+    def _ensure_no_circular_parent(self, category):
+        from timelinelib.data.db import InvalidOperationError
+        message = "Circular category parent."
+        parent = category.get_parent()
+        while parent is not None:
+            if parent == category:
+                raise InvalidOperationError(message)
+            else:
+                parent = parent.get_parent()
 
     def clone(self):
         (categories, events) = clone_data(self.categories, self.events)
