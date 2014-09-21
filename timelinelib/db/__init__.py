@@ -21,9 +21,7 @@ import os.path
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.data import Category
 from timelinelib.data import Event
-from timelinelib.dataimport.timelinexml import import_db_from_timeline_xml
 from timelinelib.data import TimePeriod
-from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType
@@ -58,6 +56,7 @@ def db_open(path, timetype=None):
 
 
 def open_tutorial_timeline(path):
+    from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
     db = create_in_memory_tutorial_db()
     db.path = path
     return  db
@@ -79,6 +78,7 @@ def db_open_timeline(path, timetype=None):
 
 def db_open_newtype_timeline(path, timetype=None):
     if os.path.exists(path):
+        from timelinelib.dataimport.timelinexml import import_db_from_timeline_xml
         db = import_db_from_timeline_xml(path)
     else:
         from timelinelib.data.db import MemoryDB
