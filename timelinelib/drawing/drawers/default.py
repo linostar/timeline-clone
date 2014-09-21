@@ -474,7 +474,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetBrush(self._get_box_brush(event))
         self.dc.SetPen(self._get_box_pen(event))
         self.dc.DrawRectangleRect(rect)
-        if event.fuzzy:
+        if event.get_fuzzy():
             self._draw_fuzzy_edges(rect, event)
         if event.locked:
             self._draw_locked_edges(rect, event)
@@ -607,7 +607,7 @@ class DefaultDrawingAlgorithm(Drawer):
         progress_rect = wx.Rect(rect.x, rect.y, w, rect.height)
         self.dc.SetClippingRect(progress_rect)
         self.dc.DrawRectangleRect(progress_rect)
-    
+
     def _draw_text(self, rect, event):
         # Ensure that we can't draw content outside inner rectangle
         rect_copy = wx.Rect(*rect)
@@ -616,7 +616,7 @@ class DefaultDrawingAlgorithm(Drawer):
             # Draw the text (if there is room for it)
             self.dc.SetClippingRect(rect_copy)
             text_x = rect.X + INNER_PADDING
-            if event.fuzzy or event.locked:
+            if event.get_fuzzy() or event.locked:
                 text_x += rect.Height / 2
             text_y = rect.Y + INNER_PADDING
             if text_x < INNER_PADDING:

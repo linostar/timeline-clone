@@ -35,7 +35,7 @@ class EventSpec(unittest.TestCase):
     def testEventPropertyFuzzyCanBeUpdated(self):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", fuzzy=True)
-        self.assertEqual(True, self.event.fuzzy)
+        self.assertEqual(True, self.event.get_fuzzy())
 
     def testEventPropertyLockedCanBeUpdated(self):
         self.given_default_point_event()
@@ -118,7 +118,7 @@ class EventCosntructorSpec(unittest.TestCase):
 
     def testEventPropertiesDefaultsToFalse(self):
         self.given_default_point_event()
-        self.assertEqual(False, self.event.fuzzy)
+        self.assertEqual(False, self.event.get_fuzzy())
         self.assertEqual(False, self.event.locked)
         self.assertEqual(False, self.event.ends_today)
         self.assertEqual(False, self.event.is_container())
@@ -126,7 +126,7 @@ class EventCosntructorSpec(unittest.TestCase):
 
     def testEventPropertyFuzzyCanBeSetAtConstruction(self):
         self.given_fuzzy_point_event()
-        self.assertEqual(True, self.event.fuzzy)
+        self.assertEqual(True, self.event.get_fuzzy())
 
     def testEventPropertyLockedCanBeSetAtConstruction(self):
         self.given_locked_point_event()
@@ -179,31 +179,31 @@ class EventCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.time_period, self.event.time_period)
         self.assertEqual(cloned_event.text, self.event.text)
         self.assertEqual(cloned_event.category, self.event.category)
-        self.assertEqual(cloned_event.fuzzy, self.event.fuzzy)
+        self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
         self.assertEqual(cloned_event.locked, self.event.locked)
         self.assertEqual(cloned_event.ends_today, self.event.ends_today)
 
     def test_cloning_dont_change_fuzzy_attribute(self):
         self.given_default_point_event()
-        self.event.fuzzy = True
+        self.event.set_fuzzy(True)
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.fuzzy, self.event.fuzzy)        
-        
+        self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
+
     def test_cloning_dont_change_locked_attribute(self):
         self.given_default_point_event()
         self.event.locked = True
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.locked, self.event.locked)        
+        self.assertEqual(cloned_event.locked, self.event.locked)
 
     def test_cloning_dont_change_ends_today_attribute(self):
         self.given_default_point_event()
         self.event.ends_today = True
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.ends_today, self.event.ends_today)        
+        self.assertEqual(cloned_event.ends_today, self.event.ends_today)
 
     def test_container_relationships_are_maintained_when_cloning(self):
         self.given_container_with_subevents()
-        cloned_event_list = clone_event_list(self.events) 
+        cloned_event_list = clone_event_list(self.events)
         self.assertEqual(len(self.events), len(cloned_event_list))
         for i in range(len(self.events)):
             self.assertTrue(self.events[i] != cloned_event_list[i])

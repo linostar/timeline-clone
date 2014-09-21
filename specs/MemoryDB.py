@@ -382,7 +382,7 @@ class describe_memory_db(unittest.TestCase):
         self.assertTrue(self.db.get_all_events()[2] == self.e3)
 
     def testEventShouldNotBeFuzzyByDefault(self):
-        self.assertFalse(self.e1.fuzzy)
+        self.assertFalse(self.e1.get_fuzzy())
 
     def testEventShouldNotBeLockedByDefault(self):
         self.assertFalse(self.e1.locked)

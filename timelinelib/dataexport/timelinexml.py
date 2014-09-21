@@ -116,7 +116,7 @@ class Exporter(object):
             write_simple_tag(file, "text", text, INDENT3)
         if evt.get_data("progress") is not None:
             write_simple_tag(file, "progress", "%s" % evt.get_data("progress"), INDENT3)
-        write_simple_tag(file, "fuzzy", "%s" % evt.fuzzy, INDENT3)
+        write_simple_tag(file, "fuzzy", "%s" % evt.get_fuzzy(), INDENT3)
         write_simple_tag(file, "locked", "%s" % evt.locked, INDENT3)
         write_simple_tag(file, "ends_today", "%s" % evt.ends_today, INDENT3)
         if evt.category is not None:

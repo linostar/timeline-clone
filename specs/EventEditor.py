@@ -136,7 +136,7 @@ class describe_event_editor__fuzzy_checkbox(EventEditorTestCase):
 
     def test_has_value_from_event(self):
         event = Mock()
-        event.fuzzy = sentinel.FUZZY
+        event.get_fuzzy.return_value = sentinel.FUZZY
         self.when_editor_opened_with_event(event)
         self.view.set_fuzzy.assert_called_with(sentinel.FUZZY)
 
@@ -292,7 +292,7 @@ class describe_event_editor__saving(object):
 
     def test_saves_fuzzy(self):
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.fuzzy, sentinel.FUZZY)
+        self.assertEqual(self.saved_event.get_fuzzy(), sentinel.FUZZY)
 
     def test_saves_locked(self):
         self.given_saving_valid_event()
