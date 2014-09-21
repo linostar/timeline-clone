@@ -83,8 +83,8 @@ class Category(object):
                 self.get_color() == other.get_color() and
                 self.get_font_color() == other.get_font_color())
 
-    def __nq__(self, other):
-        return (not (self == other))
+    def __ne__(self, other):
+        return not (self == other)
 
 
 def sort_categories(categories):

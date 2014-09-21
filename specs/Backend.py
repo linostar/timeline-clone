@@ -90,9 +90,9 @@ class CloningTest(unittest.TestCase):
     def test_when_db_data_is_cloned_category_event_relasionship_is_preserved(self):
         self.given_event_and_category_lists()
         self.when_cloning()
-        self.assertTrue(self.new_category != self.old_category)
+        self.assertTrue(self.new_category is not self.old_category)
         self.assertTrue(self.new_event != self.old_event)
-        self.assertTrue(self.db.events[0].get_category() != self.old_category)
+        self.assertTrue(self.db.events[0].get_category() is not self.old_category)
         self.assertEquals(self.new_event.get_category().get_name(),
                           self.old_category.get_name())
 

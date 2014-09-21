@@ -82,7 +82,7 @@ class cloning(TestBase):
 
     def test_cloning_returns_new_object(self):
         cloned_category = self.category_list[0].clone()
-        self.assertTrue(self.category_list[0] != cloned_category)
+        self.assertTrue(self.category_list[0] is not cloned_category)
         self.assertEqual(cloned_category.get_name(),
                          self.category_list[0].get_name())
         self.assertEqual(cloned_category.get_color(),
@@ -99,7 +99,7 @@ class cloning(TestBase):
             self.assertInstanceNotIn(clone, self.category_list)
         for clone in cloned_list:
             if clone.get_name() == "Football":
-                self.assertTrue(clone.get_parent() != self.play)
+                self.assertTrue(clone.get_parent() is not self.play)
                 self.assertTrue(clone.get_parent() is not None)
                 self.assertInstanceNotIn(clone.get_parent(), self.category_list)
 
