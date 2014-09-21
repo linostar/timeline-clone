@@ -92,8 +92,8 @@ class MemoryDB(Observable):
         return self._events.get_last()
 
     def save_event(self, event):
-        if (event.category is not None and
-            event.category not in self._events.categories):
+        if (event.get_category() is not None and
+            event.get_category() not in self._events.categories):
             raise InvalidOperationError("Event's category not in db.")
         if event not in self._events.events:
             if event.has_id():
@@ -344,8 +344,8 @@ class MemoryDB(Observable):
     def _import_events(self, db, category_map):
         for event in db.get_all_events():
             cloned_event = event.clone()
-            if event.category is not None:
-                cloned_event.category = category_map[event.category.get_name()]
+            if event.get_category() is not None:
+                cloned_event.set_category(category_map[event.get_category().get_name()])
             self.save_event(cloned_event)
 
     def _get_unique_import_category_name(self, original_name):

@@ -81,12 +81,12 @@ class a_newly_initialized_dialog(set_category_editor_spec_base):
     def test_category_can_be_set_on_all_events_without_category(self):
         self.controller.save()
         self.view.close.assert_called()
-        self.assertTrue(self.event1.category == self.category1)
-        self.assertTrue(self.event2.category == self.category2)
+        self.assertTrue(self.event1.get_category() == self.category1)
+        self.assertTrue(self.event2.get_category() == self.category2)
 
     def test_category_can_be_set_when_all_events_has_catageroies(self):
-        self.event1.category = self.category2
+        self.event1.set_category(self.category2)
         self.controller.save()
         self.view.close.assert_called()
-        self.assertTrue(self.event1.category == self.category2)
-        self.assertTrue(self.event2.category == self.category2)
+        self.assertTrue(self.event1.get_category() == self.category2)
+        self.assertTrue(self.event2.get_category() == self.category2)

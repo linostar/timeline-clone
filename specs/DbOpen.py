@@ -101,7 +101,7 @@ class DbOpenSpec(TmpDirTestCase):
                          Gregorian(2009, 11, 4, 22, 52, 0).to_time())
         self.assertEqual(event.get_time_period().end_time,
                          Gregorian(2009, 11, 11, 22, 52, 0).to_time())
-        self.assertEqual(event.category.get_name(), "Category 1")
+        self.assertEqual(event.get_category().get_name(), "Category 1")
         self.assertEqual(event.get_data("description"), "The first event.")
         self.assertEqual(event.get_data("icon"), None)
         # Assert that correct view properties are loaded (category visibility

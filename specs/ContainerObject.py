@@ -51,7 +51,7 @@ class ContainerSpec(unittest.TestCase):
         new_name = "new text"
         new_category = a_category_with(name="cat")
         self.container.update_properties(new_name, new_category)
-        self.assertEqual(new_category, self.container.category)
+        self.assertEqual(new_category, self.container.get_category())
 
     def testCidCanBeChanged(self):
         self.given_default_container()
@@ -83,7 +83,7 @@ class ContainerConstructorSpec(unittest.TestCase):
         self.assertEqual(False, self.container.get_ends_today())
         self.assertEqual(True, self.container.is_container())
         self.assertEqual(False, self.container.is_subevent())
-        self.assertEqual(None, self.container.category)
+        self.assertEqual(None, self.container.get_category())
 
     def testContainerPropertyCidCanBeSetAtConstruction(self):
         self.given_container_with_cid()
@@ -111,7 +111,7 @@ class ContainerCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.get_time_period(),
                          self.event.get_time_period())
         self.assertEqual(cloned_event.get_text(), self.event.get_text())
-        self.assertEqual(cloned_event.category, self.event.category)
+        self.assertEqual(cloned_event.get_category(), self.event.get_category())
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
         self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
         self.assertEqual(cloned_event.get_ends_today(),

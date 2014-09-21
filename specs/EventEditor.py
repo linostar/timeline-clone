@@ -225,7 +225,7 @@ class describe_event_editor__category_field(EventEditorTestCase):
 
     def test_has_value_from_event(self):
         event = Mock()
-        event.category = sentinel.CATEGORY
+        event.get_category.return_value = sentinel.CATEGORY
         self.when_editor_opened_with_event(event)
         self.view.set_category.assert_called_with(sentinel.CATEGORY)
 
@@ -296,7 +296,7 @@ class describe_event_editor__saving(object):
 
     def test_saves_category(self):
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.category, sentinel.CATEGORY)
+        self.assertEqual(self.saved_event.get_category(), sentinel.CATEGORY)
 
     def test_saves_fuzzy(self):
         self.given_saving_valid_event()

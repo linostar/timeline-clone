@@ -134,7 +134,7 @@ def clone_data(categories, events):
     events = clone_event_list(events)
     for event in events:
         try:
-            event.category = catclones[event.category]
+            event.set_category(catclones[event.get_category()])
         except KeyError:
-            event.category = None
+            event.set_category(None)
     return categories, events

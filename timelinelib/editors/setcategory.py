@@ -18,14 +18,14 @@
 
 from timelinelib.wxgui.utils import display_error_message
 
- 
+
 class SetCategoryEditor(object):
-    
+
     def __init__(self, view, timeline, selected_event_ids=[]):
         self.view = view
         self.timeline = timeline
         self.selected_event_ids = selected_event_ids
-            
+
     def save(self):
         category = self.view.get_category()
         if not self._category_is_given(category) and self.selected_event_ids == []:
@@ -36,7 +36,7 @@ class SetCategoryEditor(object):
 
     def _category_is_given(self, category):
         return category != None
-    
+
     def _save_category_in_events(self, category):
         if self.selected_event_ids == []:
             self._save_category_in_events_for_events_without_category(category)
@@ -46,17 +46,15 @@ class SetCategoryEditor(object):
     def _save_category_in_events_for_selected_events(self, category):
         for event_id in self.selected_event_ids:
             event = self.timeline.find_event_with_id(event_id)
-            event.category = category
+            event.set_category(category)
 
     def _save_category_in_events_for_events_without_category(self, category):
         for event in self.timeline.events:
-            if event.category == None:
-                event.category = category
+            if event.get_category() == None:
+                event.set_category(category)
 
     def _events_without_category_exists(self):
         for event in self.timeline.events:
             if event.category == None:
                 return True
         return False
-    
-        

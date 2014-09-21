@@ -72,10 +72,10 @@ class ViewProperties(Observable):
 
     def _is_event_visible(self, event):
         if event.is_subevent():
-            return (self.is_event_with_category_visible(event.category) and
-                    self.is_event_with_category_visible(event.container.category))
+            return (self.is_event_with_category_visible(event.get_category()) and
+                    self.is_event_with_category_visible(event.container.get_category()))
         else:
-            return self.is_event_with_category_visible(event.category)
+            return self.is_event_with_category_visible(event.get_category())
 
     def is_selected(self, event):
         return event.get_id() in self.selected_event_ids

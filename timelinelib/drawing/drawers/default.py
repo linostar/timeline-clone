@@ -358,7 +358,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _extract_categories(self):
         categories = []
         for (event, rect) in self.scene.event_data:
-            cat = event.category
+            cat = event.get_category()
             if cat and not cat in categories:
                 categories.append(cat)
         return sort_categories(categories)
@@ -626,12 +626,12 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.DestroyClippingRegion()
 
     def _set_text_foreground_color(self, event):
-        if event.category is None:
+        if event.get_category() is None:
             fg_color = BLACK
-        elif event.category.font_color is None:
+        elif event.get_category().font_color is None:
             fg_color = BLACK
         else:
-            font_color = event.category.font_color
+            font_color = event.get_category().font_color
             fg_color = wx.Colour(font_color[0], font_color[1], font_color[2])
         self.dc.SetTextForeground(fg_color)
 
@@ -686,8 +686,8 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.DrawRectangleRect(center_rect)
 
     def _get_base_color(self, event):
-        if event.category:
-            base_color = event.category.color
+        if event.get_category():
+            base_color = event.get_category().color
         else:
             base_color = (200, 200, 200)
         return base_color

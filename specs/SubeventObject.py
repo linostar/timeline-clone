@@ -90,7 +90,7 @@ class SubeventCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.get_time_period(),
                          self.event.get_time_period())
         self.assertEqual(cloned_event.get_text(), self.event.get_text())
-        self.assertEqual(cloned_event.category, self.event.category)
+        self.assertEqual(cloned_event.get_category(), self.event.get_category())
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
         self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
         self.assertEqual(cloned_event.get_ends_today(),

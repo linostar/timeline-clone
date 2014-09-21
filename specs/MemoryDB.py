@@ -250,11 +250,11 @@ class describe_memory_db(unittest.TestCase):
 
     def testSaveEventUnknownCategory(self):
         # A new
-        self.e1.category = self.c1
+        self.e1.set_category(self.c1)
         self.assertRaises(InvalidOperationError, self.db.save_event, self.e1)
         # An existing
         self.db.save_event(self.e2)
-        self.e2.category = self.c1
+        self.e2.set_category(self.c1)
         self.assertRaises(InvalidOperationError, self.db.save_event, self.e2)
         # Assert save not called
         self.assertEqual(self.save_callback_mock.call_count, 1)
@@ -517,7 +517,7 @@ class describe_importing(unittest.TestCase):
         self.assertEqual(replace_category_with_name(tree), expected_tree)
 
     def assertEventListIs(self, expected_list):
-        actual_list = ["%s (%s)" % (event.get_text(), event.category.get_name())
+        actual_list = ["%s (%s)" % (event.get_text(), event.get_category().get_name())
                        for event in self.base_db.get_all_events()]
         self.assertEqual(sorted(actual_list), expected_list)
 

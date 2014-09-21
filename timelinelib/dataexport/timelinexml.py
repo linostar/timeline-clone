@@ -119,8 +119,8 @@ class Exporter(object):
         write_simple_tag(file, "fuzzy", "%s" % evt.get_fuzzy(), INDENT3)
         write_simple_tag(file, "locked", "%s" % evt.get_locked(), INDENT3)
         write_simple_tag(file, "ends_today", "%s" % evt.get_ends_today(), INDENT3)
-        if evt.category is not None:
-            write_simple_tag(file, "category", evt.category.get_name(), INDENT3)
+        if evt.get_category() is not None:
+            write_simple_tag(file, "category", evt.get_category().get_name(), INDENT3)
         if evt.get_data("description") is not None:
             write_simple_tag(file, "description", evt.get_data("description"), INDENT3)
         alert = evt.get_data("alert")

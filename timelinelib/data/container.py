@@ -53,14 +53,14 @@ class Container(Event):
 
     def update_properties(self, text, category=None):
         self.set_text(text)
-        self.category = category
+        self.set_category(category)
 
     def clone(self):
         # Objects of type datetime are immutable.
         new_event = Container(
             self.get_time_type(), self.get_time_period().start_time,
-            self.get_time_period().end_time, self.get_text(), self.category,
-            self.container_id)
+            self.get_time_period().end_time, self.get_text(),
+            self.get_category(), self.container_id)
         # Description is immutable
         new_event.set_data("description", self.get_data("description") )
         # Icon is immutable in the sense that it is never changed by our
