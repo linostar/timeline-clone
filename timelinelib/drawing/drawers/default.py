@@ -622,7 +622,7 @@ class DefaultDrawingAlgorithm(Drawer):
             if text_x < INNER_PADDING:
                 text_x = INNER_PADDING
             self._set_text_foreground_color(event)
-            self.dc.DrawText(event.text, text_x, text_y)
+            self.dc.DrawText(event.get_text(), text_x, text_y)
             self.dc.DestroyClippingRegion()
 
     def _set_text_foreground_color(self, event):

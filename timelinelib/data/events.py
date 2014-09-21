@@ -121,7 +121,7 @@ def _generic_event_search(events, search_string):
             description = ""
         else:
             description = description.lower()
-        return target in event.text.lower() or target in description
+        return target in event.get_text().lower() or target in description
     def mean_time(event):
         return event.mean_time()
     matches = [event for event in events if match(event)]

@@ -44,7 +44,7 @@ class ContainerSpec(unittest.TestCase):
         self.given_default_container()
         new_name = "new text"
         self.container.update_properties(new_name)
-        self.assertEqual(new_name, self.container.text)
+        self.assertEqual(new_name, self.container.get_text())
 
     def testNameAndCategoryCanBeUpdated(self):
         self.given_default_container()
@@ -110,7 +110,7 @@ class ContainerCloningSpec(unittest.TestCase):
                          self.event.get_time_type())
         self.assertEqual(cloned_event.get_time_period(),
                          self.event.get_time_period())
-        self.assertEqual(cloned_event.text, self.event.text)
+        self.assertEqual(cloned_event.get_text(), self.event.get_text())
         self.assertEqual(cloned_event.category, self.event.category)
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
         self.assertEqual(cloned_event.get_locked(), self.event.get_locked())

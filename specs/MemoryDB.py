@@ -272,7 +272,7 @@ class describe_memory_db(unittest.TestCase):
     def testSaveExistingEvent(self):
         self.db.save_event(self.e1)
         id_before = self.e1.get_id()
-        self.e1.text = "new text"
+        self.e1.set_text("new text")
         self.db.save_event(self.e1)
         tp = gregorian_period("12 Feb 2010", "14 Feb 2010")
         self.assertEqual(id_before, self.e1.get_id())
@@ -454,7 +454,7 @@ class describe_undo(unittest.TestCase):
         self.assertHasEvents(["football"])
 
     def assertHasEvents(self, event_texts):
-        actual_event_texts = [e.text for e in self.db.get_all_events()]
+        actual_event_texts = [e.get_text() for e in self.db.get_all_events()]
         self.assertEqual(actual_event_texts, event_texts)
 
     def setUp(self):
@@ -517,7 +517,7 @@ class describe_importing(unittest.TestCase):
         self.assertEqual(replace_category_with_name(tree), expected_tree)
 
     def assertEventListIs(self, expected_list):
-        actual_list = ["%s (%s)" % (event.text, event.category.get_name())
+        actual_list = ["%s (%s)" % (event.get_text(), event.category.get_name())
                        for event in self.base_db.get_all_events()]
         self.assertEqual(sorted(actual_list), expected_list)
 

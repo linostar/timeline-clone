@@ -208,7 +208,7 @@ class describe_event_editor__text_field(EventEditorTestCase):
 
     def test_has_value_from_event(self):
         event = Mock()
-        event.text = sentinel.TEXT
+        event.get_text.return_value = sentinel.TEXT
         self.when_editor_opened_with_event(event)
         self.view.set_name.assert_called_with(sentinel.TEXT)
 
@@ -292,7 +292,7 @@ class describe_event_editor__saving(object):
 
     def test_saves_text(self):
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.text, "new event")
+        self.assertEqual(self.saved_event.get_text(), "new event")
 
     def test_saves_category(self):
         self.given_saving_valid_event()

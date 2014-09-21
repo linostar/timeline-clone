@@ -43,7 +43,7 @@ class ContainerEditor(object):
         self.container = container
         self.container_exists = (self.container != None)
         if self.container_exists:
-            self.name = self.container.text
+            self.name = self.container.get_text()
             self.category = self.container.category
         else:
             self.name = ""

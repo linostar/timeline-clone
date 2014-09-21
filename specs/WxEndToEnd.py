@@ -52,4 +52,4 @@ class WxEndToEndSpec(WxEndToEndTestCase):
     def assert_written_timeline_has_one_event_with_text(self, text):
         timeline = self.read_written_timeline()
         self.assertEqual(1, len(timeline.get_all_events()))
-        self.assertEqual(text, timeline.get_all_events()[0].text)
+        self.assertEqual(text, timeline.get_all_events()[0].get_text())

@@ -60,7 +60,7 @@ class Subevent(Event):
         # Objects of type datetime are immutable.
         new_event = Subevent(
             self.get_time_type(), self.get_time_period().start_time,
-            self.get_time_period().end_time, self.text, self.category,
+            self.get_time_period().end_time, self.get_text(), self.category,
             None, self.container_id)
         # Description is immutable
         new_event.set_data("description", self.get_data("description") )

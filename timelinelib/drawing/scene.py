@@ -229,7 +229,7 @@ class TimelineScene(object):
         return enlarging_factor * self._metrics.calc_width(event.time_period)
 
     def _create_ideal_rect_for_period_event(self, event):
-        tw, th = self._get_text_size(event.text)
+        tw, th = self._get_text_size(event.get_text())
         ew = self._metrics.calc_width(event.get_time_period())
         min_w = 5 * self._outer_padding
         rw = max(ew + 2 * self._outer_padding, min_w)
@@ -255,7 +255,7 @@ class TimelineScene(object):
         return self._metrics.half_height + self._baseline_padding
 
     def _create_ideal_rect_for_non_period_event(self, event):
-        tw, th = self._get_text_size(event.text)
+        tw, th = self._get_text_size(event.get_text())
         rw = tw + 2 * self._inner_padding + 2 * self._outer_padding
         rh = th + 2 * self._inner_padding + 2 * self._outer_padding
         if event.has_data():

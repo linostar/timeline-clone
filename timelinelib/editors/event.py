@@ -62,7 +62,7 @@ class EventEditor(object):
         if self.event != None:
             self.start = self.event.get_time_period().start_time
             self.end = self.event.get_time_period().end_time
-            self.name = self.event.text
+            self.name = self.event.get_text()
             self.category = self.event.category
             self.fuzzy = self.event.get_fuzzy()
             self.locked = self.event.get_locked()
