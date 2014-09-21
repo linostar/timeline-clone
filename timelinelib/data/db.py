@@ -89,48 +89,13 @@ class MemoryDB(Observable):
         return self._events.get_last()
 
     def save_event(self, event):
-        if (event.get_category() is not None and
-            event.get_category() not in self._events.categories):
-            raise TimelineIOError("Event's category not in db.")
-        if event not in self._events.events:
-            if event.has_id():
-                raise TimelineIOError("Event with id %s not found in db." % event.get_id())
-            self._events.events.append(event)
-            event.set_id(get_process_unique_id())
-            if event.is_subevent():
-                self._register_subevent(event)
-        self._save_if_not_disabled()
-        self._notify(STATE_CHANGE_ANY)
-
-    def _register_subevent(self, subevent):
-        container_events = [event for event in self._events.events
-                            if event.is_container()]
-        containers = {}
-        for container in container_events:
-            key = container.cid()
-            containers[key] = container
         try:
-            container = containers[subevent.cid()]
-            container.register_subevent(subevent)
-        except:
-            id = subevent.cid()
-            if id == 0:
-                id = self._get_max_container_id(container_events) + 1
-                subevent.set_cid(id)
-            name = "[%d]Container" % id
-            container = Container(subevent.time_type,
-                                  subevent.get_time_period().start_time,
-                                  subevent.get_time_period().end_time, name)
-            self.save_event(container)
-            self._register_subevent(subevent)
-            pass
-
-    def _get_max_container_id(self, container_events):
-        id = 0
-        for event in container_events:
-            if id < event.cid():
-                id = event.cid()
-        return id
+            self._events.save_event(event)
+        except Exception, e:
+            raise TimelineIOError("Saving event failed: %s" % e)
+        else:
+            self._save_if_not_disabled()
+            self._notify(STATE_CHANGE_ANY)
 
     def _unregister_subevent(self, subevent):
         container_events = [event for event in self._events.events
