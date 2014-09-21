@@ -182,7 +182,7 @@ class describe_event_editor__ends_today_checkbox(EventEditorTestCase):
 
     def test_has_value_from_event(self):
         event = Mock()
-        event.ends_today = sentinel.ENDS_TODYAY
+        event.get_ends_today.return_value = sentinel.ENDS_TODYAY
         self.when_editor_opened_with_event(event)
         self.view.set_ends_today.assert_called_with(sentinel.ENDS_TODYAY)
 
@@ -191,7 +191,7 @@ class describe_event_editor__ends_today_checkbox(EventEditorTestCase):
         self.editor.ends_today = True
         end_time = human_time_to_gregorian("1 Jan 2010")
         self.assertTrue(end_time <= self.editor._validate_and_save_end(end_time))
-        
+
 class describe_event_editor__text_field(EventEditorTestCase):
 
     def test_has_no_value_by_default(self):
@@ -300,7 +300,7 @@ class describe_event_editor__saving(object):
 
     def test_saves_ends_today(self):
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.ends_today, self.ends_today_value)
+        self.assertEqual(self.saved_event.get_ends_today(), self.ends_today_value)
 
     def test_saves_data(self):
         self.given_saving_valid_event()

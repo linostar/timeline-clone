@@ -196,7 +196,7 @@ class TimelineScene(object):
         return rect
 
     def _create_ideal_rect_for_event(self, event):
-        if event.ends_today:
+        if event.get_ends_today():
             event.time_period.end_time = self._db.get_time_type().now()
         if self._display_as_period(event) or event.is_subevent():
             if self._display_as_period(event):

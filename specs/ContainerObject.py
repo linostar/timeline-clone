@@ -80,7 +80,7 @@ class ContainerConstructorSpec(unittest.TestCase):
         self.assertEqual(-1, self.container.cid())
         self.assertEqual(False, self.container.get_fuzzy())
         self.assertEqual(False, self.container.get_locked())
-        self.assertEqual(False, self.container.ends_today)
+        self.assertEqual(False, self.container.get_ends_today())
         self.assertEqual(True, self.container.is_container())
         self.assertEqual(False, self.container.is_subevent())
         self.assertEqual(None, self.container.category)
@@ -113,7 +113,8 @@ class ContainerCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.category, self.event.category)
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
         self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
-        self.assertEqual(cloned_event.ends_today, self.event.ends_today)
+        self.assertEqual(cloned_event.get_ends_today(),
+                         self.event.get_ends_today())
 
     def given_container_event(self):
         self.event = Container(self.db.get_time_type(), self.now, self.now, "evt")

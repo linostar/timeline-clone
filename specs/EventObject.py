@@ -30,7 +30,7 @@ class EventSpec(unittest.TestCase):
     def testEventPropertyEndsTodayCanBeUpdated(self):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", ends_today=True)
-        self.assertEqual(True, self.event.ends_today)
+        self.assertEqual(True, self.event.get_ends_today())
 
     def testEventPropertyFuzzyCanBeUpdated(self):
         self.given_default_point_event()
@@ -46,14 +46,14 @@ class EventSpec(unittest.TestCase):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", locked=True)
         self.event.update(self.now, self.now, "evt", ends_today=True)
-        self.assertEqual(False, self.event.ends_today)
+        self.assertEqual(False, self.event.get_ends_today())
 
     def testEventPropertyEndsTodayCantBeUnsetOnLockedEvent(self):
         self.given_default_point_event()
         self.event.update(self.now, self.now, "evt", locked=True, ends_today=True)
-        self.assertEqual(True, self.event.ends_today)
+        self.assertEqual(True, self.event.get_ends_today())
         self.event.update(self.now, self.now, "evt", ends_today=False)
-        self.assertEqual(True, self.event.ends_today)
+        self.assertEqual(True, self.event.get_ends_today())
 
     def test_event_has_a_label(self):
         self.given_point_event()
@@ -120,7 +120,7 @@ class EventCosntructorSpec(unittest.TestCase):
         self.given_default_point_event()
         self.assertEqual(False, self.event.get_fuzzy())
         self.assertEqual(False, self.event.get_locked())
-        self.assertEqual(False, self.event.ends_today)
+        self.assertEqual(False, self.event.get_ends_today())
         self.assertEqual(False, self.event.is_container())
         self.assertEqual(False, self.event.is_subevent())
 
@@ -134,7 +134,7 @@ class EventCosntructorSpec(unittest.TestCase):
 
     def testEventPropertyEndsTodayCanBeSetAtConstruction(self):
         self.given_point_event_wich_ends_today()
-        self.assertEqual(True, self.event.ends_today)
+        self.assertEqual(True, self.event.get_ends_today())
 
     def given_default_point_event(self):
         self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
@@ -181,7 +181,8 @@ class EventCloningSpec(unittest.TestCase):
         self.assertEqual(cloned_event.category, self.event.category)
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
         self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
-        self.assertEqual(cloned_event.ends_today, self.event.ends_today)
+        self.assertEqual(cloned_event.get_ends_today(),
+                         self.event.get_ends_today())
 
     def test_cloning_dont_change_fuzzy_attribute(self):
         self.given_default_point_event()
@@ -197,9 +198,10 @@ class EventCloningSpec(unittest.TestCase):
 
     def test_cloning_dont_change_ends_today_attribute(self):
         self.given_default_point_event()
-        self.event.ends_today = True
+        self.event.set_ends_today(True)
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.ends_today, self.event.ends_today)
+        self.assertEqual(cloned_event.get_ends_today(),
+                         self.event.get_ends_today())
 
     def test_container_relationships_are_maintained_when_cloning(self):
         self.given_container_with_subevents()

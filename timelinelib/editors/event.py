@@ -66,7 +66,7 @@ class EventEditor(object):
             self.category = self.event.category
             self.fuzzy = self.event.get_fuzzy()
             self.locked = self.event.get_locked()
-            self.ends_today = self.event.ends_today
+            self.ends_today = self.event.get_ends_today()
         else:
             self.start = start
             self.end = end

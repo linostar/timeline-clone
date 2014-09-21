@@ -50,7 +50,7 @@ class NoOpInputHandler(InputHandler):
                     self.timeline_canvas.edit_ends()
                     raise
             return
-        if self._hit_move_handle(x, y, alt_down) and not event.ends_today:
+        if self._hit_move_handle(x, y, alt_down) and not event.get_ends_today():
             if self.timeline_canvas.ok_to_edit():
                 try:
                     self.timeline_canvas_controller.change_input_handler_to_move_by_drag(event, time_at_x)
@@ -92,7 +92,7 @@ class NoOpInputHandler(InputHandler):
         self.timeline_canvas_controller._display_eventinfo_in_statusbar(x, y, alt_down)
         if self._hit_resize_handle(x, y, alt_down) is not None:
             self.timeline_canvas.set_size_cursor()
-        elif self._hit_move_handle(x, y, alt_down) and not self.last_hovered_event.ends_today:
+        elif self._hit_move_handle(x, y, alt_down) and not self.last_hovered_event.get_ends_today():
             self.timeline_canvas.set_move_cursor()
         else:
             self.timeline_canvas.set_default_cursor()
