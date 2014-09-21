@@ -39,7 +39,7 @@ class DuplicateEventEditor(object):
 
     def create_duplicates_and_save(self):
         (periods, nbr_of_missing_dates) = self._repeat_period(
-            self.event.time_period,
+            self.event.get_time_period(),
             self.view.get_move_period_fn(),
             self.view.get_frequency(),
             self.view.get_count(),

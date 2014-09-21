@@ -122,8 +122,8 @@ class MemoryDB(Observable):
                 subevent.set_cid(id)
             name = "[%d]Container" % id
             container = Container(subevent.time_type,
-                                  subevent.time_period.start_time,
-                                  subevent.time_period.end_time, name)
+                                  subevent.get_time_period().start_time,
+                                  subevent.get_time_period().end_time, name)
             self.save_event(container)
             self._register_subevent(subevent)
             pass

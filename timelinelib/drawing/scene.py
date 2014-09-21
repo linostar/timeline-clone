@@ -210,7 +210,7 @@ class TimelineScene(object):
         if event.is_container():
             event_width = self._calc_min_subevent_threshold_width(event)
         else:
-            event_width = self._metrics.calc_width(event.time_period)
+            event_width = self._metrics.calc_width(event.get_time_period())
         return event_width > self._period_threshold
 
     def _calc_min_subevent_threshold_width(self, container):
@@ -230,11 +230,11 @@ class TimelineScene(object):
 
     def _create_ideal_rect_for_period_event(self, event):
         tw, th = self._get_text_size(event.text)
-        ew = self._metrics.calc_width(event.time_period)
+        ew = self._metrics.calc_width(event.get_time_period())
         min_w = 5 * self._outer_padding
         rw = max(ew + 2 * self._outer_padding, min_w)
         rh = th + 2 * self._inner_padding + 2 * self._outer_padding
-        rx = (self._metrics.calc_x(event.time_period.start_time) -
+        rx = (self._metrics.calc_x(event.get_time_period().start_time) -
               self._outer_padding)
         ry = self._get_ry(event)
         return self._create_ideal_wx_rect(rx, ry, rw, rh)

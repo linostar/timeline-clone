@@ -294,7 +294,7 @@ class TimelineCanvasController(object):
         return self.view_properties.is_selected(event)
 
     def event_is_period(self, event):
-        return self.get_drawer().event_is_period(event.time_period)
+        return self.get_drawer().event_is_period(event.get_time_period())
 
     def snap(self, time):
         return self.get_drawer().snap(time)

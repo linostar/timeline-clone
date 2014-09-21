@@ -97,10 +97,10 @@ class DbOpenSpec(TmpDirTestCase):
         event = events[0]
         self.assertTrue(event.has_id())
         self.assertEqual(event.text, "Event 1")
-        self.assertEqual(event.time_period.start_time,
-                          Gregorian(2009, 11, 4, 22, 52, 0).to_time())
-        self.assertEqual(event.time_period.end_time,
-                          Gregorian(2009, 11, 11, 22, 52, 0).to_time())
+        self.assertEqual(event.get_time_period().start_time,
+                         Gregorian(2009, 11, 4, 22, 52, 0).to_time())
+        self.assertEqual(event.get_time_period().end_time,
+                         Gregorian(2009, 11, 11, 22, 52, 0).to_time())
         self.assertEqual(event.category.get_name(), "Category 1")
         self.assertEqual(event.get_data("description"), "The first event.")
         self.assertEqual(event.get_data("icon"), None)

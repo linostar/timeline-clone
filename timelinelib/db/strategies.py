@@ -63,18 +63,18 @@ class DefaultContainerStrategy(ContainerStrategy):
                 self._set_end_time(event)
 
     def _container_starts_after_event(self, subevent):
-        return (self.container.time_period.start_time >
-                subevent.time_period.start_time)
+        return (self.container.get_time_period().start_time >
+                subevent.get_time_period().start_time)
 
     def _container_ends_before_event(self, event):
-        return (self.container.time_period.end_time <
-                event.time_period.end_time)
+        return (self.container.get_time_period().end_time <
+                event.get_time_period().end_time)
 
     def _set_start_time(self, event):
-        self.container.time_period.start_time = event.time_period.start_time
+        self.container.get_time_period().start_time = event.get_time_period().start_time
 
     def _set_end_time(self, event):
-        self.container.time_period.end_time = event.time_period.end_time
+        self.container.get_time_period().end_time = event.get_time_period().end_time
 
     def _adjust_time_period(self, new_event):
         """
@@ -103,8 +103,8 @@ class DefaultContainerStrategy(ContainerStrategy):
         #      or                      +
         #      or         +
         #      or                                                      +
-        left_delta = new_event.time_period.start_time - event.time_period.start_time
-        right_delta = event.time_period.end_time - new_event.time_period.end_time
+        left_delta = new_event.get_time_period().start_time - event.get_time_period().start_time
+        right_delta = event.get_time_period().end_time - new_event.get_time_period().end_time
         move_left = left_delta > right_delta
         if move_left:
             self._move_events_left(new_event, event)
@@ -117,8 +117,8 @@ class DefaultContainerStrategy(ContainerStrategy):
         self._move_early_events_left(new_event, latest_start_time, delta)
 
     def _move_events_right(self, new_event, event):
-        delta = new_event.time_period.end_time - event.time_period.start_time
-        earliest_start_time = event.time_period.start_time
+        delta = new_event.get_time_period().end_time - event.get_time_period().start_time
+        earliest_start_time = event.get_time_period().start_time
         self._move_late_events_right(new_event, earliest_start_time, delta)
 
     def _adjust_when_new_event_partially_overlaps_other_events(self, new_event, events):
@@ -146,42 +146,45 @@ class DefaultContainerStrategy(ContainerStrategy):
     def _calc_threshold_time(self, new_event):
         td = new_event.time_span()
         td = new_event.get_time_type().mult_timedelta(td, 0.2)
-        threshold_time = new_event.time_period.start_time + td
+        threshold_time = new_event.get_time_period().start_time + td
         return threshold_time
 
     def _some_event_in_new_event_threshold_time(self, new_event, events, end):
-        start = new_event.time_period.start_time
+        start = new_event.get_time_period().start_time
         for event in events:
             if event == new_event:
                 continue
-            if event.time_period.end_time >= start and event.time_period.end_time <= end:
+            if (event.get_time_period().end_time >= start and
+                event.get_time_period().end_time <= end):
                 return event
-            if event.time_period.start_time <= start and event.time_period.end_time > end:
+            if (event.get_time_period().start_time <= start and
+                event.get_time_period().end_time > end):
                 return event
         return None
 
     def _adjust_threshold_triggered_events(self, new_event, event, threshold_time):
-        delta = event.time_period.end_time - new_event.time_period.start_time
+        delta = event.get_time_period().end_time - new_event.get_time_period().start_time
         self._move_early_events_left(new_event, threshold_time, delta)
 
     def _earliest_start_time_for_event_that_starts_within_new_event(self, new_event, events, thr):
-        start = new_event.time_period.start_time
-        end = new_event.time_period.end_time
+        start = new_event.get_time_period().start_time
+        end = new_event.get_time_period().end_time
         min_start = None
         for event in events:
             if not event.is_period():
-                if event.time_period.start_time < thr:
+                if event.get_time_period().start_time < thr:
                     continue
-            if event.time_period.start_time >= start and event.time_period.start_time <= end:
+            if (event.get_time_period().start_time >= start and
+                event.get_time_period().start_time <= end):
                 if min_start == None:
-                    min_start = event.time_period.start_time
+                    min_start = event.get_time_period().start_time
                 else:
-                    if event.time_period.start_time < min_start:
-                        min_start = event.time_period.start_time
+                    if event.get_time_period().start_time < min_start:
+                        min_start = event.get_time_period().start_time
         return min_start
 
     def _adjust_events_starting_in_new_event(self, new_event, earliest_start):
-        delta = new_event.time_period.end_time - earliest_start
+        delta = new_event.get_time_period().end_time - earliest_start
         self._move_late_events_right(new_event, earliest_start, delta)
 
     def _event_totally_overlapping_new_event(self, new_event):
@@ -193,8 +196,8 @@ class DefaultContainerStrategy(ContainerStrategy):
         return None
 
     def _event_totally_overlaps_new_event(self, new_event, event):
-        return (event.time_period.start_time <= new_event.time_period.start_time and
-                event.time_period.end_time >= new_event.time_period.end_time)
+        return (event.get_time_period().start_time <= new_event.get_time_period().start_time and
+                event.get_time_period().end_time >= new_event.get_time_period().end_time)
 
     def _events_overlapped_by_new_event(self, new_event):
         overlapping_events = []
@@ -206,13 +209,13 @@ class DefaultContainerStrategy(ContainerStrategy):
         return overlapping_events
 
     def _starts_within(self, event, new_event):
-        s1 = event.time_period.start_time >= new_event.time_period.start_time
-        s2 = event.time_period.start_time <= new_event.time_period.end_time
+        s1 = event.get_time_period().start_time >= new_event.get_time_period().start_time
+        s2 = event.get_time_period().start_time <= new_event.get_time_period().end_time
         return (s1 and s2)
 
     def _ends_within(self, event, new_event):
-        s1 = event.time_period.end_time >= new_event.time_period.start_time
-        s2 = event.time_period.end_time <= new_event.time_period.end_time
+        s1 = event.get_time_period().end_time >= new_event.get_time_period().start_time
+        s2 = event.get_time_period().end_time <= new_event.get_time_period().end_time
         return (s1 and s2)
 
     def _move_early_events_left(self, new_event, latest_start_time, delta):
@@ -220,18 +223,18 @@ class DefaultContainerStrategy(ContainerStrategy):
         for event in self.container.events:
             if event == new_event:
                 continue
-            if event.time_period.start_time <= latest_start_time:
+            if event.get_time_period().start_time <= latest_start_time:
                 self._adjust_event_time_period(event, delta)
 
     def _move_late_events_right(self, new_event, earliest_start_time, delta):
         for event in self.container.events:
             if event == new_event:
                 continue
-            if event.time_period.start_time >= earliest_start_time:
+            if event.get_time_period().start_time >= earliest_start_time:
                 self._adjust_event_time_period(event, delta)
 
     def _adjust_event_time_period(self, event, delta):
-        new_start = event.time_period.start_time + delta
-        new_end = event.time_period.end_time + delta
-        event.time_period.start_time = new_start
-        event.time_period.end_time = new_end
+        new_start = event.get_time_period().start_time + delta
+        new_end = event.get_time_period().end_time + delta
+        event.get_time_period().start_time = new_start
+        event.get_time_period().end_time = new_end

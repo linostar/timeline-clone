@@ -53,11 +53,11 @@ class ResizeByDragInputHandler(ScrollViewInputHandler):
         new_snapped_time = self.controller.get_drawer().snap(new_time)
         if self.direction == wx.LEFT:
             new_start = new_snapped_time
-            new_end = self.event.time_period.end_time
+            new_end = self.event.get_time_period().end_time
             if new_start > new_end:
                 new_start = new_end
         else:
-            new_start = self.event.time_period.start_time
+            new_start = self.event.get_time_period().start_time
             new_end = new_snapped_time
             if new_end < new_start:
                 new_end = new_start

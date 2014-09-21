@@ -176,7 +176,8 @@ class EventCloningSpec(unittest.TestCase):
         self.assertTrue(self.event != cloned_event)
         self.assertEqual(cloned_event.get_time_type(),
                          self.event.get_time_type())
-        self.assertEqual(cloned_event.time_period, self.event.time_period)
+        self.assertEqual(cloned_event.get_time_period(),
+                         self.event.get_time_period())
         self.assertEqual(cloned_event.text, self.event.text)
         self.assertEqual(cloned_event.category, self.event.category)
         self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())

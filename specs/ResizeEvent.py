@@ -85,4 +85,4 @@ class ResizeEventSpec(unittest.TestCase):
     def then_event_gets_period(self, start, end):
         self.assertEqual(
             gregorian_period(start, end),
-            self.event_being_resized.time_period)
+            self.event_being_resized.get_time_period())

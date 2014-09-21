@@ -56,7 +56,7 @@ class DefaultContainerStartegySpec(unittest.TestCase):
         # Container event:   +-------+
         # New sub-event:                 +-------+
         self.given_container_with_two_events_with_nonoverlapping_periods()
-        self.subevent2.time_period.end_time = self.time("2000-05-01 10:01:01")
+        self.subevent2.get_time_period().end_time = self.time("2000-05-01 10:01:01")
         self.strategy.update(self.subevent2)
         self.assert_equal_start(self.container, self.subevent1)
         self.assert_equal_end(self.container, self.subevent2)
@@ -193,16 +193,20 @@ class DefaultContainerStartegySpec(unittest.TestCase):
                                   self.time("2000-02-01 10:01:01"), "Container1")
 
     def assert_equal_start(self, obj1, obj2):
-        self.assertEqual(obj1.time_period.start_time, obj2.time_period.start_time)
+        self.assertEqual(obj1.get_time_period().start_time,
+                         obj2.get_time_period().start_time)
 
     def assert_equal_end(self, obj1, obj2):
-        self.assertEqual(obj1.time_period.end_time, obj2.time_period.end_time)
+        self.assertEqual(obj1.get_time_period().end_time,
+                         obj2.get_time_period().end_time)
 
     def assert_start_equals_end(self, obj1, obj2):
-        self.assertEqual(obj1.time_period.start_time, obj2.time_period.end_time)
+        self.assertEqual(obj1.get_time_period().start_time,
+                         obj2.get_time_period().end_time)
 
     def assert_start_equals_start(self, obj1, obj2):
-        self.assertEqual(obj1.time_period.start_time, obj2.time_period.start_time)
+        self.assertEqual(obj1.get_time_period().start_time,
+                         obj2.get_time_period().start_time)
 
     def time(self, tm):
         return self.db.get_time_type().parse_time(tm)

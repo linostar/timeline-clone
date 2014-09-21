@@ -56,12 +56,12 @@ class EventEditor(object):
         if self.start is None:
             return False
         return self.start < self.timeline.time_type.now()
-    
+
     def _set_values(self, start, end, event):
         self.event = event
         if self.event != None:
-            self.start = self.event.time_period.start_time
-            self.end = self.event.time_period.end_time
+            self.start = self.event.get_time_period().start_time
+            self.end = self.event.get_time_period().end_time
             self.name = self.event.text
             self.category = self.event.category
             self.fuzzy = self.event.get_fuzzy()

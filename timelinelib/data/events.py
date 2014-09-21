@@ -39,12 +39,12 @@ class Events(object):
     def get_first(self):
         if len(self.get_all()) == 0:
             return None
-        return min(self.get_all(), key=lambda e: e.time_period.start_time)
+        return min(self.get_all(), key=lambda e: e.get_time_period().start_time)
 
     def get_last(self):
         if len(self.get_all()) == 0:
             return None
-        return max(self.get_all(), key=lambda e: e.time_period.end_time)
+        return max(self.get_all(), key=lambda e: e.get_time_period().end_time)
 
     def get_in_period(self, time_period):
         def include_event(event):

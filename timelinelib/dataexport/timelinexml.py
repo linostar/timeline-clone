@@ -102,9 +102,9 @@ class Exporter(object):
 
     def _write_event(self, file, evt):
         write_simple_tag(file, "start",
-                         self._time_string(evt.time_period.start_time), INDENT3)
+                         self._time_string(evt.get_time_period().start_time), INDENT3)
         write_simple_tag(file, "end",
-                         self._time_string(evt.time_period.end_time), INDENT3)
+                         self._time_string(evt.get_time_period().end_time), INDENT3)
         if evt.is_container():
             write_simple_tag(file, "text", "[%d]%s " % (evt.cid(), evt.text), INDENT3)
         elif evt.is_subevent():

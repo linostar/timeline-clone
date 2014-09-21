@@ -447,7 +447,7 @@ class TimelineViewSpec(unittest.TestCase):
         return text
 
     def assert_event_has_period(self, event, start, end):
-        self.assertEqual(gregorian_period(start, end), event.time_period)
+        self.assertEqual(gregorian_period(start, end), event.get_time_period())
 
     def assert_balloon_drawn_for_event(self, event):
         view_properties = self.get_view_properties_used_when_drawing()

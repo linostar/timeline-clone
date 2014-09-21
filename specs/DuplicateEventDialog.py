@@ -105,7 +105,7 @@ class when_duplicating_event_with_default_settings(duplicate_event_dialog_spec_b
 
     def test_the_new_event_gets_period_from_move_period_fn(self):
         new_event = self.db.save_event.call_args[0][0]
-        new_period = new_event.time_period
+        new_period = new_event.get_time_period()
         expected_period = TimePeriod(
             GregorianTimeType(),
             gregorian.from_date(2010, 8, 1).to_time(),
@@ -152,7 +152,7 @@ class a_diloag_with_different_settings(duplicate_event_dialog_spec_base):
 
     def _assert_move_period_called_with(self, num_list):
         self.assertEqual(
-            [((self.event.time_period, num), {}) for num in num_list],
+            [((self.event.get_time_period(), num), {}) for num in num_list],
             self.move_period_fn.call_args_list)
 
     def test_count_1_freq_1_direction_forward(self):

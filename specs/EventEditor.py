@@ -82,8 +82,10 @@ class describe_event_editor__start_time_field(EventEditorTestCase):
         self.assert_start_time_set_to("1 Jan 2010")
 
     def test_has_value_from_event(self):
+        time_period = Mock()
+        time_period.start_time = sentinel.START_TIME
         event = Mock()
-        event.time_period.start_time = sentinel.START_TIME
+        event.get_time_period.return_value = time_period
         self.when_editor_opened_with_event(event)
         self.view.set_start.assert_called_with(sentinel.START_TIME)
 
@@ -103,8 +105,10 @@ class describe_event_editor__end_time_field(EventEditorTestCase):
         self.assert_end_time_set_to("2 Jan 2010")
 
     def test_has_value_from_event(self):
+        time_period = Mock()
+        time_period.end_time = sentinel.END_TIME
         event = Mock()
-        event.time_period.end_time = sentinel.END_TIME
+        event.get_time_period.return_value = time_period
         self.when_editor_opened_with_event(event)
         self.view.set_end.assert_called_with(sentinel.END_TIME)
 
@@ -162,14 +166,18 @@ class describe_event_editor__locked_checkbox(EventEditorTestCase):
         self.assertTrue(self.editor.start_is_in_history())
 
     def test_event_not_starting_in_history(self):
+        time_period = Mock()
+        time_period.start_time = human_time_to_gregorian("1 Jan 3010")
         event = Mock()
-        event.time_period.start_time = human_time_to_gregorian("1 Jan 3010")
+        event.get_time_period.return_value = time_period
         self.when_editor_opened_with_event(event)
         self.assertFalse(self.editor.start_is_in_history())
 
     def test_event_starting_in_history(self):
+        time_period = Mock()
+        time_period.start_time = human_time_to_gregorian("1 Jan 2010")
         event = Mock()
-        event.time_period.start_time = human_time_to_gregorian("1 Jan 2010")
+        event.get_time_period.return_value = time_period
         self.when_editor_opened_with_event(event)
         self.assertTrue(self.editor.start_is_in_history())
 
@@ -268,18 +276,18 @@ class describe_event_editor__saving(object):
 
     def test_saves_start_time(self):
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.time_period.start_time,
+        self.assertEqual(self.saved_event.get_time_period().start_time,
                           human_time_to_gregorian("1 Jan 2010"))
 
     def test_saves_end_time(self):
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.time_period.end_time,
+        self.assertEqual(self.saved_event.get_time_period().end_time,
                           human_time_to_gregorian("2 Jan 2010"))
 
     def test_saves_end_time_from_start_time(self):
         self.view.get_show_period.return_value = False
         self.given_saving_valid_event()
-        self.assertEqual(self.saved_event.time_period.end_time,
+        self.assertEqual(self.saved_event.get_time_period().end_time,
                           human_time_to_gregorian("1 Jan 2010"))
 
     def test_saves_text(self):

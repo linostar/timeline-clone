@@ -155,8 +155,8 @@ class XmlTimelineSpec(TmpDirTestCase):
         self.assertEqual(len(events), 1)
         event = events[0]
         self.assertEqual(event.text, "Event 1")
-        self.assertEqual(event.time_period.start_time, gregorian.from_date(2010, 3, 3).to_time())
-        self.assertEqual(event.time_period.end_time, gregorian.from_date(2010, 3, 6).to_time())
+        self.assertEqual(event.get_time_period().start_time, gregorian.from_date(2010, 3, 3).to_time())
+        self.assertEqual(event.get_time_period().end_time, gregorian.from_date(2010, 3, 6).to_time())
         self.assertEqual(event.category.get_name(), "Category 1")
         self.assertEqual(event.get_data("description"), u"The <b>first</b> event åäö.")
         self.assertEqual(event.get_data("alert"), (gregorian.from_date(2012, 12, 31).to_time(), "Time to go"))
