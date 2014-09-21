@@ -78,28 +78,29 @@ def create_include_test_function(args):
 
 
 def create_suite(include_test_function):
-    return suite_from_modules(find_test_modules(), include_test_function)
+    whole_suite = suite_from_modules(find_test_modules())
+    filtered_suite = filter_suite(whole_suite, include_test_function)
+    return shuffled_suite(filtered_suite)
 
 
-def suite_from_modules(modules, include_test_function):
+def suite_from_modules(modules):
     suite = unittest.TestSuite()
     for (test_type, module) in modules:
         {
             "spec": load_test_cases_from_module_name,
-            "doctest": load_doc_test_from_module_name,
-        }[test_type](suite, module, include_test_function)
-    return shuffled_suite(suite)
+            "doctest": load_doc_tests_from_module_name,
+        }[test_type](suite, module)
+    return suite
 
 
-def load_test_cases_from_module_name(suite, module_name, include_test_function):
+def load_test_cases_from_module_name(suite, module_name):
     __import__(module_name)
     module = sys.modules[module_name]
     module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
-    filtered = filter_suite(module_suite, include_test_function)
-    suite.addTest(filtered)
+    suite.addTest(module_suite)
 
 
-def load_doc_test_from_module_name(suite, module_name, include_test_function):
+def load_doc_tests_from_module_name(suite, module_name):
     __import__(module_name)
     module = sys.modules[module_name]
     try:
@@ -108,8 +109,7 @@ def load_doc_test_from_module_name(suite, module_name, include_test_function):
         # No tests found
         pass
     else:
-        filtered = filter_suite(module_suite, include_test_function)
-        suite.addTest(filtered)
+        suite.addTest(module_suite)
 
 
 def find_test_modules():
@@ -132,12 +132,12 @@ def find_doctests():
     doctests = []
     root_dir = os.path.abspath(os.path.dirname(__file__))
     timelinelib_dir = os.path.join(root_dir, "timelinelib")
-    for module in find_modules(timelinelib_dir):
+    for module in find_python_modules(timelinelib_dir):
         doctests.append(("doctest", module))
     return doctests
 
 
-def find_modules(path):
+def find_python_modules(path):
     module_names = []
     files = os.listdir(path)
     if "__init__.py" in files:
@@ -146,7 +146,7 @@ def find_modules(path):
             if file.endswith(".py") and file != "__init__.py":
                 module_names.append("%s.%s" % (os.path.basename(path), file[:-3]))
             if os.path.isdir(os.path.join(path, file)):
-                for x in find_modules(os.path.join(path, file)):
+                for x in find_python_modules(os.path.join(path, file)):
                     module_names.append("%s.%s" % (os.path.basename(path), x))
     return module_names
 
