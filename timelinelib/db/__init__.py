@@ -18,7 +18,6 @@
 
 import os.path
 
-from timelinelib.data.db import MemoryDB
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.data import Category
 from timelinelib.data import Event
@@ -82,6 +81,7 @@ def db_open_newtype_timeline(path, timetype=None):
     if os.path.exists(path):
         db = import_db_from_timeline_xml(path)
     else:
+        from timelinelib.data.db import MemoryDB
         db = MemoryDB()
         if timetype is None:
             db.set_time_type(GregorianTimeType())
