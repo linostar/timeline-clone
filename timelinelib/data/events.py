@@ -21,6 +21,10 @@ from timelinelib.data.event import clone_event_list
 from timelinelib.data.idnumber import get_process_unique_id
 
 
+class InvalidOperationError(Exception):
+    pass
+
+
 class Events(object):
 
     def __init__(self, categories=None, events=None):
@@ -74,14 +78,12 @@ class Events(object):
             self.categories.append(category)
 
     def _ensure_category_exists_for_update(self, category):
-        from timelinelib.data.db import InvalidOperationError
         message = "Updating a category that does not exist."
         if category.has_id():
             if not self._does_category_exists(category):
                 raise InvalidOperationError(message)
 
     def _ensure_category_name_available(self, category):
-        from timelinelib.data.db import InvalidOperationError
         message = "A category with name %r already exists." % category.get_name()
         ids = self._get_ids_with_name(category.get_name())
         if self._does_category_exists(category):
@@ -105,14 +107,12 @@ class Events(object):
         return False
 
     def _ensure_parent_exists(self, category):
-        from timelinelib.data.db import InvalidOperationError
         message = "Parent category not in db."
         if (category.get_parent() is not None and
             category.get_parent() not in self.categories):
             raise InvalidOperationError(message)
 
     def _ensure_no_circular_parent(self, category):
-        from timelinelib.data.db import InvalidOperationError
         message = "Circular category parent."
         parent = category.get_parent()
         while parent is not None:

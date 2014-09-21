@@ -18,8 +18,8 @@
 
 from specs.utils import a_category_with
 from specs.utils import TestCase
+from timelinelib.data.events import InvalidOperationError
 from timelinelib.data import Events
-from timelinelib.data.db import InvalidOperationError
 
 
 class EventsTestCase(TestCase):

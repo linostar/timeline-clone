@@ -22,14 +22,11 @@ from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data import Events
 from timelinelib.data.undohandler import UndoHandler
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
-
-
-class InvalidOperationError(Exception):
-    pass
 
 
 class MemoryDB(Observable):
@@ -94,10 +91,10 @@ class MemoryDB(Observable):
     def save_event(self, event):
         if (event.get_category() is not None and
             event.get_category() not in self._events.categories):
-            raise InvalidOperationError("Event's category not in db.")
+            raise TimelineIOError("Event's category not in db.")
         if event not in self._events.events:
             if event.has_id():
-                raise InvalidOperationError("Event with id %s not found in db." % event.get_id())
+                raise TimelineIOError("Event with id %s not found in db." % event.get_id())
             self._events.events.append(event)
             event.set_id(get_process_unique_id())
             if event.is_subevent():
@@ -175,9 +172,13 @@ class MemoryDB(Observable):
         return containers
 
     def save_category(self, category):
-        self._events.save_category(category)
-        self._save_if_not_disabled()
-        self._notify(STATE_CHANGE_CATEGORY)
+        try:
+            self._events.save_category(category)
+        except Exception, e:
+            raise TimelineIOError("Saving category failed: %s" % e)
+        else:
+            self._save_if_not_disabled()
+            self._notify(STATE_CHANGE_CATEGORY)
 
     def loaded(self):
         self._undo_handler.enable(True)
@@ -207,7 +208,7 @@ class MemoryDB(Observable):
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_CATEGORY)
         else:
-            raise InvalidOperationError("Category not in db.")
+            raise TimelineIOError("Category not in db.")
 
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.displayed_period
@@ -218,7 +219,7 @@ class MemoryDB(Observable):
     def save_view_properties(self, view_properties):
         if view_properties.displayed_period is not None:
             if not view_properties.displayed_period.is_period():
-                raise InvalidOperationError(_("Displayed period must be > 0."))
+                raise TimelineIOError(_("Displayed period must be > 0."))
             self.displayed_period = view_properties.displayed_period
         self.hidden_categories = []
         for cat in self._events.categories:
