@@ -17,6 +17,8 @@
 
 
 from specs.utils import a_category_with
+from specs.utils import an_event
+from specs.utils import an_event_with
 from specs.utils import TestCase
 from timelinelib.data.events import InvalidOperationError
 from timelinelib.data import Events
@@ -99,3 +101,30 @@ class describe_saving_categories(EventsTestCase):
         self.assertRaises(InvalidOperationError,
                           self.events.save_category,
                           category)
+
+
+class describe_saving_events(EventsTestCase):
+
+    def test_can_save(self):
+        event = an_event()
+        self.events.save_event(event)
+        self.assertEqual(self.events.get_all(), [event])
+
+    def test_can_update(self):
+        self.events.save_event(an_event())
+        event = self.events.get_first()
+        event.set_text("I'm the first event")
+        self.events.save_event(event)
+        self.assertEqual(self.events.get_all(), [event])
+
+    def test_fails_if_category_does_not_exist(self):
+        self.assertRaises(InvalidOperationError,
+                          self.events.save_event,
+                          an_event_with(category=a_category_with(name="work")))
+
+
+    def test_fails_if_existing_event_does_not_seem_to_be_found(self):
+        event = an_event()
+        event.set_id(15)
+        self.assertRaises(InvalidOperationError,
+                          self.events.save_event, event)

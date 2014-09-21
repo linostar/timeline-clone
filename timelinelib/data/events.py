@@ -122,16 +122,31 @@ class Events(object):
                 parent = parent.get_parent()
 
     def save_event(self, event):
-        if (event.get_category() is not None and
-            event.get_category() not in self.categories):
-            raise InvalidOperationError("Event's category not in db.")
+        self._ensure_event_exists_for_update(event)
+        self._ensure_event_category_exists(event)
         if event not in self.events:
-            if event.has_id():
-                raise InvalidOperationError("Event with id %s not found in db." % event.get_id())
             self.events.append(event)
             event.set_id(get_process_unique_id())
             if event.is_subevent():
                 self._register_subevent(event)
+
+    def _ensure_event_exists_for_update(self, event):
+        message = "Updating an event that does not exist."
+        if event.has_id():
+            if not self._does_event_exists(event):
+                raise InvalidOperationError(message)
+
+    def _does_event_exists(self, an_event):
+        for stored_event in self.get_all():
+            if stored_event.get_id() == an_event.get_id():
+                return True
+        return False
+
+    def _ensure_event_category_exists(self, event):
+        message = "Event's category not in db."
+        if (event.get_category() is not None and
+            event.get_category() not in self.categories):
+            raise InvalidOperationError(message)
 
     def _register_subevent(self, subevent):
         container_events = [event for event in self.events
