@@ -78,7 +78,7 @@ class ViewProperties(Observable):
             return self.is_event_with_category_visible(event.category)
 
     def is_selected(self, event):
-        return event.id in self.selected_event_ids
+        return event.get_id() in self.selected_event_ids
 
     def clear_selected(self):
         if self.selected_event_ids:
@@ -100,17 +100,17 @@ class ViewProperties(Observable):
         self._notify()
 
     def set_selected(self, event, is_selected=True):
-        if is_selected == True and not event.id in self.selected_event_ids:
-            self.selected_event_ids.append(event.id)
+        if is_selected == True and not event.get_id() in self.selected_event_ids:
+            self.selected_event_ids.append(event.get_id())
             self._notify()
-        elif is_selected == False and event.id in self.selected_event_ids:
-            self.selected_event_ids.remove(event.id)
+        elif is_selected == False and event.get_id() in self.selected_event_ids:
+            self.selected_event_ids.remove(event.get_id())
             self._notify()
 
     def set_only_selected(self, event, is_selected):
         if is_selected:
-            if self.selected_event_ids != [event.id]:
-                self.selected_event_ids = [event.id]
+            if self.selected_event_ids != [event.get_id()]:
+                self.selected_event_ids = [event.get_id()]
                 self._notify()
         else:
             self.clear_selected()

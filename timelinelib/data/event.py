@@ -241,7 +241,7 @@ def clone_event_list(eventlist):
         events = []
         for event in eventlist:
             new_event = event.clone()
-            new_event.set_id(event.id)
+            new_event.set_id(event.get_id())
             events.append(new_event)
         return events
     def get_containers(cloned_events):

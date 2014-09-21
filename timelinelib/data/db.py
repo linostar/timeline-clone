@@ -97,7 +97,7 @@ class MemoryDB(Observable):
             raise InvalidOperationError("Event's category not in db.")
         if event not in self._events.events:
             if event.has_id():
-                raise InvalidOperationError("Event with id %s not found in db." % event.id)
+                raise InvalidOperationError("Event with id %s not found in db." % event.get_id())
             self._events.events.append(event)
             event.set_id(get_process_unique_id())
             if event.is_subevent():
@@ -269,13 +269,13 @@ class MemoryDB(Observable):
 
     def undo_enabled(self):
         return self._undo_enabled
-    
+
     def redo_enabled(self):
         return self._redo_enabled
-    
+
     def find_event_with_id(self, id):
         for e in self._events.events:
-            if e.id == id:
+            if e.get_id() == id:
                 return e
         return None
 

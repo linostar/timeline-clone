@@ -271,11 +271,11 @@ class describe_memory_db(unittest.TestCase):
 
     def testSaveExistingEvent(self):
         self.db.save_event(self.e1)
-        id_before = self.e1.id
+        id_before = self.e1.get_id()
         self.e1.text = "new text"
         self.db.save_event(self.e1)
         tp = gregorian_period("12 Feb 2010", "14 Feb 2010")
-        self.assertEqual(id_before, self.e1.id)
+        self.assertEqual(id_before, self.e1.get_id())
         self.assertEqual(self.db.get_events(tp), [self.e1])
         self.assertEqual(self.db.get_all_events(), [self.e1])
         self.assertEqual(self.db_listener.call_count, 2) # 1 save
@@ -304,7 +304,7 @@ class describe_memory_db(unittest.TestCase):
         self.assertEqual(len(self.db.get_events(tp)), 1)
         self.assertTrue(self.e2 in self.db.get_events(tp))
         # Delete second (by id)
-        self.db.delete_event(self.e2.id)
+        self.db.delete_event(self.e2.get_id())
         self.assertFalse(self.e2.has_id())
         self.assertEqual(len(self.db.get_events(tp)), 0)
         # Check events
