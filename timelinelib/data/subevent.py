@@ -58,7 +58,7 @@ class Subevent(Event):
 
     def clone(self):
         # Objects of type datetime are immutable.
-        new_event = Subevent(self.time_type, self.time_period.start_time,
+        new_event = Subevent(self.get_time_type(), self.time_period.start_time,
                           self.time_period.end_time, self.text, self.category,
                           None, self.container_id)
         # Description is immutable

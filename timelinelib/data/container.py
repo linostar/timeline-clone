@@ -57,7 +57,7 @@ class Container(Event):
 
     def clone(self):
         # Objects of type datetime are immutable.
-        new_event = Container(self.time_type, self.time_period.start_time,
+        new_event = Container(self.get_time_type(), self.time_period.start_time,
                           self.time_period.end_time, self.text, self.category,
                           self.container_id)
         # Description is immutable

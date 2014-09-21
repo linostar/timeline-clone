@@ -85,13 +85,14 @@ class SubeventCloningSpec(unittest.TestCase):
         self.given_subevent_event()
         cloned_event = self.event.clone()
         self.assertTrue(self.event != cloned_event)
-        self.assertEqual(cloned_event.time_type, self.event.time_type)        
-        self.assertEqual(cloned_event.time_period, self.event.time_period)        
-        self.assertEqual(cloned_event.text, self.event.text)        
-        self.assertEqual(cloned_event.category, self.event.category)        
-        self.assertEqual(cloned_event.fuzzy, self.event.fuzzy)        
-        self.assertEqual(cloned_event.locked, self.event.locked)        
-        self.assertEqual(cloned_event.ends_today, self.event.ends_today)        
+        self.assertEqual(cloned_event.get_time_type(),
+                         self.event.get_time_type())
+        self.assertEqual(cloned_event.time_period, self.event.time_period)
+        self.assertEqual(cloned_event.text, self.event.text)
+        self.assertEqual(cloned_event.category, self.event.category)
+        self.assertEqual(cloned_event.fuzzy, self.event.fuzzy)
+        self.assertEqual(cloned_event.locked, self.event.locked)
+        self.assertEqual(cloned_event.ends_today, self.event.ends_today)
 
     def given_subevent_event(self):
         self.event = Subevent(self.db.get_time_type(), self.now, self.now, "evt")
