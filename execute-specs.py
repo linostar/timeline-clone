@@ -28,56 +28,12 @@ import unittest
 ONLY_FLAG = "--only"
 
 
-class TestFileList(object):
-
-    def __init__(self):
-        self._modules = []
-
-    def find(self):
-        self._find_specs()
-        self._find_doctests()
-
-    def _find_specs(self):
-        for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
-            if file.endswith(".py") and file != "__init__.py":
-                module_name = os.path.basename(file)[:-3]
-                abs_module_name = "specs.%s" % module_name
-                self._modules.append(("spec", abs_module_name))
-
-    def _find_doctests(self):
-        root_dir = os.path.abspath(os.path.dirname(__file__))
-        timelinelib_dir = os.path.join(root_dir, "timelinelib")
-        for module in find_modules(timelinelib_dir):
-            self._modules.append(("doctest", module))
-
-    def shuffle(self):
-        random.shuffle(self._modules)
-
-    def show(self):
-        for x in self._modules:
-            print(x)
-
-    def get_suite(self, include_test_function):
-        suite = unittest.TestSuite()
-        for (test_type, module) in self._modules:
-            {
-                "spec": load_test_cases_from_module_name,
-                "doctest": load_doc_test_from_module_name,
-            }[test_type](suite, module, include_test_function)
-        return shuffled_suite(suite)
-
-
 def execute_specs(args):
     setup_displayhook()
     setup_paths()
     install_gettext_in_builtin_namespace()
     disable_monitoring()
-
-    t = TestFileList()
-    t.find()
-
-    suite = t.get_suite(create_include_test_function(args))
-
+    suite = create_suite(create_include_test_function(args))
     all_pass = execute_suite(suite, select_verbosity(args))
     return all_pass
 
@@ -121,11 +77,18 @@ def create_include_test_function(args):
         return lambda test: True
 
 
-def select_verbosity(args):
-    if ONLY_FLAG in args:
-        return 2
-    else:
-        return 1
+def create_suite(include_test_function):
+    return suite_from_modules(find_test_modules(), include_test_function)
+
+
+def suite_from_modules(modules, include_test_function):
+    suite = unittest.TestSuite()
+    for (test_type, module) in modules:
+        {
+            "spec": load_test_cases_from_module_name,
+            "doctest": load_doc_test_from_module_name,
+        }[test_type](suite, module, include_test_function)
+    return shuffled_suite(suite)
 
 
 def load_test_cases_from_module_name(suite, module_name, include_test_function):
@@ -134,6 +97,44 @@ def load_test_cases_from_module_name(suite, module_name, include_test_function):
     module_suite = unittest.defaultTestLoader.loadTestsFromModule(module)
     filtered = filter_suite(module_suite, include_test_function)
     suite.addTest(filtered)
+
+
+def load_doc_test_from_module_name(suite, module_name, include_test_function):
+    __import__(module_name)
+    module = sys.modules[module_name]
+    try:
+        module_suite = doctest.DocTestSuite(module)
+    except ValueError:
+        # No tests found
+        pass
+    else:
+        filtered = filter_suite(module_suite, include_test_function)
+        suite.addTest(filtered)
+
+
+def find_test_modules():
+    modules = find_specs() + find_doctests()
+    random.shuffle(modules)
+    return modules
+
+
+def find_specs():
+    specs = []
+    for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
+        if file.endswith(".py") and file != "__init__.py":
+            module_name = os.path.basename(file)[:-3]
+            abs_module_name = "specs.%s" % module_name
+            specs.append(("spec", abs_module_name))
+    return specs
+
+
+def find_doctests():
+    doctests = []
+    root_dir = os.path.abspath(os.path.dirname(__file__))
+    timelinelib_dir = os.path.join(root_dir, "timelinelib")
+    for module in find_modules(timelinelib_dir):
+        doctests.append(("doctest", module))
+    return doctests
 
 
 def find_modules(path):
@@ -148,19 +149,6 @@ def find_modules(path):
                 for x in find_modules(os.path.join(path, file)):
                     module_names.append("%s.%s" % (os.path.basename(path), x))
     return module_names
-
-
-def load_doc_test_from_module_name(suite, module_name, include_test_function):
-    __import__(module_name)
-    module = sys.modules[module_name]
-    try:
-        module_suite = doctest.DocTestSuite(module)
-    except ValueError:
-        # No tests found
-        pass
-    else:
-        filtered = filter_suite(module_suite, include_test_function)
-        suite.addTest(filtered)
 
 
 def filter_suite(test, include_test_function):
@@ -193,6 +181,13 @@ def extract_test_cases(suite):
 def execute_suite(suite, verbosity):
     res = unittest.TextTestRunner(verbosity=verbosity).run(suite)
     return res.wasSuccessful()
+
+
+def select_verbosity(args):
+    if ONLY_FLAG in args:
+        return 2
+    else:
+        return 1
 
 
 if __name__ == '__main__':
