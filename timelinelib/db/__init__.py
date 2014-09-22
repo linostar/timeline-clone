@@ -18,7 +18,6 @@
 
 import os.path
 
-from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.data import Category
 from timelinelib.data import Event
 from timelinelib.data import TimePeriod
@@ -88,6 +87,7 @@ def db_open_newtype_timeline(path, timetype=None):
         else:
             db.set_time_type(timetype)
     def save_callback():
+        from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
         export_db_to_timeline_xml(db, path)
     db.register_save_callback(save_callback)
     db.set_should_lock(True)
