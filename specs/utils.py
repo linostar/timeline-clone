@@ -122,9 +122,9 @@ class TestCase(unittest.TestCase):
 
     def assertObjectEquality(self, create_fn, modify_fn):
         (one, two, three) = create_fn()
-        self.assertIsNot(one, two)
-        self.assertIsNot(one, three)
-        self.assertIsNot(two, three)
+        self.assertTrue(one is not two)
+        self.assertTrue(one is not three)
+        self.assertTrue(two is not three)
         self.assertEqual(one, two)
         self.assertEqual(two, three)
         self.assertNotEqual(one, None)
