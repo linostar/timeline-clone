@@ -45,6 +45,7 @@ class Event(object):
                 self.get_category() == other.get_category() and
                 self.get_description() == other.get_description() and
                 self.get_hyperlink() == other.get_hyperlink() and
+                self.get_progress() == other.get_progress() and
                 self.get_icon() == other.get_icon())
 
     def __ne__(self, other):
@@ -130,8 +131,15 @@ class Event(object):
     def get_hyperlink(self):
         return self.get_data("hyperlink")
 
+    def get_progress(self):
+        return self.get_data("progress")
+
     def set_hyperlink(self, hyperlink):
         self.set_data("hyperlink", hyperlink)
+        return self
+
+    def set_progress(self, progress):
+        self.set_data("progress", progress)
         return self
 
     def update(self, start_time, end_time, text, category=None, fuzzy=None,
@@ -240,6 +248,7 @@ class Event(object):
         # application.
         new_event.set_data("icon", self.get_data("icon"))
         new_event.set_data("hyperlink", self.get_data("hyperlink"))
+        new_event.set_data("progress", self.get_data("progress"))
         new_event.set_fuzzy(self.get_fuzzy())
         new_event.set_locked(self.get_locked())
         new_event.set_ends_today(self.get_ends_today())

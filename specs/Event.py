@@ -48,6 +48,7 @@ class describe_event(TestCase):
         self.assertEqual(event.get_description(), None)
         self.assertEqual(event.get_icon(), None)
         self.assertEqual(event.get_hyperlink(), None)
+        self.assertEqual(event.get_progress(), None)
 
     def test_can_set_values(self):
         self.assertEqual(
@@ -83,12 +84,25 @@ class describe_event(TestCase):
         self.assertEqual(
             self.an_event.set_hyperlink("http://google.com").get_hyperlink(),
             "http://google.com")
+        self.assertEqual(
+            self.an_event.set_progress(88).get_progress(),
+            88)
 
     def test_can_be_compared(self):
         self.assertObjectEquality(self.create_equal_events, self.modify_event)
 
+    def test_can_be_cloned(self):
+        (original, _, _) = self.create_equal_events()
+        clone = original.clone()
+        self.assertIsCloneOf(clone, original)
+
     def create_equal_events(self):
-        return (an_event(), an_event(), an_event())
+        events = []
+        for _ in range(3):
+            event = an_event()
+            event.set_progress(66)
+            events.append(event)
+        return events
 
     def modify_event(self, event):
         if event.get_id():
@@ -107,6 +121,7 @@ class describe_event(TestCase):
             lambda event: event.clone().set_icon("not really an icon"),
             lambda event: event.clone().set_description("another description"),
             lambda event: event.clone().set_hyperlink("http://another.com"),
+            lambda event: event.clone().set_progress(6),
         ])(event)
 
     def setUp(self):
