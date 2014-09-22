@@ -16,8 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
-
+from specs.utils import TestCase
 from timelinelib.data.db import MemoryDB
 from timelinelib.data.event import clone_event_list
 from timelinelib.data import Container
@@ -25,7 +24,7 @@ from timelinelib.data import Event
 from timelinelib.data import Subevent
 
 
-class EventSpec(unittest.TestCase):
+class EventSpec(TestCase):
 
     def testEventPropertyEndsTodayCanBeUpdated(self):
         self.given_default_point_event()
@@ -114,7 +113,7 @@ class EventSpec(unittest.TestCase):
                            self.time("2000-01-0%d %d:%d:01" % (days, hours, minutes)), "period evt")
 
 
-class EventCosntructorSpec(unittest.TestCase):
+class EventCosntructorSpec(TestCase):
 
     def testEventPropertiesDefaultsToFalse(self):
         self.given_default_point_event()
@@ -153,7 +152,7 @@ class EventCosntructorSpec(unittest.TestCase):
         self.now = self.db.get_time_type().now()
 
 
-class EventFunctionsSpec(unittest.TestCase):
+class EventFunctionsSpec(TestCase):
 
     def test_zero_time_span(self):
         self.given_default_point_event()
@@ -168,12 +167,12 @@ class EventFunctionsSpec(unittest.TestCase):
         self.now = self.db.get_time_type().now()
 
 
-class EventCloningSpec(unittest.TestCase):
+class EventCloningSpec(TestCase):
 
     def test_cloning_returns_new_object(self):
         self.given_default_point_event()
         cloned_event = self.event.clone()
-        self.assertTrue(self.event != cloned_event)
+        self.assertTrue(self.event is not cloned_event)
         self.assertEqual(cloned_event.get_time_type(),
                          self.event.get_time_type())
         self.assertEqual(cloned_event.get_time_period(),
@@ -207,9 +206,7 @@ class EventCloningSpec(unittest.TestCase):
     def test_container_relationships_are_maintained_when_cloning(self):
         self.given_container_with_subevents()
         cloned_event_list = clone_event_list(self.events)
-        self.assertEqual(len(self.events), len(cloned_event_list))
-        for i in range(len(self.events)):
-            self.assertTrue(self.events[i] != cloned_event_list[i])
+        self.assertListIsCloneOf(cloned_event_list, self.events)
         self.assertTrue(isinstance(cloned_event_list[0], Container))
         self.assertTrue(isinstance(cloned_event_list[1], Subevent))
         self.assertTrue(isinstance(cloned_event_list[2], Subevent))
@@ -217,7 +214,7 @@ class EventCloningSpec(unittest.TestCase):
         self.assertTrue(cloned_event_list[2] in cloned_event_list[0].events)
         self.assertEquals(cloned_event_list[1].container_id, cloned_event_list[0].container_id)
         self.assertEquals(cloned_event_list[2].container_id, cloned_event_list[0].container_id)
-            
+
     def given_container_with_subevents(self):
         self.container = Container(self.db.get_time_type(), self.now, self.now, "container", category=None, cid=1)
         self.subevent1 = Subevent(self.db.get_time_type(), self.now, self.now, "sub1", category=None, container=self.container, cid=1)

@@ -33,6 +33,27 @@ class Event(object):
         self.update(start_time, end_time, text, category)
         self.data = {}
 
+    def __eq__(self, other):
+        return (isinstance(other, Event) and
+                self.get_time_type() == other.get_time_type() and
+                self.get_fuzzy() == other.get_fuzzy() and
+                self.get_locked() == other.get_locked() and
+                self.get_ends_today() == other.get_ends_today() and
+                self.get_id() == other.get_id() and
+                self.get_time_period() == other.get_time_period() and
+                self.get_text() == other.get_text() and
+                self.get_category() == other.get_category() and
+                self.get_description() == other.get_description() and
+                self.get_hyperlink() == other.get_hyperlink() and
+                self.get_icon() == other.get_icon())
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __repr__(self):
+        return "Event<id=%r, text=%r, time_period=%r, ...>" % (
+            self.get_id(), self.get_text(), self.get_time_period())
+
     def get_id(self):
         return self.id
 

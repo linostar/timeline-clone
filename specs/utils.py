@@ -120,6 +120,18 @@ class TestCase(unittest.TestCase):
             if element is object_:
                 self.fail("%r was in list" % object_)
 
+    def assertObjectEquality(self, create_fn, modify_fn):
+        (one, two, three) = create_fn()
+        self.assertIsNot(one, two)
+        self.assertIsNot(one, three)
+        self.assertIsNot(two, three)
+        self.assertEqual(one, two)
+        self.assertEqual(two, three)
+        self.assertNotEqual(one, None)
+        for _ in range(20):
+            different = modify_fn(three)
+            self.assertNotEqual(one, different)
+
 
 class TmpDirTestCase(TestCase):
 

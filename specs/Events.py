@@ -44,6 +44,12 @@ class describe_cloning(EventsTestCase):
         self.assertIsCloneOf(clone.get_category_by_name("meetings").get_parent(),
                              self.events.get_category_by_name("work"))
 
+    def test_events_are_cloned(self):
+        self.events.save_event(an_event())
+        clone = self.events.clone()
+        self.assertListIsCloneOf(clone.get_all(),
+                                 self.events.get_all())
+
 
 class describe_saving_categories(EventsTestCase):
 

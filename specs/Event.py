@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import random
+
 from specs.utils import a_category_with
 from specs.utils import an_event
 from specs.utils import gregorian_period
@@ -24,6 +26,7 @@ from specs.utils import TestCase
 from timelinelib.data import Event
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType
+from timelinelib.time.timeline import delta_from_days
 
 
 class describe_event(TestCase):
@@ -80,6 +83,31 @@ class describe_event(TestCase):
         self.assertEqual(
             self.an_event.set_hyperlink("http://google.com").get_hyperlink(),
             "http://google.com")
+
+    def test_can_be_compared(self):
+        self.assertObjectEquality(self.create_equal_events, self.modify_event)
+
+    def create_equal_events(self):
+        return (an_event(), an_event(), an_event())
+
+    def modify_event(self, event):
+        if event.get_id():
+            new_id = event.get_id() + 1
+        else:
+            new_id = 8
+        return random.choice([
+            lambda event: event.clone().set_time_type(None),
+            lambda event: event.clone().set_fuzzy(not event.get_fuzzy()),
+            lambda event: event.clone().set_locked(not event.get_locked()),
+            lambda event: event.clone().set_ends_today(not event.get_ends_today()),
+            lambda event: event.clone().set_id(new_id),
+            lambda event: event.clone().set_time_period(event.get_time_period().move_delta(delta_from_days(1))),
+            lambda event: event.clone().set_text("was: %s" % event.get_text()),
+            lambda event: event.clone().set_category(a_category_with(name="another category name")),
+            lambda event: event.clone().set_icon("not really an icon"),
+            lambda event: event.clone().set_description("another description"),
+            lambda event: event.clone().set_hyperlink("http://another.com"),
+        ])(event)
 
     def setUp(self):
         self.an_event = an_event()

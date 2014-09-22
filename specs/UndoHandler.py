@@ -61,8 +61,8 @@ class UndoHandlerSpec(unittest.TestCase):
         self.db.save_event(an_event())
         self.undo_handler.enable(True)
         self.undo_handler.save()
-        self.assertFalse(self.undo_handler._undo_buffer[0].events[0] == self.db.get_all_events()[0])
-        self.assertFalse(self.undo_handler._undo_buffer[0].events[1] == self.db.get_all_events()[1])
+        self.assertFalse(self.undo_handler._undo_buffer[0].events[0] is self.db.get_all_events()[0])
+        self.assertFalse(self.undo_handler._undo_buffer[0].events[1] is self.db.get_all_events()[1])
 
     def test_save_of_empty_timeline(self):
         self.given_empty_timeline()

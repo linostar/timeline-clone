@@ -105,7 +105,7 @@ class ContainerCloningSpec(unittest.TestCase):
     def test_cloning_returns_new_object(self):
         self.given_container_event()
         cloned_event = self.event.clone()
-        self.assertTrue(self.event != cloned_event)
+        self.assertTrue(self.event is not cloned_event)
         self.assertEqual(cloned_event.get_time_type(),
                          self.event.get_time_type())
         self.assertEqual(cloned_event.get_time_period(),
