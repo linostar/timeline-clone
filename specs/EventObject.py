@@ -62,10 +62,6 @@ class EventSpec(TestCase):
         self.given_point_event()
         self.assertEqual(u"", self.event.get_duration_label())
 
-    def test_point_event_has_an_empty_duration_label(self):
-        self.given_point_event()
-        self.assertEqual(u"", self.event._get_duration_label())
-
     def test_duration_label_for_period_events(self):
         cases = ( (0,0,1, "1 #minute#"),
                   (0,1,0, "1 #hour#"),
