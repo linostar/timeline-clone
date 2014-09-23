@@ -24,7 +24,7 @@ from timelinelib.data import Event
 from timelinelib.data import Subevent
 
 
-class EventSpec(TestCase):
+class describe_event(TestCase):
 
     def testEventPropertyEndsTodayCanBeUpdated(self):
         self.given_default_point_event()
@@ -109,7 +109,7 @@ class EventSpec(TestCase):
                            self.time("2000-01-0%d %d:%d:01" % (days, hours, minutes)), "period evt")
 
 
-class EventCosntructorSpec(TestCase):
+class descrive_event_construction(TestCase):
 
     def testEventPropertiesDefaultsToFalse(self):
         self.given_default_point_event()
@@ -148,7 +148,7 @@ class EventCosntructorSpec(TestCase):
         self.now = self.db.get_time_type().now()
 
 
-class EventFunctionsSpec(TestCase):
+class describe_event_functions(TestCase):
 
     def test_zero_time_span(self):
         self.given_default_point_event()
@@ -163,7 +163,7 @@ class EventFunctionsSpec(TestCase):
         self.now = self.db.get_time_type().now()
 
 
-class EventCloningSpec(TestCase):
+class descrive_event_cloning(TestCase):
 
     def test_cloning_returns_new_object(self):
         self.given_default_point_event()
