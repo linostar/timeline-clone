@@ -22,6 +22,7 @@ from timelinelib.data.event import clone_event_list
 from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data import Subevent
+from timelinelib.data.timeperiod import TimePeriod
 
 
 class describe_event(TestCase):
@@ -169,35 +170,77 @@ class describe_event_cloning(TestCase):
         self.given_default_point_event()
         cloned_event = self.event.clone()
         self.assertTrue(self.event is not cloned_event)
-        self.assertEqual(cloned_event.get_time_type(),
-                         self.event.get_time_type())
-        self.assertEqual(cloned_event.get_time_period(),
-                         self.event.get_time_period())
-        self.assertEqual(cloned_event.get_text(), self.event.get_text())
-        self.assertEqual(cloned_event.get_category(), self.event.get_category())
-        self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
-        self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
-        self.assertEqual(cloned_event.get_ends_today(),
-                         self.event.get_ends_today())
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_copies_the_id(self):
+        self.given_default_point_event()
+        self.event.set_id(999)
+        cloned_event = self.event.clone()
+        self.assertTrue(cloned_event.get_id() != self.event.get_id())
+        self.assertTrue(cloned_event.get_id() == None)
 
     def test_cloning_dont_change_fuzzy_attribute(self):
         self.given_default_point_event()
         self.event.set_fuzzy(True)
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
+        self.assertEqual(cloned_event, self.event)
 
     def test_cloning_dont_change_locked_attribute(self):
         self.given_default_point_event()
         self.event.set_locked(True)
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
+        self.assertEqual(cloned_event, self.event)
 
     def test_cloning_dont_change_ends_today_attribute(self):
         self.given_default_point_event()
         self.event.set_ends_today(True)
         cloned_event = self.event.clone()
-        self.assertEqual(cloned_event.get_ends_today(),
-                         self.event.get_ends_today())
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_change_description_attribute(self):
+        self.given_default_point_event()
+        self.event.set_progress(75) 
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_change_icon_attribute(self):
+        self.given_default_point_event()
+        self.event.set_icon("icon") 
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_change_hyperlink_attribute(self):
+        self.given_default_point_event()
+        self.event.set_hyperlink("hyperlink") 
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_change_progress_attribute(self):
+        self.given_default_point_event()
+        self.event.set_description("Description") 
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_change_category_attribute(self):
+        self.given_default_point_event()
+        self.event.set_category("Category") 
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_change_text_attribute(self):
+        self.given_default_point_event()
+        self.event.set_text("Text") 
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event, self.event)
+
+    def test_cloning_dont_change_time_periof_attribute(self):
+        self.given_default_point_event()
+        time_period = TimePeriod(self.event.time_type,
+                                 self.event.time_type.parse_time("2010-08-01 13:44:00"),
+                                 self.event.time_type.parse_time("2014-08-01 13:44:00"))
+        self.event.set_time_period(time_period) 
+        cloned_event = self.event.clone()
+        self.assertEqual(cloned_event, self.event)
 
     def test_container_relationships_are_maintained_when_cloning(self):
         self.given_container_with_subevents()
