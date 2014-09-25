@@ -163,7 +163,7 @@ class describe_event_functions(TestCase):
         self.now = self.db.get_time_type().now()
 
 
-class descrive_event_cloning(TestCase):
+class describe_event_cloning(TestCase):
 
     def test_cloning_returns_new_object(self):
         self.given_default_point_event()
