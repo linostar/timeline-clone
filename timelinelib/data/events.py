@@ -19,6 +19,7 @@
 from timelinelib.data.category import clone_categories_list
 from timelinelib.data.event import clone_event_list
 from timelinelib.data.idnumber import get_process_unique_id
+from timelinelib.data.container import Container
 
 
 class InvalidOperationError(Exception):
