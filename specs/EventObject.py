@@ -109,7 +109,7 @@ class describe_event(TestCase):
                            self.time("2000-01-0%d %d:%d:01" % (days, hours, minutes)), "period evt")
 
 
-class descrive_event_construction(TestCase):
+class describe_event_construction(TestCase):
 
     def testEventPropertiesDefaultsToFalse(self):
         self.given_default_point_event()
