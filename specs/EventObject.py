@@ -245,6 +245,15 @@ class describe_event_cloning(TestCase):
         clone = event.clone()
         self.assertEqual(clone, event)
 
+    def test_cloned_time_periods_are_not_the_same_object(self):
+        event = self.point_event()
+        time_period = TimePeriod(event.time_type,
+                                 event.time_type.parse_time("2010-08-01 13:44:00"),
+                                 event.time_type.parse_time("2014-08-01 13:44:00"))
+        event.set_time_period(time_period) 
+        clone = event.clone()
+        self.assertTrue(time_period is not clone.get_time_period())
+
     def test_container_relationships_are_maintained_when_cloning(self):
         self.given_container_with_subevents()
         cloned_event_list = clone_event_list(self.events)
