@@ -20,6 +20,7 @@ import random
 
 from specs.utils import a_category_with
 from specs.utils import an_event
+from specs.utils import an_event_with
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
 from specs.utils import TestCase
@@ -123,6 +124,39 @@ class describe_event(TestCase):
             lambda event: event.clone().set_hyperlink("http://another.com"),
             lambda event: event.clone().set_progress(6),
         ])(event)
+
+    def test_ends_today_can_be_changed_with_update(self):
+        event = an_event_with(ends_today=False)
+        event.update(event.get_time_period().start_time, event.get_time_period().end_time, event.get_text(), ends_today=True)
+        self.assertTrue(event.get_ends_today())
+
+    def test_fuzzy_can_be_changed_with_update(self):
+        event = an_event_with(fuzzy=False)
+        event.update(event.get_time_period().start_time, event.get_time_period().end_time, event.get_text(), fuzzy=True)
+        self.assertTrue(event.get_fuzzy())
+
+    def test_locked_can_be_changed_with_update(self):
+        event = an_event_with(locked=False)
+        event.update(event.get_time_period().start_time, event.get_time_period().end_time, event.get_text(), locked=True)
+        self.assertTrue(event.get_locked())
+
+    def test_ends_today_can_not_be_set_with_update_on_locked_event(self):
+        event = an_event_with(ends_today=False, locked=True)
+        event.update(event.get_time_period().start_time, event.get_time_period().end_time, event.get_text(), ends_today=True)
+        self.assertFalse(event.get_ends_today())
+
+    def test_ends_today_can_not_be_unset_with_update_on_locked_event(self):
+        event = an_event_with(ends_today=True, locked=True)
+        event.update(event.get_time_period().start_time, event.get_time_period().end_time, event.get_text(), ends_today=False)
+        self.assertTrue(event.get_ends_today())
+
+    def test_point_event_has_a_label(self):
+        event = an_event_with(text="foo", time="11 Jul 2014 10:11")
+        self.assertEqual(u"foo (11 #Jul# 2014 10:11)", event.get_label())
+
+    def test_point_event_has_an_empty_duration_label(self):
+        event = an_event_with(text="foo", time="11 Jul 2014 10:11")
+        self.assertEqual(u"", event._get_duration_label())
 
     def setUp(self):
         self.an_event = an_event()

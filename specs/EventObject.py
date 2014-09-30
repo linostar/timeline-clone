@@ -23,42 +23,9 @@ from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data import Subevent
 from timelinelib.data.timeperiod import TimePeriod 
-from specs.utils import an_event_with
 
-class describe_event(TestCase):
 
-    def test_ends_today_can_be_changed_with_update(self):
-        event = an_event_with(ends_today=False)
-        event.update(self.now, self.now, event.get_text(), ends_today=True)
-        self.assertTrue(event.get_ends_today())
-
-    def test_fuzzy_can_be_changed_with_update(self):
-        event = an_event_with(fuzzy=False)
-        event.update(self.now, self.now, event.get_text(), fuzzy=True)
-        self.assertTrue(event.get_fuzzy())
-
-    def test_locked_can_be_changed_with_update(self):
-        event = an_event_with(locked=False)
-        event.update(self.now, self.now, event.get_text(), locked=True)
-        self.assertTrue(event.get_locked())
-
-    def test_ends_today_can_not_be_set_with_update_on_locked_event(self):
-        event = an_event_with(ends_today=False, locked=True)
-        event.update(self.now, self.now, event.get_text(), ends_today=True)
-        self.assertFalse(event.get_ends_today())
-
-    def test_ends_today_can_not_be_unset_with_update_on_locked_event(self):
-        event = an_event_with(ends_today=True, locked=True)
-        event.update(self.now, self.now, event.get_text(), ends_today=False)
-        self.assertTrue(event.get_ends_today())
-
-    def test_point_event_has_a_label(self):
-        event = an_event_with(text="foo", time="11 Jul 2014 10:11")
-        self.assertEqual(u"foo (11 #Jul# 2014 10:11)", event.get_label())
-
-    def test_point_event_has_an_empty_duration_label(self):
-        event = an_event_with(text="foo", time="11 Jul 2014 10:11")
-        self.assertEqual(u"", event._get_duration_label())
+class describe_duration_label_for_period_event(TestCase):
 
     def test_duration_label_for_period_events(self):
         cases = ( (0,0,1, "1 #minute#"),
