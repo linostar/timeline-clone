@@ -131,12 +131,12 @@ class Event(object):
     def get_hyperlink(self):
         return self.get_data("hyperlink")
 
-    def get_progress(self):
-        return self.get_data("progress")
-
     def set_hyperlink(self, hyperlink):
         self.set_data("hyperlink", hyperlink)
         return self
+
+    def get_progress(self):
+        return self.get_data("progress")
 
     def set_progress(self, progress):
         self.set_data("progress", progress)
