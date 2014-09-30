@@ -28,6 +28,7 @@ from timelinelib.data import Event
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType
 from timelinelib.time.timeline import delta_from_days
+from timelinelib.data.timeperiod import TimePeriod 
 
 
 class describe_event(TestCase):
@@ -216,3 +217,95 @@ class describe_event_functions(TestCase):
     def test_zero_time_span(self):
         event = an_event()
         self.assertEqual(event.get_time_type().get_zero_delta(), event.time_span())
+
+
+class describe_event_cloning(TestCase):
+
+    def test_cloning_returns_new_object(self):
+        event = an_event()
+        clone = event.clone()
+        self.assertTrue(clone is not event)
+
+    def test_cloning_returns_object_equal_to_event(self):
+        event = an_event()
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_id_of_clone_is_none(self):
+        event = an_event()
+        event.set_id(999)
+        clone = event.clone()
+        self.assertEqual(clone.get_id(), None)
+
+    def test_cloning_copies_fuzzy_attribute(self):
+        event = an_event()
+        event.set_fuzzy(True)
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_locked_attribute(self):
+        event = an_event()
+        event.set_locked(True)
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_ends_today_attribute(self):
+        event = an_event()
+        event.set_ends_today(True)
+        clone = event.clone()
+        self.assertEqual(clone, event)
+        
+    def test_cloning_copies_progress_attribute(self):
+        event = an_event()
+        event.set_progress(75) 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_icon_attribute(self):
+        event = an_event()
+        event.set_icon("icon") 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_hyperlink_attribute(self):
+        event = an_event()
+        event.set_hyperlink("hyperlink") 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_description_attribute(self):
+        event = an_event()
+        event.set_description("Description") 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_category_attribute(self):
+        event = an_event()
+        event.set_category("Category") 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_text_attribute(self):
+        event = an_event()
+        event.set_text("Text") 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloning_copies_time_period_attribute(self):
+        event = an_event()
+        time_period = TimePeriod(event.time_type,
+                                 event.time_type.parse_time("2010-08-01 13:44:00"),
+                                 event.time_type.parse_time("2014-08-01 13:44:00"))
+        event.set_time_period(time_period) 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
+    def test_cloned_time_periods_are_not_the_same_object(self):
+        event = an_event()
+        time_period = TimePeriod(event.time_type,
+                                 event.time_type.parse_time("2010-08-01 13:44:00"),
+                                 event.time_type.parse_time("2014-08-01 13:44:00"))
+        event.set_time_period(time_period) 
+        clone = event.clone()
+        self.assertTrue(time_period is not clone.get_time_period())
+
