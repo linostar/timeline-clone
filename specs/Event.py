@@ -287,6 +287,12 @@ class describe_event_cloning(TestCase):
         clone = event.clone()
         self.assertEqual(clone, event)
 
+    def test_cloning_copies_alert_attribute(self):
+        event = an_event()
+        event.set_alert("2015-01-07 00:00:00;hoho") 
+        clone = event.clone()
+        self.assertEqual(clone, event)
+
     def test_cloning_copies_description_attribute(self):
         event = an_event()
         event.set_description("Description") 

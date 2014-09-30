@@ -45,6 +45,7 @@ class Event(object):
                 self.get_description() == other.get_description() and
                 self.get_hyperlink() == other.get_hyperlink() and
                 self.get_progress() == other.get_progress() and
+                self.get_alert() == other.get_alert() and
                 self.get_icon() == other.get_icon())
 
     def __ne__(self, other):
@@ -256,6 +257,7 @@ class Event(object):
         new_event.set_data("icon", self.get_data("icon"))
         new_event.set_data("hyperlink", self.get_data("hyperlink"))
         new_event.set_data("progress", self.get_data("progress"))
+        new_event.set_data("alert", self.get_data("alert"))
         new_event.set_fuzzy(self.get_fuzzy())
         new_event.set_locked(self.get_locked())
         new_event.set_ends_today(self.get_ends_today())
