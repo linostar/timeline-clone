@@ -23,34 +23,6 @@ from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data import Subevent
 from timelinelib.data.timeperiod import TimePeriod 
-from specs.utils import an_event_with
-
-
-class describe_duration_label_for_period_event(TestCase):
-
-    def test_duration_label_for_period_events(self):
-        cases = ( ("11 Jul 2014 10:11", "11 Jul 2014 10:12", "1 #minute#"), 
-                  ("11 Jul 2014 10:11", "11 Jul 2014 11:11", "1 #hour#"), 
-                  ("11 Jul 2014 10:11", "12 Jul 2014 10:11", "1 #day#"), 
-                  ("11 Jul 2014 10:11", "11 Jul 2014 11:12", "1 #hour# 1 #minute#"), 
-                  ("11 Jul 2014 10:11", "12 Jul 2014 10:12", "1 #day# 1 #minute#"), 
-                  ("11 Jul 2014 10:11", "12 Jul 2014 11:11", "1 #day# 1 #hour#"), 
-                  ("11 Jul 2014 10:11", "12 Jul 2014 11:12", "1 #day# 1 #hour# 1 #minute#"), 
-                  ("11 Jul 2014 10:11", "11 Jul 2014 10:13", "2 #minutes#"), 
-                  ("11 Jul 2014 10:11", "11 Jul 2014 12:11", "2 #hours#"), 
-                  ("11 Jul 2014 10:11", "13 Jul 2014 10:11", "2 #days#"), 
-                  ("11 Jul 2014 10:11", "11 Jul 2014 12:13", "2 #hours# 2 #minutes#"), 
-                  ("11 Jul 2014 10:11", "13 Jul 2014 10:13", "2 #days# 2 #minutes#"), 
-                  ("11 Jul 2014 10:11", "13 Jul 2014 12:11", "2 #days# 2 #hours#"), 
-                  ("11 Jul 2014 10:11", "13 Jul 2014 12:13", "2 #days# 2 #hours# 2 #minutes#"), 
-                  ("11 Jul 2014 10:11", "11 Jul 2014 11:13", "1 #hour# 2 #minutes#"), 
-                  ("11 Jul 2014 10:11", "12 Jul 2014 10:13", "1 #day# 2 #minutes#"), 
-                  ("11 Jul 2014 10:11", "12 Jul 2014 12:11", "1 #day# 2 #hours#"), 
-                  ("11 Jul 2014 10:11", "12 Jul 2014 12:13", "1 #day# 2 #hours# 2 #minutes#"), 
-                )
-        for start, end, label in cases:
-            event = an_event_with(start=start, end=end)
-            self.assertEqual(label, event._get_duration_label())
 
 
 class describe_event_construction(TestCase):
