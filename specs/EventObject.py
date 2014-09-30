@@ -27,13 +27,6 @@ from specs.utils import an_event
 from specs.utils import an_event_with
 
 
-class describe_event_functions(TestCase):
-
-    def test_zero_time_span(self):
-        event = an_event()
-        self.assertEqual(event.get_time_type().get_zero_delta(), event.time_span())
-
-
 class describe_event_cloning(TestCase):
 
     def test_cloning_returns_new_object(self):

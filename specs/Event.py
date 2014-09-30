@@ -209,3 +209,10 @@ class describe_event_construction(TestCase):
     def test_event_property_ends_today_can_be_set_at_construction(self):
         event = an_event_with(ends_today=True)
         self.assertTrue(event.get_ends_today())
+
+
+class describe_event_functions(TestCase):
+
+    def test_zero_time_span(self):
+        event = an_event()
+        self.assertEqual(event.get_time_type().get_zero_delta(), event.time_span())
