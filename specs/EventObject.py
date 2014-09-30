@@ -27,31 +27,3 @@ from specs.utils import an_event
 from specs.utils import an_event_with
 
 
-class describe_event_cloning(TestCase):
-
-    def test_container_relationships_are_maintained_when_cloning(self):
-        self.given_container_with_subevents()
-        cloned_event_list = clone_event_list(self.events)
-        self.assertListIsCloneOf(cloned_event_list, self.events)
-        self.assertTrue(isinstance(cloned_event_list[0], Container))
-        self.assertTrue(isinstance(cloned_event_list[1], Subevent))
-        self.assertTrue(isinstance(cloned_event_list[2], Subevent))
-        self.assertTrue(cloned_event_list[1] in cloned_event_list[0].events)
-        self.assertTrue(cloned_event_list[2] in cloned_event_list[0].events)
-        self.assertEquals(cloned_event_list[1].container_id, cloned_event_list[0].container_id)
-        self.assertEquals(cloned_event_list[2].container_id, cloned_event_list[0].container_id)
-
-    def given_container_with_subevents(self):
-        self.container = Container(self.db.get_time_type(), self.now, self.now, "container", category=None, cid=1)
-        self.subevent1 = Subevent(self.db.get_time_type(), self.now, self.now, "sub1", category=None, container=self.container, cid=1)
-        self.subevent2 = Subevent(self.db.get_time_type(), self.now, self.now, "sub2", category=None, container=self.container)
-        self.container.register_subevent(self.subevent1)
-        self.container.register_subevent(self.subevent2)
-        self.events = [self.container, self.subevent1, self.subevent2]
-
-    def point_event(self):
-        return Event(self.db.get_time_type(), self.now, self.now, "evt")
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
