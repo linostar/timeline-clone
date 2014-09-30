@@ -30,77 +30,77 @@ from specs.utils import an_event_with
 class describe_event_cloning(TestCase):
 
     def test_cloning_returns_new_object(self):
-        event = self.point_event()
+        event = an_event()
         clone = event.clone()
         self.assertTrue(clone is not event)
 
     def test_cloning_returns_object_equal_to_event(self):
-        event = self.point_event()
+        event = an_event()
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_id_of_clone_is_none(self):
-        event = self.point_event()
+        event = an_event()
         event.set_id(999)
         clone = event.clone()
         self.assertEqual(clone.get_id(), None)
 
     def test_cloning_copies_fuzzy_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_fuzzy(True)
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_locked_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_locked(True)
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_ends_today_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_ends_today(True)
         clone = event.clone()
         self.assertEqual(clone, event)
         
     def test_cloning_copies_progress_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_progress(75) 
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_icon_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_icon("icon") 
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_hyperlink_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_hyperlink("hyperlink") 
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_description_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_description("Description") 
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_category_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_category("Category") 
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_text_attribute(self):
-        event = self.point_event()
+        event = an_event()
         event.set_text("Text") 
         clone = event.clone()
         self.assertEqual(clone, event)
 
     def test_cloning_copies_time_period_attribute(self):
-        event = self.point_event()
+        event = an_event()
         time_period = TimePeriod(event.time_type,
                                  event.time_type.parse_time("2010-08-01 13:44:00"),
                                  event.time_type.parse_time("2014-08-01 13:44:00"))
@@ -109,7 +109,7 @@ class describe_event_cloning(TestCase):
         self.assertEqual(clone, event)
 
     def test_cloned_time_periods_are_not_the_same_object(self):
-        event = self.point_event()
+        event = an_event()
         time_period = TimePeriod(event.time_type,
                                  event.time_type.parse_time("2010-08-01 13:44:00"),
                                  event.time_type.parse_time("2014-08-01 13:44:00"))
