@@ -27,29 +27,6 @@ from specs.utils import an_event
 from specs.utils import an_event_with
 
 
-class describe_event_construction(TestCase):
-
-    def test_event_properties_defaults_to_false(self):
-        event = an_event()
-        self.assertEqual(False, event.get_fuzzy())
-        self.assertEqual(False, event.get_locked())
-        self.assertEqual(False, event.get_ends_today())
-        self.assertEqual(False, event.is_container())
-        self.assertEqual(False, event.is_subevent())
-
-    def test_event_property_fuzzy_can_be_set_at_construction(self):
-        event = an_event_with(fuzzy=True)
-        self.assertTrue(event.get_fuzzy())
-
-    def test_event_property_locked_can_be_set_at_construction(self):
-        event = an_event_with(locked=True)
-        self.assertTrue(event.get_locked())
-
-    def test_event_property_ends_today_can_be_set_at_construction(self):
-        event = an_event_with(ends_today=True)
-        self.assertTrue(event.get_ends_today())
-
-
 class describe_event_functions(TestCase):
 
     def test_zero_time_span(self):
