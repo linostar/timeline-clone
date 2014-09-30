@@ -135,6 +135,13 @@ class Event(object):
         self.set_data("hyperlink", hyperlink)
         return self
 
+    def get_alert(self):
+        return self.get_data("alert")
+
+    def set_alert(self, alert):
+        self.set_data("alert", alert)
+        return self
+
     def get_progress(self):
         return self.get_data("progress")
 

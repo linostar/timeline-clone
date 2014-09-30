@@ -95,6 +95,9 @@ class describe_event(TestCase):
         self.assertEqual(
             self.an_event.set_progress(88).get_progress(),
             88)
+        self.assertEqual(
+            self.an_event.set_alert("2015-01-07 00:00:00;hoho").get_alert(),
+            "2015-01-07 00:00:00;hoho")
 
     def test_can_not_set_values(self):
         self.assertEqual(
