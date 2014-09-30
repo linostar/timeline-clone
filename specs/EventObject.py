@@ -30,16 +30,8 @@ from specs.utils import an_event_with
 class describe_event_functions(TestCase):
 
     def test_zero_time_span(self):
-        self.given_default_point_event()
-        self.assertEqual(self.event.get_time_type().get_zero_delta(),
-                         self.event.time_span())
-
-    def given_default_point_event(self):
-        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
+        event = an_event()
+        self.assertEqual(event.get_time_type().get_zero_delta(), event.time_span())
 
 
 class describe_event_cloning(TestCase):
