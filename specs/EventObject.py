@@ -23,48 +23,34 @@ from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data import Subevent
 from timelinelib.data.timeperiod import TimePeriod 
+from specs.utils import an_event_with
 
 
 class describe_duration_label_for_period_event(TestCase):
 
     def test_duration_label_for_period_events(self):
-        cases = ( (0,0,1, "1 #minute#"),
-                  (0,1,0, "1 #hour#"),
-                  (1,0,0, "1 #day#"),
-                  (0,1,1, "1 #hour# 1 #minute#"),
-                  (1,0,1, "1 #day# 1 #minute#"),
-                  (1,1,0, "1 #day# 1 #hour#"),
-                  (1,1,1, "1 #day# 1 #hour# 1 #minute#"),
-                  (0,0,2, "2 #minutes#"),
-                  (0,2,0, "2 #hours#"),
-                  (2,0,0, "2 #days#"),
-                  (0,2,2, "2 #hours# 2 #minutes#"),
-                  (2,0,2, "2 #days# 2 #minutes#"),
-                  (2,2,0, "2 #days# 2 #hours#"),
-                  (2,2,2, "2 #days# 2 #hours# 2 #minutes#"),
-                  (0,1,2, "1 #hour# 2 #minutes#"),
-                  (1,0,2, "1 #day# 2 #minutes#"),
-                  (1,2,0, "1 #day# 2 #hours#"),
-                  (1,2,2, "1 #day# 2 #hours# 2 #minutes#"),
-                 )
-        for case in cases:
-            days, hours, minutes, expected_label = case
-            event = self.given_period_event(days, hours, minutes)
-            self.assertEqual(expected_label, event._get_duration_label())
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
-
-    def time(self, tm):
-        return self.db.get_time_type().parse_time(tm)
-
-    def given_period_event(self, days=0, hours=0, minutes=0):
-        days += 1
-        hours += 1
-        minutes += 1
-        return Event(self.db.get_time_type(), self.time("2000-01-01 01:01:01"),
-                     self.time("2000-01-0%d %d:%d:01" % (days, hours, minutes)), "period evt")
+        cases = ( ("11 Jul 2014 10:11", "11 Jul 2014 10:12", "1 #minute#"), 
+                  ("11 Jul 2014 10:11", "11 Jul 2014 11:11", "1 #hour#"), 
+                  ("11 Jul 2014 10:11", "12 Jul 2014 10:11", "1 #day#"), 
+                  ("11 Jul 2014 10:11", "11 Jul 2014 11:12", "1 #hour# 1 #minute#"), 
+                  ("11 Jul 2014 10:11", "12 Jul 2014 10:12", "1 #day# 1 #minute#"), 
+                  ("11 Jul 2014 10:11", "12 Jul 2014 11:11", "1 #day# 1 #hour#"), 
+                  ("11 Jul 2014 10:11", "12 Jul 2014 11:12", "1 #day# 1 #hour# 1 #minute#"), 
+                  ("11 Jul 2014 10:11", "11 Jul 2014 10:13", "2 #minutes#"), 
+                  ("11 Jul 2014 10:11", "11 Jul 2014 12:11", "2 #hours#"), 
+                  ("11 Jul 2014 10:11", "13 Jul 2014 10:11", "2 #days#"), 
+                  ("11 Jul 2014 10:11", "11 Jul 2014 12:13", "2 #hours# 2 #minutes#"), 
+                  ("11 Jul 2014 10:11", "13 Jul 2014 10:13", "2 #days# 2 #minutes#"), 
+                  ("11 Jul 2014 10:11", "13 Jul 2014 12:11", "2 #days# 2 #hours#"), 
+                  ("11 Jul 2014 10:11", "13 Jul 2014 12:13", "2 #days# 2 #hours# 2 #minutes#"), 
+                  ("11 Jul 2014 10:11", "11 Jul 2014 11:13", "1 #hour# 2 #minutes#"), 
+                  ("11 Jul 2014 10:11", "12 Jul 2014 10:13", "1 #day# 2 #minutes#"), 
+                  ("11 Jul 2014 10:11", "12 Jul 2014 12:11", "1 #day# 2 #hours#"), 
+                  ("11 Jul 2014 10:11", "12 Jul 2014 12:13", "1 #day# 2 #hours# 2 #minutes#"), 
+                )
+        for start, end, label in cases:
+            event = an_event_with(start=start, end=end)
+            self.assertEqual(label, event._get_duration_label())
 
 
 class describe_event_construction(TestCase):
