@@ -23,45 +23,31 @@ from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data import Subevent
 from timelinelib.data.timeperiod import TimePeriod 
+from specs.utils import an_event
+from specs.utils import an_event_with
 
 
 class describe_event_construction(TestCase):
 
-    def testEventPropertiesDefaultsToFalse(self):
-        self.given_default_point_event()
-        self.assertEqual(False, self.event.get_fuzzy())
-        self.assertEqual(False, self.event.get_locked())
-        self.assertEqual(False, self.event.get_ends_today())
-        self.assertEqual(False, self.event.is_container())
-        self.assertEqual(False, self.event.is_subevent())
+    def test_event_properties_defaults_to_false(self):
+        event = an_event()
+        self.assertEqual(False, event.get_fuzzy())
+        self.assertEqual(False, event.get_locked())
+        self.assertEqual(False, event.get_ends_today())
+        self.assertEqual(False, event.is_container())
+        self.assertEqual(False, event.is_subevent())
 
-    def testEventPropertyFuzzyCanBeSetAtConstruction(self):
-        self.given_fuzzy_point_event()
-        self.assertEqual(True, self.event.get_fuzzy())
+    def test_event_property_fuzzy_can_be_set_at_construction(self):
+        event = an_event_with(fuzzy=True)
+        self.assertTrue(event.get_fuzzy())
 
-    def testEventPropertyLockedCanBeSetAtConstruction(self):
-        self.given_locked_point_event()
-        self.assertEqual(True, self.event.get_locked())
+    def test_event_property_locked_can_be_set_at_construction(self):
+        event = an_event_with(locked=True)
+        self.assertTrue(event.get_locked())
 
-    def testEventPropertyEndsTodayCanBeSetAtConstruction(self):
-        self.given_point_event_wich_ends_today()
-        self.assertEqual(True, self.event.get_ends_today())
-
-    def given_default_point_event(self):
-        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt")
-
-    def given_point_event_wich_ends_today(self):
-        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", ends_today=True)
-
-    def given_fuzzy_point_event(self):
-        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", fuzzy=True)
-
-    def given_locked_point_event(self):
-        self.event = Event(self.db.get_time_type(), self.now, self.now, "evt", locked=True)
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
+    def test_event_property_ends_today_can_be_set_at_construction(self):
+        event = an_event_with(ends_today=True)
+        self.assertTrue(event.get_ends_today())
 
 
 class describe_event_functions(TestCase):
