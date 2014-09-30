@@ -76,10 +76,12 @@ class describe_event(TestCase):
             self.an_event.set_fuzzy(True).get_fuzzy(),
             True)
         self.assertEqual(
-            self.an_event.set_locked(True).get_locked(),
-            True)
-        self.assertEqual(
             self.an_event.set_ends_today(True).get_ends_today(),
+            True)
+        # This test must be run before the next one because the
+        # tests updates the self.an_event.
+        self.assertEqual(
+            self.an_event.set_locked(True).get_locked(),
             True)
         self.assertEqual(
             self.an_event.set_description("cool").get_description(),
@@ -93,6 +95,11 @@ class describe_event(TestCase):
         self.assertEqual(
             self.an_event.set_progress(88).get_progress(),
             88)
+
+    def test_can_not_set_values(self):
+        self.assertEqual(
+            an_event_with(locked=True).set_ends_today(True).get_ends_today(),
+            False)
 
     def test_can_be_compared(self):
         self.assertObjectEquality(self.create_equal_events, self.modify_event)

@@ -110,7 +110,8 @@ class Event(object):
         return self.ends_today
 
     def set_ends_today(self, ends_today):
-        self.ends_today = ends_today
+        if not self.locked:
+            self.ends_today = ends_today
         return self
 
     def get_description(self):
