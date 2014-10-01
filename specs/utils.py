@@ -83,6 +83,16 @@ def an_event_with(start=None, end=None, time=ANY_TIME, text="foo", fuzzy=False,
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
+def a_subevent_with(start=None, end=None, time=ANY_TIME, text="sub", category=None, container=None, cid=-1):
+    if start and end:
+        start = human_time_to_gregorian(start)
+        end = human_time_to_gregorian(end)
+    else:
+        start = human_time_to_gregorian(time)
+        end = human_time_to_gregorian(time)
+    return Subevent(GregorianTimeType(), start, end, text, category=category, container=container, cid=cid)
+
+
 def a_container(name, category, sub_events):
     cid = 99
     start = human_time_to_gregorian(ANY_TIME)
@@ -95,6 +105,13 @@ def a_container(name, category, sub_events):
         all_events.append(Subevent(GregorianTimeType(), start, end, name,
                                    category=category, container=container))
     return all_events
+
+
+def a_container_with(text="container", category=None, cid=-1):
+    start = human_time_to_gregorian(ANY_TIME)
+    end = human_time_to_gregorian(ANY_TIME)
+    container = Container(GregorianTimeType(), start, end, text, category=category, cid=cid)
+    return container
 
 
 def a_category_with(name, color=(255, 0, 0), font_color=(0, 255, 255),

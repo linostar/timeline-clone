@@ -21,56 +21,47 @@ import unittest
 from specs.utils import a_category_with
 from timelinelib.data.db import MemoryDB
 from timelinelib.data import Container
-from timelinelib.data import Subevent
+from specs.utils import a_container_with
+from specs.utils import a_subevent_with
 
 
-class ContainerSpec(unittest.TestCase):
+class describe_container(unittest.TestCase):
 
-    def testContainerCanHaveSubevents(self):
-        self.given_period_subevent()
-        self.given_default_container()
-        self.container.register_subevent(self.event)
-        self.assertEqual(1, len(self.container.events))
+    def test_can_have_subevents(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
+        container = a_container_with(text="container")
+        container.register_subevent(subevent)
+        self.assertEqual(1, len(container.events))
+        self.assertEqual(subevent, container.events[0])
 
-    def testSubeventsCanBeUnregistered(self):
-        self.given_period_subevent()
-        self.given_default_container()
-        self.container.register_subevent(self.event)
-        self.assertEqual(1, len(self.container.events))
-        self.container.unregister_subevent(self.event)
-        self.assertEqual(0, len(self.container.events))
+    def test_subevents_can_be_unregistered(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
+        container = a_container_with(text="container")
+        container.register_subevent(subevent)
+        container.unregister_subevent(subevent)
+        self.assertEqual(0, len(container.events))
 
-    def testNameCanBeUpdated(self):
-        self.given_default_container()
+    def test_name_can_be_updated(self):
+        container = a_container_with(text="container")
         new_name = "new text"
-        self.container.update_properties(new_name)
-        self.assertEqual(new_name, self.container.get_text())
+        container.update_properties(new_name)
+        self.assertEqual(new_name, container.get_text())
 
-    def testNameAndCategoryCanBeUpdated(self):
-        self.given_default_container()
+    def test_category_can_be_updated(self):
+        container = a_container_with(text="container")
         new_name = "new text"
         new_category = a_category_with(name="cat")
-        self.container.update_properties(new_name, new_category)
-        self.assertEqual(new_category, self.container.get_category())
+        container.update_properties(new_name, category=new_category)
+        self.assertEqual(new_category, container.get_category())
 
-    def testCidCanBeChanged(self):
-        self.given_default_container()
-        self.container.set_cid(99)
-        self.assertEqual(99, self.container.cid())
+    def test_default_cid(self):
+        container = a_container_with(text="container")
+        self.assertEqual(-1, container.cid())
 
-    def given_default_container(self):
-        self.container = Container(self.db.get_time_type(), self.now, self.now, "container")
-
-    def given_period_subevent(self):
-        self.event = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
-                              self.time("2000-01-03 10:01:01"), "evt")
-
-    def time(self, tm):
-        return self.db.get_time_type().parse_time(tm)
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
+    def test_cid_can_be_changed(self):
+        container = a_container_with(text="container")
+        container.set_cid(99)
+        self.assertEqual(99, container.cid())
 
 
 class ContainerConstructorSpec(unittest.TestCase):
