@@ -18,87 +18,43 @@
 
 import unittest
 
-from timelinelib.data.db import MemoryDB
-from timelinelib.data import Container
-from timelinelib.data import Subevent
+from specs.utils import a_subevent_with
+from specs.utils import a_container_with
 
 
-class SubeventSpec(unittest.TestCase):
+class describe_subevent(unittest.TestCase):
 
-    def testSubeventCanChangeContainer(self):
-        self.given_default_subevent()
-        self.given_container_with_cid()
-        self.subevent.register_container(self.container)
-        self.assertEqual(99, self.subevent.cid())
-        self.assertEqual(self.container, self.subevent.container)
+    def test_can_change_container(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
+        container = a_container_with(text="container", cid=99)
+        subevent.register_container(container)
+        self.assertEqual(99, subevent.cid())
+        self.assertEqual(container, subevent.container)
 
-    def given_default_subevent(self):
-        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
-                                 self.time("2000-01-03 10:01:01"), "evt")
+    def test_properties_defaults(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
+        self.assertEqual(-1, subevent.cid())
+        self.assertEqual(False, subevent.get_fuzzy())
+        self.assertEqual(False, subevent.get_locked())
+        self.assertEqual(False, subevent.get_ends_today())
+        self.assertEqual(False, subevent.is_container())
+        self.assertEqual(True, subevent.is_subevent())
 
-    def given_container_with_cid(self):
-        self.container = Container(self.db.get_time_type(), self.now, self.now, "evt", cid=99)
-
-
-    def time(self, tm):
-        return self.db.get_time_type().parse_time(tm)
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
+    def test_cid_can_be_set_a_construction(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        self.assertEqual(99, subevent.cid())
 
 
-class ContainerSubeventSpec(unittest.TestCase):
-
-    def testSubeventPropertiesDefaultsToFalse(self):
-        self.given_default_subevent()
-        self.assertEqual(-1, self.subevent.cid())
-        self.assertEqual(False, self.subevent.get_fuzzy())
-        self.assertEqual(False, self.subevent.get_locked())
-        self.assertEqual(False, self.subevent.get_ends_today())
-        self.assertEqual(False, self.subevent.is_container())
-        self.assertEqual(True, self.subevent.is_subevent())
-
-    def testSubeventPropertyCidCanBeSetAtConstruction(self):
-        self.given_subevent_with_cid()
-        self.assertEqual(99, self.subevent.cid())
-
-    def given_default_subevent(self):
-        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
-                                 self.time("2000-01-03 10:01:01"), "evt")
-
-    def given_subevent_with_cid(self):
-        self.subevent = Subevent(self.db.get_time_type(), self.time("2000-01-01 10:01:01"),
-                                 self.time("2000-01-03 10:01:01"), "evt", cid=99)
-
-    def time(self, tm):
-        return self.db.get_time_type().parse_time(tm)
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
-
-
-class SubeventCloningSpec(unittest.TestCase):
+class describe_subevent_cloning(unittest.TestCase):
 
     def test_cloning_returns_new_object(self):
-        self.given_subevent_event()
-        cloned_event = self.event.clone()
-        self.assertTrue(self.event is not cloned_event)
-        self.assertEqual(cloned_event.get_time_type(),
-                         self.event.get_time_type())
-        self.assertEqual(cloned_event.get_time_period(),
-                         self.event.get_time_period())
-        self.assertEqual(cloned_event.get_text(), self.event.get_text())
-        self.assertEqual(cloned_event.get_category(), self.event.get_category())
-        self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
-        self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
-        self.assertEqual(cloned_event.get_ends_today(),
-                         self.event.get_ends_today())
-
-    def given_subevent_event(self):
-        self.event = Subevent(self.db.get_time_type(), self.now, self.now, "evt")
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
+        cloned_subevent = subevent.clone()
+        self.assertTrue(subevent is not cloned_subevent)
+        self.assertEqual(cloned_subevent.get_time_type(), subevent.get_time_type())
+        self.assertEqual(cloned_subevent.get_time_period(), subevent.get_time_period())
+        self.assertEqual(cloned_subevent.get_text(), subevent.get_text())
+        self.assertEqual(cloned_subevent.get_category(), subevent.get_category())
+        self.assertEqual(cloned_subevent.get_fuzzy(), subevent.get_fuzzy())
+        self.assertEqual(cloned_subevent.get_locked(), subevent.get_locked())
+        self.assertEqual(cloned_subevent.get_ends_today(), subevent.get_ends_today())
