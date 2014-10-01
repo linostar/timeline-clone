@@ -19,8 +19,6 @@
 import unittest
 
 from specs.utils import a_category_with
-from timelinelib.data.db import MemoryDB
-from timelinelib.data import Container
 from specs.utils import a_container_with
 from specs.utils import a_subevent_with
 
@@ -64,53 +62,33 @@ class describe_container(unittest.TestCase):
         self.assertEqual(99, container.cid())
 
 
-class ContainerConstructorSpec(unittest.TestCase):
+class describe_container_construction(unittest.TestCase):
 
     def testContainerPropertiesDefaultsToFalse(self):
-        self.given_default_container()
-        self.assertEqual(-1, self.container.cid())
-        self.assertEqual(False, self.container.get_fuzzy())
-        self.assertEqual(False, self.container.get_locked())
-        self.assertEqual(False, self.container.get_ends_today())
-        self.assertEqual(True, self.container.is_container())
-        self.assertEqual(False, self.container.is_subevent())
-        self.assertEqual(None, self.container.get_category())
+        container = a_container_with(text="container")
+        self.assertEqual(-1, container.cid())
+        self.assertEqual(False, container.get_fuzzy())
+        self.assertEqual(False, container.get_locked())
+        self.assertEqual(False, container.get_ends_today())
+        self.assertEqual(True, container.is_container())
+        self.assertEqual(False, container.is_subevent())
+        self.assertEqual(None, container.get_category())
 
-    def testContainerPropertyCidCanBeSetAtConstruction(self):
-        self.given_container_with_cid()
-        self.assertEqual(99, self.container.cid())
-
-    def given_default_container(self):
-        self.container = Container(self.db.get_time_type(), self.now, self.now, "container")
-
-    def given_container_with_cid(self):
-        self.container = Container(self.db.get_time_type(), self.now, self.now, "evt", cid=99)
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
+    def test_cid_can_be_set_at_construction(self):
+        container = a_container_with(text="container", cid=99)
+        self.assertEqual(99, container.cid())
 
 
-class ContainerCloningSpec(unittest.TestCase):
+class describe_container_cloning(unittest.TestCase):
 
     def test_cloning_returns_new_object(self):
-        self.given_container_event()
-        cloned_event = self.event.clone()
-        self.assertTrue(self.event is not cloned_event)
-        self.assertEqual(cloned_event.get_time_type(),
-                         self.event.get_time_type())
-        self.assertEqual(cloned_event.get_time_period(),
-                         self.event.get_time_period())
-        self.assertEqual(cloned_event.get_text(), self.event.get_text())
-        self.assertEqual(cloned_event.get_category(), self.event.get_category())
-        self.assertEqual(cloned_event.get_fuzzy(), self.event.get_fuzzy())
-        self.assertEqual(cloned_event.get_locked(), self.event.get_locked())
-        self.assertEqual(cloned_event.get_ends_today(),
-                         self.event.get_ends_today())
-
-    def given_container_event(self):
-        self.event = Container(self.db.get_time_type(), self.now, self.now, "evt")
-
-    def setUp(self):
-        self.db = MemoryDB()
-        self.now = self.db.get_time_type().now()
+        container = a_container_with(text="container")
+        cloned_container = container.clone()
+        self.assertTrue(container is not cloned_container)
+        self.assertEqual(cloned_container.get_time_type(), container.get_time_type())
+        self.assertEqual(cloned_container.get_time_period(), container.get_time_period())
+        self.assertEqual(cloned_container.get_text(), container.get_text())
+        self.assertEqual(cloned_container.get_category(), container.get_category())
+        self.assertEqual(cloned_container.get_fuzzy(), container.get_fuzzy())
+        self.assertEqual(cloned_container.get_locked(), container.get_locked())
+        self.assertEqual(cloned_container.get_ends_today(), container.get_ends_today())
