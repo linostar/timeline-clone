@@ -64,7 +64,7 @@ class describe_container(unittest.TestCase):
 
 class describe_container_construction(unittest.TestCase):
 
-    def testContainerPropertiesDefaultsToFalse(self):
+    def test_properties_defaults(self):
         container = a_container_with(text="container")
         self.assertEqual(-1, container.cid())
         self.assertEqual(False, container.get_fuzzy())
