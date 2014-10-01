@@ -48,13 +48,7 @@ class describe_subevent(unittest.TestCase):
 class describe_subevent_cloning(unittest.TestCase):
 
     def test_cloning_returns_new_object(self):
-        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
         cloned_subevent = subevent.clone()
         self.assertTrue(subevent is not cloned_subevent)
-        self.assertEqual(cloned_subevent.get_time_type(), subevent.get_time_type())
-        self.assertEqual(cloned_subevent.get_time_period(), subevent.get_time_period())
-        self.assertEqual(cloned_subevent.get_text(), subevent.get_text())
-        self.assertEqual(cloned_subevent.get_category(), subevent.get_category())
-        self.assertEqual(cloned_subevent.get_fuzzy(), subevent.get_fuzzy())
-        self.assertEqual(cloned_subevent.get_locked(), subevent.get_locked())
-        self.assertEqual(cloned_subevent.get_ends_today(), subevent.get_ends_today())
+        self.assertTrue(cloned_subevent == subevent)
