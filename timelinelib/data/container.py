@@ -30,6 +30,11 @@ class Container(Event):
         import timelinelib.db.strategies
         self.strategy = timelinelib.db.strategies.DefaultContainerStrategy(self)
 
+    def __eq__(self, other):
+        return (isinstance(other, Container) and
+                self.container_id == other.cid() and
+                super(Container, self).__eq__(other))
+
     def is_container(self):
         return True
 

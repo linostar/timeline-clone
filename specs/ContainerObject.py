@@ -82,13 +82,7 @@ class describe_container_construction(unittest.TestCase):
 class describe_container_cloning(unittest.TestCase):
 
     def test_cloning_returns_new_object(self):
-        container = a_container_with(text="container")
+        container = a_container_with(text="container", cid=99)
         cloned_container = container.clone()
         self.assertTrue(container is not cloned_container)
-        self.assertEqual(cloned_container.get_time_type(), container.get_time_type())
-        self.assertEqual(cloned_container.get_time_period(), container.get_time_period())
-        self.assertEqual(cloned_container.get_text(), container.get_text())
-        self.assertEqual(cloned_container.get_category(), container.get_category())
-        self.assertEqual(cloned_container.get_fuzzy(), container.get_fuzzy())
-        self.assertEqual(cloned_container.get_locked(), container.get_locked())
-        self.assertEqual(cloned_container.get_ends_today(), container.get_ends_today())
+        self.assertEqual(cloned_container,  container)
