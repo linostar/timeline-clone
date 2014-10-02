@@ -73,4 +73,7 @@ class Subevent(Event):
         # application.
         new_event.set_data("icon", self.get_data("icon"))
         new_event.set_data("hyperlink", self.get_data("hyperlink"))
+        new_event.set_data("progress", self.get_data("progress"))
+        new_event.set_data("alert", self.get_data("alert"))
+        new_event.set_fuzzy(self.get_fuzzy())
         return new_event

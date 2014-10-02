@@ -52,3 +52,15 @@ class describe_subevent_cloning(unittest.TestCase):
         cloned_subevent = subevent.clone()
         self.assertTrue(subevent is not cloned_subevent)
         self.assertTrue(cloned_subevent == subevent)
+
+    def test_cloning_copies_progress(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        subevent.set_progress(85)
+        cloned_subevent = subevent.clone()
+        self.assertTrue(cloned_subevent == subevent)
+
+    def test_cloning_copies_alert(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        subevent.set_alert("1 Jan 200 10:01;Wake up")
+        cloned_subevent = subevent.clone()
+        self.assertTrue(cloned_subevent == subevent)
