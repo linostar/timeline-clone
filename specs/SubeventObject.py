@@ -64,3 +64,33 @@ class describe_subevent_cloning(unittest.TestCase):
         subevent.set_alert("1 Jan 200 10:01;Wake up")
         cloned_subevent = subevent.clone()
         self.assertTrue(cloned_subevent == subevent)
+
+    def test_cloning_copies_icon(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        subevent.set_icon("icon")
+        cloned_subevent = subevent.clone()
+        self.assertTrue(cloned_subevent == subevent)
+
+    def test_cloning_copies_hyperlink(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        subevent.set_hyperlink("http://www.svd.se")
+        cloned_subevent = subevent.clone()
+        self.assertTrue(cloned_subevent == subevent)
+
+    def test_cloning_copies_fuzzy(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        subevent.set_fuzzy(True)
+        cloned_subevent = subevent.clone()
+        self.assertTrue(cloned_subevent == subevent)
+
+    def test_cloning_dont_copies_locked(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        subevent.set_locked(True)
+        cloned_subevent = subevent.clone()
+        self.assertFalse(cloned_subevent == subevent)
+
+    def test_cloning_dont_copies_ends_today(self):
+        subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
+        subevent.set_ends_today(True)
+        cloned_subevent = subevent.clone()
+        self.assertFalse(cloned_subevent == subevent)
