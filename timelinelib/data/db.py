@@ -156,24 +156,16 @@ class MemoryDB(Observable):
         if isinstance(category_or_id, Category):
             category = category_or_id
         else:
-            category = self._find_category_with_id(category_or_id)
-        if category in self._events.categories:
-            if category in self.hidden_categories:
-                self.hidden_categories.remove(category)
-            self._events.categories.remove(category)
-            category.set_id(None)
-            # Loop to update parent attribute on children
-            for cat in self._events.categories:
-                if cat.get_parent() == category:
-                    cat.set_parent(category.get_parent())
-            # Loop to update category for events
-            for event in self._events.events:
-                if event.category == category:
-                    event.category = category.get_parent()
+            category = self._events.get_category_with_id(category_or_id)
+        if category in self.hidden_categories:
+            self.hidden_categories.remove(category)
+        try:
+            self._events.delete_category(category)
+        except Exception, e:
+            raise TimelineIOError("Deleting category failed: %s" % e)
+        else:
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_CATEGORY)
-        else:
-            raise TimelineIOError("Category not in db.")
 
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.displayed_period
@@ -239,12 +231,6 @@ class MemoryDB(Observable):
         for e in self._events.get_all():
             if e.get_id() == id:
                 return e
-        return None
-
-    def _find_category_with_id(self, id):
-        for c in self._events.get_categories():
-            if c.get_id() == id:
-                return c
         return None
 
     def _save_if_not_disabled(self):

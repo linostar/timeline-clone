@@ -69,6 +69,12 @@ class Events(object):
             if category.get_name() == name:
                 return category
 
+    def get_category_with_id(self, id):
+        for category in self.categories:
+            if category.get_id() == id:
+                return category
+        return None
+
     def save_category(self, category):
         self._ensure_category_exists_for_update(category)
         self._ensure_category_name_available(category)
@@ -77,6 +83,20 @@ class Events(object):
         if not self._does_category_exists(category):
             category.set_id(get_process_unique_id())
             self.categories.append(category)
+
+    def delete_category(self, category):
+        if category not in self.categories:
+            raise InvalidOperationError("Category not in db.")
+        self.categories.remove(category)
+        category.set_id(None)
+        # Loop to update parent attribute on children
+        for cat in self.categories:
+            if cat.get_parent() == category:
+                cat.set_parent(category.get_parent())
+        # Loop to update category for events
+        for event in self.events:
+            if event.get_category() == category:
+                event.set_category(category.get_parent())
 
     def _ensure_category_exists_for_update(self, category):
         message = "Updating a category that does not exist."
