@@ -478,7 +478,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self._draw_fuzzy_edges(rect, event)
         if event.get_locked():
             self._draw_locked_edges(rect, event)
-        if event.data.has_key("progress"):
+        if event.get_data("progress"):
             self.draw_progress_box(rect, event)
         self.dc.DestroyClippingRegion()
 
@@ -603,7 +603,7 @@ class DefaultDrawingAlgorithm(Drawer):
         base_color = self._get_base_color(event)
         progress_color = get_progress_color(base_color)
         self.dc.SetBrush(wx.Brush(wx.Colour(progress_color[0], progress_color[1], progress_color[2])))
-        w = rect.width * event.data["progress"] / 100.0
+        w = rect.width * event.get_data("progress") / 100.0
         progress_rect = wx.Rect(rect.x, rect.y, w, rect.height)
         self.dc.SetClippingRect(progress_rect)
         self.dc.DrawRectangleRect(progress_rect)
