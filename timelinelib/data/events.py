@@ -30,16 +30,16 @@ class Events(object):
 
     def __init__(self, categories=None, events=None):
         if categories is None:
-            self.categories = []
+            self._categories = []
         else:
-            self.categories = categories
+            self._categories = categories
         if events is None:
-            self.events = []
+            self._events = []
         else:
-            self.events = events
+            self._events = events
 
     def get_all(self):
-        return list(self.events)
+        return list(self._events)
 
     def get_first(self):
         if len(self.get_all()) == 0:
@@ -56,21 +56,21 @@ class Events(object):
             if not event.inside_period(time_period):
                 return False
             return True
-        return [e for e in self.events if include_event(e)]
+        return [e for e in self._events if include_event(e)]
 
     def search(self, search_string):
-        return _generic_event_search(self.events, search_string)
+        return _generic_event_search(self._events, search_string)
 
     def get_categories(self):
-        return list(self.categories)
+        return list(self._categories)
 
     def get_category_by_name(self, name):
-        for category in self.categories:
+        for category in self._categories:
             if category.get_name() == name:
                 return category
 
     def get_category_with_id(self, id):
-        for category in self.categories:
+        for category in self._categories:
             if category.get_id() == id:
                 return category
         return None
@@ -82,19 +82,19 @@ class Events(object):
         self._ensure_no_circular_parent(category)
         if not self._does_category_exists(category):
             category.set_id(get_process_unique_id())
-            self.categories.append(category)
+            self._categories.append(category)
 
     def delete_category(self, category):
-        if category not in self.categories:
+        if category not in self._categories:
             raise InvalidOperationError("Category not in db.")
-        self.categories.remove(category)
+        self._categories.remove(category)
         category.set_id(None)
         # Loop to update parent attribute on children
-        for cat in self.categories:
+        for cat in self._categories:
             if cat.get_parent() == category:
                 cat.set_parent(category.get_parent())
         # Loop to update category for events
-        for event in self.events:
+        for event in self._events:
             if event.get_category() == category:
                 event.set_category(category.get_parent())
 
@@ -130,7 +130,7 @@ class Events(object):
     def _ensure_parent_exists(self, category):
         message = "Parent category not in db."
         if (category.get_parent() is not None and
-            category.get_parent() not in self.categories):
+            category.get_parent() not in self._categories):
             raise InvalidOperationError(message)
 
     def _ensure_no_circular_parent(self, category):
@@ -145,21 +145,21 @@ class Events(object):
     def save_event(self, event):
         self._ensure_event_exists_for_update(event)
         self._ensure_event_category_exists(event)
-        if event not in self.events:
-            self.events.append(event)
+        if event not in self._events:
+            self._events.append(event)
             event.set_id(get_process_unique_id())
             if event.is_subevent():
                 self._register_subevent(event)
 
     def delete_event(self, event):
-        if event not in self.events:
+        if event not in self._events:
             raise InvalidOperationError("Event not in db.")
         if event.is_subevent():
             self._unregister_subevent(event)
         if event.is_container():
             for subevent in event.events:
-                self.events.remove(subevent)
-        self.events.remove(event)
+                self._events.remove(subevent)
+        self._events.remove(event)
         event.set_id(None)
 
     def _unregister_subevent(self, subevent):
@@ -171,12 +171,12 @@ class Events(object):
             container = containers[subevent.cid()]
             container.unregister_subevent(subevent)
             if len(container.events) == 0:
-                self.events.remove(container)
+                self._events.remove(container)
         except:
             pass
 
     def get_containers(self):
-        return [event for event in self.events if event.is_container()]
+        return [event for event in self._events if event.is_container()]
 
     def _ensure_event_exists_for_update(self, event):
         message = "Updating an event that does not exist."
@@ -193,11 +193,11 @@ class Events(object):
     def _ensure_event_category_exists(self, event):
         message = "Event's category not in db."
         if (event.get_category() is not None and
-            event.get_category() not in self.categories):
+            event.get_category() not in self._categories):
             raise InvalidOperationError(message)
 
     def _register_subevent(self, subevent):
-        container_events = [event for event in self.events
+        container_events = [event for event in self._events
                             if event.is_container()]
         containers = {}
         for container in container_events:
@@ -228,19 +228,19 @@ class Events(object):
     def place_event_after_event(self, event_to_place, target_event):
         if event_to_place == target_event:
             return
-        self.events.remove(event_to_place)
-        new_index = self.events.index(target_event) + 1
-        self.events.insert(new_index, event_to_place)
+        self._events.remove(event_to_place)
+        new_index = self._events.index(target_event) + 1
+        self._events.insert(new_index, event_to_place)
 
     def place_event_before_event(self, event_to_place, target_event):
         if event_to_place == target_event:
             return
-        self.events.remove(event_to_place)
-        new_index = self.events.index(target_event)
-        self.events.insert(new_index, event_to_place)
+        self._events.remove(event_to_place)
+        new_index = self._events.index(target_event)
+        self._events.insert(new_index, event_to_place)
 
     def clone(self):
-        (categories, events) = clone_data(self.categories, self.events)
+        (categories, events) = clone_data(self._categories, self._events)
         return Events(categories, events)
 
 

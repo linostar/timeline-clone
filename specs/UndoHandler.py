@@ -36,7 +36,7 @@ class UndoHandlerSpec(unittest.TestCase):
 
     def test_get_data_on_empty_list_raises_exception(self):
         self.assertRaises(IndexError, self.undo_handler.get_data)
-        
+
     def test_undo_not_possible_after_construction(self):
         self.assertFalse(self.undo_handler.undo())
 
@@ -61,24 +61,24 @@ class UndoHandlerSpec(unittest.TestCase):
         self.db.save_event(an_event())
         self.undo_handler.enable(True)
         self.undo_handler.save()
-        self.assertFalse(self.undo_handler._undo_buffer[0].events[0] is self.db.get_all_events()[0])
-        self.assertFalse(self.undo_handler._undo_buffer[0].events[1] is self.db.get_all_events()[1])
+        self.assertFalse(self.undo_handler._undo_buffer[0].get_all()[0] is self.db.get_all_events()[0])
+        self.assertFalse(self.undo_handler._undo_buffer[0].get_all()[1] is self.db.get_all_events()[1])
 
     def test_save_of_empty_timeline(self):
         self.given_empty_timeline()
         self.assertEqual(1, self.get_undo_buffer_len())
-        self.assertEqual(0, len(self.undo_handler._undo_buffer[0].events))
+        self.assertEqual(0, len(self.undo_handler._undo_buffer[0].get_all()))
 
     def test_undo_when_nothing_to_undo(self):
         self.given_empty_timeline()
         self.undo_handler.undo()
         self.assertEqual(1, self.get_undo_buffer_len())
-        self.assertEqual(0, len(self.undo_handler.get_data().events))
+        self.assertEqual(0, len(self.undo_handler.get_data().get_all()))
 
     def test_save_of_timeline(self):
         self.given_timeline_with_two_events_added()
         self.assertEqual(3, self.get_undo_buffer_len())
-        self.assertEqual(2, len(self.undo_handler.get_data().events))
+        self.assertEqual(2, len(self.undo_handler.get_data().get_all()))
 
     def test_undo(self):
         self.given_timeline_with_two_events_added()
@@ -103,7 +103,7 @@ class UndoHandlerSpec(unittest.TestCase):
         self.assertTrue(self.db.undo_enabled())
         self.undo_handler.undo()
         self.assertFalse(self.db.undo_enabled())
-        
+
     def test_db_should_be_notified_when_redo_isnt_possible(self):
         self.assertFalse(self.db.redo_enabled())
         self.given_empty_timeline()
@@ -113,7 +113,7 @@ class UndoHandlerSpec(unittest.TestCase):
         self.assertFalse(self.db.redo_enabled())
         self.undo_handler.undo()
         self.assertTrue(self.db.redo_enabled())
-        
+
     def setUp(self):
         self.db = MemoryDB()
         self.undo_handler = UndoHandler(self.db)
@@ -134,4 +134,4 @@ class UndoHandlerSpec(unittest.TestCase):
         return len(self.undo_handler._undo_buffer)
 
     def get_event_list(self):
-        return self.undo_handler.get_data().events
+        return self.undo_handler.get_data().get_all()
