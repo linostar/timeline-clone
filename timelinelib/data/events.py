@@ -151,6 +151,33 @@ class Events(object):
             if event.is_subevent():
                 self._register_subevent(event)
 
+    def delete_event(self, event):
+        if event not in self.events:
+            raise InvalidOperationError("Event not in db.")
+        if event.is_subevent():
+            self._unregister_subevent(event)
+        if event.is_container():
+            for subevent in event.events:
+                self.events.remove(subevent)
+        self.events.remove(event)
+        event.set_id(None)
+
+    def _unregister_subevent(self, subevent):
+        container_events = self.get_containers()
+        containers = {}
+        for container in container_events:
+            containers[container.cid()] = container
+        try:
+            container = containers[subevent.cid()]
+            container.unregister_subevent(subevent)
+            if len(container.events) == 0:
+                self.events.remove(container)
+        except:
+            pass
+
+    def get_containers(self):
+        return [event for event in self.events if event.is_container()]
+
     def _ensure_event_exists_for_update(self, event):
         message = "Updating an event that does not exist."
         if event.has_id():

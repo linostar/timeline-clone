@@ -313,8 +313,11 @@ class describe_memory_db(unittest.TestCase):
         self.assertEqual(self.save_callback_mock.call_count, 4)
 
     def testDeleteNonExistingEvent(self):
+        self.assertRaises(TimelineIOError, self.db.delete_event, self.e1)
+        self.assertRaises(TimelineIOError, self.db.delete_event, 5)
         other_db = MemoryDB()
         other_db.save_event(self.e2)
+        self.assertRaises(TimelineIOError, self.db.delete_event, self.e2)
         # Assert save not called
         self.assertEqual(self.save_callback_mock.call_count, 0)
 

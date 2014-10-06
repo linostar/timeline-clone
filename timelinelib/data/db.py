@@ -97,33 +97,16 @@ class MemoryDB(Observable):
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
 
-    def _unregister_subevent(self, subevent):
-        container_events = [event for event in self._events.events
-                            if event.is_container()]
-        containers = {}
-        for container in container_events:
-            containers[container.cid()] = container
-        try:
-            container = containers[subevent.cid()]
-            container.unregister_subevent(subevent)
-            if len(container.events) == 0:
-                self._events.events.remove(container)
-        except:
-            pass
-
     def delete_event(self, event_or_id, save=True):
         if isinstance(event_or_id, Event):
             event = event_or_id
         else:
             event = self.find_event_with_id(event_or_id)
-        if event in self._events.events:
-            if event.is_subevent():
-                self._unregister_subevent(event)
-            if event.is_container():
-                for subevent in event.events:
-                    self._events.events.remove(subevent)
-            self._events.events.remove(event)
-            event.set_id(None)
+        try:
+            self._events.delete_event(event)
+        except Exception, e:
+            raise TimelineIOError("Deleting event failed: %s" % e)
+        else:
             if save:
                 self._save_if_not_disabled()
                 self._notify(STATE_CHANGE_ANY)
@@ -132,9 +115,7 @@ class MemoryDB(Observable):
         return self._events.get_categories()
 
     def get_containers(self):
-        containers = [event for event in self._events.events
-                      if event.is_container()]
-        return containers
+        return self._events.get_containers()
 
     def save_category(self, category):
         try:
