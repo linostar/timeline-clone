@@ -202,18 +202,10 @@ class MemoryDB(Observable):
                 self._save_if_not_disabled()
 
     def place_event_after_event(self, event_to_place, target_event):
-        if (event_to_place == target_event):
-            return
-        self._events.events.remove(event_to_place)
-        new_index = self._events.events.index(target_event) + 1
-        self._events.events.insert(new_index, event_to_place)
+        self._events.place_event_after_event(event_to_place, target_event)
 
     def place_event_before_event(self, event_to_place, target_event):
-        if (event_to_place == target_event):
-            return
-        self._events.events.remove(event_to_place)
-        new_index = self._events.events.index(target_event)
-        self._events.events.insert(new_index, event_to_place)
+        self._events.place_event_before_event(event_to_place, target_event)
 
     def undo(self):
         if self._undo_handler.undo():

@@ -178,6 +178,20 @@ class Events(object):
                 id = event.cid()
         return id
 
+    def place_event_after_event(self, event_to_place, target_event):
+        if event_to_place == target_event:
+            return
+        self.events.remove(event_to_place)
+        new_index = self.events.index(target_event) + 1
+        self.events.insert(new_index, event_to_place)
+
+    def place_event_before_event(self, event_to_place, target_event):
+        if event_to_place == target_event:
+            return
+        self.events.remove(event_to_place)
+        new_index = self.events.index(target_event)
+        self.events.insert(new_index, event_to_place)
+
     def clone(self):
         (categories, events) = clone_data(self.categories, self.events)
         return Events(categories, events)
