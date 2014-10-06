@@ -177,7 +177,7 @@ class MemoryDB(Observable):
 
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.displayed_period
-        for cat in self._events.categories:
+        for cat in self._events.get_categories():
             visible = cat not in self.hidden_categories
             view_properties.set_category_visible(cat, visible)
 
@@ -187,7 +187,7 @@ class MemoryDB(Observable):
                 raise TimelineIOError(_("Displayed period must be > 0."))
             self.displayed_period = view_properties.displayed_period
         self.hidden_categories = []
-        for cat in self._events.categories:
+        for cat in self._events.get_categories():
             if not view_properties.is_category_visible(cat):
                 self.hidden_categories.append(cat)
         self._save_if_not_disabled()
@@ -240,13 +240,13 @@ class MemoryDB(Observable):
         return self._redo_enabled
 
     def find_event_with_id(self, id):
-        for e in self._events.events:
+        for e in self._events.get_all():
             if e.get_id() == id:
                 return e
         return None
 
     def _find_category_with_id(self, id):
-        for c in self._events.categories:
+        for c in self._events.get_categories():
             if c.get_id() == id:
                 return c
         return None
@@ -285,7 +285,7 @@ class MemoryDB(Observable):
         """
         self.hidden_categories = []
         for cat in hidden_categories:
-            if cat not in self._events.categories:
+            if cat not in self._events.get_categories():
                 raise ValueError("Category '%s' not in db." % cat.get_name())
             self.hidden_categories.append(cat)
 
