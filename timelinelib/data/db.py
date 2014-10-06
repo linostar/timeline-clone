@@ -203,9 +203,13 @@ class MemoryDB(Observable):
 
     def place_event_after_event(self, event_to_place, target_event):
         self._events.place_event_after_event(event_to_place, target_event)
+        self._save_if_not_disabled()
+        self._notify(STATE_CHANGE_ANY)
 
     def place_event_before_event(self, event_to_place, target_event):
         self._events.place_event_before_event(event_to_place, target_event)
+        self._save_if_not_disabled()
+        self._notify(STATE_CHANGE_ANY)
 
     def undo(self):
         if self._undo_handler.undo():

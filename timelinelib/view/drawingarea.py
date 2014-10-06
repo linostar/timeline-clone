@@ -389,8 +389,6 @@ class TimelineCanvasController(object):
             else:
                 self.timeline.place_event_before_event(selected_event,
                                                        overlapping_event)
-            self._redraw_timeline()
-            self.timeline._save_if_not_disabled()
         safe_locking(self.view, edit_function)
 
     def key_up(self, keycode):
