@@ -56,8 +56,7 @@ class SelectMenuInstruction(Instruction):
     def _find_menu_item_id(self, win):
         labels   = self.get_all_args()
         menu_bar = self._get_menu_bar(win)
-        inx = menu_bar.FindMenu(labels[0])
-        menu = menu_bar.GetMenu(inx)
+        menu = self._find_menu(win, labels[0])
         labels = labels [1:]
         while len(labels) > 0:
             item_id = self._get_menu_item_id(menu, labels[0])
@@ -67,6 +66,15 @@ class SelectMenuInstruction(Instruction):
             labels = labels [1:]
         return item_id
 
+    def _find_menu(self, win, label):
+        menu_bar = self._get_menu_bar(win)
+        labels = label.split("|")
+        for label in labels:
+            inx = menu_bar.FindMenu(label)
+            if inx != -1:
+                return menu_bar.GetMenu(inx)
+        return None
+        
     def _get_menu_bar(self, win):
         menu_bar = win.GetMenuBar()
         if menu_bar is None:
@@ -74,11 +82,13 @@ class SelectMenuInstruction(Instruction):
         return menu_bar
 
     def _get_menu_item_id(self, menu, label):
-        valid_labels = self._get_valid_labels(label)
-        for label in valid_labels:
-            item_id = menu.FindItem(label)
-            if item_id != wx.NOT_FOUND:
-                return item_id
+        labels = label.split("|")
+        for label in labels:
+            valid_labels = self._get_valid_labels(label)
+            for lbl in valid_labels:
+                item_id = menu.FindItem(lbl)
+                if item_id != wx.NOT_FOUND:
+                    return item_id
         return wx.NOT_FOUND
         
     def _get_valid_labels(self, label):

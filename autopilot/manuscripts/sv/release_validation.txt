@@ -6,12 +6,12 @@
 #
 
 
-include(file_menuv.txt)
-include(edit_menu_open_close_dialogs.txt)
-include(view_menu_open_close_dialogs.txt)
-include(timeline_menu_open_close_dialogs.txt)
-include(navigate_menu_open_close_dialogs.txt)
-include(help_menu_open_close_dialogs.txt)
-include(event_editor.txt)
+include(file_menu.txt)
+#include(edit_menu_open_close_dialogs.txt)
+#include(view_menu_open_close_dialogs.txt)
+#include(timeline_menu_open_close_dialogs.txt)
+#include(navigate_menu_open_close_dialogs.txt)
+#include(help_menu_open_close_dialogs.txt)
+#include(event_editor.txt)
 
-close Application
+#close Application
