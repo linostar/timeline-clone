@@ -88,14 +88,18 @@ class MemoryDB(Observable):
     def get_last_event(self):
         return self._events.get_last()
 
-    def save_event(self, event):
+    def save_events(self, events):
         try:
-            self._events.save_event(event)
+            for event in events:
+                self._events.save_event(event)
         except Exception, e:
             raise TimelineIOError("Saving event failed: %s" % e)
         else:
             self._save_if_not_disabled()
             self._notify(STATE_CHANGE_ANY)
+
+    def save_event(self, event):
+        self.save_events([event])
 
     def delete_event(self, event_or_id, save=True):
         if isinstance(event_or_id, Event):

@@ -79,7 +79,6 @@ class a_newly_initialized_dialog(duplicate_event_dialog_spec_base):
 
     def setUp(self):
         duplicate_event_dialog_spec_base.setUp(self)
-        self.controller.initialize()
 
     def test_number_of_duplicates_should_be_1(self):
         self.view.set_count.assert_called_with(1)
@@ -101,11 +100,11 @@ class when_duplicating_event_with_default_settings(duplicate_event_dialog_spec_b
         self._duplicate_with(count=1, freq=1, direction=FORWARD)
 
     def test_one_new_event_is_saved(self):
-        self.assertEqual(1, self.db.save_event.call_count)
+        self.assertEqual(1, self.db.save_events.call_count)
 
     def test_the_new_event_gets_period_from_move_period_fn(self):
-        new_event = self.db.save_event.call_args[0][0]
-        new_period = new_event.get_time_period()
+        new_events = self.db.save_events.call_args[0][0]
+        new_period = new_events[0].get_time_period()
         expected_period = TimePeriod(
             GregorianTimeType(),
             gregorian.from_date(2010, 8, 1).to_time(),
@@ -113,8 +112,8 @@ class when_duplicating_event_with_default_settings(duplicate_event_dialog_spec_b
         self.assertEqual(expected_period, new_period)
 
     def test_the_new_event_should_not_be_the_same_as_the_existing(self):
-        new_event = self.db.save_event.call_args[0][0]
-        self.assertNotEquals(self.event, new_event)
+        new_events = self.db.save_events.call_args[0][0]
+        self.assertNotEquals(self.event, new_events[0])
 
     def test_the_dialog_should_close(self):
         self.assertTrue(self.view.close.assert_called)
@@ -124,7 +123,7 @@ class when_saving_duplicated_event_fails(duplicate_event_dialog_spec_base):
 
     def setUp(self):
         duplicate_event_dialog_spec_base.setUp(self)
-        self.db.save_event.side_effect = TimelineIOError
+        self.db.save_events.side_effect = TimelineIOError
         self._duplicate_with(count=1, freq=1, direction=FORWARD)
 
     def test_the_failure_is_handled(self):

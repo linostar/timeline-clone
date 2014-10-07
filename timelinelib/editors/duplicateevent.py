@@ -30,31 +30,41 @@ class DuplicateEventEditor(object):
         self.view = view
         self.db = db
         self.event = event
+        self._populate_view()
 
-    def initialize(self):
+    def create_duplicates_and_save(self):
+        events, nbr_of_missing_dates = self._create_duplicates()
+        self._save_duplicates(events, nbr_of_missing_dates)
+
+    def _populate_view(self):
         self.view.set_count(1)
         self.view.set_frequency(1)
         self.view.select_move_period_fn_at_index(0)
         self.view.set_direction(FORWARD)
 
-    def create_duplicates_and_save(self):
+    def _create_duplicates(self):
         (periods, nbr_of_missing_dates) = self._repeat_period(
             self.event.get_time_period(),
             self.view.get_move_period_fn(),
             self.view.get_frequency(),
             self.view.get_count(),
             self.view.get_direction())
+        events = []
+        for period in periods:
+            event = self.event.clone()
+            event.update_period(period.start_time, period.end_time)
+            events.append(event)
+        return events, nbr_of_missing_dates
+
+    def _save_duplicates(self, events, nbr_of_missing_dates):
         try:
-            for period in periods:
-                event = self.event.clone()
-                event.update_period(period.start_time, period.end_time)
-                self.db.save_event(event)
+            self.db.save_events(events)
             if nbr_of_missing_dates > 0:
                 self.view.handle_date_errors(nbr_of_missing_dates)
             self.view.close()
         except TimelineIOError, e:
             self.view.handle_db_error(e)
-
+            
     def _repeat_period(self, period, move_period_fn, frequency,
                        repetitions, direction):
         periods = []

@@ -32,7 +32,6 @@ class DuplicateEventDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, title=_("Duplicate Event"))
         self._create_gui(db.get_time_type().get_duplicate_functions())
         self.controller = DuplicateEventEditor(self, db, event)
-        self.controller.initialize()
 
     def set_count(self, count):
         self.sc_count.SetValue(count)
