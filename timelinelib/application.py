@@ -71,6 +71,7 @@ class TimelineApplication(object):
         else:
             self.config.append_recently_opened(path)
             self.main_frame.update_open_recent_submenu()
+            self.timeline.path = path
             self.main_frame.display_timeline(self.timeline)
             self.timelinepath = path
             self.last_changed = self._get_modification_date()

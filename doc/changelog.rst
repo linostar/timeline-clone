@@ -18,6 +18,7 @@ Bug fixes:
 * Synchronizing a timeline that has been modified by someone else actually
   reads the modified timeline instead of ignoring it. (This bug was introduced
   in version 1.1.0.)
+* File name displayed in titlebar when creating a new file timeline
 
 Version 1.3.0
 -------------
