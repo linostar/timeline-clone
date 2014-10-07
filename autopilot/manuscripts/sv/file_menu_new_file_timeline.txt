@@ -1,0 +1,11 @@
+Select Menu(Hjälp|Help, "Getting started tutorial") 
+
+Select Menu(Arkiv|File, Ny|New, "Timelinefil...|File Timeline...") 
+Enter text(1, "abc")
+Click Button(&Save)
+
+# The file abc.timeline has been created earlier so we get a messagebox
+# with the text, "File Already Exists", so we OK that.
+Click Button(OK)
+
+
