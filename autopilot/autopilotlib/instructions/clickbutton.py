@@ -46,7 +46,11 @@ class ClickButtonInstruction(Instruction):
 
     def _click_button(self, win):
         name = self.arg(1)
-        try:
-            win.click_button(name)
-        except NotFoundException:
-            Logger.add_error("Button(%s) not found. hwnd=%d" % (name, win.hwnd))
+        names = name.split("|")
+        for nmn in names:
+            try:
+                win.click_button(nmn)
+                return
+            except NotFoundException:
+                pass
+        Logger.add_error("Button(%s) not found. hwnd=%d" % (name, win.hwnd))

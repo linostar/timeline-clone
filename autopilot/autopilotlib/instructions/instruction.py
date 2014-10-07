@@ -102,7 +102,9 @@ class Instruction():
         
     def _find_win_by_name(self, name, classname):
         wins = wx.GetTopLevelWindows()
-        for win in wins:
-            if win.ClassName == classname and win.GetLabel() == name:
-                return win
+        names = name.split("|")
+        for nmn in names:
+            for win in wins:
+                if win.ClassName == classname and win.GetLabel() == nmn:
+                    return win
         raise NotFoundException()
