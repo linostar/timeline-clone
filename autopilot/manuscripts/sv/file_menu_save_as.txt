@@ -1,6 +1,6 @@
-Select Menu(Hjälp, "Getting started tutorial") 
-Select Menu(Arkiv, "Spara som...") 
-Select Menu(Arkiv, "Save as") 
+Select Menu(Hjälp|Help, "Getting started tutorial") 
+Select Menu(Arkiv|File, "Spara som...") 
+Select Menu(Arkiv|File, "Save as") 
 Enter text(1, "abc")
 Click Button(&Save)
 

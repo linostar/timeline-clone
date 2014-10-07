@@ -2,15 +2,15 @@ Select Menu(Hjälp|Help, "Getting|Getting started tutorial")
 Select Menu(Arkiv|File, "Import timeline...|Importera Timeline...") 
 Enter text(1, "abc")
 Click Button(Open)
+# Import is performed even if the file doesn't exist!
 
-# Can't import to tutorial
-Click Button(OK)
 
 # Try again to import abc to abc
-#Select Menu(Arkiv, "Öppna") 
-#Enter text(1, "abc")
-#Click Button(Open)
+Select Menu(Arkiv|File, "Öppna") 
+Enter text(1, "abc")
+Click Button(Open)
 
-#Select Menu(Arkiv, "Importera Timeline...") 
-#Enter text(1, "abc")
-#Click Button(Open)
+
+Select Menu(Arkiv|File, "Import timeline...|Importera Timeline...") 
+Enter text(1, "abc")
+Click Button(Open)

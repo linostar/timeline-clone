@@ -1,5 +1,5 @@
-Select Menu(Hjälp, "Getting started tutorial") 
-Select Menu(Arkiv, "Öppna") 
+Select Menu(Hjälp|Help, "Getting started tutorial") 
+Select Menu(Arkiv|File, "Öppna") 
 Enter text(1, "abc")
 Click Button(Open)
 

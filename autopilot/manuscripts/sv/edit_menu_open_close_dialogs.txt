@@ -1,15 +1,15 @@
 # Edit menu
 
-Select Menu(Hjälp, "Getting started tutorial") 
+Select Menu(Hjälp|Help, "Getting started tutorial") 
 
-Select Menu(Redigera, Sök) 
+Select Menu(Redigera|Edit, Sök) 
 
-Select Menu(Redigera, "Find Categories") 
+Select Menu(Redigera|Edit, "Find Categories") 
 Click Button(Stäng)
 
-Select Menu(Redigera, Inställningar) 
+Select Menu(Redigera|Edit, Inställningar) 
 Click Button(Stäng)
 
-Select Menu(Redigera, Shortcuts...) 
+Select Menu(Redigera|Edit, Shortcuts...) 
 Click Button(Stäng)
 

@@ -1,28 +1,28 @@
 # Hjälp menu
-Select Menu(Hjälp, "Getting started tutorial") 
+Select Menu(Hjälp|Help, "Getting started tutorial") 
 
-Select Menu(Hjälp, Innehåll)
-Hide Frame(Hjälp)
+Select Menu(Hjälp|Help, Innehåll|Contents)
+Hide Frame(Hjälp|Help)
 
-Select Menu(Hjälp, "Give Feedback...")
+Select Menu(Hjälp|Help, "Give Feedback...")
 Click Button("Stäng")
 
-Select Menu(Hjälp, "Give Feedback on Features", "Exporting whole Timeline to images...")
+Select Menu(Hjälp|Help, "Give Feedback on Features", "Exporting whole Timeline to images...")
 Click Button("Avbryt")
 
-Select Menu(Hjälp, "Give Feedback on Features", "Containers...")
+Select Menu(Hjälp|Help, "Give Feedback on Features", "Containers...")
 Click Button("Avbryt")
 
-Select Menu(Hjälp, "Give Feedback on Features", "Vertical Zooming...")
+Select Menu(Hjälp|Help, "Give Feedback on Features", "Vertical Zooming...")
 Click Button("Avbryt")
 
-Select Menu(Hjälp, "Give Feedback on Features", "Vertical Scrolling...")
+Select Menu(Hjälp|Help, "Give Feedback on Features", "Vertical Scrolling...")
 Click Button("Avbryt")
 
-Select Menu(Hjälp, Contact )
-Hide Frame(Hjälp)
+Select Menu(Hjälp|Help, Contact)
+Hide Frame(Hjälp|Help)
 
-Select Menu(Hjälp, Om )
+Select Menu(Hjälp|Help, Om )
 Click Button("License >>")
 Click Button("License >>")
 Click Button("Developers >>")

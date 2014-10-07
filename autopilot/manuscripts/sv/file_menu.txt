@@ -6,8 +6,8 @@
 #
 
 
-#include(file_menu_open_close_dialogs.txt)
-#include(file_menu_new_file_timeline.txt)
-#include(file_menu_open_timeline.txt)
-#include(file_menu_save_as.txt)
+include(file_menu_open_close_dialogs.txt)
+include(file_menu_new_file_timeline.txt)
+include(file_menu_open_timeline.txt)
+include(file_menu_save_as.txt)
 include(file_menu_import.txt)

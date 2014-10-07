@@ -1,30 +1,30 @@
 # Timeline menu
 
 # Open a well known Timeline
-Select Menu(Hjälp, "Getting started tutorial") 
+Select Menu(Hjälp|Help, "Getting started tutorial") 
 
-Select Menu(Tidslinje, "Skapa Händelse...") 
+Select Menu(Tidslinje|Timeline, "Skapa Händelse...|Create Event...") 
 Click Button(Avbryt)
 
 # Make sure an event is selected with this command
-click mouse(605,355)
+click mouse(605,365)
 
-Select Menu(Tidslinje, "Editera valda Händelser...") 
+Select Menu(Tidslinje|Timeline, "Editera valda Händelser...|Edit Selected Event...") 
 Click Button(Avbryt)
 
-Select Menu(Tidslinje, "Duplicera Markerad Händelse...") 
+Select Menu(Tidslinje|Timeline, "Duplicera Markerad Händelse...|Duplicate Selected Event...") 
 Click Button(Avbryt)
 
-Select Menu(Tidslinje, "Sätt Kategori på valda Händelser...") 
+Select Menu(Tidslinje|Timeline, "Sätt Kategori på valda Händelser...|Set Category on Selected Events...") 
 Click Button(Avbryt)
 
-Select Menu(Tidslinje, "Mät avståndet mellan två valda händelser...") 
+Select Menu(Tidslinje|Timeline, "Mät avståndet mellan två valda händelser...|Measure Distance between two Events...") 
 Click Button(Avbryt)
 
-Select Menu(Tidslinje, "Set Category on events without category...") 
+Select Menu(Tidslinje|Timeline, "Set Category on events without category...") 
 Click Button(Avbryt)
 
-Select Menu(Tidslinje, "Redigera Kategorier") 
+Select Menu(Tidslinje|Timeline, "Redigera Kategorier|Edit Categories") 
 Click Button(Stäng)
 
-Select Menu(Tidslinje, "Read Only") 
+Select Menu(Tidslinje|Timeline, "Read Only") 

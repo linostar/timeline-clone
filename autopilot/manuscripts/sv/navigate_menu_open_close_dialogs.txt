@@ -1,47 +1,47 @@
 # Navigera menu
-Select Menu(Hjälp, "Getting started tutorial") 
+Select Menu(Hjälp|Help, "Getting started tutorial") 
 
-Select Menu(Navigera, "Framåt ett År") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Framåt ett År|Forward One Year") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Go to Date...") 
+Select Menu(Navigera|Navigate, "Go to Date...") 
 Click Button(Avbryt)
 
-Select Menu(Navigera, Bakåt) 
-Select Menu(Navigera, Framåt) 
+Select Menu(Navigera|Navigate, Bakåt|Forward) 
+Select Menu(Navigera|Navigate, Framåt|Backward) 
 
-Select Menu(Navigera, "Framåt En Vecka") 
-Select Menu(Navigera, "Bakåt En Vecka") 
+Select Menu(Navigera|Navigate, "Framåt En Vecka|Forward One Week") 
+Select Menu(Navigera|Navigate, "Bakåt En Vecka|Backward One Week") 
 
-Select Menu(Navigera, "Framåt En Månad") 
-Select Menu(Navigera, "Bakåt en Månad") 
+Select Menu(Navigera|Navigate, "Framåt En Månad|Forward One Month") 
+Select Menu(Navigera|Navigate, "Bakåt en Månad|Backward One Month") 
 
-Select Menu(Navigera, "Framåt ett År") 
-Select Menu(Navigera, "Bakåt Ett År") 
+Select Menu(Navigera|Navigate, "Framåt ett År|Forward One Year") 
+Select Menu(Navigera|Navigate, "Bakåt Ett År|Backward One Year") 
 
-Select Menu(Navigera, "Anpassa Millenium") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Anpassa Millenium|Fit Millennium") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Anpass Århundrade") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Anpass Århundrade|Fit Century") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Anpassa Decennium") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Anpassa Decennium|Fit Decade") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Anpassa År") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Anpassa År|Fit Year") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Anpassa Månad") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Anpassa Månad|Fit month") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Anpassa Vecka") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Anpassa Vecka|Fit Week") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Anpassa Dag") 
-Select Menu(Navigera, "Gå till Idag ") 
+Select Menu(Navigera|Navigate, "Anpassa Dag|Fit Day") 
+Select Menu(Navigera|Navigate, "Gå till Idag |Go to Today") 
 
-Select Menu(Navigera, "Find First Event") 
+Select Menu(Navigera|Navigate, "Find First Event") 
 
-Select Menu(Navigera, "Find Last Event") 
+Select Menu(Navigera|Navigate, "Find Last Event") 
 
-Select Menu(Navigera, "Fit All Events") 
+Select Menu(Navigera|Navigate, "Fit All Events") 
