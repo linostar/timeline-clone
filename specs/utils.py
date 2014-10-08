@@ -17,6 +17,7 @@
 
 
 import os.path
+import random
 import shutil
 import sys
 import tempfile
@@ -114,10 +115,24 @@ def a_container_with(text="container", category=None, cid=-1):
     return container
 
 
+def a_category():
+    return a_category_with(name="category")
+
+
 def a_category_with(name, color=(255, 0, 0), font_color=(0, 255, 255),
                     parent=None):
     return Category(name=name, color=color, font_color=font_color,
                     parent=parent)
+
+
+def randomly_modify(obj, modifiers):
+    return random.choice(modifiers)(obj)
+
+
+def create_modifier(name, fn):
+    def modifier(obj):
+        return (fn(obj), name)
+    return modifier
 
 
 class TestCase(unittest.TestCase):

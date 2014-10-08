@@ -16,12 +16,15 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from specs.utils import randomly_modify
+from specs.utils import a_category
 from specs.utils import a_category_with
+from specs.utils import create_modifier
 from specs.utils import TestCase
 from timelinelib.data import Category
 
 
-class describe_category(TestCase):
+class describe_category_fundamentals(TestCase):
 
     def test_can_get_values(self):
         category = Category("work", (50, 100, 150), (0, 0, 0))
@@ -33,21 +36,37 @@ class describe_category(TestCase):
 
     def test_can_set_values(self):
         self.assertEqual(
-            self.category.set_id(15).get_id(),
+            a_category().set_id(15).get_id(),
             15)
         self.assertEqual(
-            self.category.set_name("fun").get_name(),
+            a_category().set_name("fun").get_name(),
             "fun")
         self.assertEqual(
-            self.category.set_color((33, 66, 99)).get_color(),
+            a_category().set_color((33, 66, 99)).get_color(),
             (33, 66, 99))
         self.assertEqual(
-            self.category.set_font_color((11, 12, 13)).get_font_color(),
+            a_category().set_font_color((11, 12, 13)).get_font_color(),
             (11, 12, 13))
+        a_parent = a_category_with(name="parent")
         self.assertEqual(
-            self.category.set_parent(self.a_parent).get_parent(),
-            self.a_parent)
+            a_category().set_parent(a_parent).get_parent(),
+            a_parent)
 
-    def setUp(self):
-        self.category = Category("work", (50, 100, 150), (0, 0, 0))
-        self.a_parent = a_category_with(name="parent")
+    def test_can_be_compared(self):
+        (one, other) = self._get_random_category_pair()
+        self.assertEqNeWorks(one, other, self._modify_category)
+
+    def test_can_be_cloned(self):
+        (original, _) = self._get_random_category_pair()
+        self.assertIsCloneOf(original.clone(), original)
+
+    def _get_random_category_pair(self):
+        one = a_category()
+        other = a_category()
+        return (one, other)
+
+    def _modify_category(self, category):
+        return randomly_modify(category, [
+            create_modifier("change name", lambda category:
+                category.set_name("was: %s" % category.get_name())),
+        ])
