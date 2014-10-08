@@ -8,17 +8,19 @@ Version 1.4.0
 
 New features, enhancements:
 
-* Added a context menu to Timeline.
 * Added undo feature
+* Added a context menu to Timeline
 
 Bug fixes:
 
-* Fixed following error when using wxPython >= 2.9: AttributeError: 'module' object has no attribute 'Color'
+* Fixed the following error when using wxPython >= 2.9:
+  AttributeError: 'module' object has no attribute 'Color'
+* Fixed the following error: iCCP: known incorrect sRGB profile
 * Fixed navigation problem, go to time, for numeric timeline
 * Synchronizing a timeline that has been modified by someone else actually
   reads the modified timeline instead of ignoring it. (This bug was introduced
   in version 1.1.0.)
-* File name displayed in titlebar when creating a new file timeline
+* File name is displayed in titlebar when creating a new file timeline
 
 Version 1.3.0
 -------------
