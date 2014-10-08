@@ -10,6 +10,8 @@ New features, enhancements:
 
 * Added undo feature
 * Added a context menu to Timeline
+* Added notification window at top of the screen when modifying a read-only
+  timeline or a timeline that is not saved on disk
 
 Bug fixes:
 
