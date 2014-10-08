@@ -9,8 +9,8 @@ Version 1.4.0
 New features, enhancements:
 
 * Added undo feature
-* Added a context menu to Timeline
-* Added notification window at top of the screen when modifying a read-only
+* Added a context menu to the timeline window
+* Added a notification window at the top of the screen when opening a read-only
   timeline or a timeline that is not saved on disk
 
 Bug fixes:
