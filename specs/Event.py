@@ -16,8 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import random
-
 from specs.utils import a_category_with
 from specs.utils import an_event
 from specs.utils import an_event_with
@@ -123,7 +121,7 @@ class describe_event_fundamentals(TestCase):
             new_id = event.get_id() + 1
         else:
             new_id = 8
-        return random.choice([
+        return randomly_modify(event, [
             create_modifier("change time type", lambda event:
                 event.set_time_type(None)),
             create_modifier("change fuzzy", lambda event:
@@ -148,7 +146,7 @@ class describe_event_fundamentals(TestCase):
                 event.set_hyperlink("http://another.com")),
             create_modifier("change progress", lambda event:
                 event.set_progress(6)),
-        ])(event)
+        ])
 
 
 class describe_event(TestCase):
