@@ -73,7 +73,7 @@ def _load(db, dir_path):
             # Create the stuff
             p = parents.get(os.path.normpath(os.path.join(dirpath, "..")),
                             None)
-            cat = Category(dirpath, (233, 233, 233), None, False, parent=p)
+            cat = Category(dirpath, (233, 233, 233), None, parent=p)
             parents[os.path.normpath(dirpath)] = cat
             all_cats.append(cat)
             db.save_category(cat)
