@@ -21,21 +21,23 @@ import random
 from specs.utils import a_category_with
 from specs.utils import an_event
 from specs.utils import an_event_with
+from specs.utils import create_modifier
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
+from specs.utils import randomly_modify
 from specs.utils import TestCase
+from timelinelib.data.db import MemoryDB
+from timelinelib.data.event import clone_event_list
+from timelinelib.data import Container
 from timelinelib.data import Event
+from timelinelib.data import Subevent
+from timelinelib.data.timeperiod import TimePeriod
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType
 from timelinelib.time.timeline import delta_from_days
-from timelinelib.data.timeperiod import TimePeriod 
-from timelinelib.data.event import clone_event_list
-from timelinelib.data import Container
-from timelinelib.data import Subevent
-from timelinelib.data.db import MemoryDB
 
 
-class describe_event(TestCase):
+class describe_event_fundamentals(TestCase):
 
     def test_can_get_values(self):
         event = Event(time_type=GregorianTimeType(),
@@ -58,62 +60,57 @@ class describe_event(TestCase):
 
     def test_can_set_values(self):
         self.assertEqual(
-            self.an_event.set_id(15).get_id(),
+            an_event().set_id(15).get_id(),
             15)
         self.assertEqual(
-            self.an_event.set_time_period(gregorian_period("1 Jan 2014", "1 Jan 2015")).get_time_period(),
+            an_event().set_time_period(gregorian_period("1 Jan 2014", "1 Jan 2015")).get_time_period(),
             gregorian_period("1 Jan 2014", "1 Jan 2015"))
         self.assertEqual(
-            self.an_event.set_text("cool").get_text(),
+            an_event().set_text("cool").get_text(),
             "cool")
+        a_parent_category = a_category_with(name="work")
         self.assertEqual(
-            self.an_event.set_category(self.a_category).get_category(),
-            self.a_category)
+            an_event().set_category(a_parent_category).get_category(),
+            a_parent_category)
         self.assertEqual(
-            self.an_event.set_time_type(NumTimeType()).get_time_type(),
+            an_event().set_time_type(NumTimeType()).get_time_type(),
             NumTimeType())
         self.assertEqual(
-            self.an_event.set_fuzzy(True).get_fuzzy(),
+            an_event().set_fuzzy(True).get_fuzzy(),
             True)
         self.assertEqual(
-            self.an_event.set_ends_today(True).get_ends_today(),
-            True)
-        # This test must be run before the next one because the
-        # tests updates the self.an_event.
-        self.assertEqual(
-            self.an_event.set_locked(True).get_locked(),
+            an_event().set_locked(True).get_locked(),
             True)
         self.assertEqual(
-            self.an_event.set_description("cool").get_description(),
+            an_event().set_ends_today(True).get_ends_today(),
+            True)
+        self.assertEqual(
+            an_event().set_description("cool").get_description(),
             "cool")
+        an_icon = "really not an icon"
         self.assertEqual(
-            self.an_event.set_icon(self.an_icon).get_icon(),
-            self.an_icon)
+            an_event().set_icon(an_icon).get_icon(),
+            an_icon)
         self.assertEqual(
-            self.an_event.set_hyperlink("http://google.com").get_hyperlink(),
+            an_event().set_hyperlink("http://google.com").get_hyperlink(),
             "http://google.com")
         self.assertEqual(
-            self.an_event.set_progress(88).get_progress(),
+            an_event().set_progress(88).get_progress(),
             88)
         self.assertEqual(
-            self.an_event.set_alert("2015-01-07 00:00:00;hoho").get_alert(),
+            an_event().set_alert("2015-01-07 00:00:00;hoho").get_alert(),
             "2015-01-07 00:00:00;hoho")
 
-    def test_can_not_set_values(self):
-        self.assertEqual(
-            an_event_with(locked=True).set_ends_today(True).get_ends_today(),
-            False)
-
     def test_can_be_compared(self):
-        (one, other) = self.create_equal_events()
-        self.assertEqNeWorks(one, other, self.modify_event)
+        (one, other) = self._get_random_event_pair()
+        self.assertEqNeWorks(one, other, self._modify_event)
 
     def test_can_be_cloned(self):
-        (original, _) = self.create_equal_events()
+        (original, _) = self._get_random_event_pair()
         clone = original.clone()
         self.assertIsCloneOf(clone, original)
 
-    def create_equal_events(self):
+    def _get_random_event_pair(self):
         events = []
         for _ in range(2):
             event = an_event()
@@ -121,41 +118,45 @@ class describe_event(TestCase):
             events.append(event)
         return events
 
-    def modify_event(self, event):
-        def with_event(name, fn):
-            def x(event):
-                return (fn(event), name)
-            return x
+    def _modify_event(self, event):
         if event.get_id():
             new_id = event.get_id() + 1
         else:
             new_id = 8
         return random.choice([
-            with_event("change time type",
-                lambda event: event.set_time_type(None)),
-            with_event("change fuzzy",
-                lambda event: event.set_fuzzy(not event.get_fuzzy())),
-            with_event("change locked",
-                lambda event: event.set_locked(not event.get_locked())),
-            with_event("change ends today",
-                lambda event: event.set_ends_today(not event.get_ends_today())),
-            with_event("change id",
-                lambda event: event.set_id(new_id)),
-            with_event("change time period",
-                lambda event: event.set_time_period(event.get_time_period().move_delta(delta_from_days(1)))),
-            with_event("change text",
-                lambda event: event.set_text("was: %s" % event.get_text())),
-            with_event("change category",
-                lambda event: event.set_category(a_category_with(name="another category name"))),
-            with_event("change icon",
-                lambda event: event.set_icon("not really an icon")),
-            with_event("change description",
-                lambda event: event.set_description("another description")),
-            with_event("change hyperlink",
-                lambda event: event.set_hyperlink("http://another.com")),
-            with_event("change progress",
-                lambda event: event.set_progress(6)),
+            create_modifier("change time type", lambda event:
+                event.set_time_type(None)),
+            create_modifier("change fuzzy", lambda event:
+                event.set_fuzzy(not event.get_fuzzy())),
+            create_modifier("change locked", lambda event:
+                event.set_locked(not event.get_locked())),
+            create_modifier("change ends today", lambda event:
+                event.set_ends_today(not event.get_ends_today())),
+            create_modifier("change id", lambda event:
+                event.set_id(new_id)),
+            create_modifier("change time period", lambda event:
+                event.set_time_period(event.get_time_period().move_delta(delta_from_days(1)))),
+            create_modifier("change text", lambda event:
+                event.set_text("was: %s" % event.get_text())),
+            create_modifier("change category", lambda event:
+                event.set_category(a_category_with(name="another category name"))),
+            create_modifier("change icon", lambda event:
+                event.set_icon("not really an icon")),
+            create_modifier("change description", lambda event:
+                event.set_description("another description")),
+            create_modifier("change hyperlink", lambda event:
+                event.set_hyperlink("http://another.com")),
+            create_modifier("change progress", lambda event:
+                event.set_progress(6)),
         ])(event)
+
+
+class describe_event(TestCase):
+
+    def test_can_not_set_values(self):
+        self.assertEqual(
+            an_event_with(locked=True).set_ends_today(True).get_ends_today(),
+            False)
 
     def test_ends_today_can_be_changed_with_update(self):
         event = an_event_with(ends_today=False)
@@ -213,11 +214,6 @@ class describe_event(TestCase):
         for start, end, label in cases:
             event = an_event_with(start=start, end=end)
             self.assertEqual(label, event._get_duration_label())
-
-    def setUp(self):
-        self.an_event = an_event()
-        self.a_category = a_category_with(name="work")
-        self.an_icon = "really not an icon"
 
 
 class describe_event_construction(TestCase):
