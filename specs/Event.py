@@ -105,39 +105,56 @@ class describe_event(TestCase):
             False)
 
     def test_can_be_compared(self):
-        self.assertObjectEquality(self.create_equal_events, self.modify_event)
+        (one, other) = self.create_equal_events()
+        self.assertEqNeWorks(one, other, self.modify_event)
 
     def test_can_be_cloned(self):
-        (original, _, _) = self.create_equal_events()
+        (original, _) = self.create_equal_events()
         clone = original.clone()
         self.assertIsCloneOf(clone, original)
 
     def create_equal_events(self):
         events = []
-        for _ in range(3):
+        for _ in range(2):
             event = an_event()
             event.set_progress(66)
             events.append(event)
         return events
 
     def modify_event(self, event):
+        def with_event(name, fn):
+            def x(event):
+                return (fn(event), name)
+            return x
         if event.get_id():
             new_id = event.get_id() + 1
         else:
             new_id = 8
         return random.choice([
-            lambda event: event.clone().set_time_type(None),
-            lambda event: event.clone().set_fuzzy(not event.get_fuzzy()),
-            lambda event: event.clone().set_locked(not event.get_locked()),
-            lambda event: event.clone().set_ends_today(not event.get_ends_today()),
-            lambda event: event.clone().set_id(new_id),
-            lambda event: event.clone().set_time_period(event.get_time_period().move_delta(delta_from_days(1))),
-            lambda event: event.clone().set_text("was: %s" % event.get_text()),
-            lambda event: event.clone().set_category(a_category_with(name="another category name")),
-            lambda event: event.clone().set_icon("not really an icon"),
-            lambda event: event.clone().set_description("another description"),
-            lambda event: event.clone().set_hyperlink("http://another.com"),
-            lambda event: event.clone().set_progress(6),
+            with_event("change time type",
+                lambda event: event.set_time_type(None)),
+            with_event("change fuzzy",
+                lambda event: event.set_fuzzy(not event.get_fuzzy())),
+            with_event("change locked",
+                lambda event: event.set_locked(not event.get_locked())),
+            with_event("change ends today",
+                lambda event: event.set_ends_today(not event.get_ends_today())),
+            with_event("change id",
+                lambda event: event.set_id(new_id)),
+            with_event("change time period",
+                lambda event: event.set_time_period(event.get_time_period().move_delta(delta_from_days(1)))),
+            with_event("change text",
+                lambda event: event.set_text("was: %s" % event.get_text())),
+            with_event("change category",
+                lambda event: event.set_category(a_category_with(name="another category name"))),
+            with_event("change icon",
+                lambda event: event.set_icon("not really an icon")),
+            with_event("change description",
+                lambda event: event.set_description("another description")),
+            with_event("change hyperlink",
+                lambda event: event.set_hyperlink("http://another.com")),
+            with_event("change progress",
+                lambda event: event.set_progress(6)),
         ])(event)
 
     def test_ends_today_can_be_changed_with_update(self):

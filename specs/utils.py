@@ -137,17 +137,24 @@ class TestCase(unittest.TestCase):
             if element is object_:
                 self.fail("%r was in list" % object_)
 
-    def assertObjectEquality(self, create_fn, modify_fn):
-        (one, two, three) = create_fn()
-        self.assertTrue(one is not two)
-        self.assertTrue(one is not three)
-        self.assertTrue(two is not three)
-        self.assertEqual(one, two)
-        self.assertEqual(two, three)
-        self.assertNotEqual(one, None)
-        for _ in range(20):
-            different = modify_fn(three)
-            self.assertNotEqual(one, different)
+    def assertEqNeWorks(self, one, other, modify_other_fn):
+        fail_message_one_other = "%r vs %r" % (one, other)
+        self.assertTrue(type(one) == type(other), fail_message_one_other)
+        self.assertFalse(one == None, fail_message_one_other)
+        self.assertTrue(one != None, fail_message_one_other)
+        self.assertTrue(one is not other, fail_message_one_other)
+        self.assertFalse(one is other, fail_message_one_other)
+        self.assertTrue(one == other, fail_message_one_other)
+        self.assertFalse(one != other, fail_message_one_other)
+        self.assertTrue(one == one, fail_message_one_other)
+        self.assertFalse(one != one, fail_message_one_other)
+        (modified, description) = modify_other_fn(other)
+        fail_message_modified_one = "%r vs %r (%s)" % (modified, other, description)
+        self.assertTrue(type(modified) == type(one), fail_message_modified_one)
+        self.assertTrue(modified is not one, fail_message_modified_one)
+        self.assertFalse(modified is one, fail_message_modified_one)
+        self.assertTrue(modified != one, fail_message_modified_one)
+        self.assertFalse(modified == one, fail_message_modified_one)
 
 
 class TmpDirTestCase(TestCase):
