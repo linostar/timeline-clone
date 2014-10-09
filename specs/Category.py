@@ -16,10 +16,10 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from specs.utils import randomly_modify
 from specs.utils import a_category
 from specs.utils import a_category_with
-from specs.utils import create_modifier
+from specs.utils import CATEGORY_MODIFIERS
+from specs.utils import get_random_modifier
 from specs.utils import TestCase
 from timelinelib.data import Category
 
@@ -53,20 +53,11 @@ class describe_category_fundamentals(TestCase):
             a_parent)
 
     def test_can_be_compared(self):
-        (one, other) = self._get_random_category_pair()
-        self.assertEqNeWorks(one, other, self._modify_category)
+        one = a_category()
+        other = one.clone()
+        self.assertEqNeWorks(one, other, get_random_modifier(CATEGORY_MODIFIERS))
 
     def test_can_be_cloned(self):
-        (original, _) = self._get_random_category_pair()
+        original = a_category()
+        clone = original.clone()
         self.assertIsCloneOf(original.clone(), original)
-
-    def _get_random_category_pair(self):
-        one = a_category()
-        other = a_category()
-        return (one, other)
-
-    def _modify_category(self, category):
-        return randomly_modify(category, [
-            create_modifier("change name", lambda category:
-                category.set_name("was: %s" % category.get_name())),
-        ])

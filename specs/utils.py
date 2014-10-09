@@ -37,6 +37,7 @@ from timelinelib.data import Subevent
 from timelinelib.data import TimePeriod
 from timelinelib.db import db_open
 from timelinelib.time.gregoriantime import GregorianTimeType
+from timelinelib.time.timeline import delta_from_days
 from timelinelib.wxgui.setup import start_wx_application
 
 
@@ -129,14 +130,55 @@ def a_category_with(name, color=(255, 0, 0), font_color=(0, 255, 255),
                     parent=parent)
 
 
-def randomly_modify(obj, modifiers):
-    return random.choice(modifiers)(obj)
+def get_random_modifier(modifiers):
+    return random.choice(modifiers)
 
 
-def create_modifier(name, fn):
-    def modifier(obj):
-        return (fn(obj), name)
-    return modifier
+def inc(number):
+    if number is None:
+        return 8
+    else:
+        return number + 1
+
+
+EVENT_MODIFIERS = [
+    ("change time type", lambda event:
+        event.set_time_type(None)),
+    ("change fuzzy", lambda event:
+        event.set_fuzzy(not event.get_fuzzy())),
+    ("change locked", lambda event:
+        event.set_locked(not event.get_locked())),
+    ("change ends today", lambda event:
+        event.set_ends_today(not event.get_ends_today())),
+    ("change id", lambda event:
+        event.set_id(inc(event.get_id()))),
+    ("change time period", lambda event:
+        event.set_time_period(event.get_time_period().move_delta(delta_from_days(1)))),
+    ("change text", lambda event:
+        event.set_text("was: %s" % event.get_text())),
+    ("change category", lambda event:
+        event.set_category(a_category_with(name="another category name"))),
+    ("change icon", lambda event:
+        event.set_icon("not really an icon")),
+    ("change description", lambda event:
+        event.set_description("another description")),
+    ("change hyperlink", lambda event:
+        event.set_hyperlink("http://another.com")),
+    ("change progress", lambda event:
+        event.set_progress(6)),
+]
+
+
+SUBEVENT_MODIFIERS = [
+    ("change container id", lambda event:
+        event.set_container_id(event.get_container_id()+1)),
+] + EVENT_MODIFIERS
+
+
+CATEGORY_MODIFIERS = [
+    ("change name", lambda category:
+        category.set_name("was: %s" % category.get_name())),
+]
 
 
 class TestCase(unittest.TestCase):
@@ -156,7 +198,8 @@ class TestCase(unittest.TestCase):
             if element is object_:
                 self.fail("%r was in list" % object_)
 
-    def assertEqNeWorks(self, one, other, modify_other_fn):
+    def assertEqNeWorks(self, one, other, modifier):
+        (modification_description, modifier_fn) = modifier
         fail_message_one_other = "%r vs %r" % (one, other)
         self.assertTrue(type(one) == type(other), fail_message_one_other)
         self.assertFalse(one == None, fail_message_one_other)
@@ -167,8 +210,9 @@ class TestCase(unittest.TestCase):
         self.assertFalse(one != other, fail_message_one_other)
         self.assertTrue(one == one, fail_message_one_other)
         self.assertFalse(one != one, fail_message_one_other)
-        (modified, description) = modify_other_fn(other)
-        fail_message_modified_one = "%r vs %r (%s)" % (modified, one, description)
+        modified = modifier_fn(other)
+        fail_message_modified_one = "%r vs %r (%s)" % (modified, one,
+                                                       modification_description)
         self.assertTrue(type(modified) == type(one), fail_message_modified_one)
         self.assertTrue(modified is not one, fail_message_modified_one)
         self.assertFalse(modified is one, fail_message_modified_one)

@@ -20,15 +20,14 @@ from specs.utils import a_category_with
 from specs.utils import a_container_with
 from specs.utils import a_subevent
 from specs.utils import a_subevent_with
-from specs.utils import create_modifier
+from specs.utils import get_random_modifier
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
-from specs.utils import randomly_modify
+from specs.utils import SUBEVENT_MODIFIERS
 from specs.utils import TestCase
 from timelinelib.data.subevent import Subevent
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType
-from timelinelib.time.timeline import delta_from_days
 
 
 class describe_subevent_fundamentals(TestCase):
@@ -100,55 +99,14 @@ class describe_subevent_fundamentals(TestCase):
             78)
 
     def test_can_be_compared(self):
-        (one, other) = self._get_random_event_pair()
-        self.assertEqNeWorks(one, other, self._modify_event)
+        one = a_subevent()
+        other = one.clone()
+        self.assertEqNeWorks(one, other, get_random_modifier(SUBEVENT_MODIFIERS))
 
     def test_can_be_cloned(self):
-        (original, _) = self._get_random_event_pair()
+        original = a_subevent()
         clone = original.clone()
         self.assertIsCloneOf(clone, original)
-
-    def _get_random_event_pair(self):
-        events = []
-        for _ in range(2):
-            event = a_subevent()
-            event.set_progress(66)
-            events.append(event)
-        return events
-
-    def _modify_event(self, event):
-        if event.get_id():
-            new_id = event.get_id() + 1
-        else:
-            new_id = 8
-        return randomly_modify(event, [
-            create_modifier("change time type", lambda event:
-                event.set_time_type(None)),
-            create_modifier("change fuzzy", lambda event:
-                event.set_fuzzy(not event.get_fuzzy())),
-            create_modifier("change locked", lambda event:
-                event.set_locked(not event.get_locked())),
-            create_modifier("change ends today", lambda event:
-                event.set_ends_today(not event.get_ends_today())),
-            create_modifier("change id", lambda event:
-                event.set_id(new_id)),
-            create_modifier("change time period", lambda event:
-                event.set_time_period(event.get_time_period().move_delta(delta_from_days(1)))),
-            create_modifier("change text", lambda event:
-                event.set_text("was: %s" % event.get_text())),
-            create_modifier("change category", lambda event:
-                event.set_category(a_category_with(name="another category name"))),
-            create_modifier("change icon", lambda event:
-                event.set_icon("not really an icon")),
-            create_modifier("change description", lambda event:
-                event.set_description("another description")),
-            create_modifier("change hyperlink", lambda event:
-                event.set_hyperlink("http://another.com")),
-            create_modifier("change progress", lambda event:
-                event.set_progress(6)),
-            create_modifier("change container id", lambda event:
-                event.set_container_id(event.get_container_id()+1)),
-        ])
 
 
 class describe_subevent(TestCase):
