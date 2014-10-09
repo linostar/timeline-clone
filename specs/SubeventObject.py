@@ -20,7 +20,6 @@ from specs.utils import a_category_with
 from specs.utils import a_container_with
 from specs.utils import a_subevent
 from specs.utils import a_subevent_with
-from specs.utils import get_random_modifier
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
 from specs.utils import SUBEVENT_MODIFIERS
@@ -30,7 +29,7 @@ from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.numtime import NumTimeType
 
 
-class describe_subevent_fundamentals(TestCase):
+class describe_subevent(TestCase):
 
     def test_can_get_values(self):
         event = Subevent(time_type=GregorianTimeType(),
@@ -98,18 +97,8 @@ class describe_subevent_fundamentals(TestCase):
             a_subevent().set_container_id(78).get_container_id(),
             78)
 
-    def test_can_be_compared(self):
-        one = a_subevent()
-        other = one.clone()
-        self.assertEqNeWorks(one, other, get_random_modifier(SUBEVENT_MODIFIERS))
-
-    def test_can_be_cloned(self):
-        original = a_subevent()
-        clone = original.clone()
-        self.assertIsCloneOf(clone, original)
-
-
-class describe_subevent(TestCase):
+    def test_clone_eq_ne(self):
+        self.assertCloneEqNe(a_subevent, SUBEVENT_MODIFIERS)
 
     def test_can_change_container(self):
         subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")

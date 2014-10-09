@@ -19,12 +19,11 @@
 from specs.utils import a_category
 from specs.utils import a_category_with
 from specs.utils import CATEGORY_MODIFIERS
-from specs.utils import get_random_modifier
 from specs.utils import TestCase
 from timelinelib.data import Category
 
 
-class describe_category_fundamentals(TestCase):
+class describe_category(TestCase):
 
     def test_can_get_values(self):
         category = Category("work", (50, 100, 150), (0, 0, 0))
@@ -52,12 +51,5 @@ class describe_category_fundamentals(TestCase):
             a_category().set_parent(a_parent).get_parent(),
             a_parent)
 
-    def test_can_be_compared(self):
-        one = a_category()
-        other = one.clone()
-        self.assertEqNeWorks(one, other, get_random_modifier(CATEGORY_MODIFIERS))
-
-    def test_can_be_cloned(self):
-        original = a_category()
-        clone = original.clone()
-        self.assertIsCloneOf(original.clone(), original)
+    def test_clone_eq_ne(self):
+        self.assertCloneEqNe(a_category, CATEGORY_MODIFIERS)

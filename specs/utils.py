@@ -198,8 +198,14 @@ class TestCase(unittest.TestCase):
             if element is object_:
                 self.fail("%r was in list" % object_)
 
-    def assertEqNeWorks(self, one, other, modifier):
-        (modification_description, modifier_fn) = modifier
+    def assertCloneEqNe(self, create_fn, modifiers):
+        original = create_fn()
+        clone = original.clone()
+        self.assertIsCloneOf(clone, original)
+        self.assertEqNe(original, clone, modifiers)
+
+    def assertEqNe(self, one, other, modifiers):
+        (modification_description, modifier_fn) = get_random_modifier(modifiers)
         fail_message_one_other = "%r vs %r" % (one, other)
         self.assertTrue(type(one) == type(other), fail_message_one_other)
         self.assertFalse(one == None, fail_message_one_other)

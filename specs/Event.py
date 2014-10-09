@@ -20,7 +20,6 @@ from specs.utils import a_category_with
 from specs.utils import an_event
 from specs.utils import an_event_with
 from specs.utils import EVENT_MODIFIERS
-from specs.utils import get_random_modifier
 from specs.utils import gregorian_period
 from specs.utils import human_time_to_gregorian
 from specs.utils import TestCase
@@ -35,7 +34,7 @@ from timelinelib.time.numtime import NumTimeType
 from timelinelib.time.timeline import delta_from_days
 
 
-class describe_event_fundamentals(TestCase):
+class describe_event(TestCase):
 
     def test_can_get_values(self):
         event = Event(time_type=GregorianTimeType(),
@@ -99,19 +98,6 @@ class describe_event_fundamentals(TestCase):
             an_event().set_alert("2015-01-07 00:00:00;hoho").get_alert(),
             "2015-01-07 00:00:00;hoho")
 
-    def test_can_be_compared(self):
-        one = an_event()
-        other = one.clone()
-        self.assertEqNeWorks(one, other, get_random_modifier(EVENT_MODIFIERS))
-
-    def test_can_be_cloned(self):
-        original = an_event()
-        clone = original.clone()
-        self.assertIsCloneOf(clone, original)
-
-
-class describe_event(TestCase):
-
     def test_can_not_set_values(self):
         self.assertEqual(
             an_event_with(locked=True).set_ends_today(True).get_ends_today(),
@@ -141,6 +127,9 @@ class describe_event(TestCase):
         event = an_event_with(ends_today=True, locked=True)
         event.update(event.get_time_period().start_time, event.get_time_period().end_time, event.get_text(), ends_today=False)
         self.assertTrue(event.get_ends_today())
+
+    def test_clone_eq_ne(self):
+        self.assertCloneEqNe(an_event, EVENT_MODIFIERS)
 
     def test_point_event_has_a_label(self):
         event = an_event_with(text="foo", time="11 Jul 2014 10:11")
