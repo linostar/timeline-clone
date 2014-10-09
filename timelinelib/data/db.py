@@ -218,11 +218,14 @@ class MemoryDB(Observable):
                 return e
         return None
 
+    def _save_enabled(self):
+        return self.save_disabled == False
+    
     def _save_if_not_disabled(self):
-        if self.save_disabled == False:
+        if self._save_enabled():
             if self._save_callback is not None:
                 self._save_callback()
-        self._undo_handler.save()
+            self._undo_handler.save()
 
     def get_displayed_period(self):
         """
