@@ -84,6 +84,10 @@ def an_event_with(start=None, end=None, time=ANY_TIME, text="foo", fuzzy=False,
         fuzzy=fuzzy, locked=locked, ends_today=ends_today)
 
 
+def a_subevent():
+    return a_subevent_with()
+
+
 def a_subevent_with(start=None, end=None, time=ANY_TIME, text="sub", category=None, container=None, cid=-1):
     if start and end:
         start = human_time_to_gregorian(start)
@@ -164,7 +168,7 @@ class TestCase(unittest.TestCase):
         self.assertTrue(one == one, fail_message_one_other)
         self.assertFalse(one != one, fail_message_one_other)
         (modified, description) = modify_other_fn(other)
-        fail_message_modified_one = "%r vs %r (%s)" % (modified, other, description)
+        fail_message_modified_one = "%r vs %r (%s)" % (modified, one, description)
         self.assertTrue(type(modified) == type(one), fail_message_modified_one)
         self.assertTrue(modified is not one, fail_message_modified_one)
         self.assertFalse(modified is one, fail_message_modified_one)

@@ -30,11 +30,25 @@ class Subevent(Event):
             self.container_id = self.container.cid()
         else:
             self.container_id = cid
-            
+
+    def get_container_id(self):
+        return self.container_id
+
+    def set_container_id(self, container_id):
+        self.container_id = container_id
+        return self
+
     def __eq__(self, other):
         return (isinstance(other, Subevent) and
                 self.container_id == other.cid() and
                 super(Subevent, self).__eq__(other))
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __repr__(self):
+        return "Subevent<id=%r, text=%r, container_id=%r, ...>" % (
+            self.get_id(), self.get_text(), self.get_container_id())
 
     def is_container(self):
         """Overrides parent method."""

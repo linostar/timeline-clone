@@ -16,13 +16,142 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
-
-from specs.utils import a_subevent_with
+from specs.utils import a_category_with
 from specs.utils import a_container_with
+from specs.utils import a_subevent
+from specs.utils import a_subevent_with
+from specs.utils import create_modifier
+from specs.utils import gregorian_period
+from specs.utils import human_time_to_gregorian
+from specs.utils import randomly_modify
+from specs.utils import TestCase
+from timelinelib.data.subevent import Subevent
+from timelinelib.time.gregoriantime import GregorianTimeType
+from timelinelib.time.numtime import NumTimeType
+from timelinelib.time.timeline import delta_from_days
 
 
-class describe_subevent(unittest.TestCase):
+class describe_subevent_fundamentals(TestCase):
+
+    def test_can_get_values(self):
+        event = Subevent(time_type=GregorianTimeType(),
+                         start_time=human_time_to_gregorian("11 Jul 2014"),
+                         end_time=human_time_to_gregorian("12 Jul 2014"),
+                         text="a day in my life")
+        self.assertEqual(event.get_id(), None)
+        self.assertEqual(event.get_time_period(),
+                         gregorian_period("11 Jul 2014", "12 Jul 2014"))
+        self.assertEqual(event.get_text(), "a day in my life")
+        self.assertEqual(event.get_category(), None)
+        self.assertEqual(event.get_time_type(), GregorianTimeType())
+        self.assertEqual(event.get_fuzzy(), False)
+        self.assertEqual(event.get_locked(), False)
+        self.assertEqual(event.get_ends_today(), False)
+        self.assertEqual(event.get_description(), None)
+        self.assertEqual(event.get_icon(), None)
+        self.assertEqual(event.get_hyperlink(), None)
+        self.assertEqual(event.get_progress(), None)
+        self.assertEqual(event.get_container_id(), -1)
+
+    def test_can_set_values(self):
+        self.assertEqual(
+            a_subevent().set_id(15).get_id(),
+            15)
+        self.assertEqual(
+            a_subevent().set_time_period(gregorian_period("1 Jan 2014", "1 Jan 2015")).get_time_period(),
+            gregorian_period("1 Jan 2014", "1 Jan 2015"))
+        self.assertEqual(
+            a_subevent().set_text("cool").get_text(),
+            "cool")
+        a_parent_category = a_category_with(name="work")
+        self.assertEqual(
+            a_subevent().set_category(a_parent_category).get_category(),
+            a_parent_category)
+        self.assertEqual(
+            a_subevent().set_time_type(NumTimeType()).get_time_type(),
+            NumTimeType())
+        self.assertEqual(
+            a_subevent().set_fuzzy(True).get_fuzzy(),
+            True)
+        self.assertEqual(
+            a_subevent().set_locked(True).get_locked(),
+            True)
+        self.assertEqual(
+            a_subevent().set_ends_today(True).get_ends_today(),
+            True)
+        self.assertEqual(
+            a_subevent().set_description("cool").get_description(),
+            "cool")
+        an_icon = "really not an icon"
+        self.assertEqual(
+            a_subevent().set_icon(an_icon).get_icon(),
+            an_icon)
+        self.assertEqual(
+            a_subevent().set_hyperlink("http://google.com").get_hyperlink(),
+            "http://google.com")
+        self.assertEqual(
+            a_subevent().set_progress(88).get_progress(),
+            88)
+        self.assertEqual(
+            a_subevent().set_alert("2015-01-07 00:00:00;hoho").get_alert(),
+            "2015-01-07 00:00:00;hoho")
+        self.assertEqual(
+            a_subevent().set_container_id(78).get_container_id(),
+            78)
+
+    def test_can_be_compared(self):
+        (one, other) = self._get_random_event_pair()
+        self.assertEqNeWorks(one, other, self._modify_event)
+
+    def test_can_be_cloned(self):
+        (original, _) = self._get_random_event_pair()
+        clone = original.clone()
+        self.assertIsCloneOf(clone, original)
+
+    def _get_random_event_pair(self):
+        events = []
+        for _ in range(2):
+            event = a_subevent()
+            event.set_progress(66)
+            events.append(event)
+        return events
+
+    def _modify_event(self, event):
+        if event.get_id():
+            new_id = event.get_id() + 1
+        else:
+            new_id = 8
+        return randomly_modify(event, [
+            create_modifier("change time type", lambda event:
+                event.set_time_type(None)),
+            create_modifier("change fuzzy", lambda event:
+                event.set_fuzzy(not event.get_fuzzy())),
+            create_modifier("change locked", lambda event:
+                event.set_locked(not event.get_locked())),
+            create_modifier("change ends today", lambda event:
+                event.set_ends_today(not event.get_ends_today())),
+            create_modifier("change id", lambda event:
+                event.set_id(new_id)),
+            create_modifier("change time period", lambda event:
+                event.set_time_period(event.get_time_period().move_delta(delta_from_days(1)))),
+            create_modifier("change text", lambda event:
+                event.set_text("was: %s" % event.get_text())),
+            create_modifier("change category", lambda event:
+                event.set_category(a_category_with(name="another category name"))),
+            create_modifier("change icon", lambda event:
+                event.set_icon("not really an icon")),
+            create_modifier("change description", lambda event:
+                event.set_description("another description")),
+            create_modifier("change hyperlink", lambda event:
+                event.set_hyperlink("http://another.com")),
+            create_modifier("change progress", lambda event:
+                event.set_progress(6)),
+            create_modifier("change container id", lambda event:
+                event.set_container_id(event.get_container_id()+1)),
+        ])
+
+
+class describe_subevent(TestCase):
 
     def test_can_change_container(self):
         subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
@@ -45,7 +174,7 @@ class describe_subevent(unittest.TestCase):
         self.assertEqual(99, subevent.cid())
 
 
-class describe_subevent_cloning(unittest.TestCase):
+class describe_subevent_cloning(TestCase):
 
     def test_cloning_returns_new_object(self):
         subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01", cid=99)
