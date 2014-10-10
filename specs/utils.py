@@ -141,15 +141,46 @@ def inc(number):
         return number + 1
 
 
+def new_cat(event):
+    if event.get_category() is None:
+        return a_category_with(name="new category")
+    else:
+        return a_category_with(name="was: %s" % event.get_category().get_name())
+
+
+def new_time_type(event):
+    if event.get_time_type() is None:
+        return GregorianTimeType()
+    else:
+        return None
+
+
+def new_progress(event):
+    if event.get_progress() is None:
+        return 8
+    else:
+        return (event.get_progress() + 1) % 100
+
+
+def modifier_change_ends_today(event):
+    if event.get_locked():
+        event.set_locked(False)
+        event.set_ends_today(not event.get_ends_today())
+        event.set_locked(True)
+    else:
+        event.set_ends_today(not event.get_ends_today())
+    return event
+
+
+
 EVENT_MODIFIERS = [
     ("change time type", lambda event:
-        event.set_time_type(None)),
+        event.set_time_type(new_time_type(event))),
     ("change fuzzy", lambda event:
         event.set_fuzzy(not event.get_fuzzy())),
     ("change locked", lambda event:
         event.set_locked(not event.get_locked())),
-    ("change ends today", lambda event:
-        event.set_ends_today(not event.get_ends_today())),
+    ("change ends today", modifier_change_ends_today),
     ("change id", lambda event:
         event.set_id(inc(event.get_id()))),
     ("change time period", lambda event:
@@ -157,15 +188,15 @@ EVENT_MODIFIERS = [
     ("change text", lambda event:
         event.set_text("was: %s" % event.get_text())),
     ("change category", lambda event:
-        event.set_category(a_category_with(name="another category name"))),
+        event.set_category(new_cat(event))),
     ("change icon", lambda event:
-        event.set_icon("not really an icon")),
+        event.set_icon("was: %s" % event.get_icon())),
     ("change description", lambda event:
-        event.set_description("another description")),
+        event.set_description("was: %s" % event.get_description())),
     ("change hyperlink", lambda event:
-        event.set_hyperlink("http://another.com")),
+        event.set_hyperlink("was: %s" % event.get_hyperlink())),
     ("change progress", lambda event:
-        event.set_progress(6)),
+        event.set_progress(new_progress(event))),
 ]
 
 
@@ -224,6 +255,32 @@ class TestCase(unittest.TestCase):
         self.assertFalse(modified is one, fail_message_modified_one)
         self.assertTrue(modified != one, fail_message_modified_one)
         self.assertFalse(modified == one, fail_message_modified_one)
+
+    def assertEqNeImplementationIsCorrect(self, create_fn, modifiers):
+        (modification_description, modifier_fn) = get_random_modifier(modifiers)
+        one = modifier_fn(create_fn())
+        other = modifier_fn(create_fn())
+        fail_message_one_other = "%r vs %r (%s)" % (one, other,
+                                                    modification_description)
+        self.assertTrue(type(one) == type(other), fail_message_one_other)
+        self.assertFalse(one == None, fail_message_one_other)
+        self.assertTrue(one != None, fail_message_one_other)
+        self.assertTrue(one is not other, fail_message_one_other)
+        self.assertFalse(one is other, fail_message_one_other)
+        self.assertTrue(one == other, fail_message_one_other)
+        self.assertFalse(one != other, fail_message_one_other)
+        self.assertTrue(one == one, fail_message_one_other)
+        self.assertFalse(one != one, fail_message_one_other)
+        (modification_description, modifier_fn) = get_random_modifier(modifiers)
+        modified = modifier_fn(other)
+        fail_message_modified_one = "%r vs %r (%s)" % (modified, one,
+                                                       modification_description)
+        self.assertTrue(type(modified) == type(one), fail_message_modified_one)
+        self.assertTrue(modified is not one, fail_message_modified_one)
+        self.assertFalse(modified is one, fail_message_modified_one)
+        self.assertTrue(modified != one, fail_message_modified_one)
+        self.assertFalse(modified == one, fail_message_modified_one)
+
 
 
 class TmpDirTestCase(TestCase):

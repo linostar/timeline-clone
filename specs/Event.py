@@ -131,6 +131,9 @@ class describe_event(TestCase):
     def test_clone_eq_ne(self):
         self.assertCloneEqNe(an_event, EVENT_MODIFIERS)
 
+    def test_can_be_compared(self):
+        self.assertEqNeImplementationIsCorrect(an_event, EVENT_MODIFIERS)
+
     def test_point_event_has_a_label(self):
         event = an_event_with(text="foo", time="11 Jul 2014 10:11")
         self.assertEqual(u"foo (11 #Jul# 2014 10:11)", event.get_label())
