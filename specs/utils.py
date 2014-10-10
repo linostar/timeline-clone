@@ -229,33 +229,6 @@ class TestCase(unittest.TestCase):
             if element is object_:
                 self.fail("%r was in list" % object_)
 
-    def assertCloneEqNe(self, create_fn, modifiers):
-        original = create_fn()
-        clone = original.clone()
-        self.assertIsCloneOf(clone, original)
-        self.assertEqNe(original, clone, modifiers)
-
-    def assertEqNe(self, one, other, modifiers):
-        (modification_description, modifier_fn) = get_random_modifier(modifiers)
-        fail_message_one_other = "%r vs %r" % (one, other)
-        self.assertTrue(type(one) == type(other), fail_message_one_other)
-        self.assertFalse(one == None, fail_message_one_other)
-        self.assertTrue(one != None, fail_message_one_other)
-        self.assertTrue(one is not other, fail_message_one_other)
-        self.assertFalse(one is other, fail_message_one_other)
-        self.assertTrue(one == other, fail_message_one_other)
-        self.assertFalse(one != other, fail_message_one_other)
-        self.assertTrue(one == one, fail_message_one_other)
-        self.assertFalse(one != one, fail_message_one_other)
-        modified = modifier_fn(other)
-        fail_message_modified_one = "%r vs %r (%s)" % (modified, one,
-                                                       modification_description)
-        self.assertTrue(type(modified) == type(one), fail_message_modified_one)
-        self.assertTrue(modified is not one, fail_message_modified_one)
-        self.assertFalse(modified is one, fail_message_modified_one)
-        self.assertTrue(modified != one, fail_message_modified_one)
-        self.assertFalse(modified == one, fail_message_modified_one)
-
     def assertEqNeImplementationIsCorrect(self, create_fn, modifiers):
         (modification_description, modifier_fn) = get_random_modifier(modifiers)
         one = modifier_fn(create_fn())
@@ -280,7 +253,6 @@ class TestCase(unittest.TestCase):
         self.assertFalse(modified is one, fail_message_modified_one)
         self.assertTrue(modified != one, fail_message_modified_one)
         self.assertFalse(modified == one, fail_message_modified_one)
-
 
 
 class TmpDirTestCase(TestCase):

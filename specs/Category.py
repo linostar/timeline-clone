@@ -51,8 +51,10 @@ class describe_category(TestCase):
             a_category().set_parent(a_parent).get_parent(),
             a_parent)
 
-    def test_clone_eq_ne(self):
-        self.assertCloneEqNe(a_category, CATEGORY_MODIFIERS)
-
     def test_can_be_compared(self):
         self.assertEqNeImplementationIsCorrect(a_category, CATEGORY_MODIFIERS)
+
+    def test_can_be_cloned(self):
+        original = a_category()
+        clone = original.clone()
+        self.assertIsCloneOf(clone, original)

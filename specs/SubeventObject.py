@@ -97,11 +97,13 @@ class describe_subevent(TestCase):
             a_subevent().set_container_id(78).get_container_id(),
             78)
 
-    def test_clone_eq_ne(self):
-        self.assertCloneEqNe(a_subevent, SUBEVENT_MODIFIERS)
-
     def test_can_be_compared(self):
         self.assertEqNeImplementationIsCorrect(a_subevent, SUBEVENT_MODIFIERS)
+
+    def test_can_be_cloned(self):
+        original = a_subevent()
+        clone = original.clone()
+        self.assertIsCloneOf(clone, original)
 
     def test_can_change_container(self):
         subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")

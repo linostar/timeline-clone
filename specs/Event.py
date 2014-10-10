@@ -128,11 +128,13 @@ class describe_event(TestCase):
         event.update(event.get_time_period().start_time, event.get_time_period().end_time, event.get_text(), ends_today=False)
         self.assertTrue(event.get_ends_today())
 
-    def test_clone_eq_ne(self):
-        self.assertCloneEqNe(an_event, EVENT_MODIFIERS)
-
     def test_can_be_compared(self):
         self.assertEqNeImplementationIsCorrect(an_event, EVENT_MODIFIERS)
+
+    def test_can_be_cloned(self):
+        original = an_event()
+        clone = original.clone()
+        self.assertIsCloneOf(clone, original)
 
     def test_point_event_has_a_label(self):
         event = an_event_with(text="foo", time="11 Jul 2014 10:11")
