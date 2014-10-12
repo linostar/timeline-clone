@@ -27,6 +27,8 @@ from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
 
 class describe_undo(TmpDirTestCase):
 
+    DIFF_PROGRAM = "diff"
+
     def test_a_series_of_operations_can_be_undone(self):
         db_operations = DBOperations(self.original_path, self.after_undo_path)
         db = create_in_memory_tutorial_db()
@@ -59,7 +61,7 @@ class describe_undo(TmpDirTestCase):
 
     def get_diff(self):
         try:
-            cmd = ["diff", self.original_path, self.after_undo_path]
+            cmd = [self.DIFF_PROGRAM, self.original_path, self.after_undo_path]
             process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
             output = process.communicate()[0]
         except:
@@ -78,20 +80,30 @@ class DBOperations(object):
         operations = []
         for _ in range(random.randint(0, 3)):
             operations.append(self._get_single())
-        operations.append(self._internal_operation_save_original)
+        operations.append(self._operation_save_original)
         num_operations = random.randint(1, 5)
         for _ in range(num_operations):
             operations.append(self._get_single())
         for _ in range(num_operations):
-            operations.append(self._internal_operation_undo)
-        operations.append(self._internal_operation_save_after_undo)
+            operations.append(self._operation_undo)
+        operations.append(self._operation_save_after_undo)
         return operations
+
+    def _operation_save_original(self, db):
+        export_db_to_timeline_xml(db, self.original_path)
+        return "save original"
+
+    def _operation_undo(self, db):
+        db.undo()
+        return "undo"
+
+    def _operation_save_after_undo(self, db):
+        export_db_to_timeline_xml(db, self.after_undo_path)
+        return "save after undo"
 
     def _get_single(self):
         return random.choice([
-            getattr(self, name)
-            for name in dir(self)
-            if name.startswith("_operation_")
+            self._operation_change_progress,
         ])
 
     def _operation_change_progress(self, db):
@@ -109,15 +121,3 @@ class DBOperations(object):
             event = random.choice(db.get_all_events())
             if not event.is_container():
                 return event
-
-    def _internal_operation_save_original(self, db):
-        export_db_to_timeline_xml(db, self.original_path)
-        return "save original"
-
-    def _internal_operation_undo(self, db):
-        db.undo()
-        return "undo"
-
-    def _internal_operation_save_after_undo(self, db):
-        export_db_to_timeline_xml(db, self.after_undo_path)
-        return "save after undo"
