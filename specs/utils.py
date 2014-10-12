@@ -198,6 +198,8 @@ EVENT_MODIFIERS = [
         event.set_hyperlink("was: %s" % event.get_hyperlink())),
     ("change progress", lambda event:
         event.set_progress(new_progress(event))),
+    ("change alert", lambda event:
+        event.set_alert("was: %s" % event.get_alert())),
 ]
 
 
@@ -216,12 +218,24 @@ CONTAINER_MODIFIERS = [
 CATEGORY_MODIFIERS = [
     ("change name", lambda category:
         category.set_name("was: %s" % category.get_name())),
+    ("change id", lambda category:
+        category.set_id(inc(category.get_id()))),
+    ("change color", lambda category:
+        category.set_color(category.get_color()+(1, 0, 3))),
+    ("change font color", lambda category:
+        category.set_font_color(category.get_font_color()+(1, 0, 3))),
 ]
 
 
 TIME_PERIOD_MODIFIERS = [
     ("zoom", lambda time_period:
         time_period.zoom(-1)),
+    ("extend left", lambda time_period:
+        time_period.update(time_period.start_time-time_period.time_type.get_min_zoom_delta()[0],
+                           time_period.end_time)),
+    ("extend right", lambda time_period:
+        time_period.update(time_period.start_time,
+                           time_period.end_time+time_period.time_type.get_min_zoom_delta()[0])),
 ]
 
 

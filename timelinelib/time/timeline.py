@@ -35,7 +35,7 @@ class Time(object):
                 self.seconds == time.seconds)
 
     def __ne__(self, time):
-        return not self.__eq__(time)
+        return not (self == time)
 
     def __add__(self, delta):
         if isinstance(delta, TimeDelta):
