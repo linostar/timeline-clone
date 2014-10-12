@@ -16,14 +16,14 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
-
 from specs.utils import a_category_with
 from specs.utils import a_container_with
 from specs.utils import a_subevent_with
+from specs.utils import CONTAINER_MODIFIERS
+from specs.utils import TestCase
 
 
-class describe_container(unittest.TestCase):
+class describe_container(TestCase):
 
     def test_can_have_subevents(self):
         subevent = a_subevent_with(start="1 Jan 200 10:01", end="3 Mar 200 10:01")
@@ -61,8 +61,12 @@ class describe_container(unittest.TestCase):
         container.set_cid(99)
         self.assertEqual(99, container.cid())
 
+    def test_can_be_compared(self):
+        self.assertEqNeImplementationIsCorrect(a_container_with, CONTAINER_MODIFIERS)
 
-class describe_container_construction(unittest.TestCase):
+
+
+class describe_container_construction(TestCase):
 
     def test_properties_defaults(self):
         container = a_container_with(text="container")
@@ -79,7 +83,7 @@ class describe_container_construction(unittest.TestCase):
         self.assertEqual(99, container.cid())
 
 
-class describe_container_cloning(unittest.TestCase):
+class describe_container_cloning(TestCase):
 
     def test_cloning_returns_new_object(self):
         container = a_container_with(text="container", cid=99)

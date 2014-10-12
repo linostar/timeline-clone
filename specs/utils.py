@@ -206,6 +206,12 @@ SUBEVENT_MODIFIERS = [
 ] + EVENT_MODIFIERS
 
 
+CONTAINER_MODIFIERS = [
+    ("change container id", lambda event:
+        event.set_cid(event.cid()+1)),
+] + EVENT_MODIFIERS
+
+
 CATEGORY_MODIFIERS = [
     ("change name", lambda category:
         category.set_name("was: %s" % category.get_name())),

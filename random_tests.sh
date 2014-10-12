@@ -6,5 +6,6 @@ while true; do
     ./execute-specs.py --only \
         specs.Event.describe_event \
         specs.SubeventObject.describe_subevent \
+        specs.ContainerObject.describe_container \
         specs.Category.describe_category
 done

@@ -46,6 +46,7 @@ class Container(Event):
 
     def set_cid(self, cid):
         self.container_id = cid
+        return self
 
     def register_subevent(self, subevent):
         self.strategy.register_subevent(subevent)
