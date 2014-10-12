@@ -38,10 +38,9 @@ class TimePeriod(object):
         return TimePeriod(self.time_type, self.start_time, self.end_time)
 
     def __eq__(self, other):
-        if isinstance(other, TimePeriod):
-            return (self.start_time == other.start_time and
-                    self.end_time == other.end_time)
-        return False
+        return (isinstance(other, TimePeriod) and
+                self.start_time == other.start_time and
+                self.end_time == other.end_time)
 
     def __ne__(self, other):
         return not (self == other)

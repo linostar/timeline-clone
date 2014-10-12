@@ -16,8 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
-
+from specs.utils import TestCase
+from specs.utils import TIME_PERIOD_MODIFIERS
 from timelinelib.data import TimePeriod
 from timelinelib.time.typeinterface import TimeType
 
@@ -131,7 +131,7 @@ class ATimeType(TimeType):
         return delta / 2
 
 
-class time_period_spec(unittest.TestCase):
+class time_period_spec(TestCase):
 
     def test_creating_period_with_too_small_start_time_should_fail(self):
         self.assertRaises(ValueError, TimePeriod,
@@ -220,3 +220,8 @@ class time_period_spec(unittest.TestCase):
         self.assertEqual(
             time_period.move_delta(ADelta(-10)),
             TimePeriod(ATimeType(), ATime(0), ATime(10)))
+
+    def test_can_be_compared(self):
+        def a_time_period():
+            return TimePeriod(ATimeType(), ATime(50), ATime(60))
+        self.assertEqNeImplementationIsCorrect(a_time_period, TIME_PERIOD_MODIFIERS)

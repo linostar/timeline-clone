@@ -218,6 +218,12 @@ CATEGORY_MODIFIERS = [
 ]
 
 
+TIME_PERIOD_MODIFIERS = [
+    ("zoom", lambda time_period:
+        time_period.zoom(-1)),
+]
+
+
 class TestCase(unittest.TestCase):
 
     def assertListIsCloneOf(self, cloned_list, original_list):
