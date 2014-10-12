@@ -28,7 +28,6 @@ class Event(object):
         self.locked = locked
         self.ends_today = ends_today
         self.id = None
-        self.selected = False
         self.update(start_time, end_time, text, category)
         self.data = {}
 

@@ -247,7 +247,6 @@ class TimelineCanvasController(object):
         self.view.open_duplicate_event_dialog_for_event(self.context_menu_event)
 
     def _context_menu_on_delete_event(self, evt):
-        self.context_menu_event.selected = True
         self._delete_selected_events()
 
     def _context_menu_on_sticky_balloon_event(self, evt):
