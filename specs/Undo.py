@@ -80,7 +80,7 @@ class DBOperations(object):
                 event.set_progress(new_progress)
                 break
         db.save_event(event)
-        return "change progress to %s" % new_progress
+        return "change progress to %s (event %d)" % (new_progress, event.get_id())
 
     def get(self):
         operations = []
