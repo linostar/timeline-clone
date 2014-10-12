@@ -3,11 +3,5 @@
 set -e
 
 while true; do
-    ./execute-specs.py --only \
-        specs.Event.describe_event \
-        specs.SubeventObject.describe_subevent \
-        specs.ContainerObject.describe_container \
-        specs.TimePeriod.time_period_spec \
-        specs.TimelineTime.TimeSpec \
-        specs.Category.describe_category
+    ./execute-specs.py --only test_can_be_compared test_can_be_cloned
 done
