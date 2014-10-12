@@ -19,6 +19,7 @@
 from specs.utils import TestCase
 from specs.utils import TIME_PERIOD_MODIFIERS
 from timelinelib.data import TimePeriod
+from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.typeinterface import TimeType
 
 
@@ -129,6 +130,12 @@ class ATimeType(TimeType):
 
     def half_delta(self, delta):
         return delta / 2
+
+    def __eq__(self, other):
+        return isinstance(other, ATimeType)
+
+    def __ne__(self, other):
+        return not (self == other)
 
 
 class time_period_spec(TestCase):
