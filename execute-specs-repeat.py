@@ -28,6 +28,7 @@ TIMES_TO_REPEAT = 100
 if __name__ == "__main__":
     cmd = [sys.executable, "execute-specs.py"] + sys.argv[1:]
     print("Repeating: %s" % cmd)
+    sys.stdout.flush()
     for i in range(TIMES_TO_REPEAT):
         try:
             subprocess.check_call(cmd)
