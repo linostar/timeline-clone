@@ -149,6 +149,13 @@ def new_cat(event):
         return a_category_with(name="was: %s" % event.get_category().get_name())
 
 
+def new_parent(category):
+    if category.get_parent() is None:
+        return a_category_with(name="new category")
+    else:
+        return a_category_with(name="was: %s" % category.get_parent().get_name())
+
+
 def new_time_type(event):
     if event.get_time_type() is None:
         return GregorianTimeType()
@@ -224,6 +231,8 @@ CATEGORY_MODIFIERS = [
         category.set_color(category.get_color()+(1, 0, 3))),
     ("change font color", lambda category:
         category.set_font_color(category.get_font_color()+(1, 0, 3))),
+    ("change parent", lambda category:
+        category.set_parent(new_parent(category))),
 ]
 
 

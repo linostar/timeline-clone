@@ -77,11 +77,14 @@ class Category(object):
             self.get_font_color())
 
     def __eq__(self, other):
+        if self is other:
+            return True
         return (isinstance(other, Category) and
                 self.get_id() == other.get_id() and
                 self.get_name() == other.get_name() and
                 self.get_color() == other.get_color() and
-                self.get_font_color() == other.get_font_color())
+                self.get_font_color() == other.get_font_color() and
+                self.get_parent() == other.get_parent())
 
     def __ne__(self, other):
         return not (self == other)
