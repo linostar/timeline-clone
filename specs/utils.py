@@ -38,6 +38,7 @@ from timelinelib.data import TimePeriod
 from timelinelib.db import db_open
 from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.time.timeline import delta_from_days
+from timelinelib.time.timeline import TimeDelta
 from timelinelib.wxgui.setup import start_wx_application
 
 
@@ -221,6 +222,11 @@ CATEGORY_MODIFIERS = [
 TIME_PERIOD_MODIFIERS = [
     ("zoom", lambda time_period:
         time_period.zoom(-1)),
+]
+
+
+TIME_MODIFIERS = [
+    ("add", lambda time: time + TimeDelta(1)),
 ]
 
 
