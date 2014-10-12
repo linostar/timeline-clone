@@ -39,8 +39,7 @@ class describe_undo(TmpDirTestCase):
             self.fail_with_diff(names)
 
     def read(self, path):
-        with open(self.get_tmp_path(path)) as f:
-            return f.read()
+        return open(self.get_tmp_path(path)).read()
 
     def fail_with_diff(self, names):
         lines = ["Operations could not be undone:"]
