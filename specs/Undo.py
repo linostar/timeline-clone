@@ -72,7 +72,7 @@ class DBOperations(object):
         self._after_undo_path = after_undo_path
 
     def operation_change_progress(self, db):
-        event = random.choice(db.get_all_events())
+        event = self._get_random_event(db)
         while True:
             new_progress = random.randint(0, 100)
             if new_progress != event.get_progress():
@@ -80,6 +80,12 @@ class DBOperations(object):
                 break
         db.save_event(event)
         return "change progress to %s (event %d)" % (new_progress, event.get_id())
+
+    def _get_random_event(self, db):
+        while True:
+            event = random.choice(db.get_all_events())
+            if not event.is_container():
+                return event
 
     def get(self):
         operations = []
