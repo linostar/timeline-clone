@@ -61,14 +61,14 @@ Developing timeline
 .. toctree::
     :maxdepth: 2
 
+    dev/project-infrastructure
+
     dev/setup
     dev/class-descriptions
 
     dev/translating
 
     dev/release-instructions
-
-    dev/links
 
 Project history
 ---------------
