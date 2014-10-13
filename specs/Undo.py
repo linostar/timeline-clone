@@ -110,6 +110,11 @@ class DBOperations(object):
             self._operation_change_progress,
             self._operation_change_category,
             self._operation_add_category,
+            self._operation_change_fuzzy,
+            self._operation_change_ends_today,
+            self._operation_change_locked,
+            self._operation_change_text,
+            self._operation_change_description,
         ])
 
     def _operation_change_progress(self, db):
@@ -142,6 +147,44 @@ class DBOperations(object):
                 break
         db.save_category(category)
         return "save category %r" % category
+
+    def _operation_change_fuzzy(self, db):
+        event = self._get_random_event(db)
+        event.set_fuzzy(not event.get_fuzzy())
+        db.save_event(event)
+        return "change fuzzy to %s %r" % (event.get_fuzzy(), event)
+        
+    def _operation_change_ends_today(self, db):
+        event = self._get_random_event(db)
+        while (event.is_subevent() or event.is_container()):
+            event = self._get_random_event(db)
+        event.set_ends_today(not event.get_ends_today())
+        db.save_event(event)
+        return "change ends-today to %s %r" % (event.get_ends_today(), event)
+
+    def _operation_change_locked(self, db):
+        event = self._get_random_event(db)
+        while (event.is_subevent() or event.is_container()):
+            event = self._get_random_event(db)
+        event.set_locked(not event.get_locked())
+        db.save_event(event)
+        return "change locked to %s %s %s %r" % (event.get_locked(), event.is_subevent(), event.is_container(), event)
+
+    def _operation_change_text(self, db):
+        event = self._get_random_event(db)
+        event.set_text(self._get_random_string(4, 16))
+        db.save_event(event)
+        return "change text to %s %r" % (event.get_text(), event)
+
+    def _operation_change_description(self, db):
+        event = self._get_random_event(db)
+        event.set_description(self._get_random_string(24, 36))
+        db.save_event(event)
+        return "change description to %s %r" % (event.get_description(), event)
+
+    def _get_random_string(self, min_length, max_length):
+        import string
+        return ''.join(random.choice(string.ascii_lowercase + "     ") for _ in range(random.randint(min_length, max_length)))
 
     def _get_random_event(self, db):
         while True:
