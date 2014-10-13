@@ -19,8 +19,8 @@
 import random
 import subprocess
 
+from specs.utils import a_category_with
 from specs.utils import TmpDirTestCase
-from specs.utils import EVENT_MODIFIERS
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
 
@@ -108,6 +108,8 @@ class DBOperations(object):
     def _get_single(self):
         return random.choice([
             self._operation_change_progress,
+            self._operation_change_category,
+            self._operation_add_category,
         ])
 
     def _operation_change_progress(self, db):
@@ -119,6 +121,27 @@ class DBOperations(object):
                 break
         db.save_event(event)
         return "change progress to %s %r" % (new_progress, event)
+
+    def _operation_change_category(self, db):
+        event = self._get_random_event(db)
+        while True:
+            category = random.choice(db.get_categories())
+            if category != event.get_category():
+                break
+        event.set_category(category)
+        db.save_event(event)
+        return "change category to %r %r" % (category, event)
+
+    def _operation_add_category(self, db):
+        counter = 0
+        while True:
+            counter += 1
+            name = "new category %d" % counter
+            if db.get_category_by_name(name) is None:
+                category = a_category_with(name=name)
+                break
+        db.save_category(category)
+        return "save category %r" % category
 
     def _get_random_event(self, db):
         while True:
