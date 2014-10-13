@@ -45,7 +45,11 @@ class describe_undo(TmpDirTestCase):
         self.after_undo_path = self.get_tmp_path("after_undo.timeline")
 
     def read(self, path):
-        return open(path).read()
+        f = open(path)
+        try:
+            return f.read()
+        finally:
+            f.close()
 
     def fail_with_diff(self, names):
         lines = ["Operations could not be undone:"]
