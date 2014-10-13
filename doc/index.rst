@@ -65,9 +65,9 @@ Developing timeline
 
     dev/setup
     dev/testing
-    dev/class-descriptions
-
     dev/translating
+
+    dev/class-descriptions
 
     dev/release-instructions
 

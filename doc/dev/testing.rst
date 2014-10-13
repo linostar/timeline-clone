@@ -1,5 +1,5 @@
-Testing timeline
-================
+Testing
+=======
 
 Automated tests (unit tests)
 ----------------------------
@@ -14,7 +14,7 @@ tests, you can do it like this::
 
     ./execute-specs.py --only specs.Event. specs.Category.
 
-Some of tests have a bit of randomness to them. So running them multiple times
+Some tests have a bit of randomness to them. So running them multiple times
 might give different results. We have a script to run the tests a number of
 times in sequence::
 
