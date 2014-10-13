@@ -64,6 +64,7 @@ Developing timeline
     dev/project-infrastructure
 
     dev/setup
+    dev/testing
     dev/class-descriptions
 
     dev/translating
