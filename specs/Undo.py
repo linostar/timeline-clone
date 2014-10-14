@@ -157,7 +157,9 @@ class DBOperations(object):
     def _operation_change_ends_today(self, db):
         event = self._get_random_event(db)
         if (event.is_subevent() or event.is_container()):
-            return
+            event.set_text(self._get_random_string(4, 16))
+            db.save_event(event)
+            return "change text to %s %r" % (event.get_text(), event)
         event.set_ends_today(not event.get_ends_today())
         db.save_event(event)
         return "change ends-today to %s %r" % (event.get_ends_today(), event)
@@ -165,7 +167,9 @@ class DBOperations(object):
     def _operation_change_locked(self, db):
         event = self._get_random_event(db)
         if (event.is_subevent() or event.is_container()):
-            return
+            event.set_text(self._get_random_string(4, 16))
+            db.save_event(event)
+            return "change text to %s %r" % (event.get_text(), event)
         event.set_locked(not event.get_locked())
         db.save_event(event)
         return "change locked to %s %r" % (event.get_locked(), event)
