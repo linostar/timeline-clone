@@ -21,6 +21,7 @@ import subprocess
 
 from specs.utils import a_category_with
 from specs.utils import TmpDirTestCase
+from specs.utils import an_event
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
 
@@ -115,6 +116,8 @@ class DBOperations(object):
             self._operation_change_locked,
             self._operation_change_text,
             self._operation_change_description,
+            self._operation_delete_event,
+            self._operation_add_event,
         ])
 
     def _operation_change_progress(self, db):
@@ -185,6 +188,16 @@ class DBOperations(object):
         event.set_description(self._get_random_string(24, 36))
         db.save_event(event)
         return "change description to %s %r" % (event.get_description(), event)
+
+    def _operation_delete_event(self, db):
+        event = self._get_random_event(db)
+        db.delete_event(event)
+        return "deleted event %r" % (event)
+
+    def _operation_add_event(self, db):
+        event = an_event()
+        db.save_event(event)
+        return "added event %r" % (event)
 
     def _get_random_string(self, min_length, max_length):
         import string
