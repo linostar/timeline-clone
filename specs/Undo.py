@@ -126,7 +126,7 @@ class DBOperations(object):
         ])
 
     def _operation_change_progress(self, db):
-        event = self._get_random_event(db)
+        event = self._get_random_event(db, container=False)
         while True:
             new_progress = random.randint(0, 100)
             if new_progress != event.get_progress():
@@ -136,7 +136,7 @@ class DBOperations(object):
         return "change progress to %s %r" % (new_progress, event)
 
     def _operation_change_category(self, db):
-        event = self._get_random_event(db)
+        event = self._get_random_event(db, container=False)
         while True:
             category = random.choice(db.get_categories())
             if category != event.get_category():
@@ -157,45 +157,37 @@ class DBOperations(object):
         return "save category %r" % category
 
     def _operation_change_fuzzy(self, db):
-        event = self._get_random_event(db)
+        event = self._get_random_event(db, container=False)
         event.set_fuzzy(not event.get_fuzzy())
         db.save_event(event)
         return "change fuzzy to %s %r" % (event.get_fuzzy(), event)
 
     def _operation_change_ends_today(self, db):
-        event = self._get_random_event(db)
-        if (event.is_subevent() or event.is_container()):
-            event.set_text(self._get_random_string(4, 16))
-            db.save_event(event)
-            return "change text to %s %r" % (event.get_text(), event)
+        event = self._get_random_event(db, container=False, subevent=False)
         event.set_ends_today(not event.get_ends_today())
         db.save_event(event)
         return "change ends-today to %s %r" % (event.get_ends_today(), event)
 
     def _operation_change_locked(self, db):
-        event = self._get_random_event(db)
-        if (event.is_subevent() or event.is_container()):
-            event.set_text(self._get_random_string(4, 16))
-            db.save_event(event)
-            return "change text to %s %r" % (event.get_text(), event)
+        event = self._get_random_event(db, container=False, subevent=False)
         event.set_locked(not event.get_locked())
         db.save_event(event)
         return "change locked to %s %r" % (event.get_locked(), event)
 
     def _operation_change_text(self, db):
-        event = self._get_random_event(db)
+        event = self._get_random_event(db, container=False)
         event.set_text(self._get_random_string(4, 16))
         db.save_event(event)
         return "change text to %s %r" % (event.get_text(), event)
 
     def _operation_change_description(self, db):
-        event = self._get_random_event(db)
+        event = self._get_random_event(db, container=False)
         event.set_description(self._get_random_string(24, 36))
         db.save_event(event)
         return "change description to %s %r" % (event.get_description(), event)
 
     def _operation_delete_event(self, db):
-        event = self._get_random_event(db)
+        event = self._get_random_event(db, container=False)
         db.delete_event(event)
         return "deleted event %r" % (event)
 
@@ -208,11 +200,22 @@ class DBOperations(object):
         import string
         return ''.join(random.choice(string.ascii_lowercase + "     ") for _ in range(random.randint(min_length, max_length)))
 
-    def _get_random_event(self, db):
-        while True:
-            event = random.choice(db.get_all_events())
-            if not event.is_container():
-                return event
+    def _get_random_event(self, db, regular=True, subevent=True,
+                          container=True):
+        possible_events = []
+        for event in db.get_all_events():
+            if event.is_container():
+                if container:
+                    possible_events.append(event)
+            elif event.is_subevent():
+                if subevent:
+                    possible_events.append(event)
+            else:
+                if regular:
+                    possible_events.append(event)
+        if len(possible_events) == 0:
+            raise OperationNotPossibleError()
+        return random.choice(possible_events)
 
 
 class OperationNotPossibleError(Exception):
