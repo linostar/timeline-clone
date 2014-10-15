@@ -188,7 +188,7 @@ class DBOperations(object):
         return "change description to %s %r" % (event.get_description(), event)
 
     def _operation_delete_event(self, db):
-        event = self._get_random_event(db, container=False)
+        event = self._get_random_event(db)
         db.delete_event(event)
         return "deleted event %r" % (event)
 
