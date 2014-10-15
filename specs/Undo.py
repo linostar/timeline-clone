@@ -34,11 +34,9 @@ class describe_undo(TmpDirTestCase):
         db_operations = DBOperations(self.original_path, self.after_undo_path)
         db = create_in_memory_tutorial_db()
         db.loaded()
-        names = []
-        for fn in db_operations.get():
-            names.append(fn(db))
+        operation_log = db_operations.perform(db)
         if self.read(self.original_path) != self.read(self.after_undo_path):
-            self.fail_with_diff(names)
+            self.fail_with_diff(operation_log)
 
     def setUp(self):
         TmpDirTestCase.setUp(self)
@@ -52,10 +50,10 @@ class describe_undo(TmpDirTestCase):
         finally:
             f.close()
 
-    def fail_with_diff(self, names):
+    def fail_with_diff(self, operation_log):
         lines = ["Operations could not be undone:"]
         lines.append("")
-        for name in names:
+        for name in operation_log:
             lines.append("- %s" % name)
         lines.append("")
         lines.append("Diff (original -> after undo):")
@@ -81,18 +79,25 @@ class DBOperations(object):
         self.original_path = original_path
         self.after_undo_path = after_undo_path
 
-    def get(self):
-        operations = []
+    def perform(self, db):
+        operation_log = []
         for _ in range(random.randint(0, 3)):
-            operations.append(self._get_single())
-        operations.append(self._operation_save_original)
+            operation_log.append(self._perform_single_until_succeeds(db))
+        operation_log.append(self._operation_save_original(db))
         num_operations = random.randint(1, 5)
         for _ in range(num_operations):
-            operations.append(self._get_single())
+            operation_log.append(self._perform_single_until_succeeds(db))
         for _ in range(num_operations):
-            operations.append(self._operation_undo)
-        operations.append(self._operation_save_after_undo)
-        return operations
+            operation_log.append(self._operation_undo(db))
+        operation_log.append(self._operation_save_after_undo(db))
+        return operation_log
+
+    def _perform_single_until_succeeds(self, db):
+        while True:
+            try:
+                return self._get_single()(db)
+            except OperationNotPossibleError:
+                pass
 
     def _operation_save_original(self, db):
         export_db_to_timeline_xml(db, self.original_path)
@@ -156,7 +161,7 @@ class DBOperations(object):
         event.set_fuzzy(not event.get_fuzzy())
         db.save_event(event)
         return "change fuzzy to %s %r" % (event.get_fuzzy(), event)
-        
+
     def _operation_change_ends_today(self, db):
         event = self._get_random_event(db)
         if (event.is_subevent() or event.is_container()):
@@ -208,3 +213,7 @@ class DBOperations(object):
             event = random.choice(db.get_all_events())
             if not event.is_container():
                 return event
+
+
+class OperationNotPossibleError(Exception):
+    pass
