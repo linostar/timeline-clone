@@ -30,6 +30,8 @@ if __name__ == "__main__":
     print("Running %s x %d" % (cmd, TIMES_TO_REPEAT))
     sys.stdout.flush()
     for i in range(TIMES_TO_REPEAT):
+        print("Try %d" % i)
+        sys.stdout.flush()
         try:
             subprocess.check_call(cmd)
         except subprocess.CalledProcessError:
