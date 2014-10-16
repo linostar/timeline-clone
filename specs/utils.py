@@ -53,6 +53,16 @@ def human_time_to_gregorian(human_time):
     (year, month, day, hour, minute) = human_time_to_ymdhm(human_time)
     return Gregorian(year, month, day, hour, minute, 0).to_time()
 
+def a_time_period():
+    year = random.randint(1, 4000)
+    month = random.randint(1, 12)
+    day = random.randint(1,28)
+    end_year = year + random.randint(1, 5)
+    end_month = random.randint(1, 12)
+    end_day = random.randint(1,28)
+    return TimePeriod(GregorianTimeType(),
+                      Gregorian(year, month, day, 0, 0, 0).to_time(),
+                      Gregorian(end_year, end_month, end_day, 0, 0, 0).to_time())
 
 def human_time_to_ymdhm(human_time):
     parts = human_time.split(" ")

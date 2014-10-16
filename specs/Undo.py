@@ -22,6 +22,7 @@ import subprocess
 from specs.utils import a_category_with
 from specs.utils import TmpDirTestCase
 from specs.utils import an_event
+from specs.utils import a_time_period
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
 
@@ -124,6 +125,7 @@ class DBOperations(object):
             self._operation_delete_event,
             self._operation_add_event,
             self._operation_change_hyperlink,
+            self._operation_change_time_period,
         ])
 
     def _operation_change_progress(self, db):
@@ -198,11 +200,17 @@ class DBOperations(object):
         return "added event %r" % (event)
 
     def _operation_change_hyperlink(self, db):
-        event= self._get_random_event(db, container=False)
+        event = self._get_random_event(db, container=False)
         event.set_hyperlink("http://%s" % self._get_random_string(2, 7))
         db.save_event(event)
         return "changed hyperlink to %s %r" % (event.get_hyperlink(), event)
         
+    def _operation_change_time_period(self, db):
+        event = self._get_random_event(db, container=False)
+        event.set_time_period(a_time_period())
+        db.save_event(event)
+        return "changed time_period to %s %r" % (event.get_time_period().get_label(), event)
+
     def _get_random_string(self, min_length, max_length):
         import string
         return ''.join(random.choice(string.ascii_lowercase + "     ") for _ in range(random.randint(min_length, max_length)))
