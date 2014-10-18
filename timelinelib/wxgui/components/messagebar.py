@@ -45,18 +45,22 @@ class MessageBar(wx.Panel):
     def ShowWarningMessage(self, message):
         self._set_colour((251, 100, 100))
         self._label.SetLabel(message)
-        self.Show()
+        self._show()
         self.GetParent().Layout()
 
     def ShowInformationMessage(self, message):
         self._set_colour((251, 203, 58))
         self._label.SetLabel(message)
-        self.Show()
+        self._show()
         self.GetParent().Layout()
 
     def ShowNoMessage(self):
         self.Hide()
         self.GetParent().Layout()
+
+    def _show(self):
+        self.Refresh()
+        self.Show()
 
     def _set_colour(self, colour):
         self.SetBackgroundColour(darken_color(colour))
