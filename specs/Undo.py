@@ -140,10 +140,7 @@ class DBOperations(object):
 
     def _operation_change_category(self, db):
         event = self._get_random_event(db, container=False)
-        while True:
-            category = random.choice(db.get_categories())
-            if category != event.get_category():
-                break
+        category = self._get_random_category(db, exclude=event.get_category())
         event.set_category(category)
         db.save_event(event)
         return "change category to %r %r" % (category, event)
@@ -231,6 +228,13 @@ class DBOperations(object):
         if len(possible_events) == 0:
             raise OperationNotPossibleError()
         return random.choice(possible_events)
+
+    def _get_random_category(self, db, exclude=None):
+        possible_categories = [category for category in db.get_categories()
+                               if category != exclude]
+        if len(possible_categories) == 0:
+            raise OperationNotPossibleError()
+        return random.choice(possible_categories)
 
 
 class OperationNotPossibleError(Exception):
