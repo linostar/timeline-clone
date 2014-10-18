@@ -69,6 +69,7 @@ class MemoryDB(Observable):
 
     def set_readonly(self):
         self.readonly = True
+        self._notify(STATE_CHANGE_ANY)
 
     def supported_event_data(self):
         return ["description", "icon", "alert", "hyperlink", "progress"]
