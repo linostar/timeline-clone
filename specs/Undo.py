@@ -117,6 +117,7 @@ class DBOperations(object):
             self._operation_change_progress,
             self._operation_change_category,
             self._operation_add_category,
+            self._operation_delete_category,
             self._operation_change_fuzzy,
             self._operation_change_ends_today,
             self._operation_change_locked,
@@ -144,6 +145,11 @@ class DBOperations(object):
         event.set_category(category)
         db.save_event(event)
         return "change category to %r %r" % (category, event)
+
+    def _operation_delete_category(self, db):
+        category = self._get_random_category(db)
+        db.delete_category(category)
+        return "delete category %r" % category
 
     def _operation_add_category(self, db):
         counter = 0
