@@ -35,7 +35,7 @@ platforms whenever the source code changes.
 
 If a build fails, an email will be sent to the mailing list.
 
-URL: http://rcloud.rickardlindberg.me:8080/
+URL: http://jenkins.rickardlindberg.me
 
 Translation service
 -------------------
