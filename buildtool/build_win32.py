@@ -2,7 +2,8 @@ import subprocess
 
 
 def main():
-    subprocess.Popen(["python", "build.py", "win32"])
+    p = subprocess.Popen(["python", "build.py", "win32"])
+    p.communicate()
     
     
 if __name__ == "__main__":
