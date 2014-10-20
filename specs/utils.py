@@ -336,11 +336,14 @@ class WxComponentTest(TestCase):
         self._component_by_name[name] = cls(self._main_panel, *args)
         self._components.append(self._component_by_name[name])
 
-    def add_button(self, text, callback, component_name):
+    def add_button(self, text, callback, component_name=None):
         button = wx.Button(self._main_panel, label=text)
         self._components.append(button)
         def event_listener(event):
-            callback(self.get_component(component_name))
+            if component_name:
+                callback(self.get_component(component_name))
+            else:
+                callback()
         button.Bind(wx.EVT_BUTTON, event_listener)
 
     def add_separator(self):
