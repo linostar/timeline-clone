@@ -26,8 +26,14 @@ class FileChooser(wx.Panel):
 
     BORDER = 1
 
-    def __init__(self, parent):
+    def __init__(self, parent,
+                 dialog_message=_("Chooser file"),
+                 dialog_dir="",
+                 dialog_wildcard="*"):
         wx.Panel.__init__(self, parent)
+        self._dialog_message = dialog_message
+        self._dialog_dir = dialog_dir
+        self._dialog_wildcard = dialog_wildcard
         self._create_gui()
 
     def GetPath(self):
@@ -47,6 +53,17 @@ class FileChooser(wx.Panel):
 
     def _create_browse_button(self):
         self._browse_button = wx.Button(self, wx.ID_OPEN)
+        self._browse_button.Bind(wx.EVT_BUTTON, self._on_browse_button_click)
+
+    def _on_browse_button_click(self, evt):
+        dialog = wx.FileDialog(self,
+                               message=self._dialog_message,
+                               defaultDir=self._dialog_dir,
+                               wildcard=self._dialog_wildcard,
+                               style=wx.FD_OPEN)
+        if dialog.ShowModal() == wx.ID_OK:
+            self._path_text_field.SetValue(dialog.GetPath())
+        dialog.Destroy()
 
     def _layout_components(self):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
