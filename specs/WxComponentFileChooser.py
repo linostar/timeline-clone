@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import wx
+
 from specs.utils import WxComponentTest
 from timelinelib.wxgui.components.filechooser import FileChooser
 
@@ -27,5 +29,14 @@ class MessageBarComponentTest(WxComponentTest):
     def test_shows_up(self):
         self.add_separator()
         self.add_component("file_chooser", FileChooser)
+        self.get_component("file_chooser").Bind(FileChooser.EVT_PATH_CHANGED,
+                                                self._path_changed)
+        self.add_separator()
+        self.add_component("label", wx.StaticText)
         self.add_separator()
         self.show_test_window()
+
+    def _path_changed(self, evt):
+        label = self.get_component("label")
+        file_chooser = self.get_component("file_chooser")
+        label.SetLabel(file_chooser.GetPath())

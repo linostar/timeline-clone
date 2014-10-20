@@ -17,15 +17,21 @@
 
 
 import wx
+import wx.lib.newevent
 
 
 class FileChooser(wx.Panel):
+
+    PathChangedEvent, EVT_PATH_CHANGED = wx.lib.newevent.NewEvent()
 
     BORDER = 1
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self._create_gui()
+
+    def GetPath(self):
+        return self._path_text_field.GetValue()
 
     def _create_gui(self):
         self._create_path_text_field()
@@ -34,6 +40,10 @@ class FileChooser(wx.Panel):
 
     def _create_path_text_field(self):
         self._path_text_field = wx.TextCtrl(self)
+        self._path_text_field.Bind(wx.EVT_TEXT, self._on_path_text_changed)
+
+    def _on_path_text_changed(self, evt):
+        wx.PostEvent(self, self.PathChangedEvent())
 
     def _create_browse_button(self):
         self._browse_button = wx.Button(self, wx.ID_OPEN)
