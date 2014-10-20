@@ -74,7 +74,7 @@ win32py25_actions = (
                  # Create distribution executable
                  (COPYFILE, "SConstruct", "SConstruct"),
                  (COPYDIR, "po", "po"),
-                 (RUNCMD, "scons.bat", ""),
+                 (RUNCMD, r"C:\Program Files (x86)\python25\Scripts\scons.bat", ""),
                  (CPYDIR, "po", r"dist\po"),
                  (COPYDIR, "icons", r"dist\icons"),
                  (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
