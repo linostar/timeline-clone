@@ -22,12 +22,12 @@ import wx.lib.newevent
 
 class FileChooser(wx.Panel):
 
-    PathChangedEvent, EVT_PATH_CHANGED = wx.lib.newevent.NewEvent()
+    FilePathChangedEvent, EVT_FILE_PATH_CHANGED = wx.lib.newevent.NewEvent()
 
     BORDER = 1
 
     def __init__(self, parent,
-                 dialog_message=_("Chooser file"),
+                 dialog_message=_("Choose file"),
                  dialog_dir="",
                  dialog_wildcard="*"):
         wx.Panel.__init__(self, parent)
@@ -36,7 +36,7 @@ class FileChooser(wx.Panel):
         self._dialog_wildcard = dialog_wildcard
         self._create_gui()
 
-    def GetPath(self):
+    def GetFilePath(self):
         return self._path_text_field.GetValue()
 
     def _create_gui(self):
@@ -49,7 +49,7 @@ class FileChooser(wx.Panel):
         self._path_text_field.Bind(wx.EVT_TEXT, self._on_path_text_changed)
 
     def _on_path_text_changed(self, evt):
-        wx.PostEvent(self, self.PathChangedEvent())
+        wx.PostEvent(self, self.FilePathChangedEvent())
 
     def _create_browse_button(self):
         self._browse_button = wx.Button(self, wx.ID_OPEN)
