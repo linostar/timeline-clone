@@ -22,7 +22,7 @@ from specs.utils import WxComponentTest
 from timelinelib.wxgui.components.filechooser import FileChooser
 
 
-class MessageBarComponentTest(WxComponentTest):
+class FileChooserComponentTest(WxComponentTest):
 
     HALT_FOR_MANUAL_INSPECTION = False
 
