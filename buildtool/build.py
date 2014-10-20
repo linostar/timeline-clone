@@ -11,9 +11,10 @@ PUSHD = 3
 POPD = 4
 RUNCMD = 5
 RUNPYSCRIPT = 6
+CPYDIR = 7
 
 
-known_targets = ("win32",)
+known_targets = ("win32", "win32py25")
 
 
 win32_actions = (
@@ -41,7 +42,40 @@ win32_actions = (
                  (COPYFILE, "SConstruct", "SConstruct"),
                  (COPYDIR, "po", "po"),
                  (RUNCMD, "scons.bat", ""),
-                 (COPYDIR, "po", r"dist\po"),
+                 (CPYDIR, "po", r"dist\po"),
+                 (COPYDIR, "icons", r"dist\icons"),
+                 (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
+                 (COPYFILE, "COPYING", "COPYING"),
+                 (COPYFILE, r"release\win\inno\WINSTALL", r"WINSTALL"),
+                 (RUNCMD, "iscc.exe", r"inno\timelineWin32_2.iss"),
+                 )
+
+win32py25_actions = (
+                 # Modify some python files
+                 (COPYDIR, r"release\win\cmd", "cmd"),
+                 (COPYFILE, "timeline.py", "timeline.py"),
+                 (RUNPYSCRIPT, r"cmd\mod2_timeline_py.py", ""),
+                 (COPYDIR, "timelinelib", "timelinelib"),
+                 (RUNPYSCRIPT, r"cmd\mod2_paths_py.py", ""),
+                 (RUNPYSCRIPT, r"cmd\mod2_version_py.py", ""),
+                 (MAKEDIR, None, "inno"),
+                 (COPYFILE, r"release\win\inno\timelineWin32_py25.iss", r"inno\timelineWin32_2.iss"),
+                 (RUNPYSCRIPT, r"cmd\mod2_timeline_iss_win32.py", ""),
+                 # Library dependencies
+                 (COPYDIR, r"libs\dependencies\icalendar-3.2\icalendar", "icalendar"),
+                 (COPYDIR, r"libs\dependencies\pytz-2012j\pytz", "pytz"),
+                 (COPYDIR, r"libs\dependencies\pysvg-0.2.1\pysvg", "pysvg"),
+                 (COPYDIR, r"libs\dependencies\markdown-2.0.3\markdown", "markdown"),
+                 # Create distribution directory
+                 (COPYFILE, r"release\win\inno\setup.py", "setup.py"),
+                 (MAKEDIR, None, "icons"),
+                 (COPYFILE, r"release\win\inno\Timeline.ico", r"icons\Timeline.ico"),
+                 (RUNPYSCRIPT, "setup.py", "py2exe"),
+                 # Create distribution executable
+                 (COPYFILE, "SConstruct", "SConstruct"),
+                 (COPYDIR, "po", "po"),
+                 (RUNCMD, "scons.bat", ""),
+                 (CPYDIR, "po", r"dist\po"),
                  (COPYDIR, "icons", r"dist\icons"),
                  (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
                  (COPYFILE, "COPYING", "COPYING"),
@@ -50,7 +84,8 @@ win32_actions = (
                  )
 
 
-actions = {"win32": win32_actions}
+actions = {"win32": win32_actions,
+           "win32py25" : win32py25_actions}
 
 
 class Target():
@@ -95,6 +130,9 @@ class Target():
                 if action == COPYDIR:
                     print "Action %d(%d): COPYDIR %s -> %s" % (count, total, src, dst)
                     shutil.copytree(os.path.join(self.timeline_dir, src), os.path.join(dst))
+                if action == CPYDIR:
+                    print "Action %d(%d): CPYDIR %s -> %s" % (count, total, src, dst)
+                    shutil.copytree(os.path.join(src), os.path.join(dst))
                 if action == MAKEDIR:
                     print "Action %d(%d): MAKEDIR %s" % (count, total, dst)
                     os.mkdir(os.path.join(self.build_dir, dst))
