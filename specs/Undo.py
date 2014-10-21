@@ -25,6 +25,7 @@ from specs.utils import an_event
 from specs.utils import a_time_period
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.dataimport.tutorial import create_in_memory_tutorial_db
+from specs.utils import a_container
 
 
 class describe_undo(TmpDirTestCase):
@@ -127,6 +128,7 @@ class DBOperations(object):
             self._operation_add_event,
             self._operation_change_hyperlink,
             self._operation_change_time_period,
+            self._operation_add_container_with_subevents,
         ])
 
     def _operation_change_progress(self, db):
@@ -214,6 +216,11 @@ class DBOperations(object):
         db.save_event(event)
         return "changed time_period to %s %r" % (event.get_time_period().get_label(), event)
 
+    def _operation_add_container_with_subevents(self, db):
+        all_events = a_container("Container", None, [("sub1", None), ("sub2", None)])
+        db.save_events(all_events)
+        return "added a cantainer with subevents %r" % (all_events[0])
+    
     def _get_random_string(self, min_length, max_length):
         import string
         return ''.join(random.choice(string.ascii_lowercase + "     ") for _ in range(random.randint(min_length, max_length)))
