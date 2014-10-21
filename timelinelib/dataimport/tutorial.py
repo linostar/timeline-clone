@@ -129,6 +129,7 @@ class TutorialTimelineCreator(object):
         self.db.set_displayed_period(TimePeriod(self.db.get_time_type(),
                                                 self.start, self.end))
         self.last_cat = None
+        self.next_cid = 1 
 
     def add_category(self, name, color, font_color, make_last_added_parent=False):
         if make_last_added_parent:
@@ -149,6 +150,8 @@ class TutorialTimelineCreator(object):
     def add_container(self, text, description, start_add, end_add=None):
         start, end = self.calc_start_end(start_add, end_add)
         container = Container(self.db.get_time_type(), start, end, text, self.prev_cat)
+        container.set_cid(self.next_cid)
+        self.next_cid += 1
         self.db.save_event(container)
         return container
 
@@ -157,6 +160,7 @@ class TutorialTimelineCreator(object):
         evt = Subevent(self.db.get_time_type(), start, end, text, self.last_cat)
         if description:
             evt.set_data("description", description)
+        evt.set_container_id(self.next_cid - 1)
         self.db.save_event(evt)
         container.register_subevent(evt)
 
