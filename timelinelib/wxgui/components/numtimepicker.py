@@ -58,7 +58,7 @@ class NumTimePickerController(object):
 
     def __init__(self, time_picker, default_num_time):
         self.time_picker = time_picker
-        self.time_picker.set_range(-10000, 10000)
+        self.time_picker.set_range(-1000000000, 1000000000)
         self.default_num_time = default_num_time
 
     def get_value(self):
