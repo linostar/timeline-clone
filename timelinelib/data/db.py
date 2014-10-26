@@ -279,6 +279,21 @@ class MemoryDB(Observable):
         return category_map
 
     def _import_events(self, db, category_map):
+        def get_max_container_id():
+            max_container_id = 0
+            for event in self.get_all_events():
+                if event.is_container():
+                    if event.cid() > max_container_id:
+                        max_container_id = event.cid()
+            return max_container_id
+        def set_imported_ids(max_cid):
+            for event in db.get_all_events():
+                if event.is_container():
+                    event.set_cid(event.cid() + max_cid)
+                elif event.is_subevent():
+                    event.set_container_id(event.get_container_id() + max_cid)
+        max_cid = get_max_container_id()
+        set_imported_ids(max_cid)      
         for event in db.get_all_events():
             cloned_event = event.clone()
             if event.get_category() is not None:
