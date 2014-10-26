@@ -25,6 +25,7 @@ from timelinelib.db import db_open
 from timelinelib.wxgui.components.filechooser import FileChooser
 from timelinelib.wxgui.utils import BORDER
 from timelinelib.wxgui.utils import handle_db_error
+from timelinelib.wxgui.utils import WildcardHelper
 
 
 class ImportDialog(wx.Dialog):
@@ -42,7 +43,10 @@ class ImportDialog(wx.Dialog):
         self._show_preview()
 
     def _create_file_chooser(self):
-        self._file_chooser = FileChooser(self)
+        self._file_chooser = FileChooser(
+            self,
+            dialog_wildcard=WildcardHelper(
+                _("Timeline files"), ["timeline", "ics"]).wildcard_string())
         self._file_chooser.Bind(FileChooser.EVT_FILE_PATH_CHANGED,
                                 self._on_file_path_changed)
 
