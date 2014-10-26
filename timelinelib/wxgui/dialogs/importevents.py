@@ -81,7 +81,7 @@ class ImportDialog(wx.Dialog):
                 if (self._db_to_import.get_time_type() !=
                     self._db.get_time_type()):
                     self._db_to_import = None
-                    self._preview_text.SetError(_("The two timeline have different time types."))
+                    self._preview_text.SetError(_("The selected timeline has a different time type."))
                 else:
                     self._preview_text.SetSuccess("%d events will be imported." %
                             len(self._db_to_import.get_all_events()))
