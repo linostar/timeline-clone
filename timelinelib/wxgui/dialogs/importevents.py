@@ -20,9 +20,11 @@ import os.path
 
 import wx
 
+from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
 from timelinelib.wxgui.components.filechooser import FileChooser
 from timelinelib.wxgui.utils import BORDER
+from timelinelib.wxgui.utils import handle_db_error
 
 
 class ImportDialog(wx.Dialog):
@@ -68,5 +70,10 @@ class ImportDialog(wx.Dialog):
             self._preview_text.SetLabel("OK")
 
     def _on_button_ok_clicked(self, evt):
-        self._db.import_db(db_open(self._file_chooser.GetFilePath()))
-        self.Close()
+        db_to_import = db_open(self._file_chooser.GetFilePath())
+        try:
+            self._db.import_db(db_to_import)
+        except TimelineIOError, e:
+            handle_db_error(e)
+        else:
+            self.Close()

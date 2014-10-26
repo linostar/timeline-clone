@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
+
 import wx
 
 from timelinelib.data import sort_categories
@@ -139,11 +141,27 @@ def display_warning_message(message, parent=None):
     dial = wx.MessageDialog(parent, message, _("Warning"), wx.OK | wx.ICON_WARNING)
     dial.ShowModal()
 
+
 def display_information_message(caption, message, parent=None):
-    dialog = wx.MessageDialog(parent, message, caption, 
+    dialog = wx.MessageDialog(parent, message, caption,
                               wx.OK | wx.ICON_INFORMATION)
     dialog.ShowModal()
     dialog.Destroy()
+
+
+def handle_db_error(e):
+    try:
+        display_error_message("\n\n".join([
+            _("Timeline has encountered a fatal error:"),
+            str(e),
+            _("To prevent you from loosing data, timeline will now crash."),
+        ]))
+        (type, value, traceback) = sys.exc_info()
+        from timelinelib.wxgui.setup import unhandled_exception_hook
+        unhandled_exception_hook(type, value, traceback)
+    finally:
+        sys.exit(1)
+
 
 def get_user_ack(question, parent=None):
     return wx.MessageBox(question, _("Question"),
