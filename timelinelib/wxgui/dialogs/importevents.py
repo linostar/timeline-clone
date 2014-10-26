@@ -55,7 +55,7 @@ class ImportDialog(wx.Dialog):
         self._show_preview()
 
     def _create_preview_text(self):
-        self._preview_text = wx.StaticText(self, size=(300, 100))
+        self._preview_text = FeedbackText(self, size=(300, 100))
 
     def _create_buttons(self):
         self._buttons = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
@@ -71,19 +71,20 @@ class ImportDialog(wx.Dialog):
     def _show_preview(self):
         self._db_to_import = None
         if not os.path.exists(self._file_chooser.GetFilePath()):
-            self._preview_text.SetLabel("file does not exist")
+            self._preview_text.SetError(_("File does not exist."))
         else:
             try:
                 self._db_to_import = db_open(self._file_chooser.GetFilePath())
-            except:
-                self._preview_text.SetLabel("unable to open timeline")
+            except Exception, e:
+                self._preview_text.SetError(_("Unable to load events: %s.") % str(e))
             else:
                 if (self._db_to_import.get_time_type() !=
                     self._db.get_time_type()):
                     self._db_to_import = None
-                    self._preview_text.SetLabel("different time types")
+                    self._preview_text.SetError(_("The two timeline have different time types."))
                 else:
-                    self._preview_text.SetLabel("ok")
+                    self._preview_text.SetSuccess("%d events will be imported." %
+                            len(self._db_to_import.get_all_events()))
 
     def _on_button_ok_clicked(self, evt):
         if not self._db_to_import:
@@ -94,3 +95,14 @@ class ImportDialog(wx.Dialog):
             handle_db_error(e)
         else:
             self.Close()
+
+
+class FeedbackText(wx.StaticText):
+
+    def SetError(self, text):
+        self.SetForegroundColour((255, 0, 0))
+        self.SetLabel(text)
+
+    def SetSuccess(self, text):
+        self.SetForegroundColour((0, 0, 0))
+        self.SetLabel(text)
