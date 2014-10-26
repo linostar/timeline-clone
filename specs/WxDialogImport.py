@@ -17,6 +17,7 @@
 
 
 from specs.utils import WxComponentTest
+from timelinelib.db import db_open
 from timelinelib.wxgui.dialogs.importevents import ImportDialog
 
 
@@ -31,6 +32,6 @@ class ImportDialogTest(WxComponentTest):
         self.show_test_window()
 
     def _on_open_import_dialog_click(self):
-        dialog = ImportDialog()
+        dialog = ImportDialog(db_open(":tutorial:"))
         dialog.ShowModal()
         dialog.Destroy()

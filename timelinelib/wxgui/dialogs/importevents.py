@@ -20,14 +20,16 @@ import os.path
 
 import wx
 
+from timelinelib.db import db_open
 from timelinelib.wxgui.components.filechooser import FileChooser
 from timelinelib.wxgui.utils import BORDER
 
 
 class ImportDialog(wx.Dialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, db, parent=None):
         wx.Dialog.__init__(self, parent, title=_("Import events"))
+        self._db = db
         self._create_gui()
 
     def _create_gui(self):
@@ -50,6 +52,7 @@ class ImportDialog(wx.Dialog):
 
     def _create_buttons(self):
         self._buttons = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        self.Bind(wx.EVT_BUTTON, self._on_button_ok_clicked, id=wx.ID_OK)
 
     def _layout_components(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -63,3 +66,7 @@ class ImportDialog(wx.Dialog):
             self._preview_text.SetLabel("file does not exist")
         else:
             self._preview_text.SetLabel("OK")
+
+    def _on_button_ok_clicked(self, evt):
+        self._db.import_db(db_open(self._file_chooser.GetFilePath()))
+        self.Close()
