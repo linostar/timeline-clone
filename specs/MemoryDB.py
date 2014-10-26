@@ -483,36 +483,65 @@ class describe_importing(unittest.TestCase):
         self.assertEqual(self.base_db.get_categories(), [])
         self.assertEqual(self.base_db.get_all_events(), [])
 
-    def test_categories_are_imported(self):
-        work = a_category_with(name="work")
-        self.import_db.save_category(work)
-        paper_work = a_category_with(name="paper work", parent=work)
-        self.import_db.save_category(paper_work)
-        self.base_db.import_db(self.import_db)
-        self.assertCategoryTreeIs([
-            ("work (imported 1)", [
-                ("paper work (imported 1)", []),
-            ]),
-        ])
-
-    def test_categories_are_given_unique_names(self):
-        self.base_db.save_category(a_category_with(name="work (imported 1)"))
-        self.import_db.save_category(a_category_with(name="work"))
-        self.base_db.import_db(self.import_db)
-        self.assertCategoryTreeIs([
-            ("work (imported 1)", []),
-            ("work (imported 2)", []),
-        ])
-
     def test_events_are_imported(self):
-        work = a_category_with(name="work")
-        self.import_db.save_category(work)
-        dentist = an_event_with(text="dentist", category=work)
-        self.import_db.save_event(dentist)
+        self.import_db.save_event(an_event_with(text="dentist"))
+        self.import_db.save_event(an_event_with(text="golf"))
         self.base_db.import_db(self.import_db)
         self.assertEventListIs([
-            "dentist (work (imported 1))",
+            "dentist ()",
+            "golf ()",
         ])
+
+    def test_events_are_imported_into_existing_categories(self):
+        self.import_db.save_category(a_category_with(name="work"))
+        self.import_db.save_event(an_event_with(
+            text="dentist",
+            category=self.import_db.get_category_by_name("work")))
+        self.base_db.save_category(a_category_with(name="work"))
+        self.base_db.import_db(self.import_db)
+        self.assertEventListIs([
+            "dentist (work)",
+        ])
+        self.assertCategoryTreeIs([
+            ("work", [])
+        ])
+
+    def test_new_categories_are_created_if_they_do_not_exist(self):
+        self.import_db.save_category(a_category_with(name="work"))
+        self.import_db.save_event(an_event_with(
+            text="dentist",
+            category=self.import_db.get_category_by_name("work")))
+        self.base_db.import_db(self.import_db)
+        self.assertEventListIs([
+            "dentist (work)",
+        ])
+        self.assertCategoryTreeIs([
+            ("work", [])
+        ])
+
+    def test_new_categories_have_no_parent(self):
+        self.import_db.save_category(a_category_with(name="work"))
+        self.import_db.save_category(a_category_with(
+            name="paper work",
+            parent=self.import_db.get_category_by_name("work")))
+        self.import_db.save_event(an_event_with(
+            text="write article",
+            category=self.import_db.get_category_by_name("paper work")))
+        self.base_db.import_db(self.import_db)
+        self.assertEventListIs([
+            "write article (paper work)",
+        ])
+        self.assertCategoryTreeIs([
+            ("paper work", [])
+        ])
+
+    def test_categories_without_events_are_not_imported(self):
+        self.import_db.save_category(a_category_with(name="work"))
+        self.import_db.save_category(a_category_with(
+            name="paper work",
+            parent=self.import_db.get_category_by_name("work")))
+        self.base_db.import_db(self.import_db)
+        self.assertCategoryTreeIs([])
 
     def test_save_is_only_called_once(self):
         self.import_db.save_category(a_category_with(name="work"))
@@ -529,7 +558,12 @@ class describe_importing(unittest.TestCase):
         self.assertEqual(replace_category_with_name(tree), expected_tree)
 
     def assertEventListIs(self, expected_list):
-        actual_list = ["%s (%s)" % (event.get_text(), event.get_category().get_name())
+        def category_name(event):
+            if event.get_category():
+                return event.get_category().get_name()
+            else:
+                return ""
+        actual_list = ["%s (%s)" % (event.get_text(), category_name(event))
                        for event in self.base_db.get_all_events()]
         self.assertEqual(sorted(actual_list), expected_list)
 

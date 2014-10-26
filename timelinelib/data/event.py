@@ -81,6 +81,12 @@ class Event(object):
     def get_category(self):
         return self.category
 
+    def get_category_name(self):
+        if self.get_category():
+            return self.get_category().get_name()
+        else:
+            return None
+
     def set_category(self, category):
         self.category = category
         return self
