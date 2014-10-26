@@ -34,6 +34,7 @@ class ImportDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, title=_("Import events"))
         self._db = db
         self._create_gui()
+        self._db_to_import = None
 
     def _create_gui(self):
         self._create_file_chooser()
@@ -68,15 +69,27 @@ class ImportDialog(wx.Dialog):
         self.SetSizerAndFit(sizer)
 
     def _show_preview(self):
+        self._db_to_import = None
         if not os.path.exists(self._file_chooser.GetFilePath()):
             self._preview_text.SetLabel("file does not exist")
         else:
-            self._preview_text.SetLabel("OK")
+            try:
+                self._db_to_import = db_open(self._file_chooser.GetFilePath())
+            except:
+                self._preview_text.SetLabel("unable to open timeline")
+            else:
+                if (self._db_to_import.get_time_type() !=
+                    self._db.get_time_type()):
+                    self._db_to_import = None
+                    self._preview_text.SetLabel("different time types")
+                else:
+                    self._preview_text.SetLabel("ok")
 
     def _on_button_ok_clicked(self, evt):
-        db_to_import = db_open(self._file_chooser.GetFilePath())
+        if not self._db_to_import:
+            return
         try:
-            self._db.import_db(db_to_import)
+            self._db.import_db(self._db_to_import)
         except TimelineIOError, e:
             handle_db_error(e)
         else:
