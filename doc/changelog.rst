@@ -13,6 +13,7 @@ New features, enhancements:
 * Added a notification window at the top of the screen when opening a read-only
   timeline or a timeline that is not saved on disk
 * Expanded range of numeric time picker
+* Added import dialog
 
 Bug fixes:
 
