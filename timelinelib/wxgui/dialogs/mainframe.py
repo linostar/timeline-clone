@@ -46,6 +46,7 @@ from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
 from timelinelib.wxgui.dialogs.helpbrowser import HelpBrowser
+from timelinelib.wxgui.dialogs.importevents import ImportDialog
 from timelinelib.wxgui.dialogs.preferences import PreferencesDialog
 from timelinelib.wxgui.dialogs.setcategoryeditor import SetCategoryEditorDialog
 from timelinelib.wxgui.dialogs.shortcutseditor import ShortcutsEditorDialog
@@ -557,7 +558,11 @@ class GuiCreator(object):
             self._save_as()
 
     def _mnu_file_import_on_click(self, menu):
-        self._open_existing_timeline(True)
+        def open_import_dialog():
+            dialog = ImportDialog(self.timeline, self)
+            dialog.ShowModal()
+            dialog.Destroy()
+        safe_locking(self, open_import_dialog)
 
     def _mnu_file_export_view_on_click(self, evt):
         export_to_image(self)
@@ -583,8 +588,8 @@ class GuiCreator(object):
 
 class MainFrameApiUsedByController(object):
 
-    def open_timeline(self, input_file, import_timeline=False):
-        self.controller.open_timeline(input_file, import_timeline)
+    def open_timeline(self, input_file):
+        self.controller.open_timeline(input_file)
 
     def set_timeline_readonly(self):
         self._set_readonly_text_in_status_bar()
@@ -838,7 +843,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
             self.controller.open_timeline(dialog.GetPath())
         dialog.Destroy()
 
-    def _open_existing_timeline(self, import_timeline=False):
+    def _open_existing_timeline(self):
         dir = ""
         if self.timeline is not None:
             dir = os.path.dirname(self.timeline.path)
@@ -847,7 +852,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
                                defaultDir=dir,
                                wildcard=wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
-            self.controller.open_timeline(dialog.GetPath(), import_timeline)
+            self.controller.open_timeline(dialog.GetPath())
         dialog.Destroy()
 
     def _save_as(self):

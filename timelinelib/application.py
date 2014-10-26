@@ -54,20 +54,13 @@ class TimelineApplication(object):
         else:
             display_error_message(_("File '%s' does not exist.") % path, self.main_frame)
 
-    def open_timeline(self, path, import_timeline=False, timetype=None, save_current_data=True):
+    def open_timeline(self, path, timetype=None, save_current_data=True):
         if save_current_data:
             self.main_frame.save_current_timeline_data()
         try:
             new_db = self.db_open_fn(path, timetype=timetype)
-            if import_timeline:
-                if os.path.exists(path):
-                    self.timeline.import_db(new_db)
-                else:
-                    display_error_message(_("File '%s' does not exist.") % path)
-                    return
-            else:
-                self.timeline = new_db
-                self.timeline.loaded()
+            self.timeline = new_db
+            self.timeline.loaded()
         except TimelineIOError, e:
             self.main_frame.handle_db_error(e)
             self.timelinepath = None
