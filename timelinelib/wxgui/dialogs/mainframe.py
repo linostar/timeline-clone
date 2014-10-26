@@ -819,7 +819,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         path = self._get_file_path()
         if path is not None:
             timetype = NumTimeType()
-            self.controller.open_timeline(path, False, timetype)
+            self.controller.open_timeline(path, timetype)
 
     def _get_file_path(self):
         path = None
