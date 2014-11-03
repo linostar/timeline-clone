@@ -90,6 +90,7 @@ class ImportDialog(wx.Dialog):
                 else:
                     self._preview_text.SetSuccess("%d events will be imported." %
                             len(self._db_to_import.get_all_events()))
+        self.GetSizer().Layout()
 
     def _on_button_ok_clicked(self, evt):
         if not self._db_to_import:
