@@ -202,7 +202,7 @@ class GuiCreator(object):
 
     def _create_import_menu_item(self, file_menu):
         mnu_file_import = file_menu.Append(
-            ID_IMPORT, _("Import timeline..."), _("Import timeline..."))
+            ID_IMPORT, _("Import events..."), _("Import events..."))
         self.shortcut_items[ID_IMPORT] = mnu_file_import
         self.Bind(wx.EVT_MENU, self._mnu_file_import_on_click, mnu_file_import)
         self.menu_controller.add_menu_requiring_writable_timeline(mnu_file_import)
