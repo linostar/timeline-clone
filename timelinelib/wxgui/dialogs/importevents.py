@@ -34,7 +34,7 @@ class ImportDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, title=_("Import events"))
         self._db = db
         self._create_gui()
-        self._db_to_import = None
+        self._show_preview()
 
     def _create_gui(self):
         self._create_header()
@@ -42,7 +42,6 @@ class ImportDialog(wx.Dialog):
         self._create_preview_text()
         self._create_buttons()
         self._layout_components()
-        self._show_preview()
 
     def _create_header(self):
         self._header = Header(self, label=_("Select timeline to import from:"))
@@ -74,23 +73,18 @@ class ImportDialog(wx.Dialog):
         self.SetSizerAndFit(sizer)
 
     def _show_preview(self):
-        self._db_to_import = None
         if not os.path.exists(self._file_chooser.GetFilePath()):
-            self._preview_text.SetError(_("File does not exist."))
+            self._set_error(_("File does not exist."))
         else:
             try:
-                self._db_to_import = db_open(self._file_chooser.GetFilePath())
+                db_to_import = db_open(self._file_chooser.GetFilePath())
             except Exception, e:
-                self._preview_text.SetError(_("Unable to load events: %s.") % str(e))
+                self._set_error(_("Unable to load events: %s.") % str(e))
             else:
-                if (self._db_to_import.get_time_type() !=
-                    self._db.get_time_type()):
-                    self._db_to_import = None
-                    self._preview_text.SetError(_("The selected timeline has a different time type."))
+                if db_to_import.get_time_type() != self._db.get_time_type():
+                    self._set_error(_("The selected timeline has a different time type."))
                 else:
-                    self._preview_text.SetSuccess("%d events will be imported." %
-                            len(self._db_to_import.get_all_events()))
-        self.GetSizer().Layout()
+                    self._set_success(db_to_import, _("%d events will be imported." % len(db_to_import.get_all_events())))
 
     def _on_button_ok_clicked(self, evt):
         if not self._db_to_import:
@@ -101,6 +95,16 @@ class ImportDialog(wx.Dialog):
             handle_db_error(e)
         else:
             self.Close()
+
+    def _set_success(self, db_to_import, text):
+        self._db_to_import = db_to_import
+        self._preview_text.SetSuccess(text)
+        self.GetSizer().Layout()
+
+    def _set_error(self, text):
+        self._db_to_import = None
+        self._preview_text.SetError(text)
+        self.GetSizer().Layout()
 
 
 class Header(wx.StaticText):
