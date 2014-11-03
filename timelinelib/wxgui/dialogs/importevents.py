@@ -59,7 +59,7 @@ class ImportDialog(wx.Dialog):
         self._show_preview()
 
     def _create_preview_text(self):
-        self._preview_text = FeedbackText(self, size=(300, 100))
+        self._preview_text = FeedbackText(self, size=(300, 70))
 
     def _create_buttons(self):
         self._buttons = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
