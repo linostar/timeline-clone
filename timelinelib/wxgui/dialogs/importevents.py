@@ -37,11 +37,15 @@ class ImportDialog(wx.Dialog):
         self._db_to_import = None
 
     def _create_gui(self):
+        self._create_header()
         self._create_file_chooser()
         self._create_preview_text()
         self._create_buttons()
         self._layout_components()
         self._show_preview()
+
+    def _create_header(self):
+        self._header = Header(self, label=_("Select timeline to import from:"))
 
     def _create_file_chooser(self):
         self._file_chooser = FileChooser(
@@ -63,6 +67,7 @@ class ImportDialog(wx.Dialog):
 
     def _layout_components(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self._header, flag=wx.ALL|wx.EXPAND, border=BORDER)
         sizer.Add(self._file_chooser, flag=wx.ALL|wx.EXPAND, border=BORDER)
         sizer.Add(self._preview_text, flag=wx.ALL|wx.EXPAND, border=BORDER)
         sizer.Add(self._buttons, flag=wx.ALL|wx.EXPAND, border=BORDER)
@@ -95,6 +100,15 @@ class ImportDialog(wx.Dialog):
             handle_db_error(e)
         else:
             self.Close()
+
+
+class Header(wx.StaticText):
+
+    def __init__(self, *args, **kwargs):
+        wx.StaticText.__init__(self, *args, **kwargs)
+        font = self.GetFont()
+        font.SetWeight(wx.FONTWEIGHT_BOLD)
+        self.SetFont(font)
 
 
 class FeedbackText(wx.StaticText):
