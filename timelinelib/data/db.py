@@ -288,14 +288,19 @@ class MemoryDB(Observable):
 
     def _create_imported_event(self, event):
         clone = event.clone()
-        if event.get_category_name() is not None:
-            if self._has_category_with_name(event.get_category_name()):
-                category = self.get_category_by_name(event.get_category_name())
-            else:
-                category = event.get_category().clone().set_parent(None)
-                self.save_category(category)
-            clone.set_category(category)
+        clone.set_category(self._create_imported_category(event.get_category()))
         return clone
+
+    def _create_imported_category(self, category):
+        if category is None:
+            return None
+        elif self._has_category_with_name(category.get_name()):
+            return self.get_category_by_name(category.get_name())
+        else:
+            imported_parent = self._create_imported_category(category.get_parent())
+            category = category.clone().set_parent(imported_parent)
+            self.save_category(category)
+            return category
 
     def _has_category_with_name(self, name):
         for category in self.get_categories():

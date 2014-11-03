@@ -519,7 +519,7 @@ class describe_importing(unittest.TestCase):
             ("work", [])
         ])
 
-    def test_new_categories_have_no_parent(self):
+    def test_new_categories_preserve_parent(self):
         self.import_db.save_category(a_category_with(name="work"))
         self.import_db.save_category(a_category_with(
             name="paper work",
@@ -532,7 +532,28 @@ class describe_importing(unittest.TestCase):
             "write article (paper work)",
         ])
         self.assertCategoryTreeIs([
-            ("paper work", [])
+            ("work", [
+                ("paper work", []),
+            ])
+        ])
+
+    def test_new_categories_are_attached_to_existing_ones(self):
+        self.import_db.save_category(a_category_with(name="work"))
+        self.import_db.save_category(a_category_with(
+            name="paper work",
+            parent=self.import_db.get_category_by_name("work")))
+        self.import_db.save_event(an_event_with(
+            text="write article",
+            category=self.import_db.get_category_by_name("paper work")))
+        self.base_db.save_category(a_category_with(name="work"))
+        self.base_db.import_db(self.import_db)
+        self.assertEventListIs([
+            "write article (paper work)",
+        ])
+        self.assertCategoryTreeIs([
+            ("work", [
+                ("paper work", []),
+            ])
         ])
 
     def test_categories_without_events_are_not_imported(self):
