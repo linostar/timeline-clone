@@ -96,8 +96,7 @@ class MemoryDB(Observable):
         except Exception, e:
             raise TimelineIOError("Saving event failed: %s" % e)
         else:
-            self._save_if_not_disabled()
-            self._notify(STATE_CHANGE_ANY)
+            self._save_if_not_disabled(STATE_CHANGE_ANY)
 
     def save_event(self, event):
         self.save_events([event])
@@ -113,8 +112,7 @@ class MemoryDB(Observable):
             raise TimelineIOError("Deleting event failed: %s" % e)
         else:
             if save:
-                self._save_if_not_disabled()
-                self._notify(STATE_CHANGE_ANY)
+                self._save_if_not_disabled(STATE_CHANGE_ANY)
 
     def get_categories(self):
         return self._events.get_categories()
@@ -128,8 +126,7 @@ class MemoryDB(Observable):
         except Exception, e:
             raise TimelineIOError("Saving category failed: %s" % e)
         else:
-            self._save_if_not_disabled()
-            self._notify(STATE_CHANGE_CATEGORY)
+            self._save_if_not_disabled(STATE_CHANGE_CATEGORY)
 
     def loaded(self):
         self._undo_handler.enable(True)
@@ -150,8 +147,7 @@ class MemoryDB(Observable):
         except Exception, e:
             raise TimelineIOError("Deleting category failed: %s" % e)
         else:
-            self._save_if_not_disabled()
-            self._notify(STATE_CHANGE_CATEGORY)
+            self._save_if_not_disabled(STATE_CHANGE_CATEGORY)
 
     def load_view_properties(self, view_properties):
         view_properties.displayed_period = self.displayed_period
@@ -181,26 +177,22 @@ class MemoryDB(Observable):
 
     def place_event_after_event(self, event_to_place, target_event):
         self._events.place_event_after_event(event_to_place, target_event)
-        self._save_if_not_disabled()
-        self._notify(STATE_CHANGE_ANY)
+        self._save_if_not_disabled(STATE_CHANGE_ANY)
 
     def place_event_before_event(self, event_to_place, target_event):
         self._events.place_event_before_event(event_to_place, target_event)
-        self._save_if_not_disabled()
-        self._notify(STATE_CHANGE_ANY)
+        self._save_if_not_disabled(STATE_CHANGE_ANY)
 
     def undo(self):
         if self._undo_handler.undo():
             self._events = self._undo_handler.get_data()
-            self._save_if_not_disabled()
-            self._notify(STATE_CHANGE_ANY)
+            self._save_if_not_disabled(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
 
     def redo(self):
         if self._undo_handler.redo():
             self._events = self._undo_handler.get_data()
-            self._save_if_not_disabled()
-            self._notify(STATE_CHANGE_ANY)
+            self._save_if_not_disabled(STATE_CHANGE_ANY)
             self._undo_handler.enable(True)
 
     def notify_undo_redo_states(self, undo_state, redo_state):
@@ -221,12 +213,14 @@ class MemoryDB(Observable):
 
     def _save_enabled(self):
         return self.save_disabled == False
-    
-    def _save_if_not_disabled(self):
+
+    def _save_if_not_disabled(self, notification=None):
         if self._save_enabled():
             if self._save_callback is not None:
                 self._save_callback()
             self._undo_handler.save()
+            if notification is not None:
+                self._notify(notification)
 
     def get_displayed_period(self):
         """
@@ -266,6 +260,7 @@ class MemoryDB(Observable):
         self.disable_save()
         self._import_events_from(db)
         self.enable_save()
+        self._notify(STATE_CHANGE_ANY)
 
     def _import_events_from(self, db):
         def get_max_container_id():
