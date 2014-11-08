@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Version 1.5.0
+-------------
+
+**Planned release on 31 January 2015.**
+
+New features, enhancements:
+
+Bug fixes:
+
 Version 1.4.0
 -------------
 
