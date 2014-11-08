@@ -8,21 +8,21 @@ msgstr ""
 "Project-Id-Version: Timeline 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-04-05 09:36+0200\n"
-"PO-Revision-Date: 2010-05-17 00:14+0000\n"
-"Last-Translator: Leandro Pavón Serrano <Unknown>\n"
+"PO-Revision-Date: 2014-07-08 22:20+0000\n"
+"Last-Translator: Roman <elproferoman@gmail.com>\n"
 "Language-Team: native-languaje <elproferoman@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-06-23 05:32+0000\n"
-"X-Generator: Launchpad (build 17065)\n"
+"X-Launchpad-Export-Date: 2014-11-07 15:33+0000\n"
+"X-Generator: Launchpad (build 17231)\n"
 "X-Poedit-Language: Spanish\n"
 "X-Poedit-Basepath: /home/roman/traducciones\n"
 
 #: timelinelib\application.py:56
 #, python-format
 msgid "File '%s' does not exist."
-msgstr "El archivo '%s' no existe"
+msgstr "El archivo «%s» no existe."
 
 #: timelinelib\application.py:101
 msgid ""
@@ -377,7 +377,7 @@ msgstr ""
 
 #: timelinelib\db\backends\tutorial.py:37
 msgid "Intro"
-msgstr ""
+msgstr "Introducción"
 
 #: timelinelib\db\backends\tutorial.py:39
 msgid "Hover me!"
@@ -389,7 +389,7 @@ msgstr ""
 
 #: timelinelib\db\backends\tutorial.py:42
 msgid "Features"
-msgstr ""
+msgstr "Características"
 
 #: timelinelib\db\backends\tutorial.py:44
 msgid "Scroll"
@@ -439,7 +439,7 @@ msgstr ""
 
 #: timelinelib\db\backends\tutorial.py:73
 msgid "Zoom"
-msgstr ""
+msgstr "Escala"
 
 #: timelinelib\db\backends\tutorial.py:74
 msgid ""
