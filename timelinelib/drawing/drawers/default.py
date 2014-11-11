@@ -600,14 +600,23 @@ class DefaultDrawingAlgorithm(Drawer):
         gc.StrokePath(path)
 
     def draw_progress_box(self, rect, event):
-        base_color = self._get_base_color(event)
-        progress_color = get_progress_color(base_color)
-        self.dc.SetBrush(wx.Brush(wx.Colour(progress_color[0], progress_color[1], progress_color[2])))
-        w = rect.width * event.get_data("progress") / 100.0
-        progress_rect = wx.Rect(rect.x, rect.y, w, rect.height)
+        self._set_progress_color(event)
+        progress_rect = self._get_progress_rect(rect, event.get_data("progress") / 100.0)
         self.dc.SetClippingRect(progress_rect)
         self.dc.DrawRectangleRect(progress_rect)
 
+    def _set_progress_color(self, event):
+        base_color = self._get_base_color(event)
+        progress_color = get_progress_color(base_color)
+        self.dc.SetBrush(wx.Brush(wx.Colour(progress_color[0], progress_color[1], progress_color[2])))
+
+    def _get_progress_rect(self, event_rect, width_factor):
+        HEIGHT_FACTOR = 0.35
+        w = event_rect.width * width_factor
+        h = event_rect.height * HEIGHT_FACTOR
+        y = event_rect.y + (event_rect.height - h)
+        return wx.Rect(event_rect.x, y, w, h)
+    
     def _draw_text(self, rect, event):
         # Ensure that we can't draw content outside inner rectangle
         rect_copy = wx.Rect(*rect)
