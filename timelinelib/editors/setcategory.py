@@ -49,12 +49,12 @@ class SetCategoryEditor(object):
             event.set_category(category)
 
     def _save_category_in_events_for_events_without_category(self, category):
-        for event in self.timeline.events:
+        for event in self.timeline.get_all_events():
             if event.get_category() == None:
                 event.set_category(category)
 
     def _events_without_category_exists(self):
-        for event in self.timeline.events:
+        for event in self.timeline.get_all_events():
             if event.category == None:
                 return True
         return False

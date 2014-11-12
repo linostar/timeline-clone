@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Version 1.4.1
+-------------
+
+**Released on 12 November 2014.**
+
+Bug fixes:
+
+ * Fixed: Crash report: AttributeError: 'MemoryDB' object has no attribute 'events'
+
 Version 1.4.0
 -------------
 
