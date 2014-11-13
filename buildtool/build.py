@@ -1,8 +1,34 @@
+# Copyright (C) 2009, 2010, 2011  Rickard Lindberg, Roger Lindberg
+#
+# This file is part of Timeline.
+#
+# Timeline is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Timeline is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
+
+
+"""
+Working directory = BUILD_DIR
+COPYDIR     Copies from TIMELINE_DIR to BUILD_DIR
+"""
+
 import sys
 import os
 import shutil
 import subprocess
 
+
+TIMELINE_DIR = os.path.abspath("..\\")
+BUILD_DIR = os.path.abspath(".\\target")
 
 COPYFILE = 0
 COPYDIR = 1
@@ -14,7 +40,7 @@ RUNPYSCRIPT = 6
 CPYDIR = 7
 
 
-known_targets = ("win32", "win32py25")
+known_targets = ("win32", "win32py25", "source")
 
 
 win32_actions = (
@@ -84,8 +110,19 @@ win32py25_actions = (
                  )
 
 
+source_actions = (
+                 # Change working dir to TIMELINE_DIR
+                 (PUSHD, os.path.join(TIMELINE_DIR, "release"), None),
+                 # Create source release artifact
+                 (RUNPYSCRIPT, "make-source-release.py", ""),
+                 # Restore working dir 
+                 (POPD, None, None),
+                 )
+
+
 actions = {"win32": win32_actions,
-           "win32py25" : win32py25_actions}
+           "win32py25" : win32py25_actions,
+           "source" : source_actions}
 
 
 class Target():
@@ -98,7 +135,7 @@ class Target():
         self.define_root_dirs()
         self.create_target_dir()
         self.execute_actions()  
-        self.delete_target_dir()
+        #self.delete_target_dir()
         
     def define_root_dirs(self):
         self.timeline_dir = os.path.abspath("..\\")
@@ -125,19 +162,19 @@ class Target():
             for action, src, dst in self.actions:
                 count +=1
                 if action == COPYFILE:
-                    print "Action %d(%d): COPYFILE %s -> %s" % (count, total, src, dst)
+                    print "Action %d(%d): COPYFILE %s -> %s" % (count, total, src, os.path.abspath(dst))
                     shutil.copyfile(os.path.join(self.timeline_dir, src), dst)
                 if action == COPYDIR:
-                    print "Action %d(%d): COPYDIR %s -> %s" % (count, total, src, dst)
+                    print "Action %d(%d): COPYDIR %s -> %s" % (count, total, src, os.path.abspath(dst))
                     shutil.copytree(os.path.join(self.timeline_dir, src), os.path.join(dst))
                 if action == CPYDIR:
-                    print "Action %d(%d): CPYDIR %s -> %s" % (count, total, src, dst)
+                    print "Action %d(%d): CPYDIR %s -> %s" % (count, total, src, os.path.abspath(dst))
                     shutil.copytree(os.path.join(src), os.path.join(dst))
                 if action == MAKEDIR:
-                    print "Action %d(%d): MAKEDIR %s" % (count, total, dst)
+                    print "Action %d(%d): MAKEDIR %s" % (count, total, os.path.abspath(dst))
                     os.mkdir(os.path.join(self.build_dir, dst))
                 if action == RUNPYSCRIPT:
-                    print "Action %d(%d): RUNPYSCRIPT %s %s" % (count, total, src, dst)
+                    print "Action %d(%d): RUNPYSCRIPT %s %s" % (count, total, src, os.path.abspath(dst))
                     success, msg = self.run_pyscript(src, [dst])
                     if not success:
                         print msg
