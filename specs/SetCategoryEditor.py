@@ -47,9 +47,11 @@ class set_category_editor_spec_base(unittest.TestCase):
         return self.view
 
     def _create_db_mock(self):
+        def get_all_events():
+            return [self.event1, self.event2]
         self.db = Mock(MemoryDB)
         self.db.get_time_type.return_value = self.time_type
-        self.db.events = [self.event1, self.event2]
+        self.db.get_all_events = get_all_events
         return self.db
 
     def _create_category1(self):
