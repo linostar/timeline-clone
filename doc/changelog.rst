@@ -8,6 +8,7 @@ Version 1.5.0
 New features, enhancements:
 
 * Made progress bar thinner to improve visibility
+* Made progress- and done-colors selectable
 
 Bug fixes:
 
