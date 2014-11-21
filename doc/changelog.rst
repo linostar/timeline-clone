@@ -1,6 +1,5 @@
 Changelog
 =========
-
 Version 1.5.0
 -------------
 
@@ -9,6 +8,17 @@ Version 1.5.0
 New features, enhancements:
 
 * Made progress bar thinner to improve visibility
+
+Bug fixes:
+
+Version 1.4.1
+-------------
+
+**Released on 12 November 2014.**
+
+Bug fixes:
+
+ * Fixed: Crash report: AttributeError: 'MemoryDB' object has no attribute 'events'
 
 Bug fixes:
 
