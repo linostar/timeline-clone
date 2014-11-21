@@ -18,6 +18,11 @@
 
 from timelinelib.data import Category
 from timelinelib.db.exceptions import TimelineIOError
+from timelinelib.drawing.drawers import get_progress_color
+
+
+DEFAULT_COLOR = (255, 0, 0)
+DEFAULT_FONT_COLOR = (0, 0, 0)
 
 
 class CategoryEditor(object):
@@ -36,12 +41,16 @@ class CategoryEditor(object):
             self.view.set_category_tree(tree)
             if self.category is None:
                 self.view.set_name("")
-                self.view.set_color((255, 0, 0))
-                self.view.set_font_color((0, 0, 0))
+                self.view.set_color(DEFAULT_COLOR)
+                self.view.set_progress_color(get_progress_color(DEFAULT_COLOR))
+                self.view.set_done_color(get_progress_color(DEFAULT_COLOR))
+                self.view.set_font_color(DEFAULT_FONT_COLOR)
                 self.view.set_parent(None)
             else:
                 self.view.set_name(self.category.get_name())
                 self.view.set_color(self.category.get_color())
+                self.view.set_progress_color(self.category.get_progress_color())
+                self.view.set_done_color(self.category.get_done_color())
                 self.view.set_font_color(self.category.get_font_color())
                 self.view.set_parent(self.category.get_parent())
 
@@ -49,6 +58,8 @@ class CategoryEditor(object):
         try:
             new_name = self.view.get_name()
             new_color = self.view.get_color()
+            new_progress_color = self.view.get_progress_color()
+            new_done_color = self.view.get_done_color()
             new_font_color = self.view.get_font_color()
             new_parent = self.view.get_parent()
             if not self._name_valid(new_name):
@@ -63,6 +74,8 @@ class CategoryEditor(object):
             else:
                 self.category.name = new_name
                 self.category.color = new_color
+                self.category.progress_color = new_progress_color
+                self.category.done_color = new_done_color
                 self.category.font_color = new_font_color
                 self.category.parent = new_parent
             self.category_repository.save(self.category)

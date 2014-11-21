@@ -117,6 +117,8 @@ class Parser(object):
                 Tag("category", ANY, self._parse_category, [
                     Tag("name", SINGLE, parse_fn_store("tmp_name")),
                     Tag("color", SINGLE, parse_fn_store("tmp_color")),
+                    Tag("progress_color", OPTIONAL, parse_fn_store("tmp_progress_color")),
+                    Tag("done_color", OPTIONAL, parse_fn_store("tmp_done_color")),
                     Tag("font_color", OPTIONAL, parse_fn_store("tmp_font_color")),
                     Tag("parent", OPTIONAL, parse_fn_store("tmp_parent")),
                 ])
@@ -168,6 +170,8 @@ class Parser(object):
     def _parse_category(self, text, tmp_dict):
         name = tmp_dict.pop("tmp_name")
         color = parse_color(tmp_dict.pop("tmp_color"))
+        progress_color = self._parse_optional_color(tmp_dict, "tmp_progress_color", None)
+        done_color = self._parse_optional_color(tmp_dict, "tmp_done_color", None)
         font_color = self._parse_optional_color(tmp_dict, "tmp_font_color")
         parent_name = tmp_dict.pop("tmp_parent", None)
         if parent_name:
@@ -177,6 +181,10 @@ class Parser(object):
         else:
             parent = None
         category = Category(name, color, font_color, parent=parent)
+        if progress_color:
+            category.set_progress_color(progress_color)
+        if done_color:
+            category.set_done_color(done_color)
         old_category = self.db.get_category_by_name(name)
         if old_category is not None:
             category = old_category
@@ -266,11 +274,11 @@ class Parser(object):
         else:
             return 0
 
-    def _parse_optional_color(self, tmp_dict, id):
+    def _parse_optional_color(self, tmp_dict, id, missing_value=(0, 0, 0)):
         if tmp_dict.has_key(id):
             return parse_color(tmp_dict.pop(id))
         else:
-            return (0, 0, 0)
+            return missing_value
 
     def _parse_displayed_period(self, text, tmp_dict):
         start = self._parse_time(tmp_dict.pop("tmp_start"))

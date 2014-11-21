@@ -56,6 +56,14 @@ class WxCategoryEdtiorDialog(wx.Dialog):
         (r, g, b) = self.colorpicker.GetValue()
         return (r, g, b)
 
+    def get_progress_color(self):
+        (r, g, b) = self.progresscolorpicker.GetValue()
+        return (r, g, b)
+
+    def get_done_color(self):
+        (r, g, b) = self.donecolorpicker.GetValue()
+        return (r, g, b)
+
     def get_font_color(self):
         # Convert wx.Colour to (r, g, b) tuple
         (r, g, b) = self.fontcolorpicker.GetValue()
@@ -63,6 +71,12 @@ class WxCategoryEdtiorDialog(wx.Dialog):
 
     def set_color(self, new_color):
         self.colorpicker.SetValue(new_color)
+
+    def set_progress_color(self, new_color):
+        self.progresscolorpicker.SetValue(new_color)
+
+    def set_done_color(self, new_color):
+        self.donecolorpicker.SetValue(new_color)
 
     def set_font_color(self, new_color):
         self.fontcolorpicker.SetValue(new_color)
@@ -110,11 +124,15 @@ class WxCategoryEdtiorDialog(wx.Dialog):
     def _create_field_grid(self):
         self.txt_name = wx.TextCtrl(self, size=(150, -1))
         self.colorpicker = colourselect.ColourSelect(self)
+        self.progresscolorpicker = colourselect.ColourSelect(self)
+        self.donecolorpicker = colourselect.ColourSelect(self)
         self.fontcolorpicker = colourselect.ColourSelect(self)
         self.parentlistbox = wx.Choice(self, wx.ID_ANY)
         grid = wx.FlexGridSizer(4, 2, BORDER, BORDER)
         self._add_ctrl_to_grid(_("Name:"), self.txt_name, grid)
         self._add_ctrl_to_grid(_("Color:"), self.colorpicker, grid)
+        self._add_ctrl_to_grid(_("Progress Color:"), self.progresscolorpicker, grid)
+        self._add_ctrl_to_grid(_("Done Color:"), self.donecolorpicker, grid)
         self._add_ctrl_to_grid(_("Font Color:"), self.fontcolorpicker, grid)
         self._add_ctrl_to_grid(_("Parent:"), self.parentlistbox, grid)
         return grid
