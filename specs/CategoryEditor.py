@@ -168,6 +168,7 @@ class WhenTryingToSaveACategoryButDbRaisesException(CategoryEditorBaseFixture):
         CategoryEditorBaseFixture.setUp(self)
         self._initializeControllerWith(None)
         self.view.get_name.return_value = "foobar"
+        self.view.get_color.return_value = (0,0,0)
         self.category_repository.save.side_effect = TimelineIOError
         self.controller.save()
 

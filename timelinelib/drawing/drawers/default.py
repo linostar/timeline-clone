@@ -23,7 +23,6 @@ import wx
 
 from timelinelib.config.paths import ICONS_DIR
 from timelinelib.data import sort_categories
-from timelinelib.drawing.drawers import get_progress_color
 from timelinelib.drawing.interface import Drawer
 from timelinelib.drawing.scene import TimelineScene
 from timelinelib.drawing.utils import darken_color
@@ -606,8 +605,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawRectangleRect(progress_rect)
 
     def _set_progress_color(self, event):
-        base_color = self._get_base_color(event)
-        progress_color = get_progress_color(base_color)
+        progress_color = event.get_progress_color()
         self.dc.SetBrush(wx.Brush(wx.Colour(progress_color[0], progress_color[1], progress_color[2])))
 
     def _get_progress_rect(self, event_rect, width_factor):

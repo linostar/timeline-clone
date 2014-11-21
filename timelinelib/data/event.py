@@ -17,6 +17,10 @@
 
 
 from timelinelib.data.timeperiod import TimePeriod
+from timelinelib.drawing.drawers import get_progress_color
+
+
+DEFAULT_COLOR = (200, 200, 200)
 
 
 class Event(object):
@@ -155,6 +159,16 @@ class Event(object):
         self.set_data("progress", progress)
         return self
 
+    def get_progress_color(self):
+        category = self.category
+        if category:
+            if self.get_progress() == 100:
+                return category.get_done_color()
+            else:
+                return category.get_progress_color()
+        else:
+            return get_progress_color(DEFAULT_COLOR)
+    
     def update(self, start_time, end_time, text, category=None, fuzzy=None,
                locked=None, ends_today=None):
         """Change the event data."""

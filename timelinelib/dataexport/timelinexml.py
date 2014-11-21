@@ -86,6 +86,8 @@ class Exporter(object):
     def _write_category(self, file, cat):
         write_simple_tag(file, "name", cat.get_name(), INDENT3)
         write_simple_tag(file, "color", color_string(cat.get_color()), INDENT3)
+        write_simple_tag(file, "progress_color", color_string(cat.get_progress_color()), INDENT3)
+        write_simple_tag(file, "done_color", color_string(cat.get_done_color()), INDENT3)
         write_simple_tag(file, "font_color", color_string(cat.get_font_color()), INDENT3)
         if cat.get_parent():
             write_simple_tag(file, "parent", cat.get_parent().get_name(), INDENT3)

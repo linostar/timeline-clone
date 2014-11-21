@@ -16,12 +16,17 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from timelinelib.drawing.drawers import get_progress_color
+
+
 class Category(object):
 
     def __init__(self, name, color, font_color, parent=None):
         self.id = None
         self.name = name
         self.color = color
+        self.progress_color = get_progress_color(color)
+        self.done_color = get_progress_color(color)
         if font_color is None:
             self.font_color = (0, 0, 0)
         else:
@@ -48,8 +53,22 @@ class Category(object):
     def get_color(self):
         return self.color
 
+    def get_progress_color(self):
+        return self.progress_color
+
+    def get_done_color(self):
+        return self.done_color
+
     def set_color(self, color):
         self.color = color
+        return self
+
+    def set_progress_color(self, color):
+        self.progress_color = color
+        return self
+
+    def set_done_color(self, color):
+        self.done_color = color
         return self
 
     def get_font_color(self):
@@ -69,6 +88,8 @@ class Category(object):
     def clone(self):
         clone = Category(self.get_name(), self.get_color(),
                          self.get_font_color(), self.get_parent())
+        clone.set_progress_color(self.get_progress_color())
+        clone.set_done_color(self.get_done_color())
         return clone
 
     def __repr__(self):
@@ -83,6 +104,8 @@ class Category(object):
                 self.get_id() == other.get_id() and
                 self.get_name() == other.get_name() and
                 self.get_color() == other.get_color() and
+                self.get_progress_color() == other.get_progress_color() and
+                self.get_done_color() == other.get_done_color() and
                 self.get_font_color() == other.get_font_color() and
                 self.get_parent() == other.get_parent())
 
