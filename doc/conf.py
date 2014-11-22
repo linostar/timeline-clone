@@ -75,8 +75,8 @@ def get_latest_version():
 rst_epilog = """
 .. |latest_zip| replace:: timeline-%(version)s.zip
 .. _latest_zip: http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/%(version)s/timeline-%(version)s.zip/download
-.. |latest_exe| replace:: SetupTimeline%(exe_version)sPy2Exe.exe
-.. _latest_exe: http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/%(version)s/SetupTimeline%(exe_version)sPy2Exe.exe/download
+.. |latest_exe| replace:: SetupTimeline%(exe_version)sPy2ExeWin32.exe
+.. _latest_exe: http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/%(version)s/SetupTimeline%(exe_version)sPy2ExeWin32.exe/download
 """ % {
     "version": get_latest_version(),
     "exe_version": get_latest_version().replace(".", ""),
