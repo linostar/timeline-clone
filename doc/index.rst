@@ -62,6 +62,7 @@ describe possible solutions.
 .. toctree::
     :maxdepth: 2
 
+    crash-reports
     issues
 
 Developing timeline
