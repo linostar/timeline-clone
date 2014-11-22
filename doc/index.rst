@@ -56,13 +56,9 @@ Getting started
 Issues
 ------
 
-On this page we collect problems that users are having with timeline, and also
-describe possible solutions.
-
 .. toctree::
     :maxdepth: 2
 
-    crash-reports
     issues
 
 Developing timeline
