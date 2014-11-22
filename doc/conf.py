@@ -53,13 +53,10 @@ copyright = u'2013, Rickard Lindberg'
 # built documents.
 #
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from timelinelib.meta.version import get_version
-
 # The short X.Y version.
-version = get_version()
+version = ""
 # The full version, including alpha/beta/rc tags.
-release = get_version()
+release = ""
 
 def get_latest_version():
     latest_version = "null"
