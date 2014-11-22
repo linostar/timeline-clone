@@ -4,6 +4,17 @@ Issues
 On this page we collect problems that users are having with timeline, and also
 describe possible solutions.
 
+Website is out of date
+----------------------
+
+Problem: When we update the doc in the repository, those changes are not
+immediately reflected on the website. A manual step is required to upload the
+latest doc to the website.
+
+Possible solution: Have the `Jenkins job
+<https://jenkins.rickardlindberg.me/job/timeline-doc/>`_ update the website on
+a successful build.
+
 TypeError: not all arguments converted during string formatting
 ---------------------------------------------------------------
 
