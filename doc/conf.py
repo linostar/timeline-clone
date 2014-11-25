@@ -53,13 +53,10 @@ copyright = u'2013, Rickard Lindberg'
 # built documents.
 #
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from timelinelib.meta.version import get_version
-
 # The short X.Y version.
-version = get_version()
+version = ""
 # The full version, including alpha/beta/rc tags.
-release = get_version()
+release = ""
 
 def get_latest_version():
     latest_version = "null"
@@ -75,8 +72,8 @@ def get_latest_version():
 rst_epilog = """
 .. |latest_zip| replace:: timeline-%(version)s.zip
 .. _latest_zip: http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/%(version)s/timeline-%(version)s.zip/download
-.. |latest_exe| replace:: SetupTimeline%(exe_version)sPy2Exe.exe
-.. _latest_exe: http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/%(version)s/SetupTimeline%(exe_version)sPy2Exe.exe/download
+.. |latest_exe| replace:: SetupTimeline%(exe_version)sPy2ExeWin32.exe
+.. _latest_exe: http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/%(version)s/SetupTimeline%(exe_version)sPy2ExeWin32.exe/download
 """ % {
     "version": get_latest_version(),
     "exe_version": get_latest_version().replace(".", ""),

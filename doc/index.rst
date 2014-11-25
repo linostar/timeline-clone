@@ -53,7 +53,13 @@ Getting started
     installing
     support
 
-    known-bugs
+Issues
+------
+
+.. toctree::
+    :maxdepth: 2
+
+    issues
 
 Developing timeline
 -------------------
