@@ -21,7 +21,7 @@ msgstr ""
 #: timelinelib\wxgui\dialogs\categoryeditor.py:87
 #, python-format
 msgid "Category name '%s' not valid. Must be non-empty."
-msgstr "Bitte geben Sie einen Namen für die gewählte Kategorie ein."
+msgstr "Bitte geben Sie einen Namen für die gewählte Kategorie ein.%s"
 
 #: timelinelib\application.py:56
 #, python-format
