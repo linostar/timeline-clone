@@ -37,6 +37,8 @@ from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
+from timelinelib.config.experimentalfeatures import experimental_feature_enabled
+from timelinelib.config.experimentalfeatures import EVENT_DONE
 
 
 # The width in pixels of the vertical scroll zones.
@@ -211,6 +213,8 @@ class TimelineCanvasController(object):
             (_("Duplicate..."), self._context_menu_on_duplicate_event),
             (_("Delete"), self._context_menu_on_delete_event),
         ]
+        if experimental_feature_enabled(EVENT_DONE):
+            menu_definitions.append((_("Done"), self._context_menu_on_done_event))
         if self.context_menu_event.has_data():
             menu_definitions.append((_("Sticky Balloon"), self._context_menu_on_sticky_balloon_event))
         hyperlink = self.context_menu_event.get_data("hyperlink")
@@ -256,6 +260,9 @@ class TimelineCanvasController(object):
     def _context_menu_on_goto_hyperlink_event(self, evt):
         hyperlink = self.context_menu_event.get_data("hyperlink")
         webbrowser.open(hyperlink)
+
+    def _context_menu_on_done_event(self, evt):
+        self._mark_selected_events_as_done()
 
     def left_mouse_dclick(self, x, y, ctrl_down, alt_down=False):
         """
@@ -556,6 +563,21 @@ class TimelineCanvasController(object):
             self.view_properties.clear_selected()
         safe_locking(self.view, edit_function, exception_handler)
             
+    def _mark_selected_events_as_done(self):
+        def exception_handler(ex):
+            if isinstance(ex, TimelineIOError):
+                self.fn_handle_db_error(ex)
+            else:
+                raise(ex)
+        def _last_event(event_id):
+            return event_id == selected_event_ids[-1]
+        def edit_function():
+            for event_id in selected_event_ids:
+                self.timeline.mark_event_as_done(event_id, save=_last_event(event_id))        
+            self.view_properties.clear_selected()
+        selected_event_ids = self.view_properties.get_selected_event_ids()
+        safe_locking(self.view, edit_function, exception_handler)
+
     def balloon_visibility_changed(self, visible):
         self.view_properties.show_balloons_on_hover = visible
         # When display on hovering is disabled we have to make sure

@@ -114,6 +114,27 @@ class MemoryDB(Observable):
             if save:
                 self._save_if_not_disabled(STATE_CHANGE_ANY)
 
+    def mark_event_as_done(self, event_or_id, save=True):
+        def mark_as_done(event):
+            event.set_progress(100)
+        error_text = "Mark event Done failed"
+        self._process_event(event_or_id, mark_as_done, error_text, save)
+        
+    def _process_event(self, event_or_id, process_func, error_text, save=False):
+        try:
+            process_func(self._get_event(event_or_id))
+        except Exception, e:
+            raise TimelineIOError("%s: %s" % (error_text, e))
+        else:
+            if save:
+                self._save_if_not_disabled(STATE_CHANGE_ANY)
+        
+    def _get_event(self, event_or_id):
+        if isinstance(event_or_id, Event):
+            return event_or_id
+        else:
+            return self.find_event_with_id(event_or_id)
+        
     def get_categories(self):
         return self._events.get_categories()
 
