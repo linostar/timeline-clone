@@ -102,17 +102,10 @@ class MemoryDB(Observable):
         self.save_events([event])
 
     def delete_event(self, event_or_id, save=True):
-        if isinstance(event_or_id, Event):
-            event = event_or_id
-        else:
-            event = self.find_event_with_id(event_or_id)
-        try:
+        def delete(event):
             self._events.delete_event(event)
-        except Exception, e:
-            raise TimelineIOError("Deleting event failed: %s" % e)
-        else:
-            if save:
-                self._save_if_not_disabled(STATE_CHANGE_ANY)
+        error_text = "Deleting event failed"
+        self._process_event(event_or_id, delete, error_text, save)
 
     def mark_event_as_done(self, event_or_id, save=True):
         def mark_as_done(event):
