@@ -20,6 +20,7 @@ import wx
 
 from timelinelib.config.preferences import PreferencesEditor
 from timelinelib.wxgui.utils import BORDER
+from timelinelib.config.experimentalfeatures import ExperimentalFeatures
 
 
 class PreferencesDialog(wx.Dialog):
@@ -35,6 +36,11 @@ class PreferencesDialog(wx.Dialog):
 
     def set_checkbox_open_recent_at_startup(self, value):
         self.chb_open_recent.SetValue(value)
+
+    def set_experimental_features(self):
+        for feature in ExperimentalFeatures().get_all_features():
+            child = self.FindWindowByName(feature.get_display_name())
+            child.SetValue(feature.enabled())
 
     def set_week_start(self, index):
         self.choice_week.SetSelection(index)
@@ -53,9 +59,11 @@ class PreferencesDialog(wx.Dialog):
         return main_box
 
     def _create_nootebook_control(self):
-        notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
+        notebook = wx.Notebook(self, style=wx.BK_DEFAULT, size=(250,-1))
         self._create_general_tab(notebook)
         self._create_date_time_tab(notebook)
+        if len(ExperimentalFeatures().get_all_features()) > 0:
+            self._create_experimental_fetaures_tab(notebook)
         return notebook
 
     def _create_button_box(self):
@@ -86,6 +94,23 @@ class PreferencesDialog(wx.Dialog):
         grid.Add(wx.StaticText(panel, label=_("Week start on:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
         grid.Add(self.choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        return (grid,)
+    
+    def _create_experimental_fetaures_tab(self,notebook):
+        panel = self._create_tab_panel(notebook, _("Experimental Features"))
+        controls = self._create_experimental_features_controls(panel)
+        self._size_tab_panel(panel, controls)
+
+    def _create_experimental_features_controls(self, panel):
+        grid = wx.FlexGridSizer(1, 1, BORDER, BORDER)
+        feture_index = 0
+        for feature in ExperimentalFeatures().get_all_features():
+            name = feature.get_display_name()
+            cb = wx.CheckBox(panel, feture_index, label=name, name=name)
+            cb.SetValue(feature.enabled())
+            grid.Add(cb)
+            self.Bind(wx.EVT_CHECKBOX, self._experimental_feature, cb)
+            feture_index += 1
         return (grid,)
     
     def _create_tab_panel(self, notebook, label):
@@ -138,5 +163,8 @@ class PreferencesDialog(wx.Dialog):
     def _choice_week_on_choice(self, evt):
         self._controller.on_week_start_changed(evt.IsChecked())
 
+    def _experimental_feature(self, evt):
+        self._controller.on_experimental_features_changed(evt.Id, evt.Selection == 1)
+    
     def _btn_close_on_click(self, e):
         self.EndModal(wx.ID_OK)

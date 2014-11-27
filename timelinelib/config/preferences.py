@@ -16,18 +16,22 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from timelinelib.config.experimentalfeatures import ExperimentalFeatures
+
+
 class PreferencesEditor(object):
 
     def __init__(self, dialog, config):
         self.dialog = dialog
         self.config = config
         self.weeks_map = ((0, "monday"), (1, "sunday"))
+        self.features = ExperimentalFeatures()
 
     def initialize_controls(self):
-        self.dialog.set_checkbox_use_inertial_scrolling(
-            self.config.get_use_inertial_scrolling())
-        self.dialog.set_checkbox_open_recent_at_startup(
-            self.config.get_open_recent_at_startup())
+        self.dialog.set_checkbox_use_inertial_scrolling(self.config.get_use_inertial_scrolling())
+        self.dialog.set_checkbox_open_recent_at_startup(self.config.get_open_recent_at_startup())
+        self.features.set_from_string(self.config.get_experimental_features())
+        self.dialog.set_experimental_features()
         index = self._week_index(self.config.week_start)
         self.dialog.set_week_start(index)
 
@@ -40,6 +44,11 @@ class PreferencesEditor(object):
     def on_week_start_changed(self, value):
         self.config.week_start = self._index_week(value)
 
+    def on_experimental_features_changed(self, feature_index, value):
+        ef = ExperimentalFeatures() 
+        ef.set_value_on_feature(feature_index, value)
+        self.config.experimental_features = str(ef) 
+    
     def _week_index(self, week):
         for (i, w) in self.weeks_map:
             if w == week:

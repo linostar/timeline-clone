@@ -57,6 +57,7 @@ from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
+from timelinelib.config.experimentalfeatures import ExperimentalFeatures
 import timelinelib.wxgui.utils as gui_utils
 
 
@@ -733,11 +734,9 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
     def __init__(self, application_arguments):
         self.config = read_config(application_arguments.get_config_file_path())
-
         wx.Frame.__init__(self, None, size=self.config.get_window_size(),
                           pos=self.config.get_window_pos(),
                           style=wx.DEFAULT_FRAME_STYLE, name="main_frame")
-
         self.Bind(EVT_CATS_VIEW_CHANGED, self._on_cats_view_changed)
         # To enable translations of wx stock items.
         self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)
@@ -754,6 +753,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         self.enable_disable_menus()
         self.controller.on_started(application_arguments)
         self._create_and_start_timer()
+        self._set_experimental_features()
 
     # API:s used by time types
     def week_starts_on_monday(self):
@@ -800,6 +800,9 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
     def _timer_tick(self, evt):
         self._handle_event_alerts()
+
+    def _set_experimental_features(self):
+        ExperimentalFeatures().set_from_string(self.config.get_experimental_features())
 
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()

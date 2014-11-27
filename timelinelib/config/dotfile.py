@@ -45,6 +45,7 @@ OPEN_RECENT_AT_STARTUP = "open_recent_at_startup"
 BALLOON_ON_HOVER = "balloon_on_hover"
 WEEK_START = "week_start"
 USE_INERTIAL_SCROLLING = "use_inertial_scrolling"
+EXPERIMENTAL_FEATURES = "experimental_features"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
@@ -58,7 +59,8 @@ DEFAULTS = {
     RECENT_FILES: "",
     BALLOON_ON_HOVER: "True",
     WEEK_START: "monday",
-    USE_INERTIAL_SCROLLING : "False"
+    USE_INERTIAL_SCROLLING : "False",
+    EXPERIMENTAL_FEATURES : "",
 }
 # Some settings
 MAX_NBR_OF_RECENT_FILES_SAVED = 5
@@ -208,3 +210,10 @@ class Config(object):
             return default
     def set_shortcut_key(self, cfgid, value):
         self.config_parser.set(DEFAULTSECT, cfgid, value)
+
+    def get_experimental_features(self):
+        return self.config_parser.get(DEFAULTSECT, EXPERIMENTAL_FEATURES)
+    def set_experimental_features(self, value):
+        self.config_parser.set(DEFAULTSECT, EXPERIMENTAL_FEATURES, value)
+    experimental_features = property(get_experimental_features, set_experimental_features)
+

@@ -16,41 +16,45 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-EVENT_DONE = 0
-CONTAINERS_DISPLAY = 1
+from timelinelib.config.experimentalfeaturedone import ExperimentalFeatureDone
+from timelinelib.config.experimentalfeaturecontainersize import ExperimentalFeatureContainerSize
 
-FEATURES = (EVENT_DONE, CONTAINERS_DISPLAY)
+
+EVENT_DONE = ExperimentalFeatureDone()
+CONTAINER_SIZE = ExperimentalFeatureContainerSize()
+FEATURES = (EVENT_DONE, CONTAINER_SIZE)
 
 
 class ExperimentalFeatures(object):
     
-    def __init__(self):
-        self.enabled_features = []
-        #self.enable_all()
-        
-    def enabled(self, feature):
-        return feature in self.enabled_features
-
-    def enable(self, feature):
-        if feature in FEATURES and feature not in self.enabled_features:
-            self.enabled_features.append(feature)
-
-    def enable_all(self):
-        self.enabled_features = list(FEATURES)
-                
-    def disable(self, feature):
-        if feature in FEATURES and feature in self.enabled_features:
-            self.enabled_features.remove(feature)
-            
-    def disable_all(self):
-        self.enabled_features = []
-                
-    def get_enabled_features(self):
-        return self.enabled_features
+    def __str__(self):
+        collector = []
+        for feature in FEATURES:
+            collector.append("%s=" % feature.get_display_name())
+            if feature.enabled():
+                collector.append("1")
+            else:
+                collector.append("0")
+            collector.append(";")
+        return "".join(collector)
     
+    def set_from_string(self, str):
+        for item in str.split(";"):
+            if "=" in item:
+                name, value = item.split("=")
+                self.set_value_on_feature_by_name(name.strip(), value.strip() == "1")
+        
+    def set_value_on_feature_by_name(self, name, value):
+        for feature in FEATURES:
+            if feature.get_display_name() == name:
+                feature.set_value(value)
+                return
+            
+    def set_value_on_feature(self, feature_index, value):
+        if value:
+            FEATURES[feature_index].enable()
+        else:
+            FEATURES[feature_index].disable()
+            
     def get_all_features(self):
         return FEATURES
-    
-    
-def experimental_feature_enabled(feature):
-    return ExperimentalFeatures().enabled(feature)

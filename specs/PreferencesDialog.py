@@ -31,6 +31,7 @@ class PreferencesDialogSpec(unittest.TestCase):
         self.preferences_dialog = Mock(PreferencesDialog)
         self.config = Mock(Config)
         self.config.week_start = "monday"
+        self.config.get_experimental_features.return_value = ""
         self.controller = PreferencesEditor(self.preferences_dialog, self.config)
 
     def test_opens_with_inertial_scrolling_if_set_in_config(self):

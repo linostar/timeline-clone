@@ -37,9 +37,7 @@ from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
-from timelinelib.config.experimentalfeatures import experimental_feature_enabled
-from timelinelib.config.experimentalfeatures import EVENT_DONE
-
+from timelinelib.config.experimentalfeatures import EVENT_DONE 
 
 # The width in pixels of the vertical scroll zones.
 # When the mouse reaches the any of the two scroll zone areas, scrolling
@@ -213,7 +211,7 @@ class TimelineCanvasController(object):
             (_("Duplicate..."), self._context_menu_on_duplicate_event),
             (_("Delete"), self._context_menu_on_delete_event),
         ]
-        if experimental_feature_enabled(EVENT_DONE):
+        if EVENT_DONE.enabled():
             menu_definitions.append((_("Done"), self._context_menu_on_done_event))
         if self.context_menu_event.has_data():
             menu_definitions.append((_("Sticky Balloon"), self._context_menu_on_sticky_balloon_event))

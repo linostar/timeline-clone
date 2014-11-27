@@ -19,44 +19,15 @@
 import unittest
 
 from timelinelib.config.experimentalfeatures import ExperimentalFeatures
-from timelinelib.config.experimentalfeatures import experimental_feature_enabled
 
 
 class describe_experimental_features(unittest.TestCase):
     
-    def test_has_a_list_of_enabled_features(self):
-        enabled_features = self.ef.get_enabled_features()
-        self.assertTrue(isinstance(enabled_features, (list, tuple)))
-                
     def test_has_a_list_of_all_features(self):
         features = self.ef.get_all_features()
         self.assertTrue(isinstance(features, (list, tuple)))
         self.assertTrue(len(features) > 0)
-                
-    def test_a_feature_can_be_enabled(self):
-        enabled_features = self.ef.get_all_features()
-        self.ef.enable(enabled_features[0])
-        self.assertTrue(self.ef.enabled(enabled_features[0]))
       
-    def test_all_features_can_be_enabled(self):
-        self.ef.enable_all()
-        for feature in self.ef.get_all_features():
-            self.assertTrue(self.ef.enabled(feature))
-      
-    def test_a_feature_can_be_disabled(self):
-        enabled_features = self.ef.get_all_features()
-        self.ef.disable(enabled_features[0])
-        self.assertFalse(self.ef.enabled(enabled_features[0]))
-
-    def test_all_features_can_be_disabled(self):
-        self.ef.disable_all()
-        for feature in self.ef.get_all_features():
-            self.assertFalse(self.ef.enabled(feature))
-      
-    def test_feature_test_exists(self):
-        self.assertFalse(experimental_feature_enabled(0))
-    
     def setUp(self):  
         self.ef = ExperimentalFeatures()
-        self.enabled_features = self.ef.get_enabled_features()
         
