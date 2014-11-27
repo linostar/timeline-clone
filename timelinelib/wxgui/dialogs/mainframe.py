@@ -252,6 +252,7 @@ class GuiCreator(object):
                 dialog.ShowModal()
                 dialog.Destroy()
             safe_locking(self, edit_function)
+            self.main_panel.redraw_timeline()          
         def edit_shortcuts(evt):
             def edit_function():
                 dialog = ShortcutsEditorDialog(self, self.shortcut_controller)
@@ -745,6 +746,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         self.menu_controller = MenuController()
         self._set_initial_values_to_member_variables()
         self._create_print_data()
+        self._set_experimental_features()
         self._create_gui()
         self.Maximize(self.config.get_window_maximized())
         self.SetTitle(APPLICATION_NAME)
@@ -753,7 +755,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         self.enable_disable_menus()
         self.controller.on_started(application_arguments)
         self._create_and_start_timer()
-        self._set_experimental_features()
 
     # API:s used by time types
     def week_starts_on_monday(self):

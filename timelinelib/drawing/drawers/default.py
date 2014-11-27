@@ -27,6 +27,7 @@ from timelinelib.drawing.interface import Drawer
 from timelinelib.drawing.scene import TimelineScene
 from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
+from timelinelib.config.experimentalfeatures import CONTAINER_SIZE
 
 
 OUTER_PADDING = 5 # Space between event boxes (pixels)
@@ -48,7 +49,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self._create_pens()
         self._create_brushes()
         self.fast_draw = False
-        self.outer_padding = OUTER_PADDING
 
     def increment_font_size(self, step=2):
         self.font_size += step
@@ -101,6 +101,10 @@ class DefaultDrawingAlgorithm(Drawer):
         return self.scene.get_closest_overlapping_event(event_to_move, up=up)
 
     def draw(self, dc, timeline, view_properties, config):
+        if CONTAINER_SIZE.enabled():
+            self.outer_padding = OUTER_PADDING + 4
+        else:
+            self.outer_padding = OUTER_PADDING 
         self.config = config
         self.dc = dc
         self.time_type = timeline.get_time_type()
@@ -442,14 +446,21 @@ class DefaultDrawingAlgorithm(Drawer):
         self._draw_lines_to_non_period_events(view_properties)
         for (event, rect) in self.scene.event_data:
             if event.is_container():
-                self._draw_container(event, rect, view_properties)
+                if CONTAINER_SIZE.enabled():
+                    self._draw_container(event, rect, view_properties, True)
+                else:
+                    self._draw_container(event, rect, view_properties)
             else:
                 self._draw_event(event, rect, view_properties)
 
-    def _draw_container(self, event, rect, view_properties):
-        box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
+    def _draw_container(self, event, rect, view_properties, extended=False):
+        if extended:
+            PADDING = 12
+        else:
+            PADDING = 0
+        box_rect = wx.Rect(rect.X - 2, rect.Y - 2 - PADDING, rect.Width + 4, rect.Height + 4 + PADDING)
         self._draw_box(box_rect, event)
-        self._draw_text(rect, event)
+        self._draw_text(rect, event, extended)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
@@ -615,17 +626,22 @@ class DefaultDrawingAlgorithm(Drawer):
         y = event_rect.y + (event_rect.height - h)
         return wx.Rect(event_rect.x, y, w, h)
     
-    def _draw_text(self, rect, event):
+    def _draw_text(self, rect, event, extended=False):
         # Ensure that we can't draw content outside inner rectangle
         rect_copy = wx.Rect(*rect)
         rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
         if rect_copy.Width > 0:
             # Draw the text (if there is room for it)
-            self.dc.SetClippingRect(rect_copy)
             text_x = rect.X + INNER_PADDING
             if event.get_fuzzy() or event.get_locked():
                 text_x += rect.Height / 2
             text_y = rect.Y + INNER_PADDING
+            if extended:
+                Y_OFFSET = -16 
+                text_y += Y_OFFSET
+                self.dc.SetClippingRect(wx.Rect(rect_copy.X, rect_copy.Y + Y_OFFSET, rect_copy.Width, rect_copy.Height))
+            else:
+                self.dc.SetClippingRect(rect_copy)
             if text_x < INNER_PADDING:
                 text_x = INNER_PADDING
             self._set_text_foreground_color(event)
