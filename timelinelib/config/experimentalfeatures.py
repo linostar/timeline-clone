@@ -58,3 +58,6 @@ class ExperimentalFeatures(object):
             
     def get_all_features(self):
         return FEATURES
+
+def experimental_feature(foo):
+    return foo

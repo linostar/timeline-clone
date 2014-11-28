@@ -27,6 +27,7 @@ from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
+from timelinelib.config.experimentalfeatures import experimental_feature
 
 
 class MemoryDB(Observable):
@@ -107,6 +108,7 @@ class MemoryDB(Observable):
         error_text = "Deleting event failed"
         self._process_event(event_or_id, delete, error_text, save)
 
+    @experimental_feature
     def mark_event_as_done(self, event_or_id, save=True):
         def mark_as_done(event):
             if not event.is_container():
