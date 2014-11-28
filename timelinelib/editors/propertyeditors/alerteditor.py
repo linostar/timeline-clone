@@ -26,6 +26,7 @@ from timelinelib.editors.propertyeditors.baseeditor import BaseEditor
 class AlertEditorGuiCreator(wx.Panel):
     
     def __init__(self, parent):
+        self.parent = parent
         wx.Panel.__init__(self, parent)
             
     def create_sizer(self):
@@ -55,6 +56,7 @@ class AlertEditorGuiCreator(wx.Panel):
 
     def _create_input_controls(self):
         alert_panel = wx.Panel(self)
+        alert_panel.on_return = self._on_return
         time_type = self.editor.timeline.get_time_type()
         self.dtp_start =  time_picker_for(time_type)(alert_panel, config=self.editor.config)
         self.text_data = wx.TextCtrl(alert_panel, size=(300,80), style=wx.TE_MULTILINE)
@@ -62,6 +64,9 @@ class AlertEditorGuiCreator(wx.Panel):
         self._layout_input_controls(alert_panel)
         return alert_panel
 
+    def _on_return(self):
+        self.parent.on_return()
+    
     def _layout_input_controls(self, alert_panel):
         when = wx.StaticText(alert_panel, label=_("When:"))
         text = wx.StaticText(alert_panel, label=_("Text:"))

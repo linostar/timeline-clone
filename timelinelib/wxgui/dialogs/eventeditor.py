@@ -267,6 +267,7 @@ class EventEditorDialog(wx.Dialog):
     def _create_editor(self, notebook, editor_class_decription):
         name, editor_class = editor_class_decription
         panel = wx.Panel(notebook)
+        panel.on_return = self.on_return
         editor = editor_class(panel, self)
         notebook.AddPage(panel, name)
         sizer = wx.BoxSizer(wx.VERTICAL)
