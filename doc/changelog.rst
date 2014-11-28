@@ -12,6 +12,8 @@ New features, enhancements:
 
 Bug fixes:
 
+* Fixed: Crash report: Clicking Return in datetimepicker in Event alert editor
+
 Version 1.4.1
 -------------
 
