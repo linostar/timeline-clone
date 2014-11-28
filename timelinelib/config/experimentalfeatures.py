@@ -64,10 +64,14 @@ class ExperimentalFeatures(object):
         return FEATURES
 
 
-def experimental_feature_event_done(foo):
-    try:
-        if EVENT_DONE.enabled():
-            pass
-    except:
-        raise ExperimentalFeatureException(_("Feature EVENT_DONE, not implemented"))
-    return foo
+def experimental_feature(feature):
+    """
+    Decorator used for methods, only used by an Experimental feature.
+    The purpose of the decorator is to simplify removal of the feature
+    code if it is decided not to implement the feature.
+    """
+    def deco(foo):
+        if not feature in FEATURES:
+            raise ExperimentalFeatureException(_("Feature EVENT_DONE, not implemented"))
+        return foo
+    return deco
