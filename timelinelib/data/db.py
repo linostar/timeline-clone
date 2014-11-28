@@ -16,9 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.data.idnumber import get_process_unique_id
 from timelinelib.data import Category
-from timelinelib.data import Container
 from timelinelib.data import Event
 from timelinelib.data import Events
 from timelinelib.data.undohandler import UndoHandler
