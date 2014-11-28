@@ -16,18 +16,40 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import wx
 from timelinelib.config.experimentalfeature import ExperimentalFeature
-
+from timelinelib.drawing.utils import get_default_font
 
 DISPLAY_NAME = "Extend Container height"
 DESCRIPTION = "Extend the height of a container so that the container name becomes visible"  
 
+Y_OFFSET = -16 
+PADDING = 12
+OUTER_PAADING = 4
+TEXT_OFFSET = -16
+INNER_PADDING = 3
+FONT_SIZE = 8
 
 class ExperimentalFeatureContainerSize(ExperimentalFeature):
     
     def __init__(self):
         ExperimentalFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
 
-    def handler(self):
-        pass
+    def get_extra_outer_padding_to_avoid_vertical_overlapping(self):
+        return OUTER_PAADING
     
+    def clip_text_rect_region(self, dc, rect):
+        dc.SetClippingRect(wx.Rect(rect.X, rect.Y + Y_OFFSET, rect.Width, rect.Height))
+        
+    def get_vertical_larger_box_rect(self, rect):
+        return wx.Rect(rect.X - 2, rect.Y - 2 - PADDING, rect.Width + 4, rect.Height + 4 + PADDING)
+    
+    def draw_container_text_top_adjusted(self, text, dc, rect):
+        old_font = dc.GetFont()
+        dc.SetFont(get_default_font(FONT_SIZE))
+        dc.SetClippingRect(wx.Rect(rect.X, rect.Y + Y_OFFSET, rect.Width, rect.Height))
+        text_x = rect.X + INNER_PADDING
+        text_y = rect.Y + INNER_PADDING + TEXT_OFFSET
+        dc.DrawText(text, text_x, text_y)
+        dc.SetFont(old_font)
+
