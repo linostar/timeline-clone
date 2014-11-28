@@ -25,6 +25,10 @@ EXTENDED_CONTAINER_HEIGHT = ExperimentalFeatureContainerSize()
 FEATURES = (EVENT_DONE, EXTENDED_CONTAINER_HEIGHT)
 
 
+class ExperimentalFeatureException(Exception):
+    pass
+
+
 class ExperimentalFeatures(object):
     
     def __str__(self):
@@ -60,5 +64,10 @@ class ExperimentalFeatures(object):
         return FEATURES
 
 
-def experimental_feature(foo):
+def experimental_feature_event_done(foo):
+    try:
+        if EVENT_DONE.enabled():
+            pass
+    except:
+        raise ExperimentalFeatureException(_("Feature EVENT_DONE, not implemented"))
     return foo

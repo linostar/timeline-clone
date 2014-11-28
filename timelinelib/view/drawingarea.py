@@ -20,6 +20,8 @@ import webbrowser
 
 import wx
 
+from timelinelib.config.experimentalfeatures import EVENT_DONE 
+from timelinelib.config.experimentalfeatures import experimental_feature_event_done
 from timelinelib.data import TimeOutOfRangeLeftError
 from timelinelib.data import TimeOutOfRangeRightError
 from timelinelib.db.exceptions import TimelineIOError
@@ -36,8 +38,6 @@ from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
-from timelinelib.config.experimentalfeatures import EVENT_DONE 
-from timelinelib.config.experimentalfeatures import experimental_feature
 
 # The width in pixels of the vertical scroll zones.
 # When the mouse reaches the any of the two scroll zone areas, scrolling
@@ -259,7 +259,7 @@ class TimelineCanvasController(object):
         hyperlink = self.context_menu_event.get_data("hyperlink")
         webbrowser.open(hyperlink)
 
-    @experimental_feature
+    @experimental_feature_event_done
     def _context_menu_on_done_event(self, evt):
         self._mark_selected_events_as_done()
 
@@ -562,7 +562,7 @@ class TimelineCanvasController(object):
             self.view_properties.clear_selected()
         safe_locking(self.view, edit_function, exception_handler)
             
-    @experimental_feature
+    @experimental_feature_event_done
     def _mark_selected_events_as_done(self):
         def exception_handler(ex):
             if isinstance(ex, TimelineIOError):
