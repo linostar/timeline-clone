@@ -20,15 +20,16 @@ import wx
 from timelinelib.config.experimentalfeature import ExperimentalFeature
 from timelinelib.drawing.utils import get_default_font
 
+
 DISPLAY_NAME = "Extend Container height"
 DESCRIPTION = "Extend the height of a container so that the container name becomes visible"  
-
 Y_OFFSET = -16 
 PADDING = 12
 OUTER_PAADING = 4
 TEXT_OFFSET = -16
 INNER_PADDING = 3
 FONT_SIZE = 8
+
 
 class ExperimentalFeatureContainerSize(ExperimentalFeature):
     
@@ -52,4 +53,3 @@ class ExperimentalFeatureContainerSize(ExperimentalFeature):
         text_y = rect.Y + INNER_PADDING + TEXT_OFFSET
         dc.DrawText(text, text_x, text_y)
         dc.SetFont(old_font)
-
