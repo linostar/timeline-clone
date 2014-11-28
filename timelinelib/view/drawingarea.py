@@ -211,7 +211,7 @@ class TimelineCanvasController(object):
             (_("Delete"), self._context_menu_on_delete_event),
         ]
         if EVENT_DONE.enabled():
-            menu_definitions.append((_("Done"), self._context_menu_on_done_event))
+            menu_definitions.append((EVENT_DONE.get_display_name(), self._context_menu_on_done_event))
         if self.context_menu_event.has_data():
             menu_definitions.append((_("Sticky Balloon"), self._context_menu_on_sticky_balloon_event))
         hyperlink = self.context_menu_event.get_data("hyperlink")
