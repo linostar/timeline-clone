@@ -22,7 +22,14 @@ from timelinelib.drawing.utils import get_default_font
 
 
 DISPLAY_NAME = "Extend Container height"
-DESCRIPTION = "Extend the height of a container so that the container name becomes visible"  
+DESCRIPTION = """
+              Extend the height of a container so that the container name becomes visible.
+              
+              This also has the side effect that ordinary events come farther apart in
+              the vertical direction.
+              
+              The container name font is fixed when you zoom vertically (Alt + Mouse wheel)
+              """  
 Y_OFFSET = -16 
 PADDING = 12
 OUTER_PAADING = 4

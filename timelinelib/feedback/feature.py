@@ -17,6 +17,7 @@
 
 
 from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
+from timelinelib.config.experimentalfeature import ExperimentalFeature
 
 
 """
@@ -64,9 +65,13 @@ class FeatureForm(object):
         self.dialog = dialog
 
     def populate(self, subject):
-        self.subject = subject
-        self.dialog.set_feature_name(subject)
-        self.dialog.set_feature_description(FEATURES[subject])
+        if isinstance(subject, ExperimentalFeature):
+            self.dialog.set_feature_name(subject.get_display_name())
+            self.dialog.set_feature_description(subject.get_description())
+        else:
+            self.subject = subject
+            self.dialog.set_feature_name(subject)
+            self.dialog.set_feature_description(FEATURES[subject])
 
     def give_feedback(self):
         show_feedback_dialog("", self.subject, "")

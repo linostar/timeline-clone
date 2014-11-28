@@ -20,7 +20,12 @@ from timelinelib.config.experimentalfeature import ExperimentalFeature
 
 
 DISPLAY_NAME = "Mark Event as Done"
-DESCRIPTION = "Mark an Event as Done by setting progress=100%"  
+DESCRIPTION = """
+              Mark an Event as Done by setting progress=100%
+              
+              A menu item 'Mark as Done' appears in the context menu, 
+              displayed when you righ-click on one or more selected Events.
+              """  
 
 
 class ExperimentalFeatureDone(ExperimentalFeature):

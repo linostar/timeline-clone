@@ -489,6 +489,9 @@ class GuiCreator(object):
         def features(e):
             feature_name = self.feedback_featues[e.Id]
             show_feature_feedback_dialog(feature_name)
+        def display_experimental_features(e):
+            feature = self.feedback_featues[e.Id]
+            show_feature_feedback_dialog(feature)
         self.feedback_featues = {}
         if len(FEATURES) > 0:
             menu = wx.Menu()
@@ -501,7 +504,8 @@ class GuiCreator(object):
             menu.AppendSeparator()
             for feature in ExperimentalFeatures().get_all_features():
                 mi = menu.Append(wx.ID_ANY, "%s..." % feature.get_display_name())
-            
+                self.feedback_featues[mi.GetId()] = feature
+                self.Bind(wx.EVT_MENU, display_experimental_features, mi)
         help_menu.InsertMenu(5, wx.ID_ANY, "&Give Feedback on Features", menu)
 
     def display_timeline_context_menu(self):
