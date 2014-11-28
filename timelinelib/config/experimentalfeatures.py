@@ -21,8 +21,8 @@ from timelinelib.config.experimentalfeaturecontainersize import ExperimentalFeat
 
 
 EVENT_DONE = ExperimentalFeatureDone()
-CONTAINER_SIZE = ExperimentalFeatureContainerSize()
-FEATURES = (EVENT_DONE, CONTAINER_SIZE)
+EXTENDED_CONTAINER_HEIGHT = ExperimentalFeatureContainerSize()
+FEATURES = (EVENT_DONE, EXTENDED_CONTAINER_HEIGHT)
 
 
 class ExperimentalFeatures(object):
@@ -38,8 +38,8 @@ class ExperimentalFeatures(object):
             collector.append(";")
         return "".join(collector)
     
-    def set_from_string(self, str):
-        for item in str.split(";"):
+    def set_from_string(self, cfg_string):
+        for item in cfg_string.split(";"):
             if "=" in item:
                 name, value = item.split("=")
                 self.set_value_on_feature_by_name(name.strip(), value.strip() == "1")
