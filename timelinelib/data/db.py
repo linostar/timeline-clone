@@ -109,7 +109,8 @@ class MemoryDB(Observable):
 
     def mark_event_as_done(self, event_or_id, save=True):
         def mark_as_done(event):
-            event.set_progress(100)
+            if not event.is_container():
+                event.set_progress(100)
         error_text = "Mark event Done failed"
         self._process_event(event_or_id, mark_as_done, error_text, save)
         
