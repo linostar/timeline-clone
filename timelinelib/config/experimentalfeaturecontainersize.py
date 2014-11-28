@@ -39,9 +39,6 @@ class ExperimentalFeatureContainerSize(ExperimentalFeature):
     def get_extra_outer_padding_to_avoid_vertical_overlapping(self):
         return OUTER_PAADING
     
-    def clip_text_rect_region(self, dc, rect):
-        dc.SetClippingRect(wx.Rect(rect.X, rect.Y + Y_OFFSET, rect.Width, rect.Height))
-        
     def get_vertical_larger_box_rect(self, rect):
         return wx.Rect(rect.X - 2, rect.Y - 2 - PADDING, rect.Width + 4, rect.Height + 4 + PADDING)
     
