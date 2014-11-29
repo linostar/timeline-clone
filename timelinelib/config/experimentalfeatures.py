@@ -72,6 +72,6 @@ def experimental_feature(feature):
     """
     def deco(foo):
         if not feature in FEATURES:
-            raise ExperimentalFeatureException(_("Feature EVENT_DONE, not implemented"))
+            raise ExperimentalFeatureException("Feature '%s', not implemented" % feature.get_display_name())
         return foo
     return deco
