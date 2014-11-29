@@ -23,12 +23,6 @@ class ExperimentalFeature(object):
         self.description = description
         self.active = False
     
-    def enable(self):
-        self.active = True
-        
-    def disable(self):
-        self.active = False
-    
     def set_active(self, value):
         self.active = value
         
