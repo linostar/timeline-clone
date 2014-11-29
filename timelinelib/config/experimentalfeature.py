@@ -40,4 +40,6 @@ class ExperimentalFeature(object):
     
     def get_description(self):
         return self.description
-    
+
+    def get_config(self):
+        return "%s=%s;" % (self.display_name, str(self.active))

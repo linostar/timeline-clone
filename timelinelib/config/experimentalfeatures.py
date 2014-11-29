@@ -34,19 +34,14 @@ class ExperimentalFeatures(object):
     def __str__(self):
         collector = []
         for feature in FEATURES:
-            collector.append("%s=" % feature.get_display_name())
-            if feature.enabled():
-                collector.append("1")
-            else:
-                collector.append("0")
-            collector.append(";")
+            collector.append(feature.get_config())
         return "".join(collector)
     
     def set_from_string(self, cfg_string):
         for item in cfg_string.split(";"):
             if "=" in item:
                 name, value = item.split("=")
-                self.set_value_on_feature_by_name(name.strip(), value.strip() == "1")
+                self.set_value_on_feature_by_name(name.strip(), value.strip() == "True")
         
     def set_value_on_feature_by_name(self, name, value):
         for feature in FEATURES:
