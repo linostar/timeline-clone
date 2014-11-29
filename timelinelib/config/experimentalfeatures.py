@@ -50,12 +50,12 @@ class ExperimentalFeatures(object):
         for item in cfg_string.split(";"):
             if "=" in item:
                 name, value = item.split("=")
-                self._set_value_on_feature_by_name(name.strip(), value.strip() == "True")
+                self._set_active_state_on_feature_by_name(name.strip(), value.strip() == "True")
     
-    def set_value_on_feature_by_index(self, feature_index, value):
+    def set_active_state_on_feature_by_index(self, feature_index, value):
         FEATURES[feature_index].set_active(value)
             
-    def _set_value_on_feature_by_name(self, name, value):
+    def _set_active_state_on_feature_by_name(self, name, value):
         for feature in FEATURES:
             if feature.get_display_name() == name:
                 feature.set_value(value)

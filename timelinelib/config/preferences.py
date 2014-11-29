@@ -46,7 +46,7 @@ class PreferencesEditor(object):
 
     def on_experimental_features_changed(self, feature_index, value):
         ef = ExperimentalFeatures() 
-        ef.set_value_on_feature_by_index(feature_index, value)
+        ef.set_active_state_on_feature_by_index(feature_index, value)
         self.config.experimental_features = str(ef) 
     
     def _week_index(self, week):
