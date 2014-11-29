@@ -41,14 +41,8 @@ class ExperimentalFeatures(object):
         for item in cfg_string.split(";"):
             if "=" in item:
                 name, value = item.split("=")
-                self.set_value_on_feature_by_name(name.strip(), value.strip() == "True")
-        
-    def set_value_on_feature_by_name(self, name, value):
-        for feature in FEATURES:
-            if feature.get_display_name() == name:
-                feature.set_value(value)
-                return
-            
+                self._set_value_on_feature_by_name(name.strip(), value.strip() == "True")
+    
     def set_value_on_feature(self, feature_index, value):
         if value:
             FEATURES[feature_index].enable()
@@ -58,6 +52,12 @@ class ExperimentalFeatures(object):
     def get_all_features(self):
         return FEATURES
 
+    def _set_value_on_feature_by_name(self, name, value):
+        for feature in FEATURES:
+            if feature.get_display_name() == name:
+                feature.set_value(value)
+                return
+            
 
 def experimental_feature(feature):
     """
