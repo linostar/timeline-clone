@@ -23,7 +23,7 @@ DISPLAY_NAME = "Vertical &Zooming"
 DESCRIPTION = """
              This new feature enables you to zoom the Timeline events vertically.
              You accomplish this by pressing the Alt key and then scroll the mouse wheel.
-             """,
+             """
 
 class InstalledFeatureVerticalZooming(InstalledFeature):
     

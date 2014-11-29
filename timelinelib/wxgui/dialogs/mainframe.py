@@ -30,7 +30,7 @@ from timelinelib.data import TimePeriod
 from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
 from timelinelib.db.utils import safe_locking
-from timelinelib.feedback.feature import FEATURES
+from timelinelib.features.installed.installedfeatures import InstalledFeatures
 from timelinelib.feedback.feature import show_feature_feedback_dialog
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
@@ -486,26 +486,24 @@ class GuiCreator(object):
         self.help_menu = help_menu
 
     def _create_menu_features_feedback(self, help_menu):
-        def features(e):
-            feature_name = self.feedback_featues[e.Id]
-            show_feature_feedback_dialog(feature_name)
-        def display_experimental_features(e):
+        def display_feature(e):
             feature = self.feedback_featues[e.Id]
             show_feature_feedback_dialog(feature)
         self.feedback_featues = {}
-        if len(FEATURES) > 0:
+        installed_features = InstalledFeatures().get_all_features()
+        if len(installed_features) > 0:
             menu = wx.Menu()
-            for item in FEATURES.keys():
-                mi = menu.Append(wx.ID_ANY, "%s..." % item)
-                self.feedback_featues[mi.GetId()] = item
-                self.Bind(wx.EVT_MENU, features, mi)
+            for feature in installed_features:
+                mi = menu.Append(wx.ID_ANY, "%s..." % feature.get_display_name())
+                self.feedback_featues[mi.GetId()] = feature
+                self.Bind(wx.EVT_MENU, display_feature, mi)
         experimental_features = ExperimentalFeatures().get_all_features()
         if len(experimental_features) > 0:
             menu.AppendSeparator()
             for feature in ExperimentalFeatures().get_all_features():
                 mi = menu.Append(wx.ID_ANY, "%s..." % feature.get_display_name())
                 self.feedback_featues[mi.GetId()] = feature
-                self.Bind(wx.EVT_MENU, display_experimental_features, mi)
+                self.Bind(wx.EVT_MENU, display_feature, mi)
         help_menu.InsertMenu(5, wx.ID_ANY, "&Give Feedback on Features", menu)
 
     def display_timeline_context_menu(self):

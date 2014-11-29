@@ -27,7 +27,7 @@ DESCRIPTION = """
              if you resize an event within the container.
              
              Have a look at this video for a demo. http://www.youtube.com/watch?v=dBwEQ3vqB_I
-             """,
+             """
 
 class InstalledFeatureContainers(InstalledFeature):
     

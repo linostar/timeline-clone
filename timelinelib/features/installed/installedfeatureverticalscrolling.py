@@ -25,7 +25,7 @@ DESCRIPTION = """
              You accomplish this by pressing the Ctrl+Shift keys and then scroll the mouse wheel.
              Point events and period events are scrolled in opposite directions and disappear
              from view when they cross the divider line.
-             """,
+             """
 
 class InstalledFeatureVerticalScrolling(InstalledFeature):
     

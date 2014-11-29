@@ -21,10 +21,10 @@ from timelinelib.features.installed.installedfeature import InstalledFeature
 
 DISPLAY_NAME = "E&xporting whole Timeline to images"
 DESCRIPTION = """
-             Now you can export the entire timeline to a series of images.
-             Select menu File -> Export Whole Timeline to Image.
-             Each image will contain the timespan currently displayed in the Timeline view.
-             """,
+              Now you can export the entire timeline to a series of images.
+              Select menu File -> Export Whole Timeline to Image.
+              Each image will contain the timespan currently displayed in the Timeline view.
+              """
 
 class InstalledFeatureExportImages(InstalledFeature):
     
