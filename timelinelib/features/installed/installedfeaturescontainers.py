@@ -29,7 +29,7 @@ DESCRIPTION = """
              Have a look at this video for a demo. http://www.youtube.com/watch?v=dBwEQ3vqB_I
              """,
 
-class InstalledFeatureExportImages(InstalledFeature):
+class InstalledFeatureContainers(InstalledFeature):
     
     def __init__(self):
         InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
