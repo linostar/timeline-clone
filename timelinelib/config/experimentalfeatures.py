@@ -66,7 +66,7 @@ class ExperimentalFeatures(object):
     def _set_active_state_on_feature_by_name(self, name, value):
         for feature in FEATURES:
             if feature.get_display_name() == name:
-                feature.set_value(value)
+                feature.set_active(value)
                 return
             
 
