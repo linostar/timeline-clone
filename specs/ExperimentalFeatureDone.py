@@ -31,9 +31,6 @@ class describe_experimental_feature_done(unittest.TestCase):
     def test_has_description(self):
         self.assertEqual(DESCRIPTION, self.ef.get_description())
         
-    def test_has_handler(self):
-        self.assertTrue(self.ef.handler != None)
-        
     def setUp(self):
         self.ef = ExperimentalFeatureDone()
-        
+

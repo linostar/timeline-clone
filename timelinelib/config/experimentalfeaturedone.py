@@ -33,5 +33,3 @@ class ExperimentalFeatureDone(ExperimentalFeature):
     def __init__(self):
         ExperimentalFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
 
-    def handler(self):
-        pass
