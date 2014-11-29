@@ -18,7 +18,7 @@
 
 import unittest
 
-from timelinelib.config.experimentalfeatures import ExperimentalFeatures
+from timelinelib.features.experimental.experimentalfeatures import ExperimentalFeatures
 
 
 class describe_experimental_features(unittest.TestCase):

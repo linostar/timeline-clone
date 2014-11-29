@@ -21,17 +21,17 @@ import unittest
 from mock import Mock
 
 from timelinelib.feedback.feature import FeatureForm
-from timelinelib.feedback.feature import FEATURES
+from timelinelib.features.installed.installedfeatures import InstalledFeatures
 from timelinelib.wxgui.dialogs.feature import FeatureDialog
 
 
 class FeedbackFormSpec(unittest.TestCase):
 
     def test_shows_parts_in_dialog(self):
-        key = FEATURES.keys()[0]
+        key = InstalledFeatures().get_all_features()[0]
         self.form.populate(key)
-        self.dialog.set_feature_name.assert_called_with(key)
-        self.dialog.set_feature_description.assert_called_with(FEATURES[key])
+        self.dialog.set_feature_name.assert_called_with(key.get_display_name())
+        self.dialog.set_feature_description.assert_called_with(key.get_description())
 
     def setUp(self):
         self.dialog = Mock(FeatureDialog)
