@@ -16,6 +16,11 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+"""
+ExperimentalFeature:  Common base class for all experimental features.
+"""
+
+
 class ExperimentalFeature(object):
     
     def __init__(self, display_name, description):
