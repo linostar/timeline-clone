@@ -17,7 +17,7 @@
 
 
 import wx
-from timelinelib.config.experimentalfeature import ExperimentalFeature
+from timelinelib.features.experimental.experimentalfeature import ExperimentalFeature
 from timelinelib.drawing.utils import get_default_font
 
 

@@ -20,8 +20,8 @@ import webbrowser
 
 import wx
 
-from timelinelib.config.experimentalfeatures import EVENT_DONE 
-from timelinelib.config.experimentalfeatures import experimental_feature
+from timelinelib.features.experimental.experimentalfeatures import EVENT_DONE 
+from timelinelib.features.experimental.experimentalfeatures import experimental_feature
 from timelinelib.data import TimeOutOfRangeLeftError
 from timelinelib.data import TimeOutOfRangeRightError
 from timelinelib.db.exceptions import TimelineIOError

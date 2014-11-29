@@ -20,7 +20,7 @@ import wx
 
 from timelinelib.config.preferences import PreferencesEditor
 from timelinelib.wxgui.utils import BORDER
-from timelinelib.config.experimentalfeatures import ExperimentalFeatures
+from timelinelib.features.experimental.experimentalfeatures import ExperimentalFeatures
 
 
 class PreferencesDialog(wx.Dialog):

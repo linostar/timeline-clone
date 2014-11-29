@@ -57,7 +57,7 @@ from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
-from timelinelib.config.experimentalfeatures import ExperimentalFeatures
+from timelinelib.features.experimental.experimentalfeatures import ExperimentalFeatures
 import timelinelib.wxgui.utils as gui_utils
 
 

@@ -25,8 +25,8 @@ from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.utilities.observer import Observable
 from timelinelib.utilities.observer import STATE_CHANGE_ANY
 from timelinelib.utilities.observer import STATE_CHANGE_CATEGORY
-from timelinelib.config.experimentalfeatures import EVENT_DONE
-from timelinelib.config.experimentalfeatures import experimental_feature
+from timelinelib.features.experimental.experimentalfeatures import EVENT_DONE
+from timelinelib.features.experimental.experimentalfeatures import experimental_feature
 
 class MemoryDB(Observable):
 

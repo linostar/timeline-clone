@@ -27,7 +27,7 @@ from timelinelib.drawing.interface import Drawer
 from timelinelib.drawing.scene import TimelineScene
 from timelinelib.drawing.utils import darken_color
 from timelinelib.drawing.utils import get_default_font
-from timelinelib.config.experimentalfeatures import EXTENDED_CONTAINER_HEIGHT
+from timelinelib.features.experimental.experimentalfeatures import EXTENDED_CONTAINER_HEIGHT
 
 
 OUTER_PADDING = 5 # Space between event boxes (pixels)

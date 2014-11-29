@@ -17,7 +17,7 @@
 
 
 from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
-from timelinelib.config.experimentalfeature import ExperimentalFeature
+from timelinelib.features.experimental.experimentalfeature import ExperimentalFeature
 
 
 """

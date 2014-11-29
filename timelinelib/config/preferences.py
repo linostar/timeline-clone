@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.config.experimentalfeatures import ExperimentalFeatures
+from timelinelib.features.experimental.experimentalfeatures import ExperimentalFeatures
 
 
 class PreferencesEditor(object):

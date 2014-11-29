@@ -24,8 +24,8 @@ ExperimentalFeatures is responsible for reading and storing experimental feature
 """
 
 
-from timelinelib.config.experimentalfeaturedone import ExperimentalFeatureDone
-from timelinelib.config.experimentalfeaturecontainersize import ExperimentalFeatureContainerSize
+from timelinelib.features.experimental.experimentalfeaturedone import ExperimentalFeatureDone
+from timelinelib.features.experimental.experimentalfeaturecontainersize import ExperimentalFeatureContainerSize
 
 
 EVENT_DONE = ExperimentalFeatureDone()

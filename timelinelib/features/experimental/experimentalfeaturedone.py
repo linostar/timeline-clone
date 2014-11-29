@@ -16,7 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.config.experimentalfeature import ExperimentalFeature
+from timelinelib.features.experimental.experimentalfeature import ExperimentalFeature
 
 
 DISPLAY_NAME = "Mark Event as Done"
