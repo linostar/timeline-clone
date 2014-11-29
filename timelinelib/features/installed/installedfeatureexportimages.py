@@ -16,25 +16,18 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-ExperimentalFeature:  Common base class for all experimental features.
-"""
+from timelinelib.features.installed.installedfeature import InstalledFeature
 
 
-from timelinelib.features.feature import Feature
+DISPLAY_NAME = "E&xporting whole Timeline to images"
+DESCRIPTION = """
+             Now you can export the entire timeline to a series of images.
+             Select menu File -> Export Whole Timeline to Image.
+             Each image will contain the timespan currently displayed in the Timeline view.
+             """,
 
-
-class ExperimentalFeature(Feature):
+class InstalledFeatureExportImages(InstalledFeature):
     
-    def __init__(self, display_name, description):
-        Feature.__init__(self, display_name, description)
-        self.active = False
-    
-    def set_active(self, value):
-        self.active = value
-        
-    def enabled(self):
-        return self.active
-    
-    def get_config(self):
-        return "%s=%s;" % (self.display_name, str(self.active))
+    def __init__(self):
+        InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
+

@@ -16,25 +16,17 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-ExperimentalFeature:  Common base class for all experimental features.
-"""
+from timelinelib.features.installed.installedfeature import InstalledFeature
 
 
-from timelinelib.features.feature import Feature
+DISPLAY_NAME = "Vertical &Zooming"
+DESCRIPTION = """
+             This new feature enables you to zoom the Timeline events vertically.
+             You accomplish this by pressing the Alt key and then scroll the mouse wheel.
+             """,
 
-
-class ExperimentalFeature(Feature):
+class InstalledFeatureVerticalZooming(InstalledFeature):
     
-    def __init__(self, display_name, description):
-        Feature.__init__(self, display_name, description)
-        self.active = False
-    
-    def set_active(self, value):
-        self.active = value
-        
-    def enabled(self):
-        return self.active
-    
-    def get_config(self):
-        return "%s=%s;" % (self.display_name, str(self.active))
+    def __init__(self):
+        InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
+

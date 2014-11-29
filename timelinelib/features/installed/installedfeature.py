@@ -17,24 +17,14 @@
 
 
 """
-ExperimentalFeature:  Common base class for all experimental features.
+InstalledFeature:  Common base class for all installed features.
 """
 
 
-from timelinelib.features.feature import Feature
+from timelinelib.features.feature import Feature  
 
 
-class ExperimentalFeature(Feature):
+class InstalledFeature(Feature):
     
     def __init__(self, display_name, description):
         Feature.__init__(self, display_name, description)
-        self.active = False
-    
-    def set_active(self, value):
-        self.active = value
-        
-    def enabled(self):
-        return self.active
-    
-    def get_config(self):
-        return "%s=%s;" % (self.display_name, str(self.active))

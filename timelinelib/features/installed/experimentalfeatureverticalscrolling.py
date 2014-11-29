@@ -16,25 +16,19 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-ExperimentalFeature:  Common base class for all experimental features.
-"""
+from timelinelib.features.installed.installedfeature import InstalledFeature
 
 
-from timelinelib.features.feature import Feature
+DISPLAY_NAME = "Vertical &Scrolling"
+DESCRIPTION = """
+             This new feature enables you to scroll the Timeline events vertically.
+             You accomplish this by pressing the Ctrl+Shift keys and then scroll the mouse wheel.
+             Point events and period events are scrolled in opposite directions and disappear
+             from view when they cross the divider line.
+             """,
 
-
-class ExperimentalFeature(Feature):
+class InstalledFeatureVerticalScrolling(InstalledFeature):
     
-    def __init__(self, display_name, description):
-        Feature.__init__(self, display_name, description)
-        self.active = False
-    
-    def set_active(self, value):
-        self.active = value
-        
-    def enabled(self):
-        return self.active
-    
-    def get_config(self):
-        return "%s=%s;" % (self.display_name, str(self.active))
+    def __init__(self):
+        InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
+
