@@ -67,6 +67,10 @@ def experimental_feature(feature):
     Decorator used for methods, only used by an Experimental feature.
     The purpose of the decorator is to simplify removal of the feature
     code if it is decided not to implement the feature.
+    Example:
+       @experimental_feature(EVENT_DONE)
+       def foo()
+           pass
     """
     def deco(foo):
         if not feature in FEATURES:
