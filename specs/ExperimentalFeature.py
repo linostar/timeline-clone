@@ -24,11 +24,11 @@ from timelinelib.config.experimentalfeaturedone import ExperimentalFeatureDone
 class describe_experimental_feature(unittest.TestCase):
     
     def test_can_be_enabled(self):
-        self.ef.enable()
+        self.ef.set_active(True)
         self.assertTrue(self.ef.enabled())
         
     def test_can_be_disabled(self):
-        self.ef.disable()
+        self.ef.set_active(False)
         self.assertFalse(self.ef.enabled())
         
     def setUp(self):
