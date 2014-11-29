@@ -813,7 +813,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         self._handle_event_alerts()
 
     def _set_experimental_features(self):
-        ExperimentalFeatures().set_from_string(self.config.get_experimental_features())
+        ExperimentalFeatures().set_active_state_on_all_features_from_config_string(self.config.get_experimental_features())
 
     def _load_icon_bundle(self):
         bundle = wx.IconBundle()

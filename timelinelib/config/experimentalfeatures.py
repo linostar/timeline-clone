@@ -46,7 +46,7 @@ class ExperimentalFeatures(object):
     def get_all_features(self):
         return FEATURES
 
-    def set_from_string(self, cfg_string):
+    def set_active_state_on_all_features_from_config_string(self, cfg_string):
         for item in cfg_string.split(";"):
             if "=" in item:
                 name, value = item.split("=")
