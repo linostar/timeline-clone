@@ -43,7 +43,7 @@ class ExperimentalFeatures(object):
                 name, value = item.split("=")
                 self._set_value_on_feature_by_name(name.strip(), value.strip() == "True")
     
-    def set_value_on_feature(self, feature_index, value):
+    def set_value_on_feature_by_index(self, feature_index, value):
         if value:
             FEATURES[feature_index].enable()
         else:
