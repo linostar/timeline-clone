@@ -19,7 +19,7 @@
 import wx
 import webbrowser
 
-from timelinelib.feedback.feature import FeatureForm
+from timelinelib.feedback.feature import FeatureDialogController
 from timelinelib.wxgui.utils import BORDER
 
 
@@ -98,7 +98,7 @@ class FeatureDialog(FeatureDialogGui):
 
     def __init__(self, parent=None):
         FeatureDialogGui.__init__(self, parent)
-        self.controller = FeatureForm(self)
+        self.controller = FeatureDialogController(self)
 
     def set_feature_name(self, text):
         self.info_label.SetLabel(text)
@@ -107,3 +107,11 @@ class FeatureDialog(FeatureDialogGui):
 
     def set_feature_description(self, text):
         self.body_text.SetValue(text)
+
+
+def show_feature_feedback_dialog(feature, parent=None):
+    dialog = FeatureDialog(parent)
+    dialog.controller.populate(feature)
+    dialog.ShowModal()
+    dialog.Destroy()
+        

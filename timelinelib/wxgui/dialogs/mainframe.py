@@ -31,7 +31,7 @@ from timelinelib.db.exceptions import TimelineIOError
 from timelinelib.db import db_open
 from timelinelib.db.utils import safe_locking
 from timelinelib.features.installed.installedfeatures import InstalledFeatures
-from timelinelib.feedback.feature import show_feature_feedback_dialog
+from timelinelib.wxgui.dialogs.feature import show_feature_feedback_dialog
 from timelinelib.meta.about import APPLICATION_NAME
 from timelinelib.meta.about import display_about_dialog
 from timelinelib.proxies.drawingarea import DrawingAreaProxy

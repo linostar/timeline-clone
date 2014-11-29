@@ -19,7 +19,7 @@
 from timelinelib.wxgui.dialogs.feedback import show_feedback_dialog
 
 
-class FeatureForm(object):
+class FeatureDialogController(object):
 
     def __init__(self, dialog):
         self.dialog = dialog
@@ -31,11 +31,3 @@ class FeatureForm(object):
 
     def give_feedback(self):
         show_feedback_dialog("", self.subject, "")
-
-
-def show_feature_feedback_dialog(feature, parent=None):
-    from timelinelib.wxgui.dialogs.feature import FeatureDialog
-    dialog = FeatureDialog(parent)
-    dialog.controller.populate(feature)
-    dialog.ShowModal()
-    dialog.Destroy()
