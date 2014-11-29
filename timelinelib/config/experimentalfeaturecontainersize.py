@@ -28,7 +28,7 @@ DESCRIPTION = """
               This also has the side effect that ordinary events come farther apart in
               the vertical direction.
               
-              The container name font is fixed when you zoom vertically (Alt + Mouse wheel)
+              The font for the container name has a fixed size when you zoom vertically (Alt + Mouse wheel)
               """  
 Y_OFFSET = -16 
 PADDING = 12
