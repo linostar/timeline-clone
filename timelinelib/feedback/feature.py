@@ -66,6 +66,7 @@ class FeatureForm(object):
 
     def populate(self, subject):
         if isinstance(subject, ExperimentalFeature):
+            self.subject = subject.get_display_name()
             self.dialog.set_feature_name(subject.get_display_name())
             self.dialog.set_feature_description(subject.get_description())
         else:
