@@ -32,11 +32,20 @@ class ExperimentalFeatureException(Exception):
 class ExperimentalFeatures(object):
     
     def __str__(self):
+        """
+        Formats the configuration string for all experimental features,
+        which is a semicolon separated list of feature configurations.
+           features-configuration ::= (feature-configuration ';')*
+           feature-configuration ::=  feature-name  '='  ('True'|'False')
+        """
         collector = []
         for feature in FEATURES:
             collector.append(feature.get_config())
         return "".join(collector)
     
+    def get_all_features(self):
+        return FEATURES
+
     def set_from_string(self, cfg_string):
         for item in cfg_string.split(";"):
             if "=" in item:
@@ -46,9 +55,6 @@ class ExperimentalFeatures(object):
     def set_value_on_feature_by_index(self, feature_index, value):
         FEATURES[feature_index].set_active(value)
             
-    def get_all_features(self):
-        return FEATURES
-
     def _set_value_on_feature_by_name(self, name, value):
         for feature in FEATURES:
             if feature.get_display_name() == name:
