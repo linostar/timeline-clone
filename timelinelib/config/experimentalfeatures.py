@@ -44,10 +44,7 @@ class ExperimentalFeatures(object):
                 self._set_value_on_feature_by_name(name.strip(), value.strip() == "True")
     
     def set_value_on_feature_by_index(self, feature_index, value):
-        if value:
-            FEATURES[feature_index].enable()
-        else:
-            FEATURES[feature_index].disable()
+        FEATURES[feature_index].set_active(value)
             
     def get_all_features(self):
         return FEATURES

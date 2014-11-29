@@ -29,6 +29,9 @@ class ExperimentalFeature(object):
     def disable(self):
         self.active = False
     
+    def set_active(self, value):
+        self.active = value
+        
     def set_value(self, value):
         self.active = value
         
