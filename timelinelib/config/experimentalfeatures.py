@@ -16,6 +16,14 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+"""
+ExperimentalFeatures is responsible for reading and storing experimental features
+   configuration, to and from the configuration file.
+   It also holds a list of available experimental features.
+   All experimental features are instantiated when this file is loaded.
+"""
+
+
 from timelinelib.config.experimentalfeaturedone import ExperimentalFeatureDone
 from timelinelib.config.experimentalfeaturecontainersize import ExperimentalFeatureContainerSize
 
