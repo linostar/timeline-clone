@@ -19,7 +19,7 @@
 import wx
 import webbrowser
 
-from timelinelib.feedback.feature import FeatureDialogController
+from timelinelib.feedback.featuredialogcontoller import FeatureDialogController
 from timelinelib.wxgui.utils import BORDER
 
 
