@@ -21,6 +21,18 @@ ExperimentalFeatures is responsible for reading and storing experimental feature
    configuration, to and from the configuration file.
    It also holds a list of available experimental features.
    All experimental features are instantiated when this file is loaded.
+   
+To add a new experimental feature, do as follows:
+    - Create a new file in timelinelib.features.experimental, defining a class
+      that inherits from ExperimentalFeature and calls the parent __init__()-
+      function with the two arguments DISPLAY_NAME and DESCRIPTION.
+    - Instantiate the new experimental feature class in this file like...
+        NAME = NewExperimentalFeatureClass()
+    - Add the instantiated object to the FEATURES list in this file.
+    - Implement the feature logic under the condition...
+        if NAME.enabled(): 
+    - If new methods are created that only are used by the new feature,
+      decorate these functions with @experimental_feature(NAME)
 """
 
 
