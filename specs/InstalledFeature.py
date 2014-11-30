@@ -18,32 +18,14 @@
 
 import unittest
 
-from mock import Mock
-
-from timelinelib.feedback.featuredialogcontoller import FeatureDialogController
-from timelinelib.features.installed.installedfeatures import InstalledFeatures
-from timelinelib.features.feature import Feature
-from timelinelib.wxgui.dialogs.feature import FeatureDialog
+from timelinelib.features.installed.installedfeature import InstalledFeature
 
 
 DISPLAY_NAME = "Display name"
 DESCRIPTION = "Display description"
         
 
-class FeedbackFormSpec(unittest.TestCase):
-
-    def test_shows_parts_in_dialog(self):
-        key = InstalledFeatures().get_all_features()[0]
-        self.form.populate(key)
-        self.dialog.set_feature_name.assert_called_with(key.get_display_name())
-        self.dialog.set_feature_description.assert_called_with(key.get_description())
-
-    def setUp(self):
-        self.dialog = Mock(FeatureDialog)
-        self.form = FeatureDialogController(self.dialog)
-        
-
-class describe_feature(unittest.TestCase):
+class describe_installed_feature(unittest.TestCase):
     
     def test_has_a_display_name(self):
         self.assertEqual(DISPLAY_NAME, self.feature.get_display_name())
@@ -52,4 +34,4 @@ class describe_feature(unittest.TestCase):
         self.assertEqual(DESCRIPTION, self.feature.get_description())
     
     def setUp(self):
-        self.feature = Feature(DISPLAY_NAME, DESCRIPTION)
+        self.feature = InstalledFeature(DISPLAY_NAME, DESCRIPTION)
