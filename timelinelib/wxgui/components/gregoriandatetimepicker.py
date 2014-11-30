@@ -26,6 +26,7 @@ from timelinelib.time.gregoriantime import GregorianTimeType
 from timelinelib.config.paths import ICONS_DIR
 from timelinelib.wxgui.utils import display_error_message
 from timelinelib.time.timeline import delta_from_days
+from timelinelib.calendar import get_date_formatter
 
 
 class GregorianDateTimePicker(wx.Panel):
@@ -291,7 +292,7 @@ class GregorianDatePickerController(object):
 
     def set_value(self, value):
         year, month, day = value
-        date_string = "%04d-%02d-%02d" % (year, month, day)
+        date_string = get_date_formatter().format(year, month, day)
         self.date_picker.set_date_string(date_string)
 
     def on_set_focus(self):
@@ -416,13 +417,7 @@ class GregorianDatePickerController(object):
         self.date_picker.Refresh()
 
     def _parse_year_month_day(self):
-        components = self.date_picker.get_date_string().rsplit(self.separator, 2)
-        if len(components) != 3:
-            raise ValueError()
-        year  = int(components[self.region_year])
-        month = int(components[self.region_month])
-        day   = int(components[self.region_day])
-        return (year, month, day)
+        return get_date_formatter().parse(self.date_picker.get_date_string())
 
     def _ensure_within_allowed_period(self, date):
         year, month, day = date

@@ -16,9 +16,18 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.calendar.defaultdateformatter import DateFormatter
-from timelinelib.calendar.defaultdateformatter import DefaultDateFormatter
+import unittest
+
+from timelinelib.calendar.dateformatter import DateFormatter
 
 
-def get_date_formatter():
-    return DefaultDateFormatter()
+class describe_date_formatter(unittest.TestCase):
+    
+    def test_format_is_not_implemented(self):
+        self.assertRaises(NotImplementedError, self.formatter.format, 0, 0, 0)
+    
+    def test_parse_is_not_implemented(self):
+        self.assertRaises(NotImplementedError, self.formatter.parse, "")
+    
+    def setUp(self):
+        self.formatter = DateFormatter()

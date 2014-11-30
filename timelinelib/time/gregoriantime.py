@@ -33,6 +33,7 @@ from timelinelib.time.timeline import delta_from_days
 from timelinelib.time.typeinterface import TimeType
 import timelinelib.calendar.gregorian as gregorian
 import timelinelib.time.timeline as timeline
+from timelinelib.calendar import get_date_formatter
 
 
 class GregorianTimeType(TimeType):
@@ -222,7 +223,7 @@ class GregorianTimeType(TimeType):
 
     def event_date_string(self, time):
         gregorian_time = gregorian.from_time(time)
-        return "%04d-%02d-%02d" % (gregorian_time.year, gregorian_time.month, gregorian_time.day)
+        return get_date_formatter().format(gregorian_time.year, gregorian_time.month, gregorian_time.day)
 
     def event_time_string(self, time):
         gregorian_time = gregorian.from_time(time)

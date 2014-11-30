@@ -16,9 +16,12 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.calendar.defaultdateformatter import DateFormatter
-from timelinelib.calendar.defaultdateformatter import DefaultDateFormatter
+class DateFormatter(object):
+    
+    def format(self, year, month, day):
+        raise NotImplementedError("format not implemented.")
+
+    def parse(self, dt):
+        raise NotImplementedError("parse not implemented.")
 
 
-def get_date_formatter():
-    return DefaultDateFormatter()
