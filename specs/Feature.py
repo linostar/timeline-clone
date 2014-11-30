@@ -20,7 +20,7 @@ import unittest
 
 from mock import Mock
 
-from timelinelib.feedback.feature import FeatureForm
+from timelinelib.feedback.featuredialogcontoller import FeatureDialogController
 from timelinelib.features.installed.installedfeatures import InstalledFeatures
 from timelinelib.wxgui.dialogs.feature import FeatureDialog
 
@@ -35,4 +35,4 @@ class FeedbackFormSpec(unittest.TestCase):
 
     def setUp(self):
         self.dialog = Mock(FeatureDialog)
-        self.form = FeatureForm(self.dialog)
+        self.form = FeatureDialogController(self.dialog)
