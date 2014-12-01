@@ -38,11 +38,13 @@ To add a new experimental feature, do as follows:
 
 from timelinelib.features.experimental.experimentalfeaturedone import ExperimentalFeatureDone
 from timelinelib.features.experimental.experimentalfeaturecontainersize import ExperimentalFeatureContainerSize
+from timelinelib.features.experimental.experimentalfeaturedateformatting import ExperimentalFeatureDateFormatting
 
 
 EVENT_DONE = ExperimentalFeatureDone()
 EXTENDED_CONTAINER_HEIGHT = ExperimentalFeatureContainerSize()
-FEATURES = (EVENT_DONE, EXTENDED_CONTAINER_HEIGHT)
+LOCALE_DATE = ExperimentalFeatureDateFormatting()
+FEATURES = (EVENT_DONE, EXTENDED_CONTAINER_HEIGHT, LOCALE_DATE)
 
 
 class ExperimentalFeatureException(Exception):
