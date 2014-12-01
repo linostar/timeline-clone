@@ -18,11 +18,10 @@
 
 from timelinelib.calendar.defaultdateformatter import DateFormatter
 from timelinelib.calendar.defaultdateformatter import DefaultDateFormatter
-from timelinelib.features.experimental.experimentalfeatures import LOCALE_DATE
-
 
 
 def get_date_formatter():
+    from timelinelib.features.experimental.experimentalfeatures import LOCALE_DATE
     if LOCALE_DATE.enabled():
         return LOCALE_DATE
     else:
