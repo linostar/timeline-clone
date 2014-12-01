@@ -37,42 +37,51 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
     
     def __init__(self):
         ExperimentalFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
-        locale.setlocale(locale.LC_TIME, "")
-        dt = datetime.datetime(int(YEAR), int(MONTH), int(DAY)).strftime('%x')
+        dt = self._create_locale_sample_date()
         self._construct_format(dt)
         
     def format(self, year, month, day):
-        lst = self._get_data_list(year, month, day)
-        return self._format % lst
+        lst = self._get_data_tuple(year, month, day)
+        return self._dateformat % lst
     
     def parse(self, dt):
         fields = dt.split(self._separator)
-        year = int(fields[self._fields[YEAR]])
-        month = int(fields[self._fields[MONTH]])
-        day = int(fields[self._fields[DAY]])
+        year = int(fields[self._field_positions[YEAR]])
+        month = int(fields[self._field_positions[MONTH]])
+        day = int(fields[self._field_positions[DAY]])
         return year, month, day    
 
+    def _create_locale_sample_date(self):
+        self._set_default_time_locale()
+        return self._create_sample_datestring_using_locale_formatting()
+
+    def _set_default_time_locale(self):
+        locale.setlocale(locale.LC_TIME, "")
+        
+    def _create_sample_datestring_using_locale_formatting(self):
+        return datetime.datetime(int(YEAR), int(MONTH), int(DAY)).strftime('%x')
+        
     def _construct_format(self, dt):
         self._separator = self._find_separator(dt)
-        self._fields = self._get_fields(dt)
-        self._format = self._get_format(dt)
+        self._field_positions = self._get_field_positions(dt)
+        self._dateformat = self._get_date_format_string(dt)
         
     def _find_separator(self, dt):
         return re.search('\D', dt).group()
     
-    def _get_fields(self, dt):
+    def _get_field_positions(self, dt):
         keys = dt.split(self._separator)
         return {keys[0]:0, keys[1]:1, keys[2]:2}
 
-    def _get_format(self, dt):
+    def _get_date_format_string(self, dt):
         dt = dt.replace(YEAR, "%04d")
         dt = dt.replace(MONTH, "%02d")
         dt = dt.replace(DAY, "%02d")
         return dt
 
-    def _get_data_list(self, year, month, day):
+    def _get_data_tuple(self, year, month, day):
         result = [0, 0, 0]
-        result[self._fields[YEAR]] = year
-        result[self._fields[MONTH]] = month
-        result[self._fields[DAY]] = day
+        result[self._field_positions[YEAR]] = year
+        result[self._field_positions[MONTH]] = month
+        result[self._field_positions[DAY]] = day
         return tuple(result)
