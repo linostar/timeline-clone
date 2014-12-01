@@ -24,4 +24,5 @@ class DateFormatter(object):
     def parse(self, dt):
         raise NotImplementedError("parse not implemented.")
 
-
+    def separator(self):
+        raise NotImplementedError("separator not implemented.")

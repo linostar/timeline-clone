@@ -20,17 +20,19 @@ from timelinelib.calendar.dateformatter import DateFormatter
 
 
 class DefaultDateFormatter(DateFormatter):
-    
+
+    def __init__(self):
+        self._separator = "-"
+            
     def format(self, year, month, day):
         return "%04d-%02d-%02d" % (year, month, day)
     
     def parse(self, dt):
-        from timelinelib.time.gregoriantime import GregorianTimeType
-        separator = GregorianTimeType().event_date_string(GregorianTimeType().now())[4]
         try:
-            year, month, day = dt.rsplit(separator, 2)
+            year, month, day = dt.rsplit(self._separator, 2)
         except:
             raise ValueError()
         return int(year), int(month), int(day)
     
-    
+    def separator(self):
+        return self._separator

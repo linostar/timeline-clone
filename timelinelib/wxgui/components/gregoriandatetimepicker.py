@@ -272,7 +272,7 @@ class GregorianDatePickerController(object):
         self.date_picker = date_picker
         self.error_bg = error_bg
         self.original_bg = self.date_picker.GetBackgroundColour()
-        self.separator = GregorianTimeType().event_date_string(GregorianTimeType().now())[4]
+        self.separator = get_date_formatter().separator()
         self.region_year = 0
         self.region_month = 1
         self.region_day = 2

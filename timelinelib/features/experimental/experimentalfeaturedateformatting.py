@@ -51,6 +51,9 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
         day = int(fields[self._field_positions[DAY]])
         return year, month, day    
 
+    def separator(self):
+        return self._separator
+    
     def _create_locale_sample_date(self):
         self._set_default_time_locale()
         return self._create_sample_datestring_using_locale_formatting()
