@@ -54,7 +54,10 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
     
     def parse(self, dt):
         fields = dt.split(self._separator)
-        year = int(fields[self._field_positions[YEAR]])
+        try:
+            year = int(fields[self._field_positions[YEAR]])
+        except:
+            year = int(fields[self._field_positions[YEAR[2:]]])
         month = int(fields[self._field_positions[MONTH]])
         day = int(fields[self._field_positions[DAY]])
         return year, month, day    
@@ -86,13 +89,17 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
 
     def _get_date_format_string(self, dt):
         dt = dt.replace(YEAR, "%04d")
+        dt = dt.replace(YEAR[2:], "%02d")
         dt = dt.replace(MONTH, "%02d")
         dt = dt.replace(DAY, "%02d")
         return dt
 
     def _get_data_tuple(self, year, month, day):
         result = [0, 0, 0]
-        result[self._field_positions[YEAR]] = year
+        try:
+            result[self._field_positions[YEAR]] = year
+        except:
+            result[self._field_positions[YEAR[2:]]] = year % 100
         result[self._field_positions[MONTH]] = month
         result[self._field_positions[DAY]] = day
         return tuple(result)
