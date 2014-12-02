@@ -38,6 +38,7 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
     
     def __init__(self):
         ExperimentalFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
+        self.century = 0
         dt = self._create_locale_sample_date()
         self._construct_format(dt)
 
@@ -57,13 +58,20 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
         try:
             year = int(fields[self._field_positions[YEAR]])
         except:
-            year = int(fields[self._field_positions[YEAR[2:]]])
+            year = int(fields[self._field_positions[YEAR[2:]]]) + self.century
         month = int(fields[self._field_positions[MONTH]])
         day = int(fields[self._field_positions[DAY]])
         return year, month, day    
 
     def separator(self):
         return self._separator
+    
+    def get_regions(self):
+        try:
+            year = self._field_positions[YEAR]
+        except:
+            year = self._field_positions[YEAR[2:]]
+        return year, self._field_positions[MONTH], self._field_positions[DAY]
     
     def _create_locale_sample_date(self):
         self._set_default_time_locale()
@@ -98,8 +106,10 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
         result = [0, 0, 0]
         try:
             result[self._field_positions[YEAR]] = year
+            self.century = 0
         except:
             result[self._field_positions[YEAR[2:]]] = year % 100
+            self.century = int(year/100) * 100
         result[self._field_positions[MONTH]] = month
         result[self._field_positions[DAY]] = day
         return tuple(result)

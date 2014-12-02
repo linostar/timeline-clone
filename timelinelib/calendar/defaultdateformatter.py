@@ -36,3 +36,9 @@ class DefaultDateFormatter(DateFormatter):
     
     def separator(self):
         return self._separator
+
+    def get_regions(self):
+        year = 0
+        month = 1
+        day = 2
+        return year, month, day

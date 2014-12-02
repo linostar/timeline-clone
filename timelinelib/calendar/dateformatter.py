@@ -26,3 +26,6 @@ class DateFormatter(object):
 
     def separator(self):
         raise NotImplementedError("separator not implemented.")
+
+    def get_regions(self):
+        raise NotImplementedError("get_regions not implemented.")
