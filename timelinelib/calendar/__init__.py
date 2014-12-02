@@ -16,13 +16,19 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from timelinelib.calendar.defaultdateformatter import DateFormatter
 from timelinelib.calendar.defaultdateformatter import DefaultDateFormatter
 
 
+date_formatter = None
+
+
+def set_date_formatter(formatter):
+    global date_formatter
+    date_formatter = formatter
+
+
 def get_date_formatter():
-    from timelinelib.features.experimental.experimentalfeatures import LOCALE_DATE
-    if LOCALE_DATE.enabled():
-        return LOCALE_DATE
-    else:
-        return DefaultDateFormatter()
+    global date_formatter
+    if date_formatter == None:
+        date_formatter = DefaultDateFormatter()
+    return date_formatter

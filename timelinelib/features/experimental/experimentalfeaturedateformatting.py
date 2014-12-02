@@ -22,6 +22,7 @@ import re
 
 from timelinelib.features.experimental.experimentalfeature import ExperimentalFeature
 from timelinelib.calendar.dateformatter import DateFormatter
+from timelinelib.calendar import set_date_formatter
 
 
 DISPLAY_NAME = "Locale date formats"
@@ -39,6 +40,13 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
         ExperimentalFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
         dt = self._create_locale_sample_date()
         self._construct_format(dt)
+
+    def set_active(self, value):
+        self.active = value
+        if self.active:
+            set_date_formatter(self)
+        else:
+            set_date_formatter(None)
         
     def format(self, year, month, day):
         lst = self._get_data_tuple(year, month, day)
