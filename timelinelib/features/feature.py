@@ -16,8 +16,10 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Feature:  Common base class for installed- and experimental features.
+"""\
+Defines properties common to all types of Timeleine features.
+
+All types of Timeline features must inherit from this bas class
 """
 
 
