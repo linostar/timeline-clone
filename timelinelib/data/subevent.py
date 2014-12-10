@@ -61,12 +61,14 @@ class Subevent(Event):
     def update_period(self, start_time, end_time):
         """Overrides parent method."""
         Event.update_period(self, start_time, end_time)
-        self.container.update_container(self)
+        if self.container is not None:
+            self.container.update_container(self)
 
     def update_period_o(self, new_period):
         """Overrides parent method."""
         Event.update_period(self, new_period.start_time, new_period.end_time)
-        self.container.update_container(self)
+        if self.container is not None:
+            self.container.update_container(self)
 
     def cid(self):
         return self.container_id
