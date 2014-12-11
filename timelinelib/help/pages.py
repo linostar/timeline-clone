@@ -46,6 +46,7 @@ def install(help_system):
     - Help(timeline)
     - Help(events)
     - Help(categories)
+    - Help(experimental_features)
 - **%s**
     - Help(create_event)
     - Help(edit_event)
@@ -223,6 +224,24 @@ For an event the following properties can be defined.
         # Dashes produce bullet lists. DON'T remove them.
         body=_("""
 Categories are used to group events. An event can only belong to one category. All events that belong to the same category are displayed with the same background color.
+"""))
+
+    help_system.install_page(
+        id="experimental_features",
+        header=_("Experimental Features"),
+        # TRANSLATORS: This text uses special markup.
+        # DON'T translate 'HelpFigure(..)' or 'Help(..)'.
+        # Just write them as they are.
+        # Stars produce emphasized text. DON'T remove them.
+        # Dashes produce bullet lists. DON'T remove them.
+        body=_("""
+Experimental features are features implemented in Timeline but not yet decided to be permanent.
+
+An experimental feature can be switch on or off in the preferences dialog.
+
+The functionality in these features may not be fully implemented and may not have been as extensively tested as the rest of the application.
+
+The users feedback can be important when the decision to make the features permanent or not, is taken.  
 """))
 
     help_system.install_page(
