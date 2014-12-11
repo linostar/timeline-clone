@@ -23,17 +23,17 @@ class DefaultDateFormatter(DateFormatter):
 
     def __init__(self):
         self._separator = "-"
-            
+
     def format(self, year, month, day):
         return "%04d-%02d-%02d" % (year, month, day)
-    
+
     def parse(self, dt):
         try:
             year, month, day = dt.rsplit(self._separator, 2)
         except:
             raise ValueError()
         return int(year), int(month), int(day)
-    
+
     def separator(self):
         return self._separator
 

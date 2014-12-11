@@ -16,7 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def _(message): return message # deferred translation
+def _(message):
+    return message  # deferred translation
 ABBREVIATED_WEEKDAY_NAMES = [
     _("Mon"),
     _("Tue"),

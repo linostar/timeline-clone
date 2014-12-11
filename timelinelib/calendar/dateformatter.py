@@ -17,7 +17,7 @@
 
 
 class DateFormatter(object):
-    
+
     def format(self, year, month, day):
         raise NotImplementedError("format not implemented.")
 

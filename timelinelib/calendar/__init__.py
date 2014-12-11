@@ -29,6 +29,6 @@ def set_date_formatter(formatter):
 
 def get_date_formatter():
     global date_formatter
-    if date_formatter == None:
+    if date_formatter is None:
         date_formatter = DefaultDateFormatter()
     return date_formatter

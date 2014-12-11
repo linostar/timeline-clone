@@ -79,19 +79,11 @@ class Gregorian(object):
 
 
 def is_valid(year, month, day):
-    return (month >= 1
-       and  month <= 12
-       and  day >= 1
-       and  day <= days_in_month(year, month))
+    return (month >= 1 and month <= 12 and day >= 1 and day <= days_in_month(year, month))
 
 
 def is_valid_time(hour, minute, second):
-    return (hour >= 0
-       and hour < 24
-       and minute >= 0
-       and minute < 60
-       and second >= 0
-       and second < 60)
+    return (hour >= 0 and hour < 24 and minute >= 0 and minute < 60 and second >= 0 and second < 60)
 
 
 def days_in_month(year, month):

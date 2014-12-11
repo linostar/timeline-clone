@@ -32,7 +32,8 @@ ENGLISH_MONTH_NAMES = [
 ]
 
 
-def _(message): return message # deferred translation
+def _(message):
+    return message  # deferred translation
 ABBREVIATED_ENGLISH_MONTH_NAMES = [
     _("Jan"),
     _("Feb"),
@@ -55,8 +56,8 @@ def month_from_english_name(month_name):
 
 
 def english_name_of_month(month):
-    return ENGLISH_MONTH_NAMES[month-1]
+    return ENGLISH_MONTH_NAMES[month - 1]
 
 
 def abbreviated_name_of_month(month):
-    return _(ABBREVIATED_ENGLISH_MONTH_NAMES[month-1])
+    return _(ABBREVIATED_ENGLISH_MONTH_NAMES[month - 1])
