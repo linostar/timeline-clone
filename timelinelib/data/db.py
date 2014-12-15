@@ -106,6 +106,13 @@ class MemoryDB(Observable):
         error_text = "Deleting event failed"
         self._process_event(event_or_id, delete, error_text, save)
 
+    def get_max_cid(self):
+        max_cid = 0
+        for event in self.get_all_events():
+            if event.is_container():
+                max_cid = max(event.cid(), max_cid)
+        return max_cid
+    
     @experimental_feature(EVENT_DONE)
     def mark_event_as_done(self, event_or_id, save=True):
         def mark_as_done(event):
