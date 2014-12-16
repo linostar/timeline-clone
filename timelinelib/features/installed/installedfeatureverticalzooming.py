@@ -25,8 +25,8 @@ DESCRIPTION = """
              You accomplish this by pressing the Alt key and then scroll the mouse wheel.
              """
 
+
 class InstalledFeatureVerticalZooming(InstalledFeature):
-    
+
     def __init__(self):
         InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
-

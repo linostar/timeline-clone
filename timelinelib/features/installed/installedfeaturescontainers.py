@@ -25,12 +25,12 @@ DESCRIPTION = """
              In a container events can not overlap, so if you add a new event to a container
              all other events are moved to give room for the new event. The same thing happens
              if you resize an event within the container.
-             
+
              Have a look at this video for a demo. http://www.youtube.com/watch?v=dBwEQ3vqB_I
              """
 
+
 class InstalledFeatureContainers(InstalledFeature):
-    
+
     def __init__(self):
         InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
-

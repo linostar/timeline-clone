@@ -23,13 +23,13 @@ from timelinelib.features.installed.installedfeatureverticalzooming import Insta
 
 
 class InstalledFeatures(object):
-    
+
     def __init__(self):
         self.features = (InstalledFeatureExportImages(),
                          InstalledFeatureContainers(),
                          InstalledFeatureVerticalScrolling(),
                          InstalledFeatureVerticalZooming()
                          )
-    
+
     def get_all_features(self):
         return self.features

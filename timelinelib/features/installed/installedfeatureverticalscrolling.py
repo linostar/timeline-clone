@@ -27,8 +27,7 @@ DESCRIPTION = """
              from view when they cross the divider line.
              """
 
+
 class InstalledFeatureVerticalScrolling(InstalledFeature):
-    
     def __init__(self):
         InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
-

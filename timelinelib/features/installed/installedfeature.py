@@ -21,10 +21,10 @@ InstalledFeature:  Common base class for all installed features.
 """
 
 
-from timelinelib.features.feature import Feature  
+from timelinelib.features.feature import Feature
 
 
 class InstalledFeature(Feature):
-    
+
     def __init__(self, display_name, description):
         Feature.__init__(self, display_name, description)

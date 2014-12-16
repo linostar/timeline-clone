@@ -26,8 +26,8 @@ DESCRIPTION = """
               Each image will contain the timespan currently displayed in the Timeline view.
               """
 
+
 class InstalledFeatureExportImages(InstalledFeature):
-    
+
     def __init__(self):
         InstalledFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
-
