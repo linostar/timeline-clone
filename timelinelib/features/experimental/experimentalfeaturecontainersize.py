@@ -24,13 +24,13 @@ from timelinelib.drawing.utils import get_default_font
 DISPLAY_NAME = "Extend Container height"
 DESCRIPTION = """
               Extend the height of a container so that the container name becomes visible.
-              
+
               This also has the side effect that ordinary events come farther apart in
               the vertical direction.
-              
+
               The font for the container name has a fixed size when you zoom vertically (Alt + Mouse wheel)
-              """  
-Y_OFFSET = -16 
+              """
+Y_OFFSET = -16
 PADDING = 12
 OUTER_PAADING = 4
 TEXT_OFFSET = -16
@@ -39,16 +39,16 @@ FONT_SIZE = 8
 
 
 class ExperimentalFeatureContainerSize(ExperimentalFeature):
-    
+
     def __init__(self):
         ExperimentalFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
 
     def get_extra_outer_padding_to_avoid_vertical_overlapping(self):
         return OUTER_PAADING
-    
+
     def get_vertical_larger_box_rect(self, rect):
         return wx.Rect(rect.X - 2, rect.Y - 2 - PADDING, rect.Width + 4, rect.Height + 4 + PADDING)
-    
+
     def draw_container_text_top_adjusted(self, text, dc, rect):
         old_font = dc.GetFont()
         dc.SetFont(get_default_font(FONT_SIZE))

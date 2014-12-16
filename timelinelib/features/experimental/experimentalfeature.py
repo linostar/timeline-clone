@@ -25,16 +25,16 @@ from timelinelib.features.feature import Feature
 
 
 class ExperimentalFeature(Feature):
-    
+
     def __init__(self, display_name, description):
         Feature.__init__(self, display_name, description)
         self.active = False
-    
+
     def set_active(self, value):
         self.active = value
-        
+
     def enabled(self):
         return self.active
-    
+
     def get_config(self):
         return "%s=%s;" % (self.display_name, str(self.active))

@@ -21,7 +21,7 @@ ExperimentalFeatures is responsible for reading and storing experimental feature
    configuration, to and from the configuration file.
    It also holds a list of available experimental features.
    All experimental features are instantiated when this file is loaded.
-   
+
 To add a new experimental feature, do as follows:
     - Create a new file in timelinelib.features.experimental, defining a class
       that inherits from ExperimentalFeature and calls the parent __init__()-
@@ -30,7 +30,7 @@ To add a new experimental feature, do as follows:
         NAME = NewExperimentalFeatureClass()
     - Add the instantiated object to the FEATURES list in this file.
     - Implement the feature logic under the condition...
-        if NAME.enabled(): 
+        if NAME.enabled():
     - If new methods are created that only are used by the new feature,
       decorate these functions with @experimental_feature(NAME)
 """
@@ -52,7 +52,7 @@ class ExperimentalFeatureException(Exception):
 
 
 class ExperimentalFeatures(object):
-    
+
     def __str__(self):
         """
         Formats the configuration string for all experimental features,
@@ -64,7 +64,7 @@ class ExperimentalFeatures(object):
         for feature in FEATURES:
             collector.append(feature.get_config())
         return "".join(collector)
-    
+
     def get_all_features(self):
         return FEATURES
 
@@ -73,16 +73,16 @@ class ExperimentalFeatures(object):
             if "=" in item:
                 name, value = item.split("=")
                 self._set_active_state_on_feature_by_name(name.strip(), value.strip() == "True")
-    
+
     def set_active_state_on_feature_by_index(self, feature_index, value):
         FEATURES[feature_index].set_active(value)
-            
+
     def _set_active_state_on_feature_by_name(self, name, value):
         for feature in FEATURES:
             if feature.get_display_name() == name:
                 feature.set_active(value)
                 return
-            
+
 
 def experimental_feature(feature):
     """
@@ -95,7 +95,7 @@ def experimental_feature(feature):
            pass
     """
     def deco(foo):
-        if not feature in FEATURES:
+        if feature not in FEATURES:
             raise ExperimentalFeatureException("Feature '%s', not implemented" % feature.get_display_name())
         return foo
     return deco

@@ -22,14 +22,13 @@ from timelinelib.features.experimental.experimentalfeature import ExperimentalFe
 DISPLAY_NAME = "Mark Event as Done"
 DESCRIPTION = """
               Mark an Event as Done by setting progress=100%
-              
-              A menu item 'Mark as Done' appears in the context menu, 
+
+              A menu item 'Mark as Done' appears in the context menu,
               displayed when you righ-click on one or more selected Events.
-              """  
+              """
 
 
 class ExperimentalFeatureDone(ExperimentalFeature):
-    
+
     def __init__(self):
         ExperimentalFeature.__init__(self, DISPLAY_NAME, DESCRIPTION)
-
