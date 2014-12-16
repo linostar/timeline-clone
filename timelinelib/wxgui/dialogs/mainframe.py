@@ -344,6 +344,10 @@ class GuiCreator(object):
         self.menu_controller.add_menu_requiring_visible_timeline_view(sidebar_item)
         self.menu_controller.add_menu_requiring_timeline(legend_item)
         self.menu_controller.add_menu_requiring_timeline(balloons_item)
+        self.menu_controller.add_menu_requiring_timeline(view_menu.FindItemById(ID_ZOOMIN))
+        self.menu_controller.add_menu_requiring_timeline(view_menu.FindItemById(ID_ZOOMOUT))
+        self.menu_controller.add_menu_requiring_timeline(view_menu.FindItemById(ID_VERT_ZOOMIN))
+        self.menu_controller.add_menu_requiring_timeline(view_menu.FindItemById(ID_VERT_ZOOMOUT))
 
     def _create_timeline_menu(self, main_menu_bar):
         def create_event(evt):

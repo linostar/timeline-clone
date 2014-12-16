@@ -7,14 +7,15 @@ Version 1.5.0
 
 New features, enhancements:
 
-* Made progress bar thinner to improve visibility
-* Made progress- and done-colors selectable
+ * Made progress bar thinner to improve visibility
+ * Made progress- and done-colors selectable
 
 Bug fixes:
 
-* Fixed: Crash report: Duplication subevent
-* Fixed: Crash report: Clicking Return in datetimepicker in Event alert editor
-* Fixed problem with duplication of containers
+ * Fixed: Crash report: Duplication subevent
+ * Fixed: Crash report: Clicking Return in datetimepicker in Event alert editor
+ * Fixed problem with duplication of containers
+ * Fixed problem with menus requiring a timeline
 
 Version 1.4.1
 -------------
