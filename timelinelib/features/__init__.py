@@ -23,7 +23,7 @@ Defines and handle Timeline features.
 A feature in Timeline can come in several flavours.
    * Installed
    * Experimental
-   
+
 An installed feature is functionality that is built and implemented in
 Timeline. A Timeline user can give feedback on an installed feature
 through a menu selection in the Help menu.
