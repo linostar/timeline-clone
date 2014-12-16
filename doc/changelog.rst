@@ -14,6 +14,7 @@ Bug fixes:
 
 * Fixed: Crash report: Duplication subevent
 * Fixed: Crash report: Clicking Return in datetimepicker in Event alert editor
+* Fixed problem with duplication of containers
 
 Version 1.4.1
 -------------

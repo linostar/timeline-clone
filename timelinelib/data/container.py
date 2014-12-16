@@ -66,3 +66,6 @@ class Container(Event):
             self.get_time_type(), self.get_time_period().start_time,
             self.get_time_period().end_time, self.get_text(),
             self.get_category(), self.container_id)
+
+    def get_subevents(self):
+        return self.events
