@@ -136,7 +136,7 @@ class GuiCreator(object):
         from timelinelib.config.shortcut import ShortcutController
         self.shortcut_controller = ShortcutController(self.config, self.shortcut_items)
         self.shortcut_controller.load_config_settings()
-        
+
     def _bind_frame_events(self):
         self.Bind(wx.EVT_CLOSE, self._window_on_close)
 
@@ -166,7 +166,7 @@ class GuiCreator(object):
         file_menu.AppendMenu(wx.ID_ANY, _("New"), file_new_menu, _("Create a new timeline"))
 
     def _create_file_new_timeline_menu_item(self, file_new_menu):
-        accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
+        accel = wx.GetStockLabel(wx.ID_NEW, wx.STOCK_WITH_ACCELERATOR | wx.STOCK_WITH_MNEMONIC)
         accel = accel.split("\t", 1)[1]
         file_new_menu.Append(
             wx.ID_NEW, _("File Timeline...") + "\t" + accel, _("File Timeline..."))
@@ -236,24 +236,31 @@ class GuiCreator(object):
 
     def _create_edit_menu(self, main_menu_bar):
         from timelinelib.wxgui.dialogs.categoryfind import CategoryFindDialog
+
         def create_category_find_dialog():
             return CategoryFindDialog(self, self.timeline)
+
         def find(evt):
             self.main_panel.show_searchbar(True)
+
         def find_categories(evt):
             gui_utils.show_modal(create_category_find_dialog, self.handle_db_error)
+
         def mouse_in_sidebar():
             if not self.config.show_sidebar:
                 return False
             return SidebarProxy(self).mouse_over_sidebar()
+
         def preferences(evt):
             def edit_function():
                 dialog = PreferencesDialog(self, self.config)
                 dialog.ShowModal()
                 dialog.Destroy()
             safe_locking(self, edit_function)
-            self.main_panel.redraw_timeline()          
+            self.main_panel.redraw_timeline()
+
         def edit_shortcuts(evt):
+
             def edit_function():
                 dialog = ShortcutsEditorDialog(self, self.shortcut_controller)
                 dialog.ShowModal()
@@ -276,7 +283,7 @@ class GuiCreator(object):
         find_categories_item = edit_menu.FindItemById(ID_FIND_CATEGORIES)
         self.menu_controller.add_menu_requiring_timeline(find_item)
         self.menu_controller.add_menu_requiring_timeline(find_categories_item)
-                
+
     def _create_view_menu(self, main_menu_bar):
         def sidebar(evt):
             self.config.set_show_sidebar(evt.IsChecked())
@@ -284,19 +291,25 @@ class GuiCreator(object):
                 self.main_panel.show_sidebar()
             else:
                 self.main_panel.hide_sidebar()
+
         def legend(evt):
             self.config.set_show_legend(evt.IsChecked())
             DrawingAreaProxy(self).show_hide_legend(evt.IsChecked())
+
         def balloons(evt):
             self.config.set_balloon_on_hover(evt.IsChecked())
-            #self.main_panel.balloon_visibility_changed(evt.IsChecked())
+            # self.main_panel.balloon_visibility_changed(evt.IsChecked())
             DrawingAreaProxy(self).balloon_visibility_changed(evt.IsChecked())
+
         def zoomin(evt):
             DrawingAreaProxy(self).zoom_in()
+
         def zoomout(evt):
             DrawingAreaProxy(self).zoom_out()
+
         def vert_zoomin(evt):
             DrawingAreaProxy(self).vert_zoom_in()
+
         def vert_zoomout(evt):
             DrawingAreaProxy(self).vert_zoom_out()
         cbx = True
@@ -334,8 +347,8 @@ class GuiCreator(object):
 
     def _create_timeline_menu(self, main_menu_bar):
         def create_event(evt):
-            open_create_event_editor(self, self.config, self.timeline,
-                                     self.handle_db_error)
+            open_create_event_editor(self, self.config, self.timeline, self.handle_db_error)
+
         def edit_event(evt):
             try:
                 event_id = self.main_panel.get_id_of_first_selected_event()
@@ -344,6 +357,7 @@ class GuiCreator(object):
                 # No event selected so do nothing!
                 return
             self.main_panel.open_event_editor(event)
+
         def duplicate_event(evt):
             try:
                 event_id = self.main_panel.get_id_of_first_selected_event()
@@ -351,30 +365,38 @@ class GuiCreator(object):
             except IndexError:
                 # No event selected so do nothing!
                 return
-            open_duplicate_event_dialog_for_event(self, self.timeline,
-                                                  self.handle_db_error, event)
+            open_duplicate_event_dialog_for_event(self, self.timeline, self.handle_db_error, event)
+
         def set_categoryon_selected(evt):
+
             def edit_function():
                     self._set_category_to_selected_events()
             safe_locking(self, edit_function)
+
         def measure_distance(evt):
             self._measure_distance_between_events()
+
         def set_category_on_without(evt):
             def edit_function():
                 self._set_category()
             safe_locking(self, edit_function)
+
         def edit_categories(evt):
             def edit_function():
                 self._edit_categories()
             safe_locking(self, edit_function)
+
         def set_readonly(evt):
             self.controller.set_timeline_in_readonly_mode()
+
         def undo(evt):
             safe_locking(self, self.timeline.undo)
-            self.main_panel.redraw_timeline()          
+            self.main_panel.redraw_timeline()
+
         def redo(evt):
             safe_locking(self, self.timeline.redo)
-            self.main_panel.redraw_timeline()        
+            self.main_panel.redraw_timeline()
+
         cbx = False
         items = ((ID_CREATE_EVENT, create_event, _("Create &Event..."), cbx),
                  (ID_EDIT_EVENT, edit_event, _("&Edit Selected Event..."), cbx),
@@ -415,9 +437,10 @@ class GuiCreator(object):
             if event:
                 start = event.time_period.start_time
                 delta = self.main_panel.get_displayed_period_delta()
-                end   = start + delta
+                end = start + delta
                 margin_delta = self.timeline.get_time_type().margin_delta(delta)
                 self._navigate_timeline(lambda tp: tp.update(start, end, -margin_delta))
+
         def find_last(evt):
             event = self.timeline.get_last_event()
             if event:
@@ -426,6 +449,7 @@ class GuiCreator(object):
                 start = end - delta
                 margin_delta = self.timeline.get_time_type().margin_delta(delta)
                 self._navigate_timeline(lambda tp: tp.update(start, end, end_delta=margin_delta))
+
         def fit_all(evt):
             self._fit_all_events()
 
@@ -455,21 +479,27 @@ class GuiCreator(object):
     def _create_help_menu(self, main_menu_bar):
         def contents(e):
             self.help_browser.show_page("contents")
+
         def tutorial(e):
             self.controller.open_timeline(":tutorial:")
+
         def feedback(e):
             show_feedback_dialog(
                 parent=None,
                 info="",
                 subject=_("Feedback"),
                 body="")
+
         def features(e):
             info = self.feedback_featues[e.Id]
-            show_feature_feedback_dialog( "x", info, "y")
+            show_feature_feedback_dialog("x", info, "y")
+
         def contact(e):
             self.help_browser.show_page("contact")
+
         def about(e):
             display_about_dialog()
+
         cbx = False
         items = [(wx.ID_HELP, contents, _("&Contents\tF1"), cbx),
                  None,
@@ -489,11 +519,13 @@ class GuiCreator(object):
         def display_feature(e):
             feature = self.feedback_featues[e.Id]
             show_feature_feedback_dialog(feature)
+
         def create_and_bind_submenus(menu, features):
             for feature in features:
                 mi = menu.Append(wx.ID_ANY, "%s..." % feature.get_display_name())
                 self.feedback_featues[mi.GetId()] = feature
                 self.Bind(wx.EVT_MENU, display_feature, mi)
+
         def create_feature_feedback_menu(mnu_pos):
             installed_features = InstalledFeatures().get_all_features()
             if len(installed_features) > 0:
@@ -501,7 +533,8 @@ class GuiCreator(object):
                 create_and_bind_submenus(menu, installed_features)
                 help_menu.InsertMenu(mnu_pos, wx.ID_ANY, _("&Give Feedback on Features"), menu)
                 mnu_pos += 1
-            return mnu_pos 
+            return mnu_pos
+
         def create_experimental_feature_feedback_menu(mnu_pos):
             experimental_features = ExperimentalFeatures().get_all_features()
             if len(experimental_features) > 0:
@@ -528,10 +561,10 @@ class GuiCreator(object):
             menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(1), self.edit_menu)
             menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(2), self.view_menu)
             menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(3), self.timeline_menu)
-            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(4), self.navigate_menu) 
+            menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(4), self.navigate_menu)
             menu.AppendMenu(wx.ID_ANY, menu_bar.GetMenuLabel(5), self.help_menu)
-            return menu 
-        
+            return menu
+
     def _create_menu_items(self, menu, items):
         menu_items = []
         for item in items:
@@ -593,9 +626,8 @@ class GuiCreator(object):
     def _mnu_file_exit_on_click(self, evt):
         self.Close()
 
-    def _add_ellipses_to_menuitem(self, id):
-        plain = wx.GetStockLabel(id,
-                wx.STOCK_WITH_ACCELERATOR|wx.STOCK_WITH_MNEMONIC)
+    def _add_ellipses_to_menuitem(self, wx_id):
+        plain = wx.GetStockLabel(wx_id, wx.STOCK_WITH_ACCELERATOR | wx.STOCK_WITH_MNEMONIC)
         # format of plain 'xxx[\tyyy]', example '&New\tCtrl+N'
         tab_index = plain.find("\t")
         if tab_index != -1:
@@ -642,7 +674,7 @@ class MainFrameApiUsedByController(object):
         self._enable_disable_undo()
 
     def _set_title(self):
-        if self.timeline == None:
+        if self.timeline is None:
             self.SetTitle(APPLICATION_NAME)
         else:
             self.SetTitle("%s (%s) - %s" % (
@@ -684,7 +716,7 @@ class MainFrameApiUsedByController(object):
         if self.timeline.get_time_type().get_name() == "numtime":
             id_offset = 100
         return id_offset
-    
+
     def _navigation_menu_item_on_click(self, evt):
         fn = self._navigation_functions_by_menu_item_id[evt.GetId()]
         time_period = self.main_panel.get_time_period()
@@ -721,18 +753,18 @@ class MainFrameApiUsedByController(object):
         mnu_edit_event.Enable(one_event_selected)
         mnu_duplicate_event.Enable(one_event_selected)
         mnu_set_category.Enable(some_event_selected)
-        #self.mnu_timeline_edit_event.Enable(one_event_selected)
-        #self.mnu_timeline_duplicate_event.Enable(one_event_selected)
-        #self.mnu_timeline_set_event_category.Enable(some_event_selected)
+        # self.mnu_timeline_edit_event.Enable(one_event_selected)
+        # self.mnu_timeline_duplicate_event.Enable(one_event_selected)
+        # self.mnu_timeline_set_event_category.Enable(some_event_selected)
 
     def _enable_disable_measure_distance_between_two_events_menu(self):
         two_events_selected = self.main_panel.get_nbr_of_selected_events() == 2
         mnu_measure_distance = self.timeline_menu.FindItemById(ID_MEASURE_DISTANCE)
         mnu_measure_distance.Enable(two_events_selected)
-        #self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
+        # self.mnu_timeline_measure_distance_between_events.Enable(two_events_selected)
 
     def _enable_disable_searchbar(self):
-        if self.timeline == None:
+        if self.timeline is None:
             self.main_panel.show_searchbar(False)
 
     def _enable_disable_undo(self):
@@ -744,7 +776,7 @@ class MainFrameApiUsedByController(object):
         else:
             mnu_undo.Enable(False)
             mnu_redo.Enable(False)
-        
+
 
 class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
@@ -778,7 +810,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
     def display_time_editor_dialog(self, time_type, initial_time,
                                    handle_new_time_fn, title):
         dialog = TimeEditorDialog(self, self.config, time_type, initial_time, title)
-        dialog.ShowModal() 
+        dialog.ShowModal()
         result = dialog.GetReturnCode()
         dialog.Destroy()
         if result == wx.ID_OK:
@@ -852,7 +884,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
                 msg_second_part = _("Opening timeline instead of creating new.")
                 wx.MessageBox("%s\n\n%s" % (msg_first_part, msg_second_part),
                               _("Information"),
-                              wx.OK|wx.ICON_INFORMATION, self)
+                              wx.OK | wx.ICON_INFORMATION, self)
         dialog.Destroy()
         return path
 
@@ -863,12 +895,12 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         dialog.Destroy()
 
     def _open_existing_timeline(self):
-        dir = ""
+        directory = ""
         if self.timeline is not None:
-            dir = os.path.dirname(self.timeline.path)
+            directory = os.path.dirname(self.timeline.path)
         wildcard = self.timeline_wildcard_helper.wildcard_string()
         dialog = wx.FileDialog(self, message=_("Open Timeline"),
-                               defaultDir=dir,
+                               defaultDir=directory,
                                wildcard=wildcard, style=wx.FD_OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             self.controller.open_timeline(dialog.GetPath())
@@ -882,7 +914,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         defaultDir = os.path.dirname(self.timeline.path)
         wildcard_helper = WildcardHelper(_("Timeline files"), ["timeline"])
         wildcard = wildcard_helper.wildcard_string()
-        style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT
+        style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
         message = _("Save Timeline As")
         dialog = wx.FileDialog(self, message=message, defaultDir=defaultDir,
                                wildcard=wildcard, style=style)
@@ -909,8 +941,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
         if dialog.ShowModal() == wx.ID_OK:
             path = self.images_svg_wildcard_helper.get_path(dialog)
             overwrite_question = _("File '%s' exists. Overwrite?") % path
-            if (not os.path.exists(path) or
-                _ask_question(overwrite_question, self) == wx.YES):
+            if (not os.path.exists(path) or _ask_question(overwrite_question, self) == wx.YES):
                 self.main_panel.svgexport(path)
         dialog.Destroy()
 
@@ -972,6 +1003,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
     def _set_category_to_selected_events(self):
         selected_event_ids = self.main_panel.get_selected_event_ids()
+
         def create_set_category_editor():
             return SetCategoryEditorDialog(self, self.timeline, selected_event_ids)
         gui_utils.show_modal(create_set_category_editor, self.handle_db_error)
@@ -988,7 +1020,7 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
 
     def _fit_all_events(self):
         all_period = self._period_for_all_visible_events()
-        if all_period == None:
+        if all_period is None:
             return
         if all_period.is_period():
             self._navigate_timeline(lambda tp: tp.update(all_period.start_time, all_period.end_time))
@@ -1113,7 +1145,7 @@ class MenuController(object):
             self._enable_disable_menu_requiring_visible_timeline_view(menu, timeline_view_visible)
 
     def _enable_disable_menu_requiring_writable_timeline(self, menu):
-        if self.current_timeline == None:
+        if self.current_timeline is None:
             menu.Enable(False)
         elif self.current_timeline.is_read_only():
             menu.Enable(False)
@@ -1121,10 +1153,10 @@ class MenuController(object):
             menu.Enable(True)
 
     def _enable_disable_menu_requiring_timeline(self, menu):
-        menu.Enable(self.current_timeline != None)
+        menu.Enable(self.current_timeline is not None)
 
     def _enable_disable_menu_requiring_visible_timeline_view(self, menu, timeline_view_visible):
-        has_timeline = self.current_timeline != None
+        has_timeline = self.current_timeline is not None
         menu.Enable(has_timeline and timeline_view_visible)
 
 
@@ -1190,7 +1222,7 @@ class MainPanel(wx.Panel):
 
     def show_searchbar(self, show=True):
         self.searchbar.Show(show)
-        if show == True:
+        if show is True:
             self.searchbar.set_focus()
         self.GetSizer().Layout()
 
@@ -1204,7 +1236,7 @@ class MainPanel(wx.Panel):
         self.show_welcome_panel()
 
     def display_timeline(self, timeline):
-        if timeline == None:
+        if timeline is None:
             # Do we ever end up here with the welcome panel displayed?
             self._remove_timeline_and_show_welcome_panel()
         else:
@@ -1269,10 +1301,7 @@ class MainPanel(wx.Panel):
 
     def svgexport(self, path):
         import timelinelib.dataexport.svg as svgexport
-        svgexport.export(
-                    path,
-                    self.get_scene(),
-                    self.get_view_properties())
+        svgexport.export(path, self.get_scene(), self.get_view_properties())
 
     def get_view_properties(self):
         return self.timeline_panel.get_view_properties()
@@ -1331,7 +1360,7 @@ class WelcomePanel(wx.Panel):
         vsizer.Add(btn_tutorial, flag=wx.ALIGN_CENTER_HORIZONTAL)
         # Sizer
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        hsizer.Add(vsizer, flag=wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, proportion=1)
+        hsizer.Add(vsizer, flag=wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, proportion=1)
         self.SetSizer(hsizer)
 
     def _btn_tutorial_on_click(self, e):
@@ -1367,7 +1396,7 @@ class ErrorPanel(wx.Panel):
         vsizer.Add(btn_contact, flag=wx.ALIGN_CENTER_HORIZONTAL)
         # Sizer
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        hsizer.Add(vsizer, flag=wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, proportion=1)
+        hsizer.Add(vsizer, flag=wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, proportion=1)
         self.SetSizer(hsizer)
 
     def _btn_contact_on_click(self, e):
