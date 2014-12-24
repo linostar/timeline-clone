@@ -86,8 +86,8 @@ class ExperimentalFeatures(object):
 
 def experimental_feature(feature):
     """
-    The syntax for decorators with arguments is a bit different - the decorator 
-    with arguments should return a function that will take a function and return 
+    The syntax for decorators with arguments is a bit different - the decorator
+    with arguments should return a function that will take a function and return
     another function. So it should really return a normal decorator.
 
     Decorator used for methods, only used by an Experimental feature.

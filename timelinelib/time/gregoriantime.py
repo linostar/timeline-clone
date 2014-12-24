@@ -96,9 +96,11 @@ class GregorianTimeType(TimeType):
         """Returns a unicode string describing the time period."""
         def label_with_time(time):
             return u"%s %s" % (label_without_time(time), time_label(time))
+
         def label_without_time(time):
             gregorian_datetime = gregorian.from_time(time)
             return u"%s %s %s" % (gregorian_datetime.day, abbreviated_name_of_month(gregorian_datetime.month), gregorian_datetime.year)
+
         def time_label(time):
             return "%02d:%02d" % time.get_time_of_day()[:-1]
         if time_period.is_period():
