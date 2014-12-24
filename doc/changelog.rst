@@ -9,6 +9,7 @@ New features, enhancements:
 
  * Made progress bar thinner to improve visibility
  * Made progress- and done-colors selectable
+ * Depper zooming, to one minute, enabled
 
 Bug fixes:
 
