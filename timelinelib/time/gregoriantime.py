@@ -34,6 +34,8 @@ from timelinelib.time.typeinterface import TimeType
 import timelinelib.calendar.gregorian as gregorian
 import timelinelib.time.timeline as timeline
 from timelinelib.calendar import get_date_formatter
+from timelinelib.features.experimental.experimentalfeatures import DEEP_ZOOM
+from timelinelib.features.experimental.experimentalfeatures import experimental_feature
 
 
 class GregorianTimeType(TimeType):
@@ -104,10 +106,10 @@ class GregorianTimeType(TimeType):
         if time_period.is_period():
             if time_period.has_nonzero_time():
                 label = u"%s to %s" % (label_with_time(time_period.start_time),
-                                      label_with_time(time_period.end_time))
+                                       label_with_time(time_period.end_time))
             else:
                 label = u"%s to %s" % (label_without_time(time_period.start_time),
-                                      label_without_time(time_period.end_time))
+                                       label_without_time(time_period.end_time))
         else:
             if time_period.has_nonzero_time():
                 label = u"%s" % label_with_time(time_period.start_time)
@@ -151,6 +153,9 @@ class GregorianTimeType(TimeType):
         day_period = TimePeriod(self, timeline.Time(0, 0), timeline.Time(1, 0))
         one_day_width = metrics.calc_exact_width(day_period)
         self.major_strip_is_decade = False
+        if DEEP_ZOOM.enabled():
+            if one_day_width > 20000:
+                return (StripHour(), StripMinute())
         if one_day_width > 600:
             return (StripDay(), StripHour())
         elif one_day_width > 45:
@@ -187,18 +192,20 @@ class GregorianTimeType(TimeType):
         return delta1 / delta2
 
     def get_max_zoom_delta(self):
-        return (delta_from_days(1200 * 365),
-                _("Can't zoom wider than 1200 years"))
+        return (delta_from_days(1200 * 365), _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):
-        return (timeline.delta_from_seconds(60 * 60), _("Can't zoom deeper than 1 hour"))
+        if DEEP_ZOOM.enabled():
+            return (timeline.delta_from_seconds(60), _("Can't zoom deeper than 1 minute"))
+        else:
+            return (timeline.delta_from_seconds(60 * 60), _("Can't zoom deeper than 1 hour"))
 
     def get_zero_delta(self):
         return timeline.delta_from_seconds(0)
 
     def time_period_has_nonzero_time(self, time_period):
         nonzero_time = (time_period.start_time.seconds != 0 or
-                        time_period.end_time.seconds  != 0)
+                        time_period.end_time.seconds != 0)
         return nonzero_time
 
     def get_name(self):
@@ -213,7 +220,10 @@ class GregorianTimeType(TimeType):
         ]
 
     def zoom_is_ok(self, delta):
-        return (delta.seconds > 3600) or (delta.get_days() > 0)
+        if DEEP_ZOOM.enabled():
+            return (delta.seconds > 60) or (delta.get_days() > 0)
+        else:
+            return (delta.seconds > 3600) or (delta.get_days() > 0)
 
     def half_delta(self, delta):
         return delta / 2
@@ -271,7 +281,7 @@ def _move_page_smart(current_period, navigation_fn, direction):
     elif _whole_number_of_months(current_period):
         _move_page_months(current_period, navigation_fn, direction)
     else:
-        navigation_fn(lambda tp: tp.move_delta(direction*current_period.delta()))
+        navigation_fn(lambda tp: tp.move_delta(direction * current_period.delta()))
 
 
 def _whole_number_of_years(period):
@@ -392,7 +402,7 @@ def forward_one_week_fn(main_frame, current_period, navigation_fn):
 
 def backward_one_week_fn(main_frame, current_period, navigation_fn):
     wk = delta_from_days(7)
-    navigation_fn(lambda tp: tp.move_delta(-1*wk))
+    navigation_fn(lambda tp: tp.move_delta(-1 * wk))
 
 
 def navigate_month_step(current_period, navigation_fn, direction):
@@ -405,19 +415,19 @@ def navigate_month_step(current_period, navigation_fn, direction):
     if direction > 0:
         if gt.month == 2:
             d = 28
-        elif gt.month in (4,6,9,11):
+        elif gt.month in (4, 6, 9, 11):
             d = 30
         else:
             d = 31
     else:
         if gt.month == 3:
             d = 28
-        elif gt.month in (5,7,10,12):
+        elif gt.month in (5, 7, 10, 12):
             d = 30
         else:
             d = 31
     mv = delta_from_days(d)
-    navigation_fn(lambda tp: tp.move_delta(direction*mv))
+    navigation_fn(lambda tp: tp.move_delta(direction * mv))
 
 
 def forward_one_month_fn(main_frame, current_period, navigation_fn):
@@ -435,7 +445,7 @@ def forward_one_year_fn(main_frame, current_period, navigation_fn):
 
 def backward_one_year_fn(main_frame, current_period, navigation_fn):
     yr = delta_from_days(365)
-    navigation_fn(lambda tp: tp.move_delta(-1*yr))
+    navigation_fn(lambda tp: tp.move_delta(-1 * yr))
 
 
 def fit_millennium_fn(main_frame, current_period, navigation_fn):
@@ -443,7 +453,7 @@ def fit_millennium_fn(main_frame, current_period, navigation_fn):
     if mean.year > get_millenium_max_year():
         year = get_millenium_max_year()
     else:
-        year = max(get_min_year_containing_jan_1(), int(mean.year/1000)*1000)
+        year = max(get_min_year_containing_jan_1(), int(mean.year / 1000) * 1000)
     start = gregorian.from_date(year, 1, 1).to_time()
     end = gregorian.from_date(year + 1000, 1, 1).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
@@ -466,7 +476,7 @@ def fit_century_fn(main_frame, current_period, navigation_fn):
     if mean.year > get_century_max_year():
         year = get_century_max_year()
     else:
-        year = max(get_min_year_containing_jan_1(), int(mean.year/100)*100)
+        year = max(get_min_year_containing_jan_1(), int(mean.year / 100) * 100)
     start = gregorian.from_date(year, 1, 1).to_time()
     end = gregorian.from_date(year + 100, 1, 1).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
@@ -474,8 +484,8 @@ def fit_century_fn(main_frame, current_period, navigation_fn):
 
 def fit_decade_fn(main_frame, current_period, navigation_fn):
     mean = gregorian.from_time(current_period.mean_time())
-    start = gregorian.from_date(int(mean.year/10)*10, 1, 1).to_time()
-    end = gregorian.from_date(int(mean.year/10)*10+10, 1, 1).to_time()
+    start = gregorian.from_date(int(mean.year / 10) * 10, 1, 1).to_time()
+    end = gregorian.from_date(int(mean.year / 10) * 10 + 10, 1, 1).to_time()
     navigation_fn(lambda tp: tp.update(start, end))
 
 
@@ -534,7 +544,7 @@ class StripCentury(Strip):
 
     def increment(self, time):
         gregorian_time = gregorian.from_time(time)
-        return gregorian_time.replace(year=gregorian_time.year+100).to_time()
+        return gregorian_time.replace(year=gregorian_time.year + 100).to_time()
 
     def get_font(self, time_period):
         return get_default_font(8)
@@ -557,7 +567,7 @@ class StripDecade(Strip):
 
     def increment(self, time):
         gregorian_time = gregorian.from_time(time)
-        return gregorian_time.replace(year=gregorian_time.year+10).to_time()
+        return gregorian_time.replace(year=gregorian_time.year + 10).to_time()
 
     def _decade_start_year(self, year):
         # The first start year must be to the left of the first visible
@@ -719,12 +729,16 @@ class StripHour(Strip):
     def label(self, time, major=False):
         time = gregorian.from_time(time)
         if major:
-            return "%s %s %s %s" % (time.day, abbreviated_name_of_month(time.month),
-                                    format_year(time.year), time.hour)
+            if DEEP_ZOOM.enabled():
+                return "%s %s %s: %sh" % (time.day, abbreviated_name_of_month(time.month),
+                                          format_year(time.year), time.hour)
+            else:
+                return "%s %s %s %s" % (time.day, abbreviated_name_of_month(time.month),
+                                        format_year(time.year), time.hour)
         return str(time.hour)
 
     def start(self, time):
-        (hours, minutes, seconds) = time.get_time_of_day()
+        (hours, _, _) = time.get_time_of_day()
         return timeline.Time(time.julian_day, hours * 60 * 60)
 
     def increment(self, time):
@@ -732,6 +746,33 @@ class StripHour(Strip):
 
     def get_font(self, time_period):
         return get_default_font(8)
+
+
+class StripMinute(Strip):
+    #
+    # This class is only used when the exprimental feature DEEP_ZOOM is enabled
+    #
+
+    @experimental_feature(DEEP_ZOOM)
+    def label(self, time, major=False):
+        time = gregorian.from_time(time)
+        if major:
+            return "%s %s %s: %s:%s" % (time.day, abbreviated_name_of_month(time.month),
+                                        format_year(time.year), time.hour, time.minute)
+        return str(time.minute)
+
+    @experimental_feature(DEEP_ZOOM)
+    def start(self, time):
+        (hours, minutes, _) = time.get_time_of_day()
+        return timeline.Time(time.julian_day, minutes * 60 + hours * 60 * 60)
+
+    @experimental_feature(DEEP_ZOOM)
+    def increment(self, time):
+        return time + timeline.delta_from_seconds(60)
+
+    @experimental_feature(DEEP_ZOOM)
+    def get_font(self, time_period):
+        return get_default_font(6)
 
 
 def format_year(year):
@@ -775,16 +816,16 @@ def move_period_num_months(period, num):
             start_month = gregorian_start.month + 12 + delta
             end_month = gregorian_end.month + 12 + delta
             if start_month > 12:
-                start_month -=12
-                end_month -=12
+                start_month -= 12
+                end_month -= 12
             if start_month > gregorian_start.month:
                 years -= 1
         else:
             start_month = gregorian_start.month + delta
             end_month = gregorian_start.month + delta
             if start_month > 12:
-                start_month -=12
-                end_month -=12
+                start_month -= 12
+                end_month -= 12
                 years += 1
         start_year = gregorian_start.year + years
         end_year = gregorian_start.year + years

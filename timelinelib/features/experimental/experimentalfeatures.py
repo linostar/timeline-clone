@@ -39,12 +39,14 @@ To add a new experimental feature, do as follows:
 from timelinelib.features.experimental.experimentalfeaturedone import ExperimentalFeatureDone
 from timelinelib.features.experimental.experimentalfeaturecontainersize import ExperimentalFeatureContainerSize
 from timelinelib.features.experimental.experimentalfeaturedateformatting import ExperimentalFeatureDateFormatting
+from timelinelib.features.experimental.experimentalfeaturedeepzoom import ExperimentalFeatureDeepZoom
 
 
 EVENT_DONE = ExperimentalFeatureDone()
 EXTENDED_CONTAINER_HEIGHT = ExperimentalFeatureContainerSize()
 LOCALE_DATE = ExperimentalFeatureDateFormatting()
-FEATURES = (EVENT_DONE, EXTENDED_CONTAINER_HEIGHT, LOCALE_DATE)
+DEEP_ZOOM = ExperimentalFeatureDeepZoom()
+FEATURES = (EVENT_DONE, EXTENDED_CONTAINER_HEIGHT, LOCALE_DATE, DEEP_ZOOM)
 
 
 class ExperimentalFeatureException(Exception):
