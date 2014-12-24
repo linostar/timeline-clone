@@ -34,8 +34,6 @@ from timelinelib.time.typeinterface import TimeType
 import timelinelib.calendar.gregorian as gregorian
 import timelinelib.time.timeline as timeline
 from timelinelib.calendar import get_date_formatter
-from timelinelib.features.experimental.experimentalfeatures import DEEP_ZOOM
-from timelinelib.features.experimental.experimentalfeatures import experimental_feature
 
 
 class GregorianTimeType(TimeType):
@@ -153,10 +151,9 @@ class GregorianTimeType(TimeType):
         day_period = TimePeriod(self, timeline.Time(0, 0), timeline.Time(1, 0))
         one_day_width = metrics.calc_exact_width(day_period)
         self.major_strip_is_decade = False
-        if DEEP_ZOOM.enabled():
-            if one_day_width > 20000:
-                return (StripHour(), StripMinute())
-        if one_day_width > 600:
+        if one_day_width > 20000:
+            return (StripHour(), StripMinute())
+        elif one_day_width > 600:
             return (StripDay(), StripHour())
         elif one_day_width > 45:
             return (StripWeek(config), StripWeekday())
@@ -195,10 +192,7 @@ class GregorianTimeType(TimeType):
         return (delta_from_days(1200 * 365), _("Can't zoom wider than 1200 years"))
 
     def get_min_zoom_delta(self):
-        if DEEP_ZOOM.enabled():
-            return (timeline.delta_from_seconds(60), _("Can't zoom deeper than 1 minute"))
-        else:
-            return (timeline.delta_from_seconds(60 * 60), _("Can't zoom deeper than 1 hour"))
+        return (timeline.delta_from_seconds(60), _("Can't zoom deeper than 1 minute"))
 
     def get_zero_delta(self):
         return timeline.delta_from_seconds(0)
@@ -220,10 +214,7 @@ class GregorianTimeType(TimeType):
         ]
 
     def zoom_is_ok(self, delta):
-        if DEEP_ZOOM.enabled():
-            return (delta.seconds > 60) or (delta.get_days() > 0)
-        else:
-            return (delta.seconds > 3600) or (delta.get_days() > 0)
+        return (delta.seconds > 60) or (delta.get_days() > 0)
 
     def half_delta(self, delta):
         return delta / 2
@@ -729,12 +720,8 @@ class StripHour(Strip):
     def label(self, time, major=False):
         time = gregorian.from_time(time)
         if major:
-            if DEEP_ZOOM.enabled():
-                return "%s %s %s: %sh" % (time.day, abbreviated_name_of_month(time.month),
-                                          format_year(time.year), time.hour)
-            else:
-                return "%s %s %s %s" % (time.day, abbreviated_name_of_month(time.month),
-                                        format_year(time.year), time.hour)
+            return "%s %s %s: %sh" % (time.day, abbreviated_name_of_month(time.month),
+                                      format_year(time.year), time.hour)
         return str(time.hour)
 
     def start(self, time):
@@ -749,11 +736,7 @@ class StripHour(Strip):
 
 
 class StripMinute(Strip):
-    #
-    # This class is only used when the exprimental feature DEEP_ZOOM is enabled
-    #
 
-    @experimental_feature(DEEP_ZOOM)
     def label(self, time, major=False):
         time = gregorian.from_time(time)
         if major:
@@ -761,16 +744,13 @@ class StripMinute(Strip):
                                         format_year(time.year), time.hour, time.minute)
         return str(time.minute)
 
-    @experimental_feature(DEEP_ZOOM)
     def start(self, time):
         (hours, minutes, _) = time.get_time_of_day()
         return timeline.Time(time.julian_day, minutes * 60 + hours * 60 * 60)
 
-    @experimental_feature(DEEP_ZOOM)
     def increment(self, time):
         return time + timeline.delta_from_seconds(60)
 
-    @experimental_feature(DEEP_ZOOM)
     def get_font(self, time_period):
         return get_default_font(6)
 
