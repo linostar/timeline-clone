@@ -66,8 +66,8 @@ class TimelineViewSpec(unittest.TestCase):
         self.assert_displays_status_text(_("Select region to zoom into"))
 
     def test_displays_period_to_short_message_when_zooming(self):
-        self.given_time_at_x_is(0, "1 Aug 2010 00:00")
-        self.given_time_at_x_is(1, "1 Aug 2010 00:01")
+        self.given_time_at_x_is(0, "1 Aug 2010 00:00:00")
+        self.given_time_at_x_is(1, "1 Aug 2010 00:00:01")
         self.init_view_with_db()
         self.start_shift_drag_at_x(0)
         self.move_mouse_to_x(1)

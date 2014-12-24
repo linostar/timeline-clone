@@ -72,7 +72,7 @@ def human_time_to_ymdhm(human_time):
     year = int(year_part)
     if len(parts) == 4:
         hour = int(parts[3][:2])
-        minute = int(parts[3][3:])
+        minute = int(parts[3][3:5])
     else:
         hour = 0
         minute = 0

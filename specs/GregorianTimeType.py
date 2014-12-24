@@ -144,7 +144,7 @@ class GregorianTimeTypeSpec(unittest.TestCase):
         self.assertEqual(2, dt.get_day_of_week())
 
     def test_get_min_zoom_delta(self):
-        self.assertEqual(timeline.TimeDelta(60 * 60), self.time_type.get_min_zoom_delta()[0])
+        self.assertEqual(timeline.TimeDelta(60), self.time_type.get_min_zoom_delta()[0])
 
 
 class GregorianStripWeekSpec(unittest.TestCase):
@@ -254,10 +254,10 @@ class GregorianStripHourSpec(unittest.TestCase):
     def test_label_major(self):
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("2013-07-07 12:00:00"), True),
-            "7 #Jul# 2013 12")
+            "7 #Jul# 2013: 12h")
         self.assertEqual(
             self.strip.label(self.time_type.parse_time("-5-07-07 12:00:00"), True),
-            "7 #Jul# 6 BC 12")
+            "7 #Jul# 6 BC: 12h")
 
     def setUp(self):
         self.time_type = GregorianTimeType()
