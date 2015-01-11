@@ -10,7 +10,11 @@ New features, enhancements:
  * Made progress bar thinner to improve visibility
  * Made progress- and done-colors selectable
  * Deeper zooming, to one minute, enabled
-
+ * Introduced the concept of 'Experimental features'
+ * Experimental feature - Mark event as done
+ * Experimental feature - Extend container height
+ * Experimental feature - Locale date formats
+ 
 Bug fixes:
 
  * Fixed: Crash report: Duplication subevent
