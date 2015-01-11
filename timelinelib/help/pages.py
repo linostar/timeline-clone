@@ -237,7 +237,7 @@ Categories are used to group events. An event can only belong to one category. A
         body=_("""
 Experimental features are features implemented in Timeline but not yet decided to be permanent.
 
-An experimental feature can be switch on or off in the preferences dialog.
+An experimental feature can be switched on or off in the preferences dialog.
 
 The functionality in these features may not be fully implemented and may not have been as extensively tested as the rest of the application.
 
