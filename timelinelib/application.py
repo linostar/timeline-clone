@@ -47,7 +47,7 @@ class TimelineApplication(object):
             for input_file in input_files:
                 self.main_frame.open_timeline(input_file)
 
-    def  open_timeline_if_exists(self, path):
+    def open_timeline_if_exists(self, path):
         if os.path.exists(path):
             self.open_timeline(path)
         else:
