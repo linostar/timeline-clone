@@ -62,7 +62,7 @@ class TimelineCanvasController(object):
         self.fn_handle_db_error = fn_handle_db_error
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
-        self.divider_line_slider.Bind(wx.EVT_SLIDER,       self._slider_on_slider)
+        self.divider_line_slider.Bind(wx.EVT_SLIDER, self._slider_on_slider)
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
         self.change_input_handler_to_no_op()
         self.fast_draw = False
@@ -141,7 +141,7 @@ class TimelineCanvasController(object):
         return properties_loaded
 
     def _unregister_timeline(self, timeline):
-        if timeline != None:
+        if timeline is not None:
             timeline.unregister(self._timeline_changed)
 
     def show_hide_legend(self, show):
@@ -149,7 +149,7 @@ class TimelineCanvasController(object):
 
     def get_time_period(self):
         """Return currently displayed time period."""
-        if self.timeline == None:
+        if self.timeline is None:
             raise Exception(_("No timeline set"))
         return self.view_properties.displayed_period
 
@@ -167,7 +167,7 @@ class TimelineCanvasController(object):
         Note: The time period should never be modified directly. This method
         should always be used instead.
         """
-        if self.timeline == None:
+        if self.timeline is None:
             raise Exception(_("No timeline set"))
         try:
             self.view_properties.displayed_period = navigation_fn(self.view_properties.displayed_period)
@@ -203,7 +203,7 @@ class TimelineCanvasController(object):
             return
         if self.context_menu_event is not None:
             self.display_event_context_menu()
-            
+
     def display_event_context_menu(self):
         self.view_properties.set_selected(self.context_menu_event, True)
         menu_definitions = [
@@ -241,8 +241,8 @@ class TimelineCanvasController(object):
     def _get_first_selected_event(self):
         selected_event_ids = self.view_properties.get_selected_event_ids()
         if len(selected_event_ids) > 0:
-            id = selected_event_ids[0]
-            return self.timeline.find_event_with_id(id)
+            event_id = selected_event_ids[0]
+            return self.timeline.find_event_with_id(event_id)
         return None
 
     def _context_menu_on_edit_event(self, evt):
@@ -358,15 +358,15 @@ class TimelineCanvasController(object):
         else:
             self._scroll_down()
         self._redraw_timeline()
-        
+
     def _scroll_up(self):
         self.view_properties.hscroll_amount -= HSCROLL_STEP
         if self.view_properties.hscroll_amount < 0:
             self.view_properties.hscroll_amount = 0
-    
+
     def _scroll_down(self):
         self.view_properties.hscroll_amount += HSCROLL_STEP
-    
+
     def key_down(self, keycode, alt_down):
         if keycode == wx.WXK_DELETE:
             self._delete_selected_events()
@@ -410,8 +410,7 @@ class TimelineCanvasController(object):
         """A right click has occured in the divider-line slider."""
         menu = wx.Menu()
         menu_item = wx.MenuItem(menu, wx.NewId(), _("Center"))
-        self.view.Bind(wx.EVT_MENU, self._context_menu_on_menu_center,
-                  id=menu_item.GetId())
+        self.view.Bind(wx.EVT_MENU, self._context_menu_on_menu_center, id=menu_item.GetId())
         menu.AppendItem(menu_item)
         self.view.PopupMenu(menu)
         menu.Destroy()
@@ -422,8 +421,7 @@ class TimelineCanvasController(object):
         self._redraw_timeline()
 
     def _timeline_changed(self, state_change):
-        if (state_change == STATE_CHANGE_ANY or
-            state_change == STATE_CHANGE_CATEGORY):
+        if (state_change == STATE_CHANGE_ANY or state_change == STATE_CHANGE_CATEGORY):
             self._redraw_timeline()
 
     def _set_initial_values_to_member_variables(self):
@@ -482,11 +480,11 @@ class TimelineCanvasController(object):
                 self.view_properties.set_only_selected(event, selected)
         else:
             self.view_properties.clear_selected()
-        return event != None
+        return event is not None
 
     def _display_eventinfo_in_statusbar(self, xpixelpos, ypixelpos, alt_down=False):
         event = self.drawing_algorithm.event_at(xpixelpos, ypixelpos, alt_down)
-        if event != None:
+        if event is not None:
             label = event.get_label()
         else:
             label = self._format_current_pos_datetime_string(xpixelpos)
@@ -497,7 +495,7 @@ class TimelineCanvasController(object):
         dt = self.time_type.event_date_string(tm)
         tm = self.time_type.event_time_string(tm)
         return "%s %s" % (dt, tm)
-        
+
     def balloon_show_timer_fired(self):
         self.input_handler.balloon_show_timer_fired()
 
@@ -512,7 +510,7 @@ class TimelineCanvasController(object):
         Return True if x is within the left hand or right hand area
         where timed scrolling shall start/continue.
         """
-        width, height = self.view.GetSizeTuple()
+        width, _ = self.view.GetSizeTuple()
         if width - x < SCROLL_ZONE_WIDTH or x < SCROLL_ZONE_WIDTH:
             return True
         return False
@@ -534,8 +532,8 @@ class TimelineCanvasController(object):
 
     def _zoom_timeline(self, direction, x):
         """ zoom time line at position x """
-        width, height = self.view.GetSizeTuple()
-        x_percent_of_width=float(x)/width
+        width, _ = self.view.GetSizeTuple()
+        x_percent_of_width = float(x) / width
         self.navigate_timeline(lambda tp: tp.zoom(direction, x_percent_of_width))
 
     def _delete_selected_events(self):
@@ -558,13 +556,13 @@ class TimelineCanvasController(object):
             return event_id == selected_event_ids[-1]
         def _delete_events():
             for event_id in selected_event_ids:
-                self.timeline.delete_event(event_id, save=_last_event(event_id))        
+                self.timeline.delete_event(event_id, save=_last_event(event_id))
         def edit_function():
             if user_ack():
                 _delete_events()
             self.view_properties.clear_selected()
         safe_locking(self.view, edit_function, exception_handler)
-            
+
     @experimental_feature(EVENT_DONE)
     def _mark_selected_events_as_done(self):
         def exception_handler(ex):
@@ -576,7 +574,7 @@ class TimelineCanvasController(object):
             return event_id == selected_event_ids[-1]
         def edit_function():
             for event_id in selected_event_ids:
-                self.timeline.mark_event_as_done(event_id, save=_last_event(event_id))        
+                self.timeline.mark_event_as_done(event_id, save=_last_event(event_id))
             self.view_properties.clear_selected()
         selected_event_ids = self.view_properties.get_selected_event_ids()
         safe_locking(self.view, edit_function, exception_handler)
