@@ -20,7 +20,6 @@ import getpass
 import os
 
 from timelinelib.db.exceptions import TimelineIOError
-from timelinelib.time.numtime import NumTimeType
 from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_warning_message
 from timelinelib.wxgui.utils import get_user_ack
