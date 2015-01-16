@@ -31,8 +31,7 @@ from timelinelib.wxgui.utils import _ask_question
 
 class TimelinePanel(wx.Panel):
 
-    def __init__(self, parent, config, handle_db_error, status_bar_adapter,
-            main_frame):
+    def __init__(self, parent, config, handle_db_error, status_bar_adapter, main_frame):
         wx.Panel.__init__(self, parent)
         self._db_listener = Listener(self._on_db_changed)
         self.config = config
@@ -93,7 +92,7 @@ class TimelinePanel(wx.Panel):
 
     def _create_divider_line_slider(self):
         self.divider_line_slider = wx.Slider(
-            self, value=50, size=(20, -1), style=wx.SL_LEFT|wx.SL_VERTICAL)
+            self, value=50, size=(20, -1), style=wx.SL_LEFT | wx.SL_VERTICAL)
 
     def _create_splitter(self):
         self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
@@ -162,8 +161,8 @@ class _Sidebar(wx.Panel):
         sizer = wx.GridBagSizer(vgap=0, hgap=0)
         sizer.AddGrowableCol(0, proportion=0)
         sizer.AddGrowableRow(0, proportion=0)
-        sizer.Add(self.category_tree, (0,0), flag=wx.GROW)
-        sizer.Add(self.cbx_toggle_cat_view, (1,0), flag=wx.ALL, border=5)
+        sizer.Add(self.category_tree, (0, 0), flag=wx.GROW)
+        sizer.Add(self.cbx_toggle_cat_view, (1, 0), flag=wx.ALL, border=5)
         self.SetSizer(sizer)
         self.Bind(wx.EVT_CHECKBOX, self._cbx_on_click, self.cbx_toggle_cat_view)
 
@@ -209,7 +208,7 @@ class TimelineCanvas(wx.Panel):
     def get_filtered_events(self, search_target):
         events = self.get_timeline().search(search_target)
         return self.get_view_properties().filter_events(events)
-        
+
     def set_timeline(self, timeline):
         self.controller.set_timeline(timeline)
 
@@ -298,46 +297,46 @@ class TimelineCanvas(wx.Panel):
 
     def ok_to_edit(self):
         return self.main_frame.ok_to_edit()
-    
+
     def edit_ends(self):
         self.SetFocusIgnoringChildren()
         return self.main_frame.edit_ends()
 
     def zoom_in(self):
         self.controller.mouse_wheel_moved(120, True, False, False, self._get_half_width())
-    
+
     def zoom_out(self):
         self.controller.mouse_wheel_moved(-120, True, False, False, self._get_half_width())
 
     def vert_zoom_in(self):
         self.controller.mouse_wheel_moved(120, False, False, True, self._get_half_width())
-    
+
     def vert_zoom_out(self):
         self.controller.mouse_wheel_moved(-120, False, False, True, self._get_half_width())
 
     def _get_half_width(self):
         return self.GetSize()[0] / 2
-        
+
     def _create_gui(self):
         self.balloon_show_timer = wx.Timer(self, -1)
         self.balloon_hide_timer = wx.Timer(self, -1)
         self.dragscroll_timer = wx.Timer(self, -1)
-        self.Bind(wx.EVT_TIMER,            self._on_balloon_show_timer, self.balloon_show_timer)
-        self.Bind(wx.EVT_TIMER,            self._on_balloon_hide_timer, self.balloon_hide_timer)
-        self.Bind(wx.EVT_TIMER,            self._on_dragscroll, self.dragscroll_timer)
+        self.Bind(wx.EVT_TIMER, self._on_balloon_show_timer, self.balloon_show_timer)
+        self.Bind(wx.EVT_TIMER, self._on_balloon_hide_timer, self.balloon_hide_timer)
+        self.Bind(wx.EVT_TIMER, self._on_dragscroll, self.dragscroll_timer)
         self.Bind(wx.EVT_ERASE_BACKGROUND, self._on_erase_background)
-        self.Bind(wx.EVT_PAINT,            self._on_paint)
-        self.Bind(wx.EVT_SIZE,             self._on_size)
-        self.Bind(wx.EVT_LEFT_DOWN,        self._on_left_down)
-        self.Bind(wx.EVT_RIGHT_DOWN,       self._on_right_down)
-        self.Bind(wx.EVT_LEFT_DCLICK,      self._on_left_dclick)
-        self.Bind(wx.EVT_MIDDLE_UP,        self._on_middle_up)
-        self.Bind(wx.EVT_LEFT_UP,          self._on_left_up)
-        self.Bind(wx.EVT_ENTER_WINDOW,     self._on_enter)
-        self.Bind(wx.EVT_MOTION,           self._on_motion)
-        self.Bind(wx.EVT_MOUSEWHEEL,       self._on_mousewheel)
-        self.Bind(wx.EVT_KEY_DOWN,         self._on_key_down)
-        self.Bind(wx.EVT_KEY_UP,           self._on_key_up)
+        self.Bind(wx.EVT_PAINT, self._on_paint)
+        self.Bind(wx.EVT_SIZE, self._on_size)
+        self.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
+        self.Bind(wx.EVT_RIGHT_DOWN, self._on_right_down)
+        self.Bind(wx.EVT_LEFT_DCLICK, self._on_left_dclick)
+        self.Bind(wx.EVT_MIDDLE_UP, self._on_middle_up)
+        self.Bind(wx.EVT_LEFT_UP, self._on_left_up)
+        self.Bind(wx.EVT_ENTER_WINDOW, self._on_enter)
+        self.Bind(wx.EVT_MOTION, self._on_motion)
+        self.Bind(wx.EVT_MOUSEWHEEL, self._on_mousewheel)
+        self.Bind(wx.EVT_KEY_DOWN, self._on_key_down)
+        self.Bind(wx.EVT_KEY_UP, self._on_key_up)
 
     def _on_balloon_show_timer(self, evt):
         self.controller.balloon_show_timer_fired()
@@ -358,7 +357,7 @@ class TimelineCanvas(wx.Panel):
         if self.surface_bitmap:
             dc.DrawBitmap(self.surface_bitmap, 0, 0, True)
         else:
-            pass # TODO: Fill with white?
+            pass  # TODO: Fill with white?
         dc.EndDrawing()
 
     def _on_size(self, evt):
@@ -400,4 +399,3 @@ class TimelineCanvas(wx.Panel):
 
     def display_timeline_context_menu(self):
         self.main_frame.display_timeline_context_menu()
-
