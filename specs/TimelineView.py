@@ -374,9 +374,9 @@ class TimelineViewSpec(unittest.TestCase):
             self.timeline_canvas,
             self.status_bar_adapter,
             self.config,
-            self.mock_drawer,
             self.divider_line_slider,
-            self.fn_handle_db_error)
+            self.fn_handle_db_error,
+            drawer=self.mock_drawer)
 
     def given_event_with(self, start="4 Aug 2010", end="10 Aug 2010",
                          text="Text", description=None,

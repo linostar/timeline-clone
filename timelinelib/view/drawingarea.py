@@ -38,6 +38,8 @@ from timelinelib.view.periodevent import CreatePeriodEventByDragInputHandler
 from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
+from timelinelib.drawing import get_drawer
+
 
 # The width in pixels of the vertical scroll zones.
 # When the mouse reaches the any of the two scroll zone areas, scrolling
@@ -52,14 +54,21 @@ MOUSE_SCROLL_FACTOR = 1 / 10.0
 
 class TimelineCanvasController(object):
 
-    def __init__(self, view, status_bar_adapter, config, drawing_algorithm,
-                 divider_line_slider, fn_handle_db_error):
-        self.config = config
+    def __init__(self, view, status_bar_adapter, config, divider_line_slider, fn_handle_db_error, drawer=None):
+        """
+        The purpose of the drawer argument is make testing easier. A test can
+        mock a drawer and use the mock by sending it in the drawer argument.
+        Normally the drawer is collected with the get_drawer() method.
+        """
         self.view = view
         self.status_bar_adapter = status_bar_adapter
-        self.drawing_algorithm = drawing_algorithm
+        self.config = config
         self.divider_line_slider = divider_line_slider
         self.fn_handle_db_error = fn_handle_db_error
+        if drawer is not None:
+            self.drawing_algorithm = drawer
+        else:
+            self.drawing_algorithm = get_drawer()
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
         self.divider_line_slider.Bind(wx.EVT_SLIDER, self._slider_on_slider)

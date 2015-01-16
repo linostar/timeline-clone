@@ -86,7 +86,7 @@ class DrawingAreaSpec(unittest.TestCase):
         fn_handle_db_error = None
         self.controller = TimelineCanvasController(
             self.timeline_canvas, status_bar_adapter, config,
-            self.drawing_algorithm, divider_line_slider, fn_handle_db_error)
+            divider_line_slider, fn_handle_db_error, drawer=self.drawing_algorithm)
 
 
 class Config(object):
