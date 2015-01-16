@@ -30,8 +30,8 @@ from timelinelib.drawing.utils import get_default_font
 from timelinelib.features.experimental.experimentalfeatures import EXTENDED_CONTAINER_HEIGHT
 
 
-OUTER_PADDING = 5 # Space between event boxes (pixels)
-INNER_PADDING = 3 # Space inside event box to text (pixels)
+OUTER_PADDING = 5  # Space between event boxes (pixels)
+INNER_PADDING = 3  # Space inside event box to text (pixels)
 PERIOD_THRESHOLD = 20  # Periods smaller than this are drawn as events (pixels)
 BALLOON_RADIUS = 12
 ARROW_OFFSET = BALLOON_RADIUS + 25
@@ -54,7 +54,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.font_size += step
         self.small_text_font = get_default_font(self.font_size)
         self._adjust_outer_padding_to_font_size()
-        
+
     def decrement_font_size(self, step=2):
         if self.font_size > step:
             self.font_size -= step
@@ -66,14 +66,14 @@ class DefaultDrawingAlgorithm(Drawer):
             self.outer_padding = OUTER_PADDING * self.font_size / 8
         else:
             self.outer_padding = OUTER_PADDING
-        
+
     def _create_fonts(self):
         self.header_font = get_default_font(12, True)
         self.small_text_font = get_default_font(self.font_size)
         self.small_text_font_bold = get_default_font(8, True)
 
     def _create_pens(self):
-        self.red_solid_pen = wx.Pen(wx.Colour(255,0, 0), 1, wx.SOLID)
+        self.red_solid_pen = wx.Pen(wx.Colour(255, 0, 0), 1, wx.SOLID)
         self.black_solid_pen = wx.Pen(wx.Colour(0, 0, 0), 1, wx.SOLID)
         self.darkred_solid_pen = wx.Pen(wx.Colour(200, 0, 0), 1, wx.SOLID)
         self.black_dashed_pen = wx.Pen(wx.Colour(200, 200, 200), 1, wx.USER_DASH)
@@ -101,7 +101,7 @@ class DefaultDrawingAlgorithm(Drawer):
         return self.scene.get_closest_overlapping_event(event_to_move, up=up)
 
     def draw(self, dc, timeline, view_properties, config):
-        self.outer_padding = OUTER_PADDING 
+        self.outer_padding = OUTER_PADDING
         if EXTENDED_CONTAINER_HEIGHT.enabled():
             self.outer_padding += EXTENDED_CONTAINER_HEIGHT.get_extra_outer_padding_to_avoid_vertical_overlapping()
         self.config = config
@@ -110,7 +110,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.scene = self._create_scene(
             dc.GetSizeTuple(), timeline, view_properties, self._get_text_extent)
         self._perform_drawing(view_properties)
-        del self.dc # Program crashes if we don't delete the dc reference.
+        del self.dc  # Program crashes if we don't delete the dc reference.
 
     def _create_scene(self, size, db, view_properties, get_text_extent_fn):
         scene = TimelineScene(size, db, view_properties, get_text_extent_fn, self.config)
@@ -141,25 +141,25 @@ class DefaultDrawingAlgorithm(Drawer):
     def snap(self, time, snap_region=10):
         if self._distance_to_left_border(time) < snap_region:
             return self._get_time_at_left_border(time)
-        elif self._distance_to_right_border(time)  < snap_region:
+        elif self._distance_to_right_border(time) < snap_region:
             return self._get_time_at_right_border(time)
         else:
             return time
 
     def _distance_to_left_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
+        left_strip_time, _ = self._snap_region(time)
         return self.scene.distance_between_times(time, left_strip_time)
 
     def _distance_to_right_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
+        _, right_strip_time = self._snap_region(time)
         return self.scene.distance_between_times(time, right_strip_time)
 
     def _get_time_at_left_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
+        left_strip_time, _ = self._snap_region(time)
         return left_strip_time
 
     def _get_time_at_right_border(self, time):
-        left_strip_time, right_strip_time = self._snap_region(time)
+        _, right_strip_time = self._snap_region(time)
         return right_strip_time
 
     def _snap_region(self, time):
@@ -195,7 +195,7 @@ class DefaultDrawingAlgorithm(Drawer):
                     container_rect = rect
                 else:
                     return event, rect
-        if container_event == None:
+        if container_event is None:
             return None
         return container_event, container_rect
 
@@ -284,7 +284,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.DrawText(label, x, INNER_PADDING)
 
     def _calculate_major_strip_label_x(self, time_period, label):
-        (tw, th) = self.dc.GetTextExtent(label)
+        tw, _ = self.dc.GetTextExtent(label)
         x = self.scene.x_pos_for_time(time_period.mean_time()) - tw / 2
         if x - INNER_PADDING < 0:
             x = INNER_PADDING
@@ -335,10 +335,10 @@ class DefaultDrawingAlgorithm(Drawer):
     def _point_subevent(self, event):
         return event.is_subevent() and not event.is_period()
 
-    def _get_container_y(self, id):
+    def _get_container_y(self, cid):
         for (event, rect) in self.scene.event_data:
             if event.is_container():
-                if event.container_id == id:
+                if event.container_id == cid:
                     return rect.y - 1
         return self.scene.divider_y
 
@@ -359,9 +359,9 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _extract_categories(self):
         categories = []
-        for (event, rect) in self.scene.event_data:
+        for (event, _) in self.scene.event_data:
             cat = event.get_category()
-            if cat and not cat in categories:
+            if cat and cat not in categories:
                 categories.append(cat)
         return sort_categories(categories)
 
@@ -397,7 +397,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _text_height_with_current_font(self):
         STRING_WITH_MIXED_CAPITALIZATION = "jJ"
-        tw, th = self.dc.GetTextExtent(STRING_WITH_MIXED_CAPITALIZATION)
+        _, th = self.dc.GetTextExtent(STRING_WITH_MIXED_CAPITALIZATION)
         return th
 
     def _draw_legend_items(self, rect, categories):
@@ -426,7 +426,7 @@ class DefaultDrawingAlgorithm(Drawer):
                 else:
                     self._scroll_period_events(amount, event, rect, collection)
             self.scene.event_data = collection
-        
+
     def _scroll_point_events(self, amount, event, rect, collection):
         rect.Y += amount
         if rect.Y < self.scene.divider_y - rect.height:
@@ -436,7 +436,7 @@ class DefaultDrawingAlgorithm(Drawer):
         rect.Y -= amount
         if rect.Y > self.scene.divider_y + rect.height:
             collection.append((event, rect))
-        
+
     def _draw_events(self, view_properties):
         """Draw all event boxes and the text inside them."""
         self._scroll_events_vertically(view_properties)
@@ -452,7 +452,7 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_container(self, event, rect, view_properties):
         box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
         if EXTENDED_CONTAINER_HEIGHT.enabled():
-            box_rect = EXTENDED_CONTAINER_HEIGHT.get_vertical_larger_box_rect(rect) 
+            box_rect = EXTENDED_CONTAINER_HEIGHT.get_vertical_larger_box_rect(rect)
         self._draw_box(box_rect, event)
         self._draw_text(rect, event)
         if view_properties.is_selected(event):
@@ -531,11 +531,11 @@ class DefaultDrawingAlgorithm(Drawer):
         self.draw_fuzzy(event, p1, p2, p3, p4, p5)
 
     def draw_fuzzy(self, event, p1, p2, p3, p4, p5):
-        self._draw_fuzzy_polygon(p1, p2 ,p3)
-        self._draw_fuzzy_polygon(p3, p4 ,p5)
+        self._draw_fuzzy_polygon(p1, p2, p3)
+        self._draw_fuzzy_polygon(p3, p4, p5)
         self._draw_fuzzy_border(event, p2, p3, p5)
 
-    def _draw_fuzzy_polygon(self, p1, p2 ,p3):
+    def _draw_fuzzy_polygon(self, p1, p2, p3):
         self.dc.SetBrush(wx.WHITE_BRUSH)
         self.dc.SetPen(wx.WHITE_PEN)
         self.dc.DrawPolygon((p1, p2, p3))
@@ -687,11 +687,11 @@ class DefaultDrawingAlgorithm(Drawer):
         big_rect = wx.Rect(rect.X - SIZE, rect.Y - SIZE, rect.Width + 2 * SIZE, rect.Height + 2 * SIZE)
         self.dc.DestroyClippingRegion()
         self.dc.SetClippingRect(big_rect)
-        y = rect.Y + rect.Height/2 - SIZE/2
+        y = rect.Y + rect.Height / 2 - SIZE / 2
         x = rect.X - SIZE / 2
-        west_rect   = wx.Rect(x + 1             , y, SIZE, SIZE)
+        west_rect = wx.Rect(x + 1, y, SIZE, SIZE)
         center_rect = wx.Rect(x + rect.Width / 2, y, SIZE, SIZE)
-        east_rect   = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
+        east_rect = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
         self.dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
         self.dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
         if not event.locked:
@@ -740,8 +740,7 @@ class DefaultDrawingAlgorithm(Drawer):
         top_rect = None
         self.dc.SetTextForeground(BLACK)
         for (event, rect) in self.scene.event_data:
-            if (event.get_data("description") != None or
-                event.get_data("icon") != None):
+            if (event.get_data("description") is not None or event.get_data("icon") is not None):
                 sticky = view_properties.event_has_sticky_balloon(event)
                 if (view_properties.event_is_hovered(event) or sticky):
                     if not sticky:
@@ -757,9 +756,9 @@ class DefaultDrawingAlgorithm(Drawer):
             padding = 2 * BALLOON_RADIUS
             if iw > 0:
                 padding += BALLOON_RADIUS
-            max_text_width = (self.scene.width - SLIDER_WIDTH - event_rect.X - 
-                             event_rect.width / 2 - iw - padding + ARROW_OFFSET)
-            return max(MIN_TEXT_WIDTH, max_text_width)        
+            max_text_width = (self.scene.width - SLIDER_WIDTH - event_rect.X -
+                              event_rect.width / 2 - iw - padding + ARROW_OFFSET)
+            return max(MIN_TEXT_WIDTH, max_text_width)
         # Constants
         MIN_TEXT_WIDTH = 200
         MIN_WIDTH = 100
@@ -770,7 +769,7 @@ class DefaultDrawingAlgorithm(Drawer):
         # Icon
         (iw, ih) = (0, 0)
         icon = event.get_data("icon")
-        if icon != None:
+        if icon is not None:
             (iw, ih) = icon.Size
             inner_rect_w = iw
             inner_rect_h = ih
@@ -780,27 +779,25 @@ class DefaultDrawingAlgorithm(Drawer):
         (tw, th) = (0, 0)
         description = event.get_data("description")
         lines = None
-        if description != None:
+        if description is not None:
             max_text_width = max_text_width(iw)
             lines = break_text(description, self.dc, max_text_width)
             th = len(lines) * self.dc.GetCharHeight()
             for line in lines:
-                (lw, lh) = self.dc.GetTextExtent(line)
+                (lw, _) = self.dc.GetTextExtent(line)
                 tw = max(lw, tw)
-            if icon != None:
+            if icon is not None:
                 inner_rect_w += BALLOON_RADIUS
             inner_rect_w += min(tw, max_text_width)
             inner_rect_h = max(inner_rect_h, th)
         inner_rect_w = max(MIN_WIDTH, inner_rect_w)
         bounding_rect, x, y = self._draw_balloon_bg(
             self.dc, (inner_rect_w, inner_rect_h),
-            (event_rect.X + event_rect.Width / 2,
-            event_rect.Y),
-            True, sticky)
-        if icon != None:
+            (event_rect.X + event_rect.Width / 2, event_rect.Y), True, sticky)
+        if icon is not None:
             self.dc.DrawBitmap(icon, x, y, False)
             x += iw + BALLOON_RADIUS
-        if lines != None:
+        if lines is not None:
             ty = y
             for line in lines:
                 self.dc.DrawText(line, x, ty)
@@ -808,8 +805,8 @@ class DefaultDrawingAlgorithm(Drawer):
             x += tw
         # Write data so we know where the balloon was drawn
         # Following two lines can be used when debugging the rectangle
-        #self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        #self.dc.DrawRectangleRect(bounding_rect)
+        # self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
+        # self.dc.DrawRectangleRect(bounding_rect)
         self.balloon_data.append((event, bounding_rect))
 
     def _draw_balloon_bg(self, dc, inner_size, tip_pos, above, sticky):
@@ -879,13 +876,13 @@ class DefaultDrawingAlgorithm(Drawer):
         p7 = wx.Point(p6.x, p6.y + R)
         path.AddArc(p7.x, p7.y, R, math.radians(-90), math.radians(0))
         # The right side
-        p8 = wx.Point(p7.x + R , p7.y + H - R)
+        p8 = wx.Point(p7.x + R, p7.y + H - R)
         path.AddLineToPoint(p8.x, p8.y)
         # The lower right rounded corner. p9 is the center of the arc
         p9 = wx.Point(p8.x - R, p8.y)
         path.AddArc(p9.x, p9.y, R, math.radians(0), math.radians(90))
         # The lower side
-        p10 = wx.Point(p9.x - W + W_ARROW +  ARROW_OFFSET, p9.y + R)
+        p10 = wx.Point(p9.x - W + W_ARROW + ARROW_OFFSET, p9.y + R)
         path.AddLineToPoint(p10.x, p10.y)
         path.CloseSubpath()
         # Draw sharp lines on GTK which uses Cairo
@@ -904,7 +901,7 @@ class DefaultDrawingAlgorithm(Drawer):
             pin = wx.Bitmap(os.path.join(ICONS_DIR, "stickypin.png"))
         else:
             pin = wx.Bitmap(os.path.join(ICONS_DIR, "unstickypin.png"))
-        self.dc.DrawBitmap(pin, p7.x -5, p6.y + 5, True)
+        self.dc.DrawBitmap(pin, p7.x - 5, p6.y + 5, True)
 
         # Return
         bx = left_x
@@ -920,12 +917,12 @@ def break_text(text, dc, max_width_in_px):
     sentences = text.split("\n")
     lines = []
     for sentence in sentences:
-        w, h = dc.GetTextExtent(sentence)
+        w, _ = dc.GetTextExtent(sentence)
         if w <= max_width_in_px:
             lines.append(sentence)
         # The sentence is too long. Break it.
         else:
-            break_sentence(dc, lines, sentence, max_width_in_px);
+            break_sentence(dc, lines, sentence, max_width_in_px)
     return lines
 
 
@@ -935,7 +932,7 @@ def break_sentence(dc, lines, sentence, max_width_in_px):
     max_word_len_in_ch = get_max_word_length(dc, max_width_in_px)
     words = break_line(dc, sentence, max_word_len_in_ch)
     for word in words:
-        w, h = dc.GetTextExtent("".join(line) + word + " ")
+        w, _ = dc.GetTextExtent("".join(line) + word + " ")
         # Max line length reached. Start a new line
         if w > max_width_in_px:
             lines.append("".join(line))
@@ -970,7 +967,7 @@ def break_word(dc, word, max_word_len_in_ch):
     words = []
     while len(word) > max_word_len_in_ch:
         word1 = word[0:max_word_len_in_ch] + "-"
-        word =  word[max_word_len_in_ch:]
+        word = word[max_word_len_in_ch:]
         words.append(word1)
     words.append(word)
     return words
@@ -979,8 +976,8 @@ def break_word(dc, word, max_word_len_in_ch):
 def get_max_word_length(dc, max_width_in_px):
     TEMPLATE_CHAR = 'K'
     word = [TEMPLATE_CHAR]
-    w, h = dc.GetTextExtent("".join(word))
+    w, _ = dc.GetTextExtent("".join(word))
     while w < max_width_in_px:
         word.append(TEMPLATE_CHAR)
-        w, h = dc.GetTextExtent("".join(word))
+        w, _ = dc.GetTextExtent("".join(word))
     return len(word) - 1
