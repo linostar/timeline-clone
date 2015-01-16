@@ -1331,7 +1331,6 @@ class MainPanel(wx.Panel):
 
     def _show_panel(self, panel):
         self._hide_all_panels()
-        # Show this one
         panel.Show(True)
         self.sizerOuter.Layout()
         panel.activated()
