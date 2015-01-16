@@ -107,8 +107,7 @@ class DefaultDrawingAlgorithm(Drawer):
         self.config = config
         self.dc = dc
         self.time_type = timeline.get_time_type()
-        self.scene = self._create_scene(
-            dc.GetSizeTuple(), timeline, view_properties, self._get_text_extent)
+        self.scene = self._create_scene(dc.GetSizeTuple(), timeline, view_properties, self._get_text_extent)
         self._perform_drawing(view_properties)
         del self.dc  # Program crashes if we don't delete the dc reference.
 
@@ -229,8 +228,7 @@ class DefaultDrawingAlgorithm(Drawer):
         end_x = self.scene.x_pos_for_time(end)
         self.dc.SetBrush(self.lightgrey_solid_brush)
         self.dc.SetPen(wx.TRANSPARENT_PEN)
-        self.dc.DrawRectangle(start_x, 0,
-                              end_x - start_x + 1, self.scene.height)
+        self.dc.DrawRectangle(start_x, 0, end_x - start_x + 1, self.scene.height)
 
     def _draw_bg(self, view_properties):
         if self.fast_draw:
@@ -409,8 +407,7 @@ class DefaultDrawingAlgorithm(Drawer):
             self.dc.SetBrush(wx.Brush(base_color, wx.SOLID))
             self.dc.SetPen(wx.Pen(border_color, 1, wx.SOLID))
             color_box_rect = (OUTER_PADDING + rect.Width - item_height -
-                              INNER_PADDING,
-                              cur_y, item_height, item_height)
+                              INNER_PADDING, cur_y, item_height, item_height)
             self.dc.DrawRectangleRect(color_box_rect)
             self.dc.SetTextForeground((0, 0, 0))
             self.dc.DrawText(cat.name, OUTER_PADDING + INNER_PADDING, cur_y)
