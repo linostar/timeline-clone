@@ -1330,14 +1330,15 @@ class MainPanel(wx.Panel):
         self.SetSizer(self.sizerOuter)
 
     def _show_panel(self, panel):
-        # Hide all panels
-        for panel_to_hide in [self.welcome_panel, self.timeline_panel,
-                              self.error_panel]:
-            panel_to_hide.Show(False)
+        self._hide_all_panels()
         # Show this one
         panel.Show(True)
         self.sizerOuter.Layout()
         panel.activated()
+
+    def _hide_all_panels(self):
+        for panel_to_hide in [self.welcome_panel, self.timeline_panel, self.error_panel]:
+            panel_to_hide.Show(False)
 
 
 class WelcomePanel(wx.Panel):
