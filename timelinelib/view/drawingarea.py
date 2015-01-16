@@ -549,6 +549,7 @@ class TimelineCanvasController(object):
         """After acknowledge from the user, delete all selected events."""
         selected_event_ids = self.view_properties.get_selected_event_ids()
         nbr_of_selected_event_ids = len(selected_event_ids)
+
         def user_ack():
             if nbr_of_selected_event_ids > 1:
                 text = _("Are you sure you want to delete %d events?" %
@@ -556,16 +557,20 @@ class TimelineCanvasController(object):
             else:
                 text = _("Are you sure you want to delete this event?")
             return self.view.ask_question(text) == wx.YES
+
         def exception_handler(ex):
             if isinstance(ex, TimelineIOError):
                 self.fn_handle_db_error(ex)
             else:
                 raise(ex)
+
         def _last_event(event_id):
             return event_id == selected_event_ids[-1]
+
         def _delete_events():
             for event_id in selected_event_ids:
                 self.timeline.delete_event(event_id, save=_last_event(event_id))
+
         def edit_function():
             if user_ack():
                 _delete_events()
@@ -579,8 +584,10 @@ class TimelineCanvasController(object):
                 self.fn_handle_db_error(ex)
             else:
                 raise(ex)
+
         def _last_event(event_id):
             return event_id == selected_event_ids[-1]
+
         def edit_function():
             for event_id in selected_event_ids:
                 self.timeline.mark_event_as_done(event_id, save=_last_event(event_id))
