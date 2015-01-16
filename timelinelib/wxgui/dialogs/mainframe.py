@@ -1248,10 +1248,9 @@ class MainPanel(wx.Panel):
 
     def _show_new_timeline(self, timeline):
         self.set_timeline(timeline)
-        self.category_tree.set_timeline_view(
-            self.get_timeline_canvas().get_timeline(),
-            self.get_timeline_canvas().get_view_properties())
-        self.set_searchbar_timeline_canvas(self.get_timeline_canvas())
+        canvas = self.get_timeline_canvas()
+        self.category_tree.set_timeline_view(canvas.get_timeline(), canvas.get_view_properties())
+        self.set_searchbar_timeline_canvas(canvas)
         self.show_timeline_panel()
 
     def set_timeline(self, timeline):
