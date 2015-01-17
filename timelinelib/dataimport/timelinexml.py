@@ -18,7 +18,6 @@
 
 from os.path import abspath
 import base64
-import os.path
 import re
 import shutil
 import StringIO
@@ -218,7 +217,7 @@ class Parser(object):
         hyperlink = tmp_dict.pop("tmp_hyperlink", None)
         if self._is_container_event(text):
             cid, text = self._extract_container_id(text)
-            event = Container(self.db.get_time_type(), start, end, text, category, cid=cid)
+            event = Container(self.db.get_time_type(), start, end, text.strip, category, cid=cid)
         elif self._is_subevent(text):
             cid, text = self._extract_subid(text)
             event = Subevent(self.db.get_time_type(), start, end, text, category, cid=cid)
