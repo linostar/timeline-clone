@@ -39,6 +39,7 @@ RUNCMD = 5
 RUNPYSCRIPT = 6
 CPYDIR = 7
 ANNOTATE = 8
+RUNPYTEST = 9
 
 ACTION_NAMES = {COPYFILE: "COPYFILE",
                 COPYDIR: "COPYDIR",
@@ -47,14 +48,14 @@ ACTION_NAMES = {COPYFILE: "COPYFILE",
                 POPD: "POPD",
                 RUNCMD: "RUNCMD",
                 RUNPYSCRIPT: "RUNPYSCRIPT",
-                CPYDIR: "CPYDIR",}
+                RUNPYTEST: "RUNPYTEST",
+                CPYDIR: "CPYDIR", }
 
 
 known_targets = ("win32", "win32py25", "source")
 
 
-win32_actions = (
-                 (ANNOTATE, "Modify some python files", ""),
+win32_actions = ((ANNOTATE, "Modify some python files", ""),
                  (COPYDIR, r"release\win\cmd", "cmd"),
                  (COPYFILE, "timeline.py", "timeline.py"),
                  (RUNPYSCRIPT, r"cmd\mod2_timeline_py.py", ""),
@@ -64,16 +65,25 @@ win32_actions = (
                  (MAKEDIR, None, "inno"),
                  (COPYFILE, r"release\win\inno\timelineWin32_2.iss", r"inno\timelineWin32_2.iss"),
                  (RUNPYSCRIPT, r"cmd\mod2_timeline_iss_win32.py", ""),
+
+                 (ANNOTATE, "Run Tests", ""),
+                 (PUSHD, "..\\..\\", ""),
+                 (RUNPYTEST, r"execute-specs.py", ""),
+                 # (RUNPYTEST, r"execute-specs-repeat.py", ""),
+                 (POPD, "", ""),
+
                  (ANNOTATE, "Library dependencies", ""),
                  (COPYDIR, r"libs\dependencies\icalendar-3.2\icalendar", "icalendar"),
                  (COPYDIR, r"libs\dependencies\pytz-2012j\pytz", "pytz"),
                  (COPYDIR, r"libs\dependencies\pysvg-0.2.1\pysvg", "pysvg"),
                  (COPYDIR, r"libs\dependencies\markdown-2.0.3\markdown", "markdown"),
+
                  (ANNOTATE, "Create distribution directory", ""),
                  (COPYFILE, r"release\win\inno\setup.py", "setup.py"),
                  (MAKEDIR, None, "icons"),
                  (COPYFILE, r"release\win\inno\Timeline.ico", r"icons\Timeline.ico"),
                  (RUNPYSCRIPT, "setup.py", "py2exe"),
+
                  (ANNOTATE, "Create distribution executable", ""),
                  (COPYFILE, "SConstruct", "SConstruct"),
                  (COPYDIR, "po", "po"),
@@ -83,54 +93,54 @@ win32_actions = (
                  (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
                  (COPYFILE, "COPYING", "COPYING"),
                  (COPYFILE, r"release\win\inno\WINSTALL", r"WINSTALL"),
+
                  (ANNOTATE, "Create Setup executable", ""),
                  (RUNCMD, "iscc.exe", r"inno\timelineWin32_2.iss"),
+
                  (ANNOTATE, "Done", ""),
                  )
 
-win32py25_actions = (
-                 # Modify some python files
-                 (COPYDIR, r"release\win\cmd", "cmd"),
-                 (COPYFILE, "timeline.py", "timeline.py"),
-                 (RUNPYSCRIPT, r"cmd\mod2_timeline_py.py", ""),
-                 (COPYDIR, "timelinelib", "timelinelib"),
-                 (RUNPYSCRIPT, r"cmd\mod2_paths_py.py", ""),
-                 (RUNPYSCRIPT, r"cmd\mod2_version_py.py", ""),
-                 (MAKEDIR, None, "inno"),
-                 (COPYFILE, r"release\win\inno\timelineWin32_py25.iss", r"inno\timelineWin32_2.iss"),
-                 (RUNPYSCRIPT, r"cmd\mod2_timeline_iss_win32.py", ""),
-                 # Library dependencies
-                 (COPYDIR, r"libs\dependencies\icalendar-3.2\icalendar", "icalendar"),
-                 (COPYDIR, r"libs\dependencies\pytz-2012j\pytz", "pytz"),
-                 (COPYDIR, r"libs\dependencies\pysvg-0.2.1\pysvg", "pysvg"),
-                 (COPYDIR, r"libs\dependencies\markdown-2.0.3\markdown", "markdown"),
-                 # Create distribution directory
-                 (COPYFILE, r"release\win\inno\setup.py", "setup.py"),
-                 (MAKEDIR, None, "icons"),
-                 (COPYFILE, r"release\win\inno\Timeline.ico", r"icons\Timeline.ico"),
-                 (RUNPYSCRIPT, "setup.py", "py2exe"),
-                 # Create distribution executable
-                 (COPYFILE, "SConstruct", "SConstruct"),
-                 (COPYDIR, "po", "po"),
-                 (RUNCMD, "scons.bat", ""),
-                 (CPYDIR, "po", r"dist\po"),
-                 (COPYDIR, "icons", r"dist\icons"),
-                 (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
-                 (COPYFILE, "COPYING", "COPYING"),
-                 (COPYFILE, r"release\win\inno\WINSTALL", r"WINSTALL"),
-                 # Create setup executable
-                 (RUNCMD, "iscc.exe", r"inno\timelineWin32_2.iss"),
-                 )
+win32py25_actions = (  # Modify some python files
+                     (COPYDIR, r"release\win\cmd", "cmd"),
+                     (COPYFILE, "timeline.py", "timeline.py"),
+                     (RUNPYSCRIPT, r"cmd\mod2_timeline_py.py", ""),
+                     (COPYDIR, "timelinelib", "timelinelib"),
+                     (RUNPYSCRIPT, r"cmd\mod2_paths_py.py", ""),
+                     (RUNPYSCRIPT, r"cmd\mod2_version_py.py", ""),
+                     (MAKEDIR, None, "inno"),
+                     (COPYFILE, r"release\win\inno\timelineWin32_py25.iss", r"inno\timelineWin32_2.iss"),
+                     (RUNPYSCRIPT, r"cmd\mod2_timeline_iss_win32.py", ""),
+                     # Library dependencies
+                     (COPYDIR, r"libs\dependencies\icalendar-3.2\icalendar", "icalendar"),
+                     (COPYDIR, r"libs\dependencies\pytz-2012j\pytz", "pytz"),
+                     (COPYDIR, r"libs\dependencies\pysvg-0.2.1\pysvg", "pysvg"),
+                     (COPYDIR, r"libs\dependencies\markdown-2.0.3\markdown", "markdown"),
+                     # Create distribution directory
+                     (COPYFILE, r"release\win\inno\setup.py", "setup.py"),
+                     (MAKEDIR, None, "icons"),
+                     (COPYFILE, r"release\win\inno\Timeline.ico", r"icons\Timeline.ico"),
+                     (RUNPYSCRIPT, "setup.py", "py2exe"),
+                     # Create distribution executable
+                     (COPYFILE, "SConstruct", "SConstruct"),
+                     (COPYDIR, "po", "po"),
+                     (RUNCMD, "scons.bat", ""),
+                     (CPYDIR, "po", r"dist\po"),
+                     (COPYDIR, "icons", r"dist\icons"),
+                     (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
+                     (COPYFILE, "COPYING", "COPYING"),
+                     (COPYFILE, r"release\win\inno\WINSTALL", r"WINSTALL"),
+                     # Create setup executable
+                     (RUNCMD, "iscc.exe", r"inno\timelineWin32_2.iss"),
+)
 
 
-source_actions = (
-                 # Change working dir to TIMELINE_DIR
-                 (PUSHD, os.path.join(TIMELINE_DIR, "release"), None),
-                 # Create source release artifact
-                 (RUNPYSCRIPT, "make-source-release.py", ""),
-                 # Restore working dir 
-                 (POPD, None, None),
-                 )
+source_actions = (  # Change working dir to TIMELINE_DIR
+                    (PUSHD, os.path.join(TIMELINE_DIR, "release"), None),
+                    # Create source release artifact
+                    (RUNPYSCRIPT, "make-source-release.py", ""),
+                    # Restore working dir
+                    (POPD, None, None),
+)
 
 
 actions = {"win32": win32_actions,
@@ -153,27 +163,29 @@ class Target():
                                POPD: self.popd,
                                RUNCMD: self.runcmd,
                                RUNPYSCRIPT: self.runpyscript,
+                               RUNPYTEST: self.runpytest,
                                CPYDIR: self.cpydir,
                                ANNOTATE: self.annotate}
 
     def build(self):
         self.define_root_dirs()
         self.create_target_dir()
-        self.execute_actions()  
-        
+        self.execute_actions()
+
     def define_root_dirs(self):
         self.timeline_dir = os.path.abspath("..\\")
         self.build_dir = os.path.abspath(".\\target")
         print "Source in %s" % self.timeline_dir
         print "Target in %s" % os.getcwd()
-        
-    def create_target_dir(self):  
+
+    def create_target_dir(self):
         print "Deleting old target"
         if os.path.exists(self.build_dir):
             shutil.rmtree(self.build_dir)
         print "Creating target dir"
         os.mkdir(self.build_dir)
         os.chdir(self.build_dir)
+        self.cwd = os.getcwd()
 
     def execute_actions(self):
         count = 0
@@ -181,14 +193,14 @@ class Target():
         try:
             for action, src, dst in self.actions:
                 if action is not ANNOTATE:
-                    count +=1
+                    count += 1
                     print "Action %2d(%2d): %s" % (count, total, ACTION_NAMES[action])
                 self.ACTION_METHODS[action](src, dst)
             print "BUILD DONE"
         except Exception, ex:
             print str(ex)
             print "BUILD FAILED"
-            
+
     def annotate(self, src, dst):
         self.print_header(src)
 
@@ -206,12 +218,18 @@ class Target():
 
     def makedir(self, src, dst):
         self.print_src_dst(None, dst)
-        print "    dst: %s" % os.path.abspath(dst)   
+        print "    dst: %s" % os.path.abspath(dst)
         os.mkdir(os.path.join(self.build_dir, dst))
 
     def runpyscript(self, src, dst):
         self.print_src_dst(src, os.path.abspath(dst))
         success, msg = self.run_pyscript(src, [dst])
+        if not success:
+            raise Exception(msg)
+
+    def runpytest(self, src, dst):
+        self.print_src_dst(src, os.path.abspath(dst))
+        success, msg = self.run_pyscript(src, [dst], display_stderr=True)
         if not success:
             raise Exception(msg)
 
@@ -222,7 +240,7 @@ class Target():
             raise Exception(msg)
 
     def pushd(self, src, dst):
-        self.print_src_dst(os.path.abspath(self.cwd), os.getcwd())
+        self.print_src_dst(os.getcwd(), os.path.abspath(src))
         self.cwd = os.getcwd()
         os.chdir(src)
 
@@ -231,17 +249,21 @@ class Target():
         print "    dst: %s" % self.cwd
         os.chdir(self.cwd)
 
-    def run_pyscript(self, script, args=[]):
-        return self.run_command(["python", script] + args)
+    def run_pyscript(self, script, args=[], display_stderr=False):
+        return self.run_command(["python", script] + args, display_stderr)
 
-    def run_command(self, cmd):
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out = p.communicate()
-        if p.returncode == 0:
-            return True, out[0]
+    def run_command(self, cmd, display_stderr=False):
+        if display_stderr:
+            rc = subprocess.call(cmd)
+            return rc == 0, ""
         else:
-            return False, out[1]
-    
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out = p.communicate()
+            if p.returncode == 0:
+                return True, out[0]
+            else:
+                return False, out[1]
+
     def print_header(self, message):
         print "-------------------------------------------------------"
         print "  %s" % message
@@ -249,10 +271,11 @@ class Target():
 
     def print_src_dst(self, src, dst):
         if src is not None:
-            print "    src: %s" % src   
+            print "    src: %s" % src
         if dst is not None:
-            print "    dst: %s" % dst  
-    
+            print "    dst: %s" % dst
+
+
 def main():
     if len(sys.argv) == 1:
         print "A target-name must be given as an argument"
@@ -262,7 +285,7 @@ def main():
             print "%s is an unknown target" % target
         else:
             Target(target).build()
-    
-    
+
+
 if __name__ == "__main__":
     main()
