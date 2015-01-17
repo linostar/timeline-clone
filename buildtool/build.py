@@ -38,13 +38,23 @@ POPD = 4
 RUNCMD = 5
 RUNPYSCRIPT = 6
 CPYDIR = 7
+ANNOTATE = 8
+
+ACTION_NAMES = {COPYFILE: "COPYFILE",
+                COPYDIR: "COPYDIR",
+                MAKEDIR: "MAKEDIR",
+                PUSHD: "PUSHD",
+                POPD: "POPD",
+                RUNCMD: "RUNCMD",
+                RUNPYSCRIPT: "RUNPYSCRIPT",
+                CPYDIR: "CPYDIR",}
 
 
 known_targets = ("win32", "win32py25", "source")
 
 
 win32_actions = (
-                 # Modify some python files
+                 (ANNOTATE, "Modify some python files", ""),
                  (COPYDIR, r"release\win\cmd", "cmd"),
                  (COPYFILE, "timeline.py", "timeline.py"),
                  (RUNPYSCRIPT, r"cmd\mod2_timeline_py.py", ""),
@@ -54,17 +64,17 @@ win32_actions = (
                  (MAKEDIR, None, "inno"),
                  (COPYFILE, r"release\win\inno\timelineWin32_2.iss", r"inno\timelineWin32_2.iss"),
                  (RUNPYSCRIPT, r"cmd\mod2_timeline_iss_win32.py", ""),
-                 # Library dependencies
+                 (ANNOTATE, "Library dependencies", ""),
                  (COPYDIR, r"libs\dependencies\icalendar-3.2\icalendar", "icalendar"),
                  (COPYDIR, r"libs\dependencies\pytz-2012j\pytz", "pytz"),
                  (COPYDIR, r"libs\dependencies\pysvg-0.2.1\pysvg", "pysvg"),
                  (COPYDIR, r"libs\dependencies\markdown-2.0.3\markdown", "markdown"),
-                 # Create distribution directory
+                 (ANNOTATE, "Create distribution directory", ""),
                  (COPYFILE, r"release\win\inno\setup.py", "setup.py"),
                  (MAKEDIR, None, "icons"),
                  (COPYFILE, r"release\win\inno\Timeline.ico", r"icons\Timeline.ico"),
                  (RUNPYSCRIPT, "setup.py", "py2exe"),
-                 # Create distribution executable
+                 (ANNOTATE, "Create distribution executable", ""),
                  (COPYFILE, "SConstruct", "SConstruct"),
                  (COPYDIR, "po", "po"),
                  (RUNCMD, "scons.bat", ""),
@@ -73,7 +83,9 @@ win32_actions = (
                  (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
                  (COPYFILE, "COPYING", "COPYING"),
                  (COPYFILE, r"release\win\inno\WINSTALL", r"WINSTALL"),
+                 (ANNOTATE, "Create Setup executable", ""),
                  (RUNCMD, "iscc.exe", r"inno\timelineWin32_2.iss"),
+                 (ANNOTATE, "Done", ""),
                  )
 
 win32py25_actions = (
@@ -106,6 +118,7 @@ win32py25_actions = (
                  (COPYFILE, r"release\win\inno\Timeline.ico", r"dist\icons\Timeline.ico"),
                  (COPYFILE, "COPYING", "COPYING"),
                  (COPYFILE, r"release\win\inno\WINSTALL", r"WINSTALL"),
+                 # Create setup executable
                  (RUNCMD, "iscc.exe", r"inno\timelineWin32_2.iss"),
                  )
 
@@ -121,21 +134,32 @@ source_actions = (
 
 
 actions = {"win32": win32_actions,
-           "win32py25" : win32py25_actions,
-           "source" : source_actions}
+           "win32py25": win32py25_actions,
+           "source": source_actions}
 
 
 class Target():
+
     def __init__(self, target):
-        print "Building target %s" % target
+        print "-------------------------------------------------------"
+        print "  %s" % ("Building target %s" % target)
+        print "-------------------------------------------------------"
         self.target = target
         self.actions = actions[target]
+        self.ACTION_METHODS = {COPYFILE: self.copyfile,
+                               COPYDIR: self.copydir,
+                               MAKEDIR: self.makedir,
+                               PUSHD: self.pushd,
+                               POPD: self.popd,
+                               RUNCMD: self.runcmd,
+                               RUNPYSCRIPT: self.runpyscript,
+                               CPYDIR: self.cpydir,
+                               ANNOTATE: self.annotate}
 
     def build(self):
         self.define_root_dirs()
         self.create_target_dir()
         self.execute_actions()  
-        #self.delete_target_dir()
         
     def define_root_dirs(self):
         self.timeline_dir = os.path.abspath("..\\")
@@ -151,52 +175,62 @@ class Target():
         os.mkdir(self.build_dir)
         os.chdir(self.build_dir)
 
-    def delete_target_dir(self):
-        os.chdir("..\\")
-        shutil.rmtree(self.build_dir)
-    
     def execute_actions(self):
         count = 0
-        total = len(self.actions)
+        total = len([actions for action in self.actions if action[0] is not ANNOTATE])
         try:
             for action, src, dst in self.actions:
-                count +=1
-                if action == COPYFILE:
-                    print "Action %d(%d): COPYFILE %s -> %s" % (count, total, src, os.path.abspath(dst))
-                    shutil.copyfile(os.path.join(self.timeline_dir, src), dst)
-                if action == COPYDIR:
-                    print "Action %d(%d): COPYDIR %s -> %s" % (count, total, src, os.path.abspath(dst))
-                    shutil.copytree(os.path.join(self.timeline_dir, src), os.path.join(dst))
-                if action == CPYDIR:
-                    print "Action %d(%d): CPYDIR %s -> %s" % (count, total, src, os.path.abspath(dst))
-                    shutil.copytree(os.path.join(src), os.path.join(dst))
-                if action == MAKEDIR:
-                    print "Action %d(%d): MAKEDIR %s" % (count, total, os.path.abspath(dst))
-                    os.mkdir(os.path.join(self.build_dir, dst))
-                if action == RUNPYSCRIPT:
-                    print "Action %d(%d): RUNPYSCRIPT %s %s" % (count, total, src, os.path.abspath(dst))
-                    success, msg = self.run_pyscript(src, [dst])
-                    if not success:
-                        print msg
-                        break
-                if action == RUNCMD:
-                    print "Action %d(%d): RUNCMD %s" % (count, total, src)
-                    success, msg = self.run_command([src, dst])
-                    if not success:
-                        print msg
-                        break
-                if action == PUSHD:
-                    self.cwd = os.getcwd()
-                    os.chdir(src)
-                    print "Action %d(%d): PUSHD %s ->  %s" % (count, total, os.path.abspath(self.cwd),  os.getcwd())
-                if action == POPD:
-                    os.chdir(self.cwd)
-                    print "Action %d(%d): POP %s" % (count, total, self.cwd)
+                if action is not ANNOTATE:
+                    count +=1
+                    print "Action %2d(%2d): %s" % (count, total, ACTION_NAMES[action])
+                self.ACTION_METHODS[action](src, dst)
             print "BUILD DONE"
         except Exception, ex:
             print str(ex)
             print "BUILD FAILED"
             
+    def annotate(self, src, dst):
+        self.print_header(src)
+
+    def copyfile(self, src, dst):
+        self.print_src_dst(src, os.path.abspath(dst))
+        shutil.copyfile(os.path.join(self.timeline_dir, src), dst)
+
+    def copydir(self, src, dst):
+        self.print_src_dst(src, os.path.abspath(dst))
+        shutil.copytree(os.path.join(self.timeline_dir, src), os.path.join(dst))
+
+    def cpydir(self, src, dst):
+        self.print_src_dst(src, os.path.abspath(dst))
+        shutil.copytree(os.path.join(src), os.path.join(dst))
+
+    def makedir(self, src, dst):
+        self.print_src_dst(None, dst)
+        print "    dst: %s" % os.path.abspath(dst)   
+        os.mkdir(os.path.join(self.build_dir, dst))
+
+    def runpyscript(self, src, dst):
+        self.print_src_dst(src, os.path.abspath(dst))
+        success, msg = self.run_pyscript(src, [dst])
+        if not success:
+            raise Exception(msg)
+
+    def runcmd(self, src, dst):
+        self.print_src_dst(src, dst)
+        success, msg = self.run_command([src, dst])
+        if not success:
+            raise Exception(msg)
+
+    def pushd(self, src, dst):
+        self.print_src_dst(os.path.abspath(self.cwd), os.getcwd())
+        self.cwd = os.getcwd()
+        os.chdir(src)
+
+    def popd(self, src, dst):
+        self.print_src_dst(None, self.cwd)
+        print "    dst: %s" % self.cwd
+        os.chdir(self.cwd)
+
     def run_pyscript(self, script, args=[]):
         return self.run_command(["python", script] + args)
 
@@ -208,7 +242,17 @@ class Target():
         else:
             return False, out[1]
     
+    def print_header(self, message):
+        print "-------------------------------------------------------"
+        print "  %s" % message
+        print "-------------------------------------------------------"
 
+    def print_src_dst(self, src, dst):
+        if src is not None:
+            print "    src: %s" % src   
+        if dst is not None:
+            print "    dst: %s" % dst  
+    
 def main():
     if len(sys.argv) == 1:
         print "A target-name must be given as an argument"
