@@ -174,7 +174,6 @@ class Event(object):
         """Change the event data."""
         self.time_period = TimePeriod(self.time_type, start_time, end_time)
         self.text = text
-        print "'%s'" % self.text
         self.category = category
         if ends_today is not None:
             if not self.locked:
