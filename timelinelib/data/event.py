@@ -168,7 +168,7 @@ class Event(object):
                 return category.get_progress_color()
         else:
             return get_progress_color(DEFAULT_COLOR)
-    
+
     def update(self, start_time, end_time, text, category=None, fuzzy=None,
                locked=None, ends_today=None):
         """Change the event data."""
@@ -240,7 +240,7 @@ class Event(object):
     def has_data(self):
         """Return True if the event has associated data, or False if not."""
         for id in self.data:
-            if self.data[id] != None:
+            if self.data[id] is not None:
                 return True
         return False
 
@@ -270,7 +270,7 @@ class Event(object):
         new_event = Event(self.time_type, self.time_period.start_time,
                           self.time_period.end_time, self.text, self.category)
         # Description is immutable
-        new_event.set_data("description", self.get_data("description") )
+        new_event.set_data("description", self.get_data("description"))
         # Icon is immutable in the sense that it is never changed by our
         # application.
         new_event.set_data("icon", self.get_data("icon"))
