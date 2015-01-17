@@ -32,7 +32,7 @@ class Event(object):
         self.locked = locked
         self.ends_today = ends_today
         self.id = None
-        self.update(start_time, end_time, text.strip(), category)
+        self.update(start_time, end_time, text, category)
         self.data = {}
 
     def __eq__(self, other):
@@ -79,7 +79,7 @@ class Event(object):
         return self.text
 
     def set_text(self, text):
-        self.text = text
+        self.text = text.strip()
         return self
 
     def get_category(self):
@@ -173,7 +173,7 @@ class Event(object):
                locked=None, ends_today=None):
         """Change the event data."""
         self.time_period = TimePeriod(self.time_type, start_time, end_time)
-        self.text = text
+        self.text = text.strip()
         self.category = category
         if ends_today is not None:
             if not self.locked:
