@@ -16,6 +16,9 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from __builtin__ import Exception
+
+
 INSTRUCTION = 0
 RESULT = 1
 ERROR = 2
@@ -35,13 +38,17 @@ class Logger():
     def set_path(self, path_to_logfile):
         Logger.path = path_to_logfile
         fp = open(Logger.path, "w")
-        fp.close    
+        fp.close()
 
     @classmethod
     def add(self, message):
         fp = open(Logger.path, "a")
-        fp.write("%s\n" % message)
-        fp.close        
+        try:
+            fp.write("%s\n" % message)
+        except Exception, ex:
+            print ex
+            fp.close()
+        fp.close()
 
     @classmethod
     def line(self):
