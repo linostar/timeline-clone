@@ -19,6 +19,15 @@ Click Button("Avbryt")
 Select Menu(Hjälp|Help, "Give Feedback on Features", "Vertical Scrolling...")
 Click Button("Avbryt")
 
+Select Menu(Hjälp|Help, "Give Feedback on Experimental Features", "Mark Event as Done...")
+Click Button("Avbryt")
+
+Select Menu(Hjälp|Help, "Give Feedback on Experimental Features", "Extend Container height...")
+Click Button("Avbryt")
+
+Select Menu(Hjälp|Help, "Give Feedback on Experimental Features", "Locale date formats...")
+Click Button("Avbryt")
+
 Select Menu(Hjälp|Help, Contact)
 Hide Frame(Hjälp|Help)
 

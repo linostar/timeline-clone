@@ -1,16 +1,13 @@
-Select Menu(Hjälp|Help, "Getting|Getting started tutorial") 
-Select Menu(Arkiv|File, "Import timeline...|Importera Timeline...") 
-Enter text(1, "abc")
-Click Button(Open)
-# Import is performed even if the file doesn't exist!
+# Imprt by giving a name
+Select Menu(Hjälp|Help, "Getting|Getting started tutorial")
+Select Menu(Arkiv|File, "Import events...|Importera Händelser...") 
+Enter text(1, "C:\Users\Public\Documents\Timeline\Version 1.5\abc.timeline")
+Click Button(OK)
 
-
-# Try again to import abc to abc
-Select Menu(Arkiv|File, "Öppna") 
-Enter text(1, "abc")
-Click Button(Open)
-
-
-Select Menu(Arkiv|File, "Import timeline...|Importera Timeline...") 
-Enter text(1, "abc")
-Click Button(Open)
+# Imprt by selecting a name in the open dialog
+Select Menu(Hjälp|Help, "Getting|Getting started tutorial")
+Select Menu(Arkiv|File, "Import events...|Importera Händelser...") 
+Click Button(Öppna|Open)
+Enter text(1, "abc.timeline")
+Click Button(Öppna|Open)
+Click Button(OK)
