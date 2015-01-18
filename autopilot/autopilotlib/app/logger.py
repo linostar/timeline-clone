@@ -22,18 +22,17 @@ from __builtin__ import Exception
 INSTRUCTION = 0
 RESULT = 1
 ERROR = 2
-LABELS = {
-    INSTRUCTION : "INSTRUCTION:",
-    RESULT:       "RESULT     :",
-    ERROR:        "ERROR      :",
-}
+LABELS = {INSTRUCTION: "INSTRUCTION:",
+          RESULT: "RESULT:",
+          ERROR: "ERROR:",
+          }
 
 
 class Logger():
 
     path = None
     log_dialog_descriptions = False
-    
+
     @classmethod
     def set_path(self, path_to_logfile):
         Logger.path = path_to_logfile
@@ -53,7 +52,7 @@ class Logger():
     @classmethod
     def line(self):
         self.add("-------------------------------------------------")
-            
+
     @classmethod
     def line2(self):
         self.add("   ----------------------------------------------")
@@ -61,7 +60,7 @@ class Logger():
     @classmethod
     def newline(self):
         self.add("")
-            
+
     @classmethod
     def header(self, label):
         self.line()
@@ -81,11 +80,11 @@ class Logger():
         for line in lines:
             self.add("   %s" % line)
         self.newline()
-          
+
     @classmethod
     def add_instruction(self, result):
         self._add_log(INSTRUCTION, result)
-          
+
     @classmethod
     def add_result(self, result):
         self._add_log(RESULT, result)
@@ -93,19 +92,19 @@ class Logger():
     @classmethod
     def add_open(self, win):
         self._add_log(RESULT, "%s '%s' opened" % (win.classname(), win.name()))
-          
+
     @classmethod
     def add_close(self, win):
         self._add_log(RESULT, "%s '%s' closed" % (win.classname(), win.name()))
-        
+
     @classmethod
     def add_error(self, result):
         self._add_log(ERROR, result)
-          
+
     @classmethod
     def _add_log(self, logtype, result):
         self.add("%s %s" % (LABELS[logtype], result))
-          
+
     @classmethod
     def set_log_dialog_descriptions(self, log_descriptions):
         Logger.log_dialog_descriptions = log_descriptions
