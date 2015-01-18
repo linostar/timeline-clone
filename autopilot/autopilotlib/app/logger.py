@@ -16,6 +16,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import codecs
 from __builtin__ import Exception
 
 
@@ -41,11 +42,14 @@ class Logger():
 
     @classmethod
     def add(self, message):
-        fp = open(Logger.path, "a")
+        fp = codecs.open(Logger.path, "a", "cp1250")
         try:
-            fp.write("%s\n" % message)
+            if isinstance(message, str):
+                message = message.decode('cp1250')
+            fp.write(u"%s\n" % message)
         except Exception, ex:
             print ex
+            print type(message), message
             fp.close()
         fp.close()
 
