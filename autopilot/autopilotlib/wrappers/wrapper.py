@@ -56,9 +56,9 @@ class Wrapper(object):
         hwnd = self._get_button(label)
         self._send_click_message_to_button(hwnd)
 
-    def click_mouse(self, position):
+    def click_mouse(self, position, ctrl=False):
         try:
-            self._send_lbutton_click_to_window(position)
+            self._send_lbutton_click_to_window(position, ctrl)
             Logger.add_result("Mouse clicked at (%d, %d)" % (position[0], position[1]))
         except NotFoundException:
             Logger.add_error("Mouse click failed")
@@ -115,8 +115,8 @@ class Wrapper(object):
     def _send_text_to_text_control(self, hwnd, text):
         win.send_text_to_text_control(hwnd, text)
      
-    def _send_lbutton_click_to_window(self, position):
-        win.send_lbutton_click_to_window(position)
+    def _send_lbutton_click_to_window(self, position, ctrl=False):
+        win.send_lbutton_click_to_window(position, ctrl)
            
     def _get_button(self, label):     
         try:
