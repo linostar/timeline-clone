@@ -26,20 +26,20 @@ class ClickButtonInstruction(Instruction):
     """
         0        1       2  3    4
         command  object  (  arg  )
-        
+
         command ::=  Click
         object  ::=  Button | Btn
         arg     ::=  STRING | TEXT | NUM
-        
+
         Clicks a button. The button can be identified by it's name or by it's
         position in the current window.
-        
+
         Example 1:   Click Button (OK)
         Example 2:   Click Btn ("Save as...")
-        Example 3:   Click Button(2)   
-    """    
+        Example 3:   Click Button(2)
+    """
 
-    @Overrides(Instruction)    
+    @Overrides(Instruction)
     def execute(self, manuscript, win):
         manuscript.execute_next_instruction()
         self._click_button(win)
