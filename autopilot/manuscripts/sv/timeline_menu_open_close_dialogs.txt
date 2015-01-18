@@ -7,7 +7,7 @@ Select Menu(Tidslinje|Timeline, "Skapa Händelse...|Create Event...")
 Click Button(Avbryt)
 
 # Make sure an event is selected with this command
-click mouse(450,365)
+click mouse(500,570)
 
 Select Menu(Tidslinje|Timeline, "Editera valda Händelser...|Edit Selected Event...") 
 Click Button(Avbryt)
@@ -19,9 +19,9 @@ Select Menu(Tidslinje|Timeline, "Sätt Kategori på valda Händelser...|Set Categor
 Click Button(Avbryt)
 
 # Click deselects other selected events!
-#click mouse(850,365)
-#Select Menu(Tidslinje|Timeline, "Mät avståndet mellan två valda händelser...|Measure Distance between two Events...") 
-#Click Button(Avbryt)
+click mouse(1400,570,Ctrl)
+Select Menu(Tidslinje|Timeline, "Mät avståndet mellan två valda händelser...|Measure Distance between two Events...") 
+Click Button(OK)
 
 Select Menu(Tidslinje|Timeline, "Set Category on events without category...") 
 Click Button(Avbryt)

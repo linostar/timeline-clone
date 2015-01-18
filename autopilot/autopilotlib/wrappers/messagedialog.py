@@ -27,16 +27,23 @@ wxMessageDialog = wx.MessageDialog
 
 
 class MessageDialog(wxMessageDialog, Wrapper):
-    
+
     def __init__(self, *args, **kw):
         wxMessageDialog.__init__(self, *args, **kw)
-        
+
     def ShowModal(self):
         Logger.add_result("MessageDialog opened")
-        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS, 
+        wx.CallLater(TIME_TO_WAIT_FOR_DIALOG_TO_SHOW_IN_MILLISECONDS,
                      self._explore, MessageDialog.listener)
         super(MessageDialog, self).ShowModal()
-        
+
+    def IsShown(self):
+        """
+        Some generic dialogs return False here, even when they
+        are visible!!!!
+        """
+        return True
+
     @classmethod
     def wrap(self, listener):
         wx.MessageDialog = MessageDialog

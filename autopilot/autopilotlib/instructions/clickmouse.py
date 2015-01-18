@@ -26,26 +26,30 @@ class ClickMouseInstruction(Instruction):
     """
         0        1       2  3  4  5  6
         command  object  (  x  ,  y  )
-        
+
         command ::=  Click
         object  ::=  Mouse
         x, y    ::=  NUM
-        
+
         X, y is measured relative the position of the active window and are
         expressed in pixels.
-        
+
         Example 1:   Click Mouse (100,200)
-    """    
-    
-    @Overrides(Instruction)    
+    """
+
+    @Overrides(Instruction)
     def execute(self, manuscript, win):
         manuscript.execute_next_instruction()
         self._clik_mouse(win)
-        
+
     def _clik_mouse(self, win):
         pos = self._position(win)
         try:
-            win.click_mouse(pos)
+            ctrl = False
+            if self.arg(3) is not None:
+                if self.arg(3) == "Ctrl":
+                    ctrl = True
+            win.click_mouse(pos, ctrl)
         except NotFoundException:
             Logger.add_error("Mouse click at (%d, %d) failed" % (pos[0], pos[1]))
 

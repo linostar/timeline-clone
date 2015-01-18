@@ -33,16 +33,16 @@ def get_foreground_window():
     if isWindows():
         return win32gui.GetForegroundWindow()
 
-    
+
 def get_active_window():
     if isWindows():
         return win32gui.GetActiveWindow()
 
-    
+
 def get_classname(hwnd):
     return win32gui.GetClassName(hwnd)
 
-    
+
 def get_window_text(hwnd):
     return win32gui.GetWindowText(hwnd)
 
@@ -52,8 +52,8 @@ def get_children(hwnd):
         children = []
         win32gui.EnumChildWindows(hwnd, _get_child, children)
         return children
-        
-        
+
+
 def _get_child(hwnd, children):
     if isWindows():
         class_name = win32gui.GetClassName(hwnd)
@@ -62,15 +62,29 @@ def _get_child(hwnd, children):
         return True
 
 
-def send_lbutton_click_to_window(position):
+def send_lbutton_click_to_window(position, ctrl=False):
     if isWindows():
-        win32api.SetCursorPos(position)
-        flags = win32con.MOUSEEVENTF_LEFTDOWN | win32con.MOUSEEVENTF_ABSOLUTE
-        win32api.mouse_event(flags, 0, 0)
-        flags = win32con.MOUSEEVENTF_LEFTUP | win32con.MOUSEEVENTF_ABSOLUTE
-        win32api.mouse_event(flags, 0, 0)
-  
-          
+        if ctrl:
+            send_ctrl_key_down()
+        try:
+            win32api.SetCursorPos(position)
+            flags = win32con.MOUSEEVENTF_LEFTDOWN | win32con.MOUSEEVENTF_ABSOLUTE
+            win32api.mouse_event(flags, 0, 0)
+            flags = win32con.MOUSEEVENTF_LEFTUP | win32con.MOUSEEVENTF_ABSOLUTE
+            win32api.mouse_event(flags, 0, 0)
+        finally:
+            if ctrl:
+                send_ctrl_key_up()
+
+
+def send_ctrl_key_down():
+    win32api.keybd_event(win32con.VK_CONTROL, 0, 0, 0)
+
+
+def send_ctrl_key_up():
+    win32api.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0)
+
+
 def send_text_to_text_control(hwnd, text):
     if isWindows():
         win32gui.SetWindowText(hwnd, text)
@@ -84,4 +98,3 @@ def send_click_message_to_button(hwnd):
 def send_select_combobox_item(hwnd, text):
     if isWindows():
         return win32gui.SendMessage(hwnd, win32con.CB_SELECTSTRING, -1, text)
-                                
