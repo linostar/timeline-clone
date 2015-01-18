@@ -21,22 +21,22 @@ import wx
 import autopilotlib.manuscript.scanner as scanner
 from autopilotlib.app.exceptions import NotFoundException
 
- 
+
 class Instruction():
     """
     The base class for all types of instructions.
-    
+
     An instruction always belongs to a Manuscript.
-    
+
     Textual syntax:  <instruction-name> <instruction-target>  <optional-arglist>
 
     """
-    
+
     def __init__(self, tokens):
         self.tokens = tokens
         self.include = False
         self.comment = False
-        
+
     def __str__(self):
         text = []
         for token in self.tokens:
@@ -47,7 +47,7 @@ class Instruction():
 
     def execute(self, manuscript, win):
         manuscript.execute_next_instruction()
-    
+
     def arg(self, n):
         """
         Return the n:th argument, where n = 1,2,....
@@ -58,7 +58,7 @@ class Instruction():
             return self._symbol(inx)
         except:
             return None
-    
+
     def _find_index_to_first_token_after_parenthesis(self):
         inx = 0
         for token in self.tokens:
@@ -66,7 +66,7 @@ class Instruction():
             if token.id == scanner.LP:
                 break
         return inx
-    
+
     def _symbol(self, index):
         try:
             token = self.tokens[index]
@@ -76,7 +76,7 @@ class Instruction():
                 return token.lexeme
         except:
             return None
-  
+
     def get_all_args(self):
         args = []
         for token in self.tokens:
@@ -85,21 +85,21 @@ class Instruction():
             elif token.id == scanner.STRING:
                 args.append(token.lexeme[1:-1])
         return args
-            
+
     def find_win(self, win, classname, label=None):
-        if label == None:
+        if label is None:
             name = win.GetLabel()
-            win  = self._find_win_from_input(win, classname)
+            win = self._find_win_from_input(win, classname)
         else:
             name = label
             win = self._find_win_by_name(name, classname)
         return win, name
-    
+
     def _find_win_from_input(self, win, classname):
         if win.ClassName == classname:
             return win
         raise NotFoundException()
-        
+
     def _find_win_by_name(self, name, classname):
         wins = wx.GetTopLevelWindows()
         names = name.split("|")

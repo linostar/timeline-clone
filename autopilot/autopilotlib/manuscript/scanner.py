@@ -180,33 +180,30 @@ SUBID_NAMES = {
     ID_COMBOBOX       : "COMBOBOX",
 }
 
-#-----------------------------------------------------------------------
-#
-# Global variables
-#
-#-----------------------------------------------------------------------
-ID_SPECIAL_CHARS = ('_', '-', '.','å','ä','ö','Å','Ä','Ö', '&', '|')
+
+ID_SPECIAL_CHARS = ('_', '-', '.', 'å', 'ä', 'ö', 'Å', 'Ä', 'Ö', '&', '|')
 _line = 1
-_col  = 0
+_col = 0
 _tab_count = 0
 
 _print_unknown_only = True
 _include_whitespace_tokens = False
 _include_comment_tokens = False
 
+
 class Token(object):
     """An object of this class represents an instruction lexical token"""
 
     def __init__(self, token_id, lexeme, subid=None, col=0):
-        self.id     = token_id
+        self.id = token_id
         self.lexeme = lexeme
-        self.subid  = subid
-        self.col    = col
+        self.subid = subid
+        self.col = col
 
     def tostr(self, exclude_filename=False):
         """Return a string representation of a Token object"""
 
-        if self.subid == None:
+        if self.subid is None:
             subid = NA
         else:
             subid = self.subid
@@ -245,7 +242,7 @@ def scan_instruction(text):
             token = Token(KEYWORD, text, ID_COMMENT, col=0)
             tokens.append(token)
             return tokens
-        
+
         # Space
         elif text[i] == ' ':
             lexeme = " "
@@ -309,7 +306,7 @@ def scan_instruction(text):
         i += 1
         _col += 1
 
-        #Print result
+        # Print result
         if _print_unknown_only:
             if (token == UNKNOWN):
                 msg = "%d %d %s %s" % (i, token, typename, lexeme)
@@ -326,11 +323,7 @@ def scan_instruction(text):
 
     return tokens
 
-#-----------------------------------------------------------------------
-#
-# _parse_identifier
-#
-#-----------------------------------------------------------------------
+
 def _parse_identifier(text, i):
 
     # Collection of all characters that belongs to the identifier
@@ -346,9 +339,9 @@ def _parse_identifier(text, i):
 
     # Reserved word ?
     if identifier.lower() in INSTRUCTION_ALIASES.keys():
-        identifier = INSTRUCTION_ALIASES[identifier.lower()] 
+        identifier = INSTRUCTION_ALIASES[identifier.lower()]
     if identifier.lower() in INSTRUCTION_KEYWORDS:
-        identifier = identifier.lower() 
+        identifier = identifier.lower()
         token = KEYWORD
         subid = ID_INCLUDE + INSTRUCTION_KEYWORDS.index(identifier)
     else:
@@ -361,19 +354,21 @@ def _parse_identifier(text, i):
     # Return string and index of last character in identifier
     return identifier, token, subid, i - 1
 
+
 def is_number(s):
     try:
         int(s)
         return True
     except ValueError:
         return False
-    
+
+
 def _parse_string(text, i):
     inx = text.find('"', i + 1)
     if inx < 0:
         return text, STRING, None, len(text) - 1
-    else:    
-        return text[i:inx+1], STRING, None, inx
+    else:
+        return text[i:inx + 1], STRING, None, inx
 
 
 def print_tokens(tokens):
