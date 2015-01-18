@@ -17,7 +17,7 @@ Click Button(Cancel)
 Select Menu(Arkiv|File, "Spara som|Save As") 
 Click Button(Cancel)
 
-Select Menu(Arkiv|File, "Importera Timeline...|Import timeline...") 
+Select Menu(Arkiv|File, "Importera Timeline...|Import events...") 
 Click Button(Cancel)
 
 Select Menu(Arkiv|File, "Exportera vyn till en Bild...|Export Current view to Image...") 
