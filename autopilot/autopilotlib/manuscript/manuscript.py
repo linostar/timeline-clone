@@ -38,20 +38,20 @@ class NoMoreInstructionsException(Exception):
 
 class Manuscript():
     """
-    This class holds all instructions for running a GUI application. The 
+    This class holds all instructions for running a GUI application. The
     manuscript can be merged from several manuscript instruction files.
     All files given on the command line to Autopilot are concatenated into
     one Manuscript. A Manuscript can also have Include instructions that
     include other manuscript instruction files.
-    
+
     The instructions in the files are converted into Instruction objects.
-    
+
     So a Manuscript has a list of Instruction objects.
-    
+
     When the Manuscript is executed the Instructions are applied on the
-    GUI application under test. 
+    GUI application under test.
     """
-    
+
     def __init__(self, args):
         self.args = args
         self.instructions = []
@@ -63,7 +63,7 @@ class Manuscript():
         self.current_dialog = None
         self.popup = None
         self._load_manuscript([args.manuscript()])
-            
+
     def execute_next_instruction(self):
         try:
             instruction = self._next_instruction()
@@ -73,16 +73,16 @@ class Manuscript():
             else:
                 # TODO: We have some timing problem so we can't set
                 #       waiting time to 0. 40 seems to be ok,
-                delay = max(40, self.args.timedelay() * 1000) 
+                delay = max(40, self.args.timedelay() * 1000)
             wx.CallLater(delay, self._execute_instruction, instruction)
         except NoMoreInstructionsException:
             Logger.add("INSTRUCTION: None")
-                
+
     def _display_instruction_in_popup_window(self, instruction):
-        if self.popup == None:
+        if self.popup is None:
             self.popup = InstructionPopup(self.windows[0])
         self.popup.SetText("%s" % instruction)
-        
+
     def _next_instruction(self):
         try:
             instruction = self.instructions[0]
@@ -113,16 +113,16 @@ class Manuscript():
             for line in self.missing_scripts:
                 collector.append(line)
         return "\n".join(collector)
-    
+
     def _load_manuscript(self, filenames):
         self._load_manuscript_from_command_line_files(filenames)
         self._load_manuscript_from_include_statements()
-    
-    def _load_manuscript_from_command_line_files(self, filenames): 
+
+    def _load_manuscript_from_command_line_files(self, filenames):
         for filename in filenames:
             instructions = self._read_manuscript(filename)
             self.instructions.extend(instructions)
-        
+
     def _load_manuscript_from_include_statements(self):
         pos = 0
         for instruction in self.instructions:
@@ -132,17 +132,17 @@ class Manuscript():
                 self._load_manuscript_from_include_statements()
                 return
             pos += 1
-    
+
     def _load_included_manuscript(self, include_instruction, pos):
         filename = include_instruction.filename()
         instructions = self._read_manuscript(filename)
         instructions.insert(0, create_instruction("#---- Included from %s ----" % filename))
         instructions.append(create_instruction("#---- End Included from %s ----" % filename))
-        self.instructions[pos:pos+1] = instructions
-        
+        self.instructions[pos:pos + 1] = instructions
+
     def _get_filename_from_include_instruction(self, instruction):
         return self._is_include(instruction)
-    
+
     def _read_manuscript(self, manuscript):
         path = Path(self.args.paths())
         try:
@@ -163,10 +163,10 @@ class Manuscript():
         except PathNotFoundException:
             self.missing_scripts.append(manuscript)
             return []
-        
+
     def get_application_frame(self):
         return self.windows[0]
-    
+
     def _get_current_window(self):
         self._validate_windows()
         try:
@@ -180,7 +180,7 @@ class Manuscript():
         if current_window.messagebox:
             del(self.windows[-1])
         return current_window
-            
+
     def _validate_windows(self):
         """Make sure the topmost window in the list self.windows is still
         valid. If not, remove it from the list and continue checking the
@@ -201,11 +201,11 @@ class Manuscript():
             except:
                 self.windows = self.windows[1:]
         self.windows.reverse()
-                
+
     def validate_dialog(self, hwnd, top_level_windows):
         top_level_windows.append(hwnd)
         return True
-        
+
     def register_dialog(self, win=None):
         if win is None:
             return
@@ -213,5 +213,5 @@ class Manuscript():
         if not self.execution_started:
             Logger.add_instruction("Execution of instructions start")
             self.execution_started = True
-            wx.CallLater(TIME_TO_WAIT_BEFORE_CONTINUING_IN_MILLISECONDS, 
+            wx.CallLater(TIME_TO_WAIT_BEFORE_CONTINUING_IN_MILLISECONDS,
                          self.execute_next_instruction)
