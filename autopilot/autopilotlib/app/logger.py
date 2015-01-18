@@ -17,6 +17,7 @@
 
 
 import codecs
+import sys
 from __builtin__ import Exception
 
 
@@ -104,6 +105,8 @@ class Logger():
     @classmethod
     def add_error(self, result):
         self._add_log(ERROR, result)
+        print "%s %s" % (LABELS[ERROR], result)
+        sys.exit()
 
     @classmethod
     def _add_log(self, logtype, result):
