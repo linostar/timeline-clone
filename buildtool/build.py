@@ -135,9 +135,9 @@ win32py25_actions = (  # Modify some python files
 
 
 source_actions = (  # Change working dir to TIMELINE_DIR
-                    (PUSHD, os.path.join(TIMELINE_DIR, "release"), None),
+                    (PUSHD, TIMELINE_DIR, None),
                     # Create source release artifact
-                    (RUNPYSCRIPT, "make-source-release.py", ""),
+                    (RUNPYTEST, "release\make-source-release.py", ""),
                     # Restore working dir
                     (POPD, None, None),
 )
