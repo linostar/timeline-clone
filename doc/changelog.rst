@@ -1,10 +1,19 @@
 Changelog
 =========
 
+Version 1.6.0
+-------------
+
+**Planned release on 30 April 2015.**
+
+New features, enhancements:
+
+Bug fixes:
+
 Version 1.5.0
 -------------
 
-**Planned release on 31 January 2015.**
+**Released on 31 January 2015.**
 
 New features, enhancements:
 

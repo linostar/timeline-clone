@@ -42,7 +42,7 @@ Checklist for making a timeline release
     3. Commit "0.xx.0 Changed version for release"
 
   5. Check that information is correct in changelog.rst
-    1. Check
+    1. Change Planned -> Released
     2. Commit "Updated changes"
     3. Pull these changes into main.
 
