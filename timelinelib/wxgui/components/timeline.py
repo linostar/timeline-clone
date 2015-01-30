@@ -90,8 +90,13 @@ class TimelinePanel(wx.Panel):
         self.message_bar = MessageBar(self)
 
     def _create_divider_line_slider(self):
-        self.divider_line_slider = wx.Slider(
-            self, value=50, size=(20, -1), style=wx.SL_LEFT | wx.SL_VERTICAL)
+        style = wx.SL_LEFT | wx.SL_VERTICAL
+        slider_pos = self.config.divider_line_slider_pos
+        self.divider_line_slider = wx.Slider(self, value=slider_pos, size=(20, -1), style=style)
+        self.Bind(wx.EVT_SCROLL, self._on_slider, self.divider_line_slider)
+
+    def _on_slider(self, evt):
+        self.config.divider_line_slider_pos = evt.GetPosition()
 
     def _create_splitter(self):
         self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)

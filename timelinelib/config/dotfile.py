@@ -46,6 +46,7 @@ BALLOON_ON_HOVER = "balloon_on_hover"
 WEEK_START = "week_start"
 USE_INERTIAL_SCROLLING = "use_inertial_scrolling"
 EXPERIMENTAL_FEATURES = "experimental_features"
+DIVIDER_LINE_SLIDER_POS = "divider_line_slider_pos"
 DEFAULTS = {
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
@@ -59,8 +60,9 @@ DEFAULTS = {
     RECENT_FILES: "",
     BALLOON_ON_HOVER: "True",
     WEEK_START: "monday",
-    USE_INERTIAL_SCROLLING : "False",
-    EXPERIMENTAL_FEATURES : "",
+    USE_INERTIAL_SCROLLING: "False",
+    EXPERIMENTAL_FEATURES: "",
+    DIVIDER_LINE_SLIDER_POS: "50",
 }
 # Some settings
 MAX_NBR_OF_RECENT_FILES_SAVED = 5
@@ -149,6 +151,12 @@ class Config(object):
     def set_sidebar_width(self, width):
         self.config_parser.set(DEFAULTSECT, SIDEBAR_WIDTH, str(width))
     sidebar_width = property(get_sidebar_width, set_sidebar_width)
+
+    def get_divider_line_slider_pos(self):
+        return self.config_parser.getint(DEFAULTSECT, DIVIDER_LINE_SLIDER_POS)
+    def set_divider_line_slider_pos(self, pos):
+        self.config_parser.set(DEFAULTSECT, DIVIDER_LINE_SLIDER_POS, str(pos))
+    divider_line_slider_pos = property(get_divider_line_slider_pos, set_divider_line_slider_pos)
 
     def get_recently_opened(self):
         ro = self.config_parser.get(DEFAULTSECT, RECENT_FILES).decode(ENCODING).split(",")

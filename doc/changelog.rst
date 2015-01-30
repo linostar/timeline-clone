@@ -8,6 +8,8 @@ Version 1.6.0
 
 New features, enhancements:
 
+ * Dividerline slider pos preserved between sessions
+
 Bug fixes:
 
 Version 1.5.0
