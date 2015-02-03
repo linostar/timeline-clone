@@ -44,7 +44,7 @@ class TimelineApplication(object):
             self.open_timeline_if_exists(self.config.get_latest_recently_opened_file())
 
     def open_or_create_timeline(self, path):
-        self.main_frame.open_timeline(path)
+        self.open_timeline(path)
 
     def open_timeline_if_exists(self, path):
         if os.path.exists(path):

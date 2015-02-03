@@ -641,9 +641,6 @@ class GuiCreator(object):
 
 class MainFrameApiUsedByController(object):
 
-    def open_timeline(self, input_file):
-        self.controller.open_timeline(input_file)
-
     def set_timeline_readonly(self):
         self._set_readonly_text_in_status_bar()
         self.enable_disable_menus()
