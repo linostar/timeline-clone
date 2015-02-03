@@ -53,13 +53,13 @@ class PreferencesDialog(wx.Dialog):
         notebook = self._create_nootebook_control()
         button_box = self._create_button_box()
         main_box = wx.BoxSizer(wx.VERTICAL)
-        flag = wx.ALL|wx.EXPAND
+        flag = wx.ALL | wx.EXPAND
         main_box.Add(notebook, flag=flag, border=BORDER, proportion=1)
         main_box.Add(button_box, flag=flag, border=BORDER)
         return main_box
 
     def _create_nootebook_control(self):
-        notebook = wx.Notebook(self, style=wx.BK_DEFAULT, size=(250,-1))
+        notebook = wx.Notebook(self, style=wx.BK_DEFAULT, size=(250, -1))
         self._create_general_tab(notebook)
         self._create_date_time_tab(notebook)
         if len(ExperimentalFeatures().get_all_features()) > 0:
@@ -93,18 +93,19 @@ class PreferencesDialog(wx.Dialog):
         grid = wx.FlexGridSizer(1, 2, BORDER, BORDER)
         grid.Add(wx.StaticText(panel, label=_("Week start on:")),
                  flag=wx.ALIGN_CENTER_VERTICAL)
-        grid.Add(self.choice_week, flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        grid.Add(self.choice_week, flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         return (grid,)
-    
-    def _create_experimental_fetaures_tab(self,notebook):
+
+    def _create_experimental_fetaures_tab(self, notebook):
         panel = self._create_tab_panel(notebook, _("Experimental Features"))
         controls = self._create_experimental_features_controls(panel)
         self._size_tab_panel(panel, controls)
 
     def _create_experimental_features_controls(self, panel):
-        grid = wx.FlexGridSizer(1, 1, BORDER, BORDER)
+        features = ExperimentalFeatures().get_all_features()
+        grid = wx.FlexGridSizer(len(features), 1, BORDER, BORDER)
         feture_index = 0
-        for feature in ExperimentalFeatures().get_all_features():
+        for feature in features:
             name = feature.get_display_name()
             cb = wx.CheckBox(panel, feture_index, label=name, name=name)
             cb.SetValue(feature.enabled())
@@ -112,7 +113,7 @@ class PreferencesDialog(wx.Dialog):
             self.Bind(wx.EVT_CHECKBOX, self._experimental_feature, cb)
             feture_index += 1
         return (grid,)
-    
+
     def _create_tab_panel(self, notebook, label):
         panel = wx.Panel(notebook)
         notebook.AddPage(panel, label)
@@ -121,7 +122,7 @@ class PreferencesDialog(wx.Dialog):
     def _size_tab_panel(self, panel, controls):
         sizer = wx.BoxSizer(wx.VERTICAL)
         for control in controls:
-            sizer.Add(control, flag=wx.ALL|wx.EXPAND, border=BORDER)
+            sizer.Add(control, flag=wx.ALL | wx.EXPAND, border=BORDER)
         panel.SetSizer(sizer)
 
     def _create_chb_open_recent(self, panel):
@@ -165,6 +166,6 @@ class PreferencesDialog(wx.Dialog):
 
     def _experimental_feature(self, evt):
         self._controller.on_experimental_features_changed(evt.Id, evt.Selection == 1)
-    
+
     def _btn_close_on_click(self, e):
         self.EndModal(wx.ID_OK)
