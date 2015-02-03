@@ -38,14 +38,10 @@ class TimelineApplication(object):
         self.timeline = None
 
     def on_started(self, application_arguments):
-        input_files = application_arguments.get_files()
-        if len(input_files) == 0:
-            ro = self.config.get_recently_opened()
-            if self.config.get_open_recent_at_startup() and len(ro) > 0:
-                self.open_timeline_if_exists(ro[0])
-        else:
-            for input_file in input_files:
-                self.main_frame.open_timeline(input_file)
+        if application_arguments.has_files():
+            self.main_frame.open_timeline(application_arguments.get_first_file())
+        elif self.config.has_recently_opened_files():
+            self.open_timeline_if_exists(self.config.get_latest_recently_opened_file())
 
     def open_timeline_if_exists(self, path):
         if os.path.exists(path):

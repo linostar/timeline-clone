@@ -166,6 +166,15 @@ class Config(object):
         return ro_filtered
     recently_opened = property(get_recently_opened)
 
+    def has_recently_opened_files(self):
+        if not self.get_open_recent_at_startup():
+            return False
+        else:
+            return len(self.recently_opened) > 0
+
+    def get_latest_recently_opened_file(self):
+        return self.recently_opened[0]
+
     def append_recently_opened(self, path):
         if path in [":tutorial:"]:
             # Special timelines should not be saved

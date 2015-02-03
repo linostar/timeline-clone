@@ -41,6 +41,12 @@ class ApplicationArguments(object):
     def get_files(self):
         return self.arguments
 
+    def get_first_file(self):
+        return self.arguments[0]
+
+    def has_files(self):
+        return len(self.arguments) > 0
+
     def get_config_file_path(self):
         if self.options.config_file_path:
             return self.options.config_file_path
