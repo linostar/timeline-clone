@@ -12,6 +12,9 @@ New features, enhancements:
 
 Bug fixes:
 
+ * Fixed crash when opening preferences dialog (wxPython 3.0.2.0)
+
+
 Version 1.5.0
 -------------
 
