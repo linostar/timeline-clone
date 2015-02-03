@@ -39,9 +39,12 @@ class TimelineApplication(object):
 
     def on_started(self, application_arguments):
         if application_arguments.has_files():
-            self.main_frame.open_timeline(application_arguments.get_first_file())
+            self.open_or_create_timeline(application_arguments.get_first_file())
         elif self.config.has_recently_opened_files():
             self.open_timeline_if_exists(self.config.get_latest_recently_opened_file())
+
+    def open_or_create_timeline(self, path):
+        self.main_frame.open_timeline(path)
 
     def open_timeline_if_exists(self, path):
         if os.path.exists(path):
