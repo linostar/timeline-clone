@@ -41,7 +41,6 @@ About timeline
     :maxdepth: 2
 
     screenshots
-    mission-statement
     status
 
 Getting started
