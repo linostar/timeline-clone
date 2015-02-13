@@ -91,4 +91,5 @@ Project history
 .. toctree::
     :maxdepth: 2
 
+    history
     changelog
