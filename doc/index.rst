@@ -61,6 +61,14 @@ Issues
 
     issues
 
+Development process
+-------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    process
+
 Developing timeline
 -------------------
 
