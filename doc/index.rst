@@ -67,6 +67,7 @@ Development process
     :maxdepth: 2
 
     process
+    guidelines
 
 Developing timeline
 -------------------
