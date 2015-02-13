@@ -19,3 +19,31 @@ archive to see if you can find your answer.
 
 If you can't find your answer, send an email to
 thetimelineproj-user@lists.sourceforge.net.
+
+Standard email responses
+------------------------
+
+Crash report that has not been fixed::
+
+    Thanks for taking the time to report this error.
+
+    We have added the problem to our backlog.
+
+    /The Timeline Team
+
+Crash report that has been fixed in the upcoming release::
+
+    Thanks for taking the time to report this error.
+
+    The problem has been fixed and and will be available in the next release.
+
+    /The Timeline Team
+
+Crash report that has been fixed in released version::
+
+    Thanks for taking the time to report this error.
+
+    The problem has been fixed in the current version. It can be downloaded
+    here: https://sourceforge.net/projects/thetimelineproj
+
+    /The Timeline Team
