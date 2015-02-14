@@ -19,7 +19,7 @@
 import os.path
 
 
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 ICONS_DIR = os.path.join(_ROOT, "icons")
 LOCALE_DIR = os.path.join(_ROOT, "po")
 HELP_RESOURCES_DIR = os.path.join(_ROOT, "help_resources")

@@ -50,7 +50,7 @@ def setup_displayhook():
 
 
 def setup_paths():
-    sys.path.insert(0, os.path.join(ROOT_DIR))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "source"))
     sys.path.insert(0, os.path.join(ROOT_DIR, "test"))
     sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dev", "mock-0.7.2"))
     sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "icalendar-3.2"))
@@ -132,7 +132,7 @@ def find_specs():
 
 def find_doctests():
     doctests = []
-    timelinelib_dir = os.path.join(ROOT_DIR, "timelinelib")
+    timelinelib_dir = os.path.join(ROOT_DIR, "source", "timelinelib")
     for module in find_python_modules(timelinelib_dir):
         doctests.append(("doctest", module))
     return doctests
