@@ -27,7 +27,8 @@ Crash report that has not been fixed::
 
     Thanks for taking the time to report this error.
 
-    We have added the problem to our backlog.
+    We have added the problem to our backlog:
+    https://sourceforge.net/p/thetimelineproj/backlog/
 
     /The Timeline Team
 
