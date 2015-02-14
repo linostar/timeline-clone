@@ -30,13 +30,13 @@ if platform.system() != "Windows":
 # Make sure that we can import timelinelib
 sys.path.insert(0, os.path.dirname(__file__))
 # Make sure that we can import pysvg
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "pysvg-0.2.1"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "dependencies", "timelinelib", "pysvg-0.2.1"))
 # Make sure that we can import pytz which icalendar is dependant on
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "pytz-2012j"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "dependencies", "timelinelib", "pytz-2012j"))
 # Make sure that we can import icalendar
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "icalendar-3.2"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "dependencies", "timelinelib", "icalendar-3.2"))
 # Make sure that we can import markdown
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "libs", "dependencies", "markdown-2.0.3"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "dependencies", "timelinelib", "markdown-2.0.3"))
 
 from timelinelib.config.paths import LOCALE_DIR
 from timelinelib.meta.about import APPLICATION_NAME
