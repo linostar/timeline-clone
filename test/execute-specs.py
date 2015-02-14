@@ -52,11 +52,11 @@ def setup_displayhook():
 def setup_paths():
     sys.path.insert(0, os.path.join(ROOT_DIR, "source"))
     sys.path.insert(0, os.path.join(ROOT_DIR, "test"))
-    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dev", "mock-0.7.2"))
-    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "icalendar-3.2"))
-    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "markdown-2.0.3"))
-    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "pysvg-0.2.1"))
-    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "pytz-2012j"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "dependencies", "dev", "mock-0.7.2"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "dependencies", "timelinelib", "icalendar-3.2"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "dependencies", "timelinelib", "markdown-2.0.3"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "dependencies", "timelinelib", "pysvg-0.2.1"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "dependencies", "timelinelib", "pytz-2012j"))
 
 
 def install_gettext_in_builtin_namespace():
