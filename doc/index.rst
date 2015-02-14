@@ -52,47 +52,6 @@ Getting started
     installing
     support
 
-Issues
-------
-
-.. toctree::
-    :maxdepth: 2
-
-    issues
-
-Development process
--------------------
-
-.. toctree::
-    :maxdepth: 2
-
-    process
-    guidelines
-
-Howtos
-------
-
-.. toctree::
-    :maxdepth: 1
-
-    howto-setup
-    howto-export
-
-Developing timeline
--------------------
-
-.. toctree::
-    :maxdepth: 2
-
-    dev/project-infrastructure
-
-    dev/testing
-    dev/translating
-
-    dev/class-descriptions
-
-    dev/release-instructions
-
 Project history
 ---------------
 
@@ -101,3 +60,22 @@ Project history
 
     history
     changelog
+
+Developing timeline
+-------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    process
+    guidelines
+
+    howtos
+
+    dev/project-infrastructure
+
+    dev/class-descriptions
+
+    dev/release-instructions
+
+    issues

@@ -1,5 +1,5 @@
-Translating
-===========
+Translate Timeline into another language
+========================================
 
 Timeline is translated on **Launchpad**:
 http://translations.launchpad.net/thetimelineproj.
