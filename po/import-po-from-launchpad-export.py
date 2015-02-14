@@ -47,7 +47,7 @@ Popen(["tar", "xvvz", "-C", tmp_dir, "--file", archive_path]).wait()
 # copy po-files
 for pofile in glob.glob(os.path.join(tmp_dir, "timeline", "*.po")):
     dest_name = re.search(r".*-(.*.po)", pofile).group(1)
-    dest = os.path.join("po", dest_name)
+    dest = os.path.join(os.path.join(os.path.dirname(__file__), dest_name))
     shutil.copy(pofile, dest)
     print dest
 
