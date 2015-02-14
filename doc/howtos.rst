@@ -9,3 +9,4 @@ Howtos
     dev/translating
     howto-run-tests
     howto-test-translations
+    howto-timeline-component
