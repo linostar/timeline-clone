@@ -69,6 +69,15 @@ Development process
     process
     guidelines
 
+Howtos
+------
+
+.. toctree::
+    :maxdepth: 1
+
+    howto-setup
+    howto-export
+
 Developing timeline
 -------------------
 
@@ -77,7 +86,6 @@ Developing timeline
 
     dev/project-infrastructure
 
-    howtos
     dev/testing
     dev/translating
 
