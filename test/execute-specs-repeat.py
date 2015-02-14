@@ -18,6 +18,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os.path
 import subprocess
 import sys
 
@@ -26,7 +27,8 @@ TIMES_TO_REPEAT = 100
 
 
 if __name__ == "__main__":
-    cmd = [sys.executable, "execute-specs.py"] + sys.argv[1:]
+    path = os.path.join(os.path.dirname(__file__), "execute-specs.py")
+    cmd = [sys.executable, path] + sys.argv[1:]
     print("Running %s x %d" % (cmd, TIMES_TO_REPEAT))
     sys.stdout.flush()
     for i in range(TIMES_TO_REPEAT):

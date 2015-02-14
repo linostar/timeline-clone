@@ -45,7 +45,7 @@ class SourceCodeDistributionSpec(unittest.TestCase):
             self.assertTrue(author in authors_content)
 
     def setUp(self):
-        self.ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
+        self.ROOT_DIR = os.path.join(os.path.dirname(__file__), "..", "..")
         self.README = os.path.join(self.ROOT_DIR, "README")
         self.changelog = os.path.join(self.ROOT_DIR, "doc", "changelog.rst")
         self.AUTHORS = os.path.join(self.ROOT_DIR, "AUTHORS")

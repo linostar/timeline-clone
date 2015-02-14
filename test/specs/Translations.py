@@ -21,6 +21,9 @@ import os
 import sys
 
 
+PO_DIR_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "po")
+
+
 def get_po_files(path):
     return [f for f in os.listdir(path) 
             if f[-3:] == ".po" ]
@@ -112,11 +115,11 @@ def report(errors):
 class TranslationsSpec(unittest.TestCase):
 
     def test_string_replacemnts_are_conserved(self):
-        self.assertEqual(0, len(get_invalid_translations("po")))
+        self.assertEqual(0, len(get_invalid_translations(PO_DIR_PATH)))
 
 
 if __name__ == '__main__':
-    invalid_translations = get_invalid_translations("..\\po")
+    invalid_translations = get_invalid_translations(PO_DIR_PATH)
     report(invalid_translations)
     print "Press any key to continue:",
     raw_input()

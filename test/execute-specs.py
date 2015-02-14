@@ -26,6 +26,7 @@ import unittest
 
 
 ONLY_FLAG = "--only"
+ROOT_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..")
 
 
 def execute_specs(args):
@@ -49,12 +50,13 @@ def setup_displayhook():
 
 
 def setup_paths():
-    root_dir = os.path.abspath(os.path.dirname(__file__))
-    sys.path.insert(0, os.path.join(root_dir, "libs", "dev", "mock-0.7.2"))
-    sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "icalendar-3.2"))
-    sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "markdown-2.0.3"))
-    sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "pysvg-0.2.1"))
-    sys.path.insert(0, os.path.join(root_dir, "libs", "dependencies", "pytz-2012j"))
+    sys.path.insert(0, os.path.join(ROOT_DIR))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "test"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dev", "mock-0.7.2"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "icalendar-3.2"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "markdown-2.0.3"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "pysvg-0.2.1"))
+    sys.path.insert(0, os.path.join(ROOT_DIR, "libs", "dependencies", "pytz-2012j"))
 
 
 def install_gettext_in_builtin_namespace():
@@ -130,8 +132,7 @@ def find_specs():
 
 def find_doctests():
     doctests = []
-    root_dir = os.path.abspath(os.path.dirname(__file__))
-    timelinelib_dir = os.path.join(root_dir, "timelinelib")
+    timelinelib_dir = os.path.join(ROOT_DIR, "timelinelib")
     for module in find_python_modules(timelinelib_dir):
         doctests.append(("doctest", module))
     return doctests
