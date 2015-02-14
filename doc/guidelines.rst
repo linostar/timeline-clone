@@ -15,3 +15,13 @@ How to write a problem description
   syntax::
 
     **Suggested solution**: ...
+
+Code style
+----------
+
+We try to follow PEP 8 with some exceptions: https://www.python.org/dev/peps/pep-0008/
+
+Exceptions:
+
+* We allow longer lines than 79 characters. But preferably not longer than 120
+* We prefer to have double quoted strings
