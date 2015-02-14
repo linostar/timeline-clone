@@ -77,7 +77,7 @@ Developing timeline
 
     dev/project-infrastructure
 
-    dev/setup
+    howtos
     dev/testing
     dev/translating
 

@@ -1,5 +1,8 @@
+Howtos
+======
+
 Setting up a development environment
-====================================
+------------------------------------
 
 The first step in setting up a development environment is to install timeline
 from source. Follow the instructions in :ref:`label-installing-from-source`,
