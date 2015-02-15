@@ -81,3 +81,11 @@ def darken_color(color, factor=0.7):
     new_g = int(g * factor)
     new_b = int(b * factor)
     return (new_r, new_g, new_b)
+
+
+def lighten_color(color, factor=1.5):
+    r, g, b = color
+    new_r = min(int(r * factor), 255)
+    new_g = min(int(g * factor), 255)
+    new_b = min(int(b * factor), 255)
+    return (new_r, new_g, new_b)

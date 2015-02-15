@@ -20,6 +20,8 @@ import wx
 
 from timelinelib.plugin.pluginbase import PluginBase
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
+from timelinelib.drawing.utils import darken_color
+from timelinelib.drawing.utils import lighten_color
 
 
 class GradientEventBoxDrawer(PluginBase):
@@ -32,5 +34,32 @@ class GradientEventBoxDrawer(PluginBase):
 
     def run(self, dc, rect, event):
         dc.SetBrush(wx.GREEN_BRUSH)
-        dc.SetPen(wx.RED_PEN)
+        dc.SetPen(wx.Pen(self._get_border_color(event), 1, wx.SOLID))
         dc.DrawRectangleRect(rect)
+        dc.GradientFillLinear((rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2), self._get_light_color(event), self._get_dark_color(event), wx.SOUTH)
+
+    def _get_light_color(self, event):
+        if event.get_category():
+            base_color = event.get_category().color
+        else:
+            base_color = (200, 200, 200)
+        return lighten_color(base_color)
+
+    def _get_dark_color(self, event):
+        if event.get_category():
+            base_color = event.get_category().color
+        else:
+            base_color = (200, 200, 200)
+        return darken_color(base_color, factor=0.8)
+
+    def _get_base_color(self, event):
+        if event.get_category():
+            base_color = event.get_category().color
+        else:
+            base_color = (200, 200, 200)
+        return base_color
+
+    def _get_border_color(self, event):
+        base_color = self._get_base_color(event)
+        border_color = darken_color(base_color)
+        return border_color
