@@ -77,5 +77,3 @@ Developing timeline
     dev/class-descriptions
 
     dev/release-instructions
-
-    issues
