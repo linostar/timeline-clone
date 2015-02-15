@@ -71,6 +71,7 @@ Developing timeline
     guidelines
 
     howtos
+    standard-email-responses
 
     dev/project-infrastructure
 
