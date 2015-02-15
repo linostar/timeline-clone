@@ -41,7 +41,6 @@ from timelinelib.view.zoom import ZoomByDragInputHandler
 from timelinelib.drawing import get_drawer
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
 from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
-from wx.tools.Editra.src.plugin import Plugin
 
 
 # The width in pixels of the vertical scroll zones.
