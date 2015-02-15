@@ -10,7 +10,7 @@ but instead of downloading the zip file, get the source code from our
 
 Then make sure you can run all tests::
 
-    ./execute-specs.py
+    ./test/execute-specs.py
 
 If that works, you have the basic environment set up.
 

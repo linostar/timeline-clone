@@ -62,6 +62,6 @@ On Linux systems, you can often install these via the package manager.
 Once you have extracted the timeline zip and installed the required
 dependencies, you should be able to run the application with this command::
 
-    python <path-to-timeline-directory>/timeline.py
+    python <path-to-timeline-directory>/source/timeline.py
 
 Preferable you create a shortcut on your platform that issues this command.

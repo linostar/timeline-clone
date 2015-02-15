@@ -18,7 +18,7 @@ Features for the next version (x.y+1) can continue to be developed in main.
 2. Change versions numbers in main to denote the next version (x.y+1.0)
     1. timelinelib/meta/version.py
     2. doc/changelog.rst
-    3. Run ``python execute-specs.py`` to find where else you need to modify
+    3. Run ``python test/execute-specs.py`` to find where else you need to modify
 3. Commit and push
 
 Work on stable
@@ -28,12 +28,12 @@ Work on stable
 2. Import translations from Launchpad
     1. Request download from here (login required)
        http://translations.launchpad.net/thetimelineproj/trunk/+translations
-    2. Run ``python import-po-from-launchpad-export.py /path/to/launchpad-export.tar.gz``
+    2. Run ``python po/import-po-from-launchpad-export.py /path/to/launchpad-export.tar.gz``
     3. Upload new pot-file (Create new po-file with the command ``scons pot``)
 3. Check that information and version numbers are correct in
     1. timelinelib/meta/version.py
     2. doc/changelog.rst
-4. Run ``python execute-specs.py`` to find possible errors
+4. Run ``python test/execute-specs.py`` to find possible errors
 
 Last changes on stable
 ----------------------
