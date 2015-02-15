@@ -71,11 +71,10 @@ Developing timeline
     guidelines
 
     howtos
+    standard-email-responses
 
     dev/project-infrastructure
 
     dev/class-descriptions
 
     dev/release-instructions
-
-    issues
