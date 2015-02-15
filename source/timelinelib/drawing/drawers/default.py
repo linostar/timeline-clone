@@ -50,6 +50,9 @@ class DefaultDrawingAlgorithm(Drawer):
         self._create_brushes()
         self.fast_draw = False
 
+    def set_event_box_drawer(self, event_box_drawer):
+        self.event_box_drawer = event_box_drawer
+
     def increment_font_size(self, step=2):
         self.font_size += step
         self.small_text_font = get_default_font(self.font_size)
@@ -472,9 +475,7 @@ class DefaultDrawingAlgorithm(Drawer):
 
     def _draw_box(self, rect, event):
         self.dc.SetClippingRect(rect)
-        self.dc.SetBrush(self._get_box_brush(event))
-        self.dc.SetPen(self._get_box_pen(event))
-        self.dc.DrawRectangleRect(rect)
+        self.event_box_drawer.run(self.dc, rect, event)
         if event.get_fuzzy():
             self._draw_fuzzy_edges(rect, event)
         if event.get_locked():

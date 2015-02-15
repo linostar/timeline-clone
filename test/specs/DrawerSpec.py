@@ -75,6 +75,7 @@ class DrawerSpec(unittest.TestCase):
     def setUp(self):
         self.app = wx.App() # a stored app is needed to create fonts
         self.drawer = DefaultDrawingAlgorithm()
+        self.drawer.set_event_box_drawer(Mock())
         self.dc = Mock(wx.DC)
         self.dc.GetSizeTuple.return_value = IMAGE_SIZE
         self.dc.GetTextExtent.return_value = TEXT_SIZE

@@ -59,7 +59,8 @@ from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
 from timelinelib.features.experimental.experimentalfeatures import ExperimentalFeatures
 import timelinelib.wxgui.utils as gui_utils
-
+from timelinelib.plugin import factory
+from timelinelib.plugin.factory import EVENTBOX_DRAWER
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -312,8 +313,14 @@ class GuiCreator(object):
 
         def vert_zoomout(evt):
             DrawingAreaProxy(self).vert_zoom_out()
+
+        def create_click_handler(plugin):
+            def event_handler(evt):
+                self.main_panel.get_timeline_canvas().set_event_box_drawer(plugin)
+            return event_handler
+
         cbx = True
-        items = ((ID_SIDEBAR, sidebar, _("&Sidebar\tCtrl+I"), cbx),
+        items = [(ID_SIDEBAR, sidebar, _("&Sidebar\tCtrl+I"), cbx),
                  (ID_LEGEND, legend, _("&Legend"), cbx),
                  None,
                  (ID_BALLOONS, balloons, _("&Balloons on hover"), cbx),
@@ -321,7 +328,12 @@ class GuiCreator(object):
                  (ID_ZOOMIN, zoomin, _("Zoom &In\tCtrl++"), False),
                  (ID_ZOOMOUT, zoomout, _("Zoom &Out\tCtrl+-"), False),
                  (ID_VERT_ZOOMIN, vert_zoomin, _("Vertical Zoom &In\tAlt++"), False),
-                 (ID_VERT_ZOOMOUT, vert_zoomout, _("Vertical Zoom &Out\tAlt+-"), False))
+                 (ID_VERT_ZOOMOUT, vert_zoomout, _("Vertical Zoom &Out\tAlt+-"), False),
+                 None,
+                 ]
+        for plugin in factory.get_plugins(EVENTBOX_DRAWER):
+            items.append((wx.ID_ANY, create_click_handler(plugin), plugin.display_name(), False))
+
         view_menu = wx.Menu()
         self._create_menu_items(view_menu, items)
         self._check_view_menu_items(view_menu)

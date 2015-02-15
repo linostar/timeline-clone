@@ -26,6 +26,7 @@ from timelinelib.wxgui.dialogs.duplicateevent import open_duplicate_event_dialog
 from timelinelib.wxgui.dialogs.eventeditor import open_create_event_editor
 from timelinelib.wxgui.dialogs.eventeditor import open_event_editor_for
 from timelinelib.wxgui.utils import _ask_question
+from timelinelib.plugin import factory
 
 
 class TimelinePanel(wx.Panel):
@@ -192,9 +193,13 @@ class TimelineCanvas(wx.Panel):
         self.config = config
         self.main_frame = main_frame
         self.controller = TimelineCanvasController(self, status_bar_adapter, config,
-                                                   divider_line_slider, fn_handle_db_error)
+                                                   divider_line_slider, fn_handle_db_error, factory)
         self.surface_bitmap = None
         self._create_gui()
+
+    def set_event_box_drawer(self, event_box_drawer):
+        self.controller.set_event_box_drawer(event_box_drawer)
+        self.redraw_timeline()
 
     def get_drawer(self):
         return self.controller.get_drawer()

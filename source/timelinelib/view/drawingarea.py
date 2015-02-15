@@ -39,6 +39,9 @@ from timelinelib.view.resize import ResizeByDragInputHandler
 from timelinelib.view.scrolldrag import ScrollByDragInputHandler
 from timelinelib.view.zoom import ZoomByDragInputHandler
 from timelinelib.drawing import get_drawer
+from timelinelib.plugin.factory import EVENTBOX_DRAWER
+from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
+from wx.tools.Editra.src.plugin import Plugin
 
 
 # The width in pixels of the vertical scroll zones.
@@ -54,12 +57,13 @@ MOUSE_SCROLL_FACTOR = 1 / 10.0
 
 class TimelineCanvasController(object):
 
-    def __init__(self, view, status_bar_adapter, config, divider_line_slider, fn_handle_db_error, drawer=None):
+    def __init__(self, view, status_bar_adapter, config, divider_line_slider, fn_handle_db_error, plugin_factory, drawer=None):
         """
         The purpose of the drawer argument is make testing easier. A test can
         mock a drawer and use the mock by sending it in the drawer argument.
         Normally the drawer is collected with the get_drawer() method.
         """
+        self.plugin_factory = plugin_factory
         self.view = view
         self.status_bar_adapter = status_bar_adapter
         self.config = config
@@ -69,6 +73,7 @@ class TimelineCanvasController(object):
             self.drawing_algorithm = drawer
         else:
             self.drawing_algorithm = get_drawer()
+        self.set_event_box_drawer(self.get_default_drawer())
         self.drawing_algorithm.use_fast_draw(False)
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
@@ -76,6 +81,16 @@ class TimelineCanvasController(object):
         self.divider_line_slider.Bind(wx.EVT_CONTEXT_MENU, self._slider_on_context_menu)
         self.change_input_handler_to_no_op()
         self.timeline = None
+
+    def get_default_drawer(self):
+        from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
+        for plugin in self.plugin_factory.get_plugins(EVENTBOX_DRAWER):
+            if isinstance(plugin, DefaultEventBoxDrawer):
+                return plugin
+        raise Exception("No default Event Box  Drawer plugin found")
+
+    def set_event_box_drawer(self, drawer):
+        self.drawing_algorithm.set_event_box_drawer(drawer)
 
     def change_input_handler_to_zoom_by_drag(self, start_time):
         self.input_handler = ZoomByDragInputHandler(self, self.status_bar_adapter, start_time)
