@@ -23,8 +23,36 @@ If you have data that you would like to display on a timeline, timeline should
 be able to show it. Timeline has multiple backends to display data from
 different sources.
 
-2015 conference
+Conference 2015
 ---------------
 
-One of the decisions on the conference was to let the timeline community decide
-the direction in which timeline should develop.
+The first Timeline conference took place at Södertuna castle on the 13-15
+February 2015.
+
+The Timeline team met to discuss future directions of the project.
+
+.. figure:: /images/2015-conference-castle.jpg
+
+    Södertuna castle.
+
+.. figure:: /images/2015-conference-team.jpg
+
+    The Timeline team.
+
+Summary:
+
+* We want to continue developing Timeline
+* We want to get more people involved in the development of Timeline
+* We worked on making it easier for new people to get into Timeline
+    * We started writing guides
+    * We improved the structure of the files in the repository
+    * We experimented with a plugin architecture that will make it easier to
+      make small modifications to Timeline
+* We want to let the Timeline community decide the direction in which Timeline
+  should develop
+    * We looked at mailing list traffic from 2014 to learn what problems users
+      face when they are using Timeline
+    * We started entering those problems in a backlog
+    * We documented the process we should try to follow
+    * In this process, all users' problems are entered in the backlog
+    * We try to solve problems from the backlog that most users have faced
