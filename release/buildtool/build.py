@@ -27,7 +27,7 @@ import shutil
 import subprocess
 
 
-TIMELINE_DIR = os.path.abspath("..\\")
+TIMELINE_DIR = os.path.abspath("..\\..\\")
 BUILD_DIR = os.path.abspath(".\\target")
 
 COPYFILE = 0
@@ -57,26 +57,27 @@ known_targets = ("win32", "win32py25", "source")
 
 win32_actions = ((ANNOTATE, "Modify some python files", ""),
                  (COPYDIR, r"release\win\cmd", "cmd"),
-                 (COPYFILE, "timeline.py", "timeline.py"),
+                 (COPYFILE, r"source\timeline.py", "timeline.py"),
                  (RUNPYSCRIPT, r"cmd\mod2_timeline_py.py", ""),
-                 (COPYDIR, "timelinelib", "timelinelib"),
+                 (COPYDIR, r"source\timelinelib", "timelinelib"),
                  (RUNPYSCRIPT, r"cmd\mod2_paths_py.py", ""),
                  (RUNPYSCRIPT, r"cmd\mod2_version_py.py", ""),
+                 (RUNPYSCRIPT, r"cmd\mod2_factory_py.py", ""),
                  (MAKEDIR, None, "inno"),
                  (COPYFILE, r"release\win\inno\timelineWin32_2.iss", r"inno\timelineWin32_2.iss"),
                  (RUNPYSCRIPT, r"cmd\mod2_timeline_iss_win32.py", ""),
 
                  (ANNOTATE, "Run Tests", ""),
-                 (PUSHD, "..\\..\\", ""),
-                 (RUNPYTEST, r"execute-specs.py", ""),
-                 # (RUNPYTEST, r"execute-specs-repeat.py", ""),
+                 (PUSHD, "..\\..\\..\\", ""),
+                 # (RUNPYTEST, r"test\execute-specs.py", ""),
+                 # (RUNPYTEST, r"test\execute-specs-repeat.py", ""),
                  (POPD, "", ""),
 
                  (ANNOTATE, "Library dependencies", ""),
-                 (COPYDIR, r"libs\dependencies\icalendar-3.2\icalendar", "icalendar"),
-                 (COPYDIR, r"libs\dependencies\pytz-2012j\pytz", "pytz"),
-                 (COPYDIR, r"libs\dependencies\pysvg-0.2.1\pysvg", "pysvg"),
-                 (COPYDIR, r"libs\dependencies\markdown-2.0.3\markdown", "markdown"),
+                 (COPYDIR, r"dependencies\timelinelib\icalendar-3.2\icalendar", "icalendar"),
+                 (COPYDIR, r"dependencies\timelinelib\pytz-2012j\pytz", "pytz"),
+                 (COPYDIR, r"dependencies\timelinelib\pysvg-0.2.1\pysvg", "pysvg"),
+                 (COPYDIR, r"dependencies\timelinelib\markdown-2.0.3\markdown", "markdown"),
 
                  (ANNOTATE, "Create distribution directory", ""),
                  (COPYFILE, r"release\win\inno\setup.py", "setup.py"),
@@ -102,19 +103,20 @@ win32_actions = ((ANNOTATE, "Modify some python files", ""),
 
 win32py25_actions = (  # Modify some python files
                      (COPYDIR, r"release\win\cmd", "cmd"),
-                     (COPYFILE, "timeline.py", "timeline.py"),
+                     (COPYFILE, r"source\timeline.py", "timeline.py"),
                      (RUNPYSCRIPT, r"cmd\mod2_timeline_py.py", ""),
-                     (COPYDIR, "timelinelib", "timelinelib"),
+                     (COPYDIR, r"source\timelinelib", "timelinelib"),
                      (RUNPYSCRIPT, r"cmd\mod2_paths_py.py", ""),
                      (RUNPYSCRIPT, r"cmd\mod2_version_py.py", ""),
+                     (RUNPYSCRIPT, r"cmd\mod2_factory_py.py", ""),
                      (MAKEDIR, None, "inno"),
                      (COPYFILE, r"release\win\inno\timelineWin32_py25.iss", r"inno\timelineWin32_2.iss"),
                      (RUNPYSCRIPT, r"cmd\mod2_timeline_iss_win32.py", ""),
                      # Library dependencies
-                     (COPYDIR, r"libs\dependencies\icalendar-3.2\icalendar", "icalendar"),
-                     (COPYDIR, r"libs\dependencies\pytz-2012j\pytz", "pytz"),
-                     (COPYDIR, r"libs\dependencies\pysvg-0.2.1\pysvg", "pysvg"),
-                     (COPYDIR, r"libs\dependencies\markdown-2.0.3\markdown", "markdown"),
+                     (COPYDIR, r"dependencies\timelinelib\icalendar-3.2\icalendar", "icalendar"),
+                     (COPYDIR, r"dependencies\timelinelib\pytz-2012j\pytz", "pytz"),
+                     (COPYDIR, r"dependencies\timelinelib\pysvg-0.2.1\pysvg", "pysvg"),
+                     (COPYDIR, r"dependencies\timelinelib\markdown-2.0.3\markdown", "markdown"),
                      # Create distribution directory
                      (COPYFILE, r"release\win\inno\setup.py", "setup.py"),
                      (MAKEDIR, None, "icons"),
@@ -173,7 +175,7 @@ class Target():
         self.execute_actions()
 
     def define_root_dirs(self):
-        self.timeline_dir = os.path.abspath("..\\")
+        self.timeline_dir = TIMELINE_DIR
         self.build_dir = os.path.abspath(".\\target")
         print "Source in %s" % self.timeline_dir
         print "Target in %s" % os.getcwd()

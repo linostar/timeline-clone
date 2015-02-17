@@ -23,9 +23,12 @@ import os.path
 from subprocess import call
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
+SRC_DIR = os.path.join(ROOT_DIR, "source")
+TST_DIR = os.path.join(ROOT_DIR, "test")
 
 # So that the we can write 'import timelinelib.xxx'
 sys.path.insert(0, ROOT_DIR)
+sys.path.insert(0, SRC_DIR)
 
 import timelinelib.meta.version
 
@@ -45,7 +48,7 @@ def warn_if_dev_version():
         continue_despite_warning("This is a development version.")
 
 def warn_if_specs_fail():
-    if call(["python", "%s/execute-specs.py" % (ROOT_DIR or ".")]) != 0:
+    if call(["python", "%s/execute-specs.py" % (TST_DIR or ".")]) != 0:
         continue_despite_warning("Spec failure.")
 
 def continue_despite_warning(warning_text):
