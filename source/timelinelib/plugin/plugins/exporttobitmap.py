@@ -22,6 +22,40 @@ import wx
 
 from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import WildcardHelper
+from timelinelib.plugin.pluginbase import PluginBase
+from timelinelib.plugin.factory import EXPORTER
+
+
+class BitmapExporter(PluginBase):
+
+    def service(self):
+        return EXPORTER
+
+    def display_name(self):
+        return _("Export Current view to Image...")
+
+    def wxid(self):
+        from timelinelib.wxgui.dialogs.mainframe import ID_EXPORT
+        return ID_EXPORT
+
+    def run(self, main_frame):
+        export_to_image(main_frame)
+
+
+class MultiBitmapExporter(PluginBase):
+
+    def service(self):
+        return EXPORTER
+
+    def display_name(self):
+        return _("Export Whole Timeline to Images...")
+
+    def wxid(self):
+        from timelinelib.wxgui.dialogs.mainframe import ID_EXPORT_ALL
+        return ID_EXPORT_ALL
+
+    def run(self, main_frame):
+        export_to_images(main_frame)
 
 
 def export_to_image(main_frame):
@@ -30,11 +64,12 @@ def export_to_image(main_frame):
         bitmap = main_frame.main_panel.get_current_image()
         image = wx.ImageFromBitmap(bitmap)
         image.SaveFile(path, image_type)
-        
+
+
 def export_to_images(main_frame):
     path, image_type = get_image_path(main_frame)
     if path is not None:
-        path_without_extension, extension  = path.rsplit(".", 1)
+        path_without_extension, extension = path.rsplit(".", 1)
         periods, current_period = main_frame.get_export_periods()
         count = 1
         for period in periods:
@@ -49,20 +84,21 @@ def export_to_images(main_frame):
         main_frame.main_panel.timeline_panel.timeline_canvas.controller.view_properties.displayed_period = current_period
         main_frame.main_panel.redraw_timeline()
 
+
 def get_image_path(main_frame):
     image_type = None
     path = None
     file_info = _("Image files")
-    file_types = [("png", wx.BITMAP_TYPE_PNG)]  
+    file_types = [("png", wx.BITMAP_TYPE_PNG)]
     images_wildcard_helper = WildcardHelper(file_info, file_types)
     wildcard = images_wildcard_helper.wildcard_string()
-    dialog = wx.FileDialog(main_frame, message=_("Export to Image"), 
-                           wildcard=wildcard, style=wx.FD_SAVE)
+    dialog = wx.FileDialog(main_frame, message=_("Export to Image"), wildcard=wildcard, style=wx.FD_SAVE)
     if dialog.ShowModal() == wx.ID_OK:
         path = images_wildcard_helper.get_path(dialog)
         image_type = images_wildcard_helper.get_extension_data(path)
     dialog.Destroy()
     return path, image_type
+
 
 def overwrite_existing_path(main_frame, path):
     if os.path.exists(path):
