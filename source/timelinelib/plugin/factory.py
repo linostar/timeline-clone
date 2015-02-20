@@ -36,10 +36,13 @@ class PluginFactory(object):
 
     def load_plugins(self):
         candidates = self._get_candidate_modules()
+        class_names = []
         for candidate in candidates:
             classes = [x for x in dir(candidate) if isclass(getattr(candidate, x))]
             for cl in classes:
-                self._save_class_instance_for_plugins(candidate, cl)
+                if cl not in class_names:
+                    class_names.append(cl)
+                    self._save_class_instance_for_plugins(candidate, cl)
 
     def get_plugins(self, service):
         try:
