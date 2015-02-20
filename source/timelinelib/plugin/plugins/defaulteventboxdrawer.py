@@ -59,11 +59,13 @@ class DefaultEventBoxDrawer(PluginBase):
 
     def _draw_fuzzy_start(self, dc, rect, event):
         """
-          p1     /p2 ----------
-                /
-          p3  <
-                \
-          p4     \p5 ----------
+               x1     x2
+
+          y1   p1    /p2 ----------
+                    /
+          y2   p3  <
+                    \
+          y3   p4    \p5 ----------
         """
         x1 = rect.x
         x2 = rect.x + rect.height / 2
@@ -79,11 +81,13 @@ class DefaultEventBoxDrawer(PluginBase):
 
     def _draw_fuzzy_end(self, dc, rect, event):
         """
-          ---- P2\    p1
-                  \
-                   >  p3
-                  /
-          ---- p4/    p4
+                   x1     x2
+
+          y1  ---- P2\    p1
+                      \
+          y2           >  p3
+                      /
+          y3  ---- p5/    p4
         """
         x1 = rect.x + rect.width - rect.height / 2
         x2 = rect.x + rect.width
