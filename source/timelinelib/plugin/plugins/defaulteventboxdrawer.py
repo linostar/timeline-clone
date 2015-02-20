@@ -33,11 +33,16 @@ class DefaultEventBoxDrawer(PluginBase):
 
     def run(self, dc, rect, event):
         self._draw_background(dc, rect, event)
+        self._draw_fuzzy_edges(dc, rect, event)
 
     def _draw_background(self, dc, rect, event):
         dc.SetBrush(wx.Brush(self._get_base_color(event), wx.SOLID))
         dc.SetPen(self._get_border_pen(event))
         dc.DrawRectangleRect(rect)
+
+    def _draw_fuzzy_edges(self, dc, rect, event):
+        if event.get_fuzzy():
+            pass
 
     def _get_border_pen(self, event):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
