@@ -49,11 +49,10 @@ class DefaultEventBoxDrawer(PluginBase):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
 
     def _get_base_color(self, event):
-        if event.get_category():
-            base_color = event.get_category().color
-        else:
-            base_color = (200, 200, 200)
-        return base_color
+        try:
+            return event.get_category().color
+        except:
+            return (200, 200, 200)
 
     def _get_border_color(self, event):
         base_color = self._get_base_color(event)
@@ -118,4 +117,3 @@ class DefaultEventBoxDrawer(PluginBase):
         path.AddLineToPoint(p3.x, p3.y)
         gc.SetPen(self._get_border_pen(event))
         gc.StrokePath(path)
-        
