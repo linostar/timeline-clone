@@ -476,65 +476,9 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_box(self, rect, event):
         self.dc.SetClippingRect(rect)
         self.event_box_drawer.run(self.dc, rect, event)
-        if event.get_locked():
-            self._draw_locked_edges(rect, event)
         if event.get_data("progress"):
             self.draw_progress_box(rect, event)
         self.dc.DestroyClippingRegion()
-
-    def _draw_locked_edges(self, rect, event):
-        self._draw_locked_start(event, rect)
-        self._draw_locked_end(event, rect)
-
-    def _draw_locked_start(self, event, rect):
-        x = rect.x
-        if event.fuzzy:
-            start_angle = -math.pi / 4
-            end_angle = math.pi / 4
-        else:
-            start_angle = -math.pi
-            end_angle = math.pi
-        self._draw_locked(event, rect, x, start_angle, end_angle)
-
-    def _draw_locked_end(self, event, rect):
-        x = rect.x + rect.width
-        if event.fuzzy:
-            start_angle = 3 * math.pi / 4
-            end_angle = 5 * math.pi / 4
-        else:
-            start_angle = math.pi / 2
-            end_angle = 3 * math.pi / 2
-        self._draw_locked(event, rect, x, start_angle, end_angle)
-
-    def _draw_locked(self, event, rect, x, start_angle, end_angle):
-        y = rect.y + rect.height / 2
-        r = rect.height / 2.5
-        self.dc.SetBrush(wx.WHITE_BRUSH)
-        self.dc.SetPen(wx.WHITE_PEN)
-        self.dc.DrawCircle(x, y, r)
-        self.dc.SetPen(self._get_box_pen(event))
-        self.draw_segment(event, x, y, r, start_angle, end_angle)
-
-    def draw_segment(self, event, x0, y0, r, start_angle, end_angle):
-        gc = wx.GraphicsContext.Create(self.dc)
-        path = gc.CreatePath()
-        segment_length = 2.0 * (end_angle - start_angle) * r
-        delta = (end_angle - start_angle) / segment_length
-        angle = start_angle
-        x1 = r * math.cos(angle) + x0
-        y1 = r * math.sin(angle) + y0
-        path.MoveToPoint(x1, y1)
-        while angle < end_angle:
-            angle += delta
-            if angle > end_angle:
-                angle = end_angle
-            x2 = r * math.cos(angle) + x0
-            y2 = r * math.sin(angle) + y0
-            path.AddLineToPoint(x2, y2)
-            x1 = x2
-            y1 = y2
-        gc.SetPen(self._get_box_pen(event))
-        gc.StrokePath(path)
 
     def draw_progress_box(self, rect, event):
         self._set_progress_color(event)

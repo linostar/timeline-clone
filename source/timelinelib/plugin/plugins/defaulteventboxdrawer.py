@@ -17,6 +17,7 @@
 
 
 import wx
+import math
 
 from timelinelib.plugin.pluginbase import PluginBase
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
@@ -34,6 +35,7 @@ class DefaultEventBoxDrawer(PluginBase):
     def run(self, dc, rect, event):
         self._draw_background(dc, rect, event)
         self._draw_fuzzy_edges(dc, rect, event)
+        self._draw_locked_edges(dc, rect, event)
 
     def _draw_background(self, dc, rect, event):
         dc.SetBrush(wx.Brush(self._get_base_color(event), wx.SOLID))
@@ -44,6 +46,11 @@ class DefaultEventBoxDrawer(PluginBase):
         if event.get_fuzzy():
             self._draw_fuzzy_start(dc, rect, event)
             self._draw_fuzzy_end(dc, rect, event)
+
+    def _draw_locked_edges(self, dc, rect, event):
+        if event.get_locked():
+            self._draw_locked_start(dc, event, rect)
+            self._draw_locked_end(dc, event, rect)
 
     def _get_border_pen(self, event):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
@@ -117,5 +124,55 @@ class DefaultEventBoxDrawer(PluginBase):
         path.MoveToPoint(p1.x, p1.y)
         path.AddLineToPoint(p2.x, p2.y)
         path.AddLineToPoint(p3.x, p3.y)
+        gc.SetPen(self._get_border_pen(event))
+        gc.StrokePath(path)
+
+    def _draw_locked_start(self, dc, event, rect):
+        x = rect.x
+        if event.fuzzy:
+            start_angle = -math.pi / 4
+            end_angle = math.pi / 4
+        else:
+            start_angle = -math.pi
+            end_angle = math.pi
+        self._draw_locked(dc, event, rect, x, start_angle, end_angle)
+
+    def _draw_locked_end(self, dc, event, rect):
+        x = rect.x + rect.width
+        if event.fuzzy:
+            start_angle = 3 * math.pi / 4
+            end_angle = 5 * math.pi / 4
+        else:
+            start_angle = math.pi / 2
+            end_angle = 3 * math.pi / 2
+        self._draw_locked(dc, event, rect, x, start_angle, end_angle)
+
+    def _draw_locked(self, dc, event, rect, x, start_angle, end_angle):
+        y = rect.y + rect.height / 2
+        r = rect.height / 2.5
+        dc.SetBrush(wx.WHITE_BRUSH)
+        dc.SetPen(wx.WHITE_PEN)
+        dc.DrawCircle(x, y, r)
+        dc.SetPen(self._get_border_pen(event))
+        self.draw_segment(dc, event, x, y, r, start_angle, end_angle)
+
+    def draw_segment(self, dc, event, x0, y0, r, start_angle, end_angle):
+        gc = wx.GraphicsContext.Create(dc)
+        path = gc.CreatePath()
+        segment_length = 2.0 * (end_angle - start_angle) * r
+        delta = (end_angle - start_angle) / segment_length
+        angle = start_angle
+        x1 = r * math.cos(angle) + x0
+        y1 = r * math.sin(angle) + y0
+        path.MoveToPoint(x1, y1)
+        while angle < end_angle:
+            angle += delta
+            if angle > end_angle:
+                angle = end_angle
+            x2 = r * math.cos(angle) + x0
+            y2 = r * math.sin(angle) + y0
+            path.AddLineToPoint(x2, y2)
+            x1 = x2
+            y1 = y2
         gc.SetPen(self._get_border_pen(event))
         gc.StrokePath(path)
