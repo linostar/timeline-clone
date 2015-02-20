@@ -16,7 +16,6 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import wx
 import unittest
 from mock import Mock
 from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
@@ -54,13 +53,5 @@ class describe_default_event_box_drawer(unittest.TestCase):
         event = an_event_with(category=category)
         self.assertEquals((70, 70, 70), self.plugin._get_border_color(event))
 
-    def test_run_calls_wx_dc_methods(self):
-        event = an_event_with(category=None)
-        self.plugin.run(self.dc, wx.Rect(), event)
-        self.dc.SetBrush.assert_called()
-        self.dc.SetPen.assert_called()
-        self.dc.DrawRectangleRect.assert_called()
-
     def setUp(self):
         self.plugin = DefaultEventBoxDrawer()
-        self.dc = Mock(wx.DC)
