@@ -36,6 +36,7 @@ class DefaultEventBoxDrawer(PluginBase):
         self._draw_background(dc, rect, event)
         self._draw_fuzzy_edges(dc, rect, event)
         self._draw_locked_edges(dc, rect, event)
+        self._draw_progress_box(dc, rect, event)
 
     def _draw_background(self, dc, rect, event):
         dc.SetBrush(wx.Brush(self._get_base_color(event), wx.SOLID))
@@ -176,3 +177,20 @@ class DefaultEventBoxDrawer(PluginBase):
             y1 = y2
         gc.SetPen(self._get_border_pen(event))
         gc.StrokePath(path)
+
+    def _draw_progress_box(self, dc, rect, event):
+        self._set_progress_color(dc, event)
+        progress_rect = self._get_progress_rect(rect, event.get_data("progress") / 100.0)
+        dc.SetClippingRect(progress_rect)
+        dc.DrawRectangleRect(progress_rect)
+
+    def _set_progress_color(self, dc, event):
+        progress_color = event.get_progress_color()
+        dc.SetBrush(wx.Brush(wx.Colour(progress_color[0], progress_color[1], progress_color[2])))
+
+    def _get_progress_rect(self, event_rect, width_factor):
+        HEIGHT_FACTOR = 0.35
+        w = event_rect.width * width_factor
+        h = event_rect.height * HEIGHT_FACTOR
+        y = event_rect.y + (event_rect.height - h)
+        return wx.Rect(event_rect.x, y, w, h)
