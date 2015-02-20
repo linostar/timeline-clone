@@ -29,6 +29,9 @@ class GradientEventBoxDrawer(DefaultEventBoxDrawer):
         return _("Gradient Event box drawer")
 
     def run(self, dc, rect, event):
+        self._draw_background(dc, rect, event)
+
+    def _draw_background(self, dc, rect, event):
         dc.SetPen(self._get_border_pen(event))
         dc.DrawRectangleRect(rect)
         inner_rect = wx.Rect(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2)

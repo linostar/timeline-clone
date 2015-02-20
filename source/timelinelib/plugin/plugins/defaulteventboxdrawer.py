@@ -32,6 +32,9 @@ class DefaultEventBoxDrawer(PluginBase):
         return _("Default Event box drawer")
 
     def run(self, dc, rect, event):
+        self._draw_background(dc, rect, event)
+
+    def _draw_background(self, dc, rect, event):
         dc.SetBrush(wx.Brush(self._get_base_color(event), wx.SOLID))
         dc.SetPen(self._get_border_pen(event))
         dc.DrawRectangleRect(rect)
