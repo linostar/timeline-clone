@@ -476,76 +476,11 @@ class DefaultDrawingAlgorithm(Drawer):
     def _draw_box(self, rect, event):
         self.dc.SetClippingRect(rect)
         self.event_box_drawer.run(self.dc, rect, event)
-        if event.get_fuzzy():
-            self._draw_fuzzy_edges(rect, event)
         if event.get_locked():
             self._draw_locked_edges(rect, event)
         if event.get_data("progress"):
             self.draw_progress_box(rect, event)
         self.dc.DestroyClippingRegion()
-
-    def _draw_fuzzy_edges(self, rect, event):
-        self._draw_fuzzy_start(rect, event)
-        self._draw_fuzzy_end(rect, event)
-
-    def _draw_fuzzy_start(self, rect, event):
-        """
-          p1     /p2 ----------
-                /
-          p3  <
-                \
-          p4     \p5 ----------
-        """
-        x1 = rect.x
-        x2 = rect.x + rect.height / 2
-        y1 = rect.y
-        y2 = rect.y + rect.height / 2
-        y3 = rect.y + rect.height
-        p1 = wx.Point(x1, y1)
-        p2 = wx.Point(x2, y1)
-        p3 = wx.Point(x1, y2)
-        p4 = wx.Point(x1, y3)
-        p5 = wx.Point(x2, y3)
-        self.draw_fuzzy(event, p1, p2, p3, p4, p5)
-
-    def _draw_fuzzy_end(self, rect, event):
-        """
-          ---- P2\    p1
-                  \
-                   >  p3
-                  /
-          ---- p4/    p4
-        """
-        x1 = rect.x + rect.width - rect.height / 2
-        x2 = rect.x + rect.width
-        y1 = rect.y
-        y2 = rect.y + rect.height / 2
-        y3 = rect.y + rect.height
-        p1 = wx.Point(x2, y1)
-        p2 = wx.Point(x1, y1)
-        p3 = wx.Point(x2, y2)
-        p4 = wx.Point(x2, y3)
-        p5 = wx.Point(x1, y3)
-        self.draw_fuzzy(event, p1, p2, p3, p4, p5)
-
-    def draw_fuzzy(self, event, p1, p2, p3, p4, p5):
-        self._draw_fuzzy_polygon(p1, p2, p3)
-        self._draw_fuzzy_polygon(p3, p4, p5)
-        self._draw_fuzzy_border(event, p2, p3, p5)
-
-    def _draw_fuzzy_polygon(self, p1, p2, p3):
-        self.dc.SetBrush(wx.WHITE_BRUSH)
-        self.dc.SetPen(wx.WHITE_PEN)
-        self.dc.DrawPolygon((p1, p2, p3))
-
-    def _draw_fuzzy_border(self, event, p1, p2, p3):
-        gc = wx.GraphicsContext.Create(self.dc)
-        path = gc.CreatePath()
-        path.MoveToPoint(p1.x, p1.y)
-        path.AddLineToPoint(p2.x, p2.y)
-        path.AddLineToPoint(p3.x, p3.y)
-        gc.SetPen(self._get_box_pen(event))
-        gc.StrokePath(path)
 
     def _draw_locked_edges(self, rect, event):
         self._draw_locked_start(event, rect)
