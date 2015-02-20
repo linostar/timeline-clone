@@ -76,16 +76,14 @@ def get_default_font(size, bold=False):
 
 
 def darken_color(color, factor=0.7):
-    r, g, b = color
-    new_r = int(r * factor)
-    new_g = int(g * factor)
-    new_b = int(b * factor)
-    return (new_r, new_g, new_b)
+    if (factor < 0.0 or factor > 1.0):
+        return color
+    return tuple([int(x * factor) for x in color])
 
 
 def lighten_color(color, factor=1.5):
-    r, g, b = color
-    new_r = min(int(r * factor), 255)
-    new_g = min(int(g * factor), 255)
-    new_b = min(int(b * factor), 255)
-    return (new_r, new_g, new_b)
+    if (factor < 1.0 or factor > 255.0):
+        return color
+    if (color == (0, 0, 0)):
+        color = (1, 1, 1) # avoid multiplying factor by zero
+    return tuple([min(int(x * factor), 255) for x in color])
