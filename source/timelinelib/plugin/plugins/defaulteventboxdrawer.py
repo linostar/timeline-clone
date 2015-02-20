@@ -42,7 +42,8 @@ class DefaultEventBoxDrawer(PluginBase):
 
     def _draw_fuzzy_edges(self, dc, rect, event):
         if event.get_fuzzy():
-            pass
+            self._draw_fuzzy_start(dc, rect, event)
+            self._draw_fuzzy_end(dc, rect, event)
 
     def _get_border_pen(self, event):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
@@ -58,3 +59,63 @@ class DefaultEventBoxDrawer(PluginBase):
         base_color = self._get_base_color(event)
         border_color = darken_color(base_color)
         return border_color
+
+    def _draw_fuzzy_start(self, dc, rect, event):
+        """
+          p1     /p2 ----------
+                /
+          p3  <
+                \
+          p4     \p5 ----------
+        """
+        x1 = rect.x
+        x2 = rect.x + rect.height / 2
+        y1 = rect.y
+        y2 = rect.y + rect.height / 2
+        y3 = rect.y + rect.height
+        p1 = wx.Point(x1, y1)
+        p2 = wx.Point(x2, y1)
+        p3 = wx.Point(x1, y2)
+        p4 = wx.Point(x1, y3)
+        p5 = wx.Point(x2, y3)
+        self.draw_fuzzy(dc, event, p1, p2, p3, p4, p5)
+
+    def _draw_fuzzy_end(self, dc, rect, event):
+        """
+          ---- P2\    p1
+                  \
+                   >  p3
+                  /
+          ---- p4/    p4
+        """
+        x1 = rect.x + rect.width - rect.height / 2
+        x2 = rect.x + rect.width
+        y1 = rect.y
+        y2 = rect.y + rect.height / 2
+        y3 = rect.y + rect.height
+        p1 = wx.Point(x2, y1)
+        p2 = wx.Point(x1, y1)
+        p3 = wx.Point(x2, y2)
+        p4 = wx.Point(x2, y3)
+        p5 = wx.Point(x1, y3)
+        self.draw_fuzzy(dc, event, p1, p2, p3, p4, p5)
+
+    def draw_fuzzy(self, dc, event, p1, p2, p3, p4, p5):
+        self._draw_fuzzy_polygon(dc, p1, p2, p3)
+        self._draw_fuzzy_polygon(dc, p3, p4, p5)
+        self._draw_fuzzy_border(dc, event, p2, p3, p5)
+
+    def _draw_fuzzy_polygon(self, dc, p1, p2, p3):
+        dc.SetBrush(wx.WHITE_BRUSH)
+        dc.SetPen(wx.WHITE_PEN)
+        dc.DrawPolygon((p1, p2, p3))
+
+    def _draw_fuzzy_border(self, dc, event, p1, p2, p3):
+        gc = wx.GraphicsContext.Create(dc)
+        path = gc.CreatePath()
+        path.MoveToPoint(p1.x, p1.y)
+        path.AddLineToPoint(p2.x, p2.y)
+        path.AddLineToPoint(p3.x, p3.y)
+        gc.SetPen(self._get_border_pen(event))
+        gc.StrokePath(path)
+        
