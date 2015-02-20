@@ -33,8 +33,11 @@ class DefaultEventBoxDrawer(PluginBase):
 
     def run(self, dc, rect, event):
         dc.SetBrush(wx.Brush(self._get_base_color(event), wx.SOLID))
-        dc.SetPen(wx.Pen(self._get_border_color(event), 1, wx.SOLID))
+        dc.SetPen(self._get_border_pen(event))
         dc.DrawRectangleRect(rect)
+
+    def _get_border_pen(self, event):
+        return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
 
     def _get_base_color(self, event):
         if event.get_category():
