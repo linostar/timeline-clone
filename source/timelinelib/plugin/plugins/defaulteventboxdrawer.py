@@ -48,16 +48,14 @@ class DefaultEventBoxDrawer(PluginBase):
     def _get_border_pen(self, event):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
 
+    def _get_border_color(self, event):
+        return darken_color(self._get_base_color(event))
+
     def _get_base_color(self, event):
         try:
             return event.get_category().color
         except:
             return (200, 200, 200)
-
-    def _get_border_color(self, event):
-        base_color = self._get_base_color(event)
-        border_color = darken_color(base_color)
-        return border_color
 
     def _draw_fuzzy_start(self, dc, rect, event):
         """
