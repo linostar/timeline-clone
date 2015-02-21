@@ -295,7 +295,7 @@ class DefaultEventBoxDrawer(PluginBase):
 
         def set_pen_and_brush():
             dc.SetBrush(wx.BLACK_BRUSH)
-            dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
+            dc.SetPen(wx.BLACK_PEN)
 
         def create_handle_rect():
             HALF_EVENT_HEIGHT = rect.Height / 2
