@@ -30,6 +30,7 @@ HALF_HANDLE_SIZE = HANDLE_SIZE / 2
 DATA_INDICATOR_SIZE = 10
 INNER_PADDING = 3  # Space inside event box to text (pixels)
 BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
 
 
 class DefaultEventBoxDrawer(PluginBase):
@@ -88,7 +89,7 @@ class DefaultEventBoxDrawer(PluginBase):
         try:
             return event.get_category().color
         except:
-            return (200, 200, 200)
+            return GRAY
 
     def _draw_fuzzy_start(self, dc, rect, event):
         """
