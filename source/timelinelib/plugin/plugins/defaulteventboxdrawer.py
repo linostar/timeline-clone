@@ -38,13 +38,14 @@ class DefaultEventBoxDrawer(PluginBase):
     def display_name(self):
         return _("Default Event box drawer")
 
-    def run(self, dc, rect, event):
+    def run(self, dc, rect, event, selected=False):
         self._draw_background(dc, rect, event)
         self._draw_fuzzy_edges(dc, rect, event)
         self._draw_locked_edges(dc, rect, event)
         self._draw_progress_box(dc, rect, event)
         self._draw_text(dc, rect, event)
         self._draw_contents_indicator(dc, event, rect)
+        self._draw_selection_handles(dc, event, rect, selected)
 
     def _draw_background(self, dc, rect, event):
         dc.SetBrush(wx.Brush(self._get_base_color(event), wx.SOLID))
@@ -64,6 +65,10 @@ class DefaultEventBoxDrawer(PluginBase):
     def _draw_contents_indicator(self, dc, event, rect):
         if event.has_balloon_data():
             self._draw_balloon_indicator(dc, event, rect)
+
+    def _draw_selection_handles(self, dc, event, rect, selected):
+        if selected:
+            self._draw_handles(dc, event, rect)
 
     def _get_border_pen(self, event):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
@@ -258,3 +263,6 @@ class DefaultEventBoxDrawer(PluginBase):
             font_color = event.get_category().font_color
             fg_color = wx.Colour(font_color[0], font_color[1], font_color[2])
         dc.SetTextForeground(fg_color)
+
+    def _draw_handles(self, dc, event, rect):
+        pass
