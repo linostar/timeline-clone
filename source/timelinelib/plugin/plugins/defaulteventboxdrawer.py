@@ -76,7 +76,7 @@ class DefaultEventBoxDrawer(PluginBase):
     def _get_border_pen(self, event):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
 
-    def _get_box_indicator_brush(self, event):
+    def _get_balloon_indicator_brush(self, event):
         base_color = self._get_base_color(event)
         darker_color = darken_color(base_color, 0.6)
         brush = wx.Brush(darker_color, wx.SOLID)
@@ -232,7 +232,7 @@ class DefaultEventBoxDrawer(PluginBase):
             wx.Point(corner_x, rect.Y),
             wx.Point(corner_x, rect.Y + DATA_INDICATOR_SIZE),
         )
-        dc.SetBrush(self._get_box_indicator_brush(event))
+        dc.SetBrush(self._get_balloon_indicator_brush(event))
         dc.SetPen(wx.TRANSPARENT_PEN)
         dc.DrawPolygon(points)
 
