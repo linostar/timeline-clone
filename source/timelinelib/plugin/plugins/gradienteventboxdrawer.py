@@ -33,6 +33,7 @@ class GradientEventBoxDrawer(DefaultEventBoxDrawer):
         self._draw_fuzzy_edges(dc, rect, event)
         self._draw_locked_edges(dc, rect, event)
         self._draw_progress_box(dc, rect, event)
+        self._draw_contents_indicator(dc, event, rect)
 
     def _draw_background(self, dc, rect, event):
         dc.SetPen(self._get_border_pen(event))

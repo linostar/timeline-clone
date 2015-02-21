@@ -464,8 +464,6 @@ class DefaultDrawingAlgorithm(Drawer):
                 return
         self._draw_box(rect, event)
         self._draw_text(rect, event)
-        if event.has_balloon_data():
-            self._draw_contents_indicator(event, rect)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
@@ -507,25 +505,6 @@ class DefaultDrawingAlgorithm(Drawer):
             font_color = event.get_category().font_color
             fg_color = wx.Colour(font_color[0], font_color[1], font_color[2])
         self.dc.SetTextForeground(fg_color)
-
-    def _draw_contents_indicator(self, event, rect):
-        """
-        The data contents indicator is a small triangle drawn in the upper
-        right corner of the event rectangle.
-        """
-        self.dc.SetClippingRect(rect)
-        corner_x = rect.X + rect.Width
-        if corner_x > self.scene.width:
-            corner_x = self.scene.width
-        points = (
-            wx.Point(corner_x - DATA_INDICATOR_SIZE, rect.Y),
-            wx.Point(corner_x, rect.Y),
-            wx.Point(corner_x, rect.Y + DATA_INDICATOR_SIZE),
-        )
-        self.dc.SetBrush(self._get_box_indicator_brush(event))
-        self.dc.SetPen(wx.TRANSPARENT_PEN)
-        self.dc.DrawPolygon(points)
-        self.dc.DestroyClippingRegion()
 
     def _draw_selection_and_handles(self, rect, event):
         self.dc.SetClippingRect(rect)
@@ -578,12 +557,6 @@ class DefaultDrawingAlgorithm(Drawer):
     def _get_box_brush(self, event):
         base_color = self._get_base_color(event)
         brush = wx.Brush(base_color, wx.SOLID)
-        return brush
-
-    def _get_box_indicator_brush(self, event):
-        base_color = self._get_base_color(event)
-        darker_color = darken_color(base_color, 0.6)
-        brush = wx.Brush(darker_color, wx.SOLID)
         return brush
 
     def _get_selected_box_brush(self, event):

@@ -24,6 +24,9 @@ from timelinelib.plugin.factory import EVENTBOX_DRAWER
 from timelinelib.drawing.utils import darken_color
 
 
+DATA_INDICATOR_SIZE = 10
+
+
 class DefaultEventBoxDrawer(PluginBase):
 
     def service(self):
@@ -37,6 +40,7 @@ class DefaultEventBoxDrawer(PluginBase):
         self._draw_fuzzy_edges(dc, rect, event)
         self._draw_locked_edges(dc, rect, event)
         self._draw_progress_box(dc, rect, event)
+        self._draw_contents_indicator(dc, event, rect)
 
     def _draw_background(self, dc, rect, event):
         dc.SetBrush(wx.Brush(self._get_base_color(event), wx.SOLID))
@@ -53,8 +57,18 @@ class DefaultEventBoxDrawer(PluginBase):
             self._draw_locked_start(dc, event, rect)
             self._draw_locked_end(dc, event, rect)
 
+    def _draw_contents_indicator(self, dc, event, rect):
+        if event.has_balloon_data():
+            self._draw_balloon_indicator(dc, event, rect)
+
     def _get_border_pen(self, event):
         return wx.Pen(self._get_border_color(event), 1, wx.SOLID)
+
+    def _get_box_indicator_brush(self, event):
+        base_color = self._get_base_color(event)
+        darker_color = darken_color(base_color, 0.6)
+        brush = wx.Brush(darker_color, wx.SOLID)
+        return brush
 
     def _get_border_color(self, event):
         return darken_color(self._get_base_color(event))
@@ -181,7 +195,6 @@ class DefaultEventBoxDrawer(PluginBase):
     def _draw_progress_box(self, dc, rect, event):
         self._set_progress_color(dc, event)
         progress_rect = self._get_progress_rect(rect, event.get_data("progress") / 100.0)
-        dc.SetClippingRect(progress_rect)
         dc.DrawRectangleRect(progress_rect)
 
     def _set_progress_color(self, dc, event):
@@ -194,3 +207,20 @@ class DefaultEventBoxDrawer(PluginBase):
         h = event_rect.height * HEIGHT_FACTOR
         y = event_rect.y + (event_rect.height - h)
         return wx.Rect(event_rect.x, y, w, h)
+
+    def _draw_balloon_indicator(self, dc, event, rect):
+        """
+        The data contents indicator is a small triangle drawn in the upper
+        right corner of the event rectangle.
+        """
+        corner_x = rect.X + rect.Width
+        # if corner_x > self.scene.width:
+        #     corner_x = self.scene.width
+        points = (
+            wx.Point(corner_x - DATA_INDICATOR_SIZE, rect.Y),
+            wx.Point(corner_x, rect.Y),
+            wx.Point(corner_x, rect.Y + DATA_INDICATOR_SIZE),
+        )
+        dc.SetBrush(self._get_box_indicator_brush(event))
+        dc.SetPen(wx.TRANSPARENT_PEN)
+        dc.DrawPolygon(points)
