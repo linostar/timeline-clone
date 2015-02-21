@@ -40,6 +40,7 @@ class DefaultEventBoxDrawer(PluginBase):
         self._draw_fuzzy_edges(dc, rect, event)
         self._draw_locked_edges(dc, rect, event)
         self._draw_progress_box(dc, rect, event)
+        self._draw_text(dc, rect, event)
         self._draw_contents_indicator(dc, event, rect)
 
     def _draw_background(self, dc, rect, event):
@@ -224,3 +225,6 @@ class DefaultEventBoxDrawer(PluginBase):
         dc.SetBrush(self._get_box_indicator_brush(event))
         dc.SetPen(wx.TRANSPARENT_PEN)
         dc.DrawPolygon(points)
+
+    def _draw_text(self, dc, rect, event):
+        pass
