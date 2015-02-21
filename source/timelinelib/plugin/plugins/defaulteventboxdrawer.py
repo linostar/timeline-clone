@@ -136,11 +136,11 @@ class DefaultEventBoxDrawer(PluginBase):
         self.draw_fuzzy(dc, event, p1, p2, p3, p4, p5)
 
     def draw_fuzzy(self, dc, event, p1, p2, p3, p4, p5):
-        self._erase_are_outzide_fuzzy_box(dc, p1, p2, p3)
-        self._erase_are_outzide_fuzzy_box(dc, p3, p4, p5)
+        self._erase_outzide_fuzzy_box(dc, p1, p2, p3)
+        self._erase_outzide_fuzzy_box(dc, p3, p4, p5)
         self._draw_fuzzy_border(dc, event, p2, p3, p5)
 
-    def _erase_are_outzide_fuzzy_box(self, dc, p1, p2, p3):
+    def _erase_outzide_fuzzy_box(self, dc, p1, p2, p3):
         dc.SetBrush(wx.WHITE_BRUSH)
         dc.SetPen(wx.WHITE_PEN)
         dc.DrawPolygon((p1, p2, p3))
