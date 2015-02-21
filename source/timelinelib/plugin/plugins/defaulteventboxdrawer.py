@@ -265,4 +265,32 @@ class DefaultEventBoxDrawer(PluginBase):
         dc.SetTextForeground(fg_color)
 
     def _draw_handles(self, dc, event, rect):
-        pass
+        dc.SetClippingRect(rect)
+        small_rect = wx.Rect(*rect)
+        small_rect.Deflate(1, 1)
+        border_color = self._get_border_color(event)
+        border_color = darken_color(border_color)
+        pen = wx.Pen(border_color, 1, wx.SOLID)
+        dc.SetBrush(wx.TRANSPARENT_BRUSH)
+        dc.SetPen(pen)
+        dc.DrawRectangleRect(small_rect)
+        self._draw_all_handles(dc, rect, event)
+        dc.DestroyClippingRegion()
+
+    def _draw_all_handles(self, dc, rect, event):
+        SIZE = 4
+        big_rect = wx.Rect(rect.X - SIZE, rect.Y - SIZE, rect.Width + 2 * SIZE, rect.Height + 2 * SIZE)
+        dc.DestroyClippingRegion()
+        dc.SetClippingRect(big_rect)
+        y = rect.Y + rect.Height / 2 - SIZE / 2
+        x = rect.X - SIZE / 2
+        west_rect = wx.Rect(x + 1, y, SIZE, SIZE)
+        center_rect = wx.Rect(x + rect.Width / 2, y, SIZE, SIZE)
+        east_rect = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
+        dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
+        dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
+        if not event.locked:
+            dc.DrawRectangleRect(east_rect)
+            dc.DrawRectangleRect(west_rect)
+        if not event.locked and not event.ends_today:
+            dc.DrawRectangleRect(center_rect)

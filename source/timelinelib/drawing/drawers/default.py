@@ -454,16 +454,12 @@ class DefaultDrawingAlgorithm(Drawer):
         if EXTENDED_CONTAINER_HEIGHT.enabled():
             box_rect = EXTENDED_CONTAINER_HEIGHT.get_vertical_larger_box_rect(rect)
         self._draw_box(box_rect, event, view_properties)
-        if view_properties.is_selected(event):
-            self._draw_selection_and_handles(rect, event)
 
     def _draw_event(self, event, rect, view_properties):
         if self._subevent_displayed_as_point_event(event, rect):
             if event.is_period():
                 return
         self._draw_box(rect, event, view_properties)
-        if view_properties.is_selected(event):
-            self._draw_selection_and_handles(rect, event)
 
     def _subevent_displayed_as_point_event(self, event, rect):
         return (event.is_subevent() and
@@ -473,37 +469,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetClippingRect(rect)
         self.event_box_drawer.run(self.dc, rect, event, view_properties.is_selected(event))
         self.dc.DestroyClippingRegion()
-
-    def _draw_selection_and_handles(self, rect, event):
-        self.dc.SetClippingRect(rect)
-        small_rect = wx.Rect(*rect)
-        small_rect.Deflate(1, 1)
-        border_color = self._get_border_color(event)
-        border_color = darken_color(border_color)
-        pen = wx.Pen(border_color, 1, wx.SOLID)
-        self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        self.dc.SetPen(pen)
-        self.dc.DrawRectangleRect(small_rect)
-        self._draw_handles(rect, event)
-        self.dc.DestroyClippingRegion()
-
-    def _draw_handles(self, rect, event):
-        SIZE = 4
-        big_rect = wx.Rect(rect.X - SIZE, rect.Y - SIZE, rect.Width + 2 * SIZE, rect.Height + 2 * SIZE)
-        self.dc.DestroyClippingRegion()
-        self.dc.SetClippingRect(big_rect)
-        y = rect.Y + rect.Height / 2 - SIZE / 2
-        x = rect.X - SIZE / 2
-        west_rect = wx.Rect(x + 1, y, SIZE, SIZE)
-        center_rect = wx.Rect(x + rect.Width / 2, y, SIZE, SIZE)
-        east_rect = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
-        self.dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
-        self.dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
-        if not event.locked:
-            self.dc.DrawRectangleRect(east_rect)
-            self.dc.DrawRectangleRect(west_rect)
-        if not event.locked and not event.ends_today:
-            self.dc.DrawRectangleRect(center_rect)
 
     def _get_base_color(self, event):
         if event.get_category():
