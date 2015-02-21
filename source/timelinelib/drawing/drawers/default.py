@@ -470,33 +470,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self.event_box_drawer.run(self.dc, rect, event, view_properties.is_selected(event))
         self.dc.DestroyClippingRegion()
 
-    def _get_base_color(self, event):
-        if event.get_category():
-            base_color = event.get_category().color
-        else:
-            base_color = (200, 200, 200)
-        return base_color
-
-    def _get_border_color(self, event):
-        base_color = self._get_base_color(event)
-        border_color = darken_color(base_color)
-        return border_color
-
-    def _get_box_pen(self, event):
-        border_color = self._get_border_color(event)
-        pen = wx.Pen(border_color, 1, wx.SOLID)
-        return pen
-
-    def _get_box_brush(self, event):
-        base_color = self._get_base_color(event)
-        brush = wx.Brush(base_color, wx.SOLID)
-        return brush
-
-    def _get_selected_box_brush(self, event):
-        border_color = self._get_border_color(event)
-        brush = wx.Brush(border_color, wx.BDIAGONAL_HATCH)
-        return brush
-
     def _draw_ballons(self, view_properties):
         """Draw ballons on selected events that has 'description' data."""
         self.balloon_data = []     # List of (event, rect)
