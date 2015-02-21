@@ -227,8 +227,6 @@ class DefaultEventBoxDrawer(PluginBase):
         right corner of the event rectangle.
         """
         corner_x = rect.X + rect.Width
-        # if corner_x > self.scene.width:
-        #     corner_x = self.scene.width
         points = (
             wx.Point(corner_x - DATA_INDICATOR_SIZE, rect.Y),
             wx.Point(corner_x, rect.Y),
