@@ -453,7 +453,7 @@ class DefaultDrawingAlgorithm(Drawer):
         box_rect = wx.Rect(rect.X - 2, rect.Y - 2, rect.Width + 4, rect.Height + 4)
         if EXTENDED_CONTAINER_HEIGHT.enabled():
             box_rect = EXTENDED_CONTAINER_HEIGHT.get_vertical_larger_box_rect(rect)
-        self._draw_box(box_rect, event)
+        self._draw_box(box_rect, event, view_properties)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
@@ -461,7 +461,7 @@ class DefaultDrawingAlgorithm(Drawer):
         if self._subevent_displayed_as_point_event(event, rect):
             if event.is_period():
                 return
-        self._draw_box(rect, event)
+        self._draw_box(rect, event, view_properties)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
@@ -469,9 +469,9 @@ class DefaultDrawingAlgorithm(Drawer):
         return (event.is_subevent() and
                 self._event_displayed_as_point_event(rect))
 
-    def _draw_box(self, rect, event):
+    def _draw_box(self, rect, event, view_properties):
         self.dc.SetClippingRect(rect)
-        self.event_box_drawer.run(self.dc, rect, event)
+        self.event_box_drawer.run(self.dc, rect, event, view_properties.is_selected(event))
         self.dc.DestroyClippingRegion()
 
     def _draw_selection_and_handles(self, rect, event):
