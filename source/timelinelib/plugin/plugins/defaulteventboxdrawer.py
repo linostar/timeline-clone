@@ -23,13 +23,13 @@ from timelinelib.plugin.pluginbase import PluginBase
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
 from timelinelib.drawing.utils import darken_color
 from timelinelib.features.experimental.experimentalfeatures import EXTENDED_CONTAINER_HEIGHT
+from timelinelib.wxgui.utils import get_colour
 
 
 HANDLE_SIZE = 4
 HALF_HANDLE_SIZE = HANDLE_SIZE / 2
 DATA_INDICATOR_SIZE = 10
 INNER_PADDING = 3  # Space inside event box to text (pixels)
-BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
 
 
@@ -259,14 +259,10 @@ class DefaultEventBoxDrawer(PluginBase):
             dc.DestroyClippingRegion()
 
     def _set_text_foreground_color(self, dc, event):
-        if event.get_category() is None:
-            fg_color = BLACK
-        elif event.get_category().font_color is None:
-            fg_color = BLACK
-        else:
-            font_color = event.get_category().font_color
-            fg_color = wx.Colour(font_color[0], font_color[1], font_color[2])
-        dc.SetTextForeground(fg_color)
+        try:
+            dc.SetTextForeground(get_colour(event.get_category().font_color))
+        except:
+            dc.SetTextForeground(wx.BLACK)
 
     def _draw_handles(self, dc, event, rect):
 
