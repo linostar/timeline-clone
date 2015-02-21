@@ -454,7 +454,6 @@ class DefaultDrawingAlgorithm(Drawer):
         if EXTENDED_CONTAINER_HEIGHT.enabled():
             box_rect = EXTENDED_CONTAINER_HEIGHT.get_vertical_larger_box_rect(rect)
         self._draw_box(box_rect, event)
-        self._draw_text(rect, event)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
@@ -463,7 +462,6 @@ class DefaultDrawingAlgorithm(Drawer):
             if event.is_period():
                 return
         self._draw_box(rect, event)
-        self._draw_text(rect, event)
         if view_properties.is_selected(event):
             self._draw_selection_and_handles(rect, event)
 
@@ -475,36 +473,6 @@ class DefaultDrawingAlgorithm(Drawer):
         self.dc.SetClippingRect(rect)
         self.event_box_drawer.run(self.dc, rect, event)
         self.dc.DestroyClippingRegion()
-
-    def _draw_text(self, rect, event):
-        # Ensure that we can't draw content outside inner rectangle
-        rect_copy = wx.Rect(*rect)
-        rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
-        if rect_copy.Width > 0:
-            # Draw the text (if there is room for it)
-            text_x = rect.X + INNER_PADDING
-            if event.get_fuzzy() or event.get_locked():
-                text_x += rect.Height / 2
-            text_y = rect.Y + INNER_PADDING
-            if text_x < INNER_PADDING:
-                text_x = INNER_PADDING
-            self._set_text_foreground_color(event)
-            if event.is_container() and EXTENDED_CONTAINER_HEIGHT.enabled():
-                EXTENDED_CONTAINER_HEIGHT.draw_container_text_top_adjusted(event.get_text(), self.dc, rect)
-            else:
-                self.dc.SetClippingRect(rect_copy)
-                self.dc.DrawText(event.get_text(), text_x, text_y)
-            self.dc.DestroyClippingRegion()
-
-    def _set_text_foreground_color(self, event):
-        if event.get_category() is None:
-            fg_color = BLACK
-        elif event.get_category().font_color is None:
-            fg_color = BLACK
-        else:
-            font_color = event.get_category().font_color
-            fg_color = wx.Colour(font_color[0], font_color[1], font_color[2])
-        self.dc.SetTextForeground(fg_color)
 
     def _draw_selection_and_handles(self, rect, event):
         self.dc.SetClippingRect(rect)

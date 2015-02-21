@@ -24,6 +24,7 @@ from mock import Mock
 from timelinelib.data.db import MemoryDB
 from timelinelib.data import Event, TimePeriod
 from timelinelib.drawing.drawers.default import DefaultDrawingAlgorithm
+from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
 from timelinelib.drawing.viewproperties import ViewProperties
 from timelinelib.time.gregoriantime import GregorianTimeType
 import timelinelib.calendar.gregorian as gregorian
@@ -51,8 +52,9 @@ class DrawerSpec(unittest.TestCase):
         self.when_timeline_is_drawn()
         self.assert_text_drawn_above("mike's birthday", BASELINE_Y_POS)
 
-    def given_event(self, name, start, end):
+    def given_event(self, name, start, end, progress=0):
         event = Event(self.timeline.get_time_type(), start, end, name)
+        event.set_progress(progress)
         self.timeline.save_event(event)
 
     def when_timeline_is_drawn(self):
@@ -75,7 +77,7 @@ class DrawerSpec(unittest.TestCase):
     def setUp(self):
         self.app = wx.App() # a stored app is needed to create fonts
         self.drawer = DefaultDrawingAlgorithm()
-        self.drawer.set_event_box_drawer(Mock())
+        self.drawer.set_event_box_drawer(DefaultEventBoxDrawer())
         self.dc = Mock(wx.DC)
         self.dc.GetSizeTuple.return_value = IMAGE_SIZE
         self.dc.GetTextExtent.return_value = TEXT_SIZE

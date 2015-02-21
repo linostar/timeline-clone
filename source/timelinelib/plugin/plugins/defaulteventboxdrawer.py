@@ -22,9 +22,12 @@ import math
 from timelinelib.plugin.pluginbase import PluginBase
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
 from timelinelib.drawing.utils import darken_color
+from timelinelib.features.experimental.experimentalfeatures import EXTENDED_CONTAINER_HEIGHT
 
 
 DATA_INDICATOR_SIZE = 10
+INNER_PADDING = 3  # Space inside event box to text (pixels)
+BLACK = (0, 0, 0)
 
 
 class DefaultEventBoxDrawer(PluginBase):
@@ -227,4 +230,31 @@ class DefaultEventBoxDrawer(PluginBase):
         dc.DrawPolygon(points)
 
     def _draw_text(self, dc, rect, event):
-        pass
+        # Ensure that we can't draw content outside inner rectangle
+        rect_copy = wx.Rect(*rect)
+        rect_copy.Deflate(INNER_PADDING, INNER_PADDING)
+        if rect_copy.Width > 0:
+            # Draw the text (if there is room for it)
+            text_x = rect.X + INNER_PADDING
+            if event.get_fuzzy() or event.get_locked():
+                text_x += rect.Height / 2
+            text_y = rect.Y + INNER_PADDING
+            if text_x < INNER_PADDING:
+                text_x = INNER_PADDING
+            self._set_text_foreground_color(dc, event)
+            if event.is_container() and EXTENDED_CONTAINER_HEIGHT.enabled():
+                EXTENDED_CONTAINER_HEIGHT.draw_container_text_top_adjusted(event.get_text(), dc, rect)
+            else:
+                dc.SetClippingRect(rect_copy)
+                dc.DrawText(event.get_text(), text_x, text_y)
+            dc.DestroyClippingRegion()
+
+    def _set_text_foreground_color(self, dc, event):
+        if event.get_category() is None:
+            fg_color = BLACK
+        elif event.get_category().font_color is None:
+            fg_color = BLACK
+        else:
+            font_color = event.get_category().font_color
+            fg_color = wx.Colour(font_color[0], font_color[1], font_color[2])
+        dc.SetTextForeground(fg_color)
