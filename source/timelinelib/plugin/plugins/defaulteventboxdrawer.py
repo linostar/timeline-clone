@@ -204,9 +204,10 @@ class DefaultEventBoxDrawer(PluginBase):
         gc.StrokePath(path)
 
     def _draw_progress_box(self, dc, rect, event):
-        self._set_progress_color(dc, event)
-        progress_rect = self._get_progress_rect(rect, event.get_data("progress") / 100.0)
-        dc.DrawRectangleRect(progress_rect)
+        if event.get_data("progress"):
+            self._set_progress_color(dc, event)
+            progress_rect = self._get_progress_rect(rect, event.get_data("progress") / 100.0)
+            dc.DrawRectangleRect(progress_rect)
 
     def _set_progress_color(self, dc, event):
         progress_color = event.get_progress_color()
