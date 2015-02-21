@@ -23,8 +23,6 @@ import wx.lib.newevent
 from timelinelib.application import TimelineApplication
 from timelinelib.config.dotfile import read_config
 from timelinelib.config.paths import ICONS_DIR
-from timelinelib.dataexport.bitmap import export_to_image
-from timelinelib.dataexport.bitmap import export_to_images
 from timelinelib.dataexport.timelinexml import export_db_to_timeline_xml
 from timelinelib.data import TimePeriod
 from timelinelib.db.exceptions import TimelineIOError
@@ -53,7 +51,6 @@ from timelinelib.wxgui.dialogs.shortcutseditor import ShortcutsEditorDialog
 from timelinelib.wxgui.dialogs.textdisplay import TextDisplayDialog
 from timelinelib.wxgui.dialogs.timeeditor import TimeEditorDialog
 from timelinelib.wxgui.timer import TimelineTimer
-from timelinelib.wxgui.utils import _ask_question
 from timelinelib.wxgui.utils import display_error_message
 from timelinelib.wxgui.utils import display_information_message
 from timelinelib.wxgui.utils import WildcardHelper
@@ -61,6 +58,8 @@ from timelinelib.features.experimental.experimentalfeatures import ExperimentalF
 import timelinelib.wxgui.utils as gui_utils
 from timelinelib.plugin import factory
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
+from timelinelib.plugin.factory import EXPORTER
+
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -151,13 +150,32 @@ class GuiCreator(object):
         file_menu.AppendSeparator()
         self._create_import_menu_item(file_menu)
         file_menu.AppendSeparator()
-        self._create_file_export_to_image_menu_item(file_menu)
-        self._create_file_export_to_images_menu_item(file_menu)
-        self._create_file_export_to_svg_menu_item(file_menu)
+        self._create_export_menues(file_menu)
         file_menu.AppendSeparator()
         self._create_file_exit_menu_item(file_menu)
         main_menu_bar.Append(file_menu, _("&File"))
         self.file_menu = file_menu
+
+    def _create_export_menues(self, file_menu):
+
+        def create_click_handler(plugin, main_frame):
+            def event_handler(evt):
+                plugin.run(main_frame)
+            return event_handler
+
+        submenu = wx.Menu()
+        file_menu.AppendMenu(wx.ID_ANY, _("Exporters"), submenu)
+        for plugin in factory.get_plugins(EXPORTER):
+            mnu = submenu.Append(wx.ID_ANY, plugin.display_name(), plugin.display_name())
+            self.menu_controller.add_menu_requiring_timeline(mnu)
+            handler = create_click_handler(plugin, self)
+            self.Bind(wx.EVT_MENU, handler, mnu)
+            method = getattr(plugin, "wxid", None)
+            if callable(method):
+                self.shortcut_items[method()] = mnu
+#           self.shortcut_items[ID_EXPORT] = mnu_file_export_view
+#           self.shortcut_items[ID_EXPORT_ALL] = mnu_file_export_all
+#           self.shortcut_items[ID_EXPORT_SVG] = mnu_file_export_svg
 
     def _create_file_new_menu(self, file_menu):
         file_new_menu = wx.Menu()
@@ -208,27 +226,6 @@ class GuiCreator(object):
         self.shortcut_items[ID_IMPORT] = mnu_file_import
         self.Bind(wx.EVT_MENU, self._mnu_file_import_on_click, mnu_file_import)
         self.menu_controller.add_menu_requiring_writable_timeline(mnu_file_import)
-
-    def _create_file_export_to_image_menu_item(self, file_menu):
-        mnu_file_export_view = file_menu.Append(
-            ID_EXPORT, _("&Export Current view to Image..."), _("Export the current view to a PNG image"))
-        self.shortcut_items[ID_EXPORT] = mnu_file_export_view
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_view)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_view_on_click, mnu_file_export_view)
-
-    def _create_file_export_to_images_menu_item(self, file_menu):
-        mnu_file_export_all = file_menu.Append(
-            ID_EXPORT_ALL, _("&Export Whole Timeline to Images..."), _("Export whole Timeline to PNG images"))
-        self.shortcut_items[ID_EXPORT_ALL] = mnu_file_export_all
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_all)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_all_on_click, mnu_file_export_all)
-
-    def _create_file_export_to_svg_menu_item(self, file_menu):
-        mnu_file_export_svg = file_menu.Append(
-            ID_EXPORT_SVG, _("&Export to SVG..."), _("Export the current view to a SVG image"))
-        self.shortcut_items[ID_EXPORT_SVG] = mnu_file_export_svg
-        self.menu_controller.add_menu_requiring_timeline(mnu_file_export_svg)
-        self.Bind(wx.EVT_MENU, self._mnu_file_export_svg_on_click, mnu_file_export_svg)
 
     def _create_file_exit_menu_item(self, file_menu):
         file_menu.Append(wx.ID_EXIT, "", _("Exit the program"))
@@ -630,15 +627,6 @@ class GuiCreator(object):
             dialog.Destroy()
         safe_locking(self, open_import_dialog)
 
-    def _mnu_file_export_view_on_click(self, evt):
-        export_to_image(self)
-
-    def _mnu_file_export_all_on_click(self, evt):
-        export_to_images(self)
-
-    def _mnu_file_export_svg_on_click(self, evt):
-        self._export_to_svg_image()
-
     def _mnu_file_exit_on_click(self, evt):
         self.Close()
 
@@ -943,27 +931,6 @@ class MainFrame(wx.Frame, GuiCreator, MainFrameApiUsedByController):
             assert new_timeline_path.endswith(".timeline")
             export_db_to_timeline_xml(self.timeline, new_timeline_path)
             self.controller.open_timeline(new_timeline_path)
-
-    def _export_to_svg_image(self):
-        if not self._has_pysvg_module():
-            display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the doc/installing.rst file for instructions how to install it."), self)
-            return
-        wildcard = self.images_svg_wildcard_helper.wildcard_string()
-        dialog = wx.FileDialog(self, message=_("Export to SVG"),
-                               wildcard=wildcard, style=wx.FD_SAVE)
-        if dialog.ShowModal() == wx.ID_OK:
-            path = self.images_svg_wildcard_helper.get_path(dialog)
-            overwrite_question = _("File '%s' exists. Overwrite?") % path
-            if (not os.path.exists(path) or _ask_question(overwrite_question, self) == wx.YES):
-                self.main_panel.svgexport(path)
-        dialog.Destroy()
-
-    def _has_pysvg_module(self):
-        try:
-            import pysvg
-            return True
-        except ImportError:
-            return False
 
     def _window_on_close(self, event):
         self.save_current_timeline_data()
@@ -1310,10 +1277,6 @@ class MainPanel(wx.Panel):
 
     def set_searchbar_timeline_canvas(self, timeline_canvas):
         self.searchbar.set_timeline_canvas(timeline_canvas)
-
-    def svgexport(self, path):
-        import timelinelib.dataexport.svg as svgexport
-        svgexport.export(path, self.get_scene(), self.get_view_properties())
 
     def get_view_properties(self):
         return self.timeline_panel.get_view_properties()
