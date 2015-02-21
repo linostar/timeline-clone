@@ -25,6 +25,8 @@ from timelinelib.drawing.utils import darken_color
 from timelinelib.features.experimental.experimentalfeatures import EXTENDED_CONTAINER_HEIGHT
 
 
+HANDLE_SIZE = 4
+HALF_HANDLE_SIZE = HANDLE_SIZE / 2
 DATA_INDICATOR_SIZE = 10
 INNER_PADDING = 3  # Space inside event box to text (pixels)
 BLACK = (0, 0, 0)
@@ -67,7 +69,7 @@ class DefaultEventBoxDrawer(PluginBase):
             self._draw_balloon_indicator(dc, event, rect)
 
     def _draw_selection_handles(self, dc, event, rect, selected):
-        if selected:
+        if not event.locked and selected:
             self._draw_handles(dc, event, rect)
 
     def _get_border_pen(self, event):
@@ -265,32 +267,53 @@ class DefaultEventBoxDrawer(PluginBase):
         dc.SetTextForeground(fg_color)
 
     def _draw_handles(self, dc, event, rect):
+
+        def draw_frame_around_event():
+            small_rect = wx.Rect(*rect)
+            small_rect.Deflate(1, 1)
+            border_color = self._get_border_color(event)
+            border_color = darken_color(border_color)
+            pen = wx.Pen(border_color, 1, wx.SOLID)
+            dc.SetBrush(wx.TRANSPARENT_BRUSH)
+            dc.SetPen(pen)
+            dc.DrawRectangleRect(small_rect)
+
         dc.SetClippingRect(rect)
-        small_rect = wx.Rect(*rect)
-        small_rect.Deflate(1, 1)
-        border_color = self._get_border_color(event)
-        border_color = darken_color(border_color)
-        pen = wx.Pen(border_color, 1, wx.SOLID)
-        dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        dc.SetPen(pen)
-        dc.DrawRectangleRect(small_rect)
+        draw_frame_around_event()
         self._draw_all_handles(dc, rect, event)
         dc.DestroyClippingRegion()
 
     def _draw_all_handles(self, dc, rect, event):
-        SIZE = 4
-        big_rect = wx.Rect(rect.X - SIZE, rect.Y - SIZE, rect.Width + 2 * SIZE, rect.Height + 2 * SIZE)
-        dc.DestroyClippingRegion()
-        dc.SetClippingRect(big_rect)
-        y = rect.Y + rect.Height / 2 - SIZE / 2
-        x = rect.X - SIZE / 2
-        west_rect = wx.Rect(x + 1, y, SIZE, SIZE)
-        center_rect = wx.Rect(x + rect.Width / 2, y, SIZE, SIZE)
-        east_rect = wx.Rect(x + rect.Width - 1, y, SIZE, SIZE)
-        dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
-        dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
-        if not event.locked:
-            dc.DrawRectangleRect(east_rect)
-            dc.DrawRectangleRect(west_rect)
-        if not event.locked and not event.ends_today:
-            dc.DrawRectangleRect(center_rect)
+
+        def inflate_clipping_region():
+            big_rect = wx.Rect(*rect)
+            big_rect.Inflate(HANDLE_SIZE, HANDLE_SIZE)
+            dc.DestroyClippingRegion()
+            dc.SetClippingRect(big_rect)
+
+        def set_pen_and_brush():
+            dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
+            dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
+
+        def create_handle_rect():
+            HALF_EVENT_HEIGHT = rect.Height / 2
+            y = rect.Y + HALF_EVENT_HEIGHT - HALF_HANDLE_SIZE
+            x = rect.X - HALF_HANDLE_SIZE + 1
+            return wx.Rect(x, y, HANDLE_SIZE, HANDLE_SIZE)
+
+        def draw_rect(handle_rect, offset):
+            handle_rect.OffsetXY(offset, 0)
+            dc.DrawRectangleRect(handle_rect)
+
+        def draw_handle_rects(handle_rect):
+            HALF_EVENT_WIDTH = rect.Width / 2
+            EVENT_WIDTH = rect.Width
+            draw_rect(handle_rect, 0)
+            draw_rect(handle_rect, EVENT_WIDTH - 2)
+            if not event.ends_today:
+                draw_rect(handle_rect, -HALF_EVENT_WIDTH)
+
+        inflate_clipping_region()
+        set_pen_and_brush()
+        handle_rect = create_handle_rect()
+        draw_handle_rects(handle_rect)
