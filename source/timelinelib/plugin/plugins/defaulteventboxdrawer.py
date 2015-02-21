@@ -294,7 +294,7 @@ class DefaultEventBoxDrawer(PluginBase):
             dc.SetClippingRect(big_rect)
 
         def set_pen_and_brush():
-            dc.SetBrush(wx.Brush("BLACK", wx.SOLID))
+            dc.SetBrush(wx.BLACK_BRUSH)
             dc.SetPen(wx.Pen("BLACK", 1, wx.SOLID))
 
         def create_handle_rect():
