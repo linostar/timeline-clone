@@ -18,6 +18,7 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import itertools
 import doctest
 import os.path
 import random
@@ -120,14 +121,33 @@ def find_test_modules():
     return modules
 
 
-def find_specs():
+def _find_specs():
     specs = []
     for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
         if file.endswith(".py") and file != "__init__.py":
             module_name = os.path.basename(file)[:-3]
             abs_module_name = "specs.%s" % module_name
             specs.append(("spec", abs_module_name))
+    print specs
     return specs
+
+
+def find_specs():
+
+    def valid(f):
+        return f.endswith(".py") and not f.startswith("__")
+
+    def module_name(rpath, filename):
+        # This following if-statement is only needed when running from within eclipse!
+        # Can't figure out why
+        if rpath.startswith("test\\"):
+            rpath = rpath[5:]
+        return "%s.%s" % (rpath.replace("\\","."), filename.rsplit(".", 1)[0])
+
+    rp = os.path.relpath(os.path.join(os.path.dirname(__file__), "specs"))
+    return list(itertools.chain(*[[("spec", module_name(rpath, f))
+                                for f in files if valid(f)]
+                                for rpath, _, files in os.walk(rp)]))
 
 
 def find_doctests():
