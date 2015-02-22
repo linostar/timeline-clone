@@ -32,6 +32,7 @@ import os.path
 
 
 # Name used in ConfigParser
+GRADIENT_EVENT_BOX_DRAWER = "gradient_event_box_drawer"
 WINDOW_WIDTH = "window_width"
 WINDOW_HEIGHT = "window_height"
 WINDOW_XPOS = "window xpos"
@@ -48,6 +49,7 @@ USE_INERTIAL_SCROLLING = "use_inertial_scrolling"
 EXPERIMENTAL_FEATURES = "experimental_features"
 DIVIDER_LINE_SLIDER_POS = "divider_line_slider_pos"
 DEFAULTS = {
+    GRADIENT_EVENT_BOX_DRAWER: "False",
     WINDOW_WIDTH: "900",
     WINDOW_HEIGHT: "500",
     WINDOW_XPOS: "-1",
@@ -103,6 +105,12 @@ class Config(object):
         finally:
             f.close()
 
+    def get_gradient_event_box_drawer(self):
+        return self.config_parser.getboolean(DEFAULTSECT, GRADIENT_EVENT_BOX_DRAWER)
+    def set_gradient_event_box_drawer(self, is_gradient):
+        self.config_parser.set(DEFAULTSECT, GRADIENT_EVENT_BOX_DRAWER, str(is_gradient))
+    gradient_event_box_drawer = property(get_gradient_event_box_drawer, set_gradient_event_box_drawer)
+    
     def get_window_size(self):
         return (self.config_parser.getint(DEFAULTSECT, WINDOW_WIDTH),
                 self.config_parser.getint(DEFAULTSECT, WINDOW_HEIGHT))
