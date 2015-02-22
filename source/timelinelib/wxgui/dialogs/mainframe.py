@@ -164,7 +164,7 @@ class GuiCreator(object):
             return event_handler
 
         submenu = wx.Menu()
-        file_menu.AppendMenu(wx.ID_ANY, _("Exporters"), submenu)
+        file_menu.AppendMenu(wx.ID_ANY, _("Export"), submenu)
         for plugin in factory.get_plugins(EXPORTER):
             mnu = submenu.Append(wx.ID_ANY, plugin.display_name(), plugin.display_name())
             self.menu_controller.add_menu_requiring_timeline(mnu)
@@ -173,9 +173,6 @@ class GuiCreator(object):
             method = getattr(plugin, "wxid", None)
             if callable(method):
                 self.shortcut_items[method()] = mnu
-#           self.shortcut_items[ID_EXPORT] = mnu_file_export_view
-#           self.shortcut_items[ID_EXPORT_ALL] = mnu_file_export_all
-#           self.shortcut_items[ID_EXPORT_SVG] = mnu_file_export_svg
 
     def _create_file_new_menu(self, file_menu):
         file_new_menu = wx.Menu()
