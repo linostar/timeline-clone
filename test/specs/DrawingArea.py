@@ -28,6 +28,8 @@ from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.wxgui.components.timeline import TimelineCanvas
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
 from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
+from timelinelib.plugin.plugins.gradienteventboxdrawer import GradientEventBoxDrawer
+from timelinelib.config.dotfile import Config
 
 
 class DrawingAreaSpec(unittest.TestCase):
@@ -80,22 +82,14 @@ class DrawingAreaSpec(unittest.TestCase):
         self.app = wx.App() # a stored app is needed to create fonts
         self.timeline_canvas = Mock(TimelineCanvas)
         status_bar_adapter = Mock(StatusBarAdapter)
-        config = Config()
+        config = Mock(Config)
         self.drawing_algorithm = DefaultDrawingAlgorithm()
         divider_line_slider = Mock(wx.Slider)
         divider_line_slider.GetValue.return_value = 1
         fn_handle_db_error = None
         plugin_factory = Mock()
-        plugin_factory.get_plugins.return_value = [DefaultEventBoxDrawer()]
+        plugin_factory.get_plugins.return_value = [DefaultEventBoxDrawer(), GradientEventBoxDrawer()]
         self.controller = TimelineCanvasController(
             self.timeline_canvas, status_bar_adapter, config,
             divider_line_slider, fn_handle_db_error, plugin_factory, drawer=self.drawing_algorithm)
 
-
-class Config(object):
-
-    def get_show_legend(self):
-        pass
-
-    def get_balloon_on_hover(self):
-        return False
