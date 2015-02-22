@@ -40,11 +40,11 @@ class Metadata(object):
         self.function = function
         self.modifier = modifier
         self.key = key
-        
-        
+
+
 CTRL_MODIFIER = "Ctrl"
-ALT_MODIFIER = "Alt" 
-NO_MODIFIER = "" 
+ALT_MODIFIER = "Alt"
+NO_MODIFIER = ""
 LABEL = "%s->%%s"
 LABEL_FILE = LABEL % _("File")
 LABEL_EDIT = LABEL % _("Edit")
@@ -55,51 +55,50 @@ LABEL_HELP = LABEL % _("Help")
 NAVLABEL = "%s(%s)->%%s"
 LABEL_NAVIGATE_TIME = NAVLABEL % (_("Navigate"), "tm")
 LABEL_NAVIGATE_NUM = NAVLABEL % (_("Navigate"), "num")
-METADATA = [
-             # File
-             Metadata(mf.ID_NEW, "shortcut_file_new",  LABEL_FILE % _("File Timeline..."), CTRL_MODIFIER, "N"),
-             Metadata(mf.ID_NEW_NUMERIC, "shortcut_file_new_numeric",  LABEL_FILE % _("Numeric Timeline..."), NO_MODIFIER, ""),
-             Metadata(mf.ID_NEW_DIR, "shortcut_file_new_dir",  LABEL_FILE % _("Directory Timeline..."), NO_MODIFIER, ""),
-             Metadata(mf.ID_SAVEAS, "shortcut_save_as",  LABEL_FILE % _("Save As..."), NO_MODIFIER, ""),
-             Metadata(mf.ID_IMPORT, "shortcut_import",  LABEL_FILE % _("Import..."), NO_MODIFIER, ""),
-             Metadata(mf.ID_EXPORT, "shortcut_export",  LABEL_FILE % _("Export Current view to Image..."), NO_MODIFIER, ""),
-             Metadata(mf.ID_EXPORT_ALL, "shortcut_export_all",  LABEL_FILE % _("Export Whole Timeline to Images..."), NO_MODIFIER, ""),
-             Metadata(mf.ID_EXPORT_SVG, "shortcut_export_svg",  LABEL_FILE % _("Export to SVG..."), NO_MODIFIER, ""),
-             Metadata(mf.ID_EXIT, "shortcut_exit",  LABEL_FILE % _("Exit"), NO_MODIFIER, ""),
-             # Edit
-             Metadata(mf.ID_FIND, "shortcut_find",  LABEL_EDIT % _("Find"), CTRL_MODIFIER, "F"),
-             Metadata(mf.ID_PREFERENCES, "shortcut_preferences",  LABEL_EDIT % _("Preferences"), NO_MODIFIER, ""),
-             Metadata(mf.ID_EDIT_SHORTCUTS, "shortcut_shortcuts",  LABEL_EDIT % _("Shortcuts"), NO_MODIFIER, ""),
-             # View
-             Metadata(mf.ID_SIDEBAR, "shortcut_sidebar", LABEL_VIEW % _("Sidebar"), CTRL_MODIFIER, "I"),
-             Metadata(mf.ID_LEGEND, "shortcut_legend",  LABEL_VIEW % _("Legend"),  NO_MODIFIER,  ""),
-             Metadata(mf.ID_BALLOONS, "shortcut_ballons",  LABEL_VIEW % _("Ballons on hover"),  NO_MODIFIER,  ""),
-             Metadata(mf.ID_ZOOMIN, "shortcut_zoomin", LABEL_VIEW % _("Zoom In"),  CTRL_MODIFIER,  "+"),
-             Metadata(mf.ID_ZOOMOUT, "shortcut_zoomout", LABEL_VIEW % _("Zoom Out"),  CTRL_MODIFIER,  "-"),
-             Metadata(mf.ID_VERT_ZOOMIN, "shortcut_vertical_zoomin", LABEL_VIEW % _("Vertical Zoom In"),  ALT_MODIFIER,  "+"),
-             Metadata(mf.ID_VERT_ZOOMOUT, "shortcut_vertical_zoomout", LABEL_VIEW % _("Vertical Zoom Out"),  ALT_MODIFIER,  "-"),
-             # Timeline
-             Metadata(mf.ID_CREATE_EVENT, "shortcut_create_event", LABEL_TIMELINE % _("Create Event"), NO_MODIFIER, ""),
-             Metadata(mf.ID_EDIT_EVENT, "shortcut_edit_event", LABEL_TIMELINE % _("Edit Selected Event"), NO_MODIFIER, ""),
-             Metadata(mf.ID_DUPLICATE_EVENT, "shortcut_duplicate_event", LABEL_TIMELINE % _("Duplicate Selected Event"), NO_MODIFIER, ""),
-             Metadata(mf.ID_SET_CATEGORY_ON_SELECTED, "shortcut_set_category_on_selected", LABEL_TIMELINE % _("Set Category on Selected Events"), NO_MODIFIER, ""),
-             Metadata(mf.ID_MEASURE_DISTANCE, "shortcut_measure_distance", LABEL_TIMELINE % _("Measure Distance between two Events"), NO_MODIFIER, ""),
-             Metadata(mf.ID_SET_CATEGORY_ON_WITHOUT, "shortcut_set_category_on_without", LABEL_TIMELINE % _("Set Category on events without category"), NO_MODIFIER, ""),
-             Metadata(mf.ID_EDIT_CATEGORIES, "shortcut_edit_categories", LABEL_TIMELINE % _("Edit Categories"), NO_MODIFIER, ""),
-             Metadata(mf.ID_SET_READONLY, "shortcut_set_readonly", LABEL_TIMELINE % _("Read Only"), NO_MODIFIER, ""),
-             Metadata(mf.ID_UNDO, "shortcut_undo", LABEL_TIMELINE % _("Undo"), CTRL_MODIFIER, "Z"),
-             Metadata(mf.ID_REDO, "shortcut_redo", LABEL_TIMELINE % _("Redo"), ALT_MODIFIER, "Z"),
-             # Help            
-             Metadata(mf.ID_HELP, "shortcut_help_content", LABEL_HELP % _("Contents"), NO_MODIFIER, "F1"),
-             Metadata(mf.ID_TUTORIAL, "shortcut_tutorial", LABEL_HELP % _("Getting started tutorial"), NO_MODIFIER, ""),
-             Metadata(mf.ID_FEEDBACK, "shortcut_feedback", LABEL_HELP % _("Give Feedback"), NO_MODIFIER, ""),
-             Metadata(mf.ID_CONTACT, "shortcut_contact", LABEL_HELP % _("Contact"), NO_MODIFIER, ""),
-             Metadata(mf.ID_ABOUT, "shortcut_about", LABEL_HELP % _("About"), NO_MODIFIER, ""),
-             # Navigate
-             Metadata(mf.ID_FIND_FIRST, "shortcut_find_first_event", LABEL_NAVIGATE % _("Find First Event"), NO_MODIFIER, ""),
-             Metadata(mf.ID_FIND_LAST, "shortcut_find_last_event", LABEL_NAVIGATE % _("Find Last Event"), NO_MODIFIER, ""),
-             Metadata(mf.ID_FIT_ALL, "shortcut_find_all_events", LABEL_NAVIGATE % _("Find All Events"), NO_MODIFIER, ""),
-             ]
+METADATA = [  # File
+              Metadata(mf.ID_NEW, "shortcut_file_new",  LABEL_FILE % _("File Timeline..."), CTRL_MODIFIER, "N"),
+              Metadata(mf.ID_NEW_NUMERIC, "shortcut_file_new_numeric",  LABEL_FILE % _("Numeric Timeline..."), NO_MODIFIER, ""),
+              Metadata(mf.ID_NEW_DIR, "shortcut_file_new_dir",  LABEL_FILE % _("Directory Timeline..."), NO_MODIFIER, ""),
+              Metadata(mf.ID_SAVEAS, "shortcut_save_as",  LABEL_FILE % _("Save As..."), NO_MODIFIER, ""),
+              Metadata(mf.ID_IMPORT, "shortcut_import",  LABEL_FILE % _("Import..."), NO_MODIFIER, ""),
+              Metadata(mf.ID_EXPORT, "shortcut_export",  LABEL_FILE % _("Export Current view to Image..."), NO_MODIFIER, ""),
+              Metadata(mf.ID_EXPORT_ALL, "shortcut_export_all",  LABEL_FILE % _("Export Whole Timeline to Images..."), NO_MODIFIER, ""),
+              Metadata(mf.ID_EXPORT_SVG, "shortcut_export_svg",  LABEL_FILE % _("Export to SVG..."), NO_MODIFIER, ""),
+              Metadata(mf.ID_EXIT, "shortcut_exit",  LABEL_FILE % _("Exit"), NO_MODIFIER, ""),
+              # Edit
+              Metadata(mf.ID_FIND, "shortcut_find",  LABEL_EDIT % _("Find"), CTRL_MODIFIER, "F"),
+              Metadata(mf.ID_PREFERENCES, "shortcut_preferences",  LABEL_EDIT % _("Preferences"), NO_MODIFIER, ""),
+              Metadata(mf.ID_EDIT_SHORTCUTS, "shortcut_shortcuts",  LABEL_EDIT % _("Shortcuts"), NO_MODIFIER, ""),
+              # View
+              Metadata(mf.ID_SIDEBAR, "shortcut_sidebar", LABEL_VIEW % _("Sidebar"), CTRL_MODIFIER, "I"),
+              Metadata(mf.ID_LEGEND, "shortcut_legend",  LABEL_VIEW % _("Legend"),  NO_MODIFIER,  ""),
+              Metadata(mf.ID_BALLOONS, "shortcut_ballons",  LABEL_VIEW % _("Ballons on hover"),  NO_MODIFIER,  ""),
+              Metadata(mf.ID_ZOOMIN, "shortcut_zoomin", LABEL_VIEW % _("Zoom In"),  CTRL_MODIFIER,  "+"),
+              Metadata(mf.ID_ZOOMOUT, "shortcut_zoomout", LABEL_VIEW % _("Zoom Out"),  CTRL_MODIFIER,  "-"),
+              Metadata(mf.ID_VERT_ZOOMIN, "shortcut_vertical_zoomin", LABEL_VIEW % _("Vertical Zoom In"),  ALT_MODIFIER,  "+"),
+              Metadata(mf.ID_VERT_ZOOMOUT, "shortcut_vertical_zoomout", LABEL_VIEW % _("Vertical Zoom Out"),  ALT_MODIFIER,  "-"),
+              # Timeline
+              Metadata(mf.ID_CREATE_EVENT, "shortcut_create_event", LABEL_TIMELINE % _("Create Event"), NO_MODIFIER, ""),
+              Metadata(mf.ID_EDIT_EVENT, "shortcut_edit_event", LABEL_TIMELINE % _("Edit Selected Event"), NO_MODIFIER, ""),
+              Metadata(mf.ID_DUPLICATE_EVENT, "shortcut_duplicate_event", LABEL_TIMELINE % _("Duplicate Selected Event"), NO_MODIFIER, ""),
+              Metadata(mf.ID_SET_CATEGORY_ON_SELECTED, "shortcut_set_category_on_selected", LABEL_TIMELINE % _("Set Category on Selected Events"), NO_MODIFIER, ""),
+              Metadata(mf.ID_MEASURE_DISTANCE, "shortcut_measure_distance", LABEL_TIMELINE % _("Measure Distance between two Events"), NO_MODIFIER, ""),
+              Metadata(mf.ID_SET_CATEGORY_ON_WITHOUT, "shortcut_set_category_on_without", LABEL_TIMELINE % _("Set Category on events without category"), NO_MODIFIER, ""),
+              Metadata(mf.ID_EDIT_CATEGORIES, "shortcut_edit_categories", LABEL_TIMELINE % _("Edit Categories"), NO_MODIFIER, ""),
+              Metadata(mf.ID_SET_READONLY, "shortcut_set_readonly", LABEL_TIMELINE % _("Read Only"), NO_MODIFIER, ""),
+              Metadata(mf.ID_UNDO, "shortcut_undo", LABEL_TIMELINE % _("Undo"), CTRL_MODIFIER, "Z"),
+              Metadata(mf.ID_REDO, "shortcut_redo", LABEL_TIMELINE % _("Redo"), ALT_MODIFIER, "Z"),
+              # Help
+              Metadata(mf.ID_HELP, "shortcut_help_content", LABEL_HELP % _("Contents"), NO_MODIFIER, "F1"),
+              Metadata(mf.ID_TUTORIAL, "shortcut_tutorial", LABEL_HELP % _("Getting started tutorial"), NO_MODIFIER, ""),
+              Metadata(mf.ID_FEEDBACK, "shortcut_feedback", LABEL_HELP % _("Give Feedback"), NO_MODIFIER, ""),
+              Metadata(mf.ID_CONTACT, "shortcut_contact", LABEL_HELP % _("Contact"), NO_MODIFIER, ""),
+              Metadata(mf.ID_ABOUT, "shortcut_about", LABEL_HELP % _("About"), NO_MODIFIER, ""),
+              # Navigate
+              Metadata(mf.ID_FIND_FIRST, "shortcut_find_first_event", LABEL_NAVIGATE % _("Find First Event"), NO_MODIFIER, ""),
+              Metadata(mf.ID_FIND_LAST, "shortcut_find_last_event", LABEL_NAVIGATE % _("Find Last Event"), NO_MODIFIER, ""),
+              Metadata(mf.ID_FIT_ALL, "shortcut_find_all_events", LABEL_NAVIGATE % _("Find All Events"), NO_MODIFIER, ""),
+    ]
 FUNCTION_KEYS = ["PgDn", "PgUp", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9"]
 SHORTCUT_KEYS = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
                  "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z",

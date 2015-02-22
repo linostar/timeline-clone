@@ -16,6 +16,8 @@
 # along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os
+import wx
 from types import UnicodeType
 from xml.sax.saxutils import escape as xmlescape
 
@@ -26,6 +28,11 @@ from pysvg.shape import *
 from pysvg.builders import *
 from pysvg.filter import *
 
+from timelinelib.plugin.pluginbase import PluginBase
+from timelinelib.plugin.factory import EXPORTER
+from timelinelib.wxgui.utils import _ask_question
+from timelinelib.wxgui.utils import display_error_message
+from timelinelib.wxgui.utils import WildcardHelper
 from timelinelib.data import sort_categories
 from timelinelib.drawing.utils import darken_color
 
@@ -38,6 +45,43 @@ MAJOR_STRIP_FONT_SIZE = 6
 ENCODING = "utf-8"
 
 
+class SvgExporter(PluginBase):
+
+    def service(self):
+        return EXPORTER
+
+    def display_name(self):
+        return _("Export to SVG...")
+
+    def wxid(self):
+        from timelinelib.wxgui.dialogs.mainframe import ID_EXPORT_SVG
+        return ID_EXPORT_SVG
+
+    def run(self, main_frame):
+        if not has_pysvg_module():
+            display_error_message(_("Could not find pysvg Python package. It is needed to export to SVG. See the Timeline website or the doc/installing.rst file for instructions how to install it."), self)
+            return
+        helper = WildcardHelper(_("SVG files"), ["svg"])
+        wildcard = helper.wildcard_string()
+        dialog = wx.FileDialog(main_frame, message=_("Export to SVG"), wildcard=wildcard, style=wx.FD_SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            path = helper.get_path(dialog)
+            overwrite_question = _("File '%s' exists. Overwrite?") % path
+            if (not os.path.exists(path) or _ask_question(overwrite_question, main_frame) == wx.YES):
+                scene = main_frame.main_panel.get_scene()
+                view_properties = main_frame.main_panel.get_view_properties()
+                export(path, scene, view_properties)
+        dialog.Destroy()
+
+
+def has_pysvg_module():
+    try:
+        import pysvg
+        return True
+    except ImportError:
+        return False
+
+
 def export(path, scene, view_properties):
     svgDrawer = SVGDrawingAlgorithm(path, scene, view_properties, shadow=True)
     svgDrawer.draw()
@@ -45,7 +89,7 @@ def export(path, scene, view_properties):
 
 
 class SVGDrawingAlgorithm(object):
-
+ 
     # options:  shadow=True|False
     def __init__(self, path, scene, view_properties, **kwargs):
         # store important data references
@@ -87,19 +131,19 @@ class SVGDrawingAlgorithm(object):
         for key in kwargs:
             if key == 'shadow':
                 self.shadowFlag = kwargs[key]
-
+ 
     def write(self, path):
         """
         write the SVG code into the file with filename path. No
         checking is done if file/path exists
         """
         self.svg.save(path, encoding=ENCODING)
-
+ 
     def draw(self):
         self._draw_bg()
         self._draw_events(self.view_properties)
         self._draw_legend(self.view_properties, self._extract_categories())
-
+ 
     def _draw_bg(self):
         """
         Draw major and minor strips, lines to all event boxes and baseline.
@@ -117,18 +161,18 @@ class SVGDrawingAlgorithm(object):
         self._draw_lines_to_non_period_events(svgGroup, self.view_properties)
         self._draw_now_line(svgGroup)
         self.svg.addElement(svgGroup)
-
+ 
     def _draw_minor_strips(self, group, style):
         for strip_period in self.scene.minor_strip_data:
             self._draw_minor_strip_divider_line_at(group,strip_period.end_time)
             self._draw_minor_strip_label(group, style, strip_period)
-
+ 
     def _draw_minor_strip_divider_line_at(self, group, time):
         x = self.scene.x_pos_for_time(time)
         oh = ShapeBuilder()
         line = oh.createLine(x,0,x,self.scene.height, strokewidth=0.5, stroke="lightgrey")
         group.addElement(line)
-
+ 
     def _draw_minor_strip_label(self, group, style, strip_period):
         label = self.scene.minor_strip.label(strip_period.start_time)
         middle = self.scene.x_pos_for_time(strip_period.start_time) + INNER_PADDING
@@ -140,7 +184,7 @@ class SVGDrawingAlgorithm(object):
         myText = self._text(label, middle, middley)
         myText.set_style(style)
         group.addElement(myText)
-
+ 
     def _draw_major_strips(self, group, style):
         oh = ShapeBuilder()
         style.setStrokeDashArray("")
@@ -166,13 +210,13 @@ class SVGDrawingAlgorithm(object):
             myText = self._text(label, x, fontSize*4+INNER_PADDING+extra_vertical_padding)
             myText.set_style(style)
             group.addElement(myText)
-
+ 
     def _draw_divider_line(self, group):
         oh = ShapeBuilder()
         line = oh.createLine(0, self.scene.divider_y, self.scene.width,
                              self.scene.divider_y, strokewidth=0.5, stroke="grey")
         group.addElement(line)
-
+ 
     def _draw_lines_to_non_period_events(self, group, view_properties):
         for (event, rect) in self.scene.event_data:
             if rect.Y < self.scene.divider_y:
@@ -187,53 +231,53 @@ class SVGDrawingAlgorithm(object):
                 group.addElement(line)
                 circle = oh.createCircle(x, self.scene.divider_y, 2)
                 group.addElement(circle)
-
+ 
     def _draw_now_line(self, group):
         x = self.scene.x_pos_for_now()
         if x > 0 and x < self.scene.width:
             oh = ShapeBuilder()
             line = oh.createLine(x, 0, x, self.scene.height, stroke="darkred")
             group.addElement(line)
-
+ 
     def _get_base_color(self, event):
         if event.category:
             base_color = event.category.color
         else:
             base_color = (200, 200, 200)
         return base_color
-
+ 
     def _get_border_color(self, event):
         base_color = self._get_base_color(event)
         border_color = darken_color(base_color)
         return border_color
-
+ 
     def _map_svg_color(self, color):
         """
         map (r,g,b) color to svg string
         """
         sColor = "#%02X%02X%02X" % color
         return sColor
-
+ 
     def _get_box_border_color(self, event):
         border_color = self._get_border_color(event)
         sColor = self._map_svg_color(border_color)
         return sColor
-
+ 
     def _get_box_color(self, event):
         """ get the color of the event box """
         base_color = self._get_base_color(event)
         sColor = self._map_svg_color(base_color)
         return sColor
-
+ 
     def _get_box_indicator_color(self, event):
         base_color = self._get_base_color(event)
         darker_color = darken_color(base_color, 0.6)
         sColor = self._map_svg_color(darker_color)
         return sColor
-
+ 
     def _legend_should_be_drawn(self, view_properties, categories):
         return view_properties.show_legend and len(categories) > 0
-
+ 
     def _extract_categories(self):
         categories = []
         for (event, rect) in self.scene.event_data:
@@ -241,11 +285,11 @@ class SVGDrawingAlgorithm(object):
             if cat and not cat in categories:
                 categories.append(cat)
         return sort_categories(categories)
-
+ 
     def _draw_legend(self, view_properties, categories):
         """
         Draw legend for the given categories.
-
+ 
         Box in lower right corner
             Motivation for positioning in right corner:
             SVG text cannot be centered since the text width cannot be calculated
@@ -254,7 +298,7 @@ class SVGDrawingAlgorithm(object):
                   But then the probability is high that a lot of text is at the left
                   bottom
                   ergo: put the legend to the right.
-
+ 
           +----------+
           | Name   O |
           | Name   O |
@@ -298,7 +342,7 @@ class SVGDrawingAlgorithm(object):
                 svgGroup.addElement(myText)
                 cur_y = cur_y + item_height + INNER_PADDING
             self.svg.addElement(svgGroup)
-
+ 
     def _draw_events(self, view_properties):
         """Draw all event boxes and the text inside them."""
         myStyle = StyleBuilder()
@@ -327,7 +371,7 @@ class SVGDrawingAlgorithm(object):
             if event.has_data():
                 svgGroup.addElement(self._draw_contents_indicator(event, rect))
             self.svg.addElement(svgGroup)
-
+ 
     def _draw_contents_indicator(self, event, rect):
         """
         The data contents indicator is a small triangle drawn in the upper
@@ -343,7 +387,7 @@ class SVGDrawingAlgorithm(object):
         indicator = oh.createPolygon(polyPoints,fill=polyColor,stroke=polyColor)
         # TODO (low): Transparency ?
         return indicator
-
+ 
     def _svg_clipped_text(self, myString, rectTuple, myStyle):
         myString = self._encode_text(myString)
         # Put text,clipping into a SVG group
@@ -374,17 +418,17 @@ class SVGDrawingAlgorithm(object):
         myText.set_textLength(width-2*INNER_PADDING)
         myText.set_lengthAdjust("spacingAndGlyphs")
         group.set_clip_path("url(#%s)" % pathId)
-
+ 
         group.addElement(myText)
         return group
-
+ 
     def _text(self, the_text, x, y):
         encoded_text = self._encode_text(the_text)
         return text(encoded_text, x, y)
-
+ 
     def _encode_text(self, text):
         return self._encode_unicode_text(xmlescape(text))
-
+ 
     def _encode_unicode_text(self, text):
         if type(text) is UnicodeType:
             return text.encode(ENCODING)
