@@ -121,17 +121,6 @@ def find_test_modules():
     return modules
 
 
-def _find_specs():
-    specs = []
-    for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
-        if file.endswith(".py") and file != "__init__.py":
-            module_name = os.path.basename(file)[:-3]
-            abs_module_name = "specs.%s" % module_name
-            specs.append(("spec", abs_module_name))
-    print specs
-    return specs
-
-
 def find_specs():
 
     def valid(f):
