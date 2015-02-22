@@ -59,6 +59,7 @@ import timelinelib.wxgui.utils as gui_utils
 from timelinelib.plugin import factory
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
 from timelinelib.plugin.factory import EXPORTER
+from timelinelib.plugin.plugins.gradienteventboxdrawer import GradientEventBoxDrawer
 
 
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -311,6 +312,10 @@ class GuiCreator(object):
         def create_click_handler(plugin):
             def event_handler(evt):
                 self.main_panel.get_timeline_canvas().set_event_box_drawer(plugin)
+                if (type(plugin) is GradientEventBoxDrawer):
+                    self.config.gradient_event_box_drawer = True
+                else:
+                    self.config.gradient_event_box_drawer = False
             return event_handler
 
         cbx = True

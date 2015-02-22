@@ -72,7 +72,7 @@ class TimelineCanvasController(object):
             self.drawing_algorithm = drawer
         else:
             self.drawing_algorithm = get_drawer()
-        self.set_event_box_drawer(self.get_default_drawer())
+        self.set_event_box_drawer(self.get_saved_drawer())
         self.drawing_algorithm.use_fast_draw(False)
         self._set_initial_values_to_member_variables()
         self._set_colors_and_styles()
@@ -81,10 +81,15 @@ class TimelineCanvasController(object):
         self.change_input_handler_to_no_op()
         self.timeline = None
 
-    def get_default_drawer(self):
+    def get_saved_drawer(self):
         from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
+        from timelinelib.plugin.plugins.gradienteventboxdrawer import GradientEventBoxDrawer
+        if (self.config.gradient_event_box_drawer):
+            saved_drawer = GradientEventBoxDrawer
+        else:
+            saved_drawer = DefaultEventBoxDrawer
         for plugin in self.plugin_factory.get_plugins(EVENTBOX_DRAWER):
-            if isinstance(plugin, DefaultEventBoxDrawer):
+            if isinstance(plugin, saved_drawer):
                 return plugin
         raise Exception("No default Event Box  Drawer plugin found")
 
