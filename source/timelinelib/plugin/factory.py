@@ -51,6 +51,12 @@ class PluginFactory(object):
         except:
             pass
 
+    def get_plugin(self, service, name):
+        try:
+            return [plugin for plugin in self.get_plugins(service) if plugin.display_name() == _(name)][0]
+        except:
+            pass
+
     def _save_class_instance_for_plugins(self, candidate, cl):
         class_ = getattr(candidate, cl)
         try:
