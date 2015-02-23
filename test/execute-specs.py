@@ -128,7 +128,7 @@ def find_specs(subdir):
              specs.extend(find_specs(os.path.join(subdir, file)))
          elif file.endswith(".py") and file != "__init__.py":
              module_name = os.path.basename(file)[:-3]
-             abs_module_name = "%s.%s" % (subdir.replace("\\", "."), module_name)
+             abs_module_name = "%s.%s" % (subdir.replace(os.sep, "."), module_name)
              specs.append(("spec", abs_module_name))
      return specs
 
