@@ -65,6 +65,7 @@ from timelinelib.plugin.plugins.gradienteventboxdrawer import GradientEventBoxDr
 CatsViewChangedEvent, EVT_CATS_VIEW_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 
+ID_PLUGINS = [wx.NewId() for x in (1, 2)]
 ID_SIDEBAR = wx.NewId()
 ID_LEGEND = wx.NewId()
 ID_BALLOONS = wx.NewId()
@@ -262,7 +263,7 @@ class GuiCreator(object):
                 dialog.ShowModal()
                 dialog.Destroy()
             safe_locking(self, edit_function)
-        cbx = False
+        cbx = 0
         items = ((wx.ID_FIND, find, None, cbx),
                  (ID_FIND_CATEGORIES, find_categories, _("Find Categories..."), cbx),
                  None,
@@ -312,26 +313,25 @@ class GuiCreator(object):
         def create_click_handler(plugin):
             def event_handler(evt):
                 self.main_panel.get_timeline_canvas().set_event_box_drawer(plugin)
-                if (type(plugin) is GradientEventBoxDrawer):
-                    self.config.gradient_event_box_drawer = True
-                else:
-                    self.config.gradient_event_box_drawer = False
+                self.config.selected_event_box_drawer = plugin.display_name()
             return event_handler
 
-        cbx = True
+        cbx = 1
         items = [(ID_SIDEBAR, sidebar, _("&Sidebar\tCtrl+I"), cbx),
                  (ID_LEGEND, legend, _("&Legend"), cbx),
                  None,
                  (ID_BALLOONS, balloons, _("&Balloons on hover"), cbx),
                  None,
-                 (ID_ZOOMIN, zoomin, _("Zoom &In\tCtrl++"), False),
-                 (ID_ZOOMOUT, zoomout, _("Zoom &Out\tCtrl+-"), False),
-                 (ID_VERT_ZOOMIN, vert_zoomin, _("Vertical Zoom &In\tAlt++"), False),
-                 (ID_VERT_ZOOMOUT, vert_zoomout, _("Vertical Zoom &Out\tAlt+-"), False),
+                 (ID_ZOOMIN, zoomin, _("Zoom &In\tCtrl++"), 0),
+                 (ID_ZOOMOUT, zoomout, _("Zoom &Out\tCtrl+-"), 0),
+                 (ID_VERT_ZOOMIN, vert_zoomin, _("Vertical Zoom &In\tAlt++"), 0),
+                 (ID_VERT_ZOOMOUT, vert_zoomout, _("Vertical Zoom &Out\tAlt+-"), 0),
                  None,
                  ]
+        plugin_counter = 0
         for plugin in factory.get_plugins(EVENTBOX_DRAWER):
-            items.append((wx.ID_ANY, create_click_handler(plugin), plugin.display_name(), False))
+            items.append((ID_PLUGINS[plugin_counter], create_click_handler(plugin), plugin.display_name(), 2))
+            plugin_counter += 1
 
         view_menu = wx.Menu()
         self._create_menu_items(view_menu, items)
@@ -344,9 +344,11 @@ class GuiCreator(object):
         sidebar_item = view_menu.FindItemById(ID_SIDEBAR)
         legend_item = view_menu.FindItemById(ID_LEGEND)
         balloons_item = view_menu.FindItemById(ID_BALLOONS)
+        gradient_item = view_menu.FindItemById(ID_PLUGINS[1])
         sidebar_item.Check(self.config.get_show_sidebar())
         legend_item.Check(self.config.get_show_legend())
         balloons_item.Check(self.config.get_balloon_on_hover())
+        gradient_item.Check(self.config.selected_event_box_drawer == "Gradient Event box drawer")
 
     def _add_view_menu_items_to_controller(self, view_menu):
         sidebar_item = view_menu.FindItemById(ID_SIDEBAR)
@@ -412,7 +414,7 @@ class GuiCreator(object):
             safe_locking(self, self.timeline.redo)
             self.main_panel.redraw_timeline()
 
-        cbx = False
+        cbx = 0
         items = ((ID_CREATE_EVENT, create_event, _("Create &Event..."), cbx),
                  (ID_EDIT_EVENT, edit_event, _("&Edit Selected Event..."), cbx),
                  (ID_DUPLICATE_EVENT, duplicate_event, _("&Duplicate Selected Event..."), cbx),
@@ -468,7 +470,7 @@ class GuiCreator(object):
         def fit_all(evt):
             self._fit_all_events()
 
-        cbx = False
+        cbx = 0
         items = ((ID_FIND_FIRST, find_first, _("Find &First Event"), cbx),
                  (ID_FIND_LAST, find_last, _("Find &Last Event"), cbx),
                  (ID_FIT_ALL, fit_all, _("Fit &All Events"), cbx))
@@ -515,7 +517,7 @@ class GuiCreator(object):
         def about(e):
             display_about_dialog()
 
-        cbx = False
+        cbx = 0
         items = [(wx.ID_HELP, contents, _("&Contents\tF1"), cbx),
                  None,
                  (ID_TUTORIAL, tutorial, _("Getting started &tutorial"), cbx),
@@ -593,8 +595,10 @@ class GuiCreator(object):
     def _create_menu_item(self, menu, item_spec):
         item_id, handler, label, checkbox = item_spec
         if label is not None:
-            if checkbox:
+            if checkbox == 1: #checkbox
                 item = menu.Append(item_id, label, kind=wx.ITEM_CHECK)
+            elif checkbox == 2: #radiobutton
+                item = menu.Append(item_id, label, kind=wx.ITEM_RADIO)
             else:
                 if label is not None:
                     item = menu.Append(item_id, label)
