@@ -116,16 +116,19 @@ def load_doc_tests_from_module_name(suite, module_name):
 
 
 def find_test_modules():
-    modules = find_specs() + find_doctests()
+    modules = find_specs("specs") + find_doctests()
     random.shuffle(modules)
     return modules
 
-def find_specs():
+
+def find_specs(subdir):
      specs = []
-     for file in os.listdir(os.path.join(os.path.dirname(__file__), "specs")):
-         if file.endswith(".py") and file != "__init__.py":
+     for file in os.listdir(os.path.join(os.path.dirname(__file__), subdir)):
+         if os.path.isdir(os.path.join(os.path.dirname(__file__), subdir, file)):
+             specs.extend(find_specs(os.path.join(subdir, file)))
+         elif file.endswith(".py") and file != "__init__.py":
              module_name = os.path.basename(file)[:-3]
-             abs_module_name = "specs.%s" % module_name
+             abs_module_name = "%s.%s" % (subdir.replace("\\", "."), module_name)
              specs.append(("spec", abs_module_name))
      return specs
 
