@@ -41,6 +41,7 @@ from timelinelib.view.zoom import ZoomByDragInputHandler
 from timelinelib.drawing import get_drawer
 from timelinelib.plugin.factory import EVENTBOX_DRAWER
 from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
+from timelinelib.utilities.encodings import to_unicode
 
 
 # The width in pixels of the vertical scroll zones.
@@ -288,7 +289,7 @@ class TimelineCanvasController(object):
 
     def _context_menu_on_goto_hyperlink_event(self, evt):
         hyperlink = self.context_menu_event.get_data("hyperlink")
-        webbrowser.open(hyperlink)
+        webbrowser.open(to_unicode(hyperlink))
 
     @experimental_feature(EVENT_DONE)
     def _context_menu_on_done_event(self, evt):
