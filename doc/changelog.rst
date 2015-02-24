@@ -9,10 +9,13 @@ Version 1.6.0
 New features, enhancements:
 
  * Dividerline slider pos preserved between sessions
+ * Introduced a Gradient Event box drawer
 
 Bug fixes:
 
  * Fixed crash when opening preferences dialog (wxPython 3.0.2.0)
+ * Fixed crash when opening hyperlink
+ 
 
 
 Version 1.5.0
