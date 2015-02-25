@@ -10,6 +10,7 @@ New features, enhancements:
 
  * Dividerline slider pos preserved between sessions
  * Introduced a Gradient Event box drawer
+ * A new Event box drawer is added (gradient draw)
 
 Bug fixes:
 
