@@ -83,7 +83,6 @@ class TimelineCanvasController(object):
         self.timeline = None
 
     def get_saved_drawer(self):
-        from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
         return self.plugin_factory.get_plugin(EVENTBOX_DRAWER, self.config.selected_event_box_drawer) or DefaultEventBoxDrawer()
         raise Exception("No default Event Box Drawer plugin found")
 
