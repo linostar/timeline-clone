@@ -27,8 +27,8 @@ from timelinelib.view.drawingarea import HSCROLL_STEP
 from timelinelib.view.drawingarea import TimelineCanvasController
 from timelinelib.wxgui.components.timeline import TimelineCanvas
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
+from timelinelib.plugin import factory
 from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
-from timelinelib.plugin.plugins.gradienteventboxdrawer import GradientEventBoxDrawer
 from timelinelib.config.dotfile import Config
 
 
@@ -87,8 +87,7 @@ class DrawingAreaSpec(unittest.TestCase):
         divider_line_slider = Mock(wx.Slider)
         divider_line_slider.GetValue.return_value = 1
         fn_handle_db_error = None
-        plugin_factory = Mock()
-        plugin_factory.get_plugins.return_value = [DefaultEventBoxDrawer(), GradientEventBoxDrawer()]
+        plugin_factory = factory
         self.controller = TimelineCanvasController(
             self.timeline_canvas, status_bar_adapter, config,
             divider_line_slider, fn_handle_db_error, plugin_factory, drawer=self.drawing_algorithm)
