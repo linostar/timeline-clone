@@ -84,14 +84,7 @@ class TimelineCanvasController(object):
 
     def get_saved_drawer(self):
         from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
-        from timelinelib.plugin.plugins.gradienteventboxdrawer import GradientEventBoxDrawer
-        if (self.config.selected_event_box_drawer == "Gradient Event box drawer"):
-            saved_drawer = GradientEventBoxDrawer
-        else:
-            saved_drawer = DefaultEventBoxDrawer
-        for plugin in self.plugin_factory.get_plugins(EVENTBOX_DRAWER):
-            if isinstance(plugin, saved_drawer):
-                return plugin
+        return self.plugin_factory.get_plugin(EVENTBOX_DRAWER, self.config.selected_event_box_drawer) or DefaultEventBoxDrawer()
         raise Exception("No default Event Box Drawer plugin found")
 
     def set_event_box_drawer(self, drawer):

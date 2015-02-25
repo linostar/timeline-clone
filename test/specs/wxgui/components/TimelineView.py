@@ -31,8 +31,8 @@ from timelinelib.data import TimeOutOfRangeRightError
 from timelinelib.wxgui.components.timeline import TimelineCanvas
 from timelinelib.wxgui.components.timeline import TimelineCanvasController
 from timelinelib.wxgui.dialogs.mainframe import StatusBarAdapter
+from timelinelib.plugin import factory
 from timelinelib.plugin.plugins.defaulteventboxdrawer import DefaultEventBoxDrawer
-from timelinelib.plugin.plugins.gradienteventboxdrawer import GradientEventBoxDrawer
 
 
 # TODO: testSavesEventAfterMove
@@ -372,8 +372,7 @@ class TimelineViewSpec(unittest.TestCase):
         self.divider_line_slider = Mock()
         self.divider_line_slider.GetValue.return_value = 50
         self.fn_handle_db_error = Mock()
-        self.mock_plugin_factory = Mock()
-        self.mock_plugin_factory.get_plugins.return_value = [DefaultEventBoxDrawer(), GradientEventBoxDrawer()]
+        self.mock_plugin_factory = factory
         self.controller = TimelineCanvasController(
             self.timeline_canvas,
             self.status_bar_adapter,
