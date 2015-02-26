@@ -16,8 +16,8 @@ Bug fixes:
 
  * Fixed crash when opening preferences dialog (wxPython 3.0.2.0)
  * Fixed crash when opening hyperlink
+ * Fixed crash when using experimental feature locale date 
  
-
 
 Version 1.5.0
 -------------
