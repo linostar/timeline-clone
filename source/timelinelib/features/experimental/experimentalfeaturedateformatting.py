@@ -54,14 +54,17 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
         return self._dateformat % lst
 
     def parse(self, dt):
+        MAP = {YEAR: (YEAR, YEAR[2:]), MONTH: (MONTH, MONTH[1:]), DAY: (DAY, DAY[1:])}
+
+        def get_value(field):
+            key1, key2 = MAP[field]
+            try:
+                return int(fields[self._field_positions[key1]])
+            except:
+                return int(fields[self._field_positions[key2]])
+
         fields = dt.split(self._separator)
-        try:
-            year = int(fields[self._field_positions[YEAR]])
-        except:
-            year = int(fields[self._field_positions[YEAR[2:]]]) + self.century
-        month = int(fields[self._field_positions[MONTH]])
-        day = int(fields[self._field_positions[DAY]])
-        return year, month, day
+        return get_value(YEAR), get_value(MONTH), get_value(DAY)
 
     def separator(self):
         return self._separator
@@ -96,11 +99,8 @@ class ExperimentalFeatureDateFormatting(ExperimentalFeature, DateFormatter):
         return {keys[0]: 0, keys[1]: 1, keys[2]: 2}
 
     def _get_date_format_string(self, dt):
-        dt = dt.replace(YEAR, "%04d")
-        dt = dt.replace(YEAR[2:], "%02d")
-        dt = dt.replace(MONTH, "%02d")
-        dt = dt.replace(DAY, "%02d")
-        return dt
+        MAP = {"3333": "%04d", "33": "%02d", "11": "%02d", "1": "%1d", "22": "%02d", "2": "%01d"}
+        return self.separator().join([MAP[part] for part in dt.split(self.separator())])
 
     def _get_data_tuple(self, year, month, day):
         result = [0, 0, 0]
