@@ -29,6 +29,7 @@ from timelinelib.editors.propertyeditors.hyperlinkeditor import HyperlinkEditor
 from timelinelib.editors.propertyeditors.alerteditor import AlertEditor
 from timelinelib.editors.propertyeditors.iconeditor import IconEditor
 from timelinelib.repositories.dbwrapper import DbWrapperEventRepository
+from timelinelib.time.timeline import delta_from_days
 from timelinelib.wxgui.components.categorychoice import CategoryChoice
 from timelinelib.wxgui.components.feedbackbutton import FeedbackButton
 from timelinelib.wxgui.dialogs.containereditor import ContainerEditorDialog
@@ -183,6 +184,8 @@ class EventEditorDialog(wx.Dialog):
         return self._create_chb(box, _("Period"), handler)
 
     def _chb_period_on_checkbox(self, e):
+        if (e.IsChecked() and self.get_start() >= self.get_end()):
+            self.set_end(self.get_start() + delta_from_days(1))
         self._show_to_time(e.IsChecked())
 
     def _create_show_time_checkbox(self, box):
